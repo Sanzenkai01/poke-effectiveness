@@ -2,6 +2,7 @@
 const effectiveness = {};
 const weaknesses = {};
 const immunities = {};
+const resistances = {};
 let menuTypes = [];
 
 const chart = document.getElementById('chart');
@@ -251,11 +252,37 @@ function renderSelection(){
             connectionsSvg.appendChild(link);
         }
     }
-    const strengths=combineLists(currentSelection.map(t=>effectiveness[t]||[]));
-    const weakAgainst=combineLists(currentSelection.map(t=>weaknesses[t]||[]));
-    const immuneList=combineLists(currentSelection.map(t=>immunities[t]||[]));
+    // compute multipliers for every attack type against the current selection
+    const multipliers = {}; // attacker -> multiplier
+    menuTypes.forEach(att=>{
+        let m = 1;
+        currentSelection.forEach(def=>{
+            // immunity of the defender against this attacker
+            if(immunities[def] && immunities[def].includes(att)){
+                m *= 0;
+            } else if(effectiveness[att] && effectiveness[att].includes(def)){
+                // attacker is super effective against this defender
+                m *= 2;
+            } else if(resistances[def] && resistances[def].includes(att)){
+                // defender resists this attacking type
+                m *= 0.5;
+            }
+        });
+        multipliers[att] = m;
+    });
+
+    // strengths remain the union of what the selected types hit super effectively
+    const strengths = combineLists(currentSelection.map(t=>effectiveness[t]||[]));
+    // weakness list now only contains attackers with multiplier > 1
+    const weakAgainst = Object.keys(multipliers).filter(t=> multipliers[t] > 1);
+    // immuList for any attacker that deals zero damage
+    const immuneList = Object.keys(multipliers).filter(t=> multipliers[t] === 0);
+
+    // counts for strengths are still based on how many selected types hit each target
     const strengthsCount = tally(currentSelection.map(t=>effectiveness[t]||[]));
-    const weakCount = tally(currentSelection.map(t=>weaknesses[t]||[]));
+    // for weaknesses we want to show the actual multiplier
+    const weakCount = {};
+    weakAgainst.forEach(t=>{ weakCount[t] = multipliers[t]; });
 
     strengths.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('effectiveness');});
     weakAgainst.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('weakness');});
@@ -290,10 +317,12 @@ function renderSelection(){
         return list.map(t2=>{
             const count = counts[t2] || 0;
             let multlabel = '';
-            if(count > 1) {
-                const mult = Math.pow(2, count - 1);
-
-                multlabel = ` x${mult}`;
+            if(count){
+                // 'count' can either be the number of selected types (for strengths)
+                // or the damage multiplier (for weaknesses). In both cases we
+                // simply show " x<count>" when >1 so that 4× weaknesses are
+                // displayed correctly and double super‑effs show as "x2".
+                if(count !== 1) multlabel = ` x${count}`;
             }
             return `<div class="info-icon-wrapper" data-type="${t2}">`+
                    `<img class="info-icon" src="icons/${t2}.png" alt="${t2}" title="${t2}" />`+
@@ -419,11 +448,17 @@ if(matrixBtn && matrixModal && matrixBody){
 
 function buildMatrix(){
     const types = menuTypes;
-    const rows = types.map(t=>{
-        const row = types.map(u=>{
+    const rows = types.map(att=>{
+        const row = types.map(def=>{
             let mult = 1;
-            if(effectiveness[t] && effectiveness[t].includes(u)) mult *= 2;
-            if(weaknesses[t] && weaknesses[t].includes(u)) mult *= 0.5;
+            // check immunity of defender
+            if(immunities[def] && immunities[def].includes(att)){
+                mult = 0;
+            } else if(effectiveness[att] && effectiveness[att].includes(def)){
+                mult *= 2;
+            } else if(resistances[def] && resistances[def].includes(att)){
+                mult *= 0.5;
+            }
             return mult;
         });
         return row;
@@ -439,6 +474,8 @@ function buildMatrix(){
 fetch('types.json').then(r=>r.json()).then(data=>{
     Object.assign(effectiveness,data.effectiveness);
     Object.assign(immunities,data.immunities);
+    Object.assign(resistances,data.resistances || {});
+    // build reverse map for weaknesses (types that hit the key super effectively)
     for(let t in effectiveness){weaknesses[t]=[];}
     for(let t in effectiveness){(effectiveness[t]||[]).forEach(target=>{if(!weaknesses[target])weaknesses[target]=[];weaknesses[target].push(t);});}
     menuTypes=Object.keys(effectiveness).sort();
