@@ -1,261 +1,424 @@
-// List of types and their super-effective targets
-const effectiveness = {
-    normal: [],
-    fire: ['grass','ice','bug','steel'],
-    water: ['fire','ground','rock'],
-    electric: ['water','flying'],
-    grass: ['water','ground','rock'],
-    ice: ['grass','ground','flying','dragon'],
-    fighting: ['normal','ice','rock','dark','steel'],
-    poison: ['grass','fairy'],
-    ground: ['fire','electric','poison','rock','steel'],
-    flying: ['grass','fighting','bug'],
-    psychic: ['fighting','poison'],
-    bug: ['grass','psychic','dark'],
-    rock: ['fire','ice','flying','bug'],
-    ghost: ['psychic','ghost'],
-    dragon: ['dragon'],
-    dark: ['psychic','ghost'],
-    steel: ['ice','rock','fairy'],
-    fairy: ['fighting','dragon','dark']
-};
 
-// compute inverse mapping (weaknesses)
+const effectiveness = {};
 const weaknesses = {};
-for (let t in effectiveness) {
-    weaknesses[t] = [];
-}
-for (let t in effectiveness) {
-    effectiveness[t].forEach(target => {
-        if (!weaknesses[target]) weaknesses[target] = [];
-        weaknesses[target].push(t);
-    });
-}
+const immunities = {};
+let menuTypes = [];
 
-// immunity mapping (defending type -> move types it is immune to)
-const immunities = {
-    normal: ['ghost'],
-    ground: ['electric'],
-    flying: ['ground'],
-    ghost: ['normal','fighting'],
-    dark: ['psychic'],
-    steel: ['poison'],
-    fairy: ['dragon']
-};
-
-// draw lines between selected and related types using SVG
-function drawConnections(type) {
-    connectionsSvg.innerHTML = '';
-    const origin = document.querySelector(`.type-button[data-type="${type}"]`);
-    if (!origin) return;
-    const rect = origin.getBoundingClientRect();
-    const svgRect = connectionsSvg.getBoundingClientRect();
-    const ox = rect.left + rect.width/2 - svgRect.left;
-    const oy = rect.top + rect.height/2 - svgRect.top;
-    const related = [...(effectiveness[type]||[]), ...(weaknesses[type]||[])];
-    related.forEach(rt => {
-        const btn = document.querySelector(`.type-button[data-type="${rt}"]`);
-        if (!btn) return;
-        const rrect = btn.getBoundingClientRect();
-        const rx = rrect.left + rrect.width/2 - svgRect.left;
-        const ry = rrect.top + rrect.height/2 - svgRect.top;
-        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-        line.setAttribute('x1', ox);
-        line.setAttribute('y1', oy);
-        line.setAttribute('x2', ox);
-        line.setAttribute('y2', oy);
-        line.setAttribute('stroke', '#fff');
-        line.setAttribute('stroke-width', '2');
-        line.setAttribute('opacity', '0.7');
-        // prepare dash animation
-        line.setAttribute('stroke-dasharray', '5,5');
-        line.style.strokeDashoffset = '100';
-        connectionsSvg.appendChild(line);
-        // animate end point and dash
-        setTimeout(()=>{
-            line.setAttribute('x2', rx);
-            line.setAttribute('y2', ry);
-            line.setAttribute('stroke', '#ff0');
-            line.style.transition = 'stroke-dashoffset 0.5s linear';
-            line.style.strokeDashoffset = '0';
-        },10);
-        // add endpoint circle
-        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        circle.setAttribute('cx', ox);
-        circle.setAttribute('cy', oy);
-        circle.setAttribute('r', '4');
-        circle.setAttribute('fill', '#ff0');
-        circle.setAttribute('opacity','0.8');
-        connectionsSvg.appendChild(circle);
-        setTimeout(()=>{
-            circle.setAttribute('cx', rx);
-            circle.setAttribute('cy', ry);
-            circle.setAttribute('r', '2');
-            circle.setAttribute('opacity','0');
-            circle.style.transition = 'cx 0.5s, cy 0.5s, opacity 0.5s, r 0.5s';
-        },10);
-    });
-}
-
-// Create buttons dynamically
 const chart = document.getElementById('chart');
 const connectionsSvg = document.getElementById('connections');
 const searchInput = document.getElementById('type-search');
+let colCount = 0;
+let currentSelection = [];
 
-function createButtons(filter="") {
-    chart.innerHTML = '';
-    for (let type in effectiveness) {
-        if (filter && !type.includes(filter.toLowerCase())) continue;
-        const btn = document.createElement('div');
-        btn.className = `type-button ${type}`;
-        btn.dataset.type = type;
-
-        const img = document.createElement('img');
-        img.src = `icons/${type}.png`;
-        img.alt = type;
-        img.className = 'type-icon';
-        btn.appendChild(img);
-
-        const hidden = document.createElement('span');
-        hidden.className = 'visually-hidden';
-        hidden.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-        btn.appendChild(hidden);
-        // visible label below icon
-        const label = document.createElement('span');
-        label.className = 'type-label';
-        label.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-        btn.appendChild(label);
-
-        btn.addEventListener('click', () => selectType(type));
-        chart.appendChild(btn);
+const strings = {
+    pt: {
+        pageTitle: 'Efetividade de Tipos Pokémon',
+        instructions: 'Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.',
+        superEffective: 'super eficaz contra',
+        vulnerable: 'vulnerável a',
+        immune: 'imune a',
+        noRelation: 'nenhuma relação especial.',
+        shareSuccess: 'Link copiado para a área de transferência!',
+        shareFail: 'Falha ao copiar link.',
+        shareLabel: 'Compartilhar',
+        printLabel: 'Imprimir',
+        resetLabel: 'Resetar',
+        legendSelected: 'Selecionado',
+        legendStrength: 'Super eficaz',
+        legendWeakness: 'Vulnerável',
+        legendImmune: 'Imune',
+        legendNeutral: 'Neutro',
+        themeToggle: 'Alternar modo claro/escuro'
+    },
+    en: {
+        pageTitle: 'Pokémon Type Effectiveness',
+        instructions: 'Click a type to see what it is effective against. Use Tab/arrow keys to navigate and Enter to select. You can choose up to two types.',
+        superEffective: 'super effective against',
+        vulnerable: 'vulnerable to',
+        immune: 'immune to',
+        noRelation: 'no special relation.',
+        shareSuccess: 'Link copied to clipboard!',
+        shareFail: 'Failed to copy link.',
+        shareLabel: 'Share',
+        printLabel: 'Print',
+        resetLabel: 'Reset',
+        legendSelected: 'Selected',
+        legendStrength: 'Super effective',
+        legendWeakness: 'Weakness',
+        legendImmune: 'Immune',
+        legendNeutral: 'Neutral',
+        themeToggle: 'Toggle dark/light mode'
     }
-}
+};
+let lang = navigator.language.startsWith('en') ? 'en' : 'pt';
+function t(k){return strings[lang][k]||'';}
 
-// initial render
-createButtons();
-
-// filter handling
-if (searchInput) {
-    searchInput.addEventListener('input', () => {
-        createButtons(searchInput.value.trim());
-        clearHighlights();
-    });
-}
-
-let current = null;
-
-function selectType(type) {
-    if (current === type) {
-        clearHighlights();
-        return;
-    }
-    clearHighlights();
-    current = type;
-
-    // highlight selected
-    const selectedBtn = document.querySelector(`.type-button[data-type="${type}"]`);
-    if (selectedBtn) selectedBtn.classList.add('active');
-
-    // draw connections
-    drawConnections(type);
-
-    // highlight effective targets (strengths)
-    const strengths = effectiveness[type] || [];
-    strengths.forEach(t => {
-        const btn = document.querySelector(`.type-button[data-type="${t}"]`);
-        if (btn) btn.classList.add('effectiveness');
-    });
-
-    // highlight weaknesses (types strong against this type)
-    const weakAgainst = weaknesses[type] || [];
-    weakAgainst.forEach(t => {
-        const btn = document.querySelector(`.type-button[data-type="${t}"]`);
-        if (btn) btn.classList.add('weakness');
-    });
-    // highlight immunities (types this type is immune to)
-    const immuneList = immunities[type] || [];
-    immuneList.forEach(t => {
-        const btn = document.querySelector(`.type-button[data-type="${t}"]`);
-        if (btn) btn.classList.add('immune');
-    });
-    // show info text with clickable icons
-    const info = document.getElementById('info');
-    let html = `<div class="info-title">${type.charAt(0).toUpperCase()+type.slice(1)}</div>`;
-    function makeIcons(list) {
-        return list.map(t =>
-            `<div class="info-icon-wrapper" data-type="${t}">`+
-            `<img class="info-icon" src="icons/${t}.png" alt="${t}" title="${t}" />`+
-            `<span class="info-label">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`+
-            `</div>`
-        ).join('');
+function updateTextContent(){
+    document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+    document.getElementById('page-title').textContent = t('pageTitle');
+    document.getElementById('instructions').textContent = t('instructions');
+    if(searchInput){
+        searchInput.placeholder = lang==='en' ? 'Search type...' : 'Buscar tipo...';
     }
 
-    if (strengths.length) {
-        const icons = makeIcons(strengths);
-        html += `<div><em>super eficaz contra:</em><div class="info-icons">${icons}</div></div>`;
-    }
-    if (weakAgainst.length) {
-        const icons2 = makeIcons(weakAgainst);
-        html += `<div><em>vulnerável a:</em><div class="info-icons">${icons2}</div></div>`;
-    }
-    if (immuneList.length) {
-        const icons3 = makeIcons(immuneList);
-        html += `<div><em>imune a:</em><div class="info-icons">${icons3}</div></div>`;
-    }
-    if (!strengths.length && !weakAgainst.length && !immuneList.length) {
-        html += `<div>nenhuma relação especial.</div>`;
-    }
-    info.innerHTML = html;
-
-    // add click handlers for chaining
-    info.querySelectorAll('.info-icon').forEach(img => {
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', () => {
-            selectType(img.dataset.type);
+    const legend = document.getElementById('legend');
+    if(legend){
+        legend.querySelectorAll('.legend-item').forEach((item,i)=>{
+            const key = ['legendSelected','legendStrength','legendWeakness','legendImmune','legendNeutral'][i];
+            if(key) item.lastChild.textContent = t(key);
         });
+    }
+
+    const shareBtn = document.getElementById('share-btn');
+    if(shareBtn){
+        shareBtn.setAttribute('title', t('shareLabel'));
+        shareBtn.setAttribute('aria-label', t('shareLabel'));
+    }
+    const printBtn = document.getElementById('print-btn');
+    if(printBtn){
+        printBtn.setAttribute('title', t('printLabel'));
+        printBtn.setAttribute('aria-label', t('printLabel'));
+    }
+    const themeBtn = document.getElementById('theme-toggle');
+    if(themeBtn){
+        themeBtn.setAttribute('aria-label', t('themeToggle'));
+        themeBtn.title = t('themeToggle');
+    }
+    const resetBtn = document.getElementById('reset-btn');
+    if(resetBtn){
+        resetBtn.setAttribute('aria-label', t('resetLabel'));
+        resetBtn.title = t('resetLabel');
+    }
+}
+
+function updateColumns(){
+    const btn = chart.querySelector('.type-button');
+    if(btn) colCount = Math.floor(chart.clientWidth / btn.offsetWidth) || 1;
+}
+
+function fuzzyMatch(type,filter){
+    if(!filter) return true;
+    filter = filter.toLowerCase();
+    let idx = 0;
+    for(let ch of type){
+        if(ch===filter[idx]) idx++;
+        if(idx===filter.length) return true;
+    }
+    return false;
+}
+
+function createButtons(filter=""){ 
+    chart.innerHTML='';
+    const normalizedFilter = filter.toLowerCase();
+    menuTypes.forEach(type=>{
+        if(!fuzzyMatch(type,filter)) return;
+        const btn=document.createElement('div');
+        btn.className=`type-button ${type}`;
+        btn.dataset.type=type;
+        btn.tabIndex=0;
+        btn.setAttribute('role','button');
+        btn.setAttribute('aria-pressed','false');
+        const img=document.createElement('img');
+        img.src=`icons/${type}.png`;
+        img.alt=type;
+        img.className='type-icon';
+        btn.appendChild(img);
+        const hidden=document.createElement('span');
+        hidden.className='visually-hidden';
+        hidden.textContent=type.charAt(0).toUpperCase()+type.slice(1);
+        btn.appendChild(hidden);
+        const label=document.createElement('span');
+        label.className='type-label';
+
+        let display = type.charAt(0).toUpperCase()+type.slice(1);
+        if(normalizedFilter){
+            let result = '';
+            let idx = 0;
+            for(let ch of display){
+                if(ch.toLowerCase() === normalizedFilter[idx]){
+                    result += `<mark>${ch}</mark>`;
+                    idx++;
+                    if(idx === normalizedFilter.length) idx = normalizedFilter.length;
+                } else {
+                    result += ch;
+                }
+            }
+            display = result;
+        }
+        label.innerHTML = display;
+        btn.appendChild(label);
+        btn.addEventListener('click',()=>selectType(type));
+        btn.addEventListener('keydown',handleKeyNav);
+        chart.appendChild(btn);
+    });
+    updateColumns();
+}
+
+function combineLists(arrs){return [...new Set(arrs.flat())];}
+function tally(arrs){
+    const m={};
+    arrs.flat().forEach(t=>{m[t]=(m[t]||0)+1;});
+    return m;
+}
+
+function drawConnections(type){
+    connectionsSvg.innerHTML='';
+    const origin=document.querySelector(`.type-button[data-type="${type}"]`);
+    if(!origin) return;
+    const rect=origin.getBoundingClientRect();
+    const svgRect=connectionsSvg.getBoundingClientRect();
+    const ox=rect.left+rect.width/2-svgRect.left;
+    const oy=rect.top+rect.height/2-svgRect.top;
+    const related=[...(effectiveness[type]||[]),...(weaknesses[type]||[])];
+    related.forEach(rt=>{
+        const btn=document.querySelector(`.type-button[data-type="${rt}"]`);
+        if(!btn) return;
+        const rrect=btn.getBoundingClientRect();
+        const rx=rrect.left+rrect.width/2-svgRect.left;
+        const ry=rrect.top+rrect.height/2-svgRect.top;
+        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',ox);line.setAttribute('y1',oy);
+        line.setAttribute('x2',ox);line.setAttribute('y2',oy);
+        line.setAttribute('stroke','#fff');line.setAttribute('stroke-width','2');
+        line.setAttribute('opacity','0.7');
+        line.setAttribute('stroke-dasharray','5,5');
+        line.style.strokeDashoffset='100';
+        connectionsSvg.appendChild(line);
+        setTimeout(()=>{
+            line.setAttribute('x2',rx);line.setAttribute('y2',ry);
+            line.setAttribute('stroke','#ff0');
+            line.style.transition='stroke-dashoffset 0.5s linear';
+            line.style.strokeDashoffset='0';
+        },10);
+        const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        circle.setAttribute('cx',ox);circle.setAttribute('cy',oy);
+        circle.setAttribute('r','4');circle.setAttribute('fill','#ff0');
+        circle.setAttribute('opacity','0.8');
+        connectionsSvg.appendChild(circle);
+        setTimeout(()=>{
+            circle.setAttribute('cx',rx);circle.setAttribute('cy',ry);
+            circle.setAttribute('r','2');circle.setAttribute('opacity','0');
+            circle.style.transition='cx 0.5s, cy 0.5s, opacity 0.5s, r 0.5s';
+        },10);
     });
 }
 
-function clearHighlights() {
-    connectionsSvg.innerHTML = '';
-    document.querySelectorAll('.type-button').forEach(btn => {
-        btn.classList.remove('active');
-        btn.classList.remove('effectiveness');
-        btn.classList.remove('weakness');
+function renderSelection(){
+    connectionsSvg.innerHTML='';
+    document.querySelectorAll('.type-button').forEach(btn=>{
+        btn.classList.remove('active','effectiveness','weakness','immune','mixed','neutral');
+        btn.setAttribute('aria-pressed','false');
     });
-    const info = document.getElementById('info');
-    info.textContent = '';
-    current = null;
+    const info=document.getElementById('info');
+    info.textContent='';
+    if(!currentSelection.length) return;
+    currentSelection.forEach(type=>{
+        const btn=document.querySelector(`.type-button[data-type="${type}"]`);
+        if(btn){btn.classList.add('active');btn.setAttribute('aria-pressed','true');drawConnections(type);}    });
+    const strengths=combineLists(currentSelection.map(t=>effectiveness[t]||[]));
+    const weakAgainst=combineLists(currentSelection.map(t=>weaknesses[t]||[]));
+    const immuneList=combineLists(currentSelection.map(t=>immunities[t]||[]));
+    const strengthsCount = tally(currentSelection.map(t=>effectiveness[t]||[]));
+    const weakCount = tally(currentSelection.map(t=>weaknesses[t]||[]));
+
+    strengths.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('effectiveness');});
+    weakAgainst.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('weakness');});
+    immuneList.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('immune');});
+
+    const overlapped = strengths.filter(t2=>immuneList.includes(t2));
+    overlapped.forEach(t2=>{
+        const b = document.querySelector(`.type-button[data-type="${t2}"]`);
+        if(b){
+            b.classList.add('mixed');
+            b.classList.remove('effectiveness');
+            b.classList.remove('immune');
+        }
+    });
+
+    if(currentSelection.length) {
+        document.querySelectorAll('.type-button').forEach(btn=>{
+            const type = btn.dataset.type;
+            if(
+                !btn.classList.contains('active') &&
+                !btn.classList.contains('effectiveness') &&
+                !btn.classList.contains('weakness') &&
+                !btn.classList.contains('immune') &&
+                !btn.classList.contains('mixed')
+            ) {
+                btn.classList.add('neutral');
+            }
+        });
+    }
+    let html=`<div class="info-title">${currentSelection.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ')}</div>`;
+    function makeIcons(list, counts){
+        return list.map(t2=>{
+            const count = counts[t2] || 0;
+            let multlabel = '';
+            if(count > 1) {
+                const mult = Math.pow(2, count - 1);
+
+                multlabel = ` x${mult}`;
+            }
+            return `<div class="info-icon-wrapper" data-type="${t2}">`+
+                   `<img class="info-icon" src="icons/${t2}.png" alt="${t2}" title="${t2}" />`+
+                   `<span class="info-label">${t2.charAt(0).toUpperCase()+t2.slice(1)}${multlabel}</span>`+
+                   `</div>`;
+        }).join('');
+    }
+    if(strengths.length) html+=`<div><em>${t('superEffective')}:</em><div class="info-icons">${makeIcons(strengths, strengthsCount)}</div></div>`;
+    if(weakAgainst.length) html+=`<div><em>${t('vulnerable')}:</em><div class="info-icons">${makeIcons(weakAgainst, weakCount)}</div></div>`;
+    if(immuneList.length) html+=`<div><em>${t('immune')}:</em><div class="info-icons">${makeIcons(immuneList, {})}</div></div>`;
+    if(!strengths.length&&!weakAgainst.length&&!immuneList.length) html+=`<div>${t('noRelation')}</div>`;
+    info.innerHTML=html;
+    info.querySelectorAll('.info-icon').forEach(img=>{img.style.cursor='pointer';img.addEventListener('click',()=>selectType(img.dataset.type));});
 }
 
-// allow escape key to reset
-window.addEventListener('keydown', e => {
-    if (e.key === 'Escape') clearHighlights();
-});
+function selectType(type){
+    const idx=currentSelection.indexOf(type);
+    if(idx!=-1){currentSelection.splice(idx,1);}else{if(currentSelection.length===2)currentSelection.shift();currentSelection.push(type);}renderSelection();updateUrl();}
 
-// on resize recompute connection positions
-window.addEventListener('resize', () => {
-    if (current) drawConnections(current);
-});
+function clearAll(){currentSelection=[];renderSelection();updateUrl();}
 
-// theme toggle
-const themeToggle = document.getElementById('theme-toggle');
-function setTheme(dark) {
-    if (dark) document.body.classList.add('dark');
-    else document.body.classList.remove('dark');
-    localStorage.setItem('darkMode', dark);
+function handleKeyNav(e){
+    const btns=Array.from(chart.querySelectorAll('.type-button'));
+    const idx=btns.indexOf(e.currentTarget);
+    if(idx===-1) return;
+    switch(e.key){
+        case'ArrowRight':if(idx<btns.length-1)btns[idx+1].focus();e.preventDefault();break;
+        case'ArrowLeft':if(idx>0)btns[idx-1].focus();e.preventDefault();break;
+        case'ArrowDown':if(idx+colCount<btns.length)btns[idx+colCount].focus();e.preventDefault();break;
+        case'ArrowUp':if(idx-colCount>=0)btns[idx-colCount].focus();e.preventDefault();break;
+        case'Enter':selectType(e.currentTarget.dataset.type);e.preventDefault();break;
+    }
 }
 
-// initialize from preference or system
-const stored = localStorage.getItem('darkMode');
-if (stored !== null) {
-    setTheme(stored === 'true');
-} else {
-    const dm = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setTheme(dm);
+window.addEventListener('keydown',e=>{if(e.key==='Escape')clearAll();});
+window.addEventListener('resize',()=>{updateColumns();if(currentSelection.length)renderSelection();});
+
+function updateUrl(){
+    const params=new URLSearchParams(location.search);
+    if(currentSelection.length)params.set('types',currentSelection.join(','));else params.delete('types');
+    const newUrl=location.pathname+'?'+params.toString();
+    history.replaceState(null,'',newUrl);
+
+    if(currentSelection.length) localStorage.setItem('selectedTypes', currentSelection.join(','));
+    else localStorage.removeItem('selectedTypes');
+}
+function initFromUrl(){
+    const params=new URLSearchParams(location.search);
+    const tparam=params.get('types');
+    if(tparam){
+        tparam.split(',').forEach(type=>{if(menuTypes.includes(type))currentSelection.push(type);});
+    }
+
+    if(!currentSelection.length) {
+        const stored = localStorage.getItem('selectedTypes');
+        if(stored) {
+            stored.split(',').forEach(type=>{if(menuTypes.includes(type))currentSelection.push(type);});
+        }
+    }
+    if(currentSelection.length)renderSelection();
 }
 
-themeToggle.addEventListener('click', () => {
-    setTheme(!document.body.classList.contains('dark'));
+const shareBtn=document.getElementById('share-btn');
+if(shareBtn){shareBtn.addEventListener('click',()=>{
+    const url=location.href;
+    navigator.clipboard.writeText(url).then(()=>alert(t('shareSuccess'))).catch(()=>alert(t('shareFail')));
+});}
+const printBtn = document.getElementById('print-btn');
+if(printBtn){
+    printBtn.addEventListener('click',()=>{
+        window.print();
+    });
+}
+const resetBtn = document.getElementById('reset-btn');
+if(resetBtn){
+    resetBtn.addEventListener('click',()=>{
+        clearAll();
+    });
+}
+
+if(searchInput){searchInput.addEventListener('input',()=>{createButtons(searchInput.value.trim());clearAll();});}
+
+const themeToggle=document.getElementById('theme-toggle');
+function setTheme(dark){if(dark)document.body.classList.add('dark');else document.body.classList.remove('dark');localStorage.setItem('darkMode',dark);}
+const stored=localStorage.getItem('darkMode');
+if(stored!==null){setTheme(stored==='true');}else{const dm=window.matchMedia('(prefers-color-scheme: dark)').matches;setTheme(dm);} 
+themeToggle.addEventListener('click',()=>{setTheme(!document.body.classList.contains('dark'));});
+
+if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+        if(reg.waiting){
+            alert('Nova versão disponível. Atualize a página.');
+        }
+        reg.addEventListener('updatefound',()=>{
+            const newSW = reg.installing;
+            newSW.addEventListener('statechange',()=>{
+                if(newSW.state==='installed' && navigator.serviceWorker.controller){
+                    alert('Nova versão disponível. Atualize a página.');
+                }
+            });
+        });
+    }).catch(console.error);
+}
+
+const matrixBtn = document.getElementById('matrix-btn');
+const matrixModal = document.getElementById('matrix-modal');
+const matrixBody = document.getElementById('matrix-body');
+if(matrixBtn && matrixModal && matrixBody){
+    matrixBtn.addEventListener('click', ()=>{
+        buildMatrix();
+        matrixModal.setAttribute('aria-hidden','false');
+    });
+    matrixModal.querySelector('.modal-close').addEventListener('click', ()=>{
+        matrixModal.setAttribute('aria-hidden','true');
+    });
+    matrixModal.addEventListener('click', e=>{
+        if(e.target===matrixModal) matrixModal.setAttribute('aria-hidden','true');
+    });
+    window.addEventListener('keydown', e=>{
+        if(e.key==='Escape') matrixModal.setAttribute('aria-hidden','true');
+    });
+}
+
+function buildMatrix(){
+    const types = menuTypes;
+    const rows = types.map(t=>{
+        const row = types.map(u=>{
+            let mult = 1;
+            if(effectiveness[t] && effectiveness[t].includes(u)) mult *= 2;
+            if(weaknesses[t] && weaknesses[t].includes(u)) mult *= 0.5;
+            return mult;
+        });
+        return row;
+    });
+    let html = '<table><tr><th></th>' + types.map(t=>`<th>${t}</th>`).join('') + '</tr>';
+    rows.forEach((row,i)=>{
+        html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'–':v}</td>`).join('') + '</tr>';
+    });
+    html += '</table>';
+    matrixBody.innerHTML = html;
+}
+
+fetch('types.json').then(r=>r.json()).then(data=>{
+    Object.assign(effectiveness,data.effectiveness);
+    Object.assign(immunities,data.immunities);
+    for(let t in effectiveness){weaknesses[t]=[];}
+    for(let t in effectiveness){(effectiveness[t]||[]).forEach(target=>{if(!weaknesses[target])weaknesses[target]=[];weaknesses[target].push(t);});}
+    menuTypes=Object.keys(effectiveness).sort();
+    createButtons();
+    updateTextContent();
+    initFromUrl();
+
+    if(searchInput) {
+        const dl = document.createElement('datalist');
+        dl.id = 'types-list';
+        menuTypes.forEach(t=>{
+            const opt = document.createElement('option');
+            opt.value = t;
+            dl.appendChild(opt);
+        });
+        document.body.appendChild(dl);
+        searchInput.setAttribute('list','types-list');
+    }
 });
-// the original clearHighlights above handles removal of all classes and svg
