@@ -25,7 +25,26 @@
     "flying": ["ground"],
     "ghost": ["normal","fighting"],
     "dark": ["psychic"],
-    "steel": ["poison"],
-    "fairy": ["dragon"]
+    "steel": ["poison"]
+  },
+  "resistances": {
+    "normal": [],
+    "fire": ["bug","steel","fire","grass","ice","fairy"],
+    "water": ["steel","fire","water","ice"],
+    "electric": ["electric","flying","steel"],
+    "grass": ["water","electric","grass","ground"],
+    "ice": ["ice"],
+    "fighting": ["bug","rock","dark"],
+    "poison": ["fighting","poison","bug","grass","fairy"],
+    "ground": ["poison","rock"],
+    "flying": ["fighting","bug","grass"],
+    "psychic": ["fighting","psychic"],
+    "bug": ["fighting","ground","grass"],
+    "rock": ["normal","fire","poison","flying"],
+    "ghost": ["poison","bug","grass","fighting"],
+    "dragon": ["fire","water","electric","grass"],
+    "dark": ["ghost","dark"],
+    "steel": ["normal","grass","ice","flying","psychic","bug","rock","dragon","steel","fairy"],
+    "fairy": ["fighting","bug","dark"]
   }
 }
