@@ -170,6 +170,8 @@ function drawConnections(type){
     const ox=rect.left+rect.width/2-svgRect.left;
     const oy=rect.top+rect.height/2-svgRect.top;
     const related=[...(effectiveness[type]||[]),...(weaknesses[type]||[])];
+    // if two types selected, highlight the line that connects them specially
+    const otherSelected = currentSelection.length===2 ? currentSelection.find(t=>t!==type) : null;
     related.forEach(rt=>{
         const btn=document.querySelector(`.type-button[data-type="${rt}"]`);
         if(!btn) return;
@@ -186,13 +188,20 @@ function drawConnections(type){
         connectionsSvg.appendChild(line);
         setTimeout(()=>{
             line.setAttribute('x2',rx);line.setAttribute('y2',ry);
-            line.setAttribute('stroke','#ff0');
+            // use a distinctive colour if this line is between the two selected types
+            if(otherSelected && rt===otherSelected) {
+                line.setAttribute('stroke','#0f0');
+                line.setAttribute('stroke-width','3');
+            } else {
+                line.setAttribute('stroke','#ff0');
+            }
             line.style.transition='stroke-dashoffset 0.5s linear';
             line.style.strokeDashoffset='0';
         },10);
         const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
         circle.setAttribute('cx',ox);circle.setAttribute('cy',oy);
-        circle.setAttribute('r','4');circle.setAttribute('fill','#ff0');
+        circle.setAttribute('r','4');
+        circle.setAttribute('fill', otherSelected && rt===otherSelected ? '#0f0' : '#ff0');
         circle.setAttribute('opacity','0.8');
         connectionsSvg.appendChild(circle);
         setTimeout(()=>{
@@ -214,7 +223,34 @@ function renderSelection(){
     if(!currentSelection.length) return;
     currentSelection.forEach(type=>{
         const btn=document.querySelector(`.type-button[data-type="${type}"]`);
-        if(btn){btn.classList.add('active');btn.setAttribute('aria-pressed','true');drawConnections(type);}    });
+        if(btn){
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed','true');
+            drawConnections(type);
+        }
+    });
+    // if two types are chosen, draw a direct connector between them as a visual link
+    if(currentSelection.length===2){
+        const [a,b]=currentSelection;
+        const btnA=document.querySelector(`.type-button[data-type="${a}"]`);
+        const btnB=document.querySelector(`.type-button[data-type="${b}"]`);
+        if(btnA && btnB){
+            const svgRect=connectionsSvg.getBoundingClientRect();
+            const rectA=btnA.getBoundingClientRect();
+            const rectB=btnB.getBoundingClientRect();
+            const ax=rectA.left+rectA.width/2-svgRect.left;
+            const ay=rectA.top+rectA.height/2-svgRect.top;
+            const bx=rectB.left+rectB.width/2-svgRect.left;
+            const by=rectB.top+rectB.height/2-svgRect.top;
+            const link=document.createElementNS('http://www.w3.org/2000/svg','line');
+            link.setAttribute('x1',ax); link.setAttribute('y1',ay);
+            link.setAttribute('x2',bx); link.setAttribute('y2',by);
+            link.setAttribute('stroke','#0ff');
+            link.setAttribute('stroke-width','4');
+            link.setAttribute('opacity','0.9');
+            connectionsSvg.appendChild(link);
+        }
+    }
     const strengths=combineLists(currentSelection.map(t=>effectiveness[t]||[]));
     const weakAgainst=combineLists(currentSelection.map(t=>weaknesses[t]||[]));
     const immuneList=combineLists(currentSelection.map(t=>immunities[t]||[]));
