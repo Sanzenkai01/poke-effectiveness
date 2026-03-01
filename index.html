@@ -9,28 +9,48 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <header class="header">
-      <h1>Efetividade de Tipos Pokémon</h1>
+      <h1 id="page-title">Efetividade de Tipos Pokémon</h1>
       <button id="theme-toggle" aria-label="Toggle dark/light mode">🌓</button>
+      <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
+      <button id="print-btn" aria-label="Imprimir" title="Imprimir" style="font-size:1.2rem;">🖨️</button>
+      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
     </header>
-    <p>Clique em um tipo para ver contra quais ele é efetivo.</p>
+    <p id="instructions">Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.</p>
 
+    <div id="legend" class="legend" aria-hidden="true">
+        <div class="legend-item"><span class="legend-color selected"></span>Selecionado</div>
+        <div class="legend-item"><span class="legend-color strength"></span>Super eficaz</div>
+        <div class="legend-item"><span class="legend-color weakness"></span>Vulnerável</div>
+        <div class="legend-item"><span class="legend-color immune"></span>Imune</div>
+        <div class="legend-item"><span class="legend-color neutral"></span>Neutro</div>
+    </div>
+
+    <div class="modal" id="matrix-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2>Tabela de Efetividade</h2>
+        <div id="matrix-body"></div>
+      </div>
+    </div>
     <div class="card">
       <div class="search-wrapper">
-        <input type="text" id="type-search" placeholder="Buscar tipo..." />
+        <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
+        <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
       </div>
       <div id="chart-container" class="chart-container">
         <svg id="connections"></svg>
-        <div id="chart" class="grid"></div>
+        <div id="chart" class="grid" role="grid"></div>
       </div>
-      <div id="info" class="info"></div>
+      <div id="info" class="info" aria-live="polite"></div>
     </div>
 
-    <!-- hidden image sprite fallback -->
-    <!-- icons generated via script in /icons directory -->
+    
+    
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
