@@ -86,6 +86,31 @@ body {
     box-shadow: 0 8px 32px rgba(0,0,0,0.37);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.catch-section {
+    margin: 0.5rem 0;
+}
+.catch-section label { display:block; margin-bottom:0.3rem; }
+.catch-section select, .catch-section input, .catch-section textarea { width:100%; border-radius:0.5rem; padding:0.4rem; border:none; }
+
+/* highlighted result box */
+.calc-result-highlight {
+    background: rgba(255,255,0,0.2);
+    padding: 0.6rem;
+    border-radius: 0.6rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+#catch-result, #log-result {
+    font-size: 1.1rem;
+}
+
+#card-result {
+    margin-bottom: 0.5rem;
+}
+
 .card:hover {
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 12px 48px rgba(0,0,0,0.5);
@@ -173,6 +198,19 @@ p {
 }
 #lang-toggle:hover,
 #share-btn:hover { transform: scale(1.2); }
+
+/* catch tab layout */
+.catch-section {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.catch-section label {min-width: 120px;}
+.catch-section input, .catch-section select, .catch-section textarea {flex:1; padding:0.4rem; border-radius:0.4rem; border:1px solid #ccc;}
+.catch-section button {padding:0.5rem 1rem; background: var(--accent-yellow); border:none; border-radius:0.4rem; cursor:pointer;}
+.catch-section button:hover {background: #e0a800;}
+
 
 .legend {
   max-width: 800px;

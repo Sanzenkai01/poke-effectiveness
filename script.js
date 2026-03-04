@@ -45,9 +45,12 @@ const ranges = {
     '95-100': { plates: 135, gold: 15 }
 };
 
+
+
 const strings = {
     pt: {
         pageTitle: 'Efetividade de Tipos Pokémon',
+        remainingMsg: 'Faltam',
         instructions: 'Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.',
         superEffective: 'super eficaz contra',
         vulnerable: 'vulnerável a',
@@ -93,7 +96,21 @@ const strings = {
         sameQuantityNote: 'Quantidade idêntica; apenas o tipo de plate muda.',
         elementItems: 'itens do elemento',
         charItems: 'itens característicos',
-        stoneItems: 'pedras do elemento'
+        stoneItems: 'pedras do elemento',
+        /* catch calculator */
+        catchTitle: 'Calculadora de Catchs',
+        ballChoiceLabel: 'Escolha a pokébola:',
+        pokemonLevelLabel: 'Nível do pokémon:',
+        optionsLabel: 'Opções',
+        calcCatchBtn: 'Calcular quantidade',
+        logBallsLabel: 'Log de balls usadas:',
+        parseLogBtn: 'Processar log',
+        cardPriceTitle: 'Preço dos cards',
+        cardNameLabel: 'Nome do card:',
+        cardPriceLabel: 'Preço unitário:',
+        cardQtyLabel: 'Quantidade:',
+        expensesMsg: 'Despesas',
+        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}'
     },
     en: {
         pageTitle: 'Pokémon Type Effectiveness',
@@ -116,6 +133,7 @@ const strings = {
         themeToggle: 'Toggle dark/light mode',
         calculatorTitle: 'Training Calculator',
         rangeLabel: 'Level range',
+        optionsLabel: 'Options',
         platesLabel: 'Plates',
         goldCoinsLabel: 'Golden coins',
         commonPlatesLabel: 'Common plates',
@@ -129,6 +147,19 @@ const strings = {
         fossilHintNone: 'No combinations available for this fossil.',
         galleryTitle: 'Available Pokémon',
         result: 'Result:',
+        /* catch */
+        catchTitle: 'Catch Calculator',
+        ballChoiceLabel: 'Choose the Pokéball:',
+        pokemonLevelLabel: 'Pokémon level:',
+        calcCatchBtn: 'Calculate amount',
+        logBallsLabel: 'Balls log:',
+        parseLogBtn: 'Process log',
+        cardPriceTitle: 'Card price',
+        cardNameLabel: 'Card name:',
+        cardPriceLabel: 'Unit price:',
+        cardQtyLabel: 'Quantity:',
+        expensesMsg: 'Expenses',
+        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}',
         dnaRequired: 'DNA required:',
         drake: 'Drake',
         bird: 'Bird',
@@ -157,6 +188,9 @@ function updateTextContent(){
     } else if(tabFossilsBtn && tabFossilsBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabFossils');
         document.title = t('tabFossils');
+    } else if(tabCatchBtn && tabCatchBtn.classList.contains('active')){
+        if(titleEl) titleEl.textContent = 'Catch Calculator';
+        document.title = 'Catch Calculator';
     } else {
         if(titleEl) titleEl.textContent = t('pageTitle');
         document.title = t('pageTitle');
@@ -174,12 +208,34 @@ function updateTextContent(){
     }
     if(tabEffectBtn) tabEffectBtn.textContent = t('tabTypes');
     if(tabCalcBtn) tabCalcBtn.textContent = t('tabCalculator');
+    if(tabCatchBtn) tabCatchBtn.textContent = t('catchTitle');
     const ptLabel = document.getElementById('pokemon-type-label');
     if(ptLabel) ptLabel.textContent = t('pokemonTypeLabel') + ':';
     variantRadios.forEach(r=>{
         if(r.value === 'normal') r.nextSibling.textContent = t('normal');
         if(r.value === 'shiny') r.nextSibling.textContent = t('shiny');
     });
+    // catch UI labels
+    const ballLabel = document.querySelector('label[for="ball-select"]');
+    if(ballLabel) ballLabel.textContent = t('ballChoiceLabel');
+    const lvlLabel = document.querySelector('label[for="level-select"]');
+    if(lvlLabel) lvlLabel.textContent = t('pokemonLevelLabel');
+    const catchBtn = document.getElementById('calc-catch-btn');
+    if(catchBtn) catchBtn.textContent = t('calcCatchBtn');
+    const logLabel = document.querySelector('label[for="log-input"]');
+    if(logLabel) logLabel.textContent = t('logBallsLabel');
+    const parseBtn = document.getElementById('parse-log');
+    if(parseBtn) parseBtn.textContent = t('parseLogBtn');
+    const catchTitleEl = document.querySelector('#content-catch h2');
+    if(catchTitleEl) catchTitleEl.textContent = t('catchTitle');
+    const cardTitle = document.querySelector('#content-catch h3');
+    if(cardTitle) cardTitle.textContent = t('cardPriceTitle');
+    const cardNameLbl = document.querySelector('label[for="card-name"]');
+    if(cardNameLbl) cardNameLbl.textContent = t('cardNameLabel');
+    const cardPriceLbl = document.querySelector('label[for="card-price"]');
+    if(cardPriceLbl) cardPriceLbl.textContent = t('cardPriceLabel');
+    const cardQtyLbl = document.querySelector('label[for="card-qty"]');
+    if(cardQtyLbl) cardQtyLbl.textContent = t('cardQtyLabel');
     if(contentCalc){
         const h2 = contentCalc.querySelector('h2');
         if(h2) h2.textContent = t('calculatorTitle');
@@ -192,7 +248,7 @@ function updateTextContent(){
         const shinyLabel = contentCalc.querySelector('label[for="shiny-plates"]');
         if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
     }
-    if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
+    if(tabCalcBtn && tabCalcBtn.classList.contains('active') || (tabCatchBtn && tabCatchBtn.classList.contains('active'))){
         instr.style.display = 'none';
     } else {
         instr.style.display = '';
@@ -244,9 +300,17 @@ function showFossils(){
     if(tabFossilsBtn) tabFossilsBtn.setAttribute('aria-selected','true');
     if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
     if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
+    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
     if(contentFossils) contentFossils.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = true;
+    // clear previous catch output
+    const catchRes = document.getElementById('catch-result');
+    const logRes = document.getElementById('log-result');
+    if(catchRes) catchRes.innerHTML = '';
+    if(logRes) logRes.innerHTML = '';
     document.getElementById('instructions').style.display = 'none';
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
@@ -332,6 +396,63 @@ function tally(arrs){
     const m={};
     arrs.flat().forEach(t=>{m[t]=(m[t]||0)+1;});
     return m;
+}
+// utility: convert large number to k shorthand (e.g. 123000 -> "123k")
+function formatCost(n){
+    if(n>=1000){
+        return Math.round(n/1000) + 'k';
+    }
+    return n.toString();
+}
+
+// catch calculator data
+const ballPrices = { ultra:130, story:260, elemental:342.11 };
+// counts per level differ between normal and shiny
+// for levels with multiple options we store an array of alternative requirements
+const captureData = {
+    normal: {
+        5:  [{ultra:1}],
+        20: [{ultra:8}],
+        30: [{ultra:31}],
+        50: [{ultra:54}],
+        65: [{ultra:46}],
+        80: [{ultra:169}],
+        95: [{ultra:192}],
+        pre:[{ultra:658}],
+        ace:[{ultra:889}]
+    },
+    shiny: {
+        5:  [{ultra:100},{story:50},{elemental:38}],
+        20: [{ultra:200},{story:100},{elemental:77}],
+        30: [{ultra:800},{story:400},{elemental:308}],
+        50: [{ultra:1000},{story:500},{elemental:385}],
+        65: [{ultra:1600},{story:800},{elemental:615}],
+        80: [{ultra:1600},{story:800},{elemental:615}],
+        95: [{ultra:3200},{story:1600},{elemental:1231}],
+        pre:[{ultra:3200},{story:1600},{elemental:1231}],
+        ace:[{ultra:10400},{story:5200},{elemental:4000}]
+    }
+};
+function computeRequired(lvl, variant){
+    variant = variant || 'normal';
+    const data = captureData[variant] || captureData['normal'];
+    // return array of options, default to a zero requirement
+    return data[lvl] || [{ultra:0,story:0,elemental:0}];
+}
+function parseLog(text){
+    let totalCost = 0;
+    const counts={ultra:0,story:0,elemental:0};
+    const moneyMatch = text.match(/spent\s+([\d.,]+)\s+dollars/i);
+    if(moneyMatch) totalCost = parseFloat(moneyMatch[1].replace(',','.'));
+    // allow multiple entries for the same ball type and sum them
+    ['ultra','story','elemental'].forEach(b=>{
+        const re = new RegExp('(\\d+)\\s+'+b+'\\s+balls?', 'gi');
+        let m;
+        while((m=re.exec(text)) !== null){
+            counts[b] += parseInt(m[1],10);
+        }
+    });
+    return {totalCost, counts};
 }
 
 function drawConnections(type){
@@ -549,9 +670,17 @@ function showEffectiveness(){
     if(tabEffectBtn) tabEffectBtn.setAttribute('aria-selected','true');
     if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
     if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
+    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
     if(contentEffect) contentEffect.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = true;
+    // clear any previous catch results/logs so they don't persist in the footer
+    const catchRes = document.getElementById('catch-result');
+    const logRes = document.getElementById('log-result');
+    if(catchRes) catchRes.innerHTML = '';
+    if(logRes) logRes.innerHTML = '';
     document.getElementById('instructions').style.display = '';
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = '';
@@ -568,9 +697,17 @@ function showCalculator(){
     if(tabCalcBtn) tabCalcBtn.setAttribute('aria-selected','true');
     if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
     if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
+    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
     if(contentCalc) contentCalc.hidden = false;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = true;
+    // also clear catch calculator results/log so they don’t linger
+    const catchRes = document.getElementById('catch-result');
+    const logRes = document.getElementById('log-result');
+    if(catchRes) catchRes.innerHTML = '';
+    if(logRes) logRes.innerHTML = '';
     document.getElementById('instructions').style.display = 'none';
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
@@ -589,6 +726,28 @@ function showCalculator(){
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
+const tabCatchBtn = document.getElementById('tab-catch');
+
+function showCatch(){
+    if(tabCatchBtn) tabCatchBtn.classList.add('active');
+    if(tabCatchBtn) tabCatchBtn.setAttribute('aria-selected','true');
+    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
+    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
+    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
+    if(contentCalc) contentCalc.hidden = true;
+    if(contentEffect) contentEffect.hidden = true;
+    if(contentFossils) contentFossils.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = false;
+    document.getElementById('instructions').style.display = 'none';
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = t('catchTitle');
+    document.title = t('catchTitle');
+    updateUrl();
+}
+if(tabCatchBtn) tabCatchBtn.addEventListener('click',()=>{ showCatch(); localStorage.setItem('selectedTab','catch'); updateUrl(); });
 
 // attempt to load tab from URL query first, fallback to localStorage
 function initTabFromUrl(){
@@ -596,6 +755,7 @@ function initTabFromUrl(){
     const tabparam=params.get('tab');
     if(tabparam==='calculator') return showCalculator();
     if(tabparam==='fossils') return showFossils();
+    if(tabparam==='catch') return showCatch();
     return showEffectiveness();
 }
 initTabFromUrl();
@@ -891,7 +1051,8 @@ function updateUrl(){
     if(currentSelection.length) params.set('types',currentSelection.join(',')); else params.delete('types');
     const activeTab = tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
-                      tabCalcBtn.classList.contains('active') ? 'calculator' : '';
+                      tabCalcBtn.classList.contains('active') ? 'calculator' :
+                      (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
     if(activeTab) params.set('tab', activeTab); else params.delete('tab');
     const newUrl=location.pathname+'?'+params.toString();
     history.replaceState(null,'',newUrl);
@@ -951,6 +1112,105 @@ if(resetBtn){
 }
 
 if(searchInput){searchInput.addEventListener('input',()=>{createButtons(searchInput.value.trim());clearAll();});}
+
+// catch calculator listeners
+const ballSelect = document.getElementById('ball-select');
+const ballImg = document.getElementById('ball-img');
+if(ballSelect){
+    ballSelect.addEventListener('change',()=>{
+        const v=ballSelect.value;
+        if(ballImg) ballImg.src = `balls/${v}.png`;
+    });
+}
+const levelSelect = document.getElementById('level-select');
+const catchResult = document.getElementById('catch-result');
+const calcCatchBtn = document.getElementById('calc-catch-btn');
+if(calcCatchBtn){
+    calcCatchBtn.addEventListener('click',()=>{
+        const lvl = levelSelect ? levelSelect.value : '5';
+        const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
+        const reqList = computeRequired(lvl, variant);
+        // build display text for each option
+        const chosen = ballSelect ? ballSelect.value : 'ultra';
+        const computeNeeded = (opt)=>{
+            if(opt[chosen] && opt[chosen] > 0) return opt[chosen];
+            // normal variant uses same count regardless of ball type
+            if(variant==='normal' && opt.ultra) return opt.ultra;
+            return 0;
+        };
+        let lines = reqList
+            .map(opt=>{
+                const needed = computeNeeded(opt);
+                if(needed===0) return null;
+                return `~ ${needed} ${chosen} ball${needed!==1?'s':''}`;
+            })
+            .filter(l=>l);
+        if(catchResult){
+            const optLabel = t('optionsLabel');
+        catchResult.innerHTML = `<div class="calc-result-highlight">${optLabel}:<br>${lines.join('<br>')}<br>(${variant})</div>`;
+        }
+    });
+}
+
+const parseLogBtn = document.getElementById('parse-log');
+const logResult = document.getElementById('log-result');
+if(parseLogBtn){
+    parseLogBtn.addEventListener('click',()=>{
+        const text = document.getElementById('log-input').value;
+        const {totalCost,counts} = parseLog(text);
+        if(logResult){
+            const exp = t('expensesMsg');
+            // report counts for all ball types and their individual cost
+            const usedUltra = counts.ultra || 0;
+            const usedStory = counts.story || 0;
+            const usedElem = counts.elemental || 0;
+            const balls = `Ultra: ${usedUltra}, Story: ${usedStory}, Elemental: ${usedElem}`;
+            // calculate remaining using total balls of any type (server behaviour)
+            const chosen = ballSelect ? ballSelect.value : 'ultra';
+            const lvl = levelSelect ? levelSelect.value : '5';
+            const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
+            const reqList = computeRequired(lvl, variant);
+            // count logged balls of selected type and also convert expense into ball count
+            const used = counts[chosen] || 0;
+            const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
+            const effectiveUsed = Math.max(used, costBased);
+            const computeNeeded = (opt)=>{
+                if(chosen && opt[chosen] && opt[chosen] > 0) return opt[chosen];
+                return 0;
+            };
+            const remMap = {};
+            reqList.forEach(opt=>{
+                const needed = Math.max(computeNeeded(opt) - effectiveUsed, 0);
+                if(needed > 0){
+                    const key = `${needed}`;
+                    if(!remMap[key]){
+                        remMap[key] = {needed, text: `${needed} ${chosen} ball${needed!==1?'s':''}`};
+                    }
+                }
+            });
+            const remLines = Object.values(remMap);
+            const remMsg = t('remainingMsg');
+            // build result string
+            let resultText = `${exp}: $${totalCost.toFixed(2)}; ${balls}`;
+            if(remLines.length){
+                const lines = remLines.map(item=>`${item.text}`);
+                resultText += `<br>${remMsg}:<br>${lines.join('<br>')}`;
+            }
+            logResult.innerHTML = `<div class="calc-result-highlight">${resultText}</div>`;
+        }
+    });
+}
+
+const calcCardBtn = document.getElementById('calc-card');
+const cardResult = document.getElementById('card-result');
+if(calcCardBtn){
+    calcCardBtn.addEventListener('click',()=>{
+        const price = parseFloat(document.getElementById('card-price').value) || 0;
+        const qty = parseInt(document.getElementById('card-qty').value) || 0;
+        const total = price * qty;
+        if(cardResult) cardResult.innerHTML = `<div class="calc-result-highlight">${qty} unidades = $${total.toFixed(2)}</div>`;
+    });
+}
 
 const themeToggle=document.getElementById('theme-toggle');
 const langToggle=document.getElementById('lang-toggle');

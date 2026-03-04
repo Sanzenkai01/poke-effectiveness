@@ -24,6 +24,7 @@
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
+      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculator de Catchs</button>
     </div>
 
     <p id="instructions">Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.</p>
@@ -122,6 +123,59 @@
         <div class="calc-info">
           <p>1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.</p>
           <p>30 shining plates custam 30 plates comuns e 1 shining stone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
+      <div class="card calc-card">
+        <h2>Calculadora de Catchs</h2>
+        <div class="catch-section">
+          <label for="ball-select">Escolha a pokébola:</label>
+          <select id="ball-select">
+            <option value="elemental">Elemental Ball</option>
+            <option value="story">Story Ball</option>
+            <option value="ultra">Ultra Ball</option>
+          </select>
+          <img id="ball-img" src="balls/elemental.png" alt="ball" style="width:50px;vertical-align:middle;">
+        </div>
+        <div class="catch-section">
+          <label for="level-select">Nível do pokémon:</label>
+          <select id="level-select">
+            <option value="5">Lvl 5</option>
+            <option value="20">Lvl 20</option>
+            <option value="30">Lvl 30</option>
+            <option value="50">Lvl 50</option>
+            <option value="65">Lvl 65</option>
+            <option value="80">Lvl 80</option>
+            <option value="95">Lvl 95</option>
+            <option value="pre">Pré Ace</option>
+            <option value="ace">Ace</option>
+          </select>
+        </div>
+        <div class="catch-section">
+          <label><input type="radio" name="catch-variant" value="normal" checked> Normal</label>
+          <label><input type="radio" name="catch-variant" value="shiny"> Shiny</label>
+          <button id="calc-catch-btn">Calcular quantidade</button>
+        </div>
+        <div id="catch-result" class="calc-info"></div>
+        <hr />
+        <div class="catch-section">
+          <label for="log-input">Log de balls usadas:</label><br>
+          <textarea id="log-input" rows="3" style="width:100%;" placeholder="Utilize !pokeballs no jogo e cole a mensagem aqui."></textarea>
+          <button id="parse-log">Processar log</button>
+        </div>
+        <div id="log-result" class="calc-info"></div>
+        <hr />
+        <div class="catch-section">
+          <h3>Preço dos cards</h3>
+          <img id="card-img" src="balls/card.png" alt="card" style="width:50px;display:block;margin-bottom:0.5rem;">
+          <label for="card-price">Preço unitário:</label>
+          <input type="number" id="card-price" step="0.01" />
+          <label for="card-qty">Quantidade:</label>
+          <input type="number" id="card-qty" />
+          <button id="calc-card">Calcular</button>
+          <div id="card-result" class="calc-info"></div>
         </div>
       </div>
     </div>
