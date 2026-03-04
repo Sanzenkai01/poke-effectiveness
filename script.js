@@ -1217,7 +1217,9 @@ if(calcCardBtn){
         const price = parseFloat(document.getElementById('card-price').value) || 0;
         const qty = parseInt(document.getElementById('card-qty').value) || 0;
         const total = price * qty;
-        if(cardResult) cardResult.innerHTML = `<div class="calc-result-highlight">${qty} unidades = $${total.toFixed(2)}</div>`;
+        // format total in a shorter k-style if large
+        const displayTotal = total >= 1000 ? formatCost(total) : total.toFixed(2);
+        if(cardResult) cardResult.innerHTML = `<div class="calc-result-highlight">${qty} unidades = $${displayTotal}</div>`;
     });
 }
 
