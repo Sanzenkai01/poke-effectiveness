@@ -78,6 +78,10 @@ p {
   gap: 1rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  background: rgba(44,62,80,0.7);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
 }
 
 #theme-toggle {
@@ -397,6 +401,230 @@ p {
   display: flex;
   justify-content: center;
   position: relative;
+}
+
+/* fossil page images */
+.fossil-img {
+  width: 80px;
+  cursor: pointer;
+  transition: transform 0.2s, border 0.2s;
+}
+.fossil-img:hover {
+  transform: scale(1.1);
+}
+.fossil-img.selected, .fossil-img.active {
+  border: 3px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255,215,0,0.6);
+  transform: scale(1.1);
+}
+.fossil-img.compatible {
+  opacity: 1;
+}
+.fossil-img.incompatible {
+  opacity: 0.3;
+}
+
+/* grid cells wrap image and label and layout fossil grid horizontally */
+#fossil-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.fossil-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fossil-label {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.fossil-cost {
+  text-align: center;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* result thumbnails */
+.result-fossils {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.result-fossil {
+  width: 40px;
+  height: 40px;
+}
+
+/* gallery layout */
+.pokemon-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* pokemon gallery at page bottom */
+.pokemon-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem;
+  cursor: pointer;
+  color: #eee;
+}
+.pokemon-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.pokemon-card div {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* tab navigation */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  background: var(--btn-bg);
+  color: #eee;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  border: none;
+  font-weight: 600;
+}
+
+.tab.active,
+.tab:focus {
+  background: #ffd700;
+  color: #000;
+  outline: none;
+}
+
+/* calculator-specific styles */
+.calc-section {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calc-section label {
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.calc-section input,
+.calc-section select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 120px;
+  text-align: center;
+}
+
+.calc-results {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  color: #fafafa;
+}
+
+.calc-info {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* calculator layout improvements */
+.calc-card { max-width: 700px; margin: 0 auto; }
+.calc-icons { display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; }
+.small-icon { width: 32px; height: 32px; opacity: 0.8; }
+
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+.calc-inputs, .calc-outputs { display: flex; flex-direction: column; gap: 1rem; }
+.calc-inputs { align-items: center; width: 100%; }
+.variant-group { display: flex; justify-content: center; }
+.variant-options { padding-left: 0; }
+.calc-outputs { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
+
+/* responsive adjustments */
+@media (max-width: 600px) {
+  .calc-grid { grid-template-columns: 1fr; }
+  .calc-outputs { order: -1; }
+}
+
+#calc-instructions {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #eee;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* variant radio group */
+.calc-section span#pokemon-type-label {
+  margin-right: 0.6rem;
+  font-weight: 500;
+}
+.calc-section label {
+  margin-right: 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.calc-section input[type="radio"] {
+  margin: 0 -30px 0 -30px; /* smaller right margin reduces gap to label */
+  vertical-align: middle;
+  position: relative;
+  top: 1px;
+}
+
+.variant-group {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: 0.5rem;
+  flex-wrap: nowrap; /* prevent line break */
+  margin-left: 350px;
+  /* ↓ shift the whole "Tipo de Pokémon" block horizontally
+     - add margin-left: 1rem; or adjust value to move right
+     - or use transform: translateX(10px); for fine tuning
+     edit this comment and the property to reposition it */
+}
+.variant-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  /* radios now centered under label */
 }
 .reset-button {
   position: absolute;
