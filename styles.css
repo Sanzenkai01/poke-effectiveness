@@ -59,6 +59,78 @@ body.dark {
   color: #eee;
 }
 
+/* modern visual enhancements */
+:root {
+    --accent-yellow: #ffc107;
+    --accent-green: #4caf50;
+    --accent-blue: #2196f3;
+    --accent-red: #f44336;
+}
+
+@keyframes gradientBG {
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
+}
+
+body {
+    background: linear-gradient(-45deg, var(--bg-start), var(--bg-end), #0a1b2c, #112233);
+    background-size:400% 400%;
+    animation: gradientBG 20s ease infinite;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.37);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+}
+
+.tabs .tab {
+    transition: background 0.3s, transform 0.2s;
+}
+.tabs .tab:hover,
+.tabs .tab.active {
+    transform: translateY(-2px);
+}
+
+input[type="text"], select, input[type="number"] {
+    transition: box-shadow 0.2s ease;
+}
+input[type="text"]:focus, select:focus, input[type="number"]:focus {
+    box-shadow: 0 0 8px var(--accent-yellow);
+    outline: none;
+}
+
+/* legend colors map to accent vars */
+.legend-color.selected {background: var(--accent-yellow);}
+.legend-color.strength {background: var(--accent-green);}
+.legend-color.resist {background: var(--accent-blue);}
+.legend-color.weakness {background: var(--accent-red);}
+
+/* scrollbars */
+::-webkit-scrollbar {width:8px;}
+::-webkit-scrollbar-track {background: rgba(0,0,0,0.1);}
+::-webkit-scrollbar-thumb {background: rgba(255,255,255,0.2); border-radius:4px;}
+
+/* share tooltip */
+.share-tooltip {
+    position: absolute;
+    padding: 0.4rem 0.8rem;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    pointer-events: none;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
 h1 {
   margin-bottom: 0.2rem;
   font-size: 2rem;
@@ -92,12 +164,14 @@ p {
   transition: transform 0.3s;
 }
 
-#share-btn {
+#lang-toggle, #share-btn {
   background: none;
   border: none;
   cursor: pointer;
   transition: transform 0.3s;
+  font-size:1.5rem;
 }
+#lang-toggle:hover,
 #share-btn:hover { transform: scale(1.2); }
 
 .legend {
@@ -125,8 +199,10 @@ p {
 .legend-color.selected { background: #ffd700; }
 .legend-color.strength { background: #8bc34a; }
 .legend-color.weakness { background: #e57373; }
+.legend-color.resist { background: #42a5f5; }
 .legend-color.immune { background: #9e9e9e; }
 .legend-color.neutral { background: #666; }
+
 
 
 .type-button:focus {
@@ -262,6 +338,16 @@ p {
   background: #e57373;
   animation: pulse-red 1s infinite;
   box-shadow: 0 0 12px rgba(229,115,115,0.7);
+}
+.type-button.resist {
+  background: #42a5f5;
+  animation: pulse-blue 1s infinite;
+  box-shadow: 0 0 12px rgba(66,165,245,0.7);
+}
+@keyframes pulse-blue {
+  0% { box-shadow: 0 0 0 rgba(66,165,245,0.7); }
+  70% { box-shadow: 0 0 10px rgba(66,165,245,0); }
+  100% { box-shadow: 0 0 0 rgba(66,165,245,0); }
 }
 
 .type-button.immune {
@@ -403,7 +489,6 @@ p {
   position: relative;
 }
 
-/* fossil page images */
 .fossil-img {
   width: 80px;
   cursor: pointer;
@@ -425,7 +510,6 @@ p {
   opacity: 0.3;
 }
 
-/* grid cells wrap image and label and layout fossil grid horizontally */
 #fossil-grid {
   display: flex;
   justify-content: center;
@@ -451,7 +535,6 @@ p {
   margin-top: 8px;
 }
 
-/* result thumbnails */
 .result-fossils {
   display: flex;
   gap: 0.5rem;
@@ -463,7 +546,6 @@ p {
   height: 40px;
 }
 
-/* gallery layout */
 .pokemon-gallery {
   display: flex;
   flex-wrap: wrap;
@@ -472,7 +554,6 @@ p {
   margin-top: 0.5rem;
 }
 
-/* pokemon gallery at page bottom */
 .pokemon-card {
   display: inline-flex;
   flex-direction: column;
@@ -493,7 +574,6 @@ p {
   text-align: center;
 }
 
-/* tab navigation */
 .tabs {
   display: flex;
   justify-content: center;
@@ -519,7 +599,6 @@ p {
   outline: none;
 }
 
-/* calculator-specific styles */
 .calc-section {
   margin-top: 0.8rem;
   display: flex;
@@ -559,7 +638,6 @@ p {
   line-height: 1.4;
 }
 
-/* calculator layout improvements */
 .calc-card { max-width: 700px; margin: 0 auto; }
 .calc-icons { display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; }
 .small-icon { width: 32px; height: 32px; opacity: 0.8; }
@@ -571,7 +649,6 @@ p {
 .variant-options { padding-left: 0; }
 .calc-outputs { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
 
-/* responsive adjustments */
 @media (max-width: 600px) {
   .calc-grid { grid-template-columns: 1fr; }
   .calc-outputs { order: -1; }
@@ -586,7 +663,6 @@ p {
   margin-right: auto;
 }
 
-/* variant radio group */
 .calc-section span#pokemon-type-label {
   margin-right: 0.6rem;
   font-weight: 500;
@@ -600,7 +676,7 @@ p {
   white-space: nowrap;
 }
 .calc-section input[type="radio"] {
-  margin: 0 -30px 0 -30px; /* smaller right margin reduces gap to label */
+  margin: 0 -30px 0 -30px;
   vertical-align: middle;
   position: relative;
   top: 1px;
@@ -612,19 +688,14 @@ p {
   justify-content: center;
   align-items: start;
   gap: 0.5rem;
-  flex-wrap: nowrap; /* prevent line break */
+  flex-wrap: nowrap;
   margin-left: 350px;
-  /* ↓ shift the whole "Tipo de Pokémon" block horizontally
-     - add margin-left: 1rem; or adjust value to move right
-     - or use transform: translateX(10px); for fine tuning
-     edit this comment and the property to reposition it */
 }
 .variant-options {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  /* radios now centered under label */
 }
 .reset-button {
   position: absolute;

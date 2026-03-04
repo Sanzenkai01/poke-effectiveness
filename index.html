@@ -15,11 +15,11 @@
     <header class="header">
       <h1 id="page-title">Efetividade de Tipos Pokémon</h1>
       <button id="theme-toggle" aria-label="Toggle dark/light mode">🌓</button>
+      <button id="lang-toggle" aria-label="Switch language" title="EN/PT" style="font-size:1.2rem;">🌐</button>
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
       <button id="print-btn" aria-label="Imprimir" title="Imprimir" style="font-size:1.2rem;">🖨️</button>
       <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
     </header>
-    <!-- tabs for switching between the type chart, fossils and the training calculator -->
     <div class="tabs" role="tablist">
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
@@ -31,6 +31,7 @@
     <div id="legend" class="legend" aria-hidden="true">
         <div class="legend-item"><span class="legend-color selected"></span>Selecionado</div>
         <div class="legend-item"><span class="legend-color strength"></span>Super eficaz</div>
+        <div class="legend-item"><span class="legend-color resist"></span>Resistente</div>
         <div class="legend-item"><span class="legend-color weakness"></span>Vulnerável</div>
         <div class="legend-item"><span class="legend-color immune"></span>Imune</div>
         <div class="legend-item"><span class="legend-color neutral"></span>Neutro</div>
@@ -44,7 +45,6 @@
       </div>
     </div>
 
-    <!-- effectiveness content wrapper -->
     <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness">
       <div class="card">
         <div class="search-wrapper">
@@ -59,7 +59,6 @@
       </div>
     </div>
 
-    <!-- fossils content, hidden until tab selected -->
     <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden>
       <div class="card calc-card">
         <p id="fossil-instructions"></p>
@@ -74,15 +73,12 @@
         <div id="result" class="calc-results" style="margin-top:1rem;"></div>
         <div id="gallery-title" class="calc-info" style="margin-top:1rem;"></div>
         <div id="pokemon-gallery" class="pokemon-gallery calc-info"></div>
-        <!-- list of Pokémon results at bottom -->
         <div id="pokemon-gallery" class="calc-info" style="margin-top:1rem;"></div>
       </div>
     </div>
 
-    <!-- calculator content, hidden until tab selected -->
     <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
       <div class="card calc-card">
-        <!-- heading removed; title already on page and in tab -->
         <div class="calc-icons">
           <img id="icon-plate" class="small-icon" src="calculadora/plate.png" alt="Plate" />
           <img id="icon-shiny" class="small-icon" src="calculadora/shiny_plate.png" alt="Shiny Plate" />
@@ -133,6 +129,8 @@
     
     
 
+    <!-- animation library for modern effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="script.js" defer></script>
 </body>
 </html>

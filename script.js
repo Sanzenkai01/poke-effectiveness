@@ -1,20 +1,22 @@
 
+// if opened via file:// the fetch will fail; warn user early
+if(location.protocol === 'file:'){
+    window.addEventListener('load', ()=>{
+        alert('O site precisa ser servido por HTTP. Inicie um servidor (por exemplo python -m http.server) e acesse via http://localhost:8000');
+    });
+}
+
 const effectiveness = {};
 const weaknesses = {};
 const immunities = {};
 const resistances = {};
 let menuTypes = [];
-
-// core elements for type chart
 const chart = document.getElementById('chart');
 const connectionsSvg = document.getElementById('connections');
 const searchInput = document.getElementById('type-search');
 let colCount = 0;
 let currentSelection = [];
 
-// tab controls (will include fossils later)
-
-// calculator elements
 const rangeSelect = document.getElementById('range-select');
 const rangeResults = document.getElementById('range-results');
 const commonInput = document.getElementById('common-plates');
@@ -23,11 +25,12 @@ const shinyInput = document.getElementById('shiny-plates');
 const shinyResults = document.getElementById('shiny-results');
 const variantRadios = document.querySelectorAll('input[name="poke-variant"]');
 
-// fossil selection state
+// safe flag for GSAP – if CDN fails this prevents errors
+const useGsap = typeof gsap !== 'undefined';
+
 let fossilSelections = [];
 const fossilResultDiv = document.getElementById('result');
 
-// tabs
 const tabEffectBtn = document.getElementById('tab-effectiveness');
 const tabFossilsBtn = document.getElementById('tab-fossils');
 const tabCalcBtn = document.getElementById('tab-calculator');
@@ -35,7 +38,6 @@ const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
 
-// data for level ranges
 const ranges = {
     '50-100': { plates: 280, gold: 40 },
     '65-100': { plates: 284, gold: 37 },
@@ -78,6 +80,8 @@ const strings = {
         result: 'Resultado:',
         dnaRequired: 'DNA exigido:',
         drake: 'Drake',
+        resistLabel: 'resiste a',
+        legendResist: 'Resiste',
         bird: 'Pássaro',
         dino: 'Dino',
         fish: 'Peixe',
@@ -105,6 +109,7 @@ const strings = {
         resetLabel: 'Reset',
         legendSelected: 'Selected',
         legendStrength: 'Super effective',
+        legendResist: 'Resists',
         legendWeakness: 'Weakness',
         legendImmune: 'Immune',
         legendNeutral: 'Neutral',
@@ -115,6 +120,7 @@ const strings = {
         goldCoinsLabel: 'Golden coins',
         commonPlatesLabel: 'Common plates',
         shinyPlatesLabel: 'Shiny plates',
+        resistLabel: 'resists',
         tabTypes: 'Types',
         tabCalculator: 'Calculator',
         tabFossils: 'Fossils',
@@ -139,12 +145,11 @@ const strings = {
         stoneItems: 'element stones'
     }
 };
-let lang = navigator.language.startsWith('en') ? 'en' : 'pt';
+let lang = localStorage.getItem('lang') || (navigator.language.startsWith('en') ? 'en' : 'pt');
 function t(k){return strings[lang][k]||'';}
 
 function updateTextContent(){
     document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
-    // change heading and document.title depending on which tab is visible
     const titleEl = document.getElementById('page-title');
     if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('calculatorTitle');
@@ -158,13 +163,10 @@ function updateTextContent(){
     }
     const instr = document.getElementById('instructions');
     instr.textContent = t('instructions');
-    // update fossil intro text
     const finstr = document.getElementById('fossil-instructions');
     if(finstr) finstr.textContent = t('fossilIntro');
-    // update cost text if the element exists
     const costEl = document.getElementById('fossil-cost');
     if(costEl) costEl.innerHTML = t('fossilCost');
-    // gallery title
     const gtitle = document.getElementById('gallery-title');
     if(gtitle) gtitle.textContent = t('galleryTitle');
     if(searchInput){
@@ -172,14 +174,12 @@ function updateTextContent(){
     }
     if(tabEffectBtn) tabEffectBtn.textContent = t('tabTypes');
     if(tabCalcBtn) tabCalcBtn.textContent = t('tabCalculator');
-    // variant labels
     const ptLabel = document.getElementById('pokemon-type-label');
     if(ptLabel) ptLabel.textContent = t('pokemonTypeLabel') + ':';
     variantRadios.forEach(r=>{
         if(r.value === 'normal') r.nextSibling.textContent = t('normal');
         if(r.value === 'shiny') r.nextSibling.textContent = t('shiny');
     });
-    // translate calculator heading, instructions and labels if calculator container exists
     if(contentCalc){
         const h2 = contentCalc.querySelector('h2');
         if(h2) h2.textContent = t('calculatorTitle');
@@ -193,7 +193,6 @@ function updateTextContent(){
         if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
     }
     if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
-        // when showing calculator, hide instructions
         instr.style.display = 'none';
     } else {
         instr.style.display = '';
@@ -202,11 +201,10 @@ function updateTextContent(){
     const legend = document.getElementById('legend');
     if(legend){
         legend.querySelectorAll('.legend-item').forEach((item,i)=>{
-            const key = ['legendSelected','legendStrength','legendWeakness','legendImmune','legendNeutral'][i];
+            const key = ['legendSelected','legendStrength','legendResist','legendWeakness','legendImmune','legendNeutral'][i];
             if(key) item.lastChild.textContent = t(key);
         });
     }
-    // update gallery labels in case language changed
     buildPokemonGallery();
 
     const shareBtn = document.getElementById('share-btn');
@@ -223,6 +221,11 @@ function updateTextContent(){
     if(themeBtn){
         themeBtn.setAttribute('aria-label', t('themeToggle'));
         themeBtn.title = t('themeToggle');
+    }
+    const langBtn = document.getElementById('lang-toggle');
+    if(langBtn){
+        langBtn.title = lang === 'en' ? 'PT' : 'EN';
+        langBtn.setAttribute('aria-label','Switch language');
     }
     const resetBtn = document.getElementById('reset-btn');
     if(resetBtn){
@@ -250,11 +253,16 @@ function showFossils(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabFossils');
     document.title = t('tabFossils');
-    // clear previous fossil output/hints
     const fres = document.getElementById('result');
     if(fres) fres.innerHTML = '';
+    if(useGsap){
+        gsap.from(contentFossils, {opacity:0, y:-10, duration:0.4});
+    }
     const fh = document.getElementById('fossil-hint');
     if(fh) fh.textContent = '';
+    if(useGsap){
+        gsap.from(contentFossils.querySelectorAll('.card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
+    }
 }
 
 function fuzzyMatch(type,filter){
@@ -310,6 +318,10 @@ function createButtons(filter=""){
         btn.appendChild(label);
         btn.addEventListener('click',()=>selectType(type));
         btn.addEventListener('keydown',handleKeyNav);
+        if(useGsap){
+            btn.addEventListener('mouseenter',()=>gsap.to(btn,{scale:1.1,duration:0.2,ease:'power1.out'}));
+            btn.addEventListener('mouseleave',()=>gsap.to(btn,{scale:1,duration:0.2,ease:'power1.out'}));
+        }
         chart.appendChild(btn);
     });
     updateColumns();
@@ -331,7 +343,6 @@ function drawConnections(type){
     const ox=rect.left+rect.width/2-svgRect.left;
     const oy=rect.top+rect.height/2-svgRect.top;
     const related=[...(effectiveness[type]||[]),...(weaknesses[type]||[])];
-    // if two types selected, highlight the line that connects them specially
     const otherSelected = currentSelection.length===2 ? currentSelection.find(t=>t!==type) : null;
     related.forEach(rt=>{
         const btn=document.querySelector(`.type-button[data-type="${rt}"]`);
@@ -347,29 +358,37 @@ function drawConnections(type){
         line.setAttribute('stroke-dasharray','5,5');
         line.style.strokeDashoffset='100';
         connectionsSvg.appendChild(line);
-        setTimeout(()=>{
-            line.setAttribute('x2',rx);line.setAttribute('y2',ry);
-            // use a distinctive colour if this line is between the two selected types
-            if(otherSelected && rt===otherSelected) {
-                line.setAttribute('stroke','#0f0');
-                line.setAttribute('stroke-width','3');
-            } else {
-                line.setAttribute('stroke','#ff0');
-            }
-            line.style.transition='stroke-dashoffset 0.5s linear';
-            line.style.strokeDashoffset='0';
-        },10);
+        if(useGsap){
+            gsap.to(line, {x2: rx, y2: ry, stroke: (otherSelected && rt===otherSelected) ? '#0f0' : '#ff0', strokeWidth: (otherSelected && rt===otherSelected)?3:2, duration: 0.5, ease: 'power1.out'});
+            gsap.to(line.style, {strokeDashoffset:0, duration:0.5, ease:'linear'});
+        } else {
+            setTimeout(()=>{
+                line.setAttribute('x2',rx);line.setAttribute('y2',ry);
+                if(otherSelected && rt===otherSelected) {
+                    line.setAttribute('stroke','#0f0');
+                    line.setAttribute('stroke-width','3');
+                } else {
+                    line.setAttribute('stroke','#ff0');
+                }
+                line.style.transition='stroke-dashoffset 0.5s linear';
+                line.style.strokeDashoffset='0';
+            },10);
+        }
         const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
         circle.setAttribute('cx',ox);circle.setAttribute('cy',oy);
         circle.setAttribute('r','4');
         circle.setAttribute('fill', otherSelected && rt===otherSelected ? '#0f0' : '#ff0');
         circle.setAttribute('opacity','0.8');
         connectionsSvg.appendChild(circle);
-        setTimeout(()=>{
-            circle.setAttribute('cx',rx);circle.setAttribute('cy',ry);
-            circle.setAttribute('r','2');circle.setAttribute('opacity','0');
-            circle.style.transition='cx 0.5s, cy 0.5s, opacity 0.5s, r 0.5s';
-        },10);
+        if(useGsap){
+            gsap.to(circle, {cx: rx, cy: ry, r:2, opacity:0, duration:0.5, ease:'power1.out'});
+        } else {
+            setTimeout(()=>{
+                circle.setAttribute('cx',rx);circle.setAttribute('cy',ry);
+                circle.setAttribute('r','2');circle.setAttribute('opacity','0');
+                circle.style.transition='cx 0.5s, cy 0.5s, opacity 0.5s, r 0.5s';
+            },10);
+        }
     });
 }
 
@@ -390,7 +409,6 @@ function renderSelection(){
             drawConnections(type);
         }
     });
-    // if two types are chosen, draw a direct connector between them as a visual link
     if(currentSelection.length===2){
         const [a,b]=currentSelection;
         const btnA=document.querySelector(`.type-button[data-type="${a}"]`);
@@ -412,40 +430,43 @@ function renderSelection(){
             connectionsSvg.appendChild(link);
         }
     }
-    // compute multipliers for every attack type against the current selection
-    const multipliers = {}; // attacker -> multiplier
+    // defensive multipliers: attacker vs currentSelection as defenders
+    const multipliers = {};
     menuTypes.forEach(att=>{
         let m = 1;
         currentSelection.forEach(def=>{
-            // immunity of the defender against this attacker
             if(immunities[def] && immunities[def].includes(att)){
-                m *= 0;
+                m *= 0;          // defender immune to this attacker
             } else if(effectiveness[att] && effectiveness[att].includes(def)){
-                // attacker is super effective against this defender
-                m *= 2;
+                m *= 2;          // attacker strong against defender
             } else if(resistances[def] && resistances[def].includes(att)){
-                // defender resists this attacking type
-                m *= 0.5;
+                m *= 0.5;        // defender resists attacker
             }
         });
         multipliers[att] = m;
     });
 
-    // strengths remain the union of what the selected types hit super effectively
     const strengths = combineLists(currentSelection.map(t=>effectiveness[t]||[]));
-    // weakness list now only contains attackers with multiplier > 1
     const weakAgainst = Object.keys(multipliers).filter(t=> multipliers[t] > 1);
-    // immuList for any attacker that deals zero damage
     const immuneList = Object.keys(multipliers).filter(t=> multipliers[t] === 0);
+    const resistList = Object.keys(multipliers).filter(t=> multipliers[t] > 0 && multipliers[t] < 1);
 
-    // counts for strengths are still based on how many selected types hit each target
     const strengthsCount = tally(currentSelection.map(t=>effectiveness[t]||[]));
-    // for weaknesses we want to show the actual multiplier
     const weakCount = {};
+    const resistCount = {};
     weakAgainst.forEach(t=>{ weakCount[t] = multipliers[t]; });
+    // count how many selected types each target resists
+    currentSelection.forEach(ct=>{
+        menuTypes.forEach(t=>{
+            if(resistances[t] && resistances[t].includes(ct)){
+                resistCount[t] = (resistCount[t]||0)+1;
+            }
+        });
+    });
 
     strengths.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('effectiveness');});
     weakAgainst.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('weakness');});
+    resistList.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('resist');});
     immuneList.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('immune');});
 
     const overlapped = strengths.filter(t2=>immuneList.includes(t2));
@@ -478,10 +499,6 @@ function renderSelection(){
             const count = counts[t2] || 0;
             let multlabel = '';
             if(count){
-                // 'count' can either be the number of selected types (for strengths)
-                // or the damage multiplier (for weaknesses). In both cases we
-                // simply show " x<count>" when >1 so that 4× weaknesses are
-                // displayed correctly and double super‑effs show as "x2".
                 if(count !== 1) multlabel = ` x${count}`;
             }
             return `<div class="info-icon-wrapper" data-type="${t2}">`+
@@ -492,10 +509,17 @@ function renderSelection(){
     }
     if(strengths.length) html+=`<div><em>${t('superEffective')}:</em><div class="info-icons">${makeIcons(strengths, strengthsCount)}</div></div>`;
     if(weakAgainst.length) html+=`<div><em>${t('vulnerable')}:</em><div class="info-icons">${makeIcons(weakAgainst, weakCount)}</div></div>`;
+    if(resistList.length) html+=`<div><em>${t('resistLabel')}:</em><div class="info-icons">${makeIcons(resistList, resistCount)}</div></div>`;
     if(immuneList.length) html+=`<div><em>${t('immune')}:</em><div class="info-icons">${makeIcons(immuneList, {})}</div></div>`;
-    if(!strengths.length&&!weakAgainst.length&&!immuneList.length) html+=`<div>${t('noRelation')}</div>`;
+    if(!strengths.length&&!weakAgainst.length&&!resistList.length&&!immuneList.length) html+=`<div>${t('noRelation')}</div>`;
     info.innerHTML=html;
-    info.querySelectorAll('.info-icon').forEach(img=>{img.style.cursor='pointer';img.addEventListener('click',()=>selectType(img.dataset.type));});
+    info.querySelectorAll('.info-icon').forEach(img=>{
+        img.style.cursor='pointer';
+        img.addEventListener('click',()=>selectType(img.dataset.type));
+        if(useGsap){
+            gsap.fromTo(img, {scale:0, opacity:0}, {scale:1, opacity:1, duration:0.3, ease:'back.out(1.7)'});
+        }
+    });
 }
 
 function selectType(type){
@@ -520,7 +544,6 @@ function handleKeyNav(e){
 window.addEventListener('keydown',e=>{if(e.key==='Escape')clearAll();});
 window.addEventListener('resize',()=>{updateColumns();if(currentSelection.length)renderSelection();});
 
-// tab switching helpers
 function showEffectiveness(){
     if(tabEffectBtn) tabEffectBtn.classList.add('active');
     if(tabEffectBtn) tabEffectBtn.setAttribute('aria-selected','true');
@@ -535,6 +558,10 @@ function showEffectiveness(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('pageTitle');
     document.title = t('pageTitle');
+    if(useGsap){
+        gsap.from(contentEffect, {opacity:0, y:-10, duration:0.4});
+    }
+    updateUrl();
 }
 function showCalculator(){
     if(tabCalcBtn) tabCalcBtn.classList.add('active');
@@ -547,31 +574,33 @@ function showCalculator(){
     document.getElementById('instructions').style.display = 'none';
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
-    // refresh results in case values changed while hidden
     updateRangeResults();
     updateCommon();
     updateShiny();
-    // update heading/title for calculator
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('calculatorTitle');
     document.title = t('calculatorTitle');
+    if(useGsap){
+        gsap.from(contentCalc, {opacity:0, y:-10, duration:0.4});
+        gsap.from(contentCalc.querySelectorAll('.calc-card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
+    }
+    updateUrl();
 }
-if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); });
-if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); });
-if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); });
+if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
+if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
+if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 
-// restore last tab from localStorage
-const savedTab = localStorage.getItem('selectedTab');
-if(savedTab==='calculator'){
-    showCalculator();
-} else if(savedTab==='fossils'){
-    showFossils();
-} else {
-    showEffectiveness();
+// attempt to load tab from URL query first, fallback to localStorage
+function initTabFromUrl(){
+    const params=new URLSearchParams(location.search);
+    const tabparam=params.get('tab');
+    if(tabparam==='calculator') return showCalculator();
+    if(tabparam==='fossils') return showFossils();
+    return showEffectiveness();
 }
+initTabFromUrl();
 
 
-// fossil combination logic (previously fossils.js)
 const fossilCombos = {
     'Drake,Bird': { pokemon: 'dracozolt.png', dna: 'dna verde.png' },
     'Bird,Drake': { pokemon: 'dracozolt.png', dna: 'dna verde.png' },
@@ -582,19 +611,20 @@ const fossilCombos = {
     'Drake,Fish': { pokemon: 'dracovish.png', dna: 'dna azul.png' },
     'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna azul.png' }
 };
-// once combos are defined, populate the gallery so it's ready when user visits fossils tab
 buildPokemonGallery();
 
 function fossilClearSelection(){
     fossilSelections.length = 0;
-    document.querySelectorAll('.fossil-img.selected').forEach(img=>img.classList.remove('selected'));
+    document.querySelectorAll('.fossil-img.selected').forEach(img=>{
+        img.classList.remove('selected');
+        if(useGsap) gsap.to(img, {scale:1, duration:0.2});
+    });
 }
 
 function fossilShowResult(pair){
     const combo = fossilCombos[pair];
     if(!combo) return;
     const [a,b] = pair.split(',');
-    // include thumbnails of the two fossils
     const fossila = `fosseis/Bag_Fossilized_${a}_Sprite.png`;
     const fossilb = `fosseis/Bag_Fossilized_${b}_Sprite.png`;
     fossilResultDiv.innerHTML = `<p>${t('result')}</p>
@@ -605,9 +635,12 @@ function fossilShowResult(pair){
         <img src="${encodeURI('fosseis/' + combo.pokemon)}" alt="${combo.pokemon}" style="width:100px;height:100px;" />
         <p>${t('dnaRequired')}</p>
         <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" />`;
+    if(useGsap){
+        gsap.from(fossilResultDiv, {opacity:0, y:-20, duration:0.5});
+        gsap.from(fossilResultDiv.querySelectorAll('img'), {scale:0, stagger:0.1, duration:0.4, ease:'back.out(1.7)'});
+    }
 }
 
-// compute compatible partners for a given fossil type
 function getPartners(type){
     const set=new Set();
     Object.keys(fossilCombos).forEach(k=>{
@@ -618,7 +651,6 @@ function getPartners(type){
     return set;
 }
 
-// create reverse lookup: pokemon image -> fossil pair
 const pokemonToPair = {};
 Object.entries(fossilCombos).forEach(([k,v])=>{
     if(v && v.pokemon){
@@ -652,7 +684,6 @@ function showByPokemon(pokemon){
 
 const hintEl = document.getElementById('fossil-hint');
     
-    // adjust fossil labels based on language (if translations provided)
     document.querySelectorAll('.fossil-label').forEach(span=>{
         const type = span.previousElementSibling?.dataset.type;
         if(type && strings[lang] && strings[lang][type.toLowerCase()]){
@@ -660,7 +691,6 @@ const hintEl = document.getElementById('fossil-hint');
         }
     });
 
-// build a gallery showing all possible Pokémon results
 function buildPokemonGallery(){
     const gallery = document.getElementById('pokemon-gallery');
     if(!gallery) return;
@@ -673,7 +703,6 @@ function buildPokemonGallery(){
         const card = document.createElement('div');
         card.className = 'pokemon-card';
         const base = data.pokemon.split('.')[0];
-        // capitalise first letter for display
         const display = base.charAt(0).toUpperCase() + base.slice(1);
         const img = document.createElement('img');
         img.src = 'fosseis/' + data.pokemon;
@@ -689,13 +718,13 @@ function buildPokemonGallery(){
     });
 }
 
-// show a result given a pokemon filename (used by gallery)
+// build gallery early so fossils appear even if fetch fails
+buildPokemonGallery();
+
 function showComboForPokemon(pokemon){
-    // find a matching key
     for(const k in fossilCombos){
         if(fossilCombos[k].pokemon === pokemon){
             const [a,b] = k.split(',');
-            // highlight the fossils temporarily
             fossilClearSelection();
             document.querySelectorAll('.fossil-img').forEach(i=>{
                 i.classList.remove('active','compatible','incompatible');
@@ -719,15 +748,13 @@ function showComboForPokemon(pokemon){
     }
 }
 
-// attach fossil handlers
 Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
     img.addEventListener('click', ()=>{
         const type = img.dataset.type;
         if(fossilSelections.includes(type)) return;
         fossilSelections.push(type);
         img.classList.add('selected');
-        img.classList.add('active'); // mimic type-button selected style
-        // update compatibility hints if only one selected
+        img.classList.add('active');
         if(fossilSelections.length===1){
             const partners = getPartners(type);
             document.querySelectorAll('.fossil-img').forEach(i=>{
@@ -750,6 +777,11 @@ Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
         }
         if(fossilSelections.length === 2){
             const key = `${fossilSelections[0]},${fossilSelections[1]}`;
+            if(useGsap){
+                // brief pop effect on selected fossils before showing result
+                const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+                gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
+            }
             fossilShowResult(key);
             setTimeout(()=>{
                 fossilClearSelection();
@@ -757,12 +789,11 @@ Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
                     i.classList.remove('active','compatible','incompatible');
                 });
                 hintEl.textContent = '';
-            }, 3000); // keep selection visible for 3 seconds
+            }, 3000);
         }
     });
 });
 
-// calculator logic
 function updateRangeResults(){
     const val = rangeSelect.value;
     const data = ranges[val];
@@ -772,19 +803,16 @@ function updateRangeResults(){
         const blocks = Math.ceil(plateCount / 30);
         const totalInBlocks = blocks * 30;
         const variantLabel = variant === 'shiny' ? t('shiny') : t('normal');
-        // compute item requirements for a common plate count
         const elementItems = plateCount * 750;
         const charItems = plateCount * 24;
         const stones = plateCount;
 
-        // auto-populate inputs based on variant
         if(variant === 'normal'){
             if(commonInput) commonInput.value = plateCount;
             updateCommon();
         } else {
-            const shinyVal = blocks * 30; // nearest multiple
+            const shinyVal = blocks * 30;
             if(shinyInput) shinyInput.value = shinyVal;
-            // mirror to common as well since crafting requires them
             if(commonInput) commonInput.value = shinyVal;
             updateShiny();
             updateCommon();
@@ -794,12 +822,12 @@ function updateRangeResults(){
         if(variant === 'normal'){
             html += `<p><strong>${t('commonPlatesLabel')}:</strong> ${plateCount}</p>`;
         } else {
-            // show only the number of shiny plates, omit block breakdown
             html += `<p><strong>${t('shinyPlatesLabel')}:</strong> ${plateCount}</p>`;
         }
         html += `<p><strong>${t('goldCoinsLabel')}:</strong> ${data.gold}</p>`;
         html += `<p><em>${t('sameQuantityNote')}</em></p>`;
         rangeResults.innerHTML = html;
+    if(useGsap) gsap.from(rangeResults, {opacity:0, y:10, duration:0.3});
     } else {
         rangeResults.innerHTML = '';
     }
@@ -813,12 +841,12 @@ function updateCommon(){
         `${elementItems.toLocaleString()} itens do elemento<br>` +
         `${charItems.toLocaleString()} itens característicos<br>` +
         `${stones.toLocaleString()} pedra(s) do elemento</p>`;
+    if(useGsap) gsap.from(commonResults, {opacity:0, y:10, duration:0.3});
 }
 function updateShiny(){
     let n = parseInt(shinyInput.value) || 0;
     let html = '';
     if(n % 30 !== 0){
-        // round up to nearest multiple of 30
         const rounded = Math.ceil(n/30)*30;
         html += `<p><em>Valor ajustado para múltiplo de 30: ${rounded}</em></p>`;
         n = rounded;
@@ -829,6 +857,7 @@ function updateShiny(){
     html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
         ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
     shinyResults.innerHTML = html;
+    if(useGsap) gsap.from(shinyResults, {opacity:0, y:10, duration:0.3});
 }
 
 if(rangeSelect) rangeSelect.addEventListener('change', updateRangeResults);
@@ -837,7 +866,6 @@ variantRadios.forEach(r=>r.addEventListener('change', ()=>{
     localStorage.setItem('pokeVariant', document.querySelector('input[name="poke-variant"]:checked').value);
 }));
 
-// keep commonInput in sync when shiny count changes
 if(shinyInput){
     shinyInput.addEventListener('input', ()=>{
         updateShiny();
@@ -848,26 +876,29 @@ if(shinyInput){
 if(commonInput) commonInput.addEventListener('input', updateCommon);
 if(shinyInput) shinyInput.addEventListener('input', updateShiny);
 
-// restore saved variant
 const savedVariant = localStorage.getItem('pokeVariant');
 if(savedVariant){
     const savedRadio = document.querySelector(`input[name="poke-variant"][value="${savedVariant}"]`);
     if(savedRadio) savedRadio.checked = true;
 }
 
-// initialise calculator with defaults
 if(rangeSelect) updateRangeResults();
 if(commonInput) updateCommon();
 if(shinyInput) updateShiny();
 
 function updateUrl(){
     const params=new URLSearchParams(location.search);
-    if(currentSelection.length)params.set('types',currentSelection.join(','));else params.delete('types');
+    if(currentSelection.length) params.set('types',currentSelection.join(',')); else params.delete('types');
+    const activeTab = tabEffectBtn.classList.contains('active') ? 'effectiveness' :
+                      tabFossilsBtn.classList.contains('active') ? 'fossils' :
+                      tabCalcBtn.classList.contains('active') ? 'calculator' : '';
+    if(activeTab) params.set('tab', activeTab); else params.delete('tab');
     const newUrl=location.pathname+'?'+params.toString();
     history.replaceState(null,'',newUrl);
 
     if(currentSelection.length) localStorage.setItem('selectedTypes', currentSelection.join(','));
     else localStorage.removeItem('selectedTypes');
+    if(activeTab) localStorage.setItem('selectedTab', activeTab);
 }
 function initFromUrl(){
     const params=new URLSearchParams(location.search);
@@ -886,10 +917,26 @@ function initFromUrl(){
 }
 
 const shareBtn=document.getElementById('share-btn');
-if(shareBtn){shareBtn.addEventListener('click',()=>{
-    const url=location.href;
-    navigator.clipboard.writeText(url).then(()=>alert(t('shareSuccess'))).catch(()=>alert(t('shareFail')));
-});}
+if(shareBtn){
+    shareBtn.addEventListener('click',()=>{
+        const url=location.href;
+        navigator.clipboard.writeText(url).then(()=>{
+            // tooltip instead of alert
+            const tip=document.createElement('div');
+            tip.className='share-tooltip';
+            tip.textContent=t('shareSuccess');
+            document.body.appendChild(tip);
+            const rect=shareBtn.getBoundingClientRect();
+            tip.style.top = (rect.bottom+5)+'px';
+            tip.style.left = (rect.left+rect.width/2)+'px';
+            if(useGsap){
+                gsap.fromTo(tip,{opacity:0,y:-5},{opacity:1,y:0,duration:0.3}).then(()=>gsap.to(tip,{opacity:0,duration:0.5,delay:1, onComplete:()=>tip.remove()}));
+            } else {
+                setTimeout(()=>tip.remove(),1500);
+            }
+        }).catch(()=>alert(t('shareFail')));
+    });
+}
 const printBtn = document.getElementById('print-btn');
 if(printBtn){
     printBtn.addEventListener('click',()=>{
@@ -906,10 +953,18 @@ if(resetBtn){
 if(searchInput){searchInput.addEventListener('input',()=>{createButtons(searchInput.value.trim());clearAll();});}
 
 const themeToggle=document.getElementById('theme-toggle');
+const langToggle=document.getElementById('lang-toggle');
 function setTheme(dark){if(dark)document.body.classList.add('dark');else document.body.classList.remove('dark');localStorage.setItem('darkMode',dark);}
 const stored=localStorage.getItem('darkMode');
 if(stored!==null){setTheme(stored==='true');}else{const dm=window.matchMedia('(prefers-color-scheme: dark)').matches;setTheme(dm);} 
 themeToggle.addEventListener('click',()=>{setTheme(!document.body.classList.contains('dark'));});
+if(langToggle){
+    langToggle.addEventListener('click',()=>{
+        lang = (lang === 'en' ? 'pt' : 'en');
+        localStorage.setItem('lang', lang);
+        updateTextContent();
+    });
+}
 
 if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').then(reg=>{
@@ -951,7 +1006,6 @@ function buildMatrix(){
     const rows = types.map(att=>{
         const row = types.map(def=>{
             let mult = 1;
-            // check immunity of defender
             if(immunities[def] && immunities[def].includes(att)){
                 mult = 0;
             } else if(effectiveness[att] && effectiveness[att].includes(def)){
@@ -975,8 +1029,7 @@ fetch('types.json').then(r=>r.json()).then(data=>{
     Object.assign(effectiveness,data.effectiveness);
     Object.assign(immunities,data.immunities);
     Object.assign(resistances,data.resistances || {});
-    // build reverse map for weaknesses (types that hit the key super effectively)
-    for(let t in effectiveness){weaknesses[t]=[];}
+        for(let t in effectiveness){weaknesses[t]=[];}
     for(let t in effectiveness){(effectiveness[t]||[]).forEach(target=>{if(!weaknesses[target])weaknesses[target]=[];weaknesses[target].push(t);});}
     menuTypes=Object.keys(effectiveness).sort();
     createButtons();
@@ -994,4 +1047,10 @@ fetch('types.json').then(r=>r.json()).then(data=>{
         document.body.appendChild(dl);
         searchInput.setAttribute('list','types-list');
     }
+    // animate cards after data is available
+    if(useGsap){
+        gsap.from('.card', {opacity:0, y:20, stagger:0.1, duration:0.6});
+    }
+}).catch(err=>{
+    console.error('fetch failed',err);
 });
