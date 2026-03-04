@@ -452,6 +452,15 @@ function parseLog(text){
             counts[b] += parseInt(m[1],10);
         }
     });
+    // some logs list specific elemental-category balls by name; treat them as elemental
+    const elementalNames = ['Net','Lure','Frost','Jungle','Neste','Dusk','Stone','Dust','Love','Quick','Repeat','Heavy','Dream','Cherish','Vile','Draco','Sport','Moon'];
+    elementalNames.forEach(name=>{
+        const re = new RegExp('(\\d+)\\s+'+name+'\\s+balls?', 'gi');
+        let m;
+        while((m=re.exec(text)) !== null){
+            counts.elemental += parseInt(m[1],10);
+        }
+    });
     return {totalCost, counts};
 }
 
