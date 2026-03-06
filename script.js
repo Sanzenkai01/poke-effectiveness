@@ -30,6 +30,7 @@ const useGsap = typeof gsap !== 'undefined';
 
 let fossilSelections = [];
 const fossilResultDiv = document.getElementById('result');
+let lastFossilPair = null;
 
 const tabEffectBtn = document.getElementById('tab-effectiveness');
 const tabFossilsBtn = document.getElementById('tab-fossils');
@@ -88,6 +89,7 @@ const strings = {
         bird: 'Pássaro',
         dino: 'Dino',
         fish: 'Peixe',
+        fossilWord: 'fóssil',
         fossilIntro: 'Selecione dois fósseis para formar um Pokémon. Cada par produz um resultado diferente e exige um DNA específico.',
         calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
         pokemonTypeLabel: 'Tipo de Pokémon',
@@ -109,8 +111,23 @@ const strings = {
         cardNameLabel: 'Nome do card:',
         cardPriceLabel: 'Preço unitário:',
         cardQtyLabel: 'Quantidade:',
+        calcCardBtn: 'Calcular',
         expensesMsg: 'Despesas',
-        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}'
+        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}',
+        /* additional catch and calculator text */
+        ballElemental: 'Pokébola Elemental',
+        ballStory: 'Pokébola Story',
+        ballUltra: 'Pokébola Ultra',
+        lvlPrefix: 'Nível ',
+        preLabel: 'Pré Ace',
+        aceLabel: 'Ace',
+        logPlaceholder: 'Utilize !pokeballs no jogo e cole a mensagem aqui.',
+        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.',
+        infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
+        infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
+        adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
+        forCommonLabel: 'Para {n} plate(s) comum(ns):',
+        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento'
     },
     en: {
         pageTitle: 'Pokémon Type Effectiveness',
@@ -140,7 +157,7 @@ const strings = {
         shinyPlatesLabel: 'Shiny plates',
         resistLabel: 'resists',
         tabTypes: 'Types',
-        tabCalculator: 'Calculator',
+        tabCalculator: 'Training Calculator',
         tabFossils: 'Fossils',
         fossilCost: 'Reviving a Pokémon costs <strong>50K</strong>.',
         fossilHintCombines: 'This fossil combines with: ',
@@ -158,6 +175,7 @@ const strings = {
         cardNameLabel: 'Card name:',
         cardPriceLabel: 'Unit price:',
         cardQtyLabel: 'Quantity:',
+        calcCardBtn: 'Calculate',
         expensesMsg: 'Expenses',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}',
         dnaRequired: 'DNA required:',
@@ -165,6 +183,7 @@ const strings = {
         bird: 'Bird',
         dino: 'Dino',
         fish: 'Fish',
+        fossilWord: 'fossil',
         fossilIntro: 'Select two fossils to form a Pokémon. Each pair yields a different result and requires specific DNA.',
         calculatorInstructions: 'Select a level range and use the fields below to calculate required materials.',
         pokemonTypeLabel: 'Pokémon type',
@@ -173,7 +192,21 @@ const strings = {
         sameQuantityNote: 'Same quantity; only plate type differs.',
         elementItems: 'element items',
         charItems: 'characteristic items',
-        stoneItems: 'element stones'
+        stoneItems: 'element stones',
+        /* additional translations */
+        ballElemental: 'Elemental Ball',
+        ballStory: 'Story Ball',
+        ballUltra: 'Ultra Ball',
+        lvlPrefix: 'Lvl ',
+        preLabel: 'Pre-Ace',
+        aceLabel: 'Ace',
+        logPlaceholder: 'Paste game log containing !pokeballs here.',
+        catchNote: 'Note: values are approximate; you may spend a few more balls.',
+        infoPlateCommon: '1 common plate requires 750 element items, 24 characteristic items and 1 element stone.',
+        infoShinyCost: '30 shining plates cost 30 common plates and 1 shining stone.',
+        adjustNote: 'Value adjusted to multiple of 30: {rounded}',
+        forCommonLabel: 'For {n} common plate(s):',
+        calcInfoItems: '{elementItems} element items, {charItems} characteristic items, {stones} element stone(s)'
     }
 };
 let lang = localStorage.getItem('lang') || (navigator.language.startsWith('en') ? 'en' : 'pt');
@@ -189,8 +222,8 @@ function updateTextContent(){
         if(titleEl) titleEl.textContent = t('tabFossils');
         document.title = t('tabFossils');
     } else if(tabCatchBtn && tabCatchBtn.classList.contains('active')){
-        if(titleEl) titleEl.textContent = 'Catch Calculator';
-        document.title = 'Catch Calculator';
+        if(titleEl) titleEl.textContent = t('catchTitle');
+        document.title = t('catchTitle');
     } else {
         if(titleEl) titleEl.textContent = t('pageTitle');
         document.title = t('pageTitle');
@@ -206,7 +239,23 @@ function updateTextContent(){
     if(searchInput){
         searchInput.placeholder = lang==='en' ? 'Search type...' : 'Buscar tipo...';
     }
+    // fossil labels need explicit refresh
+    document.querySelectorAll('.fossil-label').forEach(span=>{
+        const type = span.previousElementSibling?.dataset.type;
+        if(type && strings[lang] && strings[lang][type.toLowerCase()]){
+            span.textContent = strings[lang][type.toLowerCase()];
+        }
+    });
+    // alt text on fossil images also localized
+    document.querySelectorAll('.fossil-img').forEach(img=>{
+        const type = img.dataset.type;
+        if(type){
+            const label = t(type.toLowerCase());
+            img.alt = `${label} ${t('fossilWord')}`;
+        }
+    });
     if(tabEffectBtn) tabEffectBtn.textContent = t('tabTypes');
+    if(tabFossilsBtn) tabFossilsBtn.textContent = t('tabFossils');
     if(tabCalcBtn) tabCalcBtn.textContent = t('tabCalculator');
     if(tabCatchBtn) tabCatchBtn.textContent = t('catchTitle');
     const ptLabel = document.getElementById('pokemon-type-label');
@@ -215,6 +264,63 @@ function updateTextContent(){
         if(r.value === 'normal') r.nextSibling.textContent = t('normal');
         if(r.value === 'shiny') r.nextSibling.textContent = t('shiny');
     });
+    // translate selects & notes in catch calculator
+    const ballSelectEl = document.getElementById('ball-select');
+    if(ballSelectEl){
+        const elOpt = ballSelectEl.querySelector('option[value="elemental"]');
+        if(elOpt) elOpt.textContent = t('ballElemental');
+        const storyOpt = ballSelectEl.querySelector('option[value="story"]');
+        if(storyOpt) storyOpt.textContent = t('ballStory');
+        const ultraOpt = ballSelectEl.querySelector('option[value="ultra"]');
+        if(ultraOpt) ultraOpt.textContent = t('ballUltra');
+        if(ballImg){
+            const v = ballSelectEl.value;
+            const key = v === 'elemental' ? 'ballElemental' : v === 'story' ? 'ballStory' : 'ballUltra';
+            ballImg.alt = t(key);
+        }
+    }
+    const levelSelect = document.getElementById('level-select');
+    if(levelSelect){
+        const prefix = t('lvlPrefix');
+        ['5','20','30','50','65','80','95'].forEach(v=>{
+            const opt = levelSelect.querySelector(`option[value="${v}"]`);
+            if(opt) opt.textContent = prefix + v;
+        });
+        const preOpt = levelSelect.querySelector('option[value="pre"]');
+        if(preOpt) preOpt.textContent = t('preLabel');
+        const aceOpt = levelSelect.querySelector('option[value="ace"]');
+        if(aceOpt) aceOpt.textContent = t('aceLabel');
+    }
+    const logInput = document.getElementById('log-input');
+    if(logInput) logInput.placeholder = t('logPlaceholder');
+    const catchNoteEl = document.querySelector('.catch-note');
+    if(catchNoteEl) catchNoteEl.textContent = t('catchNote');
+    // update calculator info paragraphs
+    if(contentCalc){
+        const calcInfo = contentCalc.querySelector('.calc-info');
+        if(calcInfo){
+            calcInfo.innerHTML = `<p>${t('infoPlateCommon')}</p><p>${t('infoShinyCost')}</p>`;
+        }
+        const rangeLabel = contentCalc.querySelector('label[for="range-select"]');
+        if(rangeLabel) rangeLabel.textContent = t('rangeLabel') + ':';
+        const commonLabel = contentCalc.querySelector('label[for="common-plates"]');
+        if(commonLabel) commonLabel.textContent = t('commonPlatesLabel') + ':';
+        const shinyLabel = contentCalc.querySelector('label[for="shiny-plates"]');
+        if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
+    }
+    // translate range select options
+    if(rangeSelect){
+        const map = {
+            '50-100': lang==='en' ? '50 to 100' : '50 ao 100',
+            '65-100': lang==='en' ? '65 to 100' : '65 ao 100',
+            '80-100': lang==='en' ? '80 to 100' : '80 ao 100',
+            '95-100': lang==='en' ? '95 to 100' : '95 ao 100'
+        };
+        Object.keys(map).forEach(val=>{
+            const opt = rangeSelect.querySelector(`option[value="${val}"]`);
+            if(opt) opt.textContent = map[val];
+        });
+    }
     // catch UI labels
     const ballLabel = document.querySelector('label[for="ball-select"]');
     if(ballLabel) ballLabel.textContent = t('ballChoiceLabel');
@@ -236,6 +342,8 @@ function updateTextContent(){
     if(cardPriceLbl) cardPriceLbl.textContent = t('cardPriceLabel');
     const cardQtyLbl = document.querySelector('label[for="card-qty"]');
     if(cardQtyLbl) cardQtyLbl.textContent = t('cardQtyLabel');
+    const calcCardBtnEl = document.getElementById('calc-card');
+    if(calcCardBtnEl) calcCardBtnEl.textContent = t('calcCardBtn');
     if(contentCalc){
         const h2 = contentCalc.querySelector('h2');
         if(h2) h2.textContent = t('calculatorTitle');
@@ -288,6 +396,41 @@ function updateTextContent(){
         resetBtn.setAttribute('aria-label', t('resetLabel'));
         resetBtn.title = t('resetLabel');
     }
+    // translate icon alt texts on calculator page
+    const plateIcon = document.getElementById('icon-plate');
+    if(plateIcon) plateIcon.alt = t('platesLabel');
+    const shinyIcon = document.getElementById('icon-shiny');
+    if(shinyIcon) shinyIcon.alt = t('shinyPlatesLabel');
+    const drinkIcon = document.getElementById('icon-drink');
+    if(drinkIcon) drinkIcon.alt = t('elementItems');
+    const coinIcon = document.getElementById('icon-coin');
+    if(coinIcon) coinIcon.alt = t('goldCoinsLabel');
+    // if calculator is visible, recompute any dynamic output so the language updates
+    if(contentCalc && !contentCalc.hidden){
+        updateRangeResults();
+        updateCommon();
+        updateShiny();
+    }
+    // if a fossil result is currently shown, redraw it so strings are in correct language
+    if(lastFossilPair && fossilResultDiv && fossilResultDiv.innerHTML.trim() !== ''){
+        fossilShowResult(lastFossilPair);
+    }
+    // refresh any previously generated calculator results so text matches language
+    const catchResultEl = document.getElementById('catch-result');
+    const localCalcCatch = document.getElementById('calc-catch-btn');
+    if(localCalcCatch && catchResultEl && catchResultEl.innerHTML.trim() !== ''){
+        localCalcCatch.click();
+    }
+    const logResEl = document.getElementById('log-result');
+    const localParse = document.getElementById('parse-log');
+    if(localParse && logResEl && logResEl.innerHTML.trim() !== ''){
+        localParse.click();
+    }
+    const cardResEl = document.getElementById('card-result');
+    const localCalcCard = document.getElementById('calc-card');
+    if(localCalcCard && cardResEl && cardResEl.innerHTML.trim() !== ''){
+        localCalcCard.click();
+    }
 }
 
 function updateColumns(){
@@ -319,6 +462,7 @@ function showFossils(){
     document.title = t('tabFossils');
     const fres = document.getElementById('result');
     if(fres) fres.innerHTML = '';
+    lastFossilPair = null;
     if(useGsap){
         gsap.from(contentFossils, {opacity:0, y:-10, duration:0.4});
     }
@@ -791,6 +935,7 @@ function fossilClearSelection(){
 }
 
 function fossilShowResult(pair){
+    lastFossilPair = pair;
     const combo = fossilCombos[pair];
     if(!combo) return;
     const [a,b] = pair.split(',');
@@ -1006,10 +1151,13 @@ function updateCommon(){
     const elementItems = n * 750;
     const charItems = n * 24;
     const stones = n;
-    commonResults.innerHTML = `<p>Para ${n} plate(s) comum(ns):<br>` +
-        `${elementItems.toLocaleString()} itens do elemento<br>` +
-        `${charItems.toLocaleString()} itens característicos<br>` +
-        `${stones.toLocaleString()} pedra(s) do elemento</p>`;
+    // build using translations
+    const header = t('forCommonLabel').replace('{n}', n);
+    const itemsText = t('calcInfoItems')
+                        .replace('{elementItems}', elementItems.toLocaleString())
+                        .replace('{charItems}', charItems.toLocaleString())
+                        .replace('{stones}', stones.toLocaleString());
+    commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
     if(useGsap) gsap.from(commonResults, {opacity:0, y:10, duration:0.3});
 }
 function updateShiny(){
@@ -1017,14 +1165,20 @@ function updateShiny(){
     let html = '';
     if(n % 30 !== 0){
         const rounded = Math.ceil(n/30)*30;
-        html += `<p><em>Valor ajustado para múltiplo de 30: ${rounded}</em></p>`;
+        html += `<p><em>${t('adjustNote').replace('{rounded}', rounded)}</em></p>`;
         n = rounded;
     }
     const blocks = Math.ceil(n / 30);
     const commonNeeded = blocks * 30;
     const shiningStones = blocks;
-    html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
-        ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
+    // construct sentence depending on language
+    if(lang === 'en'){
+        html += `<p>${n} shining plate(s) require ${commonNeeded} common plate(s)` +
+                ` and ${shiningStones} shining stone(s) (in ${blocks} block(s) of 30).</p>`;
+    } else {
+        html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
+                ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
+    }
     shinyResults.innerHTML = html;
     if(useGsap) gsap.from(shinyResults, {opacity:0, y:10, duration:0.3});
 }
@@ -1128,7 +1282,11 @@ const ballImg = document.getElementById('ball-img');
 if(ballSelect){
     ballSelect.addEventListener('change',()=>{
         const v=ballSelect.value;
-        if(ballImg) ballImg.src = `balls/${v}.png`;
+        if(ballImg) {
+            ballImg.src = `balls/${v}.png`;
+            const key = v === 'elemental' ? 'ballElemental' : v === 'story' ? 'ballStory' : 'ballUltra';
+            ballImg.alt = t(key);
+        }
     });
 }
 const levelSelect = document.getElementById('level-select');
