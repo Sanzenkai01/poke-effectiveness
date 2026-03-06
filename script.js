@@ -550,7 +550,7 @@ function formatCost(n){
 }
 
 // catch calculator data
-const ballPrices = { ultra:130, story:260, elemental:342.11 };
+const ballPrices = { ultra:130, story:250, elemental:325 };
 // counts per level differ between normal and shiny
 // for levels with multiple options we store an array of alternative requirements
 const captureData = {
@@ -1338,9 +1338,23 @@ if(parseLogBtn){
             const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
             const reqList = computeRequired(lvl, variant);
             // count logged balls of selected type and also convert expense into ball count
-            const used = counts[chosen] || 0;
+            // compute how many of the *chosen* balls the player has effectively used
+            // by converting every logged ball type into the chosen type using price ratios.
+            // fall back to the raw count if the ball price is missing (should not happen).
+            const convertToChosen = (typeCountMap, target) => {
+                let sum = 0;
+                Object.entries(typeCountMap).forEach(([type,cnt])=>{
+                    if(cnt && ballPrices[target] && ballPrices[type]){
+                        sum += cnt * ballPrices[type] / ballPrices[target];
+                    }
+                });
+                // use floor to avoid fractional balls
+                return Math.floor(sum);
+            };
+            // convert counts by price, but keep totalCost fallback in case no counts were parsed
+            const converted = convertToChosen(counts, chosen);
             const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
-            const effectiveUsed = Math.max(used, costBased);
+            const effectiveUsed = Math.max(converted, costBased);
             const computeNeeded = (opt)=>{
                 if(chosen && opt[chosen] && opt[chosen] > 0) return opt[chosen];
                 return 0;
