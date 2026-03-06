@@ -82,7 +82,7 @@ const strings = {
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
         galleryTitle: 'Pokémons disponíveis',
         result: 'Resultado:',
-        dnaRequired: 'DNA exigido:',
+        dnaRequired: 'DNA Sample',
         drake: 'Drake',
         resistLabel: 'resiste a',
         legendResist: 'Resiste',
@@ -178,7 +178,7 @@ const strings = {
         calcCardBtn: 'Calculate',
         expensesMsg: 'Expenses',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}',
-        dnaRequired: 'DNA required:',
+        dnaRequired: 'DNA Sample:',
         drake: 'Drake',
         bird: 'Bird',
         dino: 'Dino',
@@ -915,14 +915,14 @@ initTabFromUrl();
 
 
 const fossilCombos = {
-    'Drake,Bird': { pokemon: 'dracozolt.png', dna: 'dna verde.png' },
-    'Bird,Drake': { pokemon: 'dracozolt.png', dna: 'dna verde.png' },
-    'Dino,Bird': { pokemon: 'arctozolt.png', dna: 'dna verde.png' },
-    'Bird,Dino': { pokemon: 'arctozolt.png', dna: 'dna verde.png' },
-    'Fish,Dino': { pokemon: 'arctovish.png', dna: 'dna azul.png' },
-    'Dino,Fish': { pokemon: 'arctovish.png', dna: 'dna azul.png' },
-    'Drake,Fish': { pokemon: 'dracovish.png', dna: 'dna azul.png' },
-    'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna azul.png' }
+    'Drake,Bird': { pokemon: 'dracozolt.png', dna: 'dna.gif' },
+    'Bird,Drake': { pokemon: 'dracozolt.png', dna: 'dna.gif' },
+    'Dino,Bird': { pokemon: 'arctozolt.png', dna: 'dna.gif' },
+    'Bird,Dino': { pokemon: 'arctozolt.png', dna: 'dna.gif' },
+    'Fish,Dino': { pokemon: 'arctovish.png', dna: 'dna.gif' },
+    'Dino,Fish': { pokemon: 'arctovish.png', dna: 'dna.gif' },
+    'Drake,Fish': { pokemon: 'dracovish.png', dna: 'dna.gif' },
+    'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna.gif' }
 };
 buildPokemonGallery();
 
@@ -948,7 +948,7 @@ function fossilShowResult(pair){
         </div>
         <img src="${encodeURI('fosseis/' + combo.pokemon)}" alt="${combo.pokemon}" style="width:100px;height:100px;" />
         <p>${t('dnaRequired')}</p>
-        <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" />`;
+        <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" /> <span class="dna-quantity">50x</span>`;
     if(useGsap){
         gsap.from(fossilResultDiv, {opacity:0, y:-20, duration:0.5});
         gsap.from(fossilResultDiv.querySelectorAll('img'), {scale:0, stagger:0.1, duration:0.4, ease:'back.out(1.7)'});
