@@ -121,13 +121,19 @@ const strings = {
         lvlPrefix: 'Nível ',
         preLabel: 'Pré Ace',
         aceLabel: 'Ace',
-        logPlaceholder: 'Utilize !pokeballs no jogo e cole a mensagem aqui.',
+        logPlaceholder: "Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui.",
         catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.',
         infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
         infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
         adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
         forCommonLabel: 'Para {n} plate(s) comum(ns):',
-        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento'
+        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento',
+        /* new messages for log parsing */
+        noExpenseWarning: '(Despesa calculada a partir das balls.)',
+        avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
+        overAvg: 'Você passou da média por {over} {ball}.',
+        encouragement: 'Continue assim, você está no caminho certo!',
+        noBallsParsed: 'Nenhuma ball reconhecida no log.'
     },
     en: {
         pageTitle: 'Pokémon Type Effectiveness',
@@ -200,13 +206,19 @@ const strings = {
         lvlPrefix: 'Lvl ',
         preLabel: 'Pre-Ace',
         aceLabel: 'Ace',
-        logPlaceholder: 'Paste game log containing !pokeballs here.',
+        logPlaceholder: "Paste game log containing !pokeballs 'pokemon name' in game and paste the message here.",
         catchNote: 'Note: values are approximate; you may spend a few more balls.',
         infoPlateCommon: '1 common plate requires 750 element items, 24 characteristic items and 1 element stone.',
         infoShinyCost: '30 shining plates cost 30 common plates and 1 shining stone.',
         adjustNote: 'Value adjusted to multiple of 30: {rounded}',
         forCommonLabel: 'For {n} common plate(s):',
-        calcInfoItems: '{elementItems} element items, {charItems} characteristic items, {stones} element stone(s)'
+        calcInfoItems: '{elementItems} element items, {charItems} characteristic items, {stones} element stone(s)',
+        /* new messages for log parsing */
+        noExpenseWarning: 'Expense estimated from balls.',
+        avgReached: 'Congrats! You have reached the average of {avg} {ball}.',
+        overAvg: 'You used {over} {ball} more than the average.',
+        encouragement: 'Keep it up, you are on the right track!',
+        noBallsParsed: 'No balls detected in log.'
     }
 };
 let lang = localStorage.getItem('lang') || (navigator.language.startsWith('en') ? 'en' : 'pt');
@@ -1316,69 +1328,103 @@ if(calcCatchBtn){
             const optLabel = t('optionsLabel');
         catchResult.innerHTML = `<div class="calc-result-highlight">${optLabel}:<br>${lines.join('<br>')}<br>(${variant})</div>`;
         }
+        // also parse log automatically if text is present
+        const logText = document.getElementById('log-input')?.value || '';
+        if(logText.trim()){
+            processLogText(logText);
+        }
     });
 }
 
 const parseLogBtn = document.getElementById('parse-log');
 const logResult = document.getElementById('log-result');
+// reusable log parsing/display routine
+function processLogText(text){
+    let {totalCost,counts} = parseLog(text);
+    console.log('processLogText called', text, totalCost, counts);
+    if(!logResult) return;
+    const exp = t('expensesMsg');
+    const usedUltra = counts.ultra || 0;
+    const usedStory = counts.story || 0;
+    const usedElem = counts.elemental || 0;
+    const balls = `Ultra: ${usedUltra}, Story: ${usedStory}, Elemental: ${usedElem}`;
+    const chosen = ballSelect ? ballSelect.value : 'ultra';
+    const lvl = levelSelect ? levelSelect.value : '5';
+    const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
+    const reqList = computeRequired(lvl, variant);
+    const convertToChosen = (typeCountMap, target) => {
+        let sum = 0;
+        Object.entries(typeCountMap).forEach(([type,cnt])=>{
+            if(cnt && ballPrices[target] && ballPrices[type]){
+                sum += cnt * ballPrices[type] / ballPrices[target];
+            }
+        });
+        return Math.floor(sum);
+    };
+    const converted = convertToChosen(counts, chosen);
+    const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
+    const effectiveUsed = Math.max(converted, costBased);
+    const computeNeeded = (opt)=>{
+        if(chosen && opt[chosen] && opt[chosen] > 0) return opt[chosen];
+        return 0;
+    };
+    const remMap = {};
+    reqList.forEach(opt=>{
+        const needed = Math.max(computeNeeded(opt) - effectiveUsed, 0);
+        if(needed > 0){
+            const key = `${needed}`;
+            if(!remMap[key]){
+                remMap[key] = {needed, text: `${needed} ${chosen} ball${needed!==1?'s':''}`};
+            }
+        }
+    });
+    const remLines = Object.values(remMap);
+    const remMsg = t('remainingMsg');
+    let resultText = '';
+    // if no cost and no counts, show fallback message
+    if(totalCost === 0 && usedUltra+usedStory+usedElem === 0){
+        resultText = t('noBallsParsed');
+    }
+    if(totalCost === 0){
+        totalCost = 0;
+        Object.entries(counts).forEach(([type,cnt])=>{
+            if(cnt && ballPrices[type]){
+                totalCost += cnt * ballPrices[type];
+            }
+        });
+        if(totalCost > 0){
+            // ensure warning stands on its own line
+            resultText += t('noExpenseWarning') + '<br>';
+        }
+    }
+    resultText += `${exp}: $${totalCost.toFixed(2)}; ${balls}`;
+    if(remLines.length){
+        const lines = remLines.map(item=>`${item.text}`);
+        resultText += `<br>${remMsg}:<br>${lines.join('<br>')}`;
+    } else {
+        let avgNeeded = 0;
+        const directOpt = reqList.find(opt=>opt[chosen] && opt[chosen] > 0);
+        if(directOpt){
+            avgNeeded = directOpt[chosen];
+        } else if(reqList.length && ballPrices[chosen]){
+            avgNeeded = convertToChosen(reqList[0], chosen);
+        }
+        const over = effectiveUsed - avgNeeded;
+        const ballLabelKey = 'ball' + chosen.charAt(0).toUpperCase() + chosen.slice(1);
+        const ballLabel = t(ballLabelKey) || chosen;
+        resultText += `<br>${t('avgReached').replace('{avg}',avgNeeded).replace('{ball}',ballLabel)}`;
+        if(over > 0){
+            resultText += `<br>${t('overAvg').replace('{over}',over).replace('{ball}',ballLabel)}`;
+        }
+        resultText += `<br>${t('encouragement')}`;
+    }
+    logResult.innerHTML = `<div class="calc-result-highlight">${resultText}</div>`;
+}
+
 if(parseLogBtn){
     parseLogBtn.addEventListener('click',()=>{
         const text = document.getElementById('log-input').value;
-        const {totalCost,counts} = parseLog(text);
-        if(logResult){
-            const exp = t('expensesMsg');
-            // report counts for all ball types and their individual cost
-            const usedUltra = counts.ultra || 0;
-            const usedStory = counts.story || 0;
-            const usedElem = counts.elemental || 0;
-            const balls = `Ultra: ${usedUltra}, Story: ${usedStory}, Elemental: ${usedElem}`;
-            // calculate remaining using total balls of any type (server behaviour)
-            const chosen = ballSelect ? ballSelect.value : 'ultra';
-            const lvl = levelSelect ? levelSelect.value : '5';
-            const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
-            const reqList = computeRequired(lvl, variant);
-            // count logged balls of selected type and also convert expense into ball count
-            // compute how many of the *chosen* balls the player has effectively used
-            // by converting every logged ball type into the chosen type using price ratios.
-            // fall back to the raw count if the ball price is missing (should not happen).
-            const convertToChosen = (typeCountMap, target) => {
-                let sum = 0;
-                Object.entries(typeCountMap).forEach(([type,cnt])=>{
-                    if(cnt && ballPrices[target] && ballPrices[type]){
-                        sum += cnt * ballPrices[type] / ballPrices[target];
-                    }
-                });
-                // use floor to avoid fractional balls
-                return Math.floor(sum);
-            };
-            // convert counts by price, but keep totalCost fallback in case no counts were parsed
-            const converted = convertToChosen(counts, chosen);
-            const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
-            const effectiveUsed = Math.max(converted, costBased);
-            const computeNeeded = (opt)=>{
-                if(chosen && opt[chosen] && opt[chosen] > 0) return opt[chosen];
-                return 0;
-            };
-            const remMap = {};
-            reqList.forEach(opt=>{
-                const needed = Math.max(computeNeeded(opt) - effectiveUsed, 0);
-                if(needed > 0){
-                    const key = `${needed}`;
-                    if(!remMap[key]){
-                        remMap[key] = {needed, text: `${needed} ${chosen} ball${needed!==1?'s':''}`};
-                    }
-                }
-            });
-            const remLines = Object.values(remMap);
-            const remMsg = t('remainingMsg');
-            // build result string
-            let resultText = `${exp}: $${totalCost.toFixed(2)}; ${balls}`;
-            if(remLines.length){
-                const lines = remLines.map(item=>`${item.text}`);
-                resultText += `<br>${remMsg}:<br>${lines.join('<br>')}`;
-            }
-            logResult.innerHTML = `<div class="calc-result-highlight">${resultText}</div>`;
-        }
+        processLogText(text);
     });
 }
 
