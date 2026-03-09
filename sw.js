@@ -14,8 +14,18 @@ self.addEventListener('install', ev => {
     );
 });
 
+// On fetch, bypass cache and always go to network (effectively disabling caching)
 self.addEventListener('fetch', ev => {
     ev.respondWith(
-        caches.match(ev.request).then(resp => resp || fetch(ev.request))
+        fetch(ev.request).catch(() => caches.match(ev.request))
+    );
+});
+
+// Clean up caches when the service worker activates so old data is removed
+self.addEventListener('activate', ev => {
+    ev.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(keys.map(key => caches.delete(key)))
+        )
     );
 });

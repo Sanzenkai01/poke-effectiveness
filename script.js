@@ -1455,7 +1455,11 @@ if(langToggle){
     });
 }
 
-if('serviceWorker' in navigator){
+// service worker registration is disabled to prevent caching issues during development.
+// To re-enable caching in production remove the surrounding comments or set
+// `enableSW` to true.
+const enableSW = false;
+if(enableSW && 'serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').then(reg=>{
         if(reg.waiting){
             alert('Nova versão disponível. Atualize a página.');
