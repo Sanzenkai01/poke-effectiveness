@@ -63,17 +63,23 @@
     <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden>
       <div class="card calc-card">
         <p id="fossil-instructions"></p>
+        <div class="fossil-header">
+            <button id="fossil-reset-btn" class="reset-button" aria-label="Resetar fósseis" title="Resetar fósseis">🔄</button>
+        </div>
         <div id="fossil-hint" class="calc-info"></div>
         <div id="fossil-grid" class="grid">
           <div class="fossil-cell"><img class="fossil-img" data-type="Drake" src="fosseis/Bag_Fossilized_Drake_Sprite.png" alt="Drake fossil"><span class="fossil-label">Drake</span></div>
           <div class="fossil-cell"><img class="fossil-img" data-type="Bird" src="fosseis/Bag_Fossilized_Bird_Sprite.png" alt="Bird fossil"><span class="fossil-label">Bird</span></div>
           <div class="fossil-cell"><img class="fossil-img" data-type="Dino" src="fosseis/Bag_Fossilized_Dino_Sprite.png" alt="Dino fossil"><span class="fossil-label">Dino</span></div>
           <div class="fossil-cell"><img class="fossil-img" data-type="Fish" src="fosseis/Bag_Fossilized_Fish_Sprite.png" alt="Fish fossil"><span class="fossil-label">Fish</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Amber" src="fosseis/old_amber.png" alt="Amber fossil"><span class="fossil-label">Amber</span></div>
         </div>
-        <p id="fossil-cost" class="fossil-cost"></p>
+        <!-- area for drop hint icons shown after clicking one fossil -->
+        <div id="drop-hints" class="drop-hints" aria-live="polite"></div>
         <div id="result" class="calc-results" style="margin-top:1rem;"></div>
         <div id="gallery-title" class="calc-info" style="margin-top:1rem;"></div>
         <div id="pokemon-gallery" class="pokemon-gallery calc-info"></div>
+        <p id="gallery-cost" class="fossil-cost"></p>
         <div id="pokemon-gallery" class="calc-info" style="margin-top:1rem;"></div>
       </div>
     </div>

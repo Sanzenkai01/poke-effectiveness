@@ -562,10 +562,72 @@ p {
   flex-wrap: wrap;
 }
 
+/* container for drop hint images appearing below a single fossil click */
+.drop-hints {
+  /* placed inside the fossil-cell so width 100% centers content under that cell */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* description text shown above drop hints */
+.drop-hints .drop-text {
+  font-size: 0.9rem;
+  color: #ffd;
+  margin-bottom: 2px;
+}
+
+.drop-hints .arrow-row,
+.drop-hints .image-row {
+  display: flex;
+  justify-content: center;
+}
+
+.drop-hints .image-row {
+  margin-top: 4px; /* separate images from arrows */
+  gap: 0.6rem; /* space between pokemon icons */
+}
+.drop-hints img {
+  width: 50px;
+  height: 50px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.drop-hints .drop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.drop-hints .drop-name {
+  font-size: 0.75rem;
+  color: #ffd;
+  margin-top: 2px;
+  text-align: center;
+}
+.drop-hints .arrow {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 0.8rem;
+  display: inline-block;
+  text-shadow: 0 0 3px rgba(0,0,0,0.7);
+  /* arrows now sit above the images; no vertical translate needed */
+}
+
 .fossil-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+}
+.fossil-cell .fossil-img {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.fossil-cell:hover .fossil-img {
+  transform: scale(1.15) rotate(-5deg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
 
 .fossil-label {
@@ -585,6 +647,12 @@ p {
   gap: 0.5rem;
   justify-content: center;
   margin-bottom: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 .result-fossil {
   width: 40px;
@@ -606,6 +674,20 @@ p {
   margin: 0.5rem;
   cursor: pointer;
   color: #eee;
+  transition: transform 0.2s;
+}
+.pokemon-card:hover {
+  transform: scale(1.1);
+}
+.pokemon-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: box-shadow 0.3s;
+}
+.pokemon-card:hover img {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
 .pokemon-card img {
   width: 50px;
@@ -759,6 +841,12 @@ p {
 }
 .reset-button:hover {
   transform: translateY(-50%) scale(1.1);
+}
+
+/* container for comments/actions above fossil grid */
+.fossil-header {
+  position: relative;
+  padding-bottom: 0.5rem;
 }
 
 #type-search {

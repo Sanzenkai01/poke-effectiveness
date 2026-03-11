@@ -35,6 +35,7 @@ let lastFossilPair = null;
 const tabEffectBtn = document.getElementById('tab-effectiveness');
 const tabFossilsBtn = document.getElementById('tab-fossils');
 const tabCalcBtn = document.getElementById('tab-calculator');
+const tabCatchBtn = document.getElementById('tab-catch');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
@@ -77,20 +78,25 @@ const strings = {
         tabTypes: 'Tipos',
         tabCalculator: 'Calculadora de Treinamento',
         tabFossils: 'Fósseis',
-        fossilCost: 'Reviver um Pokémon custa <strong>50K</strong>.',
+        fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
         fossilHintCombines: 'Este fóssil combina com: ',
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
         galleryTitle: 'Pokémons disponíveis',
         result: 'Resultado:',
         dnaRequired: 'DNA Sample',
+        huntSideLabel: 'Lado da hunt',
+        left: 'esquerda',
+        right: 'direita',
         drake: 'Drake',
         resistLabel: 'resiste a',
         legendResist: 'Resiste',
         bird: 'Pássaro',
         dino: 'Dino',
         fish: 'Peixe',
+        amber: 'Amber',
+        amber: 'Âmbar',
         fossilWord: 'fóssil',
-        fossilIntro: 'Selecione dois fósseis para formar um Pokémon. Cada par produz um resultado diferente e exige um DNA específico.',
+        fossilIntro: 'Selecione dois fósseis para formar um Pokémon. Cada par produz um resultado diferente e exige uma certa quantia de DNA.',
         calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
         pokemonTypeLabel: 'Tipo de Pokémon',
         normal: 'Normal',
@@ -165,11 +171,14 @@ const strings = {
         tabTypes: 'Types',
         tabCalculator: 'Training Calculator',
         tabFossils: 'Fossils',
-        fossilCost: 'Reviving a Pokémon costs <strong>50K</strong>.',
+        fossilCost: 'Reviving a Pokémon costs <strong>250K</strong>.',
         fossilHintCombines: 'This fossil combines with: ',
         fossilHintNone: 'No combinations available for this fossil.',
         galleryTitle: 'Available Pokémon',
         result: 'Result:',
+        huntSideLabel: 'Hunt side',
+        left: 'Left',
+        right: 'Right',
         /* catch */
         catchTitle: 'Catch Calculator',
         ballChoiceLabel: 'Choose the Pokéball:',
@@ -190,7 +199,7 @@ const strings = {
         dino: 'Dino',
         fish: 'Fish',
         fossilWord: 'fossil',
-        fossilIntro: 'Select two fossils to form a Pokémon. Each pair yields a different result and requires specific DNA.',
+        fossilIntro: 'Select two fossils to form a Pokémon. Each pair yields a different result and requires specific amount of DNA.',
         calculatorInstructions: 'Select a level range and use the fields below to calculate required materials.',
         pokemonTypeLabel: 'Pokémon type',
         normal: 'Normal',
@@ -244,8 +253,8 @@ function updateTextContent(){
     instr.textContent = t('instructions');
     const finstr = document.getElementById('fossil-instructions');
     if(finstr) finstr.textContent = t('fossilIntro');
-    const costEl = document.getElementById('fossil-cost');
-    if(costEl) costEl.innerHTML = t('fossilCost');
+    const galleryCost = document.getElementById('gallery-cost');
+    if(galleryCost) galleryCost.innerHTML = t('fossilCost');
     const gtitle = document.getElementById('gallery-title');
     if(gtitle) gtitle.textContent = t('galleryTitle');
     if(searchInput){
@@ -407,6 +416,21 @@ function updateTextContent(){
     if(resetBtn){
         resetBtn.setAttribute('aria-label', t('resetLabel'));
         resetBtn.title = t('resetLabel');
+    }
+    // fossils-specific reset button
+    const fossilReset = document.getElementById('fossil-reset-btn');
+    if(fossilReset){
+        fossilReset.addEventListener('click', ()=>{
+            fossilClearSelection();
+            document.querySelectorAll('.fossil-img').forEach(i=>{
+                i.classList.remove('active','compatible','incompatible');
+            });
+            const hintEl2 = document.getElementById('fossil-hint');
+            if(hintEl2) hintEl2.textContent = '';
+            const resultDiv = document.getElementById('result');
+            if(resultDiv) resultDiv.innerHTML = '';
+            lastFossilPair = null;
+        });
     }
     // translate icon alt texts on calculator page
     const plateIcon = document.getElementById('icon-plate');
@@ -891,7 +915,6 @@ function showCalculator(){
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
-const tabCatchBtn = document.getElementById('tab-catch');
 
 function showCatch(){
     if(tabCatchBtn) tabCatchBtn.classList.add('active');
@@ -934,8 +957,96 @@ const fossilCombos = {
     'Fish,Dino': { pokemon: 'arctovish.png', dna: 'dna.gif' },
     'Dino,Fish': { pokemon: 'arctovish.png', dna: 'dna.gif' },
     'Drake,Fish': { pokemon: 'dracovish.png', dna: 'dna.gif' },
-    'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna.gif' }
+    'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna.gif' },
+    // new amber pairing: two ambers produce Aerodactyl
+    'Amber,Amber': { pokemon: 'aerodactyl.png', dna: 'dna.gif' }
 };
+
+// mapping from generated pokémon to which side of the hunt they appear on
+const huntSide = {
+    dracozolt: 'left',
+    dracovish: 'left',
+    arctozolt: 'right',
+    arctovish: 'right',
+    aerodactyl: 'right'
+};
+// drop hints mapping for single fossil click; two possible drops each
+const dropHints = {
+    Drake: ['dracozolt.png','dracovish.png'],
+    Bird: ['dracozolt.png','arctozolt.png'],
+    Dino: ['arctozolt.png','arctovish.png'],
+    Fish: ['arctovish.png','dracovish.png'],
+    Amber: ['aerodactyl.png','aerodactyl.png']
+};
+
+function showDropHints(type, elem){
+    const hints = dropHints[type];
+    const container = document.getElementById('drop-hints');
+    if(!container) return;
+    container.innerHTML = '';
+    if(hints && hints.length === 2){
+        // add a descriptive line above the arrows
+        const desc = document.createElement('div');
+        desc.className = 'drop-text';
+        desc.textContent = lang === 'en' ? 'May drop:' : 'Pode dropar:';
+        container.appendChild(desc);
+        // build two-row layout: arrows on the first row, pokemon images on the second.
+        const arrowRow = document.createElement('div');
+        arrowRow.className = 'arrow-row';
+        // if both hints refer to same pokemon, show single downward arrow
+        if(hints[0] === hints[1]){
+            const downArrow = document.createElement('span');
+            downArrow.className = 'arrow';
+            downArrow.textContent = '↓';
+            arrowRow.appendChild(downArrow);
+        } else {
+            const leftArrow = document.createElement('span');
+            leftArrow.className = 'arrow';
+            leftArrow.textContent = '↙';
+            leftArrow.style.transform = 'rotate(-15deg)';
+            const rightArrow = document.createElement('span');
+            rightArrow.className = 'arrow';
+            rightArrow.textContent = '↘';
+            rightArrow.style.transform = 'rotate(15deg)';
+            arrowRow.appendChild(leftArrow);
+            arrowRow.appendChild(rightArrow);
+        }
+        const imageRow = document.createElement('div');
+        imageRow.className = 'image-row';
+        // create each pokemon image with label below
+        const unique = hints[0] === hints[1] ? [hints[0]] : [hints[0], hints[1]];
+        unique.forEach(fname=>{
+            const wrapper = document.createElement('div');
+            wrapper.className = 'drop-item';
+            const img = document.createElement('img');
+            img.src = 'fosseis/' + fname;
+            img.alt = fname;
+            const label = document.createElement('div');
+            label.className = 'drop-name';
+            // use filename without extension as name
+            const name = fname.split('.')[0];
+            label.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+            wrapper.appendChild(img);
+            wrapper.appendChild(label);
+            imageRow.appendChild(wrapper);
+        });
+        container.appendChild(arrowRow);
+        container.appendChild(imageRow);
+        // instead of aligning relative to the whole grid, move the container
+        // directly under the clicked fossil cell so the hints follow that item
+        container.style.marginTop = '0.5rem';
+        container.style.marginLeft = '';
+        if(elem){
+            const cell = elem.closest('.fossil-cell');
+            if(cell){
+                cell.appendChild(container); // this automatically moves element in DOM
+            }
+        }
+        if(useGsap){
+            gsap.from(container.children, {opacity:0, y:10, stagger:0.1, duration:0.4});
+        }
+    }
+}
 buildPokemonGallery();
 
 function fossilClearSelection(){
@@ -944,6 +1055,8 @@ function fossilClearSelection(){
         img.classList.remove('selected');
         if(useGsap) gsap.to(img, {scale:1, duration:0.2});
     });
+    const drop = document.getElementById('drop-hints');
+    if(drop) drop.innerHTML = '';
 }
 
 function fossilShowResult(pair){
@@ -951,16 +1064,48 @@ function fossilShowResult(pair){
     const combo = fossilCombos[pair];
     if(!combo) return;
     const [a,b] = pair.split(',');
-    const fossila = `fosseis/Bag_Fossilized_${a}_Sprite.png`;
-    const fossilb = `fosseis/Bag_Fossilized_${b}_Sprite.png`;
+    // special case for amber ghost image
+    // if both selected fossils are Amber, show a single amber icon
+    let fossila, fossilb;
+    if(a === 'Amber' && b === 'Amber'){
+        fossila = fossilb = 'fosseis/old_amber.png';
+    } else {
+        fossila = a === 'Amber' ? 'fosseis/old_amber.png' : `fosseis/Bag_Fossilized_${a}_Sprite.png`;
+        fossilb = b === 'Amber' ? 'fosseis/old_amber.png' : `fosseis/Bag_Fossilized_${b}_Sprite.png`;
+    }
+    // determine hunt side based on resulting pokemon
+    const base = combo.pokemon.split('.')[0];
+    const huntSide = {
+        dracozolt: 'left',
+        dracovish: 'left',
+        arctozolt: 'right',
+        arctovish: 'right',
+        aerodactyl: 'right'
+    };
+    const sideKey = huntSide[base] || '';
+    // never display hunt-side for Aerodactyl (respawn random)
+    const sideText = (sideKey && base !== 'aerodactyl') ? `<p>${t('huntSideLabel')}: ${t(sideKey)}</p>` : '';
+    // custom dna/cost for Aerodactyl
+    const isAerodactyl = base === 'aerodactyl';
+    const dnaQty = isAerodactyl ? 150 : 50;
+    const costText = isAerodactyl ? `<p style="font-weight:bold;">Reviver este Pokémon custa 500K.</p>` : '';
+    // build fossil icons section: one image if both the same
+    let fossilIcons = '';
+    if(a === 'Amber' && b === 'Amber'){
+        fossilIcons = `<img class="result-fossil" src="${encodeURI(fossila)}" alt="${a}" />`;
+    } else {
+        fossilIcons = `<img class="result-fossil" src="${encodeURI(fossila)}" alt="${a}" />
+          <img class="result-fossil" src="${encodeURI(fossilb)}" alt="${b}" />`;
+    }
     fossilResultDiv.innerHTML = `<p>${t('result')}</p>
         <div class="result-fossils">
-          <img class="result-fossil" src="${encodeURI(fossila)}" alt="${a}" />
-          <img class="result-fossil" src="${encodeURI(fossilb)}" alt="${b}" />
+          ${fossilIcons}
         </div>
         <img src="${encodeURI('fosseis/' + combo.pokemon)}" alt="${combo.pokemon}" style="width:100px;height:100px;" />
+        ${sideText}
         <p>${t('dnaRequired')}</p>
-        <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" /> <span class="dna-quantity">50x</span>`;
+        <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" /> <span class="dna-quantity">${dnaQty}x</span>
+        ${costText}`;
     if(useGsap){
         gsap.from(fossilResultDiv, {opacity:0, y:-20, duration:0.5});
         gsap.from(fossilResultDiv.querySelectorAll('img'), {scale:0, stagger:0.1, duration:0.4, ease:'back.out(1.7)'});
@@ -1022,24 +1167,50 @@ function buildPokemonGallery(){
     if(!gallery) return;
     gallery.innerHTML = '';
     const seen = new Set();
+    // use fixed order for gallery so new pokémon can be inserted precisely
+    const desiredOrder = ['dracozolt.png','dracovish.png','arctovish.png','arctozolt.png','aerodactyl.png'];
+    const entries = [];
     Object.keys(fossilCombos).forEach(k=>{
         const data = fossilCombos[k];
         if(seen.has(data.pokemon)) return;
         seen.add(data.pokemon);
+        entries.push(data.pokemon);
+    });
+    // sort according to desired order; unknown items go at end alphabetically
+    entries.sort((a,b)=>{
+        const iA = desiredOrder.indexOf(a);
+        const iB = desiredOrder.indexOf(b);
+        if(iA !== -1 && iB !== -1) return iA - iB;
+        if(iA !== -1) return -1;
+        if(iB !== -1) return 1;
+        return a.localeCompare(b);
+    });
+    entries.forEach(poke=>{
         const card = document.createElement('div');
         card.className = 'pokemon-card';
-        const base = data.pokemon.split('.')[0];
+        const base = poke.split('.')[0];
         const display = base.charAt(0).toUpperCase() + base.slice(1);
         const img = document.createElement('img');
-        img.src = 'fosseis/' + data.pokemon;
+        img.src = 'fosseis/' + poke;
         img.alt = display;
         card.appendChild(img);
         const label = document.createElement('div');
-        label.textContent = display;
+        const sideKey = huntSide[base];
+        // omit side label for aerodactyl as it's random
+        const sideText = sideKey && base !== 'aerodactyl' ? ` (${t(sideKey)})` : '';
+        label.textContent = display + sideText;
         card.appendChild(label);
         card.addEventListener('click', ()=>{
-            showComboForPokemon(data.pokemon);
+            showComboForPokemon(poke);
         });
+        if(useGsap){
+            card.addEventListener('mouseenter', ()=>{
+                gsap.to(card, {scale:1.1, duration:0.2});
+            });
+            card.addEventListener('mouseleave', ()=>{
+                gsap.to(card, {scale:1, duration:0.2});
+            });
+        }
         gallery.appendChild(card);
     });
 }
@@ -1048,6 +1219,9 @@ function buildPokemonGallery(){
 buildPokemonGallery();
 
 function showComboForPokemon(pokemon){
+    // clear any drop hints when coming from gallery
+    const drop = document.getElementById('drop-hints');
+    if(drop) drop.innerHTML = '';
     for(const k in fossilCombos){
         if(fossilCombos[k].pokemon === pokemon){
             const [a,b] = k.split(',');
@@ -1082,6 +1256,9 @@ Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
         img.classList.add('selected');
         img.classList.add('active');
         if(fossilSelections.length===1){
+            // show drop hints for solo click, positioned under clicked item
+            showDropHints(type, img);
+
             const partners = getPartners(type);
             document.querySelectorAll('.fossil-img').forEach(i=>{
                 const t=i.dataset.type;
@@ -1102,6 +1279,10 @@ Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
             }
         }
         if(fossilSelections.length === 2){
+            // clear drop hints when forming pair
+            const dropEl = document.getElementById('drop-hints');
+            if(dropEl) dropEl.innerHTML = '';
+
             const key = `${fossilSelections[0]},${fossilSelections[1]}`;
             if(useGsap){
                 // brief pop effect on selected fossils before showing result
