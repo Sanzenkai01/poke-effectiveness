@@ -36,9 +36,11 @@ const tabEffectBtn = document.getElementById('tab-effectiveness');
 const tabFossilsBtn = document.getElementById('tab-fossils');
 const tabCalcBtn = document.getElementById('tab-calculator');
 const tabCatchBtn = document.getElementById('tab-catch');
+const tabSpeedstersBtn = document.getElementById('tab-speedsters');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
+const contentSpeedsters = document.getElementById('content-speedsters');
 
 const ranges = {
     '50-100': { plates: 280, gold: 40 },
@@ -78,6 +80,7 @@ const strings = {
         tabTypes: 'Tipos',
         tabCalculator: 'Calculadora de Treinamento',
         tabFossils: 'Fósseis',
+        tabSpeedsters: 'Hoopa Portais',
         fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
         fossilHintCombines: 'Este fóssil combina com: ',
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
@@ -171,6 +174,7 @@ const strings = {
         tabTypes: 'Types',
         tabCalculator: 'Training Calculator',
         tabFossils: 'Fossils',
+        tabSpeedsters: 'Hoopa Portals',
         fossilCost: 'Reviving a Pokémon costs <strong>250K</strong>.',
         fossilHintCombines: 'This fossil combines with: ',
         fossilHintNone: 'No combinations available for this fossil.',
@@ -245,6 +249,9 @@ function updateTextContent(){
     } else if(tabCatchBtn && tabCatchBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('catchTitle');
         document.title = t('catchTitle');
+    } else if(tabSpeedstersBtn && tabSpeedstersBtn.classList.contains('active')){
+        if(titleEl) titleEl.textContent = t('tabSpeedsters');
+        document.title = t('tabSpeedsters');
     } else {
         if(titleEl) titleEl.textContent = t('pageTitle');
         document.title = t('pageTitle');
@@ -279,6 +286,7 @@ function updateTextContent(){
     if(tabFossilsBtn) tabFossilsBtn.textContent = t('tabFossils');
     if(tabCalcBtn) tabCalcBtn.textContent = t('tabCalculator');
     if(tabCatchBtn) tabCatchBtn.textContent = t('catchTitle');
+    if(tabSpeedstersBtn) tabSpeedstersBtn.textContent = t('tabSpeedsters');
     const ptLabel = document.getElementById('pokemon-type-label');
     if(ptLabel) ptLabel.textContent = t('pokemonTypeLabel') + ':';
     variantRadios.forEach(r=>{
@@ -480,9 +488,11 @@ function showFossils(){
     if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
     if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
     if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
+    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
     if(contentFossils) contentFossils.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
+    if(contentSpeedsters) contentSpeedsters.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // clear previous catch output
@@ -490,7 +500,7 @@ function showFossils(){
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
     if(logRes) logRes.innerHTML = '';
-    document.getElementById('instructions').style.display = 'none';
+    document.body.classList.remove('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
@@ -860,9 +870,11 @@ function showEffectiveness(){
     if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
     if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
     if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
+    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
     if(contentEffect) contentEffect.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    if(contentSpeedsters) contentSpeedsters.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // clear any previous catch results/logs so they don't persist in the footer
@@ -870,7 +882,7 @@ function showEffectiveness(){
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
     if(logRes) logRes.innerHTML = '';
-    document.getElementById('instructions').style.display = '';
+    document.body.classList.add('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = '';
     const titleEl = document.getElementById('page-title');
@@ -887,9 +899,11 @@ function showCalculator(){
     if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
     if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
     if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
+    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
     if(contentCalc) contentCalc.hidden = false;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    if(contentSpeedsters) contentSpeedsters.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // also clear catch calculator results/log so they don’t linger
@@ -897,7 +911,7 @@ function showCalculator(){
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
     if(logRes) logRes.innerHTML = '';
-    document.getElementById('instructions').style.display = 'none';
+    document.body.classList.remove('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
     updateRangeResults();
@@ -922,12 +936,14 @@ function showCatch(){
     if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
     if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
     if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
+    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    if(contentSpeedsters) contentSpeedsters.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = false;
-    document.getElementById('instructions').style.display = 'none';
+    document.body.classList.remove('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
@@ -936,6 +952,34 @@ function showCatch(){
     updateUrl();
 }
 if(tabCatchBtn) tabCatchBtn.addEventListener('click',()=>{ showCatch(); localStorage.setItem('selectedTab','catch'); updateUrl(); });
+if(tabSpeedstersBtn) tabSpeedstersBtn.addEventListener('click',()=>{ showSpeedsters(); localStorage.setItem('selectedTab','speedsters'); updateUrl(); });
+
+function showSpeedsters(){
+    if(tabSpeedstersBtn) tabSpeedstersBtn.classList.add('active');
+    if(tabSpeedstersBtn) tabSpeedstersBtn.setAttribute('aria-selected','true');
+    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
+    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
+    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
+    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
+    if(contentSpeedsters) contentSpeedsters.hidden = false;
+    if(contentCalc) contentCalc.hidden = true;
+    if(contentEffect) contentEffect.hidden = true;
+    if(contentFossils) contentFossils.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = true;
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = t('tabSpeedsters');
+    document.title = t('tabSpeedsters');
+    // Ensure grid is built when opening the tab (re-render if needed)
+    if(typeof renderGrid === 'function') renderGrid();
+    if(useGsap && contentSpeedsters){
+        gsap.from(contentSpeedsters, {opacity:0, y:-10, duration:0.4});
+    }
+    updateUrl();
+}
 
 // attempt to load tab from URL query first, fallback to localStorage
 function initTabFromUrl(){
@@ -944,6 +988,12 @@ function initTabFromUrl(){
     if(tabparam==='calculator') return showCalculator();
     if(tabparam==='fossils') return showFossils();
     if(tabparam==='catch') return showCatch();
+    if(tabparam==='speedsters') return showSpeedsters();
+    const saved = localStorage.getItem('selectedTab');
+    if(saved==='calculator') return showCalculator();
+    if(saved==='fossils') return showFossils();
+    if(saved==='catch') return showCatch();
+    if(saved==='speedsters') return showSpeedsters();
     return showEffectiveness();
 }
 initTabFromUrl();
@@ -1408,10 +1458,12 @@ function updateUrl(){
     const activeTab = tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
+                      tabSpeedstersBtn.classList.contains('active') ? 'speedsters' :
                       (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
     if(activeTab) params.set('tab', activeTab); else params.delete('tab');
-    const newUrl=location.pathname+'?'+params.toString();
-    history.replaceState(null,'',newUrl);
+    const query = params.toString();
+    const newUrl = location.pathname + (query ? `?${query}` : '');
+    history.replaceState(null, '', newUrl);
 
     if(currentSelection.length) localStorage.setItem('selectedTypes', currentSelection.join(','));
     else localStorage.removeItem('selectedTypes');

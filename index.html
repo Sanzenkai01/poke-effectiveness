@@ -25,6 +25,7 @@
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
       <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculator de Catchs</button>
+      <button id="tab-speedsters" class="tab" role="tab" aria-selected="false" aria-controls="content-speedsters">Hoopa Portais</button>
     </div>
 
     <p id="instructions">Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.</p>
@@ -188,11 +189,42 @@
       </div>
     </div>
 
-    
-    
+    <div id="content-speedsters" role="tabpanel" aria-labelledby="tab-speedsters" hidden>
+      <div class="card calc-card">
+        <h2>Hoopa Portais</h2>
+        <div class="speedster-actions" style="margin-bottom:0.75rem; display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
+          <p class="intro" style="max-width:720px;margin:0;color:#ddd;">Clique em um Boss para ver recomendações de pokémons para enfrentá-lo.</p>
+        </div>
+        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
+      </div>
+
+      <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+        <div class="speedster-modal-backdrop" data-close="true"></div>
+        <div class="speedster-modal-content" role="document">
+          <button class="speedster-modal-close" aria-label="Fechar">✖</button>
+          <div class="speedster-modal-header">
+        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+        <div class="speedster-modal-title">
+          <h2 id="modal-title"></h2>
+          <p id="modal-subtitle" class="speedster-subtitle"></p>
+          <div class="tier-legend" aria-label="Legenda de cores de recomendação">
+            <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
+            <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
+            <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitável
+            <span class="tier-dot tier-solo" aria-hidden="true"></span>Única opção
+            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informação
+          </div>
+        </div>
+        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+      </div>
+          <div id="modal-body" class="speedster-modal-body"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- animation library for modern effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="hoopa-portais/hoopa-portais.js" defer></script>
     <script src="script.js" defer></script>
 </body>
 </html>
