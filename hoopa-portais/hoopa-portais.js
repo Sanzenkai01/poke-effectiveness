@@ -12,58 +12,29 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          {
-            name: 'Pikachu',
-            image: 'pikachu.png',
-            tier: 'green',
-            types: ['electric'],
-            description: 'Ótimo contra voador e normal; use ataques elétricos para obter vantagem.'
-          }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          {
-            name: 'Dewgong',
-            image: 'dewgong.png',
-            tier: 'green',
-            types: ['water','ice'],
-            description: 'Água/gelo para cobertura de tipos.'
-          },
-          {
-            name: 'Mantine',
-            image: 'mantine.png',
-            tier: 'yellow',
-            types: ['water','flying'],
-            description: 'Cobertura de água com resistência extra a voador.'
-          }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          {
-            name: 'CharizardTwo',
-            image: 'charizard.png',
-            tier: 'green',
-            types: ['fire','flying'],
-            description: 'Use ataques de fogo para aproveitar a vantagem; ataque forte para maximizar o dano.'
-          },
-          {
-            name: 'Tauros',
-            image: 'tauros.png',
-            tier: 'yellow',
-            types: ['normal'],
-            description: 'Bom para desgaste e resistência contra normal/voador.'
-          },
-          {
-            name: 'Weavile',
-            image: 'weavile.png',
-            tier: 'red',
-            types: ['dark','ice'],
-            description: 'Rápido para pressionar e tirar vantagem de fraqueza a voador.'
-          }
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -87,16 +58,22 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloon', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Ideal para controle de campo aéreo.' }
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'red', types: ['fire','flying'], description: 'Aceitável, fogo aéreo.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'red', types: ['fire','psychic'], description: 'Aceitável, fogo/psíquico.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'red', types: ['flying','normal'], description: 'Aceitável, voador versátil.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'red', types: ['dark','ice'], description: 'Aceitável, rápido e sombrio.' }
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -114,22 +91,24 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Grama para neutralizar a escuridão.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Psíquico/fada com alto dano especial.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'solo', types: ['fairy'], description: 'Última opção para Mystic.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Fogo sombrio que pressiona Malamar.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'red', types: ['fire','flying'], description: 'Fogo forte para lidar com a fraqueza de água.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'red', types: ['dark','ice'], description: 'Ataques rápidos para quebrar a defesa de Malamar.' }
+          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -147,25 +126,28 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Psíquico rápido e eficiente.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Verde elétrico para vantagem.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Ataques psíquicos e fada.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Ideal para Mystic.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'yellow', types: ['water','flying'], description: 'Bom para cobertura aérea e aquática.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Bom suporte com moveset de água.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Fogo alto para pressionar o voador.', },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'red', types: ['dark','fire'], description: 'Fogo/escuro para controle e dano contínuo.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'red', types: ['dark','ice'], description: 'Ataques rápidos para quebrar fraquezas de luta/voo.' }
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -183,27 +165,33 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Grama para cobertura.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Rápido e elétrico.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Ataques psíquicos e fada.' },
-          { name: 'Venusaur', image: 'venusaur.png', tier: 'green', types: ['grass','poison'], description: 'Grama/veneno para controle.' },
-          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'green', types: ['grass','dragon'], description: 'Dragão/grama veloz.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'VenusaurTwo', image: 'venusaur.png', tier: 'green', types: ['grass','poison'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'green', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Raichu Y/Z', image: 'mega-raichu-y.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Lombre', image: 'lombre.png', tier: 'green', types: ['water','grass'], description: 'Ideal para Mystic.' },
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'yellow', types: ['steel','dragon'], description: 'Bom para resistir e cobrir fraquezas.' },
-          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'red', types: ['fighting','flying'], description: 'Aceitável, boa mobilidade.' },
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'red', types: ['fairy'], description: 'Aceitável para suporte.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Lombre', image: 'lombre.png', tier: 'green', types: ['water','grass'], description: 'Tipo move: Grass.' },
+          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
+          { name: 'Mega Hawlucha', image: 'mega-hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scyther', image: 'scyther.png', tier: 'red', types: ['bug','flying'], description: 'Ataques rápidos de inseto.' },
-          { name: 'Tauros', image: 'tauros.png', tier: 'red', types: ['normal'], description: 'Resistente e poderoso.' }
+          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' },
+          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'green', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
       }
     }
@@ -221,28 +209,34 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Psíquico forte.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Psíquico/fada para controle.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloon', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Ideal para controle de campo aéreo.' },
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'yellow', types: ['water','ice'], description: 'Água/gelo resiliente.' },
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'yellow', types: ['fairy'], description: 'Fada equilibrada.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'yellow', types: ['fairy'], description: 'Bom suporte.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'yellow', types: ['water','flying'], description: 'Cobertura aérea e aquática.' },
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'red', types: ['water','poison'], description: 'Aceitável, boa cobertura de status.' }
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Weavile', image: 'weavile.png', tier: 'red', types: ['dark','ice'], description: 'Ataques rápidos.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'red', types: ['flying','normal'], description: 'Agilidade e neutralização.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'red', types: ['fire','psychic'], description: 'Ataques de longo alcance.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'red', types: ['fire','flying'], description: 'Poder aéreo e fogo.' }
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
+          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -260,26 +254,27 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Solo forte para resistir a fogo.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Ideal para Mystic.' },
-          { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'green', types: ['water'], description: 'Ideal como tanque aquático.' },
-          { name: 'Greninja', image: 'greninja.png', tier: 'yellow', types: ['water','dark'], description: 'Bom para pressão rápida.' },
-          { name: 'Banette', image: 'banette.png', tier: 'red', types: ['ghost'], description: 'Aceitável para cobertura de status.' }
+          { name: 'Banette', image: 'banette.png', tier: 'green', types: ['ghost'], description: 'Tipo move: Ghost.' },
+          { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'green', types: ['water'], description: 'Tipo move: Water.' },
+          { name: 'Greninja', image: 'greninja.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Water.' },
+          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'red', types: ['normal','ground'], description: 'Força bruta terrestre.' },
-          { name: 'Absol', image: 'absol.png', tier: 'red', types: ['dark'], description: 'Dano crítico alto.' },
-          { name: 'Kabutops', image: 'kabutops.png', tier: 'red', types: ['rock','water'], description: 'Ataques de cobertura variados.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'red', types: ['water','flying'], description: 'Ataques voadores e aquáticos.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'red', types: ['dark','fire'], description: 'Fogo e escuridão em força.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
+          { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Water.' },
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
     }
@@ -297,24 +292,26 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Psíquico forte para lidar com bug/veneno.' },
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'yellow', types: ['grass'], description: 'Grama útil para cobertura e dano estável.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloon', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Ideal para controle de campo aéreo.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'yellow', types: ['water','flying'], description: 'Bom para cobertura aérea e aquática.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'red', types: ['water','psychic'], description: 'Aceitável, moveset de água.' }
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Bom para usar fogo contra venom/bicho.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'red', types: ['dark','fire'], description: 'Fogo/dark para forçar dano rápido.' },
-          { name: 'Scizor', image: 'scizor.png', tier: 'red', types: ['bug','steel'], description: 'Steel controla veneno e insectos.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' }
         ]
       }
     }
@@ -327,27 +324,33 @@ const hoopaPortalsData = [
     image: 'mega-meganium.png',
     locationImage: 'localizações/meganium.png',
     description: 'Folhas que curam a equipe enquanto controla o campo.',
-    types: ['grass'],
+    types: ['grass','fairy'],
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Veneno é forte contra grama; boa opção para Instinct.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'yellow', types: ['dragon'], description: 'Dragão com bom ataque especial e cobertura útil.' }
+          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloon', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Ideal para controle de campo aéreo.' },
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'yellow', types: ['water','poison'], description: 'Bom para pressão de status.' }
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Melhor opção de fogo para enfrentar grama.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'red', types: ['fire','psychic'], description: 'Aceitável para cobertura com fogo e psíquico.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Electric.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -360,27 +363,31 @@ const hoopaPortalsData = [
     image: 'mega-feraligatr.png',
     locationImage: 'localizações/feraligatr.png',
     description: 'Força bruta aquática; punhos d’água devastadores.',
-    types: ['water'],
+    types: ['water','dragon'],
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Elétrico rápido e eficaz contra água.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'yellow', types: ['dragon'], description: 'Dragão com boas resistências e ataque especial.' }
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Ideal para suporte e resistência.' }
+          { name: 'Mega Feraligatr', image: 'mega-feraligatr.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Kingdra', image: 'kingdra.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Fogo é ótima escolha contra água; rápido e versátil.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'red', types: ['fire','psychic'], description: 'Cobertura de fogo com suporte psíquico.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'red', types: ['dark','fire'], description: 'Fogo e escuridão para pressão constante.' }
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -393,29 +400,35 @@ const hoopaPortalsData = [
     image: 'mega-clefable.png',
     locationImage: 'localizações/clefable.png',
     description: 'Milagre brilhante; suporte com magia.',
-    types: ['fairy'],
+    types: ['fairy','flying'],
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Veneno é forte contra fada; escolha versátil para Instinct.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'yellow', types: ['dragon'], description: 'Dragão resistente com bom ataque especial.' }
+          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Ideal para status e cobertura.' },
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'yellow', types: ['steel','dragon'], description: 'Bom para defesa e resistência.' },
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'yellow', types: ['water','ice'], description: 'Bom para cobertura de gelo.' }
+          { name: 'Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scizor', image: 'scizor.png', tier: 'green', types: ['bug','steel'], description: 'Steel é eficaz contra fada; use golpes rápidos e consistentes.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'red', types: ['fire','flying'], description: 'Fogo é forte contra fada; bom para dano em área.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'red', types: ['dark','fire'], description: 'Combina fogo com escuridão para pressão contínua.' }
+          { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Scizor', image: 'scizor.png', tier: 'green', types: ['bug','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Water.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
+          { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
       }
     }
@@ -433,23 +446,24 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Solo efetivo contra metal/flying; boa defesa.' },
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'yellow', types: ['psychic'], description: 'Psíquico rápido para pressão constante.' }
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Gelo e água cobrem aço e voador.' },
-          { name: 'Seaking', image: 'seaking.png', tier: 'yellow', types: ['water'], description: 'Água forte e simples para segurança.' }
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Tauros', image: 'tauros.png', tier: 'red', types: ['normal'], description: 'Aceitável para força física.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'red', types: ['fire','psychic'], description: 'Aceitável para dano à distância.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'red', types: ['fire','flying'], description: 'Aceitável, poderoso no ar.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -472,22 +486,20 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Ótimo contra elétrico — use golpes de solo.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'yellow', types: ['dragon'], description: 'Dragão resistente e forte contra ataques elétricos.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Resiste a elétrico e oferece boa cobertura.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'yellow', types: ['water','flying'], description: 'Resistente a elétrico e ótimo suporte aéreo.' }
+          { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Água resiste a elétrico e oferece bom DPS.' },
-          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'yellow', types: ['water','dark'], description: 'Forte resistência a elétrico com alto ataque.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' }
         ]
       }
     }
@@ -509,34 +521,35 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Golpes terrestres são ótimos contra aço e lutador.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'yellow', types: ['dragon'], description: 'Dragão com bom ataque especial e cobertura útil.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' },
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Água é eficaz contra aço; boa velocidade e cobertura.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'yellow', types: ['water','flying'], description: 'Resistente e útil contra lutador, com suporte aéreo.' }
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' },
+          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Fogo ajuda contra aço; bom alcance mágico.' },
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'yellow', types: ['normal','ground'], description: 'Terreno resistente com golpes poderosos.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
   },
   {
     id: 'mega-absol',
-    name: 'Mega Absol',
+    name: 'Mega Absol + Mega Absol Z',
     clan: 'valor',
     clanLabel: 'Valor',
     image: 'mega-absol.png',
     locationImage: 'localizações/absol.png',
-    description: 'Dupla Mega Absol (Normal/Z).',
+    description: 'Mega Absol e Mega Absol Z são fracos contra fada; o Mega Absol normal também é fraco contra luta e inseto.',
     types: ['dark'],
     duo: true,
     bosses: [
@@ -547,22 +560,26 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Fada é ótima contra dark; use golpes especiais.' },
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'yellow', types: ['psychic'], description: 'Psíquico rápido que pode derrubar dark com ataques fortes.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Fada acessível para lidar com dark.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'yellow', types: ['fairy'], description: 'Bom para suporte e resistência contra dark.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Inseto é forte contra dark; use ataques rápidos.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'yellow', types: ['dark','ice'], description: 'Rápido e capaz de pressionar com golpes físicos.' }
+          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -594,6 +611,136 @@ const iconBase = (() => {
   const p = location.pathname.toLowerCase();
   return (p.includes('/hoopa-portais') ? '../' : '') + 'icons-type/';
 })();
+
+// Type effectiveness tables (from types.json)
+const typeEffectiveness = {
+  normal: [],
+  fire: ['grass','ice','bug','steel'],
+  water: ['fire','ground','rock'],
+  electric: ['water','flying'],
+  grass: ['water','ground','rock'],
+  ice: ['grass','ground','flying','dragon'],
+  fighting: ['normal','ice','rock','dark','steel'],
+  poison: ['grass','fairy'],
+  ground: ['fire','electric','poison','rock','steel'],
+  flying: ['grass','fighting','bug'],
+  psychic: ['fighting','poison'],
+  bug: ['grass','psychic','dark'],
+  rock: ['fire','ice','flying','bug'],
+  ghost: ['psychic','ghost'],
+  dragon: ['dragon'],
+  dark: ['psychic','ghost'],
+  steel: ['ice','rock','fairy'],
+  fairy: ['fighting','dragon','dark']
+};
+
+const typeResistances = {
+  normal: [],
+  fire: ['bug','steel','fire','grass','ice','fairy'],
+  water: ['steel','fire','water','ice'],
+  electric: ['electric','flying','steel'],
+  grass: ['water','electric','grass','ground'],
+  ice: ['ice'],
+  fighting: ['bug','rock','dark'],
+  poison: ['fighting','poison','bug','grass','fairy'],
+  ground: ['poison','rock'],
+  flying: ['fighting','bug','grass'],
+  psychic: ['fighting','psychic'],
+  bug: ['fighting','ground','grass'],
+  rock: ['normal','fire','poison','flying'],
+  ghost: ['poison','bug','grass','fighting'],
+  dragon: ['fire','water','electric','grass'],
+  dark: ['ghost','dark'],
+  steel: ['normal','grass','ice','flying','psychic','bug','rock','dragon','steel','fairy'],
+  fairy: ['fighting','bug','dark']
+};
+
+const typeImmunities = {
+  normal: ['ghost'],
+  ground: ['electric'],
+  flying: ['ground'],
+  ghost: ['normal','fighting'],
+  dark: ['psychic'],
+  steel: ['poison']
+};
+
+function getTypeMultiplier(attackingType, defendingTypes) {
+  if (!attackingType || !defendingTypes || !defendingTypes.length) return 1;
+
+  let multiplier = 1;
+  for (const def of defendingTypes) {
+    // If the defender type is immune to the attacking type, damage is 0.
+    if (typeImmunities[def]?.includes(attackingType)) {
+      return 0; // immediate immunity
+    }
+    if (typeEffectiveness[attackingType]?.includes(def)) {
+      multiplier *= 2;
+    } else if (typeResistances[def]?.includes(attackingType)) {
+      multiplier *= 0.5;
+    }
+  }
+  return multiplier;
+}
+
+function parseMoveType(poke) {
+  if (!poke || typeof poke.description !== 'string') return null;
+  const match = poke.description.match(/Tipo move:\s*([a-zA-Z]+)/i);
+  return match ? match[1].toLowerCase() : null;
+}
+
+function rankRecommendedForBoss(bossTypes, recommendedList) {
+  return recommendedList
+    .map((poke) => {
+      const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
+      const offense = getTypeMultiplier(moveType, bossTypes);
+
+      // Defense is based on boss types acting as attackers against the recommended poke types.
+      const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
+      const defenseMultipliers = bossTypes.map((bossType) => getTypeMultiplier(bossType, pokeTypes));
+      const bestDefense = Math.min(...defenseMultipliers); // best case (lowest damage taken)
+      const worstDefense = Math.max(...defenseMultipliers); // worst case (highest damage taken)
+
+      // Score offense (higher is better) and defense (lower worst-case is better)
+      // Offense: prioritize super-effective hits, but still treat neutral as ok.
+      const offenseScore =
+        offense === 0 ? 0 :
+        offense >= 4 ? 1 :
+        offense === 2 ? 0.75 :
+        offense === 1 ? 0.45 :
+        0.2;
+
+      // Defense: we want best-case immunity and punish high worst-case damage.
+      const defenseScore =
+        bestDefense === 0 ? 1 :
+        worstDefense === 0.5 ? 0.85 :
+        worstDefense === 1 ? 0.65 :
+        worstDefense === 2 ? 0.35 :
+        0.1;
+
+      // Combined gives more weight to offense but still rewards good defense.
+      const combined = offenseScore * 0.7 + defenseScore * 0.3;
+
+      let tier = 'red';
+      if (combined >= 0.82) tier = 'green';
+      else if (combined >= 0.58) tier = 'yellow';
+      else if (combined <= 0.25) tier = 'solo';
+
+      return {
+        ...poke,
+        _score: combined,
+        _offense: offense,
+        _defenseWorst: worstDefense,
+        _defenseBest: bestDefense,
+        _moveType: moveType,
+        tier,
+      };
+    })
+    .sort((a, b) => {
+      if (b._score !== a._score) return b._score - a._score;
+      const tierPriority = { green: 0, yellow: 1, red: 2, solo: 3, unknown: 4 };
+      return (tierPriority[a.tier] ?? 4) - (tierPriority[b.tier] ?? 4);
+    });
+}
 
 function safeElement(el) {
   return el instanceof HTMLElement ? el : null;
@@ -768,29 +915,15 @@ function openModal(speedster) {
     const list = document.createElement('div');
     list.className = 'speedster-clan-list';
 
-    const recommended = clanData?.recommended || [];
+const recommended = rankRecommendedForBoss(speedster.types || [], clanData?.recommended || []);
 
-    if (recommended.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'speedster-clan-empty';
-      empty.textContent = 'Nenhuma recomendação disponível.';
-      list.appendChild(empty);
-    } else {
-      const tierPriority = {
-        green: 0,   // Ideal
-        yellow: 1,  // Bom
-        red: 2,     // Aceitável
-        solo: 3,    // Última opção
-        unknown: 4  // Sem informação
-      };
-
-      const sortedRecommended = [...recommended].sort((a, b) => {
-        const aTier = (a.tier || 'unknown');
-        const bTier = (b.tier || 'unknown');
-        return (tierPriority[aTier] ?? 4) - (tierPriority[bTier] ?? 4);
-      });
-
-      sortedRecommended.forEach((poke) => {
+      if (recommended.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'speedster-clan-empty';
+        empty.textContent = 'Nenhuma recomendação disponível.';
+        list.appendChild(empty);
+      } else {
+        recommended.forEach((poke) => {
         const card = document.createElement('div');
         card.className = 'speedster-reco-card';
 
@@ -821,6 +954,15 @@ function openModal(speedster) {
         nameEl.textContent = poke.name;
 
         nameWrapper.append(tierDot, nameEl);
+
+        // Show offense/defense score as a small badge (less intrusive on the card)
+        const score = document.createElement('div');
+        score.className = 'speedster-reco-score';
+        const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
+        const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
+        score.textContent = `⚔️${atk}\n🛡️${def}`;
+        // Append to card so it sits in the corner without affecting layout
+        card.appendChild(score);
 
         // Element icon for recommended pokémon
         if (Array.isArray(poke.types) && poke.types.length) {

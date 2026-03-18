@@ -143,102 +143,13 @@ const strings = {
         overAvg: 'Você passou da média por {over} {ball}.',
         encouragement: 'Continue assim, você está no caminho certo!',
         noBallsParsed: 'Nenhuma ball reconhecida no log.'
-    },
-    en: {
-        pageTitle: 'Pokémon Type Effectiveness',
-        instructions: 'Click a type to see what it is effective against. Use Tab/arrow keys to navigate and Enter to select. You can choose up to two types.',
-        superEffective: 'super effective against',
-        vulnerable: 'vulnerable to',
-        immune: 'immune to',
-        noRelation: 'no special relation.',
-        shareSuccess: 'Link copied to clipboard!',
-        shareFail: 'Failed to copy link.',
-        shareLabel: 'Share',
-        printLabel: 'Print',
-        resetLabel: 'Reset',
-        legendSelected: 'Selected',
-        legendStrength: 'Super effective',
-        legendResist: 'Resists',
-        legendWeakness: 'Weakness',
-        legendImmune: 'Immune',
-        legendNeutral: 'Neutral',
-        themeToggle: 'Toggle dark/light mode',
-        calculatorTitle: 'Training Calculator',
-        rangeLabel: 'Level range',
-        optionsLabel: 'Options',
-        platesLabel: 'Plates',
-        goldCoinsLabel: 'Golden coins',
-        commonPlatesLabel: 'Common plates',
-        shinyPlatesLabel: 'Shiny plates',
-        resistLabel: 'resists',
-        tabTypes: 'Types',
-        tabCalculator: 'Training Calculator',
-        tabFossils: 'Fossils',
-        tabSpeedsters: 'Hoopa Portals',
-        fossilCost: 'Reviving a Pokémon costs <strong>250K</strong>.',
-        fossilHintCombines: 'This fossil combines with: ',
-        fossilHintNone: 'No combinations available for this fossil.',
-        galleryTitle: 'Available Pokémon',
-        result: 'Result:',
-        huntSideLabel: 'Hunt side',
-        left: 'Left',
-        right: 'Right',
-        /* catch */
-        catchTitle: 'Catch Calculator',
-        ballChoiceLabel: 'Choose the Pokéball:',
-        pokemonLevelLabel: 'Pokémon level:',
-        calcCatchBtn: 'Calculate amount',
-        logBallsLabel: 'Balls log:',
-        parseLogBtn: 'Process log',
-        cardPriceTitle: 'Card price',
-        cardNameLabel: 'Card name:',
-        cardPriceLabel: 'Unit price:',
-        cardQtyLabel: 'Quantity:',
-        calcCardBtn: 'Calculate',
-        expensesMsg: 'Expenses',
-        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}',
-        dnaRequired: 'DNA Sample:',
-        drake: 'Drake',
-        bird: 'Bird',
-        dino: 'Dino',
-        fish: 'Fish',
-        fossilWord: 'fossil',
-        fossilIntro: 'Select two fossils to form a Pokémon. Each pair yields a different result and requires specific amount of DNA.',
-        calculatorInstructions: 'Select a level range and use the fields below to calculate required materials.',
-        pokemonTypeLabel: 'Pokémon type',
-        normal: 'Normal',
-        shiny: 'Shiny',
-        sameQuantityNote: 'Same quantity; only plate type differs.',
-        elementItems: 'element items',
-        charItems: 'characteristic items',
-        stoneItems: 'element stones',
-        /* additional translations */
-        ballElemental: 'Elemental Ball',
-        ballStory: 'Story Ball',
-        ballUltra: 'Ultra Ball',
-        lvlPrefix: 'Lvl ',
-        preLabel: 'Pre-Ace',
-        aceLabel: 'Ace',
-        logPlaceholder: "Paste game log containing !pokeballs 'pokemon name' in game and paste the message here.",
-        catchNote: 'Note: values are approximate; you may spend a few more balls.',
-        infoPlateCommon: '1 common plate requires 750 element items, 24 characteristic items and 1 element stone.',
-        infoShinyCost: '30 shining plates cost 30 common plates and 1 shining stone.',
-        adjustNote: 'Value adjusted to multiple of 30: {rounded}',
-        forCommonLabel: 'For {n} common plate(s):',
-        calcInfoItems: '{elementItems} element items, {charItems} characteristic items, {stones} element stone(s)',
-        /* new messages for log parsing */
-        noExpenseWarning: 'Expense estimated from balls.',
-        avgReached: 'Congrats! You have reached the average of {avg} {ball}.',
-        overAvg: 'You used {over} {ball} more than the average.',
-        encouragement: 'Keep it up, you are on the right track!',
-        noBallsParsed: 'No balls detected in log.'
     }
 };
-let lang = localStorage.getItem('lang') || (navigator.language.startsWith('en') ? 'en' : 'pt');
+const lang = 'pt';
 function t(k){return strings[lang][k]||'';}
 
 function updateTextContent(){
-    document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+    document.documentElement.lang = 'pt-BR';
     const titleEl = document.getElementById('page-title');
     if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('calculatorTitle');
@@ -265,7 +176,7 @@ function updateTextContent(){
     const gtitle = document.getElementById('gallery-title');
     if(gtitle) gtitle.textContent = t('galleryTitle');
     if(searchInput){
-        searchInput.placeholder = lang==='en' ? 'Search type...' : 'Buscar tipo...';
+        searchInput.placeholder = 'Buscar tipo...';
     }
     // fossil labels need explicit refresh
     document.querySelectorAll('.fossil-label').forEach(span=>{
@@ -340,10 +251,10 @@ function updateTextContent(){
     // translate range select options
     if(rangeSelect){
         const map = {
-            '50-100': lang==='en' ? '50 to 100' : '50 ao 100',
-            '65-100': lang==='en' ? '65 to 100' : '65 ao 100',
-            '80-100': lang==='en' ? '80 to 100' : '80 ao 100',
-            '95-100': lang==='en' ? '95 to 100' : '95 ao 100'
+            '50-100': '50 ao 100',
+            '65-100': '65 ao 100',
+            '80-100': '80 ao 100',
+            '95-100': '95 ao 100'
         };
         Object.keys(map).forEach(val=>{
             const opt = rangeSelect.querySelector(`option[value="${val}"]`);
@@ -414,11 +325,6 @@ function updateTextContent(){
     if(themeBtn){
         themeBtn.setAttribute('aria-label', t('themeToggle'));
         themeBtn.title = t('themeToggle');
-    }
-    const langBtn = document.getElementById('lang-toggle');
-    if(langBtn){
-        langBtn.title = lang === 'en' ? 'PT' : 'EN';
-        langBtn.setAttribute('aria-label','Switch language');
     }
     const resetBtn = document.getElementById('reset-btn');
     if(resetBtn){
@@ -1038,7 +944,7 @@ function showDropHints(type, elem){
         // add a descriptive line above the arrows
         const desc = document.createElement('div');
         desc.className = 'drop-text';
-        desc.textContent = lang === 'en' ? 'May drop:' : 'Pode dropar:';
+        desc.textContent = 'Pode dropar:';
         container.appendChild(desc);
         // build two-row layout: arrows on the first row, pokemon images on the second.
         const arrowRow = document.createElement('div');
@@ -1414,14 +1320,8 @@ function updateShiny(){
     const blocks = Math.ceil(n / 30);
     const commonNeeded = blocks * 30;
     const shiningStones = blocks;
-    // construct sentence depending on language
-    if(lang === 'en'){
-        html += `<p>${n} shining plate(s) require ${commonNeeded} common plate(s)` +
-                ` and ${shiningStones} shining stone(s) (in ${blocks} block(s) of 30).</p>`;
-    } else {
-        html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
-                ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
-    }
+    html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
+            ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
     shinyResults.innerHTML = html;
     if(useGsap) gsap.from(shinyResults, {opacity:0, y:10, duration:0.3});
 }
@@ -1675,18 +1575,10 @@ if(calcCardBtn){
 }
 
 const themeToggle=document.getElementById('theme-toggle');
-const langToggle=document.getElementById('lang-toggle');
 function setTheme(dark){if(dark)document.body.classList.add('dark');else document.body.classList.remove('dark');localStorage.setItem('darkMode',dark);}
 const stored=localStorage.getItem('darkMode');
 if(stored!==null){setTheme(stored==='true');}else{const dm=window.matchMedia('(prefers-color-scheme: dark)').matches;setTheme(dm);} 
 themeToggle.addEventListener('click',()=>{setTheme(!document.body.classList.contains('dark'));});
-if(langToggle){
-    langToggle.addEventListener('click',()=>{
-        lang = (lang === 'en' ? 'pt' : 'en');
-        localStorage.setItem('lang', lang);
-        updateTextContent();
-    });
-}
 
 // service worker registration is disabled to prevent caching issues during development.
 // To re-enable caching in production remove the surrounding comments or set
