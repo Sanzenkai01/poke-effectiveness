@@ -153,6 +153,48 @@ const hoopaPortalsData = [
     }
   },
   {
+    id: 'mega-starmie',
+    name: 'Mega Starmie',
+    clan: 'mystic',
+    clanLabel: 'Mystic',
+    image: 'mega-starmie.png',
+    locationImage: 'localizações/starmie.png',
+    description: 'Mega Starmie aproveita água e psíquico; comece com vantagem de tipo.',
+    types: ['water','psychic'],
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Shiftry', image: 'shiftry.png', tier: 'green', types: ['grass','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'yellow', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' }
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'yellow', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
+          { name: 'Banette', image: 'banette.png', tier: 'yellow', types: ['ghost'], description: 'Tipo move: Ghost.' },
+          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Lombre', image: 'lombre.png', tier: 'yellow', types: ['water','grass'], description: 'Tipo move: Grass.' }
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          { name: 'Tauros', image: 'tauros.png', tier: 'yellow', types: ['normal'], description: 'Tipo move: Electric.' },
+          { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' },
+          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'yellow', types: ['fire','normal'], description: 'Tipo move: Grass.' }
+        ]
+      }
+    }
+  },
+  {
     id: 'mega-greninja',
     name: 'Mega Greninja',
     clan: 'valor',
@@ -264,7 +306,7 @@ const hoopaPortalsData = [
           { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'green', types: ['water'], description: 'Tipo move: Water.' },
           { name: 'Greninja', image: 'greninja.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Water.' },
           { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Dark.' },
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' }
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
@@ -493,7 +535,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' }
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
@@ -528,7 +570,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], description: 'Tipo move: Ground.' },
+          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' },
           { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
@@ -583,8 +625,8 @@ const hoopaPortalsData = [
         ]
       }
     }
-  }
-];
+  },
+  ];
 
 const clanIcons = {
   instinct: 'Instinct.png',
@@ -599,6 +641,12 @@ const modalSubtitle = document.getElementById('modal-subtitle');
 const modalBody = document.getElementById('modal-body');
 const modalClan = document.getElementById('modal-clan');
 const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
+
+const speedsterSearchInput = document.getElementById('speedster-search');
+const speedsterSearchResults = document.getElementById('speedster-search-results');
+const speedsterSearchNoResults = document.getElementById('speedster-search-no-results');
+
+let currentBoss = null;
 
 const basePath = (() => {
   const p = location.pathname.toLowerCase();
@@ -664,12 +712,15 @@ const typeImmunities = {
   steel: ['poison']
 };
 
-function getTypeMultiplier(attackingType, defendingTypes) {
+function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = []) {
   if (!attackingType || !defendingTypes || !defendingTypes.length) return 1;
 
   let multiplier = 1;
   for (const def of defendingTypes) {
-    // If the defender type is immune to the attacking type, damage is 0.
+    // If the defender is immune to the attacking type via passive/ability or type immunities, damage is 0.
+    if (Array.isArray(defenderImmunities) && defenderImmunities.includes(attackingType)) {
+      return 0; // immediate immunity
+    }
     if (typeImmunities[def]?.includes(attackingType)) {
       return 0; // immediate immunity
     }
@@ -696,7 +747,7 @@ function rankRecommendedForBoss(bossTypes, recommendedList) {
 
       // Defense is based on boss types acting as attackers against the recommended poke types.
       const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
-      const defenseMultipliers = bossTypes.map((bossType) => getTypeMultiplier(bossType, pokeTypes));
+      const defenseMultipliers = bossTypes.map((bossType) => getTypeMultiplier(bossType, pokeTypes, poke.immunities));
       const bestDefense = Math.min(...defenseMultipliers); // best case (lowest damage taken)
       const worstDefense = Math.max(...defenseMultipliers); // worst case (highest damage taken)
 
@@ -847,7 +898,248 @@ function renderGrid() {
   });
 }
 
+function formatSearchLabel(speedster) {
+  const sprite = document.createElement('img');
+  sprite.className = 'speedster-search-item-icon';
+  sprite.src = basePath + (speedster.image || '');
+  sprite.alt = speedster.name;
+  sprite.title = speedster.name;
+  sprite.loading = 'lazy';
+  sprite.style.width = '24px';
+  sprite.style.height = '24px';
+  sprite.style.borderRadius = '50%';
+
+  const typeIcons = (speedster.types || []).slice(0, 2).map((type) => {
+    const img = document.createElement('img');
+    img.className = 'speedster-search-item-icon';
+    img.src = iconBase + `${type}.png`;
+    img.alt = `${type}`;
+    img.title = type.charAt(0).toUpperCase() + type.slice(1);
+    img.loading = 'lazy';
+    return img;
+  });
+  const moveType = parseMoveType(speedster) || (speedster.types && speedster.types[0]);
+  const moveIcon = document.createElement('img');
+  moveIcon.className = 'speedster-search-item-icon';
+  moveIcon.src = iconBase + `${moveType || 'normal'}.png`;
+  moveIcon.alt = `${moveType || 'tipo'}`;
+  moveIcon.title = moveType ? moveType.charAt(0).toUpperCase() + moveType.slice(1) : 'Tipo';
+  moveIcon.loading = 'lazy';
+
+  const name = document.createElement('span');
+  name.textContent = speedster.name;
+  name.style.flex = '1';
+
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.gap = '0.25rem';
+  container.appendChild(sprite);
+  typeIcons.forEach((i) => container.appendChild(i));
+  container.appendChild(name);
+  container.appendChild(moveIcon);
+  return container;
+}
+
+function getRecommendedSpeedsters() {
+  const map = new Map();
+
+  hoopaPortalsData.forEach((boss) => {
+    Object.values(boss.clans || {}).forEach((clanData) => {
+      (clanData.recommended || []).forEach((poke) => {
+        const key = `${poke.name.toLowerCase()}|${poke.image || ''}`;
+        if (!map.has(key)) {
+          map.set(key, {
+            ...poke,
+            bossEntries: []
+          });
+        }
+
+        const entry = map.get(key);
+        entry.bossEntries.push({
+          bossName: boss.name,
+          bossData: boss,
+          sourceClan: clanData.label || '',
+          sourceBossTier: poke.tier || 'unknown'
+        });
+      });
+    });
+  });
+
+  return Array.from(map.values());
+}
+
+function renderSearchResults(query = '') {
+  if (!speedsterSearchResults || !speedsterSearchNoResults) return;
+  const q = String(query || '').trim().toLowerCase();
+
+  const availableSpeedsters = getRecommendedSpeedsters();
+  const filtered = q
+    ? availableSpeedsters.filter((st) => {
+        const bossName = currentBoss?.name || (st.bossEntries?.[0]?.bossName || '');
+        const base = `${st.name} ${bossName} ${(st.types || []).join(' ')} ${st.description || ''}`.toLowerCase();
+        return base.includes(q);
+      })
+    : availableSpeedsters;
+
+  if (filtered.length === 0) {
+    speedsterSearchResults.innerHTML = '';
+    speedsterSearchResults.hidden = true;
+    speedsterSearchNoResults.hidden = q ? false : true;
+    return;
+  }
+
+  speedsterSearchNoResults.hidden = true;
+  speedsterSearchResults.hidden = false;
+  speedsterSearchResults.innerHTML = '';
+
+  speedsterSearchNoResults.hidden = true;
+  speedsterSearchResults.hidden = false;
+
+  filtered.forEach((st) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'speedster-search-item';
+    item.setAttribute('aria-label', `Abrir boss que usa ${st.name}`);
+    item.setAttribute('data-speedster', st.name);
+
+    const content = formatSearchLabel(st);
+
+    // Remover o ponto de tier na lista de busca, conforme solicitado.
+    // Mantemos somente o texto do nome e demais informações.
+    item.appendChild(content);
+    item.addEventListener('click', () => {
+      openSpeedsterBossesModal(st);
+      hideSearchResults();
+    });
+
+    speedsterSearchResults.appendChild(item);
+  });
+}
+
+function hideSearchResults() {
+  if (!speedsterSearchResults || !speedsterSearchNoResults) return;
+  speedsterSearchResults.hidden = true;
+  speedsterSearchNoResults.hidden = true;
+}
+
+function closeSearchPanel() {
+  hideSearchResults();
+  if (speedsterSearchInput) {
+    speedsterSearchInput.value = '';
+    speedsterSearchInput.blur();
+  }
+}
+
+function getBossesForSpeedster(speedsterName) {
+  const lower = String(speedsterName || '').toLowerCase();
+  return hoopaPortalsData.filter((boss) =>
+    Object.values(boss.clans || {}).some((clanData) =>
+      (clanData.recommended || []).some((poke) => String(poke.name || '').toLowerCase() === lower)
+    )
+  );
+}
+
+function getSpeedsterTierForBoss(boss, speedsterName) {
+  const lower = String(speedsterName || '').toLowerCase();
+  for (const clanData of Object.values(boss.clans || {})) {
+    const found = (clanData.recommended || []).find((poke) => String(poke.name || '').toLowerCase() === lower);
+    if (found) {
+      return (found.tier || '').trim();
+    }
+  }
+  return '';
+}
+
+function getComputedSpeedsterTierInBoss(boss, speedsterName) {
+  const lower = String(speedsterName || '').toLowerCase();
+  if (!boss || !speedsterName) return 'unknown';
+
+  const clansOrder = ['instinct', 'mystic', 'valor'];
+  for (const clanKey of clansOrder) {
+    const clanData = boss.clans?.[clanKey];
+    if (!clanData?.recommended?.length) continue;
+
+    const ranked = rankRecommendedForBoss(boss.types || [], clanData.recommended);
+    const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
+    if (found) return found.tier || 'unknown';
+  }
+
+  // Fallback to static dataset if not found in computed ranking.
+  const staticTier = getSpeedsterTierForBoss(boss, speedsterName);
+  return staticTier || 'unknown';
+}
+
+function openSpeedsterBossesModal(speedster) {
+  const bosses = getBossesForSpeedster(speedster.name);
+  modalTitle.textContent = `${speedster.name} (Speedster)`;
+  modalSubtitle.textContent = bosses.length > 0 ? `Usado por ${bosses.length} boss(es)` : 'Não encontrado em nenhum boss';
+
+  const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
+  const pokemonImgRight = document.getElementById('modal-pokemon-img');
+  if (pokemonImgLeft) {
+    pokemonImgLeft.src = basePath + (speedster.image || '');
+    pokemonImgLeft.alt = speedster.name;
+  }
+  if (pokemonImgRight) {
+    pokemonImgRight.src = basePath + (speedster.image || '');
+    pokemonImgRight.alt = speedster.name;
+  }
+
+  modalBody.innerHTML = '';
+  const section = document.createElement('div');
+  section.className = 'speedster-clan-section';
+
+  const list = document.createElement('div');
+  list.className = 'speedster-clan-list';
+
+  if (bosses.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'speedster-clan-empty';
+    empty.textContent = 'Nenhum boss encontrado para este speedster.';
+    list.appendChild(empty);
+  } else {
+    bosses.forEach((boss) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'speedster-search-item';
+      button.style.justifyContent = 'space-between';
+      button.textContent = boss.name;
+
+      const tier = getComputedSpeedsterTierInBoss(boss, speedster.name);
+      if (tier) {
+        const dot = document.createElement('span');
+        dot.className = `tier-dot tier-${tier}`;
+        dot.style.marginLeft = '0.5rem';
+        dot.setAttribute('aria-label', `Tier ${tier}`);
+        button.appendChild(dot);
+      }
+
+      button.addEventListener('click', () => {
+        openModal(boss);
+      });
+      list.appendChild(button);
+    });
+  }
+
+  section.appendChild(list);
+  modalBody.appendChild(section);
+
+  modal.setAttribute('data-open', 'true');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  if (typeof gsap !== 'undefined') {
+    gsap.fromTo(
+      modal.querySelector('.speedster-modal-content'),
+      { opacity: 0, y: 40, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+    );
+  }
+}
+
 function openModal(speedster) {
+  currentBoss = speedster;
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
   const bossNames = bosses.map(b => b.name).join(' + ');
   modalTitle.textContent = bossNames;
@@ -888,7 +1180,6 @@ function openModal(speedster) {
   }
 
   modalBody.innerHTML = '';
-
   const clansOrder = ['instinct', 'mystic', 'valor'];
 
   clansOrder.forEach((clanKey) => {
@@ -1007,6 +1298,7 @@ const recommended = rankRecommendedForBoss(speedster.types || [], clanData?.reco
 }
 
 function closeModal() {
+  currentBoss = null;
   const content = modal.querySelector('.speedster-modal-content');
   if (typeof gsap !== 'undefined') {
     gsap.to(content, {
@@ -1074,9 +1366,62 @@ if (closeBtn) {
   closeBtn.addEventListener('click', closeModal);
 }
 
+const speedsterSearchPanel = document.querySelector('.speedster-search-panel');
+
+if (speedsterSearchPanel) {
+  const speedsterSearchCloseBtn = document.createElement('button');
+  speedsterSearchCloseBtn.type = 'button';
+  speedsterSearchCloseBtn.className = 'speedster-search-close';
+  speedsterSearchCloseBtn.setAttribute('aria-label', 'Fechar pesquisa');
+  speedsterSearchCloseBtn.textContent = '✖';
+
+  speedsterSearchCloseBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    closeSearchPanel();
+  });
+
+  // Prevent clicks inside the panel from reaching document click handler
+  speedsterSearchPanel.addEventListener('click', (event) => event.stopPropagation());
+
+  speedsterSearchPanel.appendChild(speedsterSearchCloseBtn);
+}
+
+if (speedsterSearchInput) {
+  speedsterSearchInput.addEventListener('focus', () => {
+    const value = speedsterSearchInput.value.trim();
+    if (value) renderSearchResults(value);
+    else renderSearchResults('');
+  });
+
+  speedsterSearchInput.addEventListener('input', (event) => {
+    renderSearchResults(event.target.value);
+  });
+
+  speedsterSearchInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      const active = document.activeElement;
+      if (!speedsterSearchPanel || !speedsterSearchPanel.contains(active)) {
+        hideSearchResults();
+      }
+    }, 100);
+  });
+}
+
+// Close search panel on click outside
+// (click em qualquer lugar fora do painel fecha)
+document.addEventListener('click', (event) => {
+  const searchPanel = document.querySelector('.speedster-search-panel');
+  if (!searchPanel || searchPanel.contains(event.target)) return;
+  closeSearchPanel();
+});
+
+// Close search panel with ESC também
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && modal && modal.getAttribute('data-open') === 'true') {
-    closeModal();
+  if (event.key === 'Escape') {
+    closeSearchPanel();
+    if (modal && modal.getAttribute('data-open') === 'true') {
+      closeModal();
+    }
   }
 });
 

@@ -193,7 +193,15 @@
         <h2>Hoopa Portais</h2>
         <div class="speedster-actions" style="margin-bottom:0.75rem; display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
           <p class="intro" style="max-width:720px;margin:0;color:#ddd;">Clique em um Boss para ver recomendações de pokémons para enfrentá-lo.</p>
+          <p class="intro" style="max-width:720px;margin:0;color:#ddd;font-weight:600;">⚔️ Offense: quanto maior, melhor. 🛡️ Defense: menor é melhor (0 = imune, 2 = super eficaz).</p>
+          <p class="intro" style="max-width:720px;margin:0;color:#f6c564;font-weight:600;">⚠️ Recomendado usar pokémons pelo menos bronze 5 para as recomendações apresentadas.</p>
         </div>
+        <aside class="speedster-search-panel" style="margin-bottom:1rem;">
+          <label for="speedster-search" class="speedster-search-label">Buscar Speedster</label>
+          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Speedster" aria-label="Buscar Speedster" autocomplete="off" />
+          <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
+          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Speedster ainda não foi adicionado.</div>
+        </aside>
         <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
       </div>
 

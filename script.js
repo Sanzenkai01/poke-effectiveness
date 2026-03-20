@@ -752,7 +752,15 @@ function selectType(type){
     const idx=currentSelection.indexOf(type);
     if(idx!=-1){currentSelection.splice(idx,1);}else{if(currentSelection.length===2)currentSelection.shift();currentSelection.push(type);}renderSelection();updateUrl();}
 
-function clearAll(){currentSelection=[];renderSelection();updateUrl();}
+function clearAll(options = {}){
+    currentSelection = [];
+    renderSelection();
+    if(options.clearSearch){
+        if(searchInput) searchInput.value = '';
+        createButtons('');
+    }
+    updateUrl();
+}
 
 function handleKeyNav(e){
     const btns=Array.from(chart.querySelectorAll('.type-button'));
@@ -879,8 +887,22 @@ function showSpeedsters(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabSpeedsters');
     document.title = t('tabSpeedsters');
+
     // Ensure grid is built when opening the tab (re-render if needed)
-    if(typeof renderGrid === 'function') renderGrid();
+    if(typeof renderGrid === 'function') {
+        renderGrid();
+        const speedsterGrid = document.getElementById('speedster-grid');
+        if(speedsterGrid && speedsterGrid.children.length === 0){
+            const warning = document.createElement('div');
+            warning.style.padding = '1rem';
+            warning.style.color = '#eee';
+            warning.style.background = 'rgba(255,0,0,0.08)';
+            warning.textContent = 'Não foi possível carregar speedsters, tente atualizar a página.';
+            speedsterGrid.appendChild(warning);
+            console.warn('Speedsters grid está vazio após renderização. Possível problema no hoopa-portais.js.');
+        }
+    }
+
     if(useGsap && contentSpeedsters){
         gsap.from(contentSpeedsters, {opacity:0, y:-10, duration:0.4});
     }
@@ -902,8 +924,16 @@ function initTabFromUrl(){
     if(saved==='speedsters') return showSpeedsters();
     return showEffectiveness();
 }
-initTabFromUrl();
 
+// Delay initTabFromUrl to ensure all scripts are fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add a small delay to ensure hoopa-portais.js has initialized
+        setTimeout(initTabFromUrl, 100);
+    });
+} else {
+    setTimeout(initTabFromUrl, 100);
+}
 
 const fossilCombos = {
     'Drake,Bird': { pokemon: 'dracozolt.png', dna: 'dna.gif' },
@@ -1415,7 +1445,7 @@ if(printBtn){
 const resetBtn = document.getElementById('reset-btn');
 if(resetBtn){
     resetBtn.addEventListener('click',()=>{
-        clearAll();
+        clearAll({clearSearch: true});
     });
 }
 
