@@ -577,7 +577,6 @@ function parseLog(text){
 }
 
 function drawConnections(type){
-    connectionsSvg.innerHTML='';
     const origin=document.querySelector(`.type-button[data-type="${type}"]`);
     if(!origin) return;
     const rect=origin.getBoundingClientRect();
@@ -601,7 +600,7 @@ function drawConnections(type){
         line.style.strokeDashoffset='100';
         connectionsSvg.appendChild(line);
         if(useGsap){
-            gsap.to(line, {x2: rx, y2: ry, stroke: (otherSelected && rt===otherSelected) ? '#0f0' : '#ff0', strokeWidth: (otherSelected && rt===otherSelected)?3:2, duration: 0.5, ease: 'power1.out'});
+            gsap.to(line, {attr: {x2: rx, y2: ry}, stroke: (otherSelected && rt===otherSelected) ? '#0f0' : '#ff0', strokeWidth: (otherSelected && rt===otherSelected)?3:2, duration: 0.5, ease: 'power1.out'});
             gsap.to(line.style, {strokeDashoffset:0, duration:0.5, ease:'linear'});
         } else {
             setTimeout(()=>{
@@ -623,7 +622,7 @@ function drawConnections(type){
         circle.setAttribute('opacity','0.8');
         connectionsSvg.appendChild(circle);
         if(useGsap){
-            gsap.to(circle, {cx: rx, cy: ry, r:2, opacity:0, duration:0.5, ease:'power1.out'});
+            gsap.to(circle, {attr: {cx: rx, cy: ry}, r:2, opacity:0, duration:0.5, ease:'power1.out'});
         } else {
             setTimeout(()=>{
                 circle.setAttribute('cx',rx);circle.setAttribute('cy',ry);
@@ -927,29 +926,50 @@ function showSpeedsters(){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr'];
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero'];
 
 let streamerFiltersInitialized = false;
 
 const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
 const TWITCH_BEARER_TOKEN = 'jmu7ee40wba03fsn2t30f19aol0lx7';
 
-function fetchStreamerStatus(name){
+function fetchStreamerStatus(name, isNonDrop = false){
     const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
                            !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
                            !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
 
     const detectPstory = (title) => {
         if(!title || !title.toString) return false;
-        return /\(DROP:ON\s*pstoryonline\.com\)/i.test(title.toString());
+        const normalized = title.toString().trim();
+
+        const explicitDrop = /\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized);
+        if(explicitDrop) return 'drop';
+
+        if(!isNonDrop) return false; // somente para não-Drops
+
+        // Ignorar marcadores óbvios de false positive
+        if(/(?:!|❗)\s*pstory/i.test(normalized)) return false;
+
+        // pstoryonline.com em qualquer parte do título (sem DROP explícito)
+        if(/pstoryonline\.com/i.test(normalized)) return 'nodrop';
+
+        // Palavra Pstory isolada, sem prefixo ! ou ❗
+        if(/(?:^|[^a-zA-Z0-9_])pstory(?:[^a-zA-Z0-9_]|$)/i.test(normalized)) return 'nodrop';
+
+        return false;
     };
 
-    const makeResult = (status, title='') => ({
-        status,
-        title: title ? title.toString().trim() : '',
-        isPstory: status === 'online' ? detectPstory(title || '') : false
-    });
+    const makeResult = (status, title='') => {
+        const pstoryStatus = (status === 'online' ? detectPstory(title || '') : false);
+        return {
+            status,
+            title: title ? title.toString().trim() : '',
+            isPstory: pstoryStatus !== false,
+            isPstoryDrop: pstoryStatus === 'drop',
+            isPstoryNoDrop: pstoryStatus === 'nodrop'
+        };
+    };
 
     const fetchDecapiTitle = () => {
         return fetch(`https://decapi.me/twitch/title/${encodeURIComponent(name)}`)
@@ -1361,7 +1381,7 @@ function renderStreamers(){
         grid.appendChild(card);
         console.log('renderStreamers', name, 'card appended; total now', grid.children.length);
 
-        fetchStreamerStatus(name)
+        fetchStreamerStatus(name, isNonDrop)
             .then(info=>{
                 resolvedCount += 1;
                 if(info.status === 'online'){
@@ -1372,7 +1392,13 @@ function renderStreamers(){
                     viewBtn.textContent = 'Ocultar preview';
                     setOnlinePreview();
                     // show Pstory indicator
-                    if(info.isPstory){
+                    if(info.isPstoryDrop){
+                        pstoryInfo.textContent = 'Streamando Pstory!';
+                        pstoryInfo.style.color = '#5ff7a6';
+                    } else if(info.isPstoryNoDrop){
+                        pstoryInfo.textContent = 'Streamando pstory! (sem drops)';
+                        pstoryInfo.style.color = '#ffd54f';
+                    } else if(info.isPstory){
                         pstoryInfo.textContent = 'Streamando Pstory!';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else {

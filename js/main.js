@@ -29,6 +29,10 @@
 				const btn = document.querySelector(`.type-button[data-type="${type}"]`);
 				if (btn) btn.classList.add('clan-related');
 			});
+			// Re-desenhar conexões do tipo(s) selecionado(s), se houver
+			if (window.renderSelection) {
+				window.renderSelection();
+			}
 		}
 
 		// Reset clan selection and highlights when reset button is clicked
