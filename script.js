@@ -1877,15 +1877,17 @@ function updateRangeResults(){
 }
 function updateCommon(){
     const n = parseInt(commonInput.value) || 0;
-    const elementItems = n * 750;
-    const charItems = n * 24;
-    const stones = n;
+    const perPlateElement = 750;
+    const perPlateChar = 24;
+    const perPlateStone = 1;
+    const elementItems = n * perPlateElement;
+    const charItems = n * perPlateChar;
+    const stones = n * perPlateStone;
     // build using translations
     const header = t('forCommonLabel').replace('{n}', n);
-    const itemsText = t('calcInfoItems')
-                        .replace('{elementItems}', elementItems.toLocaleString())
-                        .replace('{charItems}', charItems.toLocaleString())
-                        .replace('{stones}', stones.toLocaleString());
+    const itemsText = `${elementItems.toLocaleString()} itens do elemento (${perPlateElement}×${n}), ` +
+                      `${charItems.toLocaleString()} itens característicos (${perPlateChar}×${n}), ` +
+                      `${stones.toLocaleString()} pedra(s) do elemento (${perPlateStone}×${n})`;
     commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
     if(useGsap) gsap.from(commonResults, {opacity:0, y:10, duration:0.3});
 }
