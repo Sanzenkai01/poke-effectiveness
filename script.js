@@ -1,3 +1,12 @@
+// Helper to clear all tab highlights
+function clearTabHighlights() {
+    [tabEffectBtn, tabFossilsBtn, tabCalcBtn, tabCatchBtn, tabSpeedstersBtn, tabStreamersBtn].forEach(btn => {
+        if (btn) {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        }
+    });
+}
 
 // if opened via file:// the fetch will fail; warn user early
 if(location.protocol === 'file:'){
@@ -37,10 +46,12 @@ const tabFossilsBtn = document.getElementById('tab-fossils');
 const tabCalcBtn = document.getElementById('tab-calculator');
 const tabCatchBtn = document.getElementById('tab-catch');
 const tabSpeedstersBtn = document.getElementById('tab-speedsters');
+const tabStreamersBtn = document.getElementById('tab-streamers');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
 const contentSpeedsters = document.getElementById('content-speedsters');
+const contentStreamers = document.getElementById('content-streamers');
 
 const ranges = {
     '50-100': { plates: 280, gold: 40 },
@@ -81,6 +92,7 @@ const strings = {
         tabCalculator: 'Calculadora de Treinamento',
         tabFossils: 'Fósseis',
         tabSpeedsters: 'Hoopa Portais',
+        tabStreamers: 'Streamers',
         fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
         fossilHintCombines: 'Este fóssil combina com: ',
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
@@ -163,6 +175,9 @@ function updateTextContent(){
     } else if(tabSpeedstersBtn && tabSpeedstersBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabSpeedsters');
         document.title = t('tabSpeedsters');
+    } else if(tabStreamersBtn && tabStreamersBtn.classList.contains('active')){
+        if(titleEl) titleEl.textContent = t('tabStreamers');
+        document.title = t('tabStreamers');
     } else {
         if(titleEl) titleEl.textContent = t('pageTitle');
         document.title = t('pageTitle');
@@ -198,6 +213,7 @@ function updateTextContent(){
     if(tabCalcBtn) tabCalcBtn.textContent = t('tabCalculator');
     if(tabCatchBtn) tabCatchBtn.textContent = t('catchTitle');
     if(tabSpeedstersBtn) tabSpeedstersBtn.textContent = t('tabSpeedsters');
+    if(tabStreamersBtn) tabStreamersBtn.textContent = t('tabStreamers');
     const ptLabel = document.getElementById('pokemon-type-label');
     if(ptLabel) ptLabel.textContent = t('pokemonTypeLabel') + ':';
     variantRadios.forEach(r=>{
@@ -389,16 +405,16 @@ function updateColumns(){
 }
 
 function showFossils(){
-    if(tabFossilsBtn) tabFossilsBtn.classList.add('active');
-    if(tabFossilsBtn) tabFossilsBtn.setAttribute('aria-selected','true');
-    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
-    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
-    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
-    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
+    clearTabHighlights();
+    if(tabFossilsBtn) {
+        tabFossilsBtn.classList.add('active');
+        tabFossilsBtn.setAttribute('aria-selected','true');
+    }
     if(contentFossils) contentFossils.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
     if(contentSpeedsters) contentSpeedsters.hidden = true;
+    if(contentStreamers) contentStreamers.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // clear previous catch output
@@ -779,16 +795,16 @@ window.addEventListener('keydown',e=>{if(e.key==='Escape')clearAll();});
 window.addEventListener('resize',()=>{updateColumns();if(currentSelection.length)renderSelection();});
 
 function showEffectiveness(){
-    if(tabEffectBtn) tabEffectBtn.classList.add('active');
-    if(tabEffectBtn) tabEffectBtn.setAttribute('aria-selected','true');
-    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
-    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
-    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
-    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
+    clearTabHighlights();
+    if(tabEffectBtn) {
+        tabEffectBtn.classList.add('active');
+        tabEffectBtn.setAttribute('aria-selected','true');
+    }
     if(contentEffect) contentEffect.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
     if(contentSpeedsters) contentSpeedsters.hidden = true;
+    if(contentStreamers) contentStreamers.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // clear any previous catch results/logs so they don't persist in the footer
@@ -808,16 +824,16 @@ function showEffectiveness(){
     updateUrl();
 }
 function showCalculator(){
-    if(tabCalcBtn) tabCalcBtn.classList.add('active');
-    if(tabCalcBtn) tabCalcBtn.setAttribute('aria-selected','true');
-    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
-    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
-    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
-    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
+    clearTabHighlights();
+    if(tabCalcBtn) {
+        tabCalcBtn.classList.add('active');
+        tabCalcBtn.setAttribute('aria-selected','true');
+    }
     if(contentCalc) contentCalc.hidden = false;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
     if(contentSpeedsters) contentSpeedsters.hidden = true;
+    if(contentStreamers) contentStreamers.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     // also clear catch calculator results/log so they don’t linger
@@ -845,16 +861,16 @@ if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); lo
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 
 function showCatch(){
-    if(tabCatchBtn) tabCatchBtn.classList.add('active');
-    if(tabCatchBtn) tabCatchBtn.setAttribute('aria-selected','true');
-    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
-    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
-    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
-    if(tabSpeedstersBtn) { tabSpeedstersBtn.classList.remove('active'); tabSpeedstersBtn.setAttribute('aria-selected','false'); }
+    clearTabHighlights();
+    if(tabCatchBtn) {
+        tabCatchBtn.classList.add('active');
+        tabCatchBtn.setAttribute('aria-selected','true');
+    }
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
     if(contentSpeedsters) contentSpeedsters.hidden = true;
+    if(contentStreamers) contentStreamers.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = false;
     document.body.classList.remove('show-instructions');
@@ -867,18 +883,19 @@ function showCatch(){
 }
 if(tabCatchBtn) tabCatchBtn.addEventListener('click',()=>{ showCatch(); localStorage.setItem('selectedTab','catch'); updateUrl(); });
 if(tabSpeedstersBtn) tabSpeedstersBtn.addEventListener('click',()=>{ showSpeedsters(); localStorage.setItem('selectedTab','speedsters'); updateUrl(); });
+if(tabStreamersBtn) tabStreamersBtn.addEventListener('click',()=>{ showStreamers(); localStorage.setItem('selectedTab','streamers'); updateUrl(); });
 
 function showSpeedsters(){
-    if(tabSpeedstersBtn) tabSpeedstersBtn.classList.add('active');
-    if(tabSpeedstersBtn) tabSpeedstersBtn.setAttribute('aria-selected','true');
-    if(tabEffectBtn) { tabEffectBtn.classList.remove('active'); tabEffectBtn.setAttribute('aria-selected','false'); }
-    if(tabFossilsBtn) { tabFossilsBtn.classList.remove('active'); tabFossilsBtn.setAttribute('aria-selected','false'); }
-    if(tabCalcBtn) { tabCalcBtn.classList.remove('active'); tabCalcBtn.setAttribute('aria-selected','false'); }
-    if(tabCatchBtn) { tabCatchBtn.classList.remove('active'); tabCatchBtn.setAttribute('aria-selected','false'); }
+    clearTabHighlights();
+    if(tabSpeedstersBtn) {
+        tabSpeedstersBtn.classList.add('active');
+        tabSpeedstersBtn.setAttribute('aria-selected','true');
+    }
     if(contentSpeedsters) contentSpeedsters.hidden = false;
     if(contentCalc) contentCalc.hidden = true;
     if(contentEffect) contentEffect.hidden = true;
     if(contentFossils) contentFossils.hidden = true;
+    if(contentStreamers) contentStreamers.hidden = true;
     const contentCatch = document.getElementById('content-catch');
     if(contentCatch) contentCatch.hidden = true;
     document.body.classList.remove('show-instructions');
@@ -909,6 +926,565 @@ function showSpeedsters(){
     updateUrl();
 }
 
+const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr'];
+
+let streamerFiltersInitialized = false;
+
+const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
+const TWITCH_BEARER_TOKEN = 'jmu7ee40wba03fsn2t30f19aol0lx7';
+
+function fetchStreamerStatus(name){
+    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
+                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
+                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
+
+    const detectPstory = (title) => {
+        if(!title || !title.toString) return false;
+        return /\(DROP:ON\s*pstoryonline\.com\)/i.test(title.toString());
+    };
+
+    const makeResult = (status, title='') => ({
+        status,
+        title: title ? title.toString().trim() : '',
+        isPstory: status === 'online' ? detectPstory(title || '') : false
+    });
+
+    const fetchDecapiTitle = () => {
+        return fetch(`https://decapi.me/twitch/title/${encodeURIComponent(name)}`)
+            .then(r => r.ok ? r.text() : '')
+            .then(text => (text || '').toString().trim())
+            .catch(err => {
+                console.error('fetchDecapiTitle error', name, err);
+                return '';
+            });
+    };
+
+    const queryDecapi = () => {
+        console.log('queryDecapi', name, 'fallback active');
+        return fetchDecapiTitle().then(title => {
+            if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
+                return makeResult('offline', title);
+            }
+            return makeResult('online', title);
+        }).catch(err => {
+            console.error('queryDecapi network error', name, err);
+            return makeResult('unknown', '');
+        });
+    };
+
+    const queryIvr = () => {
+        console.warn('queryIvr', name, 'fallback active');
+        return fetch(`https://api.ivr.fi/v2/twitch/stream/${encodeURIComponent(name)}`)
+            .then(r => {
+                if(!r.ok) return queryDecapi();
+                return r.json().then(json => {
+                    if(json && json.stream){
+                        return fetchDecapiTitle().then(title => makeResult('online', title));
+                    }
+                    if(json && json.stream === null) return makeResult('offline', '');
+                    return queryDecapi();
+                }).catch(err => {
+                    console.error('queryIvr JSON error', name, err);
+                    return queryDecapi();
+                });
+            }).catch(err => {
+                console.error('queryIvr network error', name, err);
+                return queryDecapi();
+            });
+    };
+
+    if(!credentialsSet){
+        console.warn('Twitch API credentials not set. Falling back to decapi.tv query.');
+        return queryDecapi();
+    }
+
+    const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
+    console.log('fetchStreamerStatus', name, 'calling helix');
+    return fetch(url, {
+        headers: {
+            'Client-ID': TWITCH_CLIENT_ID,
+            'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
+            'Accept': 'application/json'
+        }
+    })
+    .then(r => {
+        console.log('fetchStreamerStatus', name, 'status', r.status);
+        if(!r.ok){
+            if(r.status === 401 || r.status === 403){
+                console.warn('Twitch API credenciais inválidas ou vencidas. Verifique CLIENT_ID/Bearer.');
+            } else {
+                console.warn('fetchStreamerStatus', name, 'helix returned non-OK, status', r.status);
+            }
+            return queryDecapi();
+        }
+        return r.json().then(data => {
+            console.log('fetchStreamerStatus', name, 'dataCount', data && data.data && data.data.length);
+            if(data && Array.isArray(data.data) && data.data.length > 0){
+                const stream = data.data[0];
+                const title = stream.title || '';
+                return makeResult('online', title);
+            }
+            return makeResult('offline', '');
+        }).catch(err=>{
+            console.error('fetchStreamerStatus JSON error', name, err);
+            return queryDecapi();
+        });
+    }).catch(err=>{
+        console.error('fetchStreamerStatus fetch error', name, err);
+        return queryDecapi();
+    });
+}
+
+function renderStreamers(){
+    console.log('renderStreamers called');
+    const grid = document.getElementById('streamer-grid');
+    const statusInfo = document.getElementById('streamer-status-info');
+    if(!grid){
+        console.warn('renderStreamers: streamer-grid não encontrado');
+        return;
+    }
+    if(!statusInfo){
+        console.warn('renderStreamers: streamer-status-info não encontrado');
+    }
+
+    grid.style.display = 'grid';
+    grid.innerHTML = '';
+    if(statusInfo){
+        statusInfo.textContent = 'Carregando status de streamers...';
+        const nonDropList = Array.from(NON_DROP_STREAMERS);
+        if(nonDropList.length){
+            const nonDropEl = document.createElement('div');
+            nonDropEl.style.fontSize = '0.78rem';
+            nonDropEl.style.color = '#ffeb6d';
+            nonDropEl.style.marginTop = '0.3rem';
+            nonDropEl.textContent = `Streamers sem drop (lista separada): ${nonDropList.join(', ')}`;
+            statusInfo.appendChild(nonDropEl);
+        }
+    }
+
+    let totalOnline = 0;
+    let resolvedCount = 0;
+
+    const updateStatusInfo = () => {
+        if(!statusInfo) return;
+        if(resolvedCount < STREAMERS.length) {
+            statusInfo.textContent = `Carregando ${resolvedCount}/${STREAMERS.length} status...`;
+            return;
+        }
+        if(totalOnline === 0){
+            statusInfo.textContent = 'Nenhum streamer está online agora. Mas a lista continua visível abaixo.';
+        } else {
+            statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} streamers`;
+        }
+    };
+
+    const placeStreamerCard = (card, info) => {
+        card.dataset.pstory = info.isPstory ? 'true' : 'false';
+        card.dataset.online = info.status === 'online' ? 'true' : 'false';
+        // Remove para reposicionar com ordenação correta
+        if (card.parentElement === grid) {
+            grid.removeChild(card);
+        }
+
+        if(info.isPstory){
+            grid.insertBefore(card, grid.firstChild);
+            return;
+        }
+
+        // Manter online acima de offline/unknown, mas abaixo de pstory
+        if(info.status === 'online'){
+            const lastPstory = Array.from(grid.children).filter(c => c.dataset.pstory === 'true').pop();
+            if(lastPstory){
+                grid.insertBefore(card, lastPstory.nextSibling);
+                return;
+            }
+            const firstOffline = Array.from(grid.children).find(c => c.dataset.online !== 'true');
+            if(firstOffline){
+                grid.insertBefore(card, firstOffline);
+                return;
+            }
+            grid.appendChild(card);
+            return;
+        }
+
+        // offline/unknown -> no final
+        const lastOnlineOrPstory = Array.from(grid.children).filter(c => c.dataset.pstory === 'true' || c.dataset.online === 'true').pop();
+        if(lastOnlineOrPstory){
+            grid.insertBefore(card, lastOnlineOrPstory.nextSibling);
+        } else {
+            grid.appendChild(card);
+        }
+        applyStreamerFilters();
+    };
+
+    const applyStreamerFilters = () => {
+        const grid = document.getElementById('streamer-grid');
+        if(!grid) return;
+        const filterAll = document.getElementById('filter-all');
+        const filterDrops = document.getElementById('filter-drops');
+        const filterOnline = document.getElementById('filter-online');
+        const filterPack = document.getElementById('filter-pack');
+        const filterPstory = document.getElementById('filter-pstory');
+        if(!filterAll || !filterDrops || !filterOnline || !filterPack || !filterPstory) return;
+
+        if(filterAll.checked){
+            Array.from(grid.children).forEach(card => { card.style.display = ''; });
+            return;
+        }
+
+        const showDrops = filterDrops.checked;
+        const showOnline = filterOnline.checked;
+        const showPack = filterPack.checked;
+        const showPstory = filterPstory.checked;
+        const activeCount = [showDrops, showOnline, showPack, showPstory].filter(x => x).length;
+
+        if(activeCount === 0){
+            filterAll.checked = true;
+            Array.from(grid.children).forEach(card => { card.style.display = ''; });
+            return;
+        }
+
+        Array.from(grid.children).forEach(card => {
+            const isDrop = card.dataset.drop === 'true';
+            const isOnline = card.dataset.online === 'true';
+            const isPack = card.dataset.pack === 'true';
+            const isPstory = card.dataset.pstory === 'true';
+
+            let visible = true;
+            if(showDrops && !isDrop) visible = false;
+            if(showOnline && !isOnline) visible = false;
+            if(showPack && !isPack) visible = false;
+            if(showPstory && !isPstory) visible = false;
+
+            card.style.display = visible ? '' : 'none';
+        });
+    };
+
+    const fetchStreamerAvatar = (name) => {
+        return fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(name)}`)
+            .then(r => {
+                if(!r.ok) throw new Error('avatar não encontrado');
+                return r.text();
+            })
+            .then(url => {
+                const trimmed = (url || '').trim();
+                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar inválido');
+                return trimmed;
+            })
+            .catch(() => null);
+    };
+
+    const setupStreamerFilterControls = () => {
+        if(streamerFiltersInitialized) return;
+        streamerFiltersInitialized = true;
+
+        const filterAll = document.getElementById('filter-all');
+        const filterDrops = document.getElementById('filter-drops');
+        const filterOnline = document.getElementById('filter-online');
+        const filterPack = document.getElementById('filter-pack');
+        const filterPstory = document.getElementById('filter-pstory');
+        if(!filterAll || !filterDrops || !filterOnline || !filterPack || !filterPstory) return;
+
+        const onFilterChange = () => {
+            if(filterAll.checked){
+                filterDrops.checked = false;
+                filterOnline.checked = false;
+                filterPack.checked = false;
+                filterPstory.checked = false;
+            }
+            applyStreamerFilters();
+        };
+
+        const onDropdownChange = () => {
+            if(filterAll.checked){
+                filterAll.checked = false;
+            }
+            if(!filterDrops.checked && !filterOnline.checked && !filterPack.checked && !filterPstory.checked){
+                filterAll.checked = true;
+            }
+            applyStreamerFilters();
+        };
+
+        filterAll.addEventListener('change', onFilterChange);
+        filterDrops.addEventListener('change', onDropdownChange);
+        filterOnline.addEventListener('change', onDropdownChange);
+        filterPack.addEventListener('change', onDropdownChange);
+        filterPstory.addEventListener('change', onDropdownChange);
+
+        applyStreamerFilters();
+    };
+
+    setupStreamerFilterControls();
+
+    STREAMERS.forEach(name=>{
+        const card = document.createElement('article');
+        card.className = 'streamer-card';
+        const label = document.createElement('h3');
+        const displayName = name === 'adivorcio' ? 'aDivorcio' : (name.charAt(0).toUpperCase() + name.slice(1));
+        label.textContent = displayName;
+        label.style.margin = '0';
+        const status = document.createElement('span');
+        status.className = 'streamer-status';
+        status.textContent = 'Carregando...';
+
+        const headerWrapper = document.createElement('div');
+        headerWrapper.style.display = 'flex';
+        headerWrapper.style.alignItems = 'center';
+        headerWrapper.style.justifyContent = 'space-between';
+        headerWrapper.style.width = '100%';
+
+        const nameContainer = document.createElement('div');
+        nameContainer.style.display = 'flex';
+        nameContainer.style.alignItems = 'center';
+
+        const creatorBadge = document.createElement('span');
+        creatorBadge.textContent = 'Drops';
+        creatorBadge.style.fontSize = '0.72rem';
+        creatorBadge.style.padding = '0.09rem 0.35rem';
+        creatorBadge.style.marginLeft = '0.5rem';
+        creatorBadge.style.marginTop = '0.25rem';
+        creatorBadge.style.background = 'rgba(255,255,255,0.15)';
+        creatorBadge.style.color = '#fff';
+        creatorBadge.style.borderRadius = '0.3rem';
+        creatorBadge.style.fontWeight = '600';
+        const isNonDrop = NON_DROP_STREAMERS.has(name);
+
+        const packBadge = document.createElement('span');
+        let hasPackBadge = false;
+
+        const packPreview = document.createElement('img');
+        packPreview.style.position = 'absolute';
+        packPreview.style.top = '2.6rem';
+        packPreview.style.right = '0.5rem';
+        packPreview.style.width = '140px';
+        packPreview.style.height = 'auto';
+        packPreview.style.maxHeight = '120px';
+        packPreview.style.borderRadius = '0.45rem';
+        packPreview.style.boxShadow = '0 8px 20px rgba(0,0,0,0.35)';
+        packPreview.style.opacity = '0';
+        packPreview.style.visibility = 'hidden';
+        packPreview.style.transition = 'opacity 0.22s ease, visibility 0.22s ease';
+        packPreview.style.pointerEvents = 'none';
+        packPreview.style.zIndex = '10';
+
+        if(PACK_STREAMERS.has(name)){
+            hasPackBadge = true;
+            packBadge.className = 'streamer-pack-badge';
+            packBadge.textContent = 'Pack';
+            packBadge.title = 'Esse Streamer tem pack de Streamer dentro do jogo.';
+            packBadge.style.position = 'absolute';
+            packBadge.style.top = '0.500rem';
+            packBadge.style.right = '0.5rem';
+            packBadge.style.fontSize = '0.75rem';
+            packBadge.style.padding = '0.15rem 0.45rem';
+            packBadge.style.background = 'linear-gradient(135deg,#f0c040,#ffbd00)';
+            packBadge.style.color = '#2b2b2b';
+            packBadge.style.borderRadius = '0.35rem';
+            packBadge.style.fontWeight = '700';
+            packBadge.style.zIndex = '2';
+
+            packBadge.addEventListener('mouseenter', () => {
+                const extension = '.png';
+                packPreview.src = `packs/${encodeURIComponent(name)}${extension}`;
+                packPreview.style.visibility = 'visible';
+                packPreview.style.opacity = '1';
+            });
+            packBadge.addEventListener('mouseleave', () => {
+                packPreview.style.opacity = '0';
+                packPreview.style.visibility = 'hidden';
+            });
+            packPreview.addEventListener('error', () => {
+                packPreview.style.opacity = '0';
+                packPreview.style.visibility = 'hidden';
+            });
+        }
+
+        const pstoryInfo = document.createElement('div');
+        pstoryInfo.style.fontSize = '0.82rem';
+        pstoryInfo.style.marginTop = '0.2rem';
+        pstoryInfo.style.color = '#d8d8d8';
+        pstoryInfo.textContent = '';
+        const actions = document.createElement('div');
+        actions.className = 'streamer-actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.textContent = 'Ver preview';
+        viewBtn.disabled = true;
+
+        const openBtn = document.createElement('button');
+        openBtn.textContent = 'Abrir no Twitch';
+        openBtn.disabled = true;
+
+        actions.appendChild(viewBtn);
+        actions.appendChild(openBtn);
+
+        const miniPreview = document.createElement('div');
+        miniPreview.className = 'streamer-mini-preview';
+        miniPreview.style.display = 'none';
+        miniPreview.style.marginTop = '0.5rem';
+
+        const setOnlinePreview = () => {
+            const parentDomain = location.hostname || 'localhost';
+            miniPreview.innerHTML = `\n                <iframe src="https://player.twitch.tv/?channel=${encodeURIComponent(name)}&parent=${encodeURIComponent(parentDomain)}&autoplay=false"\n                    height="180" width="100%" style="border:0;border-radius:0.5rem;min-height:160px;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>\n            `;
+            miniPreview.style.display = 'block';
+        };
+
+        const setOfflinePreview = (avatarUrl) => {
+            if(avatarUrl){
+                miniPreview.innerHTML = `\n                    <img src="${avatarUrl}" alt="${name} avatar" style="width:100%;height:160px;object-fit:cover;border-radius:0.5rem;" />\n                `;
+            } else {
+                miniPreview.innerHTML = `\n                    <div style="display:flex;align-items:center;justify-content:center;height:160px;background:rgba(255,255,255,0.05);color:#ddd;border-radius:0.5rem;">Avatar não disponível</div>\n                `;
+            }
+            miniPreview.style.display = 'block';
+        };
+
+        card.style.position = 'relative';
+        card.dataset.drop = (!isNonDrop).toString();
+        card.dataset.pack = PACK_STREAMERS.has(name) ? 'true' : 'false';
+        card.dataset.online = 'false';
+        nameContainer.appendChild(label);
+        if(!isNonDrop){
+            nameContainer.appendChild(creatorBadge);
+        }
+        headerWrapper.appendChild(nameContainer);
+        card.appendChild(headerWrapper);
+        if(hasPackBadge){
+            card.appendChild(packBadge);
+            card.appendChild(packPreview);
+        }
+        card.appendChild(status);
+        card.appendChild(pstoryInfo);
+        card.appendChild(actions);
+        card.appendChild(miniPreview);
+        grid.appendChild(card);
+        console.log('renderStreamers', name, 'card appended; total now', grid.children.length);
+
+        fetchStreamerStatus(name)
+            .then(info=>{
+                resolvedCount += 1;
+                if(info.status === 'online'){
+                    status.textContent = 'Online';
+                    status.classList.add('online');
+                    totalOnline += 1;
+                    viewBtn.disabled = false;
+                    viewBtn.textContent = 'Ocultar preview';
+                    setOnlinePreview();
+                    // show Pstory indicator
+                    if(info.isPstory){
+                        pstoryInfo.textContent = 'Streamando Pstory!';
+                        pstoryInfo.style.color = '#5ff7a6';
+                    } else {
+                        pstoryInfo.textContent = 'Não está streamando Pstory.';
+                        pstoryInfo.style.color = '#fa9005';
+                    }
+                } else if(info.status === 'offline'){
+                    status.textContent = 'Offline';
+                    status.classList.add('offline');
+                    pstoryInfo.textContent = 'Não está online no momento.';
+                    pstoryInfo.style.color = '#fa0505';
+                    viewBtn.disabled = false;
+                    viewBtn.textContent = 'Mostrar avatar';
+                    fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
+                } else if(info.status === 'unknown'){
+                    status.textContent = 'Status desconhecido';
+                    status.classList.add('offline');
+                    pstoryInfo.textContent = 'Não foi possível verificar o título.';
+                    pstoryInfo.style.color = '#aaa';
+                    viewBtn.disabled = false;
+                    viewBtn.textContent = 'Mostrar avatar';
+                    fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
+                } else {
+                    status.textContent = 'Erro ao obter';
+                    status.classList.add('offline');
+                    pstoryInfo.textContent = 'Erro ao determinar Pstory.';
+                    pstoryInfo.style.color = '#faa';
+                }
+                placeStreamerCard(card, info);
+                openBtn.disabled = false;
+                updateStatusInfo();
+            })
+
+            .catch(() => {
+                placeStreamerCard(card, {status:'unknown', isPstory:false});
+                resolvedCount += 1;
+                status.textContent = 'Erro ao obter';
+                status.classList.add('offline');
+                openBtn.disabled = false;
+                updateStatusInfo();
+            });
+
+        openBtn.addEventListener('click', ()=>{
+            window.open(`https://www.twitch.tv/${name}`, '_blank');
+        });
+
+        viewBtn.addEventListener('click', ()=>{
+            if(miniPreview.style.display === 'none' || miniPreview.style.display === ''){
+                if(status.textContent === 'Online'){
+                    setOnlinePreview();
+                    viewBtn.textContent = 'Ocultar preview';
+                } else {
+                    fetchStreamerAvatar(name).then(url => {
+                        setOfflinePreview(url);
+                        viewBtn.textContent = 'Ocultar preview';
+                    });
+                }
+            } else {
+                miniPreview.style.display = 'none';
+                openBtn.disabled = false;
+                if(status.textContent === 'Online'){
+                    viewBtn.textContent = 'Ver preview';
+                } else {
+                    viewBtn.textContent = 'Mostrar avatar';
+                }
+            }
+        });
+    });
+
+    if(grid.children.length === 0) {
+        grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum streamer configurado no momento.</div>';
+        if(statusInfo) statusInfo.textContent = 'Nenhum streamer disponível.';
+    }
+}
+
+function showStreamers(){
+    clearTabHighlights();
+    if(tabStreamersBtn) {
+        tabStreamersBtn.classList.add('active');
+        tabStreamersBtn.setAttribute('aria-selected','true');
+    }
+    if(contentStreamers) {
+        contentStreamers.hidden = false;
+        contentStreamers.removeAttribute('hidden');
+    }
+    if(contentCalc) contentCalc.hidden = true;
+    if(contentEffect) contentEffect.hidden = true;
+    if(contentFossils) contentFossils.hidden = true;
+    if(contentSpeedsters) contentSpeedsters.hidden = true;
+    const contentCatch = document.getElementById('content-catch');
+    if(contentCatch) contentCatch.hidden = true;
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = t('tabStreamers');
+    document.title = t('tabStreamers');
+    // Verifica se o grid de streamers existe e mantém visível.
+    const grid = document.getElementById('streamer-grid');
+    if(!grid){
+        console.warn('showStreamers: streamer-grid não encontrado');
+    } else {
+        grid.style.display = 'grid';
+    }
+
+    renderStreamers();
+    if(useGsap && contentStreamers){
+        gsap.from(contentStreamers, {opacity:0, y:-10, duration:0.4});
+    }
+    updateUrl();
+}
+
 // attempt to load tab from URL query first, fallback to localStorage
 function initTabFromUrl(){
     const params=new URLSearchParams(location.search);
@@ -917,11 +1493,13 @@ function initTabFromUrl(){
     if(tabparam==='fossils') return showFossils();
     if(tabparam==='catch') return showCatch();
     if(tabparam==='speedsters') return showSpeedsters();
+    if(tabparam==='streamers') return showStreamers();
     const saved = localStorage.getItem('selectedTab');
     if(saved==='calculator') return showCalculator();
     if(saved==='fossils') return showFossils();
     if(saved==='catch') return showCatch();
     if(saved==='speedsters') return showSpeedsters();
+    if(saved==='streamers') return showStreamers();
     return showEffectiveness();
 }
 
@@ -1050,79 +1628,25 @@ function fossilShowResult(pair){
     const combo = fossilCombos[pair];
     if(!combo) return;
     const [a,b] = pair.split(',');
-    // special case for amber ghost image
-    // if both selected fossils are Amber, show a single amber icon
-    let fossila, fossilb;
-    if(a === 'Amber' && b === 'Amber'){
-        fossila = fossilb = 'fosseis/old_amber.png';
-    } else {
-        fossila = a === 'Amber' ? 'fosseis/old_amber.png' : `fosseis/Bag_Fossilized_${a}_Sprite.png`;
-        fossilb = b === 'Amber' ? 'fosseis/old_amber.png' : `fosseis/Bag_Fossilized_${b}_Sprite.png`;
-    }
-    // determine hunt side based on resulting pokemon
-    const base = combo.pokemon.split('.')[0];
-    const huntSide = {
-        dracozolt: 'left',
-        dracovish: 'left',
-        arctozolt: 'right',
-        arctovish: 'right',
-        aerodactyl: 'right'
-    };
-    const sideKey = huntSide[base] || '';
-    // never display hunt-side for Aerodactyl (respawn random)
-    const sideText = (sideKey && base !== 'aerodactyl') ? `<p>${t('huntSideLabel')}: ${t(sideKey)}</p>` : '';
-    // custom dna/cost for Aerodactyl
-    const isAerodactyl = base === 'aerodactyl';
-    const dnaQty = isAerodactyl ? 150 : 50;
-    const costText = isAerodactyl ? `<p style="font-weight:bold;">Reviver este Pokémon custa 500K.</p>` : '';
-    // build fossil icons section: one image if both the same
-    let fossilIcons = '';
-    if(a === 'Amber' && b === 'Amber'){
-        fossilIcons = `<img class="result-fossil" src="${encodeURI(fossila)}" alt="${a}" />`;
-    } else {
-        fossilIcons = `<img class="result-fossil" src="${encodeURI(fossila)}" alt="${a}" />
-          <img class="result-fossil" src="${encodeURI(fossilb)}" alt="${b}" />`;
-    }
-    fossilResultDiv.innerHTML = `<p>${t('result')}</p>
-        <div class="result-fossils">
-          ${fossilIcons}
+
+    const resultDiv = document.getElementById('result');
+    if(!resultDiv) return;
+
+    const pokemonName = combo.pokemon.split('.')[0];
+    const normalizedName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
+
+    resultDiv.innerHTML = `
+        <div class="fossil-result" style="text-align:center; color:#fff;">
+            <h3>${normalizedName}</h3>
+            <img src="fosseis/${combo.pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
+            <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
+            <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
+            ${combo.dna ? `<p>DNA necessário: ${combo.dna}</p>` : ''}
         </div>
-        <img src="${encodeURI('fosseis/' + combo.pokemon)}" alt="${combo.pokemon}" style="width:100px;height:100px;" />
-        ${sideText}
-        <p>${t('dnaRequired')}</p>
-        <img src="${encodeURI('fosseis/' + combo.dna)}" alt="${combo.dna}" style="width:50px;height:50px;" /> <span class="dna-quantity">${dnaQty}x</span>
-        ${costText}`;
-    if(useGsap){
-        gsap.from(fossilResultDiv, {opacity:0, y:-20, duration:0.5});
-        gsap.from(fossilResultDiv.querySelectorAll('img'), {scale:0, stagger:0.1, duration:0.4, ease:'back.out(1.7)'});
-    }
+    `;
 }
 
-function getPartners(type){
-    const set=new Set();
-    Object.keys(fossilCombos).forEach(k=>{
-        const [a,b]=k.split(',');
-        if(a===type) set.add(b);
-        if(b===type) set.add(a);
-    });
-    return set;
-}
 
-const pokemonToPair = {};
-Object.entries(fossilCombos).forEach(([k,v])=>{
-    if(v && v.pokemon){
-        pokemonToPair[v.pokemon] = k;
-    }
-});
-
-function highlightFossils(pair){
-    const [a,b] = pair.split(',');
-    document.querySelectorAll('.fossil-img').forEach(i=>{
-        if(i.dataset.type===a || i.dataset.type===b){
-            i.classList.add('selected','active');
-        }
-    });
-}
 
 function showByPokemon(pokemon){
     const pair = pokemonToPair[pokemon];
@@ -1389,6 +1913,7 @@ function updateUrl(){
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
                       tabSpeedstersBtn.classList.contains('active') ? 'speedsters' :
+                      (tabStreamersBtn && tabStreamersBtn.classList.contains('active')) ? 'streamers' :
                       (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
     if(activeTab) params.set('tab', activeTab); else params.delete('tab');
     const query = params.toString();

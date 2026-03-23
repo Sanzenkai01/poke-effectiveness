@@ -25,6 +25,7 @@
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
       <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculator de Catchs</button>
       <button id="tab-speedsters" class="tab" role="tab" aria-selected="false" aria-controls="content-speedsters">Hoopa Portais</button>
+      <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">Streamers</button>
     </div>
 
     <p id="instructions">Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.</p>
@@ -51,6 +52,17 @@
         <div class="search-wrapper">
           <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
           <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
+        </div>
+        <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
+            <button class="clan-btn" data-clan="instinct" aria-pressed="false" title="Instinct">
+              <img src="hoopa-portais/Instinct.png" alt="Instinct" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Instinct
+            </button>
+            <button class="clan-btn" data-clan="mystic" aria-pressed="false" title="Mystic">
+              <img src="hoopa-portais/Mystic.png" alt="Mystic" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Mystic
+            </button>
+            <button class="clan-btn" data-clan="valor" aria-pressed="false" title="Valor">
+              <img src="hoopa-portais/Valor.png" alt="Valor" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Valor
+            </button>
         </div>
         <div id="chart-container" class="chart-container">
           <svg id="connections"></svg>
@@ -205,7 +217,25 @@
         <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
       </div>
 
-      <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+    </div> <!-- close content-speedsters -->
+
+    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
+      <div class="card calc-card">
+        <h2>Streamers</h2>
+        <p style="max-width:760px;margin:0.5rem auto;color:#ddd;">Acompanhe o status de transmissão dos streamers e abra a live no Twitch.</p>
+        <div id="streamer-status-info" class="streamer-status-info" style="margin-bottom:0.75rem;color:#f0f0f0;"></div>
+        <div id="streamer-filters" class="streamer-filters" style="margin-bottom:0.75rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+            <label style="font-size:0.85rem;color:#eee;"><input id="filter-all" type="checkbox" checked style="margin-right:0.3rem;">Mostrar tudo</label>
+            <label style="font-size:0.85rem;color:#eee;"><input id="filter-drops" type="checkbox" style="margin-right:0.3rem;">Drops</label>
+            <label style="font-size:0.85rem;color:#eee;"><input id="filter-online" type="checkbox" style="margin-right:0.3rem;">Online</label>
+            <label style="font-size:0.85rem;color:#eee;"><input id="filter-pack" type="checkbox" style="margin-right:0.3rem;">Pack</label>
+            <label style="font-size:0.85rem;color:#eee;"><input id="filter-pstory" type="checkbox" style="margin-right:0.3rem;">Pstory</label>
+        </div>
+        <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de Streamers"></div>
+      </div>
+    </div>
+
+    <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
         <div class="speedster-modal-backdrop" data-close="true"></div>
         <div class="speedster-modal-content" role="document">
           <button class="speedster-modal-close" aria-label="Fechar">✖</button>
@@ -229,8 +259,14 @@
       </div>
     </div>
 
-    <!-- animation library for modern effects -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <footer class="main-footer">
+      Desenvolvido por Liniko<br>
+      v6.1.0 - 2026
+    </footer>
+     <script src="js/main.js"></script>
+
+    <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="hoopa-portais/hoopa-portais.js" defer></script>
     <script src="script.js" defer></script>
 </body>

@@ -187,6 +187,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Tauros', image: 'tauros.png', tier: 'yellow', types: ['normal'], description: 'Tipo move: Electric.' },
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' },
           { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'yellow', types: ['fire','normal'], description: 'Tipo move: Grass.' }
@@ -314,6 +315,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Water.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' }
