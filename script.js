@@ -926,8 +926,8 @@ function showSpeedsters(){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero'];
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh'];
 
 let streamerFiltersInitialized = false;
 
