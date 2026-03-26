@@ -24,7 +24,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice. Passiva: Ice Scales resiste Flying e Dragon.', matchupOverrides: { 'mega-staraptor': { defenseByBossType: { fighting: 1, flying: 0.5 } } } },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
       },
@@ -415,7 +415,7 @@ const hoopaPortalsData = [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: tanka Dragon (1x).', matchupOverrides: { 'mega-feraligatr': { defenseByBossType: { dragon: 1 } } } },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2 } } }
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon e toma 0.5x de Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2, defenseByBossType: { dragon: 0.5 } } } }
         ]
       },
       mystic: {
@@ -450,7 +450,7 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
           { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' },
           { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
@@ -554,6 +554,7 @@ const hoopaPortalsData = [
     clan: 'mystic',
     clanLabel: 'Mystic',
     image: 'mega-lucario.png',
+    locationImage: 'localizações/lucario.png',
     description: 'Dupla Mega Lucario (Padrão/Z).',
     types: ['fighting','steel'],
     duo: true,
@@ -603,27 +604,75 @@ const hoopaPortalsData = [
     clans: {
       instinct: {
         label: 'Instinct',
-        recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+        recommendationGroups: [
+          {
+            title: 'Mega Absol',
+            bossId: 'mega-absol',
+            bossTypes: ['dark'],
+            recommended: [
+              { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+            ]
+          },
+          {
+            title: 'Mega Absol Z',
+            bossId: 'mega-absol-z',
+            bossTypes: ['dark','ghost'],
+            recommended: [
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
+            ]
+          }
         ]
       },
       mystic: {
         label: 'Mystic',
-        recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
+        recommendationGroups: [
+          {
+            title: 'Mega Absol',
+            bossId: 'mega-absol',
+            bossTypes: ['dark'],
+            recommended: [
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
+            ]
+          },
+          {
+            title: 'Mega Absol Z',
+            bossId: 'mega-absol-z',
+            bossTypes: ['dark','ghost'],
+            recommended: [
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+            ]
+          }
         ]
       },
       valor: {
         label: 'Valor',
-        recommended: [
-          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
-          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+        recommendationGroups: [
+          {
+            title: 'Mega Absol',
+            bossId: 'mega-absol',
+            bossTypes: ['dark'],
+            recommended: [
+              { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+            ]
+          },
+          {
+            title: 'Mega Absol Z',
+            bossId: 'mega-absol-z',
+            bossTypes: ['dark','ghost'],
+            recommended: [
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+            ]
+          }
         ]
       }
     }
@@ -714,7 +763,7 @@ const typeImmunities = {
   steel: ['poison']
 };
 
-function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = []) {
+function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = [], passiveSuperEffectiveTypes = []) {
   if (!attackingType || !defendingTypes || !defendingTypes.length) return 1;
 
   let multiplier = 1;
@@ -725,6 +774,10 @@ function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = [
     }
     if (typeImmunities[def]?.includes(attackingType)) {
       return 0; // immediate immunity
+    }
+    if (Array.isArray(passiveSuperEffectiveTypes) && passiveSuperEffectiveTypes.includes(def)) {
+      multiplier *= 2;
+      continue;
     }
     if (typeEffectiveness[attackingType]?.includes(def)) {
       multiplier *= 2;
@@ -747,68 +800,121 @@ function getMatchupOverride(poke, boss) {
   return poke.matchupOverrides?.[bossId] || null;
 }
 
-function rankRecommendedForBoss(bossOrTypes, recommendedList) {
+const tierPriority = { green: 0, otimo: 1, yellow: 2, red: 3, solo: 4, unknown: 5 };
+
+function getRecommendationGroupsForClan(boss, clanData) {
+  if (!boss || !clanData) return [];
+  if (Array.isArray(clanData.recommendationGroups) && clanData.recommendationGroups.length) {
+    return clanData.recommendationGroups.map((group) => ({
+      bossImage: group.bossImage || (Array.isArray(boss.bosses)
+        ? boss.bosses.find((entry) => entry.name === (group.title || boss.name))?.image || boss.image
+        : boss.image),
+      title: group.title || boss.name,
+      boss: {
+        id: group.bossId || boss.id,
+        name: group.title || boss.name,
+        types: Array.isArray(group.bossTypes) && group.bossTypes.length ? group.bossTypes : (boss.types || [])
+      },
+      recommended: Array.isArray(group.recommended) ? group.recommended : []
+    }));
+  }
+  return [{
+    bossImage: boss.image,
+    title: boss.name,
+    boss,
+    recommended: Array.isArray(clanData.recommended) ? clanData.recommended : []
+  }];
+}
+
+function getAllRecommendedForClan(boss, clanData) {
+  return getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
+}
+
+function pickBetterTier(currentTier, nextTier) {
+  if (!currentTier) return nextTier || 'unknown';
+  if (!nextTier) return currentTier;
+  return (tierPriority[nextTier] ?? tierPriority.unknown) < (tierPriority[currentTier] ?? tierPriority.unknown) ? nextTier : currentTier;
+}
+
+function scoreRecommendationForBoss(bossOrTypes, poke) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   const bossTypes = Array.isArray(boss.types) ? boss.types : [];
+  const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
+  const matchupOverride = getMatchupOverride(poke, boss);
+  const offense = typeof matchupOverride?.offense === 'number'
+    ? matchupOverride.offense
+    : getTypeMultiplier(moveType, bossTypes, [], poke.passiveSuperEffectiveTypes);
+
+  // Defense is based on boss types acting as attackers against the recommended poke types.
+  const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
+  const defenseMultipliers = bossTypes.map((bossType) => {
+    const customMultiplier = matchupOverride?.defenseByBossType?.[bossType];
+    if (typeof customMultiplier === 'number') return customMultiplier;
+    return getTypeMultiplier(bossType, pokeTypes, poke.immunities);
+  });
+  const bestDefense = Math.min(...defenseMultipliers); // best case (lowest damage taken)
+  const worstDefense = Math.max(...defenseMultipliers); // worst case (highest damage taken)
+
+  // Score offense (higher is better) and defense (lower worst-case is better)
+  // Offense: prioritize super-effective hits, but still treat neutral as ok.
+  const offenseScore =
+    offense === 0 ? 0 :
+    offense >= 4 ? 1 :
+    offense === 2 ? 0.75 :
+    offense === 1 ? 0.45 :
+    0.2;
+
+  // Defense: we want best-case immunity and punish high worst-case damage.
+  const defenseScore =
+    bestDefense === 0 ? 1 :
+    worstDefense === 0.5 ? 0.85 :
+    worstDefense === 1 ? 0.65 :
+    worstDefense === 2 ? 0.35 :
+    0.1;
+
+  // Combined gives more weight to offense but still rewards good defense.
+  const combined = offenseScore * 0.7 + defenseScore * 0.3;
+
+  let tier = 'red';
+  if (offense === 2 && worstDefense === 0.5) tier = 'otimo';
+  else if (combined >= 0.82) tier = 'green';
+  else if (combined >= 0.58) tier = 'yellow';
+  else if (combined <= 0.25) tier = 'solo';
+
+  return {
+    ...poke,
+    _score: combined,
+    _offense: offense,
+    _defenseWorst: worstDefense,
+    _defenseBest: bestDefense,
+    _moveType: moveType,
+    tier,
+  };
+}
+
+function rankRecommendedForBoss(bossOrTypes, recommendedList) {
   return recommendedList
-    .map((poke) => {
-      const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
-      const matchupOverride = getMatchupOverride(poke, boss);
-      const offense = typeof matchupOverride?.offense === 'number'
-        ? matchupOverride.offense
-        : getTypeMultiplier(moveType, bossTypes);
-
-      // Defense is based on boss types acting as attackers against the recommended poke types.
-      const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
-      const defenseMultipliers = bossTypes.map((bossType) => {
-        const customMultiplier = matchupOverride?.defenseByBossType?.[bossType];
-        if (typeof customMultiplier === 'number') return customMultiplier;
-        return getTypeMultiplier(bossType, pokeTypes, poke.immunities);
-      });
-      const bestDefense = Math.min(...defenseMultipliers); // best case (lowest damage taken)
-      const worstDefense = Math.max(...defenseMultipliers); // worst case (highest damage taken)
-
-      // Score offense (higher is better) and defense (lower worst-case is better)
-      // Offense: prioritize super-effective hits, but still treat neutral as ok.
-      const offenseScore =
-        offense === 0 ? 0 :
-        offense >= 4 ? 1 :
-        offense === 2 ? 0.75 :
-        offense === 1 ? 0.45 :
-        0.2;
-
-      // Defense: we want best-case immunity and punish high worst-case damage.
-      const defenseScore =
-        bestDefense === 0 ? 1 :
-        worstDefense === 0.5 ? 0.85 :
-        worstDefense === 1 ? 0.65 :
-        worstDefense === 2 ? 0.35 :
-        0.1;
-
-      // Combined gives more weight to offense but still rewards good defense.
-      const combined = offenseScore * 0.7 + defenseScore * 0.3;
-
-      let tier = 'red';
-      if (combined >= 0.82) tier = 'green';
-      else if (combined >= 0.58) tier = 'yellow';
-      else if (combined <= 0.25) tier = 'solo';
-
-      return {
-        ...poke,
-        _score: combined,
-        _offense: offense,
-        _defenseWorst: worstDefense,
-        _defenseBest: bestDefense,
-        _moveType: moveType,
-        tier,
-      };
-    })
+    .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke))
     .sort((a, b) => {
       if (b._score !== a._score) return b._score - a._score;
-      const tierPriority = { green: 0, yellow: 1, red: 2, solo: 3, unknown: 4 };
-      return (tierPriority[a.tier] ?? 4) - (tierPriority[b.tier] ?? 4);
+      return (tierPriority[a.tier] ?? tierPriority.unknown) - (tierPriority[b.tier] ?? tierPriority.unknown);
     });
 }
+
+function synchronizeRecommendationTiers() {
+  hoopaPortalsData.forEach((boss) => {
+    Object.values(boss.clans || {}).forEach((clanData) => {
+      getRecommendationGroupsForClan(boss, clanData).forEach((group) => {
+        (group.recommended || []).forEach((poke, index, list) => {
+          const computed = scoreRecommendationForBoss(group.boss, poke);
+          list[index].tier = computed.tier;
+        });
+      });
+    });
+  });
+}
+
+synchronizeRecommendationTiers();
 
 function safeElement(el) {
   return el instanceof HTMLElement ? el : null;
@@ -902,7 +1008,7 @@ function makeSpeedsterCard(speedster) {
     });
     button.appendChild(typesContainer);
   }
-  button.addEventListener('click', () => openModal(speedster));
+  button.addEventListener('click', () => openBossModalV2(speedster));
 
   return button;
 }
@@ -963,7 +1069,7 @@ function getRecommendedSpeedsters() {
 
   hoopaPortalsData.forEach((boss) => {
     Object.values(boss.clans || {}).forEach((clanData) => {
-      (clanData.recommended || []).forEach((poke) => {
+      getAllRecommendedForClan(boss, clanData).forEach((poke) => {
         const key = `${poke.name.toLowerCase()}|${poke.image || ''}`;
         if (!map.has(key)) {
           map.set(key, {
@@ -1048,20 +1154,22 @@ function getBossesForSpeedster(speedsterName) {
   const lower = String(speedsterName || '').toLowerCase();
   return hoopaPortalsData.filter((boss) =>
     Object.values(boss.clans || {}).some((clanData) =>
-      (clanData.recommended || []).some((poke) => String(poke.name || '').toLowerCase() === lower)
+      getAllRecommendedForClan(boss, clanData).some((poke) => String(poke.name || '').toLowerCase() === lower)
     )
   );
 }
 
 function getSpeedsterTierForBoss(boss, speedsterName) {
   const lower = String(speedsterName || '').toLowerCase();
+  let bestTier = '';
   for (const clanData of Object.values(boss.clans || {})) {
-    const found = (clanData.recommended || []).find((poke) => String(poke.name || '').toLowerCase() === lower);
-    if (found) {
-      return (found.tier || '').trim();
-    }
+    getAllRecommendedForClan(boss, clanData).forEach((poke) => {
+      if (String(poke.name || '').toLowerCase() === lower) {
+        bestTier = pickBetterTier(bestTier, (poke.tier || 'unknown').trim());
+      }
+    });
   }
-  return '';
+  return bestTier;
 }
 
 function getComputedSpeedsterTierInBoss(boss, speedsterName) {
@@ -1069,14 +1177,22 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
   if (!boss || !speedsterName) return 'unknown';
 
   const clansOrder = ['instinct', 'mystic', 'valor'];
+  let bestTier = '';
   for (const clanKey of clansOrder) {
     const clanData = boss.clans?.[clanKey];
-    if (!clanData?.recommended?.length) continue;
+    const groups = getRecommendationGroupsForClan(boss, clanData);
+    if (!groups.length) continue;
 
-    const ranked = rankRecommendedForBoss(boss, clanData.recommended);
-    const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
-    if (found) return found.tier || 'unknown';
+    groups.forEach((group) => {
+      const ranked = rankRecommendedForBoss(group.boss, group.recommended);
+      const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
+      if (found) {
+        bestTier = pickBetterTier(bestTier, found.tier || 'unknown');
+      }
+    });
   }
+
+  if (bestTier) return bestTier;
 
   // Fallback to static dataset if not found in computed ranking.
   const staticTier = getSpeedsterTierForBoss(boss, speedsterName);
@@ -1129,7 +1245,7 @@ function openSpeedsterBossesModal(speedster) {
       }
 
       button.addEventListener('click', () => {
-        openModal(boss);
+        openBossModalV2(boss);
       });
       list.appendChild(button);
     });
@@ -1149,6 +1265,68 @@ function openSpeedsterBossesModal(speedster) {
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
     );
   }
+}
+
+function createRecommendationCard(poke) {
+  const card = document.createElement('div');
+  card.className = 'speedster-reco-card';
+
+  const img = document.createElement('img');
+  img.className = 'speedster-reco-image';
+  img.src = basePath + poke.image;
+  img.alt = poke.name;
+  img.loading = 'lazy';
+
+  const nameWrapper = document.createElement('div');
+  nameWrapper.className = 'speedster-reco-name-wrapper';
+
+  const tier = poke.tier || 'unknown';
+  const tierDot = document.createElement('span');
+  tierDot.className = `tier-dot tier-${tier}`;
+
+  const tierLabels = {
+    green: 'Ideal',
+    otimo: 'Otimo',
+    yellow: 'Bom',
+    red: 'Aceitável',
+    solo: 'Última opção',
+    unknown: 'Sem informação'
+  };
+  tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informação');
+
+  const nameEl = document.createElement('div');
+  nameEl.className = 'speedster-reco-name';
+  nameEl.textContent = poke.name;
+  nameWrapper.append(tierDot, nameEl);
+
+  const score = document.createElement('div');
+  score.className = 'speedster-reco-score';
+  const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
+  const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
+  score.textContent = `⚔️${atk}\n🛡️${def}`;
+  card.appendChild(score);
+
+  if (Array.isArray(poke.types) && poke.types.length) {
+    const typesContainer = document.createElement('div');
+    typesContainer.className = 'type-icon-reco-corner';
+    poke.types.slice(0, 2).forEach((type) => {
+      const elementIcon = document.createElement('img');
+      elementIcon.className = 'type-icon type-icon-reco';
+      elementIcon.src = iconBase + `${type}.png`;
+      elementIcon.alt = `${type} type`;
+      elementIcon.loading = 'lazy';
+      elementIcon.title = type.charAt(0).toUpperCase() + type.slice(1);
+      typesContainer.appendChild(elementIcon);
+    });
+    card.appendChild(typesContainer);
+  }
+
+  const desc = document.createElement('div');
+  desc.className = 'speedster-reco-desc';
+  desc.textContent = poke.description;
+
+  card.append(img, nameWrapper, desc);
+  return card;
 }
 
 function openModal(speedster) {
@@ -1246,6 +1424,7 @@ const recommended = rankRecommendedForBoss(speedster, clanData?.recommended || [
 
         const tierLabels = {
           green: 'Ideal',
+          otimo: 'Otimo',
           yellow: 'Bom',
           red: 'Aceitável',
           solo: 'Última opção',
@@ -1296,6 +1475,332 @@ const recommended = rankRecommendedForBoss(speedster, clanData?.recommended || [
     section.appendChild(list);
     modalBody.appendChild(section);
   });
+
+  modal.setAttribute('data-open', 'true');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  if (typeof gsap !== 'undefined') {
+    gsap.fromTo(
+      modal.querySelector('.speedster-modal-content'),
+      { opacity: 0, y: 40, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+    );
+  }
+}
+
+// Dedicated boss modal renderer used by the speedsters tab.
+function openBossModal(speedster) {
+  currentBoss = speedster;
+  const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
+  const bossNames = bosses.map((boss) => boss.name).join(' + ');
+  modalTitle.textContent = bossNames;
+  modalSubtitle.textContent = speedster.description || '';
+
+  const modalHeader = modal.querySelector('.speedster-modal-header');
+  if (modalHeader) {
+    let modalLocationBtn = modalHeader.querySelector('.speedster-modal-location-btn');
+    if (!modalLocationBtn) {
+      modalLocationBtn = document.createElement('button');
+      modalLocationBtn.type = 'button';
+      modalLocationBtn.className = 'speedster-modal-location-btn';
+      modalLocationBtn.setAttribute('aria-label', 'Ver localização do boss');
+      modalLocationBtn.title = 'Ver localização';
+      modalLocationBtn.textContent = '🗺️';
+      modalHeader.appendChild(modalLocationBtn);
+    }
+    modalLocationBtn.onclick = () => showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+  }
+
+  const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
+  const pokemonImgRight = document.getElementById('modal-pokemon-img');
+  const leftImage = bosses[0]?.image || speedster.image;
+  const rightImage = bosses[1]?.image || speedster.image;
+  const leftAlt = bosses[0]?.name || speedster.name;
+  const rightAlt = bosses[1]?.name || speedster.name;
+
+  if (pokemonImgLeft) {
+    pokemonImgLeft.src = basePath + leftImage;
+    pokemonImgLeft.alt = leftAlt;
+  }
+  if (pokemonImgRight) {
+    pokemonImgRight.src = basePath + rightImage;
+    pokemonImgRight.alt = rightAlt;
+  }
+
+  modalBody.innerHTML = '';
+  const clansOrder = ['instinct', 'mystic', 'valor'];
+  const hasSplitRecommendations = clansOrder.some((clanKey) => {
+    const clanData = speedster.clans?.[clanKey];
+    return getRecommendationGroupsForClan(speedster, clanData).length > 1;
+  });
+  modalBody.classList.toggle('speedster-modal-body--split', hasSplitRecommendations);
+
+  clansOrder.forEach((clanKey) => {
+    const clanData = speedster.clans?.[clanKey];
+    const section = document.createElement('div');
+    section.className = 'speedster-clan-section';
+
+    const header = document.createElement('div');
+    header.className = 'speedster-clan-header';
+
+    const icon = document.createElement('img');
+    icon.className = 'speedster-clan-icon-small';
+    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.alt = `${clanData?.label || clanKey} icon`;
+    icon.loading = 'lazy';
+
+    const title = document.createElement('div');
+    title.className = 'speedster-clan-name';
+    title.textContent = clanData?.label || clanKey;
+
+    header.append(icon, title);
+    section.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'speedster-clan-list';
+
+    const recommendationGroups = getRecommendationGroupsForClan(speedster, clanData);
+    const hasMultipleGroups = recommendationGroups.length > 1;
+    if (hasMultipleGroups) {
+      list.classList.add('speedster-clan-list--split');
+    }
+
+    if (recommendationGroups.length === 0 || recommendationGroups.every((group) => !group.recommended.length)) {
+      const empty = document.createElement('div');
+      empty.className = 'speedster-clan-empty';
+      empty.textContent = 'Nenhuma recomendação disponível.';
+      list.appendChild(empty);
+    } else {
+      recommendationGroups.forEach((group) => {
+        const ranked = rankRecommendedForBoss(group.boss, group.recommended);
+        if (hasMultipleGroups) {
+          const groupBlock = document.createElement('div');
+          groupBlock.className = 'speedster-reco-group';
+
+          const groupHeader = document.createElement('div');
+          groupHeader.className = 'speedster-reco-group-header';
+
+          const groupImage = document.createElement('img');
+          groupImage.className = 'speedster-reco-group-boss';
+          groupImage.src = basePath + (group.bossImage || speedster.image);
+          groupImage.alt = group.title;
+          groupImage.loading = 'lazy';
+
+          const groupTitle = document.createElement('div');
+          groupTitle.className = 'speedster-reco-group-title';
+          groupTitle.textContent = group.title;
+
+          groupHeader.append(groupImage, groupTitle);
+          groupBlock.appendChild(groupHeader);
+
+          const groupList = document.createElement('div');
+          groupList.className = 'speedster-reco-group-list';
+          ranked.forEach((poke) => {
+            groupList.appendChild(createRecommendationCard(poke));
+          });
+          groupBlock.appendChild(groupList);
+          list.appendChild(groupBlock);
+        } else {
+          ranked.forEach((poke) => {
+            list.appendChild(createRecommendationCard(poke));
+          });
+        }
+      });
+    }
+
+    section.appendChild(list);
+    modalBody.appendChild(section);
+  });
+
+  modal.setAttribute('data-open', 'true');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  if (typeof gsap !== 'undefined') {
+    gsap.fromTo(
+      modal.querySelector('.speedster-modal-content'),
+      { opacity: 0, y: 40, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+    );
+  }
+}
+
+function openBossModalV2(speedster) {
+  currentBoss = speedster;
+  const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
+  const bossNames = bosses.map((boss) => boss.name).join(' + ');
+  modalTitle.textContent = bossNames;
+  modalSubtitle.textContent = speedster.description || '';
+
+  const modalHeader = modal.querySelector('.speedster-modal-header');
+  if (modalHeader) {
+    let modalLocationBtn = modalHeader.querySelector('.speedster-modal-location-btn');
+    if (!modalLocationBtn) {
+      modalLocationBtn = document.createElement('button');
+      modalLocationBtn.type = 'button';
+      modalLocationBtn.className = 'speedster-modal-location-btn';
+      modalLocationBtn.setAttribute('aria-label', 'Ver localização do boss');
+      modalLocationBtn.title = 'Ver localização';
+      modalLocationBtn.textContent = '🗺️';
+      modalHeader.appendChild(modalLocationBtn);
+    }
+    modalLocationBtn.onclick = () => showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+  }
+
+  const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
+  const pokemonImgRight = document.getElementById('modal-pokemon-img');
+  const leftImage = bosses[0]?.image || speedster.image;
+  const rightImage = bosses[1]?.image || speedster.image;
+  const leftAlt = bosses[0]?.name || speedster.name;
+  const rightAlt = bosses[1]?.name || speedster.name;
+
+  if (pokemonImgLeft) {
+    pokemonImgLeft.src = basePath + leftImage;
+    pokemonImgLeft.alt = leftAlt;
+  }
+  if (pokemonImgRight) {
+    pokemonImgRight.src = basePath + rightImage;
+    pokemonImgRight.alt = rightAlt;
+  }
+
+  modalBody.innerHTML = '';
+  modalBody.classList.remove('speedster-modal-body--split');
+  const clansOrder = ['instinct', 'mystic', 'valor'];
+
+  const choiceMap = new Map();
+  clansOrder.forEach((clanKey) => {
+    const clanData = speedster.clans?.[clanKey];
+    getRecommendationGroupsForClan(speedster, clanData).forEach((group) => {
+      const choiceId = group.boss?.id || group.title;
+      if (!choiceMap.has(choiceId)) {
+        choiceMap.set(choiceId, {
+          id: choiceId,
+          title: group.title,
+          bossImage: group.bossImage || speedster.image
+        });
+      }
+    });
+  });
+
+  const recommendationChoices = Array.from(choiceMap.values());
+  let activeChoiceId = recommendationChoices[0]?.id || null;
+
+  if (recommendationChoices.length > 1) {
+    const switcher = document.createElement('div');
+    switcher.className = 'speedster-variant-switch';
+
+    const switcherLabel = document.createElement('div');
+    switcherLabel.className = 'speedster-variant-switch-label';
+    switcherLabel.textContent = 'Escolha qual versão você vai enfrentar';
+    switcher.appendChild(switcherLabel);
+
+    const options = document.createElement('div');
+    options.className = 'speedster-variant-switch-options';
+
+    recommendationChoices.forEach((choice) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'speedster-variant-btn';
+      button.dataset.choiceId = choice.id;
+      if (choice.id === activeChoiceId) button.classList.add('is-active');
+
+      const image = document.createElement('img');
+      image.className = 'speedster-variant-btn-image';
+      image.src = basePath + (choice.bossImage || speedster.image);
+      image.alt = choice.title;
+      image.loading = 'lazy';
+
+      const text = document.createElement('span');
+      text.className = 'speedster-variant-btn-text';
+      text.textContent = choice.title;
+
+      button.append(image, text);
+      button.addEventListener('click', () => {
+        activeChoiceId = choice.id;
+        options.querySelectorAll('.speedster-variant-btn').forEach((btn) => {
+          btn.classList.toggle('is-active', btn.dataset.choiceId === activeChoiceId);
+        });
+        renderClanSections();
+      });
+      options.appendChild(button);
+    });
+
+    switcher.appendChild(options);
+    modalBody.appendChild(switcher);
+  }
+
+  const clanGrid = document.createElement('div');
+  clanGrid.className = 'speedster-clan-grid';
+  modalBody.appendChild(clanGrid);
+
+  function renderClanSections() {
+    clanGrid.innerHTML = '';
+
+    clansOrder.forEach((clanKey) => {
+      const clanData = speedster.clans?.[clanKey];
+      if (!clanData) return;
+
+      const section = document.createElement('div');
+      section.className = 'speedster-clan-section';
+
+      const header = document.createElement('div');
+      header.className = 'speedster-clan-header';
+
+      const icon = document.createElement('img');
+      icon.className = 'speedster-clan-icon-small';
+      icon.src = basePath + (clanIcons[clanKey] || '');
+      icon.alt = `${clanData?.label || clanKey} icon`;
+      icon.loading = 'lazy';
+
+      const title = document.createElement('div');
+      title.className = 'speedster-clan-name';
+      title.textContent = clanData?.label || clanKey;
+
+      header.append(icon, title);
+      section.appendChild(header);
+
+      const groups = getRecommendationGroupsForClan(speedster, clanData);
+      const activeGroup = groups.find((group) => (group.boss?.id || group.title) === activeChoiceId) || groups[0];
+
+      if (recommendationChoices.length > 1 && activeGroup) {
+        const currentTarget = document.createElement('div');
+        currentTarget.className = 'speedster-clan-current-target';
+
+        const targetImage = document.createElement('img');
+        targetImage.className = 'speedster-clan-current-target-image';
+        targetImage.src = basePath + (activeGroup.bossImage || speedster.image);
+        targetImage.alt = activeGroup.title;
+        targetImage.loading = 'lazy';
+
+        const targetText = document.createElement('span');
+        targetText.textContent = `Picks para ${activeGroup.title}`;
+
+        currentTarget.append(targetImage, targetText);
+        section.appendChild(currentTarget);
+      }
+
+      const list = document.createElement('div');
+      list.className = 'speedster-clan-list';
+
+      if (!activeGroup || !activeGroup.recommended.length) {
+        const empty = document.createElement('div');
+        empty.className = 'speedster-clan-empty';
+        empty.textContent = 'Nenhuma recomendação disponível.';
+        list.appendChild(empty);
+      } else {
+        const ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended);
+        ranked.forEach((poke) => {
+          list.appendChild(createRecommendationCard(poke));
+        });
+      }
+
+      section.appendChild(list);
+      clanGrid.appendChild(section);
+    });
+  }
+
+  renderClanSections();
 
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
