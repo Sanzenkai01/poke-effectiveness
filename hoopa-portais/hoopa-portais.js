@@ -1268,6 +1268,144 @@ function openSpeedsterBossesModal(speedster) {
 }
 
 function createRecommendationCard(poke) {
+  {
+    const formatTypeLabel = (type) => type ? type.charAt(0).toUpperCase() + type.slice(1) : '';
+    const moveTypeMatch = typeof poke?.description === 'string'
+      ? poke.description.match(/Tipo move:\s*([a-zA-Z/]+)/i)
+      : null;
+    const moveTypes = moveTypeMatch && moveTypeMatch[1]
+      ? moveTypeMatch[1].split('/').map((entry) => entry.trim().toLowerCase()).filter(Boolean)
+      : (poke?._moveType ? [poke._moveType] : []);
+    const tier = poke.tier || 'unknown';
+    const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
+    const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
+
+    const tierLabels = {
+      green: 'Ideal',
+      otimo: 'Otimo',
+      yellow: 'Bom',
+      red: 'AceitÃ¡vel',
+      solo: 'Ãšltima opÃ§Ã£o',
+      unknown: 'Sem informaÃ§Ã£o'
+    };
+
+    const createChip = (type, options = {}) => {
+      if (!type) return null;
+
+      const chip = document.createElement('div');
+      chip.className = `speedster-reco-chip${options.move ? ' speedster-reco-chip--move' : ''}`;
+      chip.title = options.label ? `${options.label}: ${formatTypeLabel(type)}` : formatTypeLabel(type);
+
+      const icon = document.createElement('img');
+      icon.className = 'speedster-reco-chip-icon';
+      icon.src = iconBase + `${type}.png`;
+      icon.alt = `${formatTypeLabel(type)} type`;
+      icon.loading = 'lazy';
+
+      const text = document.createElement('span');
+      text.className = 'speedster-reco-chip-text';
+
+      if (options.label) {
+        const tag = document.createElement('span');
+        tag.className = 'speedster-reco-chip-tag';
+        tag.textContent = options.label;
+        text.appendChild(tag);
+      }
+
+      const value = document.createElement('span');
+      value.className = 'speedster-reco-chip-value';
+      value.textContent = formatTypeLabel(type);
+      text.appendChild(value);
+
+      chip.append(icon, text);
+      return chip;
+    };
+
+    const createScoreMetric = (label, value, modifierClass) => {
+      const row = document.createElement('div');
+      row.className = `speedster-reco-score-row ${modifierClass}`;
+
+      const metricLabel = document.createElement('span');
+      metricLabel.className = 'speedster-reco-score-label';
+      metricLabel.textContent = label;
+
+      const metricValue = document.createElement('span');
+      metricValue.className = 'speedster-reco-score-value';
+      metricValue.textContent = value;
+
+      row.append(metricLabel, metricValue);
+      return row;
+    };
+
+    const card = document.createElement('div');
+    card.className = 'speedster-reco-card';
+    card.dataset.tier = tier;
+
+    const score = document.createElement('div');
+    score.className = 'speedster-reco-score';
+    score.title = 'ATK: quanto maior, melhor. DEF: quanto menor, melhor.';
+    score.append(
+      createScoreMetric('ATK', atk, 'speedster-reco-score-row--atk'),
+      createScoreMetric('DEF', def, 'speedster-reco-score-row--def')
+    );
+
+    const img = document.createElement('img');
+    img.className = 'speedster-reco-image';
+    img.src = basePath + poke.image;
+    img.alt = poke.name;
+    img.loading = 'lazy';
+
+    const body = document.createElement('div');
+    body.className = 'speedster-reco-body';
+
+    const nameWrapper = document.createElement('div');
+    nameWrapper.className = 'speedster-reco-name-wrapper';
+
+    const tierDot = document.createElement('span');
+    tierDot.className = `tier-dot tier-${tier}`;
+    tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informaÃ§Ã£o');
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'speedster-reco-name';
+    nameEl.textContent = poke.name;
+    nameWrapper.append(tierDot, nameEl);
+
+    const chips = document.createElement('div');
+    chips.className = 'speedster-reco-chip-list';
+
+    if (Array.isArray(poke.types) && poke.types.length) {
+      poke.types.slice(0, 2).forEach((type) => {
+        const chip = createChip(type);
+        if (chip) chips.appendChild(chip);
+      });
+    }
+
+    moveTypes.slice(0, 2).forEach((type) => {
+      const chip = createChip(type, { label: 'Move', move: true });
+      if (chip) chips.appendChild(chip);
+    });
+
+    body.appendChild(nameWrapper);
+    if (chips.childElementCount > 0) {
+      body.appendChild(chips);
+    }
+
+    card.append(score, img, body);
+
+    if (poke.description) {
+      const descBand = document.createElement('div');
+      descBand.className = 'speedster-reco-desc-band';
+
+      const desc = document.createElement('div');
+      desc.className = 'speedster-reco-desc';
+      desc.textContent = poke.description;
+
+      descBand.appendChild(desc);
+      card.appendChild(descBand);
+    }
+
+    return card;
+  }
   const card = document.createElement('div');
   card.className = 'speedster-reco-card';
 

@@ -1,12 +1,12 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const CACHE_NAME = `${CACHE_PREFIX}v8`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
-  new URL('./styles.css', self.registration.scope).toString(),
-  new URL('./script.js', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260326m', self.registration.scope).toString(),
+  new URL('./script.js?v=20260326h', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./hoopa-portais/hoopa-portais.js', self.registration.scope).toString(),
+  new URL('./hoopa-portais/hoopa-portais.js?v=20260326i', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()
 ];

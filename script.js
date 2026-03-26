@@ -8,6 +8,12 @@ function clearTabHighlights() {
     });
 }
 
+function setActiveTabTheme(tabName) {
+    if (document.body) {
+        document.body.dataset.activeTab = tabName;
+    }
+}
+
 // if opened via file:// the fetch will fail; warn user early
 if(location.protocol === 'file:'){
     window.addEventListener('load', ()=>{
@@ -412,6 +418,7 @@ function updateColumns(){
 
 function showFossils(){
     clearTabHighlights();
+    setActiveTabTheme('fossils');
     if(tabFossilsBtn) {
         tabFossilsBtn.classList.add('active');
         tabFossilsBtn.setAttribute('aria-selected','true');
@@ -801,6 +808,7 @@ window.addEventListener('resize',()=>{updateColumns();if(currentSelection.length
 
 function showEffectiveness(){
     clearTabHighlights();
+    setActiveTabTheme('effectiveness');
     if(tabEffectBtn) {
         tabEffectBtn.classList.add('active');
         tabEffectBtn.setAttribute('aria-selected','true');
@@ -830,6 +838,7 @@ function showEffectiveness(){
 }
 function showCalculator(){
     clearTabHighlights();
+    setActiveTabTheme('calculator');
     if(tabCalcBtn) {
         tabCalcBtn.classList.add('active');
         tabCalcBtn.setAttribute('aria-selected','true');
@@ -867,6 +876,7 @@ if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); local
 
 function showCatch(){
     clearTabHighlights();
+    setActiveTabTheme('catch');
     if(tabCatchBtn) {
         tabCatchBtn.classList.add('active');
         tabCatchBtn.setAttribute('aria-selected','true');
@@ -892,6 +902,7 @@ if(tabStreamersBtn) tabStreamersBtn.addEventListener('click',()=>{ showStreamers
 
 function showSpeedsters(){
     clearTabHighlights();
+    setActiveTabTheme('speedsters');
     if(tabSpeedstersBtn) {
         tabSpeedstersBtn.classList.add('active');
         tabSpeedstersBtn.setAttribute('aria-selected','true');
@@ -1163,6 +1174,23 @@ function renderStreamers(){
         } else {
             statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} streamers`;
         }
+    };
+
+    const applyStreamerVisualState = (card, info = {}) => {
+        let state = 'offline';
+        if(info.status === 'online'){
+            if(info.isPstoryDrop){
+                state = 'pstory-drop';
+            } else if(info.isPstoryNoDrop || info.isPstory){
+                state = 'pstory-nodrop';
+            } else {
+                state = 'online-nopstory';
+            }
+        }
+
+        card.dataset.streamState = state;
+        card.dataset.pstoryDrop = info.isPstoryDrop ? 'true' : 'false';
+        card.dataset.pstoryNoDrop = (info.isPstoryNoDrop || (info.isPstory && !info.isPstoryDrop)) ? 'true' : 'false';
     };
 
     const placeStreamerCard = (card, info) => {
@@ -1460,6 +1488,7 @@ function renderStreamers(){
         card.dataset.drop = (!isNonDrop).toString();
         card.dataset.pack = PACK_STREAMERS.has(name) ? 'true' : 'false';
         card.dataset.online = 'false';
+        card.dataset.streamState = 'loading';
         nameContainer.appendChild(label);
         if(!isNonDrop){
             nameContainer.appendChild(creatorBadge);
@@ -1517,13 +1546,16 @@ function renderStreamers(){
                     pstoryInfo.style.color = '#faa';
                     fetchStreamerAvatar(name).then(setOfflineAvatar);
                 }
+                applyStreamerVisualState(card, info);
                 placeStreamerCard(card, info);
                 openBtn.disabled = false;
                 updateStatusInfo();
             })
 
             .catch(() => {
-                placeStreamerCard(card, {status:'unknown', isPstory:false});
+                const fallbackInfo = {status:'unknown', isPstory:false, isPstoryDrop:false, isPstoryNoDrop:false};
+                applyStreamerVisualState(card, fallbackInfo);
+                placeStreamerCard(card, fallbackInfo);
                 resolvedCount += 1;
                 status.textContent = 'Erro ao obter';
                 status.classList.add('offline');
@@ -1551,6 +1583,7 @@ function renderStreamers(){
 
 function showStreamers(){
     clearTabHighlights();
+    setActiveTabTheme('streamers');
     if(tabStreamersBtn) {
         tabStreamersBtn.classList.add('active');
         tabStreamersBtn.setAttribute('aria-selected','true');
