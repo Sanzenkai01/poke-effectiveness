@@ -1955,9 +1955,22 @@ function updateRangeResults(){
             .replace('{stones}', stones.toLocaleString())}</p>`;
         html += `<p><em>${variant === 'normal' ? t('sameQuantityNote') : t('shiningBlockNote')}</em></p>`;
         rangeResults.innerHTML = html;
-    if(useGsap) gsap.from(rangeResults, {opacity:0, y:10, duration:0.3});
+        animateCalcResult(rangeResults);
     } else {
         rangeResults.innerHTML = '';
+    }
+}
+function animateCalcResult(target){
+    if(!target) return;
+    if(useGsap){
+        gsap.killTweensOf(target);
+        gsap.fromTo(target,
+            {opacity: 0, y: 10},
+            {opacity: 1, y: 0, duration: 0.28, overwrite: 'auto', clearProps: 'opacity,transform'}
+        );
+    } else {
+        target.style.opacity = '1';
+        target.style.transform = 'translateY(0)';
     }
 }
 function updateCommon(){
@@ -1974,7 +1987,7 @@ function updateCommon(){
                       `${charItems.toLocaleString()} itens característicos (${perPlateChar}×${n}), ` +
                       `${stones.toLocaleString()} pedra(s) do elemento (${perPlateStone}×${n})`;
     commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
-    if(useGsap) gsap.from(commonResults, {opacity:0, y:10, duration:0.3});
+    animateCalcResult(commonResults);
 }
 function updateShiny(){
     let n = parseInt(shinyInput.value) || 0;
@@ -1990,7 +2003,7 @@ function updateShiny(){
     html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
             ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
     shinyResults.innerHTML = html;
-    if(useGsap) gsap.from(shinyResults, {opacity:0, y:10, duration:0.3});
+    animateCalcResult(shinyResults);
 }
 
 if(rangeSelect) rangeSelect.addEventListener('change', updateRangeResults);

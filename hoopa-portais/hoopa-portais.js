@@ -413,9 +413,9 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: tanka Dragon (1x).', matchupOverrides: { 'mega-feraligatr': { defenseByBossType: { dragon: 1 } } } },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass.' }
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2 } } }
         ]
       },
       mystic: {
@@ -741,15 +741,30 @@ function parseMoveType(poke) {
   return match ? match[1].toLowerCase() : null;
 }
 
-function rankRecommendedForBoss(bossTypes, recommendedList) {
+function getMatchupOverride(poke, boss) {
+  const bossId = typeof boss === 'string' ? boss : boss?.id;
+  if (!bossId || !poke || typeof poke !== 'object') return null;
+  return poke.matchupOverrides?.[bossId] || null;
+}
+
+function rankRecommendedForBoss(bossOrTypes, recommendedList) {
+  const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
+  const bossTypes = Array.isArray(boss.types) ? boss.types : [];
   return recommendedList
     .map((poke) => {
       const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
-      const offense = getTypeMultiplier(moveType, bossTypes);
+      const matchupOverride = getMatchupOverride(poke, boss);
+      const offense = typeof matchupOverride?.offense === 'number'
+        ? matchupOverride.offense
+        : getTypeMultiplier(moveType, bossTypes);
 
       // Defense is based on boss types acting as attackers against the recommended poke types.
       const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
-      const defenseMultipliers = bossTypes.map((bossType) => getTypeMultiplier(bossType, pokeTypes, poke.immunities));
+      const defenseMultipliers = bossTypes.map((bossType) => {
+        const customMultiplier = matchupOverride?.defenseByBossType?.[bossType];
+        if (typeof customMultiplier === 'number') return customMultiplier;
+        return getTypeMultiplier(bossType, pokeTypes, poke.immunities);
+      });
       const bestDefense = Math.min(...defenseMultipliers); // best case (lowest damage taken)
       const worstDefense = Math.max(...defenseMultipliers); // worst case (highest damage taken)
 
@@ -1058,7 +1073,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
     const clanData = boss.clans?.[clanKey];
     if (!clanData?.recommended?.length) continue;
 
-    const ranked = rankRecommendedForBoss(boss.types || [], clanData.recommended);
+    const ranked = rankRecommendedForBoss(boss, clanData.recommended);
     const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
     if (found) return found.tier || 'unknown';
   }
@@ -1204,7 +1219,7 @@ function openModal(speedster) {
     const list = document.createElement('div');
     list.className = 'speedster-clan-list';
 
-const recommended = rankRecommendedForBoss(speedster.types || [], clanData?.recommended || []);
+const recommended = rankRecommendedForBoss(speedster, clanData?.recommended || []);
 
       if (recommended.length === 0) {
         const empty = document.createElement('div');
