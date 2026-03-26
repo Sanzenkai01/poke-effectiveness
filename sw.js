@@ -1,31 +1,101 @@
-const CACHE_NAME = 'poke-effectiveness-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/types.json',
-  '/manifest.json'
+const CACHE_PREFIX = 'poke-effectiveness-';
+const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const APP_SHELL = [
+  new URL('./', self.registration.scope).toString(),
+  new URL('./index.html', self.registration.scope).toString(),
+  new URL('./styles.css', self.registration.scope).toString(),
+  new URL('./script.js', self.registration.scope).toString(),
+  new URL('./js/main.js', self.registration.scope).toString(),
+  new URL('./hoopa-portais/hoopa-portais.js', self.registration.scope).toString(),
+  new URL('./types.json', self.registration.scope).toString(),
+  new URL('./manifest.json', self.registration.scope).toString()
 ];
+const INDEX_URL = new URL('./index.html', self.registration.scope).toString();
+const CACHEABLE_PATH = /\.(?:css|js|json|png|jpe?g|gif|svg|webp|ico|html)$/i;
 
-self.addEventListener('install', ev => {
-    ev.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-    );
+function canCache(response){
+  return response && response.ok && (response.type === 'basic' || response.type === 'default');
+}
+
+async function cacheResponse(request, response){
+  if(!canCache(response)) return response;
+  const cache = await caches.open(CACHE_NAME);
+  await cache.put(request, response.clone());
+  return response;
+}
+
+function offlineResponse(){
+  return new Response('Offline', {
+    status: 503,
+    statusText: 'Offline',
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8'
+    }
+  });
+}
+
+async function networkFirst(request, fallback = request){
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const response = await fetch(request);
+    await cacheResponse(request, response);
+    return response;
+  } catch {
+    return (await cache.match(request)) || (await cache.match(fallback)) || offlineResponse();
+  }
+}
+
+async function cacheFirst(request){
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  if(cached) return cached;
+  try {
+    const response = await fetch(request);
+    await cacheResponse(request, response);
+    return response;
+  } catch {
+    return offlineResponse();
+  }
+}
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
-// On fetch, bypass cache and always go to network (effectively disabling caching)
-self.addEventListener('fetch', ev => {
-    ev.respondWith(
-        fetch(ev.request).catch(() => caches.match(ev.request))
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+        .map(key => caches.delete(key))
     );
+    await self.clients.claim();
+  })());
 });
 
-// Clean up caches when the service worker activates so old data is removed
-self.addEventListener('activate', ev => {
-    ev.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(keys.map(key => caches.delete(key)))
-        )
-    );
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  if(request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if(url.origin !== self.location.origin) return;
+
+  if(request.mode === 'navigate'){
+    event.respondWith(networkFirst(request, INDEX_URL));
+    return;
+  }
+
+  if(url.pathname.endsWith('/types.json') || url.pathname.endsWith('types.json')){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(CACHEABLE_PATH.test(url.pathname)){
+    event.respondWith(cacheFirst(request));
+  }
 });

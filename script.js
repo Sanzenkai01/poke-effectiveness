@@ -934,6 +934,14 @@ function showSpeedsters(){
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
 const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv']);
 const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv'];
+const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
+const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
+const streamerStatusCache = new Map();
+const streamerStatusRequests = new Map();
+const streamerAvatarCache = new Map();
+const streamerAvatarRequests = new Map();
+const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
+const TWITCH_BEARER_TOKEN = 'jmu7ee40wba03fsn2t30f19aol0lx7';
 const STREAMER_DISCORD_LINKS = {
     adivorcio: 'https://discord.gg/CH5veEAA4k',
     engrafff: 'https://discord.gg/938jWv2SvA',
@@ -965,13 +973,37 @@ const STREAMER_DISCORD_LINKS = {
 
 let streamerFiltersInitialized = false;
 
-const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
-const TWITCH_BEARER_TOKEN = 'jmu7ee40wba03fsn2t30f19aol0lx7';
+function getCachedStreamerValue(cache, key){
+    const entry = cache.get(key);
+    if(!entry) return { hit: false, value: null };
+    if(entry.expiresAt <= Date.now()){
+        cache.delete(key);
+        return { hit: false, value: null };
+    }
+    return { hit: true, value: entry.value };
+}
+
+function setCachedStreamerValue(cache, key, value, ttlMs = STREAMER_CACHE_TTL_MS){
+    cache.set(key, {
+        value,
+        expiresAt: Date.now() + ttlMs
+    });
+    return value;
+}
+
+function shareStreamerRequest(requestMap, key, factory){
+    if(requestMap.has(key)) return requestMap.get(key);
+    const request = factory().finally(() => {
+        requestMap.delete(key);
+    });
+    requestMap.set(key, request);
+    return request;
+}
 
 function fetchStreamerStatus(name, isNonDrop = false){
-    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
-                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
-                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
+    const cacheKey = `${name}:${isNonDrop ? 'nodrop' : 'drop'}`;
+    const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
+    if(cached.hit) return Promise.resolve(cached.value);
 
     const detectPstory = (title) => {
         if(!title || !title.toString) return false;
@@ -1016,7 +1048,6 @@ function fetchStreamerStatus(name, isNonDrop = false){
     };
 
     const queryDecapi = () => {
-        console.log('queryDecapi', name, 'fallback active');
         return fetchDecapiTitle().then(title => {
             if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
                 return makeResult('offline', title);
@@ -1028,71 +1059,71 @@ function fetchStreamerStatus(name, isNonDrop = false){
         });
     };
 
-    const queryIvr = () => {
-        console.warn('queryIvr', name, 'fallback active');
-        return fetch(`https://api.ivr.fi/v2/twitch/stream/${encodeURIComponent(name)}`)
-            .then(r => {
-                if(!r.ok) return queryDecapi();
-                return r.json().then(json => {
-                    if(json && json.stream){
-                        return fetchDecapiTitle().then(title => makeResult('online', title));
-                    }
-                    if(json && json.stream === null) return makeResult('offline', '');
-                    return queryDecapi();
-                }).catch(err => {
-                    console.error('queryIvr JSON error', name, err);
-                    return queryDecapi();
-                });
-            }).catch(err => {
-                console.error('queryIvr network error', name, err);
+    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
+                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
+                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
+
+    const queryHelix = () => {
+        if(!credentialsSet){
+            return queryDecapi();
+        }
+
+        const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
+        return fetch(url, {
+            headers: {
+                'Client-ID': TWITCH_CLIENT_ID,
+                'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
+                'Accept': 'application/json'
+            }
+        })
+        .then(r => {
+            if(!r.ok){
                 return queryDecapi();
-            });
+            }
+            return r.json().then(data => {
+                if(data && Array.isArray(data.data) && data.data.length > 0){
+                    const stream = data.data[0];
+                    const title = stream.title || '';
+                    return makeResult('online', title);
+                }
+                return makeResult('offline', '');
+            }).catch(() => queryDecapi());
+        })
+        .catch(() => queryDecapi());
     };
 
-    if(!credentialsSet){
-        console.warn('Twitch API credentials not set. Falling back to decapi.tv query.');
-        return queryDecapi();
-    }
+    return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
+        queryHelix().then(result => {
+            const ttl = result.status === 'unknown' ? STREAMER_ERROR_CACHE_TTL_MS : STREAMER_CACHE_TTL_MS;
+            return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
+        })
+    );
+}
 
-    const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
-    console.log('fetchStreamerStatus', name, 'calling helix');
-    return fetch(url, {
-        headers: {
-            'Client-ID': TWITCH_CLIENT_ID,
-            'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
-            'Accept': 'application/json'
-        }
-    })
-    .then(r => {
-        console.log('fetchStreamerStatus', name, 'status', r.status);
-        if(!r.ok){
-            if(r.status === 401 || r.status === 403){
-                console.warn('Twitch API credenciais inválidas ou vencidas. Verifique CLIENT_ID/Bearer.');
-            } else {
-                console.warn('fetchStreamerStatus', name, 'helix returned non-OK, status', r.status);
-            }
-            return queryDecapi();
-        }
-        return r.json().then(data => {
-            console.log('fetchStreamerStatus', name, 'dataCount', data && data.data && data.data.length);
-            if(data && Array.isArray(data.data) && data.data.length > 0){
-                const stream = data.data[0];
-                const title = stream.title || '';
-                return makeResult('online', title);
-            }
-            return makeResult('offline', '');
-        }).catch(err=>{
-            console.error('fetchStreamerStatus JSON error', name, err);
-            return queryDecapi();
-        });
-    }).catch(err=>{
-        console.error('fetchStreamerStatus fetch error', name, err);
-        return queryDecapi();
-    });
+function fetchStreamerAvatar(name){
+    const cached = getCachedStreamerValue(streamerAvatarCache, name);
+    if(cached.hit) return Promise.resolve(cached.value);
+
+    return shareStreamerRequest(streamerAvatarRequests, name, () =>
+        fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(name)}`)
+            .then(r => {
+                if(!r.ok) throw new Error('avatar não encontrado');
+                return r.text();
+            })
+            .then(url => {
+                const trimmed = (url || '').trim();
+                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar inválido');
+                return trimmed;
+            })
+            .catch(() => null)
+            .then(result => {
+                const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
+                return setCachedStreamerValue(streamerAvatarCache, name, result, ttl);
+            })
+    );
 }
 
 function renderStreamers(){
-    console.log('renderStreamers called');
     const grid = document.getElementById('streamer-grid');
     const statusInfo = document.getElementById('streamer-status-info');
     if(!grid){
@@ -1214,20 +1245,6 @@ function renderStreamers(){
 
             card.style.display = visible ? '' : 'none';
         });
-    };
-
-    const fetchStreamerAvatar = (name) => {
-        return fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(name)}`)
-            .then(r => {
-                if(!r.ok) throw new Error('avatar não encontrado');
-                return r.text();
-            })
-            .then(url => {
-                const trimmed = (url || '').trim();
-                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar inválido');
-                return trimmed;
-            })
-            .catch(() => null);
     };
 
     const setupStreamerFilterControls = () => {
@@ -1380,20 +1397,64 @@ function renderStreamers(){
         miniPreview.style.display = 'none';
         miniPreview.style.marginTop = '0.5rem';
 
+        const clearMiniPreview = () => {
+            miniPreview.replaceChildren();
+        };
+
+        const hidePreview = () => {
+            clearMiniPreview();
+            miniPreview.style.display = 'none';
+        };
+
+        const safeAssetUrl = (url) => {
+            if(!url) return null;
+            try {
+                const parsed = new URL(url, location.href);
+                if(parsed.protocol !== 'http:' && parsed.protocol !== 'https:'){
+                    return null;
+                }
+                return parsed.toString();
+            } catch {
+                return null;
+            }
+        };
+
         const setOnlinePreview = () => {
             const parentDomain = location.hostname || 'localhost';
-            miniPreview.innerHTML = `\n                <iframe src="https://player.twitch.tv/?channel=${encodeURIComponent(name)}&parent=${encodeURIComponent(parentDomain)}&autoplay=false"\n                    height="180" width="100%" style="border:0;border-radius:0.5rem;min-height:160px;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>\n            `;
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.twitch.tv/?channel=${encodeURIComponent(name)}&parent=${encodeURIComponent(parentDomain)}&autoplay=false`;
+            iframe.height = '180';
+            iframe.width = '100%';
+            iframe.style.border = '0';
+            iframe.style.borderRadius = '0.5rem';
+            iframe.style.minHeight = '160px';
+            iframe.setAttribute('allowfullscreen', '');
+            iframe.setAttribute('webkitallowfullscreen', '');
+            iframe.setAttribute('mozallowfullscreen', '');
+            clearMiniPreview();
+            miniPreview.appendChild(iframe);
             miniPreview.style.display = 'block';
         };
 
-        const setOfflinePreview = (avatarUrl) => {
-            if(avatarUrl){
-                miniPreview.innerHTML = `\n                    <img src="${avatarUrl}" alt="${name} avatar" style="width:100%;height:160px;object-fit:cover;border-radius:0.5rem;" />\n                `;
-            } else {
-                miniPreview.innerHTML = `\n                    <div style="display:flex;align-items:center;justify-content:center;height:160px;background:rgba(255,255,255,0.05);color:#ddd;border-radius:0.5rem;">Avatar não disponível</div>\n                `;
+        const setOfflineAvatar = (avatarUrl) => {
+            const safeUrl = safeAssetUrl(avatarUrl);
+            if(!safeUrl){
+                hidePreview();
+                return;
             }
+            const img = document.createElement('img');
+            img.src = safeUrl;
+            img.alt = `${name} avatar`;
+            img.style.width = '100%';
+            img.style.height = '160px';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '0.5rem';
+            clearMiniPreview();
+            miniPreview.appendChild(img);
             miniPreview.style.display = 'block';
         };
+
+        hidePreview();
 
         card.style.position = 'relative';
         card.dataset.drop = (!isNonDrop).toString();
@@ -1414,7 +1475,6 @@ function renderStreamers(){
         card.appendChild(actions);
         card.appendChild(miniPreview);
         grid.appendChild(card);
-        console.log('renderStreamers', name, 'card appended; total now', grid.children.length);
 
         fetchStreamerStatus(name, isNonDrop)
             .then(info=>{
@@ -1443,18 +1503,19 @@ function renderStreamers(){
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Não está online no momento.';
                     pstoryInfo.style.color = '#fa0505';
-                    fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
+                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 } else if(info.status === 'unknown'){
                     status.textContent = 'Status desconhecido';
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Não foi possível verificar o título.';
                     pstoryInfo.style.color = '#aaa';
-                    fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
+                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 } else {
                     status.textContent = 'Erro ao obter';
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Erro ao determinar Pstory.';
                     pstoryInfo.style.color = '#faa';
+                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 }
                 placeStreamerCard(card, info);
                 openBtn.disabled = false;
@@ -1466,6 +1527,7 @@ function renderStreamers(){
                 resolvedCount += 1;
                 status.textContent = 'Erro ao obter';
                 status.classList.add('offline');
+                fetchStreamerAvatar(name).then(setOfflineAvatar);
                 openBtn.disabled = false;
                 updateStatusInfo();
             });
@@ -2074,7 +2136,6 @@ const logResult = document.getElementById('log-result');
 // reusable log parsing/display routine
 function processLogText(text){
     let {totalCost,counts} = parseLog(text);
-    console.log('processLogText called', text, totalCost, counts);
     if(!logResult) return;
     const exp = t('expensesMsg');
     const usedUltra = counts.ultra || 0;
@@ -2176,29 +2237,72 @@ if(calcCardBtn){
 
 document.body.classList.add('dark');
 
-// service worker registration is disabled to prevent caching issues during development.
-// To re-enable caching in production remove the surrounding comments or set
-// `enableSW` to true.
+const APP_CACHE_PREFIX = 'poke-effectiveness-';
+const TYPES_DATA_URL = 'types.json';
+
+// Service worker stays disabled by default while the project is updated manually.
 const enableSW = false;
-if(enableSW && 'serviceWorker' in navigator){
-    navigator.serviceWorker.register('sw.js').then(reg=>{
-        if(reg.waiting){
-            alert('Nova versão disponível. Atualize a página.');
-        }
-        reg.addEventListener('updatefound',()=>{
-            const newSW = reg.installing;
-            newSW.addEventListener('statechange',()=>{
-                if(newSW.state==='installed' && navigator.serviceWorker.controller){
-                    alert('Nova versão disponível. Atualize a página.');
-                }
-            });
+
+async function cleanupDisabledServiceWorker(){
+    if(!('serviceWorker' in navigator)) return;
+    const expectedScriptPath = new URL('sw.js', location.href).pathname;
+    try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        const matchingRegistrations = registrations.filter(registration => {
+            const scriptUrl = registration.active?.scriptURL || registration.waiting?.scriptURL || registration.installing?.scriptURL || '';
+            if(!scriptUrl) return false;
+            try {
+                return new URL(scriptUrl).pathname === expectedScriptPath;
+            } catch {
+                return false;
+            }
         });
-    }).catch(console.error);
+
+        await Promise.all(matchingRegistrations.map(registration => registration.unregister()));
+
+        if('caches' in window){
+            const cacheKeys = await caches.keys();
+            await Promise.all(
+                cacheKeys
+                    .filter(key => key.startsWith(APP_CACHE_PREFIX))
+                    .map(key => caches.delete(key))
+            );
+        }
+    } catch(err){
+        console.error('service worker cleanup failed', err);
+    }
+}
+
+if('serviceWorker' in navigator){
+    if(enableSW){
+        navigator.serviceWorker.register('sw.js').then(reg=>{
+            if(reg.waiting){
+                alert('Nova versão disponível. Atualize a página.');
+            }
+            reg.addEventListener('updatefound',()=>{
+                const newSW = reg.installing;
+                if(!newSW) return;
+                newSW.addEventListener('statechange',()=>{
+                    if(newSW.state==='installed' && navigator.serviceWorker.controller){
+                        alert('Nova versão disponível. Atualize a página.');
+                    }
+                });
+            });
+        }).catch(err => {
+            console.error('service worker registration failed', err);
+        });
+    } else {
+        cleanupDisabledServiceWorker();
+    }
 }
 
 const matrixBtn = document.getElementById('matrix-btn');
 const matrixModal = document.getElementById('matrix-modal');
 const matrixBody = document.getElementById('matrix-body');
+if(matrixBtn){
+    matrixBtn.disabled = true;
+    matrixBtn.setAttribute('aria-disabled', 'true');
+}
 if(matrixBtn && matrixModal && matrixBody){
     matrixBtn.addEventListener('click', ()=>{
         buildMatrix();
@@ -2239,32 +2343,145 @@ function buildMatrix(){
     matrixBody.innerHTML = html;
 }
 
-fetch('types.json').then(r=>r.json()).then(data=>{
-    Object.assign(effectiveness,data.effectiveness);
-    Object.assign(immunities,data.immunities);
-    Object.assign(resistances,data.resistances || {});
-        for(let t in effectiveness){weaknesses[t]=[];}
-    for(let t in effectiveness){(effectiveness[t]||[]).forEach(target=>{if(!weaknesses[target])weaknesses[target]=[];weaknesses[target].push(t);});}
-    menuTypes=Object.keys(effectiveness).sort();
+function clearTypeDataStore(){
+    [effectiveness, weaknesses, immunities, resistances].forEach(store => {
+        Object.keys(store).forEach(key => delete store[key]);
+    });
+}
+
+function createTypesLoadErrorMessage(){
+    const wrapper = document.createElement('div');
+    wrapper.className = 'load-error-message';
+    wrapper.setAttribute('role', 'alert');
+
+    const title = document.createElement('strong');
+    title.className = 'load-error-title';
+    title.textContent = 'Não foi possível carregar os tipos.';
+
+    const description = document.createElement('p');
+    description.className = 'load-error-description';
+    description.textContent = 'Atualize a página ou tente novamente em instantes.';
+
+    const retryButton = document.createElement('button');
+    retryButton.type = 'button';
+    retryButton.className = 'load-error-retry';
+    retryButton.textContent = 'Tentar novamente';
+    retryButton.addEventListener('click', loadTypesData);
+
+    wrapper.appendChild(title);
+    wrapper.appendChild(description);
+    wrapper.appendChild(retryButton);
+    return wrapper;
+}
+
+function showTypesLoadError(error){
+    clearTypeDataStore();
+    menuTypes = [];
+    currentSelection = [];
+
+    if(connectionsSvg) connectionsSvg.replaceChildren();
+    if(chart){
+        chart.replaceChildren(createTypesLoadErrorMessage());
+    }
+
+    const infoPanel = document.getElementById('info');
+    if(infoPanel){
+        infoPanel.classList.add('load-error-state');
+        infoPanel.textContent = 'Os dados de efetividade estão indisponíveis no momento.';
+    }
+
+    const instructions = document.getElementById('instructions');
+    if(instructions){
+        instructions.textContent = 'Não foi possível carregar os dados de efetividade. Atualize a página ou tente novamente.';
+    }
+
+    if(matrixBtn){
+        matrixBtn.disabled = true;
+        matrixBtn.setAttribute('aria-disabled', 'true');
+        matrixBtn.title = 'Tabela indisponível';
+    }
+
+    console.error('types.json load failed', error);
+}
+
+function resetTypesLoadErrorState(){
+    const infoPanel = document.getElementById('info');
+    if(infoPanel){
+        infoPanel.classList.remove('load-error-state');
+        if(!currentSelection.length){
+            infoPanel.textContent = '';
+        }
+    }
+
+    if(matrixBtn){
+        matrixBtn.disabled = false;
+        matrixBtn.removeAttribute('aria-disabled');
+        matrixBtn.title = 'Tabela';
+    }
+}
+
+function populateTypesDatalist(){
+    if(!searchInput) return;
+
+    const existing = document.getElementById('types-list');
+    if(existing) existing.remove();
+
+    const datalist = document.createElement('datalist');
+    datalist.id = 'types-list';
+    menuTypes.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        datalist.appendChild(option);
+    });
+    document.body.appendChild(datalist);
+    searchInput.setAttribute('list', 'types-list');
+}
+
+function applyTypesData(data){
+    if(!data || typeof data !== 'object' || typeof data.effectiveness !== 'object' || typeof data.immunities !== 'object'){
+        throw new Error('Formato inválido em types.json');
+    }
+
+    clearTypeDataStore();
+    Object.assign(effectiveness, data.effectiveness);
+    Object.assign(immunities, data.immunities);
+    Object.assign(resistances, data.resistances || {});
+
+    for(const type in effectiveness){
+        weaknesses[type] = [];
+    }
+
+    for(const type in effectiveness){
+        (effectiveness[type] || []).forEach(target => {
+            if(!weaknesses[target]) weaknesses[target] = [];
+            weaknesses[target].push(type);
+        });
+    }
+
+    menuTypes = Object.keys(effectiveness).sort();
     createButtons();
     updateTextContent();
     initFromUrl();
+    populateTypesDatalist();
 
-    if(searchInput) {
-        const dl = document.createElement('datalist');
-        dl.id = 'types-list';
-        menuTypes.forEach(t=>{
-            const opt = document.createElement('option');
-            opt.value = t;
-            dl.appendChild(opt);
-        });
-        document.body.appendChild(dl);
-        searchInput.setAttribute('list','types-list');
-    }
-    // animate cards after data is available
     if(useGsap){
         gsap.from('.card', {opacity:0, y:20, stagger:0.1, duration:0.6});
     }
-}).catch(err=>{
-    console.error('fetch failed',err);
-});
+}
+
+function loadTypesData(){
+    return fetch(TYPES_DATA_URL)
+        .then(response => {
+            if(!response.ok){
+                throw new Error(`Falha ao carregar ${TYPES_DATA_URL} (${response.status})`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            resetTypesLoadErrorState();
+            applyTypesData(data);
+        })
+        .catch(showTypesLoadError);
+}
+
+loadTypesData();
