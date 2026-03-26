@@ -1027,10 +1027,6 @@ function hideSearchResults() {
 
 function closeSearchPanel() {
   hideSearchResults();
-  if (speedsterSearchInput) {
-    speedsterSearchInput.value = '';
-    speedsterSearchInput.blur();
-  }
 }
 
 function getBossesForSpeedster(speedsterName) {
@@ -1369,8 +1365,14 @@ if (closeBtn) {
 }
 
 const speedsterSearchPanel = document.querySelector('.speedster-search-panel');
+const speedsterSearchDesktopQuery = window.matchMedia('(max-width: 1080px)');
 
 if (speedsterSearchPanel) {
+  const speedsterSearchDragHandle = document.createElement('div');
+  speedsterSearchDragHandle.className = 'speedster-search-drag-handle';
+  speedsterSearchDragHandle.textContent = 'Mover busca';
+  speedsterSearchPanel.insertBefore(speedsterSearchDragHandle, speedsterSearchPanel.firstChild);
+
   const speedsterSearchCloseBtn = document.createElement('button');
   speedsterSearchCloseBtn.type = 'button';
   speedsterSearchCloseBtn.className = 'speedster-search-close';
@@ -1384,8 +1386,71 @@ if (speedsterSearchPanel) {
 
   // Prevent clicks inside the panel from reaching document click handler
   speedsterSearchPanel.addEventListener('click', (event) => event.stopPropagation());
+  speedsterSearchPanel.addEventListener('pointerdown', (event) => event.stopPropagation());
 
   speedsterSearchPanel.appendChild(speedsterSearchCloseBtn);
+
+  let searchDragState = null;
+
+  const stopSearchPanelDrag = () => {
+    if (!searchDragState) return;
+    searchDragState = null;
+    speedsterSearchDragHandle.classList.remove('is-dragging');
+  };
+
+  const resetSearchPanelPosition = () => {
+    stopSearchPanelDrag();
+    speedsterSearchPanel.classList.remove('is-floating');
+    speedsterSearchPanel.style.left = '';
+    speedsterSearchPanel.style.top = '';
+    speedsterSearchPanel.style.right = '';
+    speedsterSearchPanel.style.bottom = '';
+  };
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  speedsterSearchDragHandle.addEventListener('pointerdown', (event) => {
+    if (speedsterSearchDesktopQuery.matches || event.button !== 0) return;
+
+    const host = speedsterSearchPanel.closest('.calc-card');
+    if (!host) return;
+
+    const hostRect = host.getBoundingClientRect();
+    const panelRect = speedsterSearchPanel.getBoundingClientRect();
+
+    searchDragState = {
+      host,
+      offsetX: event.clientX - panelRect.left,
+      offsetY: event.clientY - panelRect.top
+    };
+
+    speedsterSearchPanel.classList.add('is-floating');
+    speedsterSearchPanel.style.left = `${panelRect.left - hostRect.left}px`;
+    speedsterSearchPanel.style.top = `${panelRect.top - hostRect.top}px`;
+    speedsterSearchPanel.style.right = 'auto';
+    speedsterSearchPanel.style.bottom = 'auto';
+    speedsterSearchDragHandle.classList.add('is-dragging');
+    event.preventDefault();
+  });
+
+  window.addEventListener('pointermove', (event) => {
+    if (!searchDragState) return;
+
+    const hostRect = searchDragState.host.getBoundingClientRect();
+    const panelWidth = speedsterSearchPanel.offsetWidth;
+    const panelHeight = speedsterSearchPanel.offsetHeight;
+    const maxLeft = Math.max(0, hostRect.width - panelWidth);
+    const maxTop = Math.max(0, hostRect.height - panelHeight);
+    const nextLeft = clamp(event.clientX - hostRect.left - searchDragState.offsetX, 0, maxLeft);
+    const nextTop = clamp(event.clientY - hostRect.top - searchDragState.offsetY, 0, maxTop);
+
+    speedsterSearchPanel.style.left = `${nextLeft}px`;
+    speedsterSearchPanel.style.top = `${nextTop}px`;
+  });
+
+  window.addEventListener('pointerup', stopSearchPanelDrag);
+  window.addEventListener('pointercancel', stopSearchPanelDrag);
+  speedsterSearchDesktopQuery.addEventListener('change', resetSearchPanelPosition);
 }
 
 if (speedsterSearchInput) {

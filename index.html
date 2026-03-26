@@ -7,14 +7,13 @@
     <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
 </head>
-<body>
+<body class="dark">
     <header class="header">
       <h1 id="page-title">Efetividade de Tipos Pokémon</h1>
-      <button id="theme-toggle" aria-label="Toggle dark/light mode">🌓</button>
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
       <button id="print-btn" aria-label="Imprimir" title="Imprimir" style="font-size:1.2rem;">🖨️</button>
       <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
@@ -98,7 +97,6 @@
 
     <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
       <div class="card calc-card">
-        <h2>Calculadora de Treinamento</h2>
         <div class="calc-icons">
           <img id="icon-plate" class="small-icon" src="calculadora/plate.gif" alt="Plate" />
           <img id="icon-shiny" class="small-icon" src="calculadora/shiny_plate.gif" alt="Shiny Plate" />
@@ -148,7 +146,6 @@
 
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card">
-        <h2>Calculadora de Catchs</h2>
         <div class="catch-section">
           <label for="ball-select">Escolha a pokébola:</label>
           <select id="ball-select">
@@ -202,7 +199,6 @@
 
     <div id="content-speedsters" role="tabpanel" aria-labelledby="tab-speedsters" hidden>
       <div class="card calc-card">
-        <h2>Hoopa Portais</h2>
         <div class="speedster-actions" style="margin-bottom:0.75rem; display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
           <p class="intro" style="max-width:720px;margin:0;color:#ddd;">Clique em um Boss para ver recomendações de pokémons para enfrentá-lo.</p>
           <p class="intro" style="max-width:720px;margin:0;color:#ddd;font-weight:600;">⚔️ Offense: quanto maior, melhor. 🛡️ Defense: menor é melhor (0 = imune, 2 = super eficaz).</p>
@@ -221,7 +217,6 @@
 
     <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
       <div class="card calc-card">
-        <h2>Streamers</h2>
         <p style="max-width:760px;margin:0.5rem auto;color:#ddd;">Acompanhe o status de transmissão dos streamers e abra a live no Twitch.</p>
         <div id="streamer-status-info" class="streamer-status-info" style="margin-bottom:0.75rem;color:#f0f0f0;"></div>
         <div id="streamer-filters" class="streamer-filters" style="margin-bottom:0.75rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
@@ -260,8 +255,30 @@
     </div>
 
     <footer class="main-footer">
-      Desenvolvido por Liniko<br>
-      v6.1.0 - 2026
+      <a
+        class="footer-discord-link footer-discord-link-left"
+        href="https://discord.com/invite/Gn2x6F5vB6"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Discord do PStory"
+        title="Entrar no Discord do PStory"
+      >
+        <img src="icons-type/discord.png" alt="Discord" class="footer-discord-icon">
+      </a>
+      <div class="footer-credits">
+        Desenvolvido por Liniko<br>
+        v6.3.0 - 2026
+      </div>
+      <a
+        class="footer-discord-link footer-discord-link-right"
+        href="https://discord.com/invite/Gn2x6F5vB6"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Discord do PStory"
+        title="Entrar no Discord do PStory"
+      >
+        <img src="icons-type/discord.png" alt="Discord" class="footer-discord-icon">
+      </a>
     </footer>
      <script src="js/main.js"></script>
 

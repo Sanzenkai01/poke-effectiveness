@@ -60,6 +60,14 @@ const ranges = {
     '95-100': { plates: 135, gold: 15 }
 };
 
+const COMMON_PLATE_COST = {
+    elementItems: 750,
+    charItems: 24,
+    stones: 1
+};
+
+const SHINING_PLATE_BLOCK_SIZE = 30;
+
 
 
 const strings = {
@@ -117,6 +125,7 @@ const strings = {
         normal: 'Normal',
         shiny: 'Shiny',
         sameQuantityNote: 'Quantidade idêntica; apenas o tipo de plate muda.',
+        shiningBlockNote: 'Shining Plates são produzidas em blocos de 30.',
         elementItems: 'itens do elemento',
         charItems: 'itens característicos',
         stoneItems: 'pedras do elemento',
@@ -149,6 +158,9 @@ const strings = {
         adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
         forCommonLabel: 'Para {n} plate(s) comum(ns):',
         calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento',
+        materialsForRangeLabel: 'Materiais para fabricar',
+        roundedProductionLabel: 'Produção ajustada',
+        shiningStonesLabel: 'Shining Stones',
         /* new messages for log parsing */
         noExpenseWarning: '(Despesa calculada a partir das balls.)',
         avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
@@ -928,6 +940,34 @@ function showSpeedsters(){
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
 const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv']);
 const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv'];
+const STREAMER_DISCORD_LINKS = {
+    adivorcio: 'https://discord.gg/CH5veEAA4k',
+    engrafff: 'https://discord.gg/938jWv2SvA',
+    indypereira: '',
+    sharxera: 'https://discord.gg/UhCmU4Jmkh',
+    shadolas1: 'https://discord.gg/kqPdNewK2S',
+    guixprox: '',
+    callmevitao_: 'https://discord.gg/HzY9sMpaSV',
+    xxryuutox: 'https://discord.gg/S47R5WDU7r',
+    serpion_sk: '',
+    cabelo14: 'https://discord.gg/mBNj4TZXRm',
+    reccolin: '',
+    teylera: 'https://discord.gg/h8EVuz5Z5S',
+    hyoogplays: 'https://discord.gg/Hwfwx6M',
+    naathcarol: 'https://discord.gg/WuU3JzVr5a',
+    corujashady: '',
+    anaodapxg: 'https://discord.gg/TvKNkjGp4Y',
+    ogordonha: 'https://discord.gg/rHaVQUaPDD',
+    FernandoAlcatraz: 'https://discord.gg/5hjyzM6',
+    gordallink: '',
+    sousupermeme: 'https://discord.gg/xFegFmpTaP',
+    lordjuregi: 'https://discord.gg/G8wJtVBYEa',
+    mofexxx: '',
+    reiisuperr: '',
+    rpsubzero: '',
+    dravokh: '',
+    catarktv: ''
+};
 
 let streamerFiltersInitialized = false;
 
@@ -1329,15 +1369,16 @@ function renderStreamers(){
         const actions = document.createElement('div');
         actions.className = 'streamer-actions';
 
-        const viewBtn = document.createElement('button');
-        viewBtn.textContent = 'Ver preview';
-        viewBtn.disabled = true;
+        const discordBtn = document.createElement('button');
+        const discordLink = STREAMER_DISCORD_LINKS[name];
+        discordBtn.textContent = discordLink ? 'Discord' : 'Sem Discord';
+        discordBtn.disabled = !discordLink;
 
         const openBtn = document.createElement('button');
         openBtn.textContent = 'Abrir no Twitch';
         openBtn.disabled = true;
 
-        actions.appendChild(viewBtn);
+        actions.appendChild(discordBtn);
         actions.appendChild(openBtn);
 
         const miniPreview = document.createElement('div');
@@ -1388,8 +1429,6 @@ function renderStreamers(){
                     status.textContent = 'Online';
                     status.classList.add('online');
                     totalOnline += 1;
-                    viewBtn.disabled = false;
-                    viewBtn.textContent = 'Ocultar preview';
                     setOnlinePreview();
                     // show Pstory indicator
                     if(info.isPstoryDrop){
@@ -1410,16 +1449,12 @@ function renderStreamers(){
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Não está online no momento.';
                     pstoryInfo.style.color = '#fa0505';
-                    viewBtn.disabled = false;
-                    viewBtn.textContent = 'Mostrar avatar';
                     fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
                 } else if(info.status === 'unknown'){
                     status.textContent = 'Status desconhecido';
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Não foi possível verificar o título.';
                     pstoryInfo.style.color = '#aaa';
-                    viewBtn.disabled = false;
-                    viewBtn.textContent = 'Mostrar avatar';
                     fetchStreamerAvatar(name).then(url => setOfflinePreview(url));
                 } else {
                     status.textContent = 'Erro ao obter';
@@ -1445,25 +1480,9 @@ function renderStreamers(){
             window.open(`https://www.twitch.tv/${name}`, '_blank');
         });
 
-        viewBtn.addEventListener('click', ()=>{
-            if(miniPreview.style.display === 'none' || miniPreview.style.display === ''){
-                if(status.textContent === 'Online'){
-                    setOnlinePreview();
-                    viewBtn.textContent = 'Ocultar preview';
-                } else {
-                    fetchStreamerAvatar(name).then(url => {
-                        setOfflinePreview(url);
-                        viewBtn.textContent = 'Ocultar preview';
-                    });
-                }
-            } else {
-                miniPreview.style.display = 'none';
-                openBtn.disabled = false;
-                if(status.textContent === 'Online'){
-                    viewBtn.textContent = 'Ver preview';
-                } else {
-                    viewBtn.textContent = 'Mostrar avatar';
-                }
+        discordBtn.addEventListener('click', ()=>{
+            if(discordLink){
+                window.open(discordLink, '_blank');
             }
         });
     });
@@ -1843,15 +1862,18 @@ function updateRangeResults(){
     const variant = document.querySelector('input[name="poke-variant"]:checked')?.value || 'normal';
     if(data){
         const plateCount = data.plates;
-        const blocks = Math.ceil(plateCount / 30);
-        const totalInBlocks = blocks * 30;
+        const blocks = Math.ceil(plateCount / SHINING_PLATE_BLOCK_SIZE);
+        const totalInBlocks = blocks * SHINING_PLATE_BLOCK_SIZE;
         const variantLabel = variant === 'shiny' ? t('shiny') : t('normal');
-        const elementItems = plateCount * 750;
-        const charItems = plateCount * 24;
-        const stones = plateCount;
+        const requiredCommonPlates = variant === 'shiny' ? totalInBlocks : plateCount;
+        const elementItems = requiredCommonPlates * COMMON_PLATE_COST.elementItems;
+        const charItems = requiredCommonPlates * COMMON_PLATE_COST.charItems;
+        const stones = requiredCommonPlates * COMMON_PLATE_COST.stones;
 
         if(variant === 'normal'){
             if(commonInput) commonInput.value = plateCount;
+            if(shinyInput) shinyInput.value = 0;
+            if(shinyResults) shinyResults.innerHTML = '';
             updateCommon();
         } else {
             const shinyVal = blocks * 30;
@@ -1866,9 +1888,16 @@ function updateRangeResults(){
             html += `<p><strong>${t('commonPlatesLabel')}:</strong> ${plateCount}</p>`;
         } else {
             html += `<p><strong>${t('shinyPlatesLabel')}:</strong> ${plateCount}</p>`;
+            html += `<p><strong>${t('roundedProductionLabel')}:</strong> ${totalInBlocks}</p>`;
+            html += `<p><strong>${t('commonPlatesLabel')}:</strong> ${requiredCommonPlates}</p>`;
+            html += `<p><strong>${t('shiningStonesLabel')}:</strong> ${blocks}</p>`;
         }
         html += `<p><strong>${t('goldCoinsLabel')}:</strong> ${data.gold}</p>`;
-        html += `<p><em>${t('sameQuantityNote')}</em></p>`;
+        html += `<p><strong>${t('materialsForRangeLabel')}:</strong><br>${t('calcInfoItems')
+            .replace('{elementItems}', elementItems.toLocaleString())
+            .replace('{charItems}', charItems.toLocaleString())
+            .replace('{stones}', stones.toLocaleString())}</p>`;
+        html += `<p><em>${variant === 'normal' ? t('sameQuantityNote') : t('shiningBlockNote')}</em></p>`;
         rangeResults.innerHTML = html;
     if(useGsap) gsap.from(rangeResults, {opacity:0, y:10, duration:0.3});
     } else {
@@ -1877,9 +1906,9 @@ function updateRangeResults(){
 }
 function updateCommon(){
     const n = parseInt(commonInput.value) || 0;
-    const perPlateElement = 750;
-    const perPlateChar = 24;
-    const perPlateStone = 1;
+    const perPlateElement = COMMON_PLATE_COST.elementItems;
+    const perPlateChar = COMMON_PLATE_COST.charItems;
+    const perPlateStone = COMMON_PLATE_COST.stones;
     const elementItems = n * perPlateElement;
     const charItems = n * perPlateChar;
     const stones = n * perPlateStone;
@@ -1894,13 +1923,13 @@ function updateCommon(){
 function updateShiny(){
     let n = parseInt(shinyInput.value) || 0;
     let html = '';
-    if(n % 30 !== 0){
-        const rounded = Math.ceil(n/30)*30;
+    if(n % SHINING_PLATE_BLOCK_SIZE !== 0){
+        const rounded = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE) * SHINING_PLATE_BLOCK_SIZE;
         html += `<p><em>${t('adjustNote').replace('{rounded}', rounded)}</em></p>`;
         n = rounded;
     }
-    const blocks = Math.ceil(n / 30);
-    const commonNeeded = blocks * 30;
+    const blocks = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE);
+    const commonNeeded = blocks * SHINING_PLATE_BLOCK_SIZE;
     const shiningStones = blocks;
     html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
             ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
@@ -2157,11 +2186,7 @@ if(calcCardBtn){
     });
 }
 
-const themeToggle=document.getElementById('theme-toggle');
-function setTheme(dark){if(dark)document.body.classList.add('dark');else document.body.classList.remove('dark');localStorage.setItem('darkMode',dark);}
-const stored=localStorage.getItem('darkMode');
-if(stored!==null){setTheme(stored==='true');}else{const dm=window.matchMedia('(prefers-color-scheme: dark)').matches;setTheme(dm);} 
-themeToggle.addEventListener('click',()=>{setTheme(!document.body.classList.contains('dark'));});
+document.body.classList.add('dark');
 
 // service worker registration is disabled to prevent caching issues during development.
 // To re-enable caching in production remove the surrounding comments or set
