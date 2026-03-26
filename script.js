@@ -82,7 +82,6 @@ const strings = {
         shareSuccess: 'Link copiado para a área de transferência!',
         shareFail: 'Falha ao copiar link.',
         shareLabel: 'Compartilhar',
-        printLabel: 'Imprimir',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendStrength: 'Super eficaz',
@@ -343,11 +342,6 @@ function updateTextContent(){
     if(shareBtn){
         shareBtn.setAttribute('title', t('shareLabel'));
         shareBtn.setAttribute('aria-label', t('shareLabel'));
-    }
-    const printBtn = document.getElementById('print-btn');
-    if(printBtn){
-        printBtn.setAttribute('title', t('printLabel'));
-        printBtn.setAttribute('aria-label', t('printLabel'));
     }
     const themeBtn = document.getElementById('theme-toggle');
     if(themeBtn){
@@ -2016,12 +2010,6 @@ if(shareBtn){
                 setTimeout(()=>tip.remove(),1500);
             }
         }).catch(()=>alert(t('shareFail')));
-    });
-}
-const printBtn = document.getElementById('print-btn');
-if(printBtn){
-    printBtn.addEventListener('click',()=>{
-        window.print();
     });
 }
 const resetBtn = document.getElementById('reset-btn');

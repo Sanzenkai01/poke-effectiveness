@@ -1843,7 +1843,7 @@ p {
 
 
 @media print {
-  header, .search-wrapper, #legend, #share-btn, #print-btn, #theme-toggle, #type-search { display: none !important; }
+  header, .search-wrapper, #legend, #share-btn, #theme-toggle, #type-search { display: none !important; }
   body { background: #fff !important; color: #000 !important; }
   .card { box-shadow: none; background: #fff; }
   .type-button { box-shadow: none; }
@@ -2066,7 +2066,6 @@ h2 {
 
 #theme-toggle,
 #share-btn,
-#print-btn,
 #matrix-btn {
   position: absolute;
   top: 50%;
@@ -2084,11 +2083,7 @@ h2 {
 }
 
 #share-btn {
-  right: 6.85rem;
-}
-
-#print-btn {
-  right: 3.6rem;
+  right: 5rem;
 }
 
 #matrix-btn {
@@ -2097,7 +2092,6 @@ h2 {
 
 #theme-toggle:hover,
 #share-btn:hover,
-#print-btn:hover,
 #matrix-btn:hover {
   transform: translateY(calc(-50% - 2px));
   background: rgba(255, 255, 255, 0.12);
@@ -2331,7 +2325,6 @@ textarea:focus {
   }
 
   #share-btn,
-  #print-btn,
   #matrix-btn {
     position: static;
     transform: none;
