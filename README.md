@@ -5,7 +5,7 @@ Aplicacao estatica para consultar efetividade de tipos Pokemon e utilitarios do 
 - calculadora de treinamento
 - calculadora de catch
 - combinacoes de fosseis
-- recomendacoes para Hoopa Portais
+- recomendacoes para Bosses
 - painel de streamers
 
 ## Como rodar
@@ -26,7 +26,7 @@ Depois acesse `http://localhost:8000`.
 - `script.js`: logica principal da aplicacao
 - `styles.css`: estilos globais
 - `types.json`: dados de efetividade, imunidades e resistencias
-- `hoopa-portais/hoopa-portais.js`: dados e interface de Hoopa Portais
+- `bosses/bosses.js`: dados e interface do modulo Bosses
 - `sw.js`: service worker para cache offline quando habilitado
 
 ## Manutencao

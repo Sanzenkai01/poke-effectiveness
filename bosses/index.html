@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bosses</title>
+  <link rel="icon" type="image/x-icon" href="../icons-type/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260402g">
+</head>
+<body data-active-tab="bosses">
+  <header class="header">
+    <button id="back-btn" class="icon-button" onclick="location.href='../index.html'" aria-label="Voltar ao site">↩️</button>
+    <h1>Bosses</h1>
+    <div style="width:48px;" aria-hidden="true"></div>
+  </header>
+
+  <div class="speedster-layout" style="margin-top:0.4rem;">
+    <div class="card calc-card bosses-shell bosses-shell--standalone">
+      <div class="bosses-header">
+        <div class="bosses-mode-switch" role="tablist" aria-label="Modos de Bosses">
+          <button type="button" class="bosses-mode-btn is-active" data-boss-mode="hoopa" role="tab" aria-selected="true">Hoopa Portais</button>
+          <button type="button" class="bosses-mode-btn" data-boss-mode="champion" role="tab" aria-selected="false">Champion Path</button>
+          <button type="button" class="bosses-mode-btn" data-boss-mode="mew2" role="tab" aria-selected="false">Mew 2</button>
+        </div>
+        <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
+          <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
+          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
+          <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
+          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokémon ainda não foi adicionado.</div>
+        </aside>
+      </div>
+      <div class="bosses-hero">
+        <div class="bosses-copy">
+          <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
+          <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
+    </div>
+  </div>
+
+  <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+    <div class="speedster-modal-backdrop" data-close="true"></div>
+    <div class="speedster-modal-content" role="document">
+      <button class="speedster-modal-close" aria-label="Fechar">✖</button>
+      <div class="speedster-modal-header">
+        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+        <div class="speedster-modal-title">
+          <h2 id="modal-title"></h2>
+          <p id="modal-subtitle" class="speedster-subtitle"></p>
+          <div class="tier-legend" aria-label="Legenda de cores de recomendação">
+            <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
+            <span class="tier-dot tier-otimo" aria-hidden="true"></span>Otimo
+            <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
+            <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitável
+            <span class="tier-dot tier-solo" aria-hidden="true"></span>Única opção
+            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informação
+          </div>
+        </div>
+        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+      </div>
+      <div id="modal-body" class="speedster-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="bosses.js?v=20260402z"></script>
+</body>
+</html>

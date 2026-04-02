@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efetividade de Tipos Pokémon</title>
+    <title>Poke Effectiveness</title>
     <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260326m">
+    <link rel="stylesheet" href="styles.css?v=20260402g">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
     <header class="header">
-      <h1 id="page-title">Efetividade de Tipos Pokémon</h1>
+      <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
+      <button id="elemental-balls-btn" aria-label="Pokebolas Elementais" title="Pokebolas Elementais">
+        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" />
+      </button>
+      <h1 id="page-title">Poke Effectiveness</h1>
+      <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
       <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
     </header>
@@ -21,10 +26,96 @@
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
-      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculator de Catchs</button>
-      <button id="tab-speedsters" class="tab" role="tab" aria-selected="false" aria-controls="content-speedsters">Hoopa Portais</button>
+      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Catch</button>
+      <button id="tab-bosses" class="tab" role="tab" aria-selected="false" aria-controls="content-bosses">Bosses</button>
       <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">Streamers</button>
+      <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">YouTube</button>
     </div>
+
+    <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden>
+      <div class="home-landing__shell">
+        <div class="home-landing__hero">
+          <div class="home-landing__copy">
+            <p id="home-eyebrow" class="home-landing__eyebrow">Hub da comunidade</p>
+            <h2 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h2>
+            <p id="home-lead" class="home-landing__lead">Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.</p>
+            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, catch, bosses e streamers em um fluxo pensado para uso diário.</p>
+            <div class="home-landing__actions">
+              <button id="home-explore-btn" class="home-landing__cta" type="button" data-home-target="effectiveness">Explorar</button>
+              <a
+                class="home-landing__icon-link"
+                href="https://discord.com/invite/Gn2x6F5vB6"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Entrar no Discord do PStory"
+                title="Entrar no Discord do PStory"
+                data-tooltip="Entrar no Discord do PStory"
+              >
+                <img src="icons-type/discord.png" alt="" aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+
+          <aside class="home-landing__focus" aria-label="Resumo da plataforma">
+            <p class="home-landing__focus-label">Hub tático</p>
+            <div class="home-landing__focus-orbit">
+              <div class="home-landing__focus-core">
+                <span class="home-landing__focus-number">07</span>
+                <span class="home-landing__focus-caption">ferramentas em um só painel</span>
+              </div>
+            </div>
+            <div class="home-landing__focus-note">
+              <strong>Consulta rápida, sem excesso.</strong>
+              <p>Abra o módulo certo em um clique e continue o que precisa fazer no jogo.</p>
+            </div>
+            <div id="home-streamer-info" class="home-landing__focus-streamers" data-state="loading" aria-live="polite">
+              <span class="home-landing__focus-streamers-label">PStory ao vivo</span>
+              <strong id="home-streamer-count" class="home-landing__focus-streamers-count">--</strong>
+              <span id="home-streamer-text" class="home-landing__focus-streamers-text">Consultando streamers...</span>
+            </div>
+            <div id="home-streamer-rat-summary" class="home-landing__focus-rattata" aria-live="polite"></div>
+          </aside>
+        </div>
+
+        <div class="home-landing__tools" aria-label="Ferramentas disponíveis">
+          <button class="home-tool-card" type="button" data-home-target="effectiveness">
+            <span class="home-tool-card__index">01</span>
+            <strong class="home-tool-card__title">Tipos</strong>
+            <span class="home-tool-card__desc">Fraquezas, resistências e combinações em leitura imediata.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="fossils">
+            <span class="home-tool-card__index">02</span>
+            <strong class="home-tool-card__title">Fósseis</strong>
+            <span class="home-tool-card__desc">Escolha pares certos sem precisar cruzar tabelas manualmente.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="calculator">
+            <span class="home-tool-card__index">03</span>
+            <strong class="home-tool-card__title">Treinamento</strong>
+            <span class="home-tool-card__desc">Planeje placas, ouro e recursos antes de investir no treino.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="catch">
+            <span class="home-tool-card__index">04</span>
+            <strong class="home-tool-card__title">Catch</strong>
+            <span class="home-tool-card__desc">Consulte cálculos de captura com um fluxo mais direto e claro.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="bosses">
+            <span class="home-tool-card__index">05</span>
+            <strong class="home-tool-card__title">Bosses</strong>
+            <span class="home-tool-card__desc">Veja picks e roles ideais para cada boss sem perder tempo.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="streamers">
+            <span class="home-tool-card__index">06</span>
+            <strong class="home-tool-card__title">Streamers</strong>
+            <span class="home-tool-card__desc">Acompanhe lives e sinais úteis da comunidade em uma visão só.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="youtube">
+            <span class="home-tool-card__index">07</span>
+            <strong class="home-tool-card__title">YouTube</strong>
+            <span class="home-tool-card__desc">Assista a vídeos úteis da comunidade sem sair do Poke Utilities.</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
     <p id="instructions">Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.</p>
 
@@ -45,7 +136,88 @@
       </div>
     </div>
 
-    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness">
+    <div class="modal commands-modal" id="commands-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="commands-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="commands-modal-title">Comandos do Jogo</h2>
+        <div class="commands-list">
+          <article class="command-item">
+            <code>!pokeballs NOME DO POKEMON</code>
+            <p>Informa quantas pokebolas foram gastas no pokemon.</p>
+          </article>
+          <article class="command-item">
+            <code>!kick</code>
+            <p>Ao utilizar o comando dentro de uma casa o jogador teleporta até a porta.</p>
+          </article>
+          <article class="command-item">
+            <code>!expboost</code>
+            <p>Mostra o tempo restante do seu boost de exp ativo.</p>
+          </article>
+          <article class="command-item">
+            <code>h"house</code>
+            <p>Teleporta o jogador até a sua casa.</p>
+          </article>
+          <article class="command-item">
+            <code>h"house, nome do dono da casa</code>
+            <p>Teleporta você até a casa do alvo, caso você esteja invitado.</p>
+          </article>
+          <article class="command-item">
+            <code>!invite</code>
+            <p>Se utilizado dentro de uma casa que você tem no mínimo o cargo de sub-dono você consegue liberar a entrada para alguém na casa.</p>
+          </article>
+          <article class="command-item">
+            <code>!hoopa</code>
+            <p>Mostra os bosses hoopa atualmente ativos.</p>
+          </article>
+          <article class="command-item">
+            <code>!task</code>
+            <p>Mostra as tasks ativas do personagem. Este comando não acompanha o Rotom Phone.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="elemental-balls-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="elemental-balls-modal-title">Pokebolas Elementais</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
+          <div class="image-modal__canvas" id="elemental-balls-canvas">
+            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com o craft das pokebolas elementais" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="fossil-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fossil-location-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">âœ–</button>
+        <h2 id="fossil-location-modal-title">Local da Troca de FÃ³sseis</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botÃµes ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="fossil-location-viewport">
+          <div class="image-modal__canvas" id="fossil-location-canvas">
+            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localizaÃ§Ã£o da troca de fÃ³sseis" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden>
       <div class="card">
         <div class="search-wrapper">
           <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
@@ -53,13 +225,13 @@
         </div>
         <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
             <button class="clan-btn" data-clan="instinct" aria-pressed="false" title="Instinct">
-              <img src="hoopa-portais/Instinct.png" alt="Instinct" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Instinct
+              <img src="bosses/Instinct.png" alt="Instinct" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Instinct
             </button>
             <button class="clan-btn" data-clan="mystic" aria-pressed="false" title="Mystic">
-              <img src="hoopa-portais/Mystic.png" alt="Mystic" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Mystic
+              <img src="bosses/Mystic.png" alt="Mystic" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Mystic
             </button>
             <button class="clan-btn" data-clan="valor" aria-pressed="false" title="Valor">
-              <img src="hoopa-portais/Valor.png" alt="Valor" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Valor
+              <img src="bosses/Valor.png" alt="Valor" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Valor
             </button>
         </div>
         <div id="chart-container" class="chart-container">
@@ -74,6 +246,12 @@
       <div class="card calc-card">
         <p id="fossil-instructions"></p>
         <div class="fossil-header">
+            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fÃ³sseis" title="Local da troca de fÃ³sseis">
+              <span class="fossil-location-btn__thumb">
+                <img src="fosseis/local.png" alt="" aria-hidden="true">
+              </span>
+              <span class="fossil-location-btn__label">Local da troca</span>
+            </button>
             <button id="fossil-reset-btn" class="reset-button" aria-label="Resetar fósseis" title="Resetar fósseis">🔄</button>
         </div>
         <div id="fossil-hint" class="calc-info"></div>
@@ -143,88 +321,211 @@
     </div>
 
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
-      <div class="card calc-card">
-        <div class="catch-section">
-          <label for="ball-select">Escolha a pokébola:</label>
-          <select id="ball-select">
-            <option value="elemental">Elemental Ball</option>
-            <option value="story">Story Ball</option>
-            <option value="ultra">Ultra Ball</option>
-          </select>
-          <img id="ball-img" src="balls/elemental.png" alt="ball" style="width:50px;vertical-align:middle;">
+      <div class="card calc-card catch-card">
+        <div class="catch-hero">
+          <div class="catch-hero__copy">
+            <p id="catch-eyebrow" class="catch-hero__eyebrow">Captura otimizada</p>
+            <h2 id="catch-heading">Calculadora de Catch</h2>
+            <p id="catch-description" class="catch-hero__description">Consulte a média de balls e acompanhe o progresso do log em uma tela mais direta.</p>
+          </div>
+          <div class="catch-hero__preview" aria-live="polite">
+            <span id="catch-selected-ball-label" class="catch-hero__preview-label">Ball selecionada</span>
+            <div class="catch-ball-preview">
+              <img id="ball-img" class="catch-ball-preview__image" src="balls/elemental.png" alt="Pokébola Elemental">
+              <div class="catch-ball-preview__copy">
+                <strong id="ball-preview-name">Pokébola Elemental</strong>
+                <span id="ball-preview-price">$325 cada</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="catch-section">
-          <label for="level-select">Nível do pokémon:</label>
-          <select id="level-select">
-            <option value="5">Lvl 5</option>
-            <option value="20">Lvl 20</option>
-            <option value="30">Lvl 30</option>
-            <option value="50">Lvl 50</option>
-            <option value="65">Lvl 65</option>
-            <option value="80">Lvl 80</option>
-            <option value="95">Lvl 95</option>
-            <option value="pre">Pré Ace</option>
-            <option value="ace">Ace</option>
-          </select>
-        </div>
-        <div class="catch-section">
-          <label><input type="radio" name="catch-variant" value="normal" checked> Normal</label>
-          <label><input type="radio" name="catch-variant" value="shiny"> Shiny</label>
-          <button id="calc-catch-btn">Calcular quantidade</button>
-        </div>
-        <div id="catch-result" class="calc-info"></div>
-        <hr />
-        <div class="catch-section">
-          <label for="log-input">Log de balls usadas:</label><br>
-          <textarea id="log-input" rows="3" style="width:100%;" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (Precisa incluir a despesa.)."></textarea>
-          <button id="parse-log">Processar log</button>
-        </div>
-        <div id="log-result" class="calc-info"></div>
-        <p class="catch-note" style="font-size:0.9rem;margin-top:0.5rem;color:#eee;">Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.</p>
-        <hr />
-        <div class="catch-section">
-          <h3>Preço dos cards</h3>
-          <img id="card-img" src="balls/card.png" alt="card" style="width:50px;display:block;margin-bottom:0.5rem;">
-          <label for="card-price">Preço unitário:</label>
-          <input type="number" id="card-price" step="0.01" />
-          <label for="card-qty">Quantidade:</label>
-          <input type="number" id="card-qty" />
-          <button id="calc-card">Calcular</button>
-          <div id="card-result" class="calc-info"></div>
+
+        <div class="catch-dashboard">
+          <section class="catch-panel catch-panel--primary" aria-labelledby="catch-calc-title">
+            <div class="catch-panel__header">
+              <span class="catch-panel__eyebrow">Estimativa</span>
+              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de balls</h3>
+              <p id="catch-calc-hint" class="catch-panel__hint">Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.</p>
+            </div>
+
+            <div class="catch-form-grid">
+              <div class="catch-section catch-field">
+                <label for="ball-select">Escolha a pokébola:</label>
+                <select id="ball-select">
+                  <option value="elemental">Elemental Ball</option>
+                  <option value="story">Story Ball</option>
+                  <option value="ultra">Ultra Ball</option>
+                  <option value="safari">Safari Ball</option>
+                </select>
+              </div>
+              <div class="catch-section catch-field">
+                <label for="level-select">Nível do pokémon:</label>
+                <select id="level-select">
+                  <option value="5">Lvl 5</option>
+                  <option value="20">Lvl 20</option>
+                  <option value="30">Lvl 30</option>
+                  <option value="50">Lvl 50</option>
+                  <option value="65">Lvl 65</option>
+                  <option value="80">Lvl 80</option>
+                  <option value="95">Lvl 95</option>
+                  <option value="pre">Pré Ace</option>
+                  <option value="ace">Ace</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
+              <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
+              <div class="catch-variant-options">
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="normal" checked>
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Normal</strong>
+                    <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrão de captura.</span>
+                  </span>
+                </label>
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="shiny">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Shiny</strong>
+                    <span id="catch-variant-shiny-hint" class="catch-variant-card__hint">Mostra a média para capturas shiny.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="catch-section catch-actions">
+              <button id="calc-catch-btn" class="catch-action-button">Calcular quantidade</button>
+              <p class="catch-note">Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.</p>
+            </div>
+
+            <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
+          </section>
+
+          <div class="catch-secondary-grid">
+            <section class="catch-panel catch-panel--focus" aria-labelledby="catch-log-title">
+              <div class="catch-panel__header">
+                <span class="catch-panel__eyebrow">Log</span>
+                <h3 id="catch-log-title" class="catch-panel__title">Analise o histórico de balls</h3>
+                <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.</p>
+              </div>
+
+              <div class="catch-section catch-field catch-field--full">
+                <label for="log-input">Log de balls usadas:</label>
+                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (Precisa incluir a despesa.)."></textarea>
+              </div>
+
+              <div class="catch-section catch-actions">
+                <button id="parse-log" class="catch-action-button catch-action-button--ghost">Processar log</button>
+              </div>
+
+              <div id="log-result" class="calc-info catch-result-area" aria-live="polite"></div>
+            </section>
+          </div>
         </div>
       </div>
     </div>
 
-    <div id="content-speedsters" role="tabpanel" aria-labelledby="tab-speedsters" hidden>
-      <div class="card calc-card">
-        <div class="speedster-actions" style="margin-bottom:0.75rem; display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
-          <p class="intro" style="max-width:720px;margin:0;color:#ddd;">Clique em um Boss para ver recomendações de pokémons para enfrentá-lo.</p>
-          <p class="intro" style="max-width:720px;margin:0;color:#ddd;font-weight:600;">⚔️ Offense: quanto maior, melhor. 🛡️ Defense: menor é melhor (0 = imune, 2 = super eficaz).</p>
-          <p class="intro" style="max-width:720px;margin:0;color:#f6c564;font-weight:600;">⚠️ Recomendado usar pokémons pelo menos bronze 5 para as recomendações apresentadas.</p>
+    <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
+      <div class="card calc-card bosses-shell">
+        <div class="bosses-header">
+          <div class="bosses-mode-switch" role="tablist" aria-label="Modos de Bosses">
+            <button type="button" class="bosses-mode-btn is-active" data-boss-mode="hoopa" role="tab" aria-selected="true">Hoopa Portais</button>
+            <button type="button" class="bosses-mode-btn" data-boss-mode="champion" role="tab" aria-selected="false">Champion Path</button>
+            <button type="button" class="bosses-mode-btn" data-boss-mode="mew2" role="tab" aria-selected="false">Mew 2</button>
+          </div>
+          <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
+            <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
+            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
+            <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
+            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokémon ainda não foi adicionado.</div>
+          </aside>
         </div>
-        <aside class="speedster-search-panel" style="margin-bottom:1rem;">
-          <label for="speedster-search" class="speedster-search-label">Buscar Speedster</label>
-          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Speedster" aria-label="Buscar Speedster" autocomplete="off" />
-          <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
-          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Speedster ainda não foi adicionado.</div>
-        </aside>
+        <div class="bosses-hero">
+          <div class="bosses-copy">
+            <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
+            <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
+          </div>
+        </div>
         <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
       </div>
 
-    </div> <!-- close content-speedsters -->
+    </div> <!-- close content-bosses -->
 
     <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
       <div class="card calc-card">
         <p style="max-width:760px;margin:0.5rem auto;color:#ddd;">Acompanhe o status de transmissão dos streamers e abra a live no Twitch.</p>
         <div id="streamer-status-info" class="streamer-status-info" style="margin-bottom:0.75rem;color:#f0f0f0;"></div>
-        <div id="streamer-filters" class="streamer-filters" style="margin-bottom:0.75rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <div id="streamer-filters" class="streamer-filters" style="margin-bottom:0.75rem;">
             <label style="font-size:0.85rem;color:#eee;"><input id="filter-all" type="checkbox" checked style="margin-right:0.3rem;">Mostrar tudo</label>
             <label style="font-size:0.85rem;color:#eee;"><input id="filter-drops" type="checkbox" style="margin-right:0.3rem;">Drops</label>
             <label style="font-size:0.85rem;color:#eee;"><input id="filter-online" type="checkbox" style="margin-right:0.3rem;">Online</label>
             <label style="font-size:0.85rem;color:#eee;"><input id="filter-pack" type="checkbox" style="margin-right:0.3rem;">Pack</label>
             <label style="font-size:0.85rem;color:#eee;"><input id="filter-pstory" type="checkbox" style="margin-right:0.3rem;">Pstory</label>
+            <div id="streamer-rat-summary" class="streamer-rat-summary" aria-live="polite"></div>
         </div>
         <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de Streamers"></div>
+      </div>
+    </div>
+
+    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden>
+      <div class="card calc-card community-shell">
+        <div class="community-hero">
+          <div class="community-copy">
+            <p class="community-eyebrow">YouTube da comunidade</p>
+            <h2>Videos recentes da comunidade</h2>
+            <p class="community-lead">Veja os uploads mais recentes da comunidade.</p>
+            <p class="community-supporting">Lista cronologica, sem ranking.</p>
+            <p class="community-creator-note">Produz conteudo de PStory? Use <strong>#pstory</strong> e, se quiser, uma hashtag de tema para aparecer no filtro certo.</p>
+          </div>
+        </div>
+
+        <div id="community-topic-filters" class="community-topic-filters" aria-label="Filtros do YouTube"></div>
+
+        <div class="community-layout">
+          <section class="community-player-panel" aria-labelledby="community-featured-title">
+            <div class="community-player-frame">
+              <button id="community-video-preview" class="community-video-preview" type="button">
+                <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Preview do video selecionado" loading="lazy">
+                <span class="community-video-preview-overlay">
+                  <span class="community-video-preview-badge">Abrir video</span>
+                  <span id="community-video-preview-caption">Clique para abrir este video.</span>
+                </span>
+              </button>
+            </div>
+            <div class="community-player-meta">
+              <div class="community-player-context">
+                <span class="community-player-tag">Recentes</span>
+                <span id="community-published-at" class="community-published-at">Carregando data...</span>
+              </div>
+              <h3 id="community-featured-title">Carregando vídeo...</h3>
+              <p id="community-channel-name" class="community-channel-name">Canal da comunidade</p>
+              <div class="community-player-actions">
+                <a id="community-video-link" class="community-watch-link" href="https://www.youtube.com/results?search_query=%23pstory" target="_blank" rel="noopener noreferrer">Abrir no YouTube</a>
+                <a id="community-channel-link" class="community-watch-link community-channel-link" href="https://www.youtube.com/results?search_query=%23pstory" target="_blank" rel="noopener noreferrer">Visitar canal</a>
+              </div>
+              <div class="community-player-details">
+                <div class="community-player-detail-card">
+                  <h4>Tema atual</h4>
+                  <p id="community-topic-description">Carregando tema atual...</p>
+                </div>
+                <div id="community-player-topics" class="community-player-topics" aria-label="Temas do filtro atual"></div>
+                <div class="community-player-detail-card community-player-detail-card--soft">
+                  <h4>Como usar</h4>
+                  <p id="community-topic-helper">Escolha um video e clique na capa para abrir o player.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="community-list-panel">
+            <div class="community-list-head">
+              <h3 id="community-list-title">Videos recentes</h3>
+              <p id="community-list-description">Mais recentes em ordem cronologica.</p>
+            </div>
+            <div id="community-video-list" class="community-video-list" aria-live="polite"></div>
+          </aside>
+        </div>
       </div>
     </div>
 
@@ -239,7 +540,7 @@
           <p id="modal-subtitle" class="speedster-subtitle"></p>
           <div class="tier-legend" aria-label="Legenda de cores de recomendação">
             <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
-            <span class="tier-dot tier-otimo" aria-hidden="true"></span>Otimo
+            <span class="tier-dot tier-otimo" aria-hidden="true"></span>Muito bom
             <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
             <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitável
             <span class="tier-dot tier-solo" aria-hidden="true"></span>Única opção
@@ -283,7 +584,7 @@
 
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
-    <script src="hoopa-portais/hoopa-portais.js?v=20260326i" defer></script>
-    <script src="script.js?v=20260326h" defer></script>
+    <script src="bosses/bosses.js?v=20260402z" defer></script>
+    <script src="script.js?v=20260402g" defer></script>
 </body>
 </html>
