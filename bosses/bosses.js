@@ -67,7 +67,7 @@ const hoopaPortalsData = [
           { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
@@ -275,7 +275,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
@@ -357,7 +357,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
@@ -396,7 +396,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
@@ -517,7 +517,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
           { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' }
         ]
@@ -596,7 +596,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' },
-          { name: 'Drifloom', image: 'Drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
       },
@@ -1478,7 +1478,7 @@ const championPathBosses = createManualRoleboardBosses([
       },
       mystic: {
         dps: [
-          createRolePick('Drifloon', ['ghost', 'flying'], 'ghost', { tier: 'otimo' })
+          createRolePick('drifloon', ['ghost', 'flying'], 'ghost', { tier: 'otimo' })
         ],
         tank: [
           createRolePick('Hitmonchan', ['fighting'], 'fighting', { tier: 'otimo' }),
