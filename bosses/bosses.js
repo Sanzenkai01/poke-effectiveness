@@ -1360,11 +1360,12 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
         ],
         tank: [
-          createRolePick('Goodra', ['dragon'], 'dragon'),
-          createRolePick('Magnezone', ['electric', 'steel'], 'steel', { note: 'Ring target necessario.' })
+          createRolePick('Tangrowth', ['grass'], 'grass'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass')
         ],
         support: [
-          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Bellossom', ['grass'], 'grass')
         ]
       },
       mystic: {
@@ -1373,7 +1374,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Dewgong', ['water', 'ice'], 'ice')
         ],
         tank: [
-          createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
+          createRolePick('Drifblim', ['ghost', 'flying'], 'flying')
         ],
         support: [
           createRolePick('Comfey', ['fairy'], 'fairy'),
@@ -1386,9 +1387,9 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy')
         ],
         tank: [
-          createRolePick('Shieldon', ['rock', 'steel'], 'rock'),
-          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
-          createRolePick('Probopass', ['rock', 'steel'], 'rock')
+          createRolePick('Cramorant', ['flying', 'water'], 'flying'),
+          createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
+          createRolePick('Sableye', ['dark', 'ghost'], 'ghost')
         ],
         support: [
           createRolePick('Blissey', ['normal'], 'fairy')
