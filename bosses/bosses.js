@@ -25,7 +25,6 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice. Passiva: Ice Scales: Garante resistencia contra Flying e Dragon.', matchupOverrides: { 'mega-staraptor': { defenseByBossType: { fighting: 1, flying: 0.5 } } } },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
@@ -105,8 +104,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
@@ -144,7 +142,6 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
@@ -235,7 +232,6 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Lombre', image: 'lombre.png', tier: 'green', types: ['water','grass'], description: 'Tipo move: Grass.' },
           { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
           { name: 'Mega Hawlucha', image: 'mega-hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
@@ -280,7 +276,6 @@ const hoopaPortalsData = [
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
           { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
@@ -434,7 +429,7 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: tanka Dragon (1x).', matchupOverrides: { 'mega-feraligatr': { defenseByBossType: { dragon: 1 } } } },
+          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: o multiplicador defensivo final contra ataques do tipo Dragon e tratado como 1x.', matchupOverrides: { 'mega-feraligatr': { defenseByBossType: { dragon: 1 } } } },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
           { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon e toma 0.5x de Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2, defenseByBossType: { dragon: 0.5 } } } }
         ]
@@ -444,8 +439,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Mega Feraligatr', image: 'mega-feraligatr.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
           { name: 'Kingdra', image: 'kingdra.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
@@ -662,7 +656,6 @@ const hoopaPortalsData = [
             bossTypes: ['dark'],
             recommended: [
               { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
               { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
             ]
           },
@@ -671,8 +664,7 @@ const hoopaPortalsData = [
             bossId: 'mega-absol-z',
             bossTypes: ['dark','ghost'],
             recommended: [
-              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Fidough', image: 'fidough.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -942,7 +934,6 @@ const roleboardPickPools = {
   support: [
     { name: 'Dedenne', image: 'dedenne.png', types: ['electric', 'fairy'] },
     { name: 'Mantine', image: 'mantine.png', types: ['water', 'flying'] },
-    { name: 'Fidough', image: 'fidough.png', types: ['fairy'] },
     { name: 'Lombre', image: 'lombre.png', types: ['water', 'grass'] },
     { name: 'Dachsbun', image: 'dachsbun.png', types: ['fairy'] },
     { name: 'Qwilfish', image: 'qwilfish.png', types: ['water', 'poison'] }
@@ -1201,7 +1192,6 @@ const championPathBosses = createManualRoleboardBosses([
       mystic: {
         dps: [
           createRolePick('Dachsbun', ['fairy'], 'fairy'),
-          createRolePick('Fidough', ['fairy'], 'fairy'),
           createRolePick('Seaking', ['water'], 'ground'),
           createRolePick('BlastoiseTwo', ['water'], 'water'),
           createRolePick('Lombre', ['water', 'grass'], 'grass'),
@@ -1266,7 +1256,6 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Dewgong', ['water', 'ice'], 'ice'),
           createRolePick('Dachsbun', ['fairy'], 'fairy'),
-          createRolePick('Fidough', ['fairy'], 'fairy'),
           createRolePick('Kingdra', ['water', 'dragon'], 'dragon'),
           createRolePick('Mega Feraligatr', ['water', 'dragon'], 'dragon')
         ],
@@ -1485,7 +1474,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Weezing', ['poison'], 'poison', {
             immunities: ['ground'],
             passiveName: 'Levitate',
-            passiveDescription: 'Weezing e imune a danos do tipo terra.'
+            passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
           }),
           createRolePick('Toxapex', ['poison'], 'poison')
         ],
@@ -1708,6 +1697,22 @@ function getRecommendationNameKey(nameOrPokemon) {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+const mirroredRecommendationVariantNames = Object.freeze({
+  alakazam: 'Shiny Alakazam',
+  delphox: 'Shiny Delphox',
+  weavile: 'Shiny Weavile',
+  absol: 'Shiny Absol',
+  megaabsol: 'Shiny Mega Absol',
+  megaabsolz: 'Shiny Mega Absol Z',
+  pachirisu: 'Shiny Pachirisu',
+  seaking: 'Shiny Seaking',
+  bouffalant: 'Shiny Bouffalant',
+  dragonair: 'Shiny Dragonair',
+  megaferaligatr: 'Shiny Mega Feraligatr',
+  scizor: 'Shiny Scizor',
+  scyther: 'Shiny Scyther'
+});
+
 function getImplicitRecommendationProfile(poke) {
   const nameKey = getRecommendationNameKey(poke);
 
@@ -1725,7 +1730,50 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'alakazam' || nameKey === 'shinyalakazam') {
+    return {
+      passiveName: 'Synchronize',
+      passiveDescription: 'Torna o Pokemon imune aos efeitos negativos Paralyze, Poison e Burn.'
+    };
+  }
+
+  if (nameKey === 'shinydelphox') {
+    return {
+      passiveName: 'Blaze',
+      passiveDescription: 'Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
+  if (nameKey === 'shinyweavile') {
+    return {
+      passiveName: 'Keen Eye',
+      passiveDescription: 'O Pokemon e imune ao status negativo de cegueira (BLIND).'
+    };
+  }
+
+  if (
+    nameKey === 'absol' ||
+    nameKey === 'shinyabsol' ||
+    nameKey === 'megaabsol' ||
+    nameKey === 'shinymegaabsol' ||
+    nameKey === 'megaabsolz' ||
+    nameKey === 'shinymegaabsolz'
+  ) {
+    return {
+      passiveName: 'Super Luck',
+      passiveDescription: 'Ao atacar fisicamente tem chance de conceder um bonus de 20% de forca para a proxima habilidade. So pode ocorrer uma vez a cada 20 segundos.'
+    };
+  }
+
   if (nameKey === 'pachirisu') {
+    return {
+      immunities: ['electric'],
+      passiveName: 'Volt Absorb',
+      passiveDescription: 'O Pokemon se torna imune a danos do tipo Electric.'
+    };
+  }
+
+  if (nameKey === 'shinypachirisu') {
     return {
       immunities: ['electric'],
       passiveName: 'Volt Absorb',
@@ -1747,11 +1795,63 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'dragonair' || nameKey === 'shinydragonair') {
+    return {
+      defenseByBossType: {
+        dragon: 1
+      },
+      passiveDescription: 'O multiplicador defensivo final contra ataques do tipo Dragon e tratado como 1x.'
+    };
+  }
+
+  if (nameKey === 'seaking' || nameKey === 'shinyseaking') {
+    return {
+      immunities: ['electric'],
+      passiveName: 'Water Veil',
+      passiveDescription: 'O Pokemon se torna imune a danos do tipo Electric.'
+    };
+  }
+
+  if (nameKey === 'bouffalant' || nameKey === 'shinybouffalant') {
+    return {
+      immunities: ['electric'],
+      passiveName: 'Curly Wall',
+      passiveDescription: 'O Pokemon e imune a danos do tipo Electric.'
+    };
+  }
+
+  if (nameKey === 'megaferaligatr' || nameKey === 'shinymegaferaligatr') {
+    return {
+      passiveName: 'Torrent',
+      passiveDescription: 'Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
+  if (nameKey === 'scizor') {
+    return {
+      defenseByBossType: {
+        fighting: 0.5
+      },
+      passiveName: 'Light Metal',
+      passiveDescription: 'O Pokemon leva dano reduzido de ataques lutadores (0.5x).'
+    };
+  }
+
+  if (nameKey === 'shinyscizor') {
+    return {
+      defenseByBossType: {
+        fighting: 0.5
+      },
+      passiveName: 'Light Metal + Swarm',
+      passiveDescription: 'O Pokemon leva dano reduzido de ataques lutadores (0.5x).; Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
   if (nameKey === 'misdreavus') {
     return {
       immunities: ['ground'],
       passiveName: 'Levitate',
-      passiveDescription: 'Misdreavus e imune a danos do tipo terra.'
+      passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
     };
   }
 
@@ -1759,7 +1859,7 @@ function getImplicitRecommendationProfile(poke) {
     return {
       immunities: ['ground'],
       passiveName: 'Levitate',
-      passiveDescription: 'Bronzong e imune a danos do tipo terra.'
+      passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
     };
   }
 
@@ -1770,7 +1870,7 @@ function getImplicitRecommendationProfile(poke) {
         fire: 0.5
       },
       passiveName: 'Levitate + Heatproof',
-      passiveDescription: 'Shiny Bronzong e imune a danos do tipo terra. O Pokemon sofre menos dano de ataque do tipo Fire (0.5x).'
+      passiveDescription: 'O Pokémon e imune a danos do tipo terra. O Pokémon sofre menos dano de ataque do tipo Fire (0.5x).'
     };
   }
 
@@ -1899,6 +1999,59 @@ function visitAllRecommendationPicks(visitor) {
         if (clanData.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
             (clanData.roles?.[roleKey] || []).forEach(visitor);
+          });
+        }
+      });
+    });
+  });
+}
+
+function createMirroredRecommendationVariant(pick) {
+  const variantName = mirroredRecommendationVariantNames[getRecommendationNameKey(pick)];
+  if (!variantName) return null;
+
+  const variant = cloneRolePickConfig(pick);
+  variant.name = variantName;
+  return variant;
+}
+
+function ensureMirroredRecommendationVariantsInList(picks = []) {
+  if (!Array.isArray(picks) || !picks.length) return;
+
+  const existingNames = new Set(picks.map((pick) => getRecommendationNameKey(pick)));
+  const nextPicks = [];
+
+  picks.forEach((pick) => {
+    nextPicks.push(pick);
+
+    const variant = createMirroredRecommendationVariant(pick);
+    const variantKey = getRecommendationNameKey(variant);
+    if (!variant || !variantKey || existingNames.has(variantKey)) return;
+
+    existingNames.add(variantKey);
+    nextPicks.push(variant);
+  });
+
+  picks.splice(0, picks.length, ...nextPicks);
+}
+
+function ensureMirroredRecommendationVariants() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      Object.values(boss.clans || {}).forEach((clanData) => {
+        if (Array.isArray(clanData.recommended)) {
+          ensureMirroredRecommendationVariantsInList(clanData.recommended);
+        }
+
+        if (Array.isArray(clanData.recommendationGroups)) {
+          clanData.recommendationGroups.forEach((group) => {
+            ensureMirroredRecommendationVariantsInList(group.recommended);
+          });
+        }
+
+        if (clanData.roles) {
+          roleboardRoleOrder.forEach((roleKey) => {
+            ensureMirroredRecommendationVariantsInList(clanData.roles?.[roleKey]);
           });
         }
       });
@@ -2754,6 +2907,7 @@ function ensureMew2BossRolePicks(bossId, clanKey, roleKey, picks = []) {
   ensureRolePickNames(roleList, picks);
 }
 
+ensureMirroredRecommendationVariants();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
