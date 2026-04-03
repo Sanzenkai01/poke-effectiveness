@@ -4464,28 +4464,146 @@ textarea:focus {
   overflow: hidden;
 }
 
-.boss-role-pick-passive {
-  display: grid;
-  gap: 0.14rem;
-  width: 100%;
-  padding: 0.42rem 0.5rem;
-  border-radius: 0.72rem;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.passive-tooltip-trigger {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04)),
+    rgba(8, 14, 25, 0.34);
+  color: rgba(238, 245, 255, 0.88);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: flex-start;
+  gap: 0.42rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.38rem 0.62rem;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 10px 22px rgba(3, 9, 20, 0.14);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
 }
 
-.boss-role-pick-passive-label {
-  color: rgba(255, 255, 255, 0.48);
-  font-size: 0.5rem;
+.passive-tooltip-trigger:hover,
+.passive-tooltip-trigger:focus-visible,
+.passive-tooltip-trigger[aria-expanded="true"] {
+  color: #f6fbff;
+  border-color: rgba(138, 182, 232, 0.28);
+  background:
+    linear-gradient(180deg, rgba(138, 182, 232, 0.18), rgba(138, 182, 232, 0.08)),
+    rgba(8, 14, 25, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 14px 28px rgba(3, 9, 20, 0.22);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.passive-tooltip-trigger-icon {
+  width: 1.02rem;
+  height: 1.02rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(138, 182, 232, 0.14);
+  border: 1px solid rgba(138, 182, 232, 0.18);
+  color: #dfeeff;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.passive-tooltip-trigger-label {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.boss-role-pick-passive-text {
-  color: rgba(245, 248, 252, 0.8);
-  font-size: 0.67rem;
-  line-height: 1.32;
+.passive-tooltip-trigger--role {
+  margin-top: 0.02rem;
+}
+
+.passive-tooltip-surface {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1400;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 0.82rem 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(138, 182, 232, 0.2);
+  background:
+    linear-gradient(180deg, rgba(15, 24, 39, 0.98), rgba(7, 13, 24, 0.96));
+  box-shadow:
+    0 18px 40px rgba(3, 9, 20, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  color: #eef5ff;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.98);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.passive-tooltip-surface[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.passive-tooltip-surface::before {
+  content: "";
+  position: absolute;
+  left: var(--passive-tooltip-arrow-left, 24px);
+  width: 12px;
+  height: 12px;
+  background: rgba(10, 17, 29, 0.98);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.passive-tooltip-surface[data-placement="top"]::before {
+  bottom: -6px;
+  border-right: 1px solid rgba(138, 182, 232, 0.2);
+  border-bottom: 1px solid rgba(138, 182, 232, 0.2);
+}
+
+.passive-tooltip-surface[data-placement="bottom"]::before {
+  top: -6px;
+  border-left: 1px solid rgba(138, 182, 232, 0.2);
+  border-top: 1px solid rgba(138, 182, 232, 0.2);
+}
+
+.passive-tooltip-content {
+  display: grid;
+}
+
+.passive-tooltip-list {
+  display: grid;
+  gap: 0.52rem;
+}
+
+.passive-tooltip-item {
+  color: rgba(238, 245, 255, 0.92);
+  font-size: 0.76rem;
+  line-height: 1.48;
+}
+
+.passive-tooltip-item + .passive-tooltip-item {
+  padding-top: 0.52rem;
+  border-top: 1px solid rgba(138, 182, 232, 0.14);
 }
 
 .boss-role-pick-score {
@@ -5161,28 +5279,8 @@ textarea:focus {
   text-align: left;
 }
 
-.speedster-reco-passive {
-  display: grid;
-  gap: 0.18rem;
-  width: 100%;
-  padding: 0.46rem 0.58rem;
-  border-radius: 0.78rem;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.speedster-reco-passive-label {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.54rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.speedster-reco-passive-text {
-  color: rgba(245, 248, 252, 0.82);
-  font-size: 0.72rem;
-  line-height: 1.35;
+.passive-tooltip-trigger--reco {
+  margin-top: -0.02rem;
 }
 
 .speedster-reco-score {

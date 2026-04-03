@@ -113,6 +113,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' }
         ]
@@ -199,6 +200,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' },
           { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'yellow', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
@@ -244,6 +246,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' },
           { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'green', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
@@ -683,6 +686,7 @@ const hoopaPortalsData = [
             bossTypes: ['dark'],
             recommended: [
               { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+              { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
               { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
               { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
             ]
@@ -945,6 +949,7 @@ const roleboardPickPools = {
   ],
   dps: [
     { name: 'Scyther', image: 'scyther.png', types: ['bug', 'flying'] },
+    { name: 'Shiny Scyther', image: 'scyther.png', types: ['bug', 'flying'] },
     { name: 'Pikachu', image: 'pikachu.png', types: ['electric'] },
     { name: 'Alakazam', image: 'alakazam.png', types: ['psychic'] },
     { name: 'Weavile', image: 'weavile.png', types: ['dark', 'ice'] },
@@ -1055,8 +1060,9 @@ const rolePickImageOverrides = {
   charizardtwo: 'charizard.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
-  megascizor: 'scizor.png',
+  megascizor: 'mega-scizor.png',
   shinybronzong: 'bronzong.png',
+  shinyscyther: 'scyther.png',
   ribombee: 'Ribombee.png',
   venusaurtwo: 'venusaur.png'
 };
@@ -1219,6 +1225,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Bouffalant', ['normal'], 'ground'),
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
           createRolePick('Scyther', ['bug', 'flying'], 'bug'),
+          createRolePick('Shiny Scyther', ['bug', 'flying'], 'bug'),
           createRolePick('Cramorant', ['flying', 'water'], 'flying'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
@@ -1718,6 +1725,28 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'pachirisu') {
+    return {
+      immunities: ['electric'],
+      passiveName: 'Volt Absorb',
+      passiveDescription: 'O Pokemon se torna imune a danos do tipo Electric.'
+    };
+  }
+
+  if (nameKey === 'scyther') {
+    return {
+      passiveName: 'Steadfast',
+      passiveDescription: 'Aumentos autoinfligidos de velocidade tambem aumentam special attack.'
+    };
+  }
+
+  if (nameKey === 'shinyscyther') {
+    return {
+      passiveName: 'Steadfast + Swarm',
+      passiveDescription: 'Aumentos autoinfligidos de velocidade tambem aumentam special attack.; Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
   if (nameKey === 'misdreavus') {
     return {
       immunities: ['ground'],
@@ -2069,6 +2098,46 @@ function extractRegisteredPassiveDescription(text) {
   return parts.slice(1).join(' ').replace(/\s+/g, ' ').trim();
 }
 
+function splitPassiveDescriptionSegments(description) {
+  const normalizedDescription = typeof description === 'string'
+    ? description.replace(/\s+/g, ' ').trim()
+    : '';
+
+  if (!normalizedDescription) return [];
+
+  const semicolonSegments = normalizedDescription
+    .split(/\s*;\s*/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  if (semicolonSegments.length > 1) {
+    return semicolonSegments;
+  }
+
+  const sentenceSegments = normalizedDescription
+    .match(/[^.!?]+[.!?]?/g)
+    ?.map((segment) => segment.trim())
+    .filter(Boolean) || [];
+
+  return sentenceSegments.length ? sentenceSegments : [normalizedDescription];
+}
+
+function buildRecommendationPassiveItems(passiveName, passiveDescription, fallbackText) {
+  const passiveNames = typeof passiveName === 'string'
+    ? passiveName
+      .split(/\s*\+\s*/)
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+    : [];
+  const descriptionSegments = splitPassiveDescriptionSegments(passiveDescription);
+
+  if (passiveNames.length > 1 && descriptionSegments.length === passiveNames.length) {
+    return passiveNames.map((name, index) => `${name}: ${descriptionSegments[index]}`);
+  }
+
+  const normalizedFallback = typeof fallbackText === 'string' ? fallbackText.trim() : '';
+  return normalizedFallback ? [normalizedFallback] : [];
+}
+
 function getRecommendationPassiveInfo(poke) {
   if (!poke || typeof poke !== 'object') return null;
 
@@ -2093,12 +2162,295 @@ function getRecommendationPassiveInfo(poke) {
   const text = passiveName && !normalizedDescription.toLowerCase().startsWith(`${passiveName.toLowerCase()}:`)
     ? `${passiveName}: ${normalizedDescription}`
     : normalizedDescription;
+  const items = buildRecommendationPassiveItems(passiveName, normalizedDescription, text);
 
   return {
     name: passiveName,
     description: normalizedDescription,
-    text
+    text,
+    items
   };
+}
+
+const passiveTooltipTriggerSelector = '.passive-tooltip-trigger';
+const passiveTooltipId = 'passive-tooltip-surface';
+const passiveTooltipTapModeQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+  ? window.matchMedia('(hover: none) and (pointer: coarse)')
+  : null;
+let passiveTooltipSurface = null;
+let passiveTooltipContent = null;
+let activePassiveTooltipTrigger = null;
+let passiveTooltipPinned = false;
+let passiveTooltipHideTimer = null;
+let passiveTooltipSystemInitialized = false;
+
+function isPassiveTooltipTapMode() {
+  return Boolean(passiveTooltipTapModeQuery?.matches);
+}
+
+function clearPassiveTooltipHideTimer() {
+  if (!passiveTooltipHideTimer) return;
+  clearTimeout(passiveTooltipHideTimer);
+  passiveTooltipHideTimer = null;
+}
+
+function ensurePassiveTooltipSurface() {
+  if (passiveTooltipSurface && passiveTooltipContent && passiveTooltipSurface.isConnected) {
+    return passiveTooltipSurface;
+  }
+  if (!document?.body) return null;
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'passive-tooltip-surface';
+  tooltip.id = passiveTooltipId;
+  tooltip.setAttribute('role', 'tooltip');
+  tooltip.hidden = true;
+  tooltip.dataset.open = 'false';
+  tooltip.dataset.placement = 'top';
+
+  const content = document.createElement('div');
+  content.className = 'passive-tooltip-content';
+  tooltip.appendChild(content);
+
+  document.body.appendChild(tooltip);
+
+  passiveTooltipSurface = tooltip;
+  passiveTooltipContent = content;
+  return passiveTooltipSurface;
+}
+
+function getPassiveTooltipTrigger(target) {
+  if (!target || typeof target.closest !== 'function') return null;
+  return target.closest(passiveTooltipTriggerSelector);
+}
+
+function getPassiveTooltipItems(trigger) {
+  if (!trigger?.dataset?.passiveTooltipItems) return [];
+
+  try {
+    const parsed = JSON.parse(trigger.dataset.passiveTooltipItems);
+    return Array.isArray(parsed)
+      ? parsed.map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function renderPassiveTooltipItems(items = []) {
+  const tooltip = ensurePassiveTooltipSurface();
+  if (!tooltip || !passiveTooltipContent) return;
+
+  passiveTooltipContent.innerHTML = '';
+
+  const list = document.createElement('div');
+  list.className = 'passive-tooltip-list';
+
+  items.forEach((item) => {
+    const row = document.createElement('div');
+    row.className = 'passive-tooltip-item';
+    row.textContent = item;
+    list.appendChild(row);
+  });
+
+  passiveTooltipContent.appendChild(list);
+}
+
+function positionPassiveTooltip(trigger) {
+  const tooltip = ensurePassiveTooltipSurface();
+  if (!tooltip || !trigger?.isConnected) return;
+
+  tooltip.style.maxWidth = `${Math.min(320, Math.max(220, window.innerWidth - 24))}px`;
+  tooltip.hidden = false;
+  tooltip.style.visibility = 'hidden';
+
+  const triggerRect = trigger.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const viewportMargin = 12;
+  const gap = 10;
+  const fitsAbove = triggerRect.top >= tooltipRect.height + gap + viewportMargin;
+  const placement = fitsAbove ? 'top' : 'bottom';
+
+  let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+  left = Math.min(Math.max(left, viewportMargin), window.innerWidth - tooltipRect.width - viewportMargin);
+
+  let top = placement === 'top'
+    ? triggerRect.top - tooltipRect.height - gap
+    : triggerRect.bottom + gap;
+  top = Math.min(Math.max(top, viewportMargin), window.innerHeight - tooltipRect.height - viewportMargin);
+
+  const arrowLeft = Math.min(
+    Math.max(triggerRect.left + (triggerRect.width / 2) - left, 18),
+    Math.max(tooltipRect.width - 18, 18)
+  );
+
+  tooltip.dataset.placement = placement;
+  tooltip.style.left = `${Math.round(left)}px`;
+  tooltip.style.top = `${Math.round(top)}px`;
+  tooltip.style.setProperty('--passive-tooltip-arrow-left', `${Math.round(arrowLeft)}px`);
+  tooltip.style.visibility = '';
+}
+
+function showPassiveTooltip(trigger, options = {}) {
+  const tooltip = ensurePassiveTooltipSurface();
+  if (!tooltip || !trigger) return;
+
+  clearPassiveTooltipHideTimer();
+
+  if (activePassiveTooltipTrigger && activePassiveTooltipTrigger !== trigger) {
+    activePassiveTooltipTrigger.setAttribute('aria-expanded', 'false');
+    activePassiveTooltipTrigger.removeAttribute('aria-describedby');
+  }
+
+  activePassiveTooltipTrigger = trigger;
+  passiveTooltipPinned = Boolean(options.pinned);
+
+  const items = getPassiveTooltipItems(trigger);
+  if (!items.length) {
+    hidePassiveTooltip({ immediate: true });
+    return;
+  }
+
+  renderPassiveTooltipItems(items);
+  trigger.setAttribute('aria-expanded', 'true');
+  trigger.setAttribute('aria-describedby', passiveTooltipId);
+  positionPassiveTooltip(trigger);
+  tooltip.hidden = false;
+
+  requestAnimationFrame(() => {
+    if (activePassiveTooltipTrigger !== trigger) return;
+    tooltip.dataset.open = 'true';
+  });
+}
+
+function hidePassiveTooltip(options = {}) {
+  const { immediate = false } = options;
+  const tooltip = passiveTooltipSurface;
+  if (!tooltip) return;
+
+  clearPassiveTooltipHideTimer();
+
+  if (activePassiveTooltipTrigger) {
+    activePassiveTooltipTrigger.setAttribute('aria-expanded', 'false');
+    activePassiveTooltipTrigger.removeAttribute('aria-describedby');
+  }
+
+  activePassiveTooltipTrigger = null;
+  passiveTooltipPinned = false;
+  tooltip.dataset.open = 'false';
+
+  if (immediate) {
+    tooltip.hidden = true;
+    tooltip.style.visibility = '';
+    return;
+  }
+
+  passiveTooltipHideTimer = setTimeout(() => {
+    if (activePassiveTooltipTrigger) return;
+    tooltip.hidden = true;
+    tooltip.style.visibility = '';
+  }, 180);
+}
+
+function repositionActivePassiveTooltip() {
+  if (!activePassiveTooltipTrigger) return;
+  if (!activePassiveTooltipTrigger.isConnected) {
+    hidePassiveTooltip({ immediate: true });
+    return;
+  }
+
+  positionPassiveTooltip(activePassiveTooltipTrigger);
+}
+
+function createPassiveTooltipTrigger(passiveInfo, variant = '') {
+  if (!passiveInfo?.text) return null;
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = `passive-tooltip-trigger${variant ? ` passive-tooltip-trigger--${variant}` : ''}`;
+  trigger.dataset.passiveTooltipItems = JSON.stringify(passiveInfo.items || [passiveInfo.text]);
+  trigger.setAttribute('aria-label', passiveInfo.items?.length > 1 ? 'Ver passivas' : 'Ver passiva');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  const icon = document.createElement('span');
+  icon.className = 'passive-tooltip-trigger-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = 'i';
+
+  const label = document.createElement('span');
+  label.className = 'passive-tooltip-trigger-label';
+  label.textContent = 'Passiva(s)';
+
+  trigger.append(icon, label);
+  return trigger;
+}
+
+function initPassiveTooltipSystem() {
+  if (passiveTooltipSystemInitialized) return;
+  passiveTooltipSystemInitialized = true;
+
+  document.addEventListener('pointerover', (event) => {
+    if (isPassiveTooltipTapMode()) return;
+
+    const trigger = getPassiveTooltipTrigger(event.target);
+    if (!trigger) return;
+
+    const previousTrigger = getPassiveTooltipTrigger(event.relatedTarget);
+    if (previousTrigger === trigger) return;
+    showPassiveTooltip(trigger);
+  });
+
+  document.addEventListener('pointerout', (event) => {
+    if (isPassiveTooltipTapMode() || passiveTooltipPinned) return;
+
+    const trigger = getPassiveTooltipTrigger(event.target);
+    if (!trigger || activePassiveTooltipTrigger !== trigger) return;
+
+    const nextTrigger = getPassiveTooltipTrigger(event.relatedTarget);
+    if (nextTrigger === trigger) return;
+    hidePassiveTooltip();
+  });
+
+  document.addEventListener('focusin', (event) => {
+    const trigger = getPassiveTooltipTrigger(event.target);
+    if (!trigger) return;
+    showPassiveTooltip(trigger, { pinned: false });
+  });
+
+  document.addEventListener('focusout', (event) => {
+    if (passiveTooltipPinned) return;
+
+    const trigger = getPassiveTooltipTrigger(event.target);
+    if (!trigger || activePassiveTooltipTrigger !== trigger) return;
+
+    const nextTrigger = getPassiveTooltipTrigger(event.relatedTarget);
+    if (nextTrigger === trigger) return;
+    hidePassiveTooltip();
+  });
+
+  document.addEventListener('click', (event) => {
+    const trigger = getPassiveTooltipTrigger(event.target);
+
+    if (trigger) {
+      if (isPassiveTooltipTapMode() || event.detail === 0) {
+        event.preventDefault();
+
+        if (activePassiveTooltipTrigger === trigger && passiveTooltipPinned) {
+          hidePassiveTooltip({ immediate: true });
+        } else {
+          showPassiveTooltip(trigger, { pinned: true });
+        }
+      }
+      return;
+    }
+
+    if (passiveTooltipPinned) {
+      hidePassiveTooltip({ immediate: true });
+    }
+  });
+
+  window.addEventListener('resize', repositionActivePassiveTooltip, { passive: true });
+  window.addEventListener('scroll', repositionActivePassiveTooltip, true);
 }
 
 function getRecommendationExtraDescription(description) {
@@ -2257,8 +2609,11 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList) {
   return recommendedList
     .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke))
     .sort((a, b) => {
+      const leftPriority = tierPriority[a.tier] ?? tierPriority.unknown;
+      const rightPriority = tierPriority[b.tier] ?? tierPriority.unknown;
+      if (leftPriority !== rightPriority) return leftPriority - rightPriority;
       if (b._score !== a._score) return b._score - a._score;
-      return (tierPriority[a.tier] ?? tierPriority.unknown) - (tierPriority[b.tier] ?? tierPriority.unknown);
+      return a.name.localeCompare(b.name);
     });
 }
 
@@ -2820,6 +3175,7 @@ function makeSpeedsterCard(speedster) {
 
 function renderGrid() {
   if (!grid) return;
+  hidePassiveTooltip({ immediate: true });
   if (activeBossMode === 'hoopa') {
     ensureHoopaBossProgressFresh();
   }
@@ -3227,19 +3583,10 @@ function createRecommendationCard(poke, options = {}) {
 
     body.appendChild(nameWrapper);
     if (passiveInfo) {
-      const passive = document.createElement('div');
-      passive.className = 'speedster-reco-passive';
-
-      const passiveLabel = document.createElement('span');
-      passiveLabel.className = 'speedster-reco-passive-label';
-      passiveLabel.textContent = 'Passiva';
-
-      const passiveText = document.createElement('span');
-      passiveText.className = 'speedster-reco-passive-text';
-      passiveText.textContent = passiveInfo.text;
-
-      passive.append(passiveLabel, passiveText);
-      body.appendChild(passive);
+      const passiveTrigger = createPassiveTooltipTrigger(passiveInfo, 'reco');
+      if (passiveTrigger) {
+        body.appendChild(passiveTrigger);
+      }
     }
     if (chips.childElementCount > 0) {
       body.appendChild(chips);
@@ -3499,19 +3846,10 @@ function createRolePickCard(poke) {
   copy.append(head);
 
   if (passiveInfo) {
-    const passive = document.createElement('div');
-    passive.className = 'boss-role-pick-passive';
-
-    const passiveLabel = document.createElement('span');
-    passiveLabel.className = 'boss-role-pick-passive-label';
-    passiveLabel.textContent = 'Passiva';
-
-    const passiveText = document.createElement('span');
-    passiveText.className = 'boss-role-pick-passive-text';
-    passiveText.textContent = passiveInfo.text;
-
-    passive.append(passiveLabel, passiveText);
-    copy.appendChild(passive);
+    const passiveTrigger = createPassiveTooltipTrigger(passiveInfo, 'role');
+    if (passiveTrigger) {
+      copy.appendChild(passiveTrigger);
+    }
   }
 
   const chips = document.createElement('div');
@@ -4374,5 +4712,6 @@ document.querySelectorAll('.bosses-mode-btn').forEach((button) => {
 
 ensureHoopaBossProgressFresh();
 scheduleHoopaBossProgressReset();
+initPassiveTooltipSystem();
 setBossMode('hoopa', { render: false });
 renderGrid();
