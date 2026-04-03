@@ -1056,6 +1056,7 @@ const rolePickImageOverrides = {
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
   megascizor: 'scizor.png',
+  shinybronzong: 'bronzong.png',
   ribombee: 'Ribombee.png',
   venusaurtwo: 'venusaur.png'
 };
@@ -1099,6 +1100,10 @@ function createRolePick(name, types, moveType, extra = {}) {
 
   if (Array.isArray(extra.passiveSuperEffectiveTypes) && extra.passiveSuperEffectiveTypes.length) {
     pick.passiveSuperEffectiveTypes = extra.passiveSuperEffectiveTypes.map((type) => String(type).toLowerCase());
+  }
+
+  if (extra.defenseByBossType && typeof extra.defenseByBossType === 'object') {
+    pick.defenseByBossType = mergeLowercaseNumericMap(extra.defenseByBossType);
   }
 
   if (extra.matchupOverrides && typeof extra.matchupOverrides === 'object') {
@@ -1201,6 +1206,7 @@ const championPathBosses = createManualRoleboardBosses([
         ],
         tank: [
           createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel'),
           createRolePick('Drifblim', ['ghost', 'flying'], 'flying')
         ],
         support: [
@@ -1260,6 +1266,7 @@ const championPathBosses = createManualRoleboardBosses([
         tank: [
           createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
           createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel'),
           createRolePick('Carracosta', ['water', 'rock'], 'rock')
         ],
         support: [
@@ -1318,7 +1325,8 @@ const championPathBosses = createManualRoleboardBosses([
         ],
         tank: [
           createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
-          createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
         ],
         support: [
           createRolePick('Misdreavus', ['ghost'], 'ghost')
@@ -1374,6 +1382,8 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Dewgong', ['water', 'ice'], 'ice')
         ],
         tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel'),
           createRolePick('Drifblim', ['ghost', 'flying'], 'flying')
         ],
         support: [
@@ -1384,10 +1394,10 @@ const championPathBosses = createManualRoleboardBosses([
       valor: {
         dps: [
           createRolePick('Weavile', ['dark', 'ice'], 'ice'),
-          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy')
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
+          createRolePick('Cramorant', ['flying', 'water'], 'flying')
         ],
         tank: [
-          createRolePick('Cramorant', ['flying', 'water'], 'flying'),
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
           createRolePick('Sableye', ['dark', 'ghost'], 'ghost')
         ],
@@ -1482,7 +1492,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('drifloon', ['ghost', 'flying'], 'ghost', { tier: 'otimo' })
         ],
         tank: [
-          createRolePick('Hitmonchan', ['fighting'], 'fighting', { tier: 'otimo' }),
           createRolePick('Dusclops', ['ghost'], 'ghost')
         ],
         support: [
@@ -1541,6 +1550,10 @@ function cloneRolePickConfig(pick) {
     clonedPick.passiveSuperEffectiveTypes = [...pick.passiveSuperEffectiveTypes];
   }
 
+  if (pick.defenseByBossType && typeof pick.defenseByBossType === 'object') {
+    clonedPick.defenseByBossType = { ...pick.defenseByBossType };
+  }
+
   if (pick.matchupOverrides && typeof pick.matchupOverrides === 'object') {
     clonedPick.matchupOverrides = JSON.parse(JSON.stringify(pick.matchupOverrides));
   }
@@ -1561,6 +1574,7 @@ function getRolePickSignature(pick) {
     pick?.passiveDescription || '',
     Array.isArray(pick?.immunities) ? pick.immunities.join('/') : '',
     Array.isArray(pick?.passiveSuperEffectiveTypes) ? pick.passiveSuperEffectiveTypes.join('/') : '',
+    pick?.defenseByBossType ? JSON.stringify(pick.defenseByBossType) : '',
     pick?.matchupOverrides ? JSON.stringify(pick.matchupOverrides) : ''
   ].join('|');
 }
@@ -1604,10 +1618,23 @@ function buildChampionPathRolePools() {
 const championPathRolePoolsForMew2 = buildChampionPathRolePools();
 
 function cloneChampionPathRolePoolsForMew2() {
+  const cloneRoleForMew2 = (pick) => {
+    const clonedPick = cloneRolePickConfig(pick);
+    delete clonedPick.tier;
+    delete clonedPick.tierLocked;
+    return clonedPick;
+  };
+
+  const cloneRoleSetForMew2 = (roles = {}) => ({
+    support: Array.isArray(roles.support) ? roles.support.map(cloneRoleForMew2) : [],
+    dps: Array.isArray(roles.dps) ? roles.dps.map(cloneRoleForMew2) : [],
+    tank: Array.isArray(roles.tank) ? roles.tank.map(cloneRoleForMew2) : []
+  });
+
   return {
-    instinct: cloneRoleboardRoles(championPathRolePoolsForMew2.instinct),
-    mystic: cloneRoleboardRoles(championPathRolePoolsForMew2.mystic),
-    valor: cloneRoleboardRoles(championPathRolePoolsForMew2.valor)
+    instinct: cloneRoleSetForMew2(championPathRolePoolsForMew2.instinct),
+    mystic: cloneRoleSetForMew2(championPathRolePoolsForMew2.mystic),
+    valor: cloneRoleSetForMew2(championPathRolePoolsForMew2.valor)
   };
 }
 
@@ -1691,6 +1718,48 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'misdreavus') {
+    return {
+      immunities: ['ground'],
+      passiveName: 'Levitate',
+      passiveDescription: 'Misdreavus e imune a danos do tipo terra.'
+    };
+  }
+
+  if (nameKey === 'bronzong') {
+    return {
+      immunities: ['ground'],
+      passiveName: 'Levitate',
+      passiveDescription: 'Bronzong e imune a danos do tipo terra.'
+    };
+  }
+
+  if (nameKey === 'shinybronzong') {
+    return {
+      immunities: ['ground'],
+      defenseByBossType: {
+        fire: 0.5
+      },
+      passiveName: 'Levitate + Heatproof',
+      passiveDescription: 'Shiny Bronzong e imune a danos do tipo terra. O Pokemon sofre menos dano de ataque do tipo Fire (0.5x).'
+    };
+  }
+
+  if (nameKey === 'seviper') {
+    return {
+      passiveName: 'Shed Skin',
+      passiveDescription: 'Seviper limpa os efeitos negativos a cada 12 segundos.'
+    };
+  }
+
+  if (nameKey === 'quagsire') {
+    return {
+      immunities: ['water'],
+      passiveName: 'Water Absorb',
+      passiveDescription: 'O Pokemon se torna imune a danos tipo Water.'
+    };
+  }
+
   return null;
 }
 
@@ -1701,6 +1770,22 @@ function mergeLowercaseUniqueValues(...lists) {
       .filter(Boolean)
       .map((value) => String(value).toLowerCase())
   ));
+}
+
+function mergeLowercaseNumericMap(...maps) {
+  const merged = {};
+
+  maps.forEach((map) => {
+    if (!map || typeof map !== 'object') return;
+
+    Object.entries(map).forEach(([key, value]) => {
+      const normalizedKey = String(key || '').trim().toLowerCase();
+      if (!normalizedKey || typeof value !== 'number' || Number.isNaN(value)) return;
+      merged[normalizedKey] = value;
+    });
+  });
+
+  return Object.keys(merged).length ? merged : undefined;
 }
 
 function appendUniqueSentence(baseText, sentence) {
@@ -1721,17 +1806,48 @@ function applyImplicitRecommendationEnhancements(poke) {
   const profile = getImplicitRecommendationProfile(poke);
   if (!profile) return poke;
 
+  poke.immunities = mergeLowercaseUniqueValues(
+    poke.immunities,
+    profile.immunities
+  );
+
   poke.passiveSuperEffectiveTypes = mergeLowercaseUniqueValues(
     poke.passiveSuperEffectiveTypes,
     profile.passiveSuperEffectiveTypes
   );
 
-  if (typeof poke.description === 'string') {
-    poke.description = appendUniqueSentence(poke.description, profile.passiveText);
-  } else if (typeof poke.note === 'string') {
-    poke.note = appendUniqueSentence(poke.note, profile.passiveText);
-  } else {
-    poke.note = profile.passiveText;
+  poke.defenseByBossType = mergeLowercaseNumericMap(
+    poke.defenseByBossType,
+    profile.defenseByBossType
+  );
+
+  if (typeof profile.passiveName === 'string' && profile.passiveName.trim() && !poke.passiveName) {
+    poke.passiveName = profile.passiveName.trim();
+  }
+
+  if (typeof profile.passiveDescription === 'string' && profile.passiveDescription.trim()) {
+    poke.passiveDescription = appendUniqueSentence(
+      poke.passiveDescription,
+      profile.passiveDescription.trim()
+    );
+  }
+
+  const passiveText = typeof profile.passiveText === 'string' && profile.passiveText.trim()
+    ? profile.passiveText.trim()
+    : (
+      poke.passiveName && poke.passiveDescription
+        ? `Passiva: ${poke.passiveName}: ${poke.passiveDescription}`
+        : ''
+    );
+
+  if (passiveText) {
+    if (typeof poke.description === 'string') {
+      poke.description = appendUniqueSentence(poke.description, passiveText);
+    } else if (typeof poke.note === 'string') {
+      poke.note = appendUniqueSentence(poke.note, passiveText);
+    } else {
+      poke.note = passiveText;
+    }
   }
 
   return poke;
@@ -2092,6 +2208,8 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
     .map((attackType) => {
       const customMultiplier = matchupOverride?.defenseByBossType?.[attackType];
       if (typeof customMultiplier === 'number') return customMultiplier;
+      const passiveMultiplier = poke.defenseByBossType?.[attackType];
+      if (typeof passiveMultiplier === 'number') return passiveMultiplier;
       return getTypeMultiplier(attackType, pokeTypes, poke.immunities);
     });
   const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1; // best case (lowest damage taken)
@@ -2259,9 +2377,34 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'yellow') {
   });
 }
 
+function ensureRolePickNames(list = [], requiredPicks = []) {
+  const targetList = Array.isArray(list) ? list : [];
+  const existingNames = new Set(targetList.map((poke) => getRecommendationNameKey(poke)));
+
+  requiredPicks.forEach((pick) => {
+    const nameKey = getRecommendationNameKey(pick);
+    if (!nameKey || existingNames.has(nameKey)) return;
+    existingNames.add(nameKey);
+    targetList.push(cloneRolePickConfig(pick));
+  });
+
+  return targetList;
+}
+
+function ensureMew2BossRolePicks(bossId, clanKey, roleKey, picks = []) {
+  const boss = mew2Bosses.find((entry) => entry.id === bossId);
+  const roleList = boss?.clans?.[clanKey]?.roles?.[roleKey];
+  if (!boss || !Array.isArray(roleList)) return;
+
+  ensureRolePickNames(roleList, picks);
+}
+
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
+ensureMew2BossRolePicks('charizard', 'mystic', 'tank', [
+  createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
+]);
 refreshTierLegendLabels();
 
 function getActiveBossCatalog() {
