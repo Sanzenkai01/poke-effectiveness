@@ -4478,6 +4478,7 @@ const respawnsViewport = document.getElementById('respawns-viewport');
 const respawnsCanvas = document.getElementById('respawns-canvas');
 const respawnsImage = document.getElementById('respawns-image');
 const respawnsCaption = document.getElementById('respawns-modal-caption');
+const respawnsNote = document.getElementById('respawns-modal-note');
 const fishingBtn = document.getElementById('fishing-btn');
 const fishingModal = document.getElementById('fishing-modal');
 const fishingViewport = document.getElementById('fishing-viewport');
@@ -4736,7 +4737,8 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
 
 const respawnsViewState = {
     map: 'kanto',
-    access: null
+    access: null,
+    johtoPage: '1'
 };
 
 const respawnsViewDefinitions = {
@@ -4749,14 +4751,15 @@ const respawnsViewDefinitions = {
     },
     'johto': {
         label: 'Johto',
-        caption: 'Mapa de Johto em breve.',
-        notice: 'Imagem em breve',
-        alt: 'Aviso de mapa de Johto em breve',
-        src: ''
+        caption: 'Mapa de Johto.',
+        notice: 'Mapa de respawns',
+        alt: 'Mapa de respawns de Johto',
+        src: 'mapas/Johto-1.png'
     },
     'wild-area': {
         label: 'Wild Area',
         caption: 'Visao geral da Wild Area.',
+        note: 'Observacao tecnica: a referencia visual de Wild Area South apresenta desatualizacao parcial no setor associado ao Tauros; no entanto, o ponto de respawn permanece inalterado na mesma posicao operacional.',
         notice: 'Mapa principal',
         alt: 'Mapa geral da Wild Area',
         src: 'mapas/wild-area.png'
@@ -4767,6 +4770,51 @@ const respawnsViewDefinitions = {
         notice: 'Mapa de respawns',
         alt: 'Mapa de respawns de Orre',
         src: 'mapas/orre.png'
+    }
+};
+
+const johtoPageDefinitions = {
+    '1': {
+        label: 'Johto 1',
+        caption: 'Johto - parte 1 de 6.',
+        notice: 'Mapa 1',
+        alt: 'Mapa de Johto parte 1',
+        src: 'mapas/Johto-1.png'
+    },
+    '2': {
+        label: 'Johto 2',
+        caption: 'Johto - parte 2 de 6.',
+        notice: 'Mapa 2',
+        alt: 'Mapa de Johto parte 2',
+        src: 'mapas/Johto-2.png'
+    },
+    '3': {
+        label: 'Johto 3',
+        caption: 'Johto - parte 3 de 6.',
+        notice: 'Mapa 3',
+        alt: 'Mapa de Johto parte 3',
+        src: 'mapas/Johto-3.png'
+    },
+    '4': {
+        label: 'Johto 4',
+        caption: 'Johto - parte 4 de 6.',
+        notice: 'Mapa 4',
+        alt: 'Mapa de Johto parte 4',
+        src: 'mapas/Johto-4.png'
+    },
+    '5': {
+        label: 'Johto 5',
+        caption: 'Johto - parte 5 de 6.',
+        notice: 'Mapa 5',
+        alt: 'Mapa de Johto parte 5',
+        src: 'mapas/Johto-5.png'
+    },
+    '6': {
+        label: 'Johto 6',
+        caption: 'Johto - parte 6 de 6.',
+        notice: 'Mapa 6',
+        alt: 'Mapa de Johto parte 6',
+        src: 'mapas/Johto-6.png'
     }
 };
 
@@ -4837,21 +4885,36 @@ function updatePressedButtonState(buttons, activeValue, dataKey){
     });
 }
 
-function setRespawnsView(mapKey, accessKey = null){
+function setRespawnsView(mapKey, accessKey = null, johtoPageKey = null){
     if(!respawnsModal || !respawnsImage) return;
 
     const nextMapKey = respawnsViewDefinitions[mapKey] ? mapKey : 'kanto';
     const nextAccessKey = nextMapKey === 'wild-area' && wildAreaAccessDefinitions[accessKey] ? accessKey : null;
-    const nextView = nextAccessKey ? wildAreaAccessDefinitions[nextAccessKey] : respawnsViewDefinitions[nextMapKey];
-    const respawnsSubnav = respawnsModal.querySelector('.respawns-modal__subnav');
+    const nextJohtoPageKey = nextMapKey === 'johto' && johtoPageDefinitions[johtoPageKey]
+        ? johtoPageKey
+        : (nextMapKey === 'johto' ? respawnsViewState.johtoPage : null);
+    const johtoView = nextJohtoPageKey ? johtoPageDefinitions[nextJohtoPageKey] : null;
+    const nextView = nextAccessKey
+        ? wildAreaAccessDefinitions[nextAccessKey]
+        : (johtoView || respawnsViewDefinitions[nextMapKey]);
+    const respawnsJohtoSubnav = respawnsModal.querySelector('#respawns-johto-subnav');
+    const respawnsWildSubnav = respawnsModal.querySelector('.respawns-modal__subnav:not(#respawns-johto-subnav)');
 
     respawnsViewState.map = nextMapKey;
     respawnsViewState.access = nextAccessKey;
+    if(nextJohtoPageKey){
+        respawnsViewState.johtoPage = nextJohtoPageKey;
+    }
     respawnsModal.dataset.activeMap = nextMapKey;
-    if(respawnsSubnav){
+    if(respawnsJohtoSubnav){
+        const shouldShowJohtoPages = nextMapKey === 'johto';
+        respawnsJohtoSubnav.hidden = !shouldShowJohtoPages;
+        respawnsJohtoSubnav.setAttribute('aria-hidden', shouldShowJohtoPages ? 'false' : 'true');
+    }
+    if(respawnsWildSubnav){
         const shouldShowWildAccess = nextMapKey === 'wild-area';
-        respawnsSubnav.hidden = !shouldShowWildAccess;
-        respawnsSubnav.setAttribute('aria-hidden', shouldShowWildAccess ? 'false' : 'true');
+        respawnsWildSubnav.hidden = !shouldShowWildAccess;
+        respawnsWildSubnav.setAttribute('aria-hidden', shouldShowWildAccess ? 'false' : 'true');
     }
 
     respawnsImage.src = nextView.src || createImagePlaceholderDataUrl(nextView.label, nextView.notice);
@@ -4859,9 +4922,15 @@ function setRespawnsView(mapKey, accessKey = null){
     if(respawnsCaption){
         respawnsCaption.textContent = nextView.caption;
     }
+    if(respawnsNote){
+        const hasNote = typeof nextView.note === 'string' && nextView.note.trim().length > 0;
+        respawnsNote.hidden = !hasNote;
+        respawnsNote.textContent = hasNote ? nextView.note : '';
+    }
 
     updatePressedButtonState(respawnsModal.querySelectorAll('[data-respawn-map]'), nextMapKey, 'respawnMap');
     updatePressedButtonState(respawnsModal.querySelectorAll('[data-wild-access]'), nextAccessKey, 'wildAccess');
+    updatePressedButtonState(respawnsModal.querySelectorAll('[data-johto-page]'), nextJohtoPageKey, 'johtoPage');
 }
 
 function setupRespawnsModal(){
@@ -4869,6 +4938,7 @@ function setupRespawnsModal(){
 
     const mapButtons = respawnsModal.querySelectorAll('[data-respawn-map]');
     const accessButtons = respawnsModal.querySelectorAll('[data-wild-access]');
+    const johtoButtons = respawnsModal.querySelectorAll('[data-johto-page]');
 
     mapButtons.forEach((button)=>{
         button.addEventListener('click', ()=>{
@@ -4882,7 +4952,13 @@ function setupRespawnsModal(){
         });
     });
 
-    setRespawnsView(respawnsViewState.map, respawnsViewState.access);
+    johtoButtons.forEach((button)=>{
+        button.addEventListener('click', ()=>{
+            setRespawnsView('johto', null, button.dataset.johtoPage);
+        });
+    });
+
+    setRespawnsView(respawnsViewState.map, respawnsViewState.access, respawnsViewState.johtoPage);
 }
 
 setupZoomableImageModal(elementalBallsModal, elementalBallsViewport, elementalBallsCanvas, elementalBallsImage);

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260404e">
+    <link rel="stylesheet" href="styles.css?v=20260404g">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -17,7 +17,7 @@
       <button id="elemental-balls-btn" aria-label="Pokebolas Elementais" title="Pokebolas Elementais">
         <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" />
       </button>
-      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;" hidden>&#x1F5FA;</button>
+      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">&#x1F5FA;</button>
       <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
       <h1 id="page-title">Poke Effectiveness</h1>
       <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
@@ -204,12 +204,23 @@
         <button class="modal-close" aria-label="Fechar">&#10006;</button>
         <h2 id="respawns-modal-title">Respawns</h2>
         <div class="image-modal__toolbar image-modal__toolbar--stacked">
-          <p class="image-modal__hint">Escolha a regiao desejada ou uma entrada da Wild Area. O zoom continua disponivel na visualizacao atual.</p>
+          <p class="image-modal__hint">Escolha a regiao desejada. Em Johto e na Wild Area, use os botoes extras para trocar entre os mapas.</p>
           <div class="respawns-modal__nav" role="group" aria-label="Mapas de respawns">
             <button type="button" class="respawns-modal__tab is-active" data-respawn-map="kanto" aria-pressed="true">Kanto</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="johto" aria-pressed="false">Johto</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="wild-area" aria-pressed="false">Wild Area</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="orre" aria-pressed="false">Orre</button>
+          </div>
+          <div class="respawns-modal__subnav" id="respawns-johto-subnav" hidden>
+            <span class="respawns-modal__subnav-label">Mapas de Johto</span>
+            <div class="respawns-modal__access" role="group" aria-label="Partes do mapa de Johto">
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="1" aria-pressed="false">Parte 1</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="2" aria-pressed="false">Parte 2</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="3" aria-pressed="false">Parte 3</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="4" aria-pressed="false">Parte 4</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="5" aria-pressed="false">Parte 5</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="6" aria-pressed="false">Parte 6</button>
+            </div>
           </div>
           <div class="respawns-modal__subnav" hidden>
             <span class="respawns-modal__subnav-label">Entradas da Wild Area</span>
@@ -226,6 +237,7 @@
           </div>
         </div>
         <p id="respawns-modal-caption" class="respawns-modal__caption" aria-live="polite">Mapa de Kanto em breve.</p>
+        <p id="respawns-modal-note" class="respawns-modal__note" hidden></p>
         <div class="image-modal__frame image-modal__viewport" id="respawns-viewport">
           <div class="image-modal__canvas" id="respawns-canvas">
             <img
@@ -675,6 +687,6 @@
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="bosses/bosses.js?v=20260402z" defer></script>
-    <script src="script.js?v=20260404e" defer></script>
+    <script src="script.js?v=20260404g" defer></script>
 </body>
 </html>
