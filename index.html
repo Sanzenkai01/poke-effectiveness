@@ -3,36 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Poke Utilities reúne consulta de tipos, fósseis, treinamento, captura, chefes, transmissões e vídeos da comunidade PStory em um só lugar.">
     <title>Poke Utilities</title>
     <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260404g">
+    <link rel="stylesheet" href="styles.css?v=20260404i">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
     <header class="header">
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
-      <button id="elemental-balls-btn" aria-label="Pokebolas Elementais" title="Pokebolas Elementais">
-        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" />
+      <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
+        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
       </button>
       <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">&#x1F5FA;</button>
       <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
-      <h1 id="page-title">Poke Effectiveness</h1>
+      <h1 id="page-title">Poke Utilities</h1>
       <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
       <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
     </header>
-    <div class="tabs" role="tablist">
+    <nav class="tabs" role="tablist" aria-label="Seções principais">
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
-      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Catch</button>
-      <button id="tab-bosses" class="tab" role="tab" aria-selected="false" aria-controls="content-bosses">Bosses</button>
-      <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">Streamers</button>
-      <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">YouTube</button>
-    </div>
+      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Captura</button>
+      <button id="tab-bosses" class="tab" role="tab" aria-selected="false" aria-controls="content-bosses">Chefes</button>
+      <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">Transmissões</button>
+      <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">Vídeos</button>
+    </nav>
 
     <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden>
       <div class="home-landing__shell">
@@ -41,7 +42,7 @@
             <p id="home-eyebrow" class="home-landing__eyebrow">Hub da comunidade</p>
             <h2 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h2>
             <p id="home-lead" class="home-landing__lead">Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.</p>
-            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, catch, bosses e streamers em um fluxo pensado para uso diário.</p>
+            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.</p>
             <div class="home-landing__actions">
               <button id="home-explore-btn" class="home-landing__cta" type="button" data-home-target="effectiveness">Explorar</button>
               <a
@@ -53,7 +54,7 @@
                 title="Entrar no Discord do PStory"
                 data-tooltip="Entrar no Discord do PStory"
               >
-                <img src="icons-type/discord.png" alt="" aria-hidden="true" />
+                <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
               </a>
             </div>
           </div>
@@ -73,7 +74,7 @@
             <div id="home-streamer-info" class="home-landing__focus-streamers" data-state="loading" aria-live="polite">
               <span class="home-landing__focus-streamers-label">PStory ao vivo</span>
               <strong id="home-streamer-count" class="home-landing__focus-streamers-count">--</strong>
-              <span id="home-streamer-text" class="home-landing__focus-streamers-text">Consultando streamers...</span>
+              <span id="home-streamer-text" class="home-landing__focus-streamers-text">Consultando canais...</span>
             </div>
             <div id="home-streamer-rat-summary" class="home-landing__focus-rattata" aria-live="polite"></div>
           </aside>
@@ -97,22 +98,22 @@
           </button>
           <button class="home-tool-card" type="button" data-home-target="catch">
             <span class="home-tool-card__index">04</span>
-            <strong class="home-tool-card__title">Catch</strong>
+            <strong class="home-tool-card__title">Captura</strong>
             <span class="home-tool-card__desc">Consulte cálculos de captura com um fluxo mais direto e claro.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="bosses">
             <span class="home-tool-card__index">05</span>
-            <strong class="home-tool-card__title">Bosses</strong>
-            <span class="home-tool-card__desc">Veja picks e roles ideais para cada boss sem perder tempo.</span>
+            <strong class="home-tool-card__title">Chefes</strong>
+            <span class="home-tool-card__desc">Veja escolhas e funções ideais para cada chefe sem perder tempo.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="streamers">
             <span class="home-tool-card__index">06</span>
-            <strong class="home-tool-card__title">Streamers</strong>
-            <span class="home-tool-card__desc">Acompanhe lives e sinais úteis da comunidade em uma visão só.</span>
+            <strong class="home-tool-card__title">Transmissões</strong>
+            <span class="home-tool-card__desc">Acompanhe canais e sinais úteis da comunidade em uma visão só.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="youtube">
             <span class="home-tool-card__index">07</span>
-            <strong class="home-tool-card__title">YouTube</strong>
+            <strong class="home-tool-card__title">Vídeos</strong>
             <span class="home-tool-card__desc">Assista a vídeos úteis da comunidade sem sair do Poke Utilities.</span>
           </button>
         </div>
@@ -121,14 +122,17 @@
 
     <p id="instructions"></p>
 
-    <div id="legend" class="legend" aria-hidden="true">
-        <div class="legend-item"><span class="legend-color selected"></span>Selecionado</div>
-        <div class="legend-item"><span class="legend-color strength"></span>Super eficaz</div>
-        <div class="legend-item"><span class="legend-color resist"></span>Resistente</div>
-        <div class="legend-item"><span class="legend-color weakness"></span>Vulnerável</div>
-        <div class="legend-item"><span class="legend-color immune"></span>Imune</div>
-        <div class="legend-item"><span class="legend-color neutral"></span>Neutro</div>
-    </div>
+    <section id="legend" class="legend legend-panel" aria-labelledby="legend-title">
+        <h2 id="legend-title" class="visually-hidden">Legenda da efetividade</h2>
+        <ul class="legend-list">
+          <li class="legend-item"><span class="legend-color selected" aria-hidden="true"></span><span class="legend-item__label">Selecionado</span></li>
+          <li class="legend-item"><span class="legend-color strength" aria-hidden="true"></span><span class="legend-item__label">Super eficaz</span></li>
+          <li class="legend-item"><span class="legend-color resist" aria-hidden="true"></span><span class="legend-item__label">Resistente</span></li>
+          <li class="legend-item"><span class="legend-color weakness" aria-hidden="true"></span><span class="legend-item__label">Vulnerável</span></li>
+          <li class="legend-item"><span class="legend-color immune" aria-hidden="true"></span><span class="legend-item__label">Imune</span></li>
+          <li class="legend-item"><span class="legend-color neutral" aria-hidden="true"></span><span class="legend-item__label">Neutro</span></li>
+        </ul>
+    </section>
 
     <div class="modal" id="matrix-modal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modal-content">
@@ -182,7 +186,7 @@
     <div class="modal image-modal" id="elemental-balls-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-modal-title">
       <div class="modal-content">
         <button class="modal-close" aria-label="Fechar">✖</button>
-        <h2 id="elemental-balls-modal-title">Pokebolas Elementais</h2>
+        <h2 id="elemental-balls-modal-title">Pokébolas Elementais</h2>
         <div class="image-modal__toolbar">
           <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
@@ -193,7 +197,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
           <div class="image-modal__canvas" id="elemental-balls-canvas">
-            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com o craft das pokebolas elementais" />
+            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
@@ -260,7 +264,7 @@
           <div class="fishing-modal__actions">
             <button id="fishing-bait-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local para comprar iscas" title="Local para comprar iscas">
               <span class="fossil-location-btn__thumb">
-                <img src="mapas/iscas.png" alt="" aria-hidden="true">
+                <img src="mapas/iscas.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </span>
               <span class="fossil-location-btn__label">Comprar iscas</span>
             </button>
@@ -273,7 +277,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="fishing-viewport">
           <div class="image-modal__canvas" id="fishing-canvas">
-            <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" />
+            <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
@@ -293,7 +297,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="bait-location-viewport">
           <div class="image-modal__canvas" id="bait-location-canvas">
-            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" />
+            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
@@ -301,10 +305,10 @@
 
     <div class="modal image-modal" id="fossil-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fossil-location-modal-title">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">âœ–</button>
-        <h2 id="fossil-location-modal-title">Local da Troca de FÃ³sseis</h2>
+        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <h2 id="fossil-location-modal-title">Local da troca de fósseis</h2>
         <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botÃµes ou a roda do mouse para dar zoom na imagem.</p>
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -313,7 +317,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="fossil-location-viewport">
           <div class="image-modal__canvas" id="fossil-location-canvas">
-            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localizaÃ§Ã£o da troca de fÃ³sseis" />
+            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localização da troca de fósseis" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
@@ -321,19 +325,21 @@
 
     <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden>
       <div class="card">
+        <h2 class="visually-hidden">Consulta de tipos</h2>
         <div class="search-wrapper">
+          <label class="visually-hidden" for="type-search">Buscar tipo</label>
           <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
           <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
         </div>
         <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
             <button class="clan-btn" data-clan="instinct" aria-pressed="false" title="Instinct">
-              <img src="bosses/Instinct.png" alt="Instinct" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Instinct
+              <img src="bosses/Instinct.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Instinct
             </button>
             <button class="clan-btn" data-clan="mystic" aria-pressed="false" title="Mystic">
-              <img src="bosses/Mystic.png" alt="Mystic" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Mystic
+              <img src="bosses/Mystic.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Mystic
             </button>
             <button class="clan-btn" data-clan="valor" aria-pressed="false" title="Valor">
-              <img src="bosses/Valor.png" alt="Valor" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;"> Valor
+              <img src="bosses/Valor.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Valor
             </button>
         </div>
         <div id="chart-container" class="chart-container">
@@ -346,9 +352,10 @@
 
     <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden>
       <div class="card calc-card">
+        <h2 class="visually-hidden">Consulta de fósseis</h2>
         <p id="fossil-instructions"></p>
         <div class="fossil-header">
-            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fÃ³sseis" title="Local da troca de fÃ³sseis">
+            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fósseis" title="Local da troca de fósseis">
               <span class="fossil-location-btn__thumb">
                 <img src="fosseis/local.png" alt="" aria-hidden="true">
               </span>
@@ -358,11 +365,11 @@
         </div>
         <div id="fossil-hint" class="calc-info"></div>
         <div id="fossil-grid" class="grid">
-          <div class="fossil-cell"><img class="fossil-img" data-type="Drake" src="fosseis/Bag_Fossilized_Drake_Sprite.png" alt="Drake fossil"><span class="fossil-label">Drake</span></div>
-          <div class="fossil-cell"><img class="fossil-img" data-type="Bird" src="fosseis/Bag_Fossilized_Bird_Sprite.png" alt="Bird fossil"><span class="fossil-label">Bird</span></div>
-          <div class="fossil-cell"><img class="fossil-img" data-type="Dino" src="fosseis/Bag_Fossilized_Dino_Sprite.png" alt="Dino fossil"><span class="fossil-label">Dino</span></div>
-          <div class="fossil-cell"><img class="fossil-img" data-type="Fish" src="fosseis/Bag_Fossilized_Fish_Sprite.png" alt="Fish fossil"><span class="fossil-label">Fish</span></div>
-          <div class="fossil-cell"><img class="fossil-img" data-type="Amber" src="fosseis/old_amber.png" alt="Amber fossil"><span class="fossil-label">Amber</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Drake" src="fosseis/Bag_Fossilized_Drake_Sprite.png" alt="Fóssil Drake" loading="lazy" decoding="async"><span class="fossil-label">Drake</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Bird" src="fosseis/Bag_Fossilized_Bird_Sprite.png" alt="Fóssil Bird" loading="lazy" decoding="async"><span class="fossil-label">Bird</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Dino" src="fosseis/Bag_Fossilized_Dino_Sprite.png" alt="Fóssil Dino" loading="lazy" decoding="async"><span class="fossil-label">Dino</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Fish" src="fosseis/Bag_Fossilized_Fish_Sprite.png" alt="Fóssil Fish" loading="lazy" decoding="async"><span class="fossil-label">Fish</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Amber" src="fosseis/old_amber.png" alt="Fóssil Amber" loading="lazy" decoding="async"><span class="fossil-label">Amber</span></div>
         </div>
         <!-- area for drop hint icons shown after clicking one fossil -->
         <div id="drop-hints" class="drop-hints" aria-live="polite"></div>
@@ -375,10 +382,11 @@
 
     <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
       <div class="card calc-card">
+        <h2 class="visually-hidden">Calculadora de treinamento</h2>
         <div class="calc-icons">
-          <img id="icon-plate" class="small-icon" src="calculadora/plate.gif" alt="Plate" />
+          <img id="icon-plate" class="small-icon" src="calculadora/plate.gif" alt="Plate" decoding="async" />
           <img id="icon-shiny" class="small-icon" src="calculadora/shiny_plate.gif" alt="Shiny Plate" />
-          <img id="icon-drink" class="small-icon" src="calculadora/energy_drink.png" alt="Energy Drink" />
+          <img id="icon-drink" class="small-icon" src="calculadora/energy_drink.png" alt="Energy Drink" loading="lazy" decoding="async" />
           <img id="icon-coin" class="small-icon" src="calculadora/golden_coin.gif" alt="Golden Coin" />
         </div>
         <p id="calc-instructions">Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.</p>
@@ -427,13 +435,13 @@
         <div class="catch-hero">
           <div class="catch-hero__copy">
             <p id="catch-eyebrow" class="catch-hero__eyebrow">Captura otimizada</p>
-            <h2 id="catch-heading">Calculadora de Catch</h2>
-            <p id="catch-description" class="catch-hero__description">Consulte a média de balls e acompanhe o progresso do log em uma tela mais direta.</p>
+            <h2 id="catch-heading">Calculadora de Captura</h2>
+            <p id="catch-description" class="catch-hero__description">Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.</p>
           </div>
           <div class="catch-hero__preview" aria-live="polite">
-            <span id="catch-selected-ball-label" class="catch-hero__preview-label">Ball selecionada</span>
+            <span id="catch-selected-ball-label" class="catch-hero__preview-label">Pokébola selecionada</span>
             <div class="catch-ball-preview">
-              <img id="ball-img" class="catch-ball-preview__image" src="balls/elemental.png" alt="Pokébola Elemental">
+              <img id="ball-img" class="catch-ball-preview__image" src="balls/elemental.png" alt="Pokébola Elemental" decoding="async">
               <div class="catch-ball-preview__copy">
                 <strong id="ball-preview-name">Pokébola Elemental</strong>
                 <span id="ball-preview-price">$325 cada</span>
@@ -446,7 +454,7 @@
           <section class="catch-panel catch-panel--primary" aria-labelledby="catch-calc-title">
             <div class="catch-panel__header">
               <span class="catch-panel__eyebrow">Estimativa</span>
-              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de balls</h3>
+              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de pokébolas</h3>
               <p id="catch-calc-hint" class="catch-panel__hint">Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.</p>
             </div>
 
@@ -454,10 +462,10 @@
               <div class="catch-section catch-field">
                 <label for="ball-select">Escolha a pokébola:</label>
                 <select id="ball-select">
-                  <option value="elemental">Elemental Ball</option>
-                  <option value="story">Story Ball</option>
-                  <option value="ultra">Ultra Ball</option>
-                  <option value="safari">Safari Ball</option>
+                  <option value="elemental">Pokébola Elemental</option>
+                  <option value="story">Pokébola Story</option>
+                  <option value="ultra">Pokébola Ultra</option>
+                  <option value="safari">Pokébola Safari</option>
                 </select>
               </div>
               <div class="catch-section catch-field">
@@ -497,8 +505,8 @@
             </div>
 
             <div class="catch-section catch-actions">
-              <button id="calc-catch-btn" class="catch-action-button">Calcular quantidade</button>
-              <p class="catch-note">Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.</p>
+              <button id="calc-catch-btn" class="catch-action-button">Calcular estimativa</button>
+              <p class="catch-note">Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.</p>
             </div>
 
             <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
@@ -508,13 +516,13 @@
             <section class="catch-panel catch-panel--focus" aria-labelledby="catch-log-title">
               <div class="catch-panel__header">
                 <span class="catch-panel__eyebrow">Log</span>
-                <h3 id="catch-log-title" class="catch-panel__title">Analise o histórico de balls</h3>
+                <h3 id="catch-log-title" class="catch-panel__title">Analise o histórico de pokébolas</h3>
                 <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.</p>
               </div>
 
               <div class="catch-section catch-field catch-field--full">
-                <label for="log-input">Log de balls usadas:</label>
-                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (Precisa incluir a despesa.)."></textarea>
+                <label for="log-input">Log de pokébolas usadas:</label>
+                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (inclua a despesa)."></textarea>
               </div>
 
               <div class="catch-section catch-actions">
@@ -531,7 +539,7 @@
     <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
       <div class="card calc-card bosses-shell">
         <div class="bosses-header">
-          <div class="bosses-mode-switch" role="tablist" aria-label="Modos de Bosses">
+          <div class="bosses-mode-switch" role="tablist" aria-label="Modos de chefes">
             <button type="button" class="bosses-mode-btn is-active" data-boss-mode="hoopa" role="tab" aria-selected="true">Hoopa Portais</button>
             <button type="button" class="bosses-mode-btn" data-boss-mode="champion" role="tab" aria-selected="false">Champion Path</button>
             <button type="button" class="bosses-mode-btn" data-boss-mode="mew2" role="tab" aria-selected="false">Mew 2</button>
@@ -549,24 +557,34 @@
             <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
           </div>
         </div>
-        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
+        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
       </div>
 
     </div> <!-- close content-bosses -->
 
     <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
       <div class="card calc-card">
-        <p style="max-width:760px;margin:0.5rem auto;color:#ddd;">Acompanhe o status de transmissão dos streamers e abra a live no Twitch.</p>
-        <div id="streamer-status-info" class="streamer-status-info" style="margin-bottom:0.75rem;color:#f0f0f0;"></div>
-        <div id="streamer-filters" class="streamer-filters" style="margin-bottom:0.75rem;">
-            <label style="font-size:0.85rem;color:#eee;"><input id="filter-all" type="checkbox" checked style="margin-right:0.3rem;">Mostrar tudo</label>
-            <label style="font-size:0.85rem;color:#eee;"><input id="filter-drops" type="checkbox" style="margin-right:0.3rem;">Drops</label>
-            <label style="font-size:0.85rem;color:#eee;"><input id="filter-online" type="checkbox" style="margin-right:0.3rem;">Online</label>
-            <label style="font-size:0.85rem;color:#eee;"><input id="filter-pack" type="checkbox" style="margin-right:0.3rem;">Pack</label>
-            <label style="font-size:0.85rem;color:#eee;"><input id="filter-pstory" type="checkbox" style="margin-right:0.3rem;">Pstory</label>
-            <div id="streamer-rat-summary" class="streamer-rat-summary" aria-live="polite"></div>
+        <div class="streamer-section-header">
+          <h2>Transmissões da comunidade</h2>
+          <p>Acompanhe o status dos canais da comunidade e abra a transmissão no Twitch.</p>
         </div>
-        <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de Streamers"></div>
+        <div id="streamer-status-info" class="streamer-status-info" aria-live="polite"></div>
+        <section id="streamer-filters" class="streamer-filters" aria-labelledby="streamer-filters-title">
+            <div class="streamer-filters__intro">
+              <h3 id="streamer-filters-title" class="streamer-filters__title">Filtros rápidos</h3>
+              <p class="streamer-filters__hint">Combine os critérios para reduzir a lista sem perder contexto.</p>
+            </div>
+            <fieldset class="streamer-filters__group">
+              <legend class="streamer-filters__legend">Filtrar transmissões</legend>
+              <label><input id="filter-all" type="checkbox" checked>Mostrar todas</label>
+              <label><input id="filter-drops" type="checkbox">Com drops</label>
+              <label><input id="filter-online" type="checkbox">Online</label>
+              <label><input id="filter-pack" type="checkbox">Com pack</label>
+              <label><input id="filter-pstory" type="checkbox">PStory</label>
+            </fieldset>
+            <div id="streamer-rat-summary" class="streamer-rat-summary" aria-live="polite"></div>
+        </section>
+        <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de canais da comunidade"></div>
       </div>
     </div>
 
@@ -574,24 +592,24 @@
       <div class="card calc-card community-shell">
         <div class="community-hero">
           <div class="community-copy">
-            <p class="community-eyebrow">YouTube da comunidade</p>
-            <h2>Videos recentes da comunidade</h2>
+            <p class="community-eyebrow">Comunidade no YouTube</p>
+            <h2>Vídeos recentes da comunidade</h2>
             <p class="community-lead">Veja os uploads mais recentes da comunidade.</p>
-            <p class="community-supporting">Lista cronologica, sem ranking.</p>
-            <p class="community-creator-note">Produz conteudo de PStory? Use <strong>#pstory</strong> e, se quiser, uma hashtag de tema para aparecer no filtro certo.</p>
+            <p class="community-supporting">Lista cronológica, sem ranking.</p>
+            <p class="community-creator-note">Produz conteúdo de PStory? Use <strong>#pstory</strong> e, se quiser, uma hashtag de tema para aparecer no filtro certo.</p>
           </div>
         </div>
 
-        <div id="community-topic-filters" class="community-topic-filters" aria-label="Filtros do YouTube"></div>
+        <div id="community-topic-filters" class="community-topic-filters" aria-label="Filtros de vídeos da comunidade"></div>
 
         <div class="community-layout">
           <section class="community-player-panel" aria-labelledby="community-featured-title">
             <div class="community-player-frame">
-              <button id="community-video-preview" class="community-video-preview" type="button">
-                <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Preview do video selecionado" loading="lazy">
+              <button id="community-video-preview" class="community-video-preview" type="button" aria-label="Abrir vídeo em destaque">
+                <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Miniatura do vídeo selecionado" loading="lazy" decoding="async">
                 <span class="community-video-preview-overlay">
-                  <span class="community-video-preview-badge">Abrir video</span>
-                  <span id="community-video-preview-caption">Clique para abrir este video.</span>
+                  <span class="community-video-preview-badge">Abrir vídeo</span>
+                  <span id="community-video-preview-caption">Clique para abrir este vídeo.</span>
                 </span>
               </button>
             </div>
@@ -614,7 +632,7 @@
                 <div id="community-player-topics" class="community-player-topics" aria-label="Temas do filtro atual"></div>
                 <div class="community-player-detail-card community-player-detail-card--soft">
                   <h4>Como usar</h4>
-                  <p id="community-topic-helper">Escolha um video e clique na capa para abrir o player.</p>
+                  <p id="community-topic-helper">Escolha um vídeo e clique na capa para abrir o player.</p>
                 </div>
               </div>
             </div>
@@ -622,8 +640,8 @@
 
           <aside class="community-list-panel">
             <div class="community-list-head">
-              <h3 id="community-list-title">Videos recentes</h3>
-              <p id="community-list-description">Mais recentes em ordem cronologica.</p>
+              <h3 id="community-list-title">Vídeos recentes</h3>
+              <p id="community-list-description">Mais recentes em ordem cronológica.</p>
             </div>
             <div id="community-video-list" class="community-video-list" aria-live="polite"></div>
           </aside>
@@ -631,14 +649,14 @@
       </div>
     </div>
 
-    <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+    <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do chefe">
         <div class="speedster-modal-backdrop" data-close="true"></div>
         <div class="speedster-modal-content" role="document">
           <button class="speedster-modal-close" aria-label="Fechar">✖</button>
           <div class="speedster-modal-header">
         <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
         <div class="speedster-modal-title">
-          <h2 id="modal-title"></h2>
+          <h2 id="modal-title">Detalhes do chefe</h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
           <div class="tier-legend" aria-label="Legenda de cores de recomendação">
             <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
@@ -665,7 +683,7 @@
         aria-label="Discord do PStory"
         title="Entrar no Discord do PStory"
       >
-        <img src="icons-type/discord.png" alt="Discord" class="footer-discord-icon">
+        <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
@@ -679,14 +697,14 @@
         aria-label="Discord do PStory"
         title="Entrar no Discord do PStory"
       >
-        <img src="icons-type/discord.png" alt="Discord" class="footer-discord-icon">
+        <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
     </footer>
      <script src="js/main.js" defer></script>
 
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
-    <script src="bosses/bosses.js?v=20260402z" defer></script>
-    <script src="script.js?v=20260404g" defer></script>
+    <script src="bosses/bosses.js?v=20260404b" defer></script>
+    <script src="script.js?v=20260404h" defer></script>
 </body>
 </html>

@@ -959,7 +959,7 @@ const roleboardPickPools = {
 
 const roleboardClanSummaries = {
   instinct: {
-    champion: 'Linha mais explosiva para abrir vantagem cedo contra mega bosses.',
+    champion: 'Linha mais explosiva para abrir vantagem cedo contra mega chefes.',
     mew2: 'Equipe que acelera a raid com controle de ritmo e cobertura ofensiva.'
   },
   mystic: {
@@ -1167,7 +1167,7 @@ const championPathBosses = createManualRoleboardBosses([
     tutorialUrl: 'https://youtu.be/WzBXOWvKZ6U?si=JU5ylulj2EXQ7tb5',
     types: ['rock', 'dark'],
     moveType: 'ground',
-    description: 'Boss de trio com pressao pesada e janelas curtas para burst.',
+    description: 'Chefe de trio com pressao pesada e janelas curtas para burst.',
     clans: {
       instinct: {
         dps: [
@@ -1295,7 +1295,7 @@ const championPathBosses = createManualRoleboardBosses([
     tutorialUrl: 'https://youtu.be/Te_JA2TBKWk?si=VIm98aiKj1LDmzS3',
     types: ['steel', 'psychic'],
     moveType: 'psychic',
-    description: 'Mega boss de trio que pede cobertura e rotacao limpa entre funcoes.',
+    description: 'Mega chefe de trio que pede cobertura e rotacao limpa entre funcoes.',
     clans: {
       instinct: {
         dps: [
@@ -1409,7 +1409,7 @@ const championPathBosses = createManualRoleboardBosses([
     tutorialUrl: 'https://youtu.be/6U3jsH2fJJ0?si=1vURPQDu6jliGypW',
     types: ['ghost', 'fire'],
     moveType: 'ghost',
-    description: 'Mega boss mais punitivo nas trocas, entao suporte e tank precisam aparecer.',
+    description: 'Mega chefe mais punitivo nas trocas, entao suporte e tanque precisam aparecer.',
     clans: {
       instinct: {
         dps: [
@@ -1526,7 +1526,7 @@ const championPathBosses = createManualRoleboardBosses([
 ], {
   id: 'champion',
   encounterLabel: 'Mega trio',
-  encounterNote: 'Recomendacoes definitivas por cla e funcao para os mega bosses do Champion Path.'
+  encounterNote: 'Recomendacoes definitivas por cla e funcao para os mega chefes do Champion Path.'
 });
 
 function cloneRolePickConfig(pick) {
@@ -1635,16 +1635,16 @@ function cloneChampionPathRolePoolsForMew2() {
 }
 
 const mew2Bosses = createManualRoleboardBosses([
-  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', description: 'Boss que pede constancia e protecao durante as trocas de frente.' },
+  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
   { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
   { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
   { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
   { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
   { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
   { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.' },
-  { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', description: 'Boss agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
-  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', description: 'Boss rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
-  { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', description: 'Boss final que exige execucao limpa, com Tank, DPS e Suporte bem definidos.' }
+  { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
+  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
+  { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
 ].map((entry) => ({
   ...entry,
   clans: cloneChampionPathRolePoolsForMew2()
@@ -1661,8 +1661,8 @@ const bossCatalogs = {
     variant: 'hoopa',
     searchEnabled: true,
     introLines: [
-      'Clique em um Boss para ver recomenda\u00E7\u00F5es de pok\u00E9mons para enfrent\u00E1-lo.',
-      '\u2694\uFE0F Offense: quanto maior, melhor. \uD83D\uDEE1\uFE0F Defense: menor \u00E9 melhor (0 = imune, 2 = super eficaz).',
+      'Clique em um chefe para ver recomenda\u00E7\u00F5es de pok\u00E9mons para enfrent\u00E1-lo.',
+      '\u2694\uFE0F Ofensiva: quanto maior, melhor. \uD83D\uDEE1\uFE0F Defesa: quanto menor, melhor (0 = imune, 2 = super eficaz).',
       '\u26A0\uFE0F Recomendado usar pok\u00E9mons pelo menos bronze 5 para as recomenda\u00E7\u00F5es apresentadas.'
     ],
     data: hoopaPortalsData
@@ -1672,8 +1672,8 @@ const bossCatalogs = {
     label: 'Champion Path',
     variant: 'roleboard',
     searchEnabled: true,
-    summary: 'Abra um mega boss para ver picks de Tank, DPS e Suporte separados por cla.',
-    pills: ['Mega bosses', 'Tank / DPS / Suporte', 'Busca por pokemon'],
+    summary: 'Abra um mega chefe para ver escolhas de Tanque, DPS e Suporte separadas por cla.',
+    pills: ['Mega chefes', 'Tanque / DPS / Suporte', 'Busca por Pokémon'],
     data: championPathBosses
   },
   mew2: {
@@ -1681,8 +1681,8 @@ const bossCatalogs = {
     label: 'Mew 2',
     variant: 'roleboard',
     searchEnabled: true,
-    summary: 'Abra um boss do Mew 2 para ver o trio ideal dividido por cla, com Tank, DPS e Suporte.',
-    pills: ['Tank / DPS / Suporte', 'Busca por pokemon', 'Exemplos temporarios'],
+    summary: 'Abra um chefe do Mew 2 para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.',
+    pills: ['Tanque / DPS / Suporte', 'Busca por Pokémon', 'Exemplos temporários'],
     data: mew2Bosses
   }
 };
@@ -2201,7 +2201,7 @@ function getBossMoveType(boss) {
 
 function normalizeMoveTypeLabel(description) {
   if (typeof description !== 'string') return '';
-  return description.replace(/Tipo move:/gi, 'MoveType:');
+  return description.replace(/Tipo move:/gi, 'Tipo de golpe:');
 }
 
 function getMatchupOverride(poke, boss) {
@@ -2219,7 +2219,7 @@ const tierLabels = {
   solo: 'Ruim',
   unknown: 'Sem informacao'
 };
-const recommendationScoreTitle = 'ATK: considera o MoveType do pokemon contra a tipagem do boss. DEF: considera o pior dano entre tipagens e MoveType do boss. Passivas ja modeladas entram na conta.';
+const recommendationScoreTitle = 'ATK: considera o tipo de golpe do pokemon contra a tipagem do chefe. DEF: considera o pior dano entre tipagens e tipo de golpe do chefe. Passivas ja modeladas entram na conta.';
 
 function refreshTierLegendLabels() {
   const legendEntries = [
@@ -3070,7 +3070,7 @@ function makeHoopaBossCard(speedster) {
   const modeBadge = document.createElement('span');
   modeBadge.className = 'speedster-mode-badge';
   modeBadge.textContent = isDuo ? 'Dupla' : 'Solo';
-  modeBadge.title = isDuo ? 'Boss para dupla (2 jogadores)' : 'Boss solo (1 jogador)';
+  modeBadge.title = isDuo ? 'Chefe para dupla (2 jogadores)' : 'Chefe solo (1 jogador)';
   button.appendChild(modeBadge);
 
   const tutorialUrl = getBossTutorialUrl(speedster);
@@ -3085,8 +3085,8 @@ function makeHoopaBossCard(speedster) {
   const tutorialBtn = document.createElement('button');
   tutorialBtn.type = 'button';
   tutorialBtn.className = 'speedster-location-btn speedster-tutorial-btn';
-  tutorialBtn.setAttribute('aria-label', tutorialUrl ? 'Abrir tutorial em vídeo do boss' : 'Tutorial em vídeo em breve');
-  tutorialBtn.title = tutorialUrl ? 'Abrir um vídeo com a estratégia desse boss' : 'O tutorial em vídeo deste boss será adicionado em breve';
+  tutorialBtn.setAttribute('aria-label', tutorialUrl ? 'Abrir tutorial em vídeo do chefe' : 'Tutorial em vídeo em breve');
+  tutorialBtn.title = tutorialUrl ? 'Abrir um vídeo com a estratégia desse chefe' : 'O tutorial em vídeo deste chefe será adicionado em breve';
   tutorialBtn.dataset.available = tutorialUrl ? 'true' : 'false';
   tutorialBtn.setAttribute('aria-disabled', tutorialUrl ? 'false' : 'true');
 
@@ -3157,7 +3157,7 @@ function makeHoopaBossCard(speedster) {
     getBossTypeIcons(moveTypes.slice(0, 2)).forEach((icon) => moveChip.appendChild(icon));
 
     const moveText = document.createElement('span');
-    moveText.textContent = `MoveType ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`;
+    moveText.textContent = `Tipo de golpe ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`;
     moveChip.appendChild(moveText);
     button.appendChild(moveChip);
   }
@@ -3170,7 +3170,7 @@ function makeHoopaBossCard(speedster) {
   completionCheckbox.type = 'checkbox';
   completionCheckbox.className = 'speedster-completion__checkbox';
   completionCheckbox.checked = isHoopaBossCompleted(speedster.id);
-  completionCheckbox.setAttribute('aria-label', `Boss ${speedster.name} concluido hoje`);
+  completionCheckbox.setAttribute('aria-label', `Chefe ${speedster.name} concluido hoje`);
 
   const completionText = document.createElement('span');
   completionText.className = 'speedster-completion__text';
@@ -3259,8 +3259,8 @@ function makeRoleBossCard(boss) {
     const tutorialBtn = document.createElement('button');
     tutorialBtn.type = 'button';
     tutorialBtn.className = 'speedster-location-btn speedster-tutorial-btn';
-    tutorialBtn.setAttribute('aria-label', 'Abrir tutorial em vídeo do boss');
-    tutorialBtn.title = 'Abrir um vídeo com a estratégia desse boss';
+    tutorialBtn.setAttribute('aria-label', 'Abrir tutorial em vídeo do chefe');
+    tutorialBtn.title = 'Abrir um vídeo com a estratégia desse chefe';
     tutorialBtn.dataset.available = 'true';
     tutorialBtn.setAttribute('aria-disabled', 'false');
 
@@ -3306,7 +3306,7 @@ function makeRoleBossCard(boss) {
     const moveChip = document.createElement('span');
     moveChip.className = 'boss-role-card__chip boss-role-card__chip--wide boss-role-card__chip--move';
     getBossTypeIcons(moveTypes.slice(0, 2)).forEach((icon) => moveChip.appendChild(icon));
-    moveChip.appendChild(document.createTextNode(`MoveType ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`));
+    moveChip.appendChild(document.createTextNode(`Tipo de golpe ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`));
     button.appendChild(moveChip);
   }
 
@@ -3450,7 +3450,7 @@ function renderSearchResults(query = '') {
     const item = document.createElement('button');
     item.type = 'button';
     item.className = 'speedster-search-item';
-    item.setAttribute('aria-label', `Abrir bosses que usam ${st.name}`);
+    item.setAttribute('aria-label', `Abrir chefes que usam ${st.name}`);
     item.setAttribute('data-speedster', st.name);
 
     const content = formatSearchLabel(st);
@@ -3536,7 +3536,8 @@ function openSpeedsterBossesModal(speedster) {
     showLegend: true,
     showImages: true
   });
-  modalSubtitle.textContent = bosses.length > 0 ? `Usado por ${bosses.length} boss(es)` : 'Não encontrado em nenhum boss';
+  setModalBossWeaknesses(null, { show: false });
+  modalSubtitle.textContent = bosses.length > 0 ? `Usado por ${bosses.length} chefe(s)` : 'Não encontrado em nenhum chefe';
 
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
   const pokemonImgRight = document.getElementById('modal-pokemon-img');
@@ -3560,7 +3561,7 @@ function openSpeedsterBossesModal(speedster) {
   if (bosses.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'speedster-clan-empty';
-    empty.textContent = 'Nenhum boss encontrado para este speedster.';
+    empty.textContent = 'Nenhum chefe encontrado para este speedster.';
     list.appendChild(empty);
   } else {
     bosses.forEach((boss) => {
@@ -3699,7 +3700,7 @@ function createRecommendationCard(poke, options = {}) {
 
     const tierDot = document.createElement('span');
     tierDot.className = `tier-dot tier-${tier}`;
-    tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informaÃ§Ã£o');
+    tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informação');
 
     const nameEl = document.createElement('div');
     nameEl.className = 'speedster-reco-name';
@@ -3727,7 +3728,7 @@ function createRecommendationCard(poke, options = {}) {
       const moveRow = document.createElement('div');
       moveRow.className = 'speedster-reco-chip-row speedster-reco-chip-row--moves';
       moveTypes.slice(0, 2).forEach((type) => {
-        const chip = createChip(type, { label: 'MoveType', move: true });
+        const chip = createChip(type, { label: 'Tipo de golpe', move: true });
         if (chip) moveRow.appendChild(chip);
       });
       if (moveRow.childElementCount > 0) {
@@ -3833,7 +3834,7 @@ function ensureModalLocationButton() {
     modalLocationBtn = document.createElement('button');
     modalLocationBtn.type = 'button';
     modalLocationBtn.className = 'speedster-modal-location-btn';
-    modalLocationBtn.setAttribute('aria-label', 'Ver localizacao do boss');
+    modalLocationBtn.setAttribute('aria-label', 'Ver localização do chefe');
     modalLocationBtn.title = 'Ver localizacao';
     modalLocationBtn.textContent = '🗺️';
     modalHeader.appendChild(modalLocationBtn);
@@ -3899,6 +3900,207 @@ function setModalChrome({ bosses = [], locationImage = '', showLocation = false,
       pokemonImgRight.hidden = false;
     };
   }
+}
+
+function ensureBossWeaknessPanel() {
+  const titleWrap = modal?.querySelector('.speedster-modal-title');
+  if (!titleWrap) return null;
+
+  let panel = titleWrap.querySelector('.boss-weakness-panel');
+  if (!panel) {
+    panel = document.createElement('section');
+    panel.className = 'boss-weakness-panel';
+    panel.hidden = true;
+    panel.setAttribute('aria-label', 'Fraquezas do chefe');
+
+    const title = document.createElement('div');
+    title.className = 'boss-weakness-title';
+    title.textContent = 'Fraquezas';
+
+    const groups = document.createElement('div');
+    groups.className = 'boss-weakness-groups';
+
+    panel.append(title, groups);
+
+    const tierLegend = titleWrap.querySelector('.tier-legend');
+    if (tierLegend) {
+      tierLegend.insertAdjacentElement('afterend', panel);
+    } else {
+      titleWrap.appendChild(panel);
+    }
+  }
+
+  return {
+    panel,
+    groups: panel.querySelector('.boss-weakness-groups')
+  };
+}
+
+function hideBossWeaknessPanel() {
+  const surface = ensureBossWeaknessPanel();
+  if (!surface) return;
+  surface.panel.hidden = true;
+  surface.groups.replaceChildren();
+}
+
+function formatTypeMultiplier(multiplier) {
+  if (!Number.isFinite(multiplier)) return '-';
+  if (Number.isInteger(multiplier)) return `${multiplier}x`;
+  return `${String(Number(multiplier.toFixed(2))).replace(/\.0+$/, '')}x`;
+}
+
+function getBossWeaknessDisplayEntries(source) {
+  if (!source || typeof source !== 'object') return [];
+
+  if (Array.isArray(source)) {
+    return source
+      .map((entry, index) => ({
+        id: entry?.id || `boss-${index}`,
+        name: entry?.name || `Chefe ${index + 1}`,
+        image: entry?.image || '',
+        types: mergeLowercaseUniqueValues(entry?.types),
+        immunities: mergeLowercaseUniqueValues(entry?.immunities)
+      }))
+      .filter((entry) => entry.types.length);
+  }
+
+  const sourceTypes = mergeLowercaseUniqueValues(source.types);
+  const sourceImmunities = mergeLowercaseUniqueValues(source.immunities);
+  const groupMap = new Map();
+
+  Object.values(source.clans || {}).forEach((clanData) => {
+    getRecommendationGroupsForClan(source, clanData).forEach((group) => {
+      const bossRef = group?.boss;
+      const entryTypes = mergeLowercaseUniqueValues(bossRef?.types);
+      if (!entryTypes.length) return;
+
+      const entryId = String(bossRef?.id || group?.title || source.id || source.name || '').trim();
+      if (!entryId || groupMap.has(entryId)) return;
+
+      groupMap.set(entryId, {
+        id: entryId,
+        name: bossRef?.name || group?.title || source.name || 'Chefe',
+        image: group?.bossImage || source.image || '',
+        types: entryTypes,
+        immunities: mergeLowercaseUniqueValues(bossRef?.immunities, source.immunities)
+      });
+    });
+  });
+
+  if (Array.isArray(source.bosses) && source.bosses.length) {
+    return source.bosses.map((entry, index) => {
+      const entryNameKey = getRecommendationNameKey(entry?.name || `${source.name || 'boss'}-${index}`);
+      const groupMatch = Array.from(groupMap.values()).find((candidate) => getRecommendationNameKey(candidate.name) === entryNameKey);
+      return {
+        id: groupMatch?.id || `${source.id || 'boss'}-${index}`,
+        name: entry?.name || groupMatch?.name || source.name || 'Chefe',
+        image: entry?.image || groupMatch?.image || source.image || '',
+        types: mergeLowercaseUniqueValues(entry?.types, groupMatch?.types, sourceTypes),
+        immunities: mergeLowercaseUniqueValues(entry?.immunities, groupMatch?.immunities, sourceImmunities)
+      };
+    }).filter((entry) => entry.types.length);
+  }
+
+  if (groupMap.size > 1) {
+    return Array.from(groupMap.values());
+  }
+
+  if (sourceTypes.length) {
+    return [{
+      id: source.id || source.name || 'boss',
+      name: source.name || 'Chefe',
+      image: source.image || '',
+      types: sourceTypes,
+      immunities: sourceImmunities
+    }];
+  }
+
+  return [];
+}
+
+function getWeaknessesForBossEntry(entry) {
+  const bossTypes = mergeLowercaseUniqueValues(entry?.types);
+  const bossImmunities = mergeLowercaseUniqueValues(entry?.immunities);
+
+  return Object.keys(typeEffectiveness)
+    .map((type) => ({
+      type,
+      multiplier: getTypeMultiplier(type, bossTypes, bossImmunities)
+    }))
+    .filter((item) => item.multiplier > 1)
+    .sort((left, right) => {
+      if (right.multiplier !== left.multiplier) {
+        return right.multiplier - left.multiplier;
+      }
+      return formatTypeLabel(left.type).localeCompare(formatTypeLabel(right.type), 'pt-BR');
+    });
+}
+
+function setModalBossWeaknesses(source, options = {}) {
+  const { show = true } = options;
+  const surface = ensureBossWeaknessPanel();
+  if (!surface) return;
+
+  if (!show || !source) {
+    hideBossWeaknessPanel();
+    return;
+  }
+
+  const entries = getBossWeaknessDisplayEntries(source);
+  const renderedEntries = entries
+    .map((entry) => ({
+      ...entry,
+      weaknesses: getWeaknessesForBossEntry(entry)
+    }))
+    .filter((entry) => entry.weaknesses.length);
+
+  if (!renderedEntries.length) {
+    hideBossWeaknessPanel();
+    return;
+  }
+
+  const showBossName = renderedEntries.length > 1;
+  const fragment = document.createDocumentFragment();
+
+  renderedEntries.forEach((entry) => {
+    const group = document.createElement('div');
+    group.className = 'boss-weakness-group';
+
+    if (showBossName) {
+      const label = document.createElement('span');
+      label.className = 'boss-weakness-group-label';
+      label.textContent = entry.name;
+      group.appendChild(label);
+    }
+
+    const list = document.createElement('div');
+    list.className = 'boss-weakness-list';
+
+    entry.weaknesses.forEach((item) => {
+      const chip = document.createElement('span');
+      chip.className = 'boss-weakness-chip';
+      chip.title = `${formatTypeLabel(item.type)} ${formatTypeMultiplier(item.multiplier)}`;
+
+      const icon = document.createElement('img');
+      icon.className = 'boss-weakness-chip-icon';
+      icon.src = iconBase + `${item.type}.png`;
+      icon.alt = formatTypeLabel(item.type);
+      icon.loading = 'lazy';
+
+      const value = document.createElement('span');
+      value.className = 'boss-weakness-chip-value';
+      value.textContent = formatTypeMultiplier(item.multiplier);
+
+      chip.append(icon, value);
+      list.appendChild(chip);
+    });
+
+    group.appendChild(list);
+    fragment.appendChild(group);
+  });
+
+  surface.groups.replaceChildren(fragment);
+  surface.panel.hidden = false;
 }
 
 function openModalWithAnimation() {
@@ -4022,7 +4224,7 @@ function createRolePickCard(poke) {
   moveGroup.className = 'boss-role-pick-meta boss-role-pick-meta--move';
   const moveLabel = document.createElement('div');
   moveLabel.className = 'boss-role-pick-meta-label';
-  moveLabel.textContent = 'MoveType';
+  moveLabel.textContent = 'Tipo de golpe';
   moveGroup.append(moveLabel, moveRow);
 
   if (Array.isArray(poke.types) && poke.types.length) {
@@ -4076,6 +4278,7 @@ function openRoleBossModal(boss) {
     showLegend: true,
     showImages: true
   });
+  setModalBossWeaknesses(boss);
 
   modalBody.innerHTML = '';
   modalBody.classList.remove('speedster-modal-body--split', 'speedster-modal-body--roleboard');
@@ -4173,7 +4376,7 @@ function openModal(speedster) {
       modalLocationBtn = document.createElement('button');
       modalLocationBtn.type = 'button';
       modalLocationBtn.className = 'speedster-modal-location-btn';
-      modalLocationBtn.setAttribute('aria-label', 'Ver localização do boss');
+      modalLocationBtn.setAttribute('aria-label', 'Ver localização do chefe');
       modalLocationBtn.title = 'Ver localização';
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
@@ -4335,6 +4538,7 @@ function openBossModal(speedster) {
     showLegend: true,
     showImages: true
   });
+  setModalBossWeaknesses(speedster);
 
   const modalHeader = modal.querySelector('.speedster-modal-header');
   if (modalHeader) {
@@ -4343,7 +4547,7 @@ function openBossModal(speedster) {
       modalLocationBtn = document.createElement('button');
       modalLocationBtn.type = 'button';
       modalLocationBtn.className = 'speedster-modal-location-btn';
-      modalLocationBtn.setAttribute('aria-label', 'Ver localização do boss');
+      modalLocationBtn.setAttribute('aria-label', 'Ver localização do chefe');
       modalLocationBtn.title = 'Ver localização';
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
@@ -4485,7 +4689,7 @@ function openBossModalV2(speedster) {
       modalLocationBtn = document.createElement('button');
       modalLocationBtn.type = 'button';
       modalLocationBtn.className = 'speedster-modal-location-btn';
-      modalLocationBtn.setAttribute('aria-label', 'Ver localização do boss');
+      modalLocationBtn.setAttribute('aria-label', 'Ver localização do chefe');
       modalLocationBtn.title = 'Ver localização';
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
@@ -4522,7 +4726,8 @@ function openBossModalV2(speedster) {
         choiceMap.set(choiceId, {
           id: choiceId,
           title: group.title,
-          bossImage: group.bossImage || speedster.image
+          bossImage: group.bossImage || speedster.image,
+          boss: group.boss || speedster
         });
       }
     });
@@ -4530,6 +4735,11 @@ function openBossModalV2(speedster) {
 
   const recommendationChoices = Array.from(choiceMap.values());
   let activeChoiceId = recommendationChoices[0]?.id || null;
+  const getActiveWeaknessSource = () => {
+    if (!recommendationChoices.length) return speedster;
+    return recommendationChoices.find((choice) => choice.id === activeChoiceId)?.boss || speedster;
+  };
+  setModalBossWeaknesses(getActiveWeaknessSource());
 
   if (recommendationChoices.length > 1) {
     const switcher = document.createElement('div');
@@ -4566,6 +4776,7 @@ function openBossModalV2(speedster) {
         options.querySelectorAll('.speedster-variant-btn').forEach((btn) => {
           btn.classList.toggle('is-active', btn.dataset.choiceId === activeChoiceId);
         });
+        setModalBossWeaknesses(getActiveWeaknessSource());
         renderClanSections();
       });
       options.appendChild(button);
@@ -4693,7 +4904,7 @@ function showLocationOverlay(src) {
 
   const img = document.createElement('img');
   img.src = src;
-  img.alt = 'Localização do boss';
+  img.alt = 'Localização do chefe';
 
   overlay.appendChild(img);
 

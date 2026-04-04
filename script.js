@@ -130,9 +130,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     bosses: {
-        label: 'Bosses',
+        label: 'Chefes',
         hashtag: '#pstoryboss',
-        description: 'Vídeos sobre bosses, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
+        description: 'Vídeos sobre chefes, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
         highlights: ['Hoopa Portal', 'Drops', 'Rotas'],
         items: [
             { id: 'D0v_bND_wD4', title: 'FIZ TODOS OS BOSSES DO PSTORY! DROPEI ALGO DE BOM?' },
@@ -144,9 +144,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     catch: {
-        label: 'Catch',
+        label: 'Captura',
         hashtag: '#pstorycatch',
-        description: 'Conteúdos focados em catch, shinies, broken e rotinas de captura no servidor.',
+        description: 'Conteúdos focados em captura, shinies, broken e rotinas de captura no servidor.',
         highlights: ['Shinies', 'Broken', 'Rotina'],
         items: [
             { id: 'hLDOoIdjuKk', title: 'TUDO SOBRE BROKEN E CATCH! PSTORY ONLINE!' },
@@ -203,8 +203,8 @@ const COMMUNITY_TOPIC_ORDER = ['all', 'bosses', 'catch', 'clans', 'updates', 'gu
 const COMMUNITY_TOPIC_STORAGE_KEY = 'selectedCommunityTopic';
 const COMMUNITY_TOPIC_DESCRIPTION_OVERRIDES = {
     all: 'Videos gerais da comunidade e do servidor.',
-    bosses: 'Bosses, drops e rotas de batalha.',
-    catch: 'Catch, shinies e rotinas de captura.',
+    bosses: 'Chefes, drops e rotas de batalha.',
+    catch: 'Captura, shinies e rotinas de captura.',
     clans: 'Comparativos e guias de clas.',
     updates: 'Patches, eventos e novidades do servidor.',
     guides: 'Guias e tutoriais para evoluir com mais direcao.'
@@ -399,7 +399,7 @@ function openSiteYouTubeModal(options = {}){
 
     const iframe = document.createElement('iframe');
     iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-    iframe.title = options.title ? `YouTube: ${options.title}` : 'YouTube video player';
+    iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
     iframe.loading = 'eager';
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -449,6 +449,14 @@ function closeSiteYouTubeModal(options = {}){
     siteYouTubeModalLastFocus = null;
 }
 
+function openExternalWindow(url){
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if(opened){
+        opened.opener = null;
+    }
+    return opened;
+}
+
 window.openSiteYouTubeModal = openSiteYouTubeModal;
 window.closeSiteYouTubeModal = closeSiteYouTubeModal;
 
@@ -468,10 +476,10 @@ function setCommunityPlayerLoaded(video){
 
     if(previewImage){
         previewImage.src = video.thumbnailUrl;
-        previewImage.alt = video.title || 'Thumbnail do video selecionado';
+        previewImage.alt = video.title || 'Miniatura do vídeo selecionado';
     }
     if(previewCaption){
-        previewCaption.textContent = 'Clique para abrir este video.';
+        previewCaption.textContent = 'Clique para abrir este vídeo.';
     }
 
     if(frame){
@@ -579,14 +587,14 @@ const SHINING_PLATE_BLOCK_SIZE = 30;
 
 const strings = {
     pt: {
-        pageTitle: 'Efetividade de Tipos Pokémon',
-        siteName: 'Poke Effectiveness',
+        pageTitle: 'Tipos Pokémon',
+        siteName: 'Poke Utilities',
         homeLabel: 'Início',
         homeEyebrow: 'Hub da comunidade',
         homeTitleBefore: 'Bem-vindo ao',
         homeTitleAccent: 'Poke Utilities',
         homeLead: 'Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.',
-        homeSupporting: 'Entre por Tipos e navegue por fósseis, treinamento, catch, bosses, streamers e YouTube em um fluxo pensado para uso diário.',
+        homeSupporting: 'Entre por Tipos e navegue por fósseis, treinamento, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.',
         homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
@@ -608,15 +616,15 @@ const strings = {
         calculatorTitle: 'Calculadora de Treinamento',
         rangeLabel: 'Faixa de nível',
         platesLabel: 'Plates',
-        goldCoinsLabel: 'Golden Coins',
+        goldCoinsLabel: 'Moedas douradas',
         commonPlatesLabel: 'Plates comuns',
         shinyPlatesLabel: 'Shining Plates',
         tabTypes: 'Tipos',
         tabCalculator: 'Calculadora de Treinamento',
         tabFossils: 'Fósseis',
-        tabSpeedsters: 'Bosses',
-        tabStreamers: 'Streamers',
-        tabCommunity: 'YouTube',
+        tabSpeedsters: 'Chefes',
+        tabStreamers: 'Transmissões',
+        tabCommunity: 'Vídeos',
         fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
         fossilHintCombines: 'Este fóssil combina com: ',
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
@@ -646,11 +654,11 @@ const strings = {
         charItems: 'itens característicos',
         stoneItems: 'pedras do elemento',
         /* catch calculator */
-        catchTitle: 'Calculadora de Catch',
+        catchTitle: 'Calculadora de Captura',
         catchEyebrow: 'Captura otimizada',
-        catchDescription: 'Consulte a média de balls e acompanhe o progresso do log em uma tela mais direta.',
-        selectedBallLabel: 'Ball selecionada',
-        catchCalcTitle: 'Calcule a média de balls',
+        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.',
+        selectedBallLabel: 'Pokébola selecionada',
+        catchCalcTitle: 'Calcule a média de pokébolas',
         catchCalcHint: 'Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.',
         ballChoiceLabel: 'Escolha a pokébola:',
         pokemonLevelLabel: 'Nível do pokémon:',
@@ -659,10 +667,10 @@ const strings = {
         catchVariantShinyHint: 'Mostra a média para capturas shiny.',
         optionsLabel: 'Opções',
         catchOptionLabel: 'Opção',
-        calcCatchBtn: 'Calcular quantidade',
-        catchLogTitle: 'Analise o histórico de balls',
+        calcCatchBtn: 'Calcular estimativa',
+        catchLogTitle: 'Analise o histórico de pokébolas',
         catchLogHint: 'Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.',
-        logBallsLabel: 'Log de balls usadas:',
+        logBallsLabel: 'Log de pokébolas usadas:',
         parseLogBtn: 'Processar log',
         expensesMsg: 'Despesas',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}, Safari: {safari}',
@@ -672,7 +680,7 @@ const strings = {
         catchResultVariantLabel: 'Variante',
         catchResultBallLabel: 'Pokébola',
         catchLogResultTitle: 'Leitura do log',
-        catchLogBallsLabel: 'Balls reconhecidas',
+        catchLogBallsLabel: 'Pokébolas reconhecidas',
         catchLogEquivalentLabel: 'Equivalente em {ball}',
         catchLogSpentLabel: 'Gasto total',
         catchRemainingTitle: 'Ainda faltam',
@@ -686,7 +694,7 @@ const strings = {
         preLabel: 'Pré Ace',
         aceLabel: 'Ace',
         logPlaceholder: "Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui.",
-        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas balls a mais.',
+        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.',
         infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
         infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
         adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
@@ -699,7 +707,7 @@ const strings = {
         avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
         overAvg: 'Você passou da média por {over} {ball}.',
         encouragement: 'Continue assim, você está no caminho certo!',
-        noBallsParsed: 'Nenhuma ball reconhecida no log.'
+        noBallsParsed: 'Nenhuma pokébola reconhecida no log.'
     }
 };
 const lang = 'pt';
@@ -1025,18 +1033,18 @@ function renderCommunityFeedPanel(){
 
     renderCommunityTopicFilters();
 
-    if(heroTitleEl) heroTitleEl.textContent = 'Videos recentes da comunidade';
+    if(heroTitleEl) heroTitleEl.textContent = 'Vídeos recentes da comunidade';
     if(heroLeadEl) heroLeadEl.textContent = 'Veja os uploads mais recentes da comunidade.';
-    if(heroSupportingEl) heroSupportingEl.textContent = 'Lista cronologica, sem ranking.';
+    if(heroSupportingEl) heroSupportingEl.textContent = 'Lista cronológica, sem ranking.';
     if(playerTagEl) playerTagEl.textContent = 'Recentes';
     if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} A lista abaixo segue ordem cronológica de postagem dentro de ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um video na lista ou clique na capa para abrir o player em popup.';
-    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Ultimos videos' : `Ultimos videos de ${topic.label}`;
+    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo na lista ou clique na capa para abrir o player em pop-up.';
+    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Últimos vídeos' : `Últimos vídeos de ${topic.label}`;
     if(listDescriptionEl) listDescriptionEl.textContent = `Resultados em ordem cronológica de postagem para ${topic.hashtag}, do mais recente para o mais antigo.`;
 
     if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} Filtro: ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um video e clique na capa para abrir o player.';
-    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Videos recentes' : `Videos de ${topic.label}`;
+    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo e clique na capa para abrir o player.';
+    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Vídeos recentes' : `Vídeos de ${topic.label}`;
     if(listDescriptionEl) listDescriptionEl.textContent = `Mais recentes em ${topic.hashtag}.`;
 
     if(topicHighlightsEl){
@@ -1051,27 +1059,27 @@ function renderCommunityFeedPanel(){
 
     if(!topicItems.length){
         const fallbackVideoId = COMMUNITY_FEED_ITEMS[0]?.id || 'FBJKGfzZim4';
-        listEl.innerHTML = `<div class="community-empty">Nenhum video configurado para ${topic.hashtag} ainda.</div>`;
-        titleEl.textContent = 'Nenhum video configurado';
+        listEl.innerHTML = `<div class="community-empty">Nenhum vídeo configurado para ${topic.hashtag} ainda.</div>`;
+        titleEl.textContent = 'Nenhum vídeo configurado';
         if(channelNameEl) channelNameEl.textContent = 'Canal da comunidade';
         if(publishedAtEl) publishedAtEl.textContent = 'Data de postagem indisponivel';
         linkEl.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(topic.hashtag)}`;
         linkEl.textContent = 'Abrir no YouTube';
-        if(frame) frame.setAttribute('title', `Nenhum video configurado para ${topic.label}`);
+        if(frame) frame.setAttribute('title', `Nenhum vídeo configurado para ${topic.label}`);
         if(channelLinkEl){
             channelLinkEl.hidden = true;
             channelLinkEl.removeAttribute('href');
         }
         if(previewEl){
             previewEl.disabled = true;
-            previewEl.setAttribute('aria-label', 'Nenhum video disponivel');
+            previewEl.setAttribute('aria-label', 'Nenhum vídeo disponível');
         }
         if(previewCaptionEl){
-            previewCaptionEl.textContent = `Nenhum video em ${topic.hashtag}.`;
+            previewCaptionEl.textContent = `Nenhum vídeo em ${topic.hashtag}.`;
         }
         setCommunityPlayerLoaded({
             id: fallbackVideoId,
-            title: 'Nenhum video configurado',
+            title: 'Nenhum vídeo configurado',
             channelName: 'criadores da comunidade',
             thumbnailUrl: getCommunityVideoThumbnailUrl(fallbackVideoId)
         });
@@ -1099,7 +1107,7 @@ function renderCommunityFeedPanel(){
     }
     if(previewEl){
         previewEl.disabled = false;
-        previewEl.setAttribute('aria-label', `Abrir video em popup: ${activeVideo.title}`);
+        previewEl.setAttribute('aria-label', `Abrir vídeo em pop-up: ${activeVideo.title}`);
         previewEl.onclick = () => {
             openSiteYouTubeModal({
                 videoId: activeVideo.id,
@@ -2001,11 +2009,11 @@ function renderHomeStreamerInfo(){
 
     homeStreamerCount.textContent = String(homeStreamerInfoState.totalPstoryOnline);
     if(homeStreamerInfoState.totalPstoryOnline === 0){
-        homeStreamerText.textContent = 'Nenhum streamer está online em PStory agora.';
+        homeStreamerText.textContent = 'Nenhum canal está online em PStory agora.';
     } else if(homeStreamerInfoState.totalPstoryOnline === 1){
-        homeStreamerText.textContent = 'streamer está online e em PStory agora.';
+        homeStreamerText.textContent = 'canal está online e em PStory agora.';
     } else {
-        homeStreamerText.textContent = 'streamers estão online e em PStory agora.';
+        homeStreamerText.textContent = 'canais estão online e em PStory agora.';
     }
 }
 
@@ -2832,7 +2840,7 @@ function createStreamerRatChatMonitor(){
 
     const connect = async () => {
         if(desiredChannels.size === 0){
-            setStatus('idle', 'Nenhum streamer online para monitorar o rato.');
+            setStatus('idle', 'Nenhum canal online para monitorar o rato.');
             return;
         }
 
@@ -2911,7 +2919,7 @@ function createStreamerRatChatMonitor(){
                         console.error('streamerRatChatMonitor close error', err);
                     }
                 } else {
-                    setStatus('idle', 'Nenhum streamer online para monitorar o rato.');
+                    setStatus('idle', 'Nenhum canal online para monitorar o rato.');
                 }
                 return;
             }
@@ -3190,14 +3198,14 @@ function renderStreamers(){
         ratSummary.replaceChildren();
     }
     if(statusInfo){
-        statusInfo.textContent = 'Carregando status de streamers...';
+        statusInfo.textContent = 'Carregando status dos canais...';
         const nonDropList = Array.from(NON_DROP_STREAMERS);
         if(nonDropList.length){
             const nonDropEl = document.createElement('div');
             nonDropEl.style.fontSize = '0.78rem';
             nonDropEl.style.color = '#ffeb6d';
             nonDropEl.style.marginTop = '0.3rem';
-            nonDropEl.textContent = `Streamers sem drop (lista separada): ${nonDropList.join(', ')}`;
+            nonDropEl.textContent = `Canais sem drops (lista separada): ${nonDropList.join(', ')}`;
             statusInfo.appendChild(nonDropEl);
         }
     }
@@ -3250,7 +3258,7 @@ function renderStreamers(){
         ratSummary.appendChild(summaryEl);
         if(!selectedInfo){
             summaryEl.style.display = 'inline-flex';
-            summaryEl.textContent = 'Nenhum streamer com DROP:ON confirmado está online para monitorar o Rattata.';
+            summaryEl.textContent = 'Nenhum canal com DROP:ON confirmado está online para monitorar o Rattata.';
             summaryEl.style.color = '#b6c2cf';
             return;
         }
@@ -3265,9 +3273,9 @@ function renderStreamers(){
             return;
         }
         if(totalOnline === 0){
-            statusInfo.textContent = 'Nenhum streamer está online agora. Mas a lista continua visível abaixo.';
+            statusInfo.textContent = 'Nenhum canal está online agora. Mas a lista continua visível abaixo.';
         } else {
-            statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} streamers`;
+            statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} canais`;
         }
     };
 
@@ -3505,11 +3513,11 @@ function renderStreamers(){
 
         const discordBtn = document.createElement('button');
         const discordLink = STREAMER_DISCORD_LINKS[name];
-        discordBtn.textContent = discordLink ? 'Discord' : 'Sem Discord';
+        discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponível';
         discordBtn.disabled = !discordLink;
 
         const openBtn = document.createElement('button');
-        openBtn.textContent = 'Abrir no Twitch';
+        openBtn.textContent = 'Abrir na Twitch';
         openBtn.disabled = true;
 
         actions.appendChild(discordBtn);
@@ -3546,6 +3554,7 @@ function renderStreamers(){
             const parentDomain = location.hostname || 'localhost';
             const iframe = document.createElement('iframe');
             iframe.src = `https://player.twitch.tv/?channel=${encodeURIComponent(name)}&parent=${encodeURIComponent(parentDomain)}&autoplay=false`;
+            iframe.title = `Prévia da transmissão de ${name}`;
             iframe.height = '180';
             iframe.width = '100%';
             iframe.style.border = '0';
@@ -3567,7 +3576,8 @@ function renderStreamers(){
             }
             const img = document.createElement('img');
             img.src = safeUrl;
-            img.alt = `${name} avatar`;
+            img.alt = `Avatar offline de ${name}`;
+            img.loading = 'lazy';
             img.style.width = '100%';
             img.style.height = '160px';
             img.style.objectFit = 'cover';
@@ -3618,22 +3628,22 @@ function renderStreamers(){
                     setOnlinePreview();
                     // show Pstory indicator
                     if(info.isPstoryDrop){
-                        pstoryInfo.textContent = 'Streamando Pstory!';
+                        pstoryInfo.textContent = 'Transmitindo PStory!';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else if(info.isPstoryNoDrop){
-                        pstoryInfo.textContent = 'Streamando pstory! (sem drops)';
+                        pstoryInfo.textContent = 'Transmitindo PStory (sem drops).';
                         pstoryInfo.style.color = '#ffd54f';
                     } else if(info.isPstory){
-                        pstoryInfo.textContent = 'Streamando Pstory!';
+                        pstoryInfo.textContent = 'Transmitindo PStory!';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else {
-                        pstoryInfo.textContent = 'Não está streamando Pstory.';
+                        pstoryInfo.textContent = 'Não está transmitindo PStory.';
                         pstoryInfo.style.color = '#fa9005';
                     }
                 } else if(info.status === 'offline'){
                     status.textContent = 'Offline';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'Não está online no momento.';
+                    pstoryInfo.textContent = 'Canal offline no momento.';
                     pstoryInfo.style.color = '#fa0505';
                     fetchStreamerAvatar(name).then(setOfflineAvatar);
                 } else if(info.status === 'unknown'){
@@ -3645,7 +3655,7 @@ function renderStreamers(){
                 } else {
                     status.textContent = 'Erro ao obter';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'Erro ao determinar Pstory.';
+                    pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
                     pstoryInfo.style.color = '#faa';
                     fetchStreamerAvatar(name).then(setOfflineAvatar);
                 }
@@ -3671,19 +3681,19 @@ function renderStreamers(){
             });
 
         openBtn.addEventListener('click', ()=>{
-            window.open(`https://www.twitch.tv/${name}`, '_blank');
+            openExternalWindow(`https://www.twitch.tv/${name}`);
         });
 
         discordBtn.addEventListener('click', ()=>{
             if(discordLink){
-                window.open(discordLink, '_blank');
+                openExternalWindow(discordLink);
             }
         });
     });
 
     if(grid.children.length === 0) {
-        grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum streamer configurado no momento.</div>';
-        if(statusInfo) statusInfo.textContent = 'Nenhum streamer disponível.';
+        grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum canal configurado no momento.</div>';
+        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponível.';
     }
 }
 
