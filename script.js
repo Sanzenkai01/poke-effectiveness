@@ -4483,6 +4483,11 @@ const fishingModal = document.getElementById('fishing-modal');
 const fishingViewport = document.getElementById('fishing-viewport');
 const fishingCanvas = document.getElementById('fishing-canvas');
 const fishingImage = document.getElementById('fishing-image');
+const fishingBaitBtn = document.getElementById('fishing-bait-btn');
+const baitLocationModal = document.getElementById('bait-location-modal');
+const baitLocationViewport = document.getElementById('bait-location-viewport');
+const baitLocationCanvas = document.getElementById('bait-location-canvas');
+const baitLocationImage = document.getElementById('bait-location-image');
 const fossilLocationBtn = document.getElementById('fossil-location-btn');
 const fossilLocationModal = document.getElementById('fossil-location-modal');
 const fossilLocationViewport = document.getElementById('fossil-location-viewport');
@@ -4883,6 +4888,7 @@ function setupRespawnsModal(){
 setupZoomableImageModal(elementalBallsModal, elementalBallsViewport, elementalBallsCanvas, elementalBallsImage);
 setupZoomableImageModal(respawnsModal, respawnsViewport, respawnsCanvas, respawnsImage);
 setupZoomableImageModal(fishingModal, fishingViewport, fishingCanvas, fishingImage);
+setupZoomableImageModal(baitLocationModal, baitLocationViewport, baitLocationCanvas, baitLocationImage);
 setupZoomableImageModal(fossilLocationModal, fossilLocationViewport, fossilLocationCanvas, fossilLocationImage);
 setupRespawnsModal();
 
@@ -4910,6 +4916,11 @@ if(respawnsBtn && respawnsModal){
 if(fishingBtn && fishingModal){
     wireBasicModal(fishingBtn, fishingModal, ()=>{
         if(typeof fishingModal._onOpen === 'function') fishingModal._onOpen();
+    });
+}
+if(fishingBaitBtn && baitLocationModal){
+    wireBasicModal(fishingBaitBtn, baitLocationModal, ()=>{
+        if(typeof baitLocationModal._onOpen === 'function') baitLocationModal._onOpen();
     });
 }
 if(fossilLocationBtn && fossilLocationModal){

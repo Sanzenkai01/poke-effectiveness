@@ -2933,6 +2933,33 @@ p {
   text-align: left;
 }
 
+.fossil-location-btn--compact {
+  min-height: 3.9rem;
+  padding: 0.55rem 0.9rem 0.55rem 0.6rem;
+  border-radius: 20px;
+  gap: 0.8rem;
+}
+
+.fossil-location-btn--compact .fossil-location-btn__thumb {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 16px;
+}
+
+.fossil-location-btn--compact .fossil-location-btn__label {
+  font-size: 0.94rem;
+}
+
+.fishing-modal__actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.fishing-modal__actions .fossil-location-btn {
+  width: min(100%, 320px);
+}
+
 #type-search {
   width: 100%;
   max-width: 400px;
@@ -2959,6 +2986,9 @@ p {
   .fossil-location-btn {
     flex: 1 1 auto;
     min-width: 0;
+  }
+  .fishing-modal__actions .fossil-location-btn {
+    width: 100%;
   }
   .grid {
     gap: 0.5rem;
@@ -3635,6 +3665,10 @@ h2 {
 
 #fishing-btn {
   left: 12.5rem;
+}
+
+#respawns-btn[hidden] + #fishing-btn {
+  left: 8.75rem;
 }
 
 #share-btn {

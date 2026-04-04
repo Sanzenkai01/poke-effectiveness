@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260404c">
+    <link rel="stylesheet" href="styles.css?v=20260404e">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -17,7 +17,7 @@
       <button id="elemental-balls-btn" aria-label="Pokebolas Elementais" title="Pokebolas Elementais">
         <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" />
       </button>
-      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">&#x1F5FA;</button>
+      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;" hidden>&#x1F5FA;</button>
       <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
       <h1 id="page-title">Poke Effectiveness</h1>
       <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
@@ -245,6 +245,14 @@
         <h2 id="fishing-modal-title">Pescaria</h2>
         <div class="image-modal__toolbar">
           <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom no mapa de pescaria.</p>
+          <div class="fishing-modal__actions">
+            <button id="fishing-bait-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local para comprar iscas" title="Local para comprar iscas">
+              <span class="fossil-location-btn__thumb">
+                <img src="mapas/iscas.png" alt="" aria-hidden="true">
+              </span>
+              <span class="fossil-location-btn__label">Comprar iscas</span>
+            </button>
+          </div>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -254,6 +262,26 @@
         <div class="image-modal__frame image-modal__viewport" id="fishing-viewport">
           <div class="image-modal__canvas" id="fishing-canvas">
             <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="bait-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bait-location-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <h2 id="bait-location-modal-title">Local para comprar iscas</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="bait-location-viewport">
+          <div class="image-modal__canvas" id="bait-location-canvas">
+            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" />
           </div>
         </div>
       </div>
@@ -647,6 +675,6 @@
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="bosses/bosses.js?v=20260402z" defer></script>
-    <script src="script.js?v=20260404d" defer></script>
+    <script src="script.js?v=20260404e" defer></script>
 </body>
 </html>
