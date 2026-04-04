@@ -590,7 +590,7 @@ const strings = {
         homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
-        instructions: 'Clique em um tipo para ver contra quais outros ele é efetivo. Pressione Tab para navegar e Enter para selecionar. Você pode selecionar até dois tipos.',
+        instructions: '',
         superEffective: 'super eficaz contra',
         vulnerable: 'vulnerável a',
         immune: 'imune a',
@@ -704,37 +704,35 @@ const strings = {
 };
 const lang = 'pt';
 function t(k){return strings[lang][k]||'';}
+const FIXED_BROWSER_TITLE = 'Poke Utilities';
+
+function updateBrowserTitle(){
+    document.title = FIXED_BROWSER_TITLE;
+}
 
 function updateTextContent(){
     document.documentElement.lang = 'pt-BR';
     const titleEl = document.getElementById('page-title');
     if(document.body.classList.contains('home-view')){
         if(titleEl) titleEl.textContent = t('siteName');
-        document.title = t('siteName');
     } else if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('calculatorTitle');
-        document.title = t('calculatorTitle');
     } else if(tabFossilsBtn && tabFossilsBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabFossils');
-        document.title = t('tabFossils');
     } else if(tabCatchBtn && tabCatchBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('catchTitle');
-        document.title = t('catchTitle');
     } else if(tabSpeedstersBtn && tabSpeedstersBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabSpeedsters');
-        document.title = t('tabSpeedsters');
     } else if(tabStreamersBtn && tabStreamersBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabStreamers');
-        document.title = t('tabStreamers');
     } else if(tabCommunityBtn && tabCommunityBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('tabCommunity');
-        document.title = t('tabCommunity');
     } else {
         if(titleEl) titleEl.textContent = t('pageTitle');
-        document.title = t('pageTitle');
     }
+    updateBrowserTitle();
     const instr = document.getElementById('instructions');
-    instr.textContent = t('instructions');
+    if(instr) instr.textContent = t('instructions');
     const finstr = document.getElementById('fossil-instructions');
     if(finstr) finstr.textContent = t('fossilIntro');
     const galleryCost = document.getElementById('gallery-cost');
@@ -985,7 +983,7 @@ function showHome(){
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('siteName');
-    document.title = t('siteName');
+    updateBrowserTitle();
     if(useGsap && contentHome){
         gsap.fromTo(
             contentHome.querySelector('.home-landing__shell'),
@@ -1196,7 +1194,7 @@ function showFossils(){
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabFossils');
-    document.title = t('tabFossils');
+    updateBrowserTitle();
     const fres = document.getElementById('result');
     if(fres) fres.innerHTML = '';
     lastFossilPair = null;
@@ -1759,7 +1757,7 @@ function showEffectiveness(){
     if(legend) legend.style.display = '';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('pageTitle');
-    document.title = t('pageTitle');
+    updateBrowserTitle();
     if(useGsap){
         gsap.from(contentEffect, {opacity:0, y:-10, duration:0.4});
     }
@@ -1786,7 +1784,7 @@ function showCalculator(){
     updateShiny();
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('calculatorTitle');
-    document.title = t('calculatorTitle');
+    updateBrowserTitle();
     if(useGsap){
         gsap.from(contentCalc, {opacity:0, y:-10, duration:0.4});
         gsap.from(contentCalc.querySelectorAll('.calc-card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
@@ -1822,7 +1820,7 @@ function showCatch(){
     });
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('catchTitle');
-    document.title = t('catchTitle');
+    updateBrowserTitle();
     updateUrl();
 }
 if(tabCatchBtn) tabCatchBtn.addEventListener('click',()=>{ showCatch(); localStorage.setItem('selectedTab','catch'); updateUrl(); });
@@ -1843,7 +1841,7 @@ function showSpeedsters(){
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabSpeedsters');
-    document.title = t('tabSpeedsters');
+    updateBrowserTitle();
 
     if(typeof window.setBossMode === 'function') {
         window.setBossMode('hoopa');
@@ -3702,7 +3700,7 @@ function showStreamers(){
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabStreamers');
-    document.title = t('tabStreamers');
+    updateBrowserTitle();
     // Verifica se o grid de streamers existe e mantém visível.
     const grid = document.getElementById('streamer-grid');
     if(!grid){
@@ -3731,7 +3729,7 @@ function showCommunity(){
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabCommunity');
-    document.title = t('tabCommunity');
+    updateBrowserTitle();
     const params = new URLSearchParams(location.search);
     activeCommunityTopicKey = resolveCommunityTopicKey(params.get('topic') || localStorage.getItem(COMMUNITY_TOPIC_STORAGE_KEY));
     const activeTopic = getActiveCommunityTopic();
@@ -4474,6 +4472,17 @@ const elementalBallsModal = document.getElementById('elemental-balls-modal');
 const elementalBallsViewport = document.getElementById('elemental-balls-viewport');
 const elementalBallsCanvas = document.getElementById('elemental-balls-canvas');
 const elementalBallsImage = document.getElementById('elemental-balls-image');
+const respawnsBtn = document.getElementById('respawns-btn');
+const respawnsModal = document.getElementById('respawns-modal');
+const respawnsViewport = document.getElementById('respawns-viewport');
+const respawnsCanvas = document.getElementById('respawns-canvas');
+const respawnsImage = document.getElementById('respawns-image');
+const respawnsCaption = document.getElementById('respawns-modal-caption');
+const fishingBtn = document.getElementById('fishing-btn');
+const fishingModal = document.getElementById('fishing-modal');
+const fishingViewport = document.getElementById('fishing-viewport');
+const fishingCanvas = document.getElementById('fishing-canvas');
+const fishingImage = document.getElementById('fishing-image');
 const fossilLocationBtn = document.getElementById('fossil-location-btn');
 const fossilLocationModal = document.getElementById('fossil-location-modal');
 const fossilLocationViewport = document.getElementById('fossil-location-viewport');
@@ -4554,10 +4563,12 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
 
     const clampImageZoom = (value)=>Math.min(MAX_IMAGE_ZOOM, Math.max(MIN_IMAGE_ZOOM, value));
     const getViewportSize = ()=>{
-        const rect = viewportEl.getBoundingClientRect();
+        const viewportStyles = window.getComputedStyle(viewportEl);
+        const paddingX = (parseFloat(viewportStyles.paddingLeft) || 0) + (parseFloat(viewportStyles.paddingRight) || 0);
+        const paddingY = (parseFloat(viewportStyles.paddingTop) || 0) + (parseFloat(viewportStyles.paddingBottom) || 0);
         return {
-            width: Math.max(Math.round(rect.width), viewportEl.clientWidth, 0),
-            height: Math.max(Math.round(rect.height), viewportEl.clientHeight, 0)
+            width: Math.max(Math.round(viewportEl.clientWidth - paddingX), 0),
+            height: Math.max(Math.round(viewportEl.clientHeight - paddingY), 0)
         };
     };
     const refreshImageBaseSize = ()=>{
@@ -4583,11 +4594,12 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
         const targetHeight = Math.max(1, Math.round(imageBaseSize.height * imageZoomLevel));
         imageEl.style.width = `${targetWidth}px`;
         imageEl.style.height = `${targetHeight}px`;
-        canvasEl.style.width = `${Math.max(targetWidth, viewportEl.clientWidth)}px`;
-        canvasEl.style.height = `${Math.max(targetHeight, viewportEl.clientHeight)}px`;
+        const viewport = getViewportSize();
+        canvasEl.style.width = `${Math.max(targetWidth, viewport.width)}px`;
+        canvasEl.style.height = `${Math.max(targetHeight, viewport.height)}px`;
         const isZoomed = imageZoomLevel > 1;
         viewportEl.dataset.zoomed = isZoomed ? 'true' : 'false';
-        canvasEl.style.placeItems = 'start center';
+        canvasEl.style.placeItems = isZoomed ? 'start center' : 'center center';
         const resetBtn = modalEl.querySelector('[data-image-zoom="reset"]');
         if(resetBtn){
             resetBtn.textContent = `${Math.round(imageZoomLevel * 100)}%`;
@@ -4717,8 +4729,162 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
     modalEl._onOpen = ()=>ensureImageLayoutReady();
 }
 
+const respawnsViewState = {
+    map: 'kanto',
+    access: null
+};
+
+const respawnsViewDefinitions = {
+    'kanto': {
+        label: 'Kanto',
+        caption: 'Mapa de Kanto em breve.',
+        notice: 'Imagem em breve',
+        alt: 'Aviso de mapa de Kanto em breve',
+        src: ''
+    },
+    'johto': {
+        label: 'Johto',
+        caption: 'Mapa de Johto em breve.',
+        notice: 'Imagem em breve',
+        alt: 'Aviso de mapa de Johto em breve',
+        src: ''
+    },
+    'wild-area': {
+        label: 'Wild Area',
+        caption: 'Visao geral da Wild Area.',
+        notice: 'Mapa principal',
+        alt: 'Mapa geral da Wild Area',
+        src: 'mapas/wild-area.png'
+    },
+    'orre': {
+        label: 'Orre',
+        caption: 'Mapa de Orre.',
+        notice: 'Mapa de respawns',
+        alt: 'Mapa de respawns de Orre',
+        src: 'mapas/orre.png'
+    }
+};
+
+const wildAreaAccessDefinitions = {
+    'south': {
+        label: 'Wild Area South',
+        caption: 'Entrada South da Wild Area.',
+        notice: 'Acesso South',
+        alt: 'Mapa da entrada South da Wild Area',
+        src: 'mapas/wild-south.png'
+    },
+    'east': {
+        label: 'Wild Area East',
+        caption: 'Entrada East da Wild Area.',
+        notice: 'Acesso East',
+        alt: 'Mapa da entrada East da Wild Area',
+        src: 'mapas/wild-east.png'
+    },
+    'north': {
+        label: 'Wild Area North',
+        caption: 'Entrada North da Wild Area.',
+        notice: 'Acesso North',
+        alt: 'Mapa da entrada North da Wild Area',
+        src: 'mapas/wild-north.png'
+    }
+};
+
+function escapeSvgText(value){
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function createImagePlaceholderDataUrl(title, message){
+    const safeTitle = escapeSvgText(title);
+    const safeMessage = escapeSvgText(message);
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="${safeTitle}">
+            <defs>
+                <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#091423" />
+                    <stop offset="100%" stop-color="#132944" />
+                </linearGradient>
+                <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#7ce7ff" stop-opacity="0.18" />
+                    <stop offset="100%" stop-color="#ffd166" stop-opacity="0.12" />
+                </linearGradient>
+            </defs>
+            <rect width="1600" height="900" fill="url(#bg)" />
+            <circle cx="260" cy="180" r="160" fill="#7ce7ff" fill-opacity="0.14" />
+            <circle cx="1320" cy="720" r="220" fill="#ffd166" fill-opacity="0.12" />
+            <rect x="120" y="120" width="1360" height="660" rx="42" fill="url(#card)" stroke="#d7ecff" stroke-opacity="0.18" />
+            <text x="800" y="390" text-anchor="middle" fill="#f5fbff" font-size="94" font-family="Montserrat, Arial, sans-serif" font-weight="700">${safeTitle}</text>
+            <text x="800" y="490" text-anchor="middle" fill="#c4d6ea" font-size="42" font-family="Montserrat, Arial, sans-serif">${safeMessage}</text>
+        </svg>
+    `;
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.trim())}`;
+}
+
+function updatePressedButtonState(buttons, activeValue, dataKey){
+    buttons.forEach((button)=>{
+        const isActive = button.dataset[dataKey] === activeValue;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+}
+
+function setRespawnsView(mapKey, accessKey = null){
+    if(!respawnsModal || !respawnsImage) return;
+
+    const nextMapKey = respawnsViewDefinitions[mapKey] ? mapKey : 'kanto';
+    const nextAccessKey = nextMapKey === 'wild-area' && wildAreaAccessDefinitions[accessKey] ? accessKey : null;
+    const nextView = nextAccessKey ? wildAreaAccessDefinitions[nextAccessKey] : respawnsViewDefinitions[nextMapKey];
+    const respawnsSubnav = respawnsModal.querySelector('.respawns-modal__subnav');
+
+    respawnsViewState.map = nextMapKey;
+    respawnsViewState.access = nextAccessKey;
+    respawnsModal.dataset.activeMap = nextMapKey;
+    if(respawnsSubnav){
+        const shouldShowWildAccess = nextMapKey === 'wild-area';
+        respawnsSubnav.hidden = !shouldShowWildAccess;
+        respawnsSubnav.setAttribute('aria-hidden', shouldShowWildAccess ? 'false' : 'true');
+    }
+
+    respawnsImage.src = nextView.src || createImagePlaceholderDataUrl(nextView.label, nextView.notice);
+    respawnsImage.alt = nextView.alt;
+    if(respawnsCaption){
+        respawnsCaption.textContent = nextView.caption;
+    }
+
+    updatePressedButtonState(respawnsModal.querySelectorAll('[data-respawn-map]'), nextMapKey, 'respawnMap');
+    updatePressedButtonState(respawnsModal.querySelectorAll('[data-wild-access]'), nextAccessKey, 'wildAccess');
+}
+
+function setupRespawnsModal(){
+    if(!respawnsModal) return;
+
+    const mapButtons = respawnsModal.querySelectorAll('[data-respawn-map]');
+    const accessButtons = respawnsModal.querySelectorAll('[data-wild-access]');
+
+    mapButtons.forEach((button)=>{
+        button.addEventListener('click', ()=>{
+            setRespawnsView(button.dataset.respawnMap);
+        });
+    });
+
+    accessButtons.forEach((button)=>{
+        button.addEventListener('click', ()=>{
+            setRespawnsView('wild-area', button.dataset.wildAccess);
+        });
+    });
+
+    setRespawnsView(respawnsViewState.map, respawnsViewState.access);
+}
+
 setupZoomableImageModal(elementalBallsModal, elementalBallsViewport, elementalBallsCanvas, elementalBallsImage);
+setupZoomableImageModal(respawnsModal, respawnsViewport, respawnsCanvas, respawnsImage);
+setupZoomableImageModal(fishingModal, fishingViewport, fishingCanvas, fishingImage);
 setupZoomableImageModal(fossilLocationModal, fossilLocationViewport, fossilLocationCanvas, fossilLocationImage);
+setupRespawnsModal();
 
 if(matrixBtn){
     matrixBtn.disabled = true;
@@ -4733,6 +4899,17 @@ if(commandsBtn && commandsModal){
 if(elementalBallsBtn && elementalBallsModal){
     wireBasicModal(elementalBallsBtn, elementalBallsModal, ()=>{
         if(typeof elementalBallsModal._onOpen === 'function') elementalBallsModal._onOpen();
+    });
+}
+if(respawnsBtn && respawnsModal){
+    wireBasicModal(respawnsBtn, respawnsModal, ()=>{
+        setRespawnsView(respawnsViewState.map, respawnsViewState.access);
+        if(typeof respawnsModal._onOpen === 'function') respawnsModal._onOpen();
+    });
+}
+if(fishingBtn && fishingModal){
+    wireBasicModal(fishingBtn, fishingModal, ()=>{
+        if(typeof fishingModal._onOpen === 'function') fishingModal._onOpen();
     });
 }
 if(fossilLocationBtn && fossilLocationModal){
