@@ -2217,53 +2217,109 @@ function getRecommendedBossPokeblock(boss) {
   return match ? cloneBossConsumableConfig(bossPokeblockByAttackType[match]) : undefined;
 }
 
-function applyRecommendedConsumablesToBosses(bosses = []) {
+function applyRecommendedConsumablesToBosses(bosses = [], options = {}) {
+  const includePokeblock = options.includePokeblock !== false;
+  const includeRation = options.includeRation !== false;
+
   bosses.forEach((boss) => {
     if (!boss || typeof boss !== 'object') return;
 
-    const pokeblock = getRecommendedBossPokeblock(boss);
-    if (pokeblock) {
-      boss.pokeblock = pokeblock;
+    if (includePokeblock) {
+      const pokeblock = getRecommendedBossPokeblock(boss);
+      if (pokeblock) {
+        boss.pokeblock = pokeblock;
+      }
+    } else {
+      delete boss.pokeblock;
+      delete boss.pokebloc;
     }
 
-    const ration = getRecommendedBossRation(boss);
-    if (ration) {
-      boss.ration = ration;
+    if (includeRation) {
+      const ration = getRecommendedBossRation(boss);
+      if (ration) {
+        boss.ration = ration;
+      }
+    } else {
+      delete boss.ration;
     }
   });
 }
 
 function applyRecommendedConsumablesToAllBosses() {
   Object.values(bossCatalogs).forEach((catalog) => {
-    applyRecommendedConsumablesToBosses(catalog?.data || []);
+    applyRecommendedConsumablesToBosses(catalog?.data || [], {
+      includePokeblock: true,
+      includeRation: catalog?.variant !== 'hoopa'
+    });
   });
 }
 
 applyRecommendedConsumablesToAllBosses();
 
-function applyGoodraTankToDragonBosses() {
+function bossHasDragonMoveset(boss) {
+  return getBossMoveTypes(boss).some((type) => type === 'dragon');
+}
+
+function createGoodraDragonPick() {
+  const pick = createRolePick('Goodra', ['dragon'], 'dragon', {
+    defenseByBossType: {
+      dragon: 0.5
+    },
+    passiveName: 'Gooey',
+    passiveDescription: 'Sua gosma espessa torna o Pokemon resistente contra ataques do tipo Dragon.'
+  });
+  pick.description = 'Tipo move: Dragon.';
+  return pick;
+}
+
+function syncGoodraRecommendation(list, shouldInclude) {
+  if (!Array.isArray(list)) return;
+
+  for (let index = list.length - 1; index >= 0; index -= 1) {
+    if (getRecommendationNameKey(list[index]?.name || list[index]) === 'goodra') {
+      list.splice(index, 1);
+    }
+  }
+
+  if (shouldInclude) {
+    list.push(createGoodraDragonPick());
+  }
+}
+
+function removeGoodraRecommendation(list) {
+  syncGoodraRecommendation(list, false);
+}
+
+function applyGoodraTankRolesToDragonBosses() {
   Object.values(bossCatalogs).forEach((catalog) => {
-    if (catalog?.variant !== 'roleboard') return;
-
     (catalog.data || []).forEach((boss) => {
-      const moveTypes = Array.isArray(boss?.moveType) ? boss.moveType : [boss?.moveType];
-      const hasDragonMoveset = moveTypes.some((type) => String(type || '').trim().toLowerCase() === 'dragon');
-      if (!hasDragonMoveset) return;
-
       ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
-        const tankList = boss?.clans?.[clanKey]?.roles?.tank;
-        if (!Array.isArray(tankList)) return;
+        const clanData = boss?.clans?.[clanKey];
+        if (!clanData) return;
+        const shouldIncludeForClan = clanKey === 'instinct';
 
-        const alreadyHasGoodra = tankList.some((pick) => getRecommendationNameKey(pick?.name || pick) === 'goodra');
-        if (alreadyHasGoodra) return;
+        if (clanData.roles) {
+          syncGoodraRecommendation(
+            clanData.roles?.tank,
+            shouldIncludeForClan && bossHasDragonMoveset(boss)
+          );
+        }
 
-        tankList.push(createRolePick('Goodra', ['dragon'], 'dragon'));
+        if (Array.isArray(clanData.recommended)) {
+          removeGoodraRecommendation(clanData.recommended);
+        }
+
+        if (Array.isArray(clanData.recommendationGroups)) {
+          clanData.recommendationGroups.forEach((group) => {
+            removeGoodraRecommendation(group.recommended);
+          });
+        }
       });
     });
   });
 }
 
-applyGoodraTankToDragonBosses();
+applyGoodraTankRolesToDragonBosses();
 
 function mergeBossEffectivenessConfig(...configs) {
   const merged = configs.reduce((acc, config) => {
@@ -3636,8 +3692,7 @@ function makeHoopaBossCard(speedster) {
   }
 
   const consumableBadges = [
-    createBossConsumableBadge('pokeblock', speedster.pokeblock || speedster.pokebloc),
-    createBossConsumableBadge('ration', speedster.ration)
+    createBossConsumableBadge('pokeblock', speedster.pokeblock || speedster.pokebloc)
   ].filter(Boolean);
 
   if (consumableBadges.length) {
