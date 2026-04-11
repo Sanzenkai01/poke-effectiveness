@@ -113,7 +113,7 @@ const hoopaPortalsData = [
           { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' }
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -195,7 +195,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Tauros', image: 'tauros.png', tier: 'yellow', types: ['normal'], description: 'Tipo move: Electric.' },
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Dark/Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Shiny Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' },
@@ -289,7 +289,7 @@ const hoopaPortalsData = [
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' }
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -326,7 +326,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Dark/Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' }
@@ -445,7 +445,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
@@ -614,7 +614,7 @@ const hoopaPortalsData = [
     image: 'mega-absol.png',
     tutorialUrl: 'https://youtu.be/dV1fS8TNIRo?si=vPEeYCiKZZEyI30t',
     locationImage: 'localizações/absol.png',
-    description: 'Mega Absol e Mega Absol Z são fracos contra fada; o Mega Absol normal também é fraco contra luta e inseto.',
+    description: 'Mega Absol e Mega Absol Z sofrem dano super efetivo de Fairy, Fighting e Bug.',
     types: ['dark'],
     duo: true,
     bosses: [
@@ -639,7 +639,7 @@ const hoopaPortalsData = [
           {
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
-            bossTypes: ['dark','ghost'],
+            bossTypes: ['dark'],
             recommended: [
               { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
               { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
@@ -662,7 +662,7 @@ const hoopaPortalsData = [
           {
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
-            bossTypes: ['dark','ghost'],
+            bossTypes: ['dark'],
             recommended: [
               { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
             ]
@@ -679,16 +679,16 @@ const hoopaPortalsData = [
             recommended: [
               { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
               { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
               { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
             ]
           },
           {
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
-            bossTypes: ['dark','ghost'],
+            bossTypes: ['dark'],
             recommended: [
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark','ghost'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
               { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
             ]
           }
@@ -945,7 +945,8 @@ const roleboardPickPools = {
     { name: 'Alakazam', image: 'alakazam.png', types: ['psychic'] },
     { name: 'Weavile', image: 'weavile.png', types: ['dark', 'ice'] },
     { name: 'Greninja', image: 'greninja.png', types: ['water', 'dark'] },
-    { name: 'Ribombee', image: 'Ribombee.png', types: ['bug', 'fairy'] }
+    { name: 'Ribombee', image: 'Ribombee.png', types: ['bug', 'fairy'] },
+    { name: 'Heracross', image: 'heracross.png', types: ['bug', 'fighting'] }
   ],
   tank: [
     { name: 'Orthworm', image: 'orthworm.png', types: ['steel'] },
@@ -1012,6 +1013,10 @@ function createRoleboardBosses(entries, catalogMeta) {
     encounterNote: catalogMeta.encounterNote,
     types: Array.isArray(entry.types) ? entry.types : [],
     moveType: entry.moveType || (Array.isArray(entry.types) ? entry.types[0] : null),
+    effectiveness: cloneBossEffectivenessConfig(entry.effectiveness),
+    pokeblock: cloneBossConsumableConfig(entry.pokeblock || entry.pokebloc),
+    ration: cloneBossConsumableConfig(entry.ration),
+    disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
     emblem: entry.emblem || bossInitials(entry.name),
     clans: {
       instinct: {
@@ -1151,6 +1156,10 @@ function createManualRoleboardBosses(entries, catalogMeta) {
     encounterNote: catalogMeta.encounterNote,
     types: Array.isArray(entry.types) ? entry.types : [],
     moveType: entry.moveType || (Array.isArray(entry.types) ? entry.types[0] : null),
+    effectiveness: cloneBossEffectivenessConfig(entry.effectiveness),
+    pokeblock: cloneBossConsumableConfig(entry.pokeblock || entry.pokebloc),
+    ration: cloneBossConsumableConfig(entry.ration),
+    disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
     emblem: entry.emblem || bossInitials(entry.name),
     clans: {
       instinct: createManualRoleboardClan(catalogMeta.id, 'instinct', entry.clans?.instinct),
@@ -1174,7 +1183,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Marowak', ['ground'], 'ground'),
           createRolePick('Lurantis', ['grass'], 'bug'),
           createRolePick('VenusaurTwo', ['grass', 'poison'], 'grass'),
-          createRolePick('Mega Raichu X', ['electric'], 'fighting', { note: 'Levitate.' }),
+          createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
           createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass')
         ],
@@ -1293,6 +1302,7 @@ const championPathBosses = createManualRoleboardBosses([
     id: 'mega-metagross',
     name: 'Mega Metagross',
     tutorialUrl: 'https://youtu.be/Te_JA2TBKWk?si=VIm98aiKj1LDmzS3',
+    disableAutoPokeblock: true,
     types: ['steel', 'psychic'],
     moveType: 'psychic',
     description: 'Mega chefe de trio que pede cobertura e rotacao limpa entre funcoes.',
@@ -1354,7 +1364,7 @@ const championPathBosses = createManualRoleboardBosses([
     name: 'Mega Garchomp',
     tutorialUrl: 'https://youtu.be/959M7JJejFA?si=aOR3nfggraUuFFoj',
     types: ['dragon', 'ground'],
-    moveType: 'ground',
+    moveType: 'dragon',
     description: 'Luta mais seca, ideal para composicao que segure a linha enquanto o DPS gira.',
     clans: {
       instinct: {
@@ -1407,6 +1417,7 @@ const championPathBosses = createManualRoleboardBosses([
     id: 'mega-chandelure',
     name: 'Mega Chandelure',
     tutorialUrl: 'https://youtu.be/6U3jsH2fJJ0?si=1vURPQDu6jliGypW',
+    disableAutoPokeblock: true,
     types: ['ghost', 'fire'],
     moveType: 'ghost',
     description: 'Mega chefe mais punitivo nas trocas, entao suporte e tanque precisam aparecer.',
@@ -1445,7 +1456,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Absol', ['dark'], 'dark'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Cramorant', ['flying', 'water'], 'flying'),
-          createRolePick('Mega Absol Z', ['dark', 'ghost'], 'dark'),
+          createRolePick('Mega Absol Z', ['dark'], 'dark'),
           createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark')
         ],
         tank: [
@@ -1462,7 +1473,7 @@ const championPathBosses = createManualRoleboardBosses([
     name: 'Mega Golisopod',
     tutorialUrl: 'https://youtu.be/deZnrmwZ2bo?si=vMLsf4_aXM4wlY6W',
     types: ['bug', 'water'],
-    moveType: 'water',
+    moveType: 'bug',
     description: 'Encontro de trio que favorece cobertura ampla e cadencia boa entre os clans.',
     clans: {
       instinct: {
@@ -1613,6 +1624,18 @@ function buildChampionPathRolePools() {
 
 const championPathRolePoolsForMew2 = buildChampionPathRolePools();
 
+const mew2NeutralBossEffectiveness = Object.freeze({
+  attackMode: 'move-only',
+  offenseMode: 'neutral',
+  rankMode: 'defense-only'
+});
+
+const mew2TypedBossEffectiveness = Object.freeze({
+  attackMode: 'move-only',
+  offenseMode: 'types',
+  rankMode: 'defense-only'
+});
+
 function cloneChampionPathRolePoolsForMew2() {
   const cloneRoleForMew2 = (pick) => {
     const clonedPick = cloneRolePickConfig(pick);
@@ -1635,23 +1658,23 @@ function cloneChampionPathRolePoolsForMew2() {
 }
 
 const mew2Bosses = createManualRoleboardBosses([
-  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
-  { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
-  { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
-  { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
-  { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
-  { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
-  { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.' },
-  { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
-  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
-  { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
+  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', effectiveness: mew2NeutralBossEffectiveness, description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
+  { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', effectiveness: mew2NeutralBossEffectiveness, description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
+  { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', effectiveness: mew2NeutralBossEffectiveness, description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
+  { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', effectiveness: mew2NeutralBossEffectiveness, description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
+  { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
+  { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', effectiveness: mew2NeutralBossEffectiveness, description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
+  { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.' },
+  { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
+  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', effectiveness: mew2NeutralBossEffectiveness, description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
+  { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
 ].map((entry) => ({
   ...entry,
   clans: cloneChampionPathRolePoolsForMew2()
 })), {
   id: 'mew2',
   encounterLabel: '',
-  encounterNote: 'Layout inicial por cla e funcao para a raid de Mew 2.'
+  encounterNote: 'Layout inicial por cla e funcao para a raid de Mewtwo.'
 });
 
 const bossCatalogs = {
@@ -1678,14 +1701,100 @@ const bossCatalogs = {
   },
   mew2: {
     id: 'mew2',
-    label: 'Mew 2',
+    label: 'Mewtwo',
     variant: 'roleboard',
     searchEnabled: true,
-    summary: 'Abra um chefe do Mew 2 para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.',
+    summary: 'Abra um chefe do Mewtwo para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.',
     pills: ['Tanque / DPS / Suporte', 'Busca por Pokémon', 'Exemplos temporários'],
     data: mew2Bosses
   }
 };
+
+const bossModeAliases = Object.freeze({
+  hoopa: 'hoopa',
+  'hoopa-portais': 'hoopa',
+  champion: 'champion',
+  'champion-path': 'champion',
+  mew2: 'mew2',
+  mewtwo: 'mew2'
+});
+
+const standaloneBossModePages = Object.freeze({
+  hoopa: 'hoopa-portais.html',
+  champion: 'champion-path.html',
+  mew2: 'mewtwo.html'
+});
+
+function normalizeBossMode(mode) {
+  const normalizedMode = String(mode || '').trim().toLowerCase();
+  return bossModeAliases[normalizedMode] || '';
+}
+
+function isStandaloneBossesPage() {
+  if (typeof location === 'undefined') return false;
+  return location.pathname.toLowerCase().includes('/bosses/');
+}
+
+function getStandaloneBossModePath(mode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const targetFile = standaloneBossModePages[normalizedMode] || standaloneBossModePages.hoopa;
+  const segments = String(location.pathname || '').split('/');
+  const currentFile = String(segments[segments.length - 1] || '').toLowerCase();
+
+  if (!currentFile || currentFile === 'bosses') {
+    segments.push(targetFile);
+  } else if (
+    currentFile === 'index.html' ||
+    currentFile === 'hoopa-portais.html' ||
+    currentFile === 'champion-path.html' ||
+    currentFile === 'mewtwo.html'
+  ) {
+    segments[segments.length - 1] = targetFile;
+  } else {
+    segments[segments.length - 1] = targetFile;
+  }
+
+  return segments.join('/');
+}
+
+function getBossModeFromPathname(pathname) {
+  const filename = String(pathname || '')
+    .split('/')
+    .filter(Boolean)
+    .pop()
+    ?.replace(/\.html?$/i, '');
+
+  return normalizeBossMode(filename);
+}
+
+function getInitialBossModeFromLocation() {
+  if (typeof location === 'undefined') return 'hoopa';
+
+  const params = new URLSearchParams(location.search);
+  return normalizeBossMode(params.get('tab'))
+    || normalizeBossMode(params.get('bossmode') || params.get('mode'))
+    || getBossModeFromPathname(location.pathname)
+    || normalizeBossMode(document.body?.dataset?.initialBossMode || document.body?.dataset?.bossMode)
+    || 'hoopa';
+}
+
+function syncStandaloneBossModeUrl(mode) {
+  if (!isStandaloneBossesPage() || typeof history === 'undefined') return;
+
+  const nextPath = getStandaloneBossModePath(mode);
+  const params = new URLSearchParams(location.search);
+  params.delete('tab');
+  params.delete('bossmode');
+  params.delete('mode');
+
+  const query = params.toString();
+  const nextUrl = `${nextPath}${query ? `?${query}` : ''}${location.hash || ''}`;
+  const currentUrl = `${location.pathname}${location.search}${location.hash || ''}`;
+
+  if (currentUrl !== nextUrl) {
+    history.replaceState(null, '', nextUrl);
+  }
+}
 
 function getRecommendationNameKey(nameOrPokemon) {
   const rawName = typeof nameOrPokemon === 'string'
@@ -1720,6 +1829,14 @@ function getImplicitRecommendationProfile(poke) {
     return {
       passiveSuperEffectiveTypes: ['flying'],
       passiveText: 'Passiva: Resolute Heart: causa dano super efetivo em qualquer pokemon do tipo Flying.'
+    };
+  }
+
+  if (nameKey === 'megaraichux') {
+    return {
+      immunities: ['ground'],
+      passiveName: 'Levitate',
+      passiveDescription: 'O Pokemon e imune a danos do tipo Ground.'
     };
   }
 
@@ -1847,6 +1964,46 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'orbeetle') {
+    return {
+      passiveName: 'Swarm',
+      passiveDescription: 'Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
+  if (nameKey === 'miltank') {
+    return {
+      defenseByBossType: {
+        ice: 0.5,
+        fire: 0.5
+      },
+      passiveName: 'Thick Fat',
+      passiveDescription: 'O Pokemon recebe metade do dano de ataques do tipo Ice e Fire.'
+    };
+  }
+
+  if (nameKey === 'shinymiltank') {
+    return {
+      defenseByBossType: {
+        ice: 0.5,
+        fire: 0.5
+      },
+      passiveSuperEffectiveTypes: ['ghost'],
+      passiveName: 'Thick Fat + Scrappy',
+      passiveDescription: 'O Pokemon recebe metade do dano de ataques do tipo Ice e Fire. Os ataques deste Pokemon causam dano super efetivo contra Pokemon do tipo Ghost.'
+    };
+  }
+
+  if (nameKey === 'goodra') {
+    return {
+      defenseByBossType: {
+        dragon: 0.5
+      },
+      passiveName: 'Gooey',
+      passiveDescription: 'Sua gosma espessa torna o Pokemon resistente contra ataques do tipo Dragon.'
+    };
+  }
+
   if (nameKey === 'misdreavus') {
     return {
       immunities: ['ground'],
@@ -1915,6 +2072,215 @@ function mergeLowercaseNumericMap(...maps) {
   });
 
   return Object.keys(merged).length ? merged : undefined;
+}
+
+function cloneBossEffectivenessConfig(config) {
+  if (!config || typeof config !== 'object') return undefined;
+
+  const cloned = { ...config };
+  if (Array.isArray(config.attackTypes)) {
+    cloned.attackTypes = [...config.attackTypes];
+  }
+  if (Array.isArray(config.offenseTargetTypes)) {
+    cloned.offenseTargetTypes = [...config.offenseTargetTypes];
+  }
+
+  return cloned;
+}
+
+function cloneBossConsumableConfig(config) {
+  if (!config || typeof config !== 'object') return config || undefined;
+  return { ...config };
+}
+
+const bossConsumableCatalog = Object.freeze({
+  pokeblocks: Object.freeze({
+    rainbow: Object.freeze({
+      label: 'Rainbow PokéBlock',
+      shortLabel: 'Rainbow',
+      image: 'pokeblocks/rainbow_pokeblock.png',
+      description: 'Concede imunidade a efeitos negativos por 60 minutos.'
+    })
+  }),
+  rations: Object.freeze({
+    kasib: Object.freeze({
+      label: 'Kasib Ration',
+      shortLabel: 'Kasib',
+      image: 'rations/kasib_ration.png',
+      description: 'Aumenta a resistencia contra ataques Ghost em 30% por 60 minutos.'
+    }),
+    wacan: Object.freeze({
+      label: 'Wacan Ration',
+      shortLabel: 'Wacan',
+      image: 'rations/wacan_ration.png',
+      description: 'Aumenta a resistencia contra ataques Electric em 30% por 60 minutos.'
+    }),
+    tanga: Object.freeze({
+      label: 'Tanga Ration',
+      shortLabel: 'Tanga',
+      image: 'rations/tanga_ration.png',
+      description: 'Aumenta a resistencia contra ataques Bug em 30% por 60 minutos.'
+    }),
+    papaya: Object.freeze({
+      label: 'Papaya Ration',
+      shortLabel: 'Papaya',
+      image: 'rations/papaya_ration.png',
+      description: 'Aumenta a resistencia contra ataques Psychic em 30% por 60 minutos.'
+    }),
+    haban: Object.freeze({
+      label: 'Haban Ration',
+      shortLabel: 'Haban',
+      image: 'rations/haban_ration.png',
+      description: 'Aumenta a resistencia contra ataques Dragon em 30% por 60 minutos.'
+    }),
+    shuca: Object.freeze({
+      label: 'Shuca Ration',
+      shortLabel: 'Shuca',
+      image: 'rations/shuca_ration.png',
+      description: 'Aumenta a resistencia contra ataques Ground em 30% por 60 minutos.'
+    }),
+    coba: Object.freeze({
+      label: 'Coba Ration',
+      shortLabel: 'Coba',
+      image: 'rations/coba_ration.png',
+      description: 'Aumenta a resistencia contra ataques Flying em 30% por 60 minutos.'
+    }),
+    chople: Object.freeze({
+      label: 'Chople Ration',
+      shortLabel: 'Chople',
+      image: 'rations/chople_ration.png',
+      description: 'Aumenta a resistencia contra ataques Fighting em 30% por 60 minutos.'
+    }),
+    passho: Object.freeze({
+      label: 'Passho Ration',
+      shortLabel: 'Passho',
+      image: '',
+      description: 'Aumenta a resistencia contra ataques Water em 30% por 60 minutos.'
+    }),
+    sitrus: Object.freeze({
+      label: 'Sitrus Ration',
+      shortLabel: 'Sitrus',
+      image: 'rations/sitrus_ration.png',
+      description: 'Impede o nocaute uma vez e restaura metade da vida ao receber dano fatal. Dura 24 horas.'
+    })
+  })
+});
+
+const bossRationByAttackType = Object.freeze({
+  ghost: bossConsumableCatalog.rations.kasib,
+  electric: bossConsumableCatalog.rations.wacan,
+  bug: bossConsumableCatalog.rations.tanga,
+  psychic: bossConsumableCatalog.rations.papaya,
+  dragon: bossConsumableCatalog.rations.haban,
+  ground: bossConsumableCatalog.rations.shuca,
+  flying: bossConsumableCatalog.rations.coba,
+  fighting: bossConsumableCatalog.rations.chople,
+  water: bossConsumableCatalog.rations.passho
+});
+
+const bossPokeblockByAttackType = Object.freeze({
+  poison: bossConsumableCatalog.pokeblocks.rainbow,
+  electric: bossConsumableCatalog.pokeblocks.rainbow,
+  fire: bossConsumableCatalog.pokeblocks.rainbow,
+  ice: bossConsumableCatalog.pokeblocks.rainbow,
+  psychic: bossConsumableCatalog.pokeblocks.rainbow,
+  ghost: bossConsumableCatalog.pokeblocks.rainbow
+});
+
+const bossAutoPokeblockAllowlist = new Set([
+  'mega-victreebel'
+]);
+
+function getBossConsumableCandidateTypes(boss) {
+  return mergeLowercaseUniqueValues(getBossMoveTypes(boss), boss?.types);
+}
+
+function getRecommendedBossRation(boss) {
+  if (!boss || typeof boss !== 'object') return undefined;
+  if (boss.ration) return cloneBossConsumableConfig(boss.ration);
+
+  const match = getBossConsumableCandidateTypes(boss)
+    .find((type) => bossRationByAttackType[type]);
+
+  return match ? cloneBossConsumableConfig(bossRationByAttackType[match]) : undefined;
+}
+
+function getRecommendedBossPokeblock(boss) {
+  if (!boss || typeof boss !== 'object') return undefined;
+  if (boss.pokeblock || boss.pokebloc) return cloneBossConsumableConfig(boss.pokeblock || boss.pokebloc);
+  if (boss.disableAutoPokeblock) return undefined;
+  if (!bossAutoPokeblockAllowlist.has(String(boss.id || '').trim().toLowerCase())) return undefined;
+
+  const match = getBossConsumableCandidateTypes(boss)
+    .find((type) => bossPokeblockByAttackType[type]);
+
+  return match ? cloneBossConsumableConfig(bossPokeblockByAttackType[match]) : undefined;
+}
+
+function applyRecommendedConsumablesToBosses(bosses = []) {
+  bosses.forEach((boss) => {
+    if (!boss || typeof boss !== 'object') return;
+
+    const pokeblock = getRecommendedBossPokeblock(boss);
+    if (pokeblock) {
+      boss.pokeblock = pokeblock;
+    }
+
+    const ration = getRecommendedBossRation(boss);
+    if (ration) {
+      boss.ration = ration;
+    }
+  });
+}
+
+function applyRecommendedConsumablesToAllBosses() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    applyRecommendedConsumablesToBosses(catalog?.data || []);
+  });
+}
+
+applyRecommendedConsumablesToAllBosses();
+
+function applyGoodraTankToDragonBosses() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    if (catalog?.variant !== 'roleboard') return;
+
+    (catalog.data || []).forEach((boss) => {
+      const moveTypes = Array.isArray(boss?.moveType) ? boss.moveType : [boss?.moveType];
+      const hasDragonMoveset = moveTypes.some((type) => String(type || '').trim().toLowerCase() === 'dragon');
+      if (!hasDragonMoveset) return;
+
+      ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
+        const tankList = boss?.clans?.[clanKey]?.roles?.tank;
+        if (!Array.isArray(tankList)) return;
+
+        const alreadyHasGoodra = tankList.some((pick) => getRecommendationNameKey(pick?.name || pick) === 'goodra');
+        if (alreadyHasGoodra) return;
+
+        tankList.push(createRolePick('Goodra', ['dragon'], 'dragon'));
+      });
+    });
+  });
+}
+
+applyGoodraTankToDragonBosses();
+
+function mergeBossEffectivenessConfig(...configs) {
+  const merged = configs.reduce((acc, config) => {
+    if (!config || typeof config !== 'object') return acc;
+    return { ...acc, ...config };
+  }, {});
+
+  if (!Object.keys(merged).length) return undefined;
+
+  if (Array.isArray(merged.attackTypes)) {
+    merged.attackTypes = mergeLowercaseUniqueValues(merged.attackTypes);
+  }
+  if (Array.isArray(merged.offenseTargetTypes)) {
+    merged.offenseTargetTypes = mergeLowercaseUniqueValues(merged.offenseTargetTypes);
+  }
+
+  return merged;
 }
 
 function appendUniqueSentence(baseText, sentence) {
@@ -2180,7 +2546,7 @@ function parseMoveTypes(poke) {
     return explicitMoveTypes;
   }
   if (typeof poke.description !== 'string') return [];
-  const match = poke.description.match(/(?:Tipo move|MoveType):\s*([a-zA-Z/]+)/i);
+  const match = poke.description.match(/(?:Tipo move|Tipo de golpe|Moveset|MoveType):\s*([a-zA-Z/]+)/i);
   return match ? normalizeMoveTypeValues(match[1]) : [];
 }
 
@@ -2201,7 +2567,7 @@ function getBossMoveType(boss) {
 
 function normalizeMoveTypeLabel(description) {
   if (typeof description !== 'string') return '';
-  return description.replace(/Tipo move:/gi, 'Tipo de golpe:');
+  return description.replace(/(?:Tipo move|Tipo de golpe|MoveType):/gi, 'Moveset:');
 }
 
 function getMatchupOverride(poke, boss) {
@@ -2219,7 +2585,7 @@ const tierLabels = {
   solo: 'Ruim',
   unknown: 'Sem informacao'
 };
-const recommendationScoreTitle = 'ATK: considera o tipo de golpe do pokemon contra a tipagem do chefe. DEF: considera o pior dano entre tipagens e tipo de golpe do chefe. Passivas ja modeladas entram na conta.';
+const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
 function refreshTierLegendLabels() {
   const legendEntries = [
@@ -2325,7 +2691,7 @@ function getRecommendationPassiveInfo(poke) {
   };
 }
 
-const passiveTooltipTriggerSelector = '.passive-tooltip-trigger';
+const passiveTooltipTriggerSelector = '.passive-tooltip-trigger, .boss-role-card__consumable-trigger[data-tooltip-items]';
 const passiveTooltipId = 'passive-tooltip-surface';
 const passiveTooltipTapModeQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
   ? window.matchMedia('(hover: none) and (pointer: coarse)')
@@ -2378,10 +2744,11 @@ function getPassiveTooltipTrigger(target) {
 }
 
 function getPassiveTooltipItems(trigger) {
-  if (!trigger?.dataset?.passiveTooltipItems) return [];
+  const rawItems = trigger?.dataset?.passiveTooltipItems || trigger?.dataset?.tooltipItems;
+  if (!rawItems) return [];
 
   try {
-    const parsed = JSON.parse(trigger.dataset.passiveTooltipItems);
+    const parsed = JSON.parse(rawItems);
     return Array.isArray(parsed)
       ? parsed.map((item) => String(item || '').trim()).filter(Boolean)
       : [];
@@ -2620,7 +2987,8 @@ function getRecommendationGroupBossRef(boss, group = {}) {
     id: group.bossId || boss.id,
     name: group.title || boss.name,
     types: Array.isArray(group.bossTypes) && group.bossTypes.length ? group.bossTypes : (boss.types || []),
-    moveType: group.moveType || getBossMoveTypes(boss)
+    moveType: group.moveType || getBossMoveTypes(boss),
+    effectiveness: mergeBossEffectivenessConfig(boss?.effectiveness, group?.effectiveness)
   };
 }
 
@@ -2659,11 +3027,61 @@ function pickBetterTier(currentTier, nextTier) {
   return (tierPriority[nextTier] ?? tierPriority.unknown) < (tierPriority[currentTier] ?? tierPriority.unknown) ? nextTier : currentTier;
 }
 
+function getBossEffectivenessConfig(boss) {
+  return boss?.effectiveness && typeof boss.effectiveness === 'object'
+    ? boss.effectiveness
+    : {};
+}
+
+function getBossOffenseTargetTypes(boss) {
+  const config = getBossEffectivenessConfig(boss);
+  if (Array.isArray(config.offenseTargetTypes) && config.offenseTargetTypes.length) {
+    return mergeLowercaseUniqueValues(config.offenseTargetTypes);
+  }
+
+  const bossTypes = mergeLowercaseUniqueValues(Array.isArray(boss?.types) ? boss.types : []);
+  const moveTypes = getBossMoveTypes(boss);
+
+  if (config.offenseMode === 'neutral') {
+    return [];
+  }
+
+  if (config.offenseMode === 'move-only') {
+    return moveTypes;
+  }
+
+  if (config.offenseMode === 'types') {
+    return bossTypes;
+  }
+
+  return bossTypes.length ? bossTypes : moveTypes;
+}
+
 function getBossAttackTypes(boss) {
-  return mergeLowercaseUniqueValues(
-    Array.isArray(boss?.types) ? boss.types : [],
-    getBossMoveTypes(boss)
-  );
+  const config = getBossEffectivenessConfig(boss);
+  if (Array.isArray(config.attackTypes) && config.attackTypes.length) {
+    return mergeLowercaseUniqueValues(config.attackTypes);
+  }
+
+  const bossTypes = mergeLowercaseUniqueValues(Array.isArray(boss?.types) ? boss.types : []);
+  const moveTypes = getBossMoveTypes(boss);
+
+  if (config.attackMode === 'move-only') {
+    return moveTypes;
+  }
+
+  if (config.attackMode === 'types-only') {
+    return bossTypes;
+  }
+
+  return mergeLowercaseUniqueValues(bossTypes, moveTypes);
+}
+
+function getBossRecommendationRankMode(boss) {
+  const config = getBossEffectivenessConfig(boss);
+  return typeof config.rankMode === 'string' && config.rankMode.trim()
+    ? config.rankMode.trim().toLowerCase()
+    : 'standard';
 }
 
 function classifyRecommendationTier(offense, worstDefense) {
@@ -2693,20 +3111,28 @@ function classifyRecommendationTier(offense, worstDefense) {
   return 'solo';
 }
 
+function classifyDefenseOnlyRecommendationTier(worstDefense) {
+  if (worstDefense <= 0.25) return 'green';
+  if (worstDefense <= 0.5) return 'otimo';
+  if (worstDefense <= 1) return 'yellow';
+  if (worstDefense <= 2) return 'red';
+  return 'solo';
+}
+
 function scoreRecommendationForBoss(bossOrTypes, poke) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
-  const bossTypes = mergeLowercaseUniqueValues(Array.isArray(boss.types) ? boss.types : []);
   const bossAttackTypes = getBossAttackTypes(boss);
-  const offenseTargetTypes = bossTypes.length ? bossTypes : bossAttackTypes;
+  const offenseTargetTypes = getBossOffenseTargetTypes(boss);
+  const rankMode = getBossRecommendationRankMode(boss);
   const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
   const matchupOverride = getMatchupOverride(poke, boss);
   const offense = typeof matchupOverride?.offense === 'number'
     ? matchupOverride.offense
-    : getTypeMultiplier(moveType, offenseTargetTypes, [], poke.passiveSuperEffectiveTypes);
+    : (offenseTargetTypes.length
+      ? getTypeMultiplier(moveType, offenseTargetTypes, [], poke.passiveSuperEffectiveTypes)
+      : 1);
 
-  // Defense considers both boss typing and explicit MoveType so passives like immunities
-  // affect the final DEF/tier whenever they are already modeled in the data.
   const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
   const defenseMultipliers = (bossAttackTypes.length ? bossAttackTypes : [getBossMoveType(boss) || null])
     .filter(Boolean)
@@ -2717,11 +3143,9 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
       if (typeof passiveMultiplier === 'number') return passiveMultiplier;
       return getTypeMultiplier(attackType, pokeTypes, poke.immunities);
     });
-  const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1; // best case (lowest damage taken)
-  const worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1; // worst case (highest damage taken)
+  const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1;
+  const worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
 
-  // Score offense (higher is better) and defense (lower worst-case is better)
-  // Offense: prioritize super-effective hits, but still treat neutral as ok.
   const offenseScore =
     offense === 0 ? 0 :
     offense >= 4 ? 1 :
@@ -2729,7 +3153,6 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
     offense >= 1 ? 0.48 :
     0.18;
 
-  // Defense: we want best-case immunity and punish high worst-case damage.
   const defenseScore =
     bestDefense === 0 ? 1 :
     worstDefense <= 0.25 ? 0.96 :
@@ -2738,14 +3161,17 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
     worstDefense <= 2 ? 0.18 :
     0.03;
 
-  // Combined is used to sort inside the same tier while keeping defense relevant.
-  const combined = (offenseScore * 0.6) + (defenseScore * 0.4);
+  const combined = rankMode === 'defense-only'
+    ? ((worstDefense === 0 ? 100 : 1 / worstDefense) + (bestDefense === 0 ? 1 : 1 / (bestDefense * 10)))
+    : ((offenseScore * 0.6) + (defenseScore * 0.4));
   const explicitTier = poke?.tierLocked && typeof poke?.tier === 'string'
     ? poke.tier.trim().toLowerCase()
     : '';
   const tier = explicitTier && Object.prototype.hasOwnProperty.call(tierPriority, explicitTier)
     ? explicitTier
-    : classifyRecommendationTier(offense, worstDefense);
+    : (rankMode === 'defense-only'
+      ? classifyDefenseOnlyRecommendationTier(worstDefense)
+      : classifyRecommendationTier(offense, worstDefense));
 
   return {
     ...poke,
@@ -2907,7 +3333,47 @@ function ensureMew2BossRolePicks(bossId, clanKey, roleKey, picks = []) {
   ensureRolePickNames(roleList, picks);
 }
 
+function createHeracrossPick() {
+  return createRolePick('Heracross', ['bug', 'fighting'], 'fighting');
+}
+
+function addHeracrossIfCompatible(bossRef, picks = []) {
+  if (!Array.isArray(picks)) return;
+
+  const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick());
+  const priority = tierPriority[scored?.tier] ?? tierPriority.unknown;
+  if (priority > tierPriority.yellow) return;
+  if ((scored?._offense ?? 0) < 2) return;
+  if ((scored?._defenseWorst ?? Infinity) > 2) return;
+
+  ensureRolePickNames(picks, [scored]);
+}
+
+function injectHeracrossRecommendations() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      const mysticClan = boss?.clans?.mystic;
+      if (!mysticClan) return;
+
+      if (Array.isArray(mysticClan.recommended)) {
+        addHeracrossIfCompatible(boss, mysticClan.recommended);
+      }
+
+      if (Array.isArray(mysticClan.recommendationGroups)) {
+        mysticClan.recommendationGroups.forEach((group) => {
+          addHeracrossIfCompatible(getRecommendationGroupBossRef(boss, group), group.recommended);
+        });
+      }
+
+      if (Array.isArray(mysticClan.roles?.dps)) {
+        addHeracrossIfCompatible(boss, mysticClan.roles.dps);
+      }
+    });
+  });
+}
+
 ensureMirroredRecommendationVariants();
+injectHeracrossRecommendations();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
@@ -2987,14 +3453,21 @@ function renderBossModeIntro() {
 }
 
 function setBossMode(mode, options = {}) {
-  const nextMode = bossCatalogs[mode] ? mode : 'hoopa';
+  const nextMode = normalizeBossMode(mode) || 'hoopa';
   activeBossMode = nextMode;
+  if (options.syncUrl !== false) {
+    syncStandaloneBossModeUrl(activeBossMode);
+  }
   renderBossModeIntro();
 
   if (speedsterSearchInput) {
     speedsterSearchInput.value = '';
   }
   hideSearchResults();
+
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+    window.dispatchEvent(new CustomEvent('bossmodechange', { detail: { mode: activeBossMode } }));
+  }
 
   if (options.render === false) return;
   renderGrid();
@@ -3157,9 +3630,21 @@ function makeHoopaBossCard(speedster) {
     getBossTypeIcons(moveTypes.slice(0, 2)).forEach((icon) => moveChip.appendChild(icon));
 
     const moveText = document.createElement('span');
-    moveText.textContent = `Tipo de golpe ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`;
+    moveText.textContent = `Moveset ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`;
     moveChip.appendChild(moveText);
     button.appendChild(moveChip);
+  }
+
+  const consumableBadges = [
+    createBossConsumableBadge('pokeblock', speedster.pokeblock || speedster.pokebloc),
+    createBossConsumableBadge('ration', speedster.ration)
+  ].filter(Boolean);
+
+  if (consumableBadges.length) {
+    const consumables = document.createElement('div');
+    consumables.className = 'boss-role-card__consumables';
+    consumableBadges.forEach((badge) => consumables.appendChild(badge));
+    button.appendChild(consumables);
   }
 
   const completionLabel = document.createElement('label');
@@ -3198,7 +3683,10 @@ function makeHoopaBossCard(speedster) {
     syncCompletionState(completed);
   });
 
-  button.addEventListener('click', () => openBossModalV2(speedster));
+  button.addEventListener('click', (event) => {
+    if (getPassiveTooltipTrigger(event.target)) return;
+    openBossModalV2(speedster);
+  });
   button.addEventListener('keydown', (event) => {
     if (event.target !== button) return;
     if (event.key === 'Enter' || event.key === ' ') {
@@ -3237,6 +3725,74 @@ function createRoleBossAvatar(boss) {
 
   avatar.append(image, fallback);
   return avatar;
+}
+
+function normalizeBossConsumableEntry(entry) {
+  if (!entry) return null;
+
+  if (typeof entry === 'string') {
+    const label = entry.trim();
+    return label ? { label, shortLabel: label, image: '', tooltipItems: [] } : null;
+  }
+
+  if (typeof entry !== 'object') return null;
+
+  const label = String(entry.label || entry.name || entry.title || '').trim();
+  if (!label) return null;
+
+  const shortLabel = String(entry.shortLabel || label).trim() || label;
+  const image = typeof entry.image === 'string' && entry.image.trim()
+    ? entry.image.trim()
+    : '';
+  const tooltipItems = Array.isArray(entry.tooltipItems)
+    ? entry.tooltipItems.map((item) => String(item || '').trim()).filter(Boolean)
+    : [entry.description || entry.tooltip || entry.effect]
+      .map((item) => String(item || '').trim())
+      .filter(Boolean);
+
+  return { label, shortLabel, image, tooltipItems };
+}
+
+function createBossConsumableBadge(kind, entry) {
+  const normalizedEntry = normalizeBossConsumableEntry(entry);
+  if (!normalizedEntry) return null;
+
+  const kindLabel = kind === 'pokeblock' ? 'Pokeblock' : 'Ration';
+  const badge = document.createElement('button');
+  badge.type = 'button';
+  badge.className = `boss-role-card__consumable-trigger boss-role-card__consumable-trigger--${kind}`;
+  badge.setAttribute('aria-label', `${kindLabel}: ${normalizedEntry.label}`);
+  badge.setAttribute('aria-expanded', 'false');
+  if (normalizedEntry.tooltipItems.length) {
+    badge.dataset.tooltipItems = JSON.stringify(normalizedEntry.tooltipItems);
+  } else {
+    badge.title = `${kindLabel}: ${normalizedEntry.label}`;
+  }
+
+  if (normalizedEntry.image) {
+    const image = document.createElement('img');
+    image.className = 'boss-role-card__consumable-icon';
+    image.src = /^(?:https?:)?\/\//i.test(normalizedEntry.image)
+      ? normalizedEntry.image
+      : basePath + normalizedEntry.image;
+    image.alt = '';
+    image.setAttribute('aria-hidden', 'true');
+    image.loading = 'lazy';
+    badge.appendChild(image);
+  } else {
+    const fallback = document.createElement('span');
+    fallback.className = 'boss-role-card__consumable-icon boss-role-card__consumable-icon--fallback';
+    fallback.textContent = kind === 'pokeblock' ? 'PB' : 'RT';
+    fallback.setAttribute('aria-hidden', 'true');
+    badge.appendChild(fallback);
+  }
+
+  const text = document.createElement('span');
+  text.className = 'boss-role-card__consumable-text';
+  text.textContent = normalizedEntry.shortLabel;
+  badge.appendChild(text);
+
+  return badge;
 }
 
 function makeRoleBossCard(boss) {
@@ -3280,6 +3836,11 @@ function makeRoleBossCard(boss) {
     });
   }
 
+  const consumableBadges = [
+    createBossConsumableBadge('pokeblock', boss.pokeblock || boss.pokebloc),
+    createBossConsumableBadge('ration', boss.ration)
+  ].filter(Boolean);
+
   const title = document.createElement('div');
   title.className = 'boss-role-card__title';
   title.textContent = boss.name;
@@ -3306,11 +3867,23 @@ function makeRoleBossCard(boss) {
     const moveChip = document.createElement('span');
     moveChip.className = 'boss-role-card__chip boss-role-card__chip--wide boss-role-card__chip--move';
     getBossTypeIcons(moveTypes.slice(0, 2)).forEach((icon) => moveChip.appendChild(icon));
-    moveChip.appendChild(document.createTextNode(`Tipo de golpe ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`));
+    moveChip.appendChild(document.createTextNode(`Moveset ${moveTypes.map((type) => formatTypeLabel(type)).join(' / ')}`));
     button.appendChild(moveChip);
   }
 
-  button.addEventListener('click', () => openBossModalV2(boss));
+  if (consumableBadges.length) {
+    button.classList.add('boss-role-card--with-consumables');
+
+    const consumables = document.createElement('div');
+    consumables.className = 'boss-role-card__consumables';
+    consumableBadges.forEach((badge) => consumables.appendChild(badge));
+    button.appendChild(consumables);
+  }
+
+  button.addEventListener('click', (event) => {
+    if (getPassiveTooltipTrigger(event.target)) return;
+    openBossModalV2(boss);
+  });
   button.addEventListener('keydown', (event) => {
     if (event.target !== button) return;
     if (event.key === 'Enter' || event.key === ' ') {
@@ -3728,7 +4301,7 @@ function createRecommendationCard(poke, options = {}) {
       const moveRow = document.createElement('div');
       moveRow.className = 'speedster-reco-chip-row speedster-reco-chip-row--moves';
       moveTypes.slice(0, 2).forEach((type) => {
-        const chip = createChip(type, { label: 'Tipo de golpe', move: true });
+        const chip = createChip(type, { label: 'Moveset', move: true });
         if (chip) moveRow.appendChild(chip);
       });
       if (moveRow.childElementCount > 0) {
@@ -3958,20 +4531,20 @@ function getBossWeaknessDisplayEntries(source) {
         id: entry?.id || `boss-${index}`,
         name: entry?.name || `Chefe ${index + 1}`,
         image: entry?.image || '',
-        types: mergeLowercaseUniqueValues(entry?.types),
+        types: getBossOffenseTargetTypes(entry),
         immunities: mergeLowercaseUniqueValues(entry?.immunities)
       }))
       .filter((entry) => entry.types.length);
   }
 
-  const sourceTypes = mergeLowercaseUniqueValues(source.types);
+  const sourceTypes = getBossOffenseTargetTypes(source);
   const sourceImmunities = mergeLowercaseUniqueValues(source.immunities);
   const groupMap = new Map();
 
   Object.values(source.clans || {}).forEach((clanData) => {
     getRecommendationGroupsForClan(source, clanData).forEach((group) => {
       const bossRef = group?.boss;
-      const entryTypes = mergeLowercaseUniqueValues(bossRef?.types);
+      const entryTypes = getBossOffenseTargetTypes(bossRef);
       if (!entryTypes.length) return;
 
       const entryId = String(bossRef?.id || group?.title || source.id || source.name || '').trim();
@@ -3995,7 +4568,7 @@ function getBossWeaknessDisplayEntries(source) {
         id: groupMatch?.id || `${source.id || 'boss'}-${index}`,
         name: entry?.name || groupMatch?.name || source.name || 'Chefe',
         image: entry?.image || groupMatch?.image || source.image || '',
-        types: mergeLowercaseUniqueValues(entry?.types, groupMatch?.types, sourceTypes),
+        types: mergeLowercaseUniqueValues(getBossOffenseTargetTypes(entry), groupMatch?.types, sourceTypes),
         immunities: mergeLowercaseUniqueValues(entry?.immunities, groupMatch?.immunities, sourceImmunities)
       };
     }).filter((entry) => entry.types.length);
@@ -4224,7 +4797,7 @@ function createRolePickCard(poke) {
   moveGroup.className = 'boss-role-pick-meta boss-role-pick-meta--move';
   const moveLabel = document.createElement('div');
   moveLabel.className = 'boss-role-pick-meta-label';
-  moveLabel.textContent = 'Tipo de golpe';
+  moveLabel.textContent = 'Moveset';
   moveGroup.append(moveLabel, moveRow);
 
   if (Array.isArray(poke.types) && poke.types.length) {
@@ -5078,5 +5651,5 @@ document.querySelectorAll('.bosses-mode-btn').forEach((button) => {
 ensureHoopaBossProgressFresh();
 scheduleHoopaBossProgressReset();
 initPassiveTooltipSystem();
-setBossMode('hoopa', { render: false });
+setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();

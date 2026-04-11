@@ -69,6 +69,16 @@ const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
 const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+const appSidebar = document.getElementById('app-sidebar');
+const appShellBackdrop = document.getElementById('app-shell-backdrop');
+const sidebarHomeBtn = document.querySelector('.sidebar-home[data-nav-target="home"]');
+const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggle]');
+const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
+const mobileSidebarQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia('(max-width: 980px)')
+    : null;
+let sidebarNavigationInitialized = false;
 
 const COMMUNITY_FEED_ITEMS = [
     { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÉM TAMBÉM TEM SEU VALOR!' },
@@ -502,6 +512,222 @@ function setVisiblePanel(activePanel){
     if(activePanel !== contentHome){
         clearHomeStreamerRatSummary();
     }
+}
+
+function isMobileSidebarMode(){
+    return Boolean(mobileSidebarQuery?.matches);
+}
+
+function setSidebarGroupExpanded(groupEl, expanded){
+    if(!(groupEl instanceof HTMLElement)) return;
+
+    const toggle = groupEl.querySelector('[data-sidebar-group-toggle]');
+    const submenuId = toggle?.getAttribute('aria-controls');
+    const submenu = submenuId ? document.getElementById(submenuId) : groupEl.querySelector('.sidebar-submenu');
+    const nextExpanded = Boolean(expanded);
+
+    groupEl.dataset.expanded = nextExpanded ? 'true' : 'false';
+    if(toggle){
+        toggle.setAttribute('aria-expanded', nextExpanded ? 'true' : 'false');
+    }
+    if(submenu){
+        submenu.hidden = !nextExpanded;
+    }
+}
+
+function setSidebarOpen(nextOpen){
+    const shouldOpen = Boolean(nextOpen) && isMobileSidebarMode();
+    document.body.classList.toggle('sidebar-open', shouldOpen);
+
+    if(mobileNavToggle){
+        mobileNavToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+    if(appSidebar){
+        appSidebar.setAttribute('aria-hidden', isMobileSidebarMode() ? (shouldOpen ? 'false' : 'true') : 'false');
+    }
+    if(appShellBackdrop){
+        appShellBackdrop.hidden = !shouldOpen;
+        appShellBackdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+    }
+}
+
+function getActiveSiteTarget(){
+    if(document.body.classList.contains('home-view')) return 'home';
+    if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
+    if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
+    if(tabCalcBtn?.classList.contains('active')) return 'calculator';
+    if(tabCatchBtn?.classList.contains('active')) return 'catch';
+    if(tabSpeedstersBtn?.classList.contains('active')) return 'bosses';
+    if(tabStreamersBtn?.classList.contains('active')) return 'streamers';
+    if(tabCommunityBtn?.classList.contains('active')) return 'youtube';
+    return '';
+}
+
+function normalizeBossModeParam(value){
+    const normalized = String(value || '').trim().toLowerCase();
+    if(!normalized) return '';
+    if(normalized === 'hoopa-portais') return 'hoopa';
+    if(normalized === 'champion-path') return 'champion';
+    if(normalized === 'mewtwo') return 'mew2';
+    return ['hoopa', 'champion', 'mew2'].includes(normalized) ? normalized : '';
+}
+
+function getBossModeQueryValue(value){
+    const normalized = normalizeBossModeParam(value);
+    if(normalized === 'mew2') return 'mewtwo';
+    return normalized;
+}
+
+function getRequestedBossModeFromUrl(){
+    const params = new URLSearchParams(location.search);
+    return normalizeBossModeParam(params.get('tab'))
+        || normalizeBossModeParam(params.get('bossmode') || params.get('boss') || params.get('mode'));
+}
+
+function getCurrentBossMode(){
+    return normalizeBossModeParam(document.body?.dataset?.bossMode) || 'hoopa';
+}
+
+function syncSidebarNavigationState(){
+    if(!appSidebar) return;
+
+    const activeTarget = getActiveSiteTarget();
+    const activeBossMode = String(document.body?.dataset?.bossMode || 'hoopa').toLowerCase();
+
+    sidebarActionButtons.forEach((button) => {
+        if(!(button instanceof HTMLElement)) return;
+
+        const target = String(button.dataset.navTarget || '').toLowerCase();
+        const action = String(button.dataset.navAction || '').toLowerCase();
+        const requestedBossMode = String(button.dataset.bossMode || '').toLowerCase();
+
+        let isActive = false;
+        if(action){
+            isActive = false;
+        } else if(target === 'home'){
+            isActive = activeTarget === 'home';
+        } else if(target === 'bosses'){
+            isActive = activeTarget === 'bosses' && (!requestedBossMode || requestedBossMode === activeBossMode);
+        } else {
+            isActive = activeTarget === target;
+        }
+
+        button.classList.toggle('is-active', isActive);
+        if(isActive){
+            button.setAttribute('aria-current', 'page');
+        } else {
+            button.removeAttribute('aria-current');
+        }
+    });
+
+    document.querySelectorAll('.sidebar-group').forEach((group) => {
+        const hasActiveItem = Boolean(group.querySelector('.sidebar-sublink.is-active'));
+        group.classList.toggle('is-active', hasActiveItem);
+        if(hasActiveItem){
+            setSidebarGroupExpanded(group, true);
+        }
+    });
+}
+
+function activateSidebarTarget(button){
+    if(!(button instanceof HTMLElement)) return;
+
+    const action = String(button.dataset.navAction || '').toLowerCase();
+    const actionButtons = {
+        commands: commandsBtn,
+        'elemental-balls': elementalBallsBtn,
+        respawns: respawnsBtn,
+        fishing: fishingBtn
+    };
+    if(action && actionButtons[action]){
+        actionButtons[action]?.click();
+        setSidebarOpen(false);
+        return;
+    }
+
+    const target = String(button.dataset.navTarget || '').toLowerCase();
+    const openers = {
+        home: showHome,
+        effectiveness: showEffectiveness,
+        fossils: showFossils,
+        calculator: showCalculator,
+        catch: showCatch,
+        bosses: showSpeedsters,
+        streamers: showStreamers,
+        youtube: showCommunity
+    };
+
+    const openTarget = openers[target] || showEffectiveness;
+    openTarget();
+
+    if(target === 'bosses' && typeof window.setBossMode === 'function'){
+        window.setBossMode(String(button.dataset.bossMode || 'hoopa').toLowerCase());
+    }
+
+    syncSidebarNavigationState();
+    setSidebarOpen(false);
+}
+
+function initializeSidebarNavigation(){
+    if(sidebarNavigationInitialized) return;
+    sidebarNavigationInitialized = true;
+
+    sidebarGroupToggles.forEach((toggle) => {
+        const group = toggle.closest('.sidebar-group');
+        setSidebarGroupExpanded(group, group?.dataset?.expanded !== 'false');
+
+        toggle.addEventListener('click', () => {
+            if(!group) return;
+            const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+            setSidebarGroupExpanded(group, !isExpanded);
+        });
+    });
+
+    sidebarActionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            activateSidebarTarget(button);
+        });
+    });
+
+    if(mobileNavToggle){
+        mobileNavToggle.addEventListener('click', () => {
+            const isOpen = document.body.classList.contains('sidebar-open');
+            setSidebarOpen(!isOpen);
+        });
+    }
+
+    if(appShellBackdrop){
+        appShellBackdrop.addEventListener('click', () => {
+            setSidebarOpen(false);
+        });
+    }
+
+    if(mobileSidebarQuery){
+        const handleSidebarMediaChange = () => {
+            setSidebarOpen(false);
+            syncSidebarNavigationState();
+        };
+
+        if(typeof mobileSidebarQuery.addEventListener === 'function'){
+            mobileSidebarQuery.addEventListener('change', handleSidebarMediaChange);
+        } else if(typeof mobileSidebarQuery.addListener === 'function'){
+            mobileSidebarQuery.addListener(handleSidebarMediaChange);
+        }
+    }
+
+    window.addEventListener('bossmodechange', () => {
+        syncSidebarNavigationState();
+        updateUrl();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape' && document.body.classList.contains('sidebar-open')){
+            setSidebarOpen(false);
+        }
+    });
+
+    setSidebarOpen(false);
+    syncSidebarNavigationState();
 }
 
 function resolveCommunityTopicKey(topicKey){
@@ -1836,7 +2062,7 @@ if(tabSpeedstersBtn) tabSpeedstersBtn.addEventListener('click',()=>{ showSpeedst
 if(tabStreamersBtn) tabStreamersBtn.addEventListener('click',()=>{ showStreamers(); localStorage.setItem('selectedTab','streamers'); updateUrl(); });
 if(tabCommunityBtn) tabCommunityBtn.addEventListener('click',()=>{ showCommunity(); localStorage.setItem('selectedTab','youtube'); updateUrl(); });
 
-function showSpeedsters(){
+function showSpeedsters(requestedBossMode=''){
     clearTabHighlights();
     setActiveTabTheme('bosses');
     if(tabSpeedstersBtn) {
@@ -1851,8 +2077,13 @@ function showSpeedsters(){
     if(titleEl) titleEl.textContent = t('tabSpeedsters');
     updateBrowserTitle();
 
+    const targetBossMode = normalizeBossModeParam(requestedBossMode)
+        || getRequestedBossModeFromUrl()
+        || getCurrentBossMode()
+        || 'hoopa';
+
     if(typeof window.setBossMode === 'function') {
-        window.setBossMode('hoopa');
+        window.setBossMode(targetBossMode);
     }
 
     // Ensure grid is built when opening the tab (re-render if needed)
@@ -1877,8 +2108,8 @@ function showSpeedsters(){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2'];
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural'];
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
 const streamerStatusCache = new Map();
@@ -3761,13 +3992,17 @@ function initTabFromUrl(){
     const tabparam=params.get('tab');
     const hasQuery = params.toString().length > 0;
     if(!hasQuery) return showHome();
+    const requestedBossMode = getRequestedBossModeFromUrl();
+    const requestedBossTab = normalizeBossModeParam(tabparam);
     if(tabparam==='calculator') return showCalculator();
     if(tabparam==='fossils') return showFossils();
     if(tabparam==='catch') return showCatch();
-    if(tabparam==='bosses' || tabparam==='speedsters') return showSpeedsters();
+    if(requestedBossTab) return showSpeedsters(requestedBossTab);
+    if(tabparam==='bosses' || tabparam==='speedsters') return showSpeedsters(requestedBossMode);
     if(tabparam==='streamers') return showStreamers();
     if(tabparam==='youtube' || tabparam==='community' || tabparam==='feed') return showCommunity();
     if(tabparam==='effectiveness') return showEffectiveness();
+    if(requestedBossMode) return showSpeedsters(requestedBossMode);
     if(params.get('types')) return showEffectiveness();
     const saved = localStorage.getItem('selectedTab');
     if(saved==='calculator') return showCalculator();
@@ -4215,6 +4450,7 @@ function updateUrl(){
         params.delete('types');
         params.delete('tab');
         params.delete('topic');
+        params.delete('bossmode');
     } else if(currentSelection.length) params.set('types',currentSelection.join(','));
     else params.delete('types');
     const activeTab = isHomeView ? '' :
@@ -4225,7 +4461,11 @@ function updateUrl(){
                       (tabCommunityBtn && tabCommunityBtn.classList.contains('active')) ? 'youtube' :
                       (tabStreamersBtn && tabStreamersBtn.classList.contains('active')) ? 'streamers' :
                       (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
-    if(activeTab) params.set('tab', activeTab); else params.delete('tab');
+    const tabQueryValue = activeTab === 'bosses'
+        ? (getBossModeQueryValue(getCurrentBossMode()) || 'hoopa')
+        : activeTab;
+    if(tabQueryValue) params.set('tab', tabQueryValue); else params.delete('tab');
+    params.delete('bossmode');
     if(activeTab === 'youtube'){
         if(activeCommunityTopicKey && activeCommunityTopicKey !== 'all') params.set('topic', activeCommunityTopicKey);
         else params.delete('topic');
@@ -4235,6 +4475,7 @@ function updateUrl(){
     const query = params.toString();
     const newUrl = location.pathname + (query ? `?${query}` : '');
     history.replaceState(null, '', newUrl);
+    syncSidebarNavigationState();
 
     if(currentSelection.length) localStorage.setItem('selectedTypes', currentSelection.join(','));
     else localStorage.removeItem('selectedTypes');
@@ -4482,6 +4723,11 @@ const elementalBallsModal = document.getElementById('elemental-balls-modal');
 const elementalBallsViewport = document.getElementById('elemental-balls-viewport');
 const elementalBallsCanvas = document.getElementById('elemental-balls-canvas');
 const elementalBallsImage = document.getElementById('elemental-balls-image');
+const elementalBallsKurtBtn = document.getElementById('elemental-balls-kurt-btn');
+const elementalBallsKurtModal = document.getElementById('elemental-balls-kurt-modal');
+const elementalBallsKurtViewport = document.getElementById('elemental-balls-kurt-viewport');
+const elementalBallsKurtCanvas = document.getElementById('elemental-balls-kurt-canvas');
+const elementalBallsKurtImage = document.getElementById('elemental-balls-kurt-image');
 const respawnsBtn = document.getElementById('respawns-btn');
 const respawnsModal = document.getElementById('respawns-modal');
 const respawnsViewport = document.getElementById('respawns-viewport');
@@ -4533,6 +4779,27 @@ if(fossilLocationModal){
 if(fossilLocationImage){
     fossilLocationImage.alt = 'Imagem com a localizacao da troca de fosseis';
 }
+if(elementalBallsKurtBtn){
+    elementalBallsKurtBtn.setAttribute('aria-label', 'Abrir local do NPC Kurt');
+    elementalBallsKurtBtn.setAttribute('title', 'Local do NPC Kurt');
+}
+if(elementalBallsKurtModal){
+    const elementalBallsKurtCloseBtn = elementalBallsKurtModal.querySelector('.modal-close');
+    const elementalBallsKurtTitle = document.getElementById('elemental-balls-kurt-modal-title');
+    const elementalBallsKurtHint = elementalBallsKurtModal.querySelector('.image-modal__hint');
+    if(elementalBallsKurtCloseBtn){
+        elementalBallsKurtCloseBtn.innerHTML = '&#10006;';
+    }
+    if(elementalBallsKurtTitle){
+        elementalBallsKurtTitle.textContent = 'Local do NPC Kurt';
+    }
+    if(elementalBallsKurtHint){
+        elementalBallsKurtHint.textContent = 'Use os botoes ou a roda do mouse para dar zoom na imagem.';
+    }
+}
+if(elementalBallsKurtImage){
+    elementalBallsKurtImage.alt = 'Imagem do local do NPC Kurt para fabricar as pokebolas elementais';
+}
 
 function wireBasicModal(triggerEl, modalEl, onOpen){
     if(!triggerEl || !modalEl) return;
@@ -4568,6 +4835,7 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
     if(!modalEl || !viewportEl || !canvasEl || !imageEl) return;
 
     const zoomButtons = modalEl.querySelectorAll('[data-image-zoom]');
+    const modalContentEl = modalEl.querySelector('.modal-content');
     const MIN_IMAGE_ZOOM = 1;
     const MAX_IMAGE_ZOOM = 3.5;
     const IMAGE_ZOOM_STEP = 0.25;
@@ -4576,15 +4844,18 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
     let imageBaseSize = { width: 0, height: 0 };
     let imageZoomFrame = null;
     let imageLayoutTimeout = null;
+    let imageLayoutObserver = null;
+    let imageOpenSyncTimer = null;
 
     const clampImageZoom = (value)=>Math.min(MAX_IMAGE_ZOOM, Math.max(MIN_IMAGE_ZOOM, value));
     const getViewportSize = ()=>{
+        const rect = viewportEl.getBoundingClientRect();
         const viewportStyles = window.getComputedStyle(viewportEl);
         const paddingX = (parseFloat(viewportStyles.paddingLeft) || 0) + (parseFloat(viewportStyles.paddingRight) || 0);
         const paddingY = (parseFloat(viewportStyles.paddingTop) || 0) + (parseFloat(viewportStyles.paddingBottom) || 0);
         return {
-            width: Math.max(Math.round(viewportEl.clientWidth - paddingX), 0),
-            height: Math.max(Math.round(viewportEl.clientHeight - paddingY), 0)
+            width: Math.max(Math.round(rect.width - paddingX), 0),
+            height: Math.max(Math.round(rect.height - paddingY), 0)
         };
     };
     const refreshImageBaseSize = ()=>{
@@ -4627,6 +4898,29 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
             viewportEl.scrollTop = previousScrollTopRatio * nextMaxScrollTop;
         }
     };
+    const clearOpenSyncTimer = ()=>{
+        if(imageOpenSyncTimer){
+            clearTimeout(imageOpenSyncTimer);
+            imageOpenSyncTimer = null;
+        }
+    };
+    const resetImagePresentation = ()=>{
+        imageZoomLevel = 1;
+        imageBaseSize = { width: 0, height: 0 };
+        imageEl.style.width = '';
+        imageEl.style.height = '';
+        canvasEl.style.width = '100%';
+        canvasEl.style.height = '100%';
+        canvasEl.style.placeItems = 'center center';
+        viewportEl.dataset.zoomed = 'false';
+        viewportEl.dataset.dragging = 'false';
+        viewportEl.scrollTop = 0;
+        viewportEl.scrollLeft = 0;
+        const resetBtn = modalEl.querySelector('[data-image-zoom="reset"]');
+        if(resetBtn){
+            resetBtn.textContent = '100%';
+        }
+    };
     const resetImageZoom = ()=>{
         updateImageZoom(1, false);
         viewportEl.scrollTop = 0;
@@ -4654,9 +4948,9 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
         if(modalEl.getAttribute('aria-hidden') === 'true') return;
         const viewport = getViewportSize();
         const imageReady = imageEl.complete && imageEl.naturalWidth > 0;
-        const viewportReady = viewport.width >= 160 && viewport.height >= 160;
+        const viewportReady = viewport.width >= 220 && viewport.height >= 180;
         if(!imageReady || !viewportReady){
-            if(attempt >= 20) return;
+            if(attempt >= 40) return;
             imageLayoutTimeout = setTimeout(()=>ensureImageLayoutReady(attempt + 1), 50);
             return;
         }
@@ -4665,7 +4959,8 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
 
     modalEl._onClose = ()=>{
         clearImageLayoutTimeout();
-        resetImageZoom();
+        clearOpenSyncTimer();
+        resetImagePresentation();
     };
 
     zoomButtons.forEach(button=>{
@@ -4741,8 +5036,24 @@ function setupZoomableImageModal(modalEl, viewportEl, canvasEl, imageEl){
         ensureImageLayoutReady();
     });
     window.addEventListener('resize', syncImageZoomLayout);
+    if(typeof ResizeObserver === 'function'){
+        imageLayoutObserver = new ResizeObserver(() => {
+            syncImageZoomLayout();
+        });
+        imageLayoutObserver.observe(viewportEl);
+        if(modalContentEl){
+            imageLayoutObserver.observe(modalContentEl);
+        }
+    }
 
-    modalEl._onOpen = ()=>ensureImageLayoutReady();
+    modalEl._onOpen = ()=>{
+        clearOpenSyncTimer();
+        resetImagePresentation();
+        ensureImageLayoutReady();
+        imageOpenSyncTimer = setTimeout(()=>{
+            ensureImageLayoutReady();
+        }, 120);
+    };
 }
 
 const respawnsViewState = {
@@ -4972,6 +5283,7 @@ function setupRespawnsModal(){
 }
 
 setupZoomableImageModal(elementalBallsModal, elementalBallsViewport, elementalBallsCanvas, elementalBallsImage);
+setupZoomableImageModal(elementalBallsKurtModal, elementalBallsKurtViewport, elementalBallsKurtCanvas, elementalBallsKurtImage);
 setupZoomableImageModal(respawnsModal, respawnsViewport, respawnsCanvas, respawnsImage);
 setupZoomableImageModal(fishingModal, fishingViewport, fishingCanvas, fishingImage);
 setupZoomableImageModal(baitLocationModal, baitLocationViewport, baitLocationCanvas, baitLocationImage);
@@ -4991,6 +5303,11 @@ if(commandsBtn && commandsModal){
 if(elementalBallsBtn && elementalBallsModal){
     wireBasicModal(elementalBallsBtn, elementalBallsModal, ()=>{
         if(typeof elementalBallsModal._onOpen === 'function') elementalBallsModal._onOpen();
+    });
+}
+if(elementalBallsKurtBtn && elementalBallsKurtModal){
+    wireBasicModal(elementalBallsKurtBtn, elementalBallsKurtModal, ()=>{
+        if(typeof elementalBallsKurtModal._onOpen === 'function') elementalBallsKurtModal._onOpen();
     });
 }
 if(respawnsBtn && respawnsModal){
@@ -5184,4 +5501,5 @@ function loadTypesData(){
         .catch(showTypesLoadError);
 }
 
+initializeSidebarNavigation();
 loadTypesData();

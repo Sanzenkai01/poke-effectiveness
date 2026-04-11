@@ -9,11 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260404i">
+    <link rel="stylesheet" href="styles.css?v=20260411g">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
     <header class="header">
+      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">&#9776;</button>
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
       <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
         <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
@@ -120,6 +121,190 @@
       </div>
     </section>
 
+    <div class="app-shell">
+      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site">
+        <button class="sidebar-home" type="button" data-nav-target="home">
+          <span class="sidebar-home__brand-mark">
+            <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+          </span>
+          <span class="sidebar-home__copy">
+            <strong>Poke Utilities</strong>
+          </span>
+        </button>
+
+        <nav class="sidebar-nav" aria-label="Navegacao principal">
+          <section class="sidebar-group" data-sidebar-group="bosses" data-expanded="true">
+            <button
+              class="sidebar-group__toggle"
+              type="button"
+              data-sidebar-group-toggle
+              aria-expanded="true"
+              aria-controls="sidebar-group-bosses"
+            >
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.5l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8L12 3.5z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Bosses</strong>
+                <span>Portais, trio e raid</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-bosses" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="hoopa">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Hoopa Portais</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="champion">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Champion Path</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="mew2">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Mewtwo</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group" data-sidebar-group="systems" data-expanded="true">
+            <button
+              class="sidebar-group__toggle"
+              type="button"
+              data-sidebar-group-toggle
+              aria-expanded="true"
+              aria-controls="sidebar-group-systems"
+            >
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10v5H4V6.5zm10 0A2.5 2.5 0 0 1 16.5 4H20v8h-6V6.5zM4 14h6v6H6.5A2.5 2.5 0 0 1 4 17.5V14zm10 0h6v3.5a2.5 2.5 0 0 1-2.5 2.5H14v-6z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Sistemas</strong>
+                <span>Captura, fosseis e craft</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-systems" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="catch">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Catch</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="fossils">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Fosseis</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group" data-sidebar-group="utilities" data-expanded="true">
+            <button
+              class="sidebar-group__toggle"
+              type="button"
+              data-sidebar-group-toggle
+              aria-expanded="true"
+              aria-controls="sidebar-group-utilities"
+            >
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M11.1 3h1.8l.8 3.1a6.3 6.3 0 0 1 1.7.7l2.9-1.5 1.3 1.3-1.5 2.9c.3.5.6 1.1.7 1.7l3.2.8v1.8l-3.2.8a6.3 6.3 0 0 1-.7 1.7l1.5 2.9-1.3 1.3-2.9-1.5c-.5.3-1.1.6-1.7.7L12.9 21h-1.8l-.8-3.2a6.3 6.3 0 0 1-1.7-.7l-2.9 1.5-1.3-1.3 1.5-2.9a6.3 6.3 0 0 1-.7-1.7L2 12.9v-1.8l3.1-.8c.1-.6.4-1.2.7-1.7L4.3 5.7l1.3-1.3 2.9 1.5c.5-.3 1.1-.6 1.7-.7L11.1 3zm.9 5A4 4 0 1 0 12 16a4 4 0 0 0 0-8z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Utilidades</strong>
+                <span>Consulta e planejamento</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-utilities" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="effectiveness">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Tipos</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="calculator">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Calculadoras</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group" data-sidebar-group="community" data-expanded="true">
+            <button
+              class="sidebar-group__toggle"
+              type="button"
+              data-sidebar-group-toggle
+              aria-expanded="true"
+              aria-controls="sidebar-group-community"
+            >
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-4.7l-3.8 3v-3H6.5A2.5 2.5 0 0 1 4 13.5v-8zm6.2 2.7v5.6l4.8-2.8-4.8-2.8z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Comunidade</strong>
+                <span>Videos e transmissoes</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-community" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="youtube">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>YouTube</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="streamers">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Streamers</span>
+              </button>
+            </div>
+          </section>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span class="sidebar-footer__eyebrow">Acesso rapido</span>
+          <div class="sidebar-quick-links" role="group" aria-label="Atalhos do sistema">
+            <button class="sidebar-quick-link" type="button" data-nav-action="commands">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
+              <span>Comandos</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls">
+              <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
+                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
+              </span>
+              <span>Pokebolas</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="respawns">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
+              <span>Respawns</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="fishing">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
+              <span>Pescaria</span>
+            </button>
+          </div>
+          <a
+            class="sidebar-footer__link"
+            href="https://discord.com/invite/Gn2x6F5vB6"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="icons-type/discord.png" alt="" aria-hidden="true" class="sidebar-footer__link-icon" loading="lazy" decoding="async" />
+            Entrar no Discord
+          </a>
+        </div>
+      </aside>
+
+      <button
+        id="app-shell-backdrop"
+        class="app-shell__backdrop"
+        type="button"
+        hidden
+        aria-label="Fechar navegacao"
+      ></button>
+
+      <main class="app-main">
     <p id="instructions"></p>
 
     <section id="legend" class="legend legend-panel" aria-labelledby="legend-title">
@@ -189,6 +374,14 @@
         <h2 id="elemental-balls-modal-title">Pokébolas Elementais</h2>
         <div class="image-modal__toolbar">
           <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="fishing-modal__actions elemental-balls-modal__actions">
+            <button id="elemental-balls-kurt-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local do NPC Kurt" title="Local do NPC Kurt">
+              <span class="fossil-location-btn__thumb">
+                <img src="balls/craft-balls.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              </span>
+              <span class="fossil-location-btn__label">Local do Kurt</span>
+            </button>
+          </div>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -198,6 +391,26 @@
         <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
           <div class="image-modal__canvas" id="elemental-balls-canvas">
             <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="elemental-balls-kurt-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-kurt-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <h2 id="elemental-balls-kurt-modal-title">Local do NPC Kurt</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="elemental-balls-kurt-viewport">
+          <div class="image-modal__canvas" id="elemental-balls-kurt-canvas">
+            <img id="elemental-balls-kurt-image" class="image-modal__image" src="/mapas/kurt.png" alt="Imagem do local do NPC Kurt para fabricar as pokébolas elementais" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>
@@ -539,11 +752,6 @@
     <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
       <div class="card calc-card bosses-shell">
         <div class="bosses-header">
-          <div class="bosses-mode-switch" role="tablist" aria-label="Modos de chefes">
-            <button type="button" class="bosses-mode-btn is-active" data-boss-mode="hoopa" role="tab" aria-selected="true">Hoopa Portais</button>
-            <button type="button" class="bosses-mode-btn" data-boss-mode="champion" role="tab" aria-selected="false">Champion Path</button>
-            <button type="button" class="bosses-mode-btn" data-boss-mode="mew2" role="tab" aria-selected="false">Mew 2</button>
-          </div>
           <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
             <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
             <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
@@ -569,13 +777,9 @@
           <p>Acompanhe o status dos canais da comunidade e abra a transmissão no Twitch.</p>
         </div>
         <div id="streamer-status-info" class="streamer-status-info" aria-live="polite"></div>
-        <section id="streamer-filters" class="streamer-filters" aria-labelledby="streamer-filters-title">
-            <div class="streamer-filters__intro">
-              <h3 id="streamer-filters-title" class="streamer-filters__title">Filtros rápidos</h3>
-              <p class="streamer-filters__hint">Combine os critérios para reduzir a lista sem perder contexto.</p>
-            </div>
+        <section id="streamer-filters" class="streamer-filters" aria-label="Filtros de transmissões">
             <fieldset class="streamer-filters__group">
-              <legend class="streamer-filters__legend">Filtrar transmissões</legend>
+              <legend class="streamer-filters__legend visually-hidden">Filtrar transmissões</legend>
               <label><input id="filter-all" type="checkbox" checked>Mostrar todas</label>
               <label><input id="filter-drops" type="checkbox">Com drops</label>
               <label><input id="filter-online" type="checkbox">Online</label>
@@ -700,11 +904,13 @@
         <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
     </footer>
+    </main>
+    </div>
      <script src="js/main.js" defer></script>
 
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
-    <script src="bosses/bosses.js?v=20260404b" defer></script>
-    <script src="script.js?v=20260404h" defer></script>
+    <script src="bosses/bosses.js?v=20260411g" defer></script>
+    <script src="script.js?v=20260411g" defer></script>
 </body>
 </html>
