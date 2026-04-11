@@ -1365,6 +1365,9 @@ const championPathBosses = createManualRoleboardBosses([
     tutorialUrl: 'https://youtu.be/959M7JJejFA?si=aOR3nfggraUuFFoj',
     types: ['dragon', 'ground'],
     moveType: 'dragon',
+    effectiveness: {
+      attackMode: 'move-only'
+    },
     description: 'Luta mais seca, ideal para composicao que segure a linha enquanto o DPS gira.',
     clans: {
       instinct: {
