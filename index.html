@@ -594,52 +594,65 @@
     </div>
 
     <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
-      <div class="card calc-card">
+      <div class="card calc-card calc-shell">
         <h2 class="visually-hidden">Calculadora de treinamento</h2>
-        <div class="calc-icons">
-          <img id="icon-plate" class="small-icon" src="calculadora/plate.gif" alt="Plate" decoding="async" />
-          <img id="icon-shiny" class="small-icon" src="calculadora/shiny_plate.gif" alt="Shiny Plate" />
-          <img id="icon-drink" class="small-icon" src="calculadora/energy_drink.png" alt="Energy Drink" loading="lazy" decoding="async" />
-          <img id="icon-coin" class="small-icon" src="calculadora/golden_coin.gif" alt="Golden Coin" />
-        </div>
-        <p id="calc-instructions">Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.</p>
-        <div class="calc-grid">
-          <div class="calc-inputs">
-            <div class="calc-section">
-              <label for="range-select">Faixa de nível:</label>
-              <select id="range-select">
-                <option value="50-100">50 ao 100</option>
-                <option value="65-100">65 ao 100</option>
-                <option value="80-100">80 ao 100</option>
-                <option value="95-100">95 ao 100</option>
-              </select>
-            </div>
-            <div class="calc-section variant-group">
-              <span id="pokemon-type-label">Tipo de Pokémon:</span>
-              <div class="variant-options">
-                <label><input type="radio" name="poke-variant" value="normal" checked>Normal</label>
-                <label><input type="radio" name="poke-variant" value="shiny">Shiny</label>
+        <div class="calc-grid calc-grid--split">
+          <div class="calc-left">
+            <div class="card inputs-card">
+              <div class="inputs-header">
+                <h3>Configuração</h3>
+              </div>
+              <div class="calc-section">
+                <label for="range-select">Faixa de nível <button class="info-btn" aria-label="Ajuda" data-tooltip="Escolha a faixa de nível.">?</button></label>
+                <select id="range-select">
+                  <option value="50-100">50 ao 100</option>
+                  <option value="65-100">65 ao 100</option>
+                  <option value="80-100">80 ao 100</option>
+                  <option value="95-100">95 ao 100</option>
+                </select>
+              </div>
+              <div class="calc-section variant-group">
+                <label id="pokemon-type-label">Tipo de Pokémon</label>
+                <div class="variant-options">
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="normal" checked>Normal</label>
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="shiny">Shiny</label>
+                </div>
+              </div>
+
+              <div class="inputs-header">
+                <h3>Quantidade</h3>
+              </div>
+              <div class="calc-section">
+                <label for="common-plates">Plates comuns</label>
+                <input type="number" id="common-plates" min="0" value="0" />
+              </div>
+              <div class="calc-section">
+                <label for="shiny-plates">Shining plates</label>
+                <input type="number" id="shiny-plates" min="0" value="0" step="30" />
               </div>
             </div>
-            <div class="calc-section">
-              <label for="common-plates">Plates comuns:</label>
-              <input type="number" id="common-plates" min="0" value="0" />
+          </div>
+
+          <div class="calc-right">
+            <div class="result-card main-result">
+              <div class="result-card__header">
+                <h3>Resultado Principal <button class="info-btn" aria-label="Ajuda" data-tooltip="Resumo principal dos resultados.">?</button></h3>
+              </div>
+              <div id="range-results" class="calc-results result-block"></div>
             </div>
-            <div class="calc-section">
-              <label for="shiny-plates">Plates brilhantes:</label>
-              <input type="number" id="shiny-plates" min="0" value="0" step="30" />
+
+            <div class="result-card resources-result">
+              <h4>Recursos</h4>
+              <div id="common-results" class="calc-results result-block"></div>
+              <div id="shiny-results" class="calc-results result-block"></div>
             </div>
           </div>
-          <div class="calc-outputs">
-            <div id="range-results" class="calc-results"></div>
-            <div id="common-results" class="calc-results"></div>
-            <div id="shiny-results" class="calc-results"></div>
-          </div>
         </div>
-        <div class="calc-info">
-          <p>1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.</p>
-          <p>30 shining plates custam 30 plates comuns e 1 shining stone.</p>
-        </div>
+
+        <details class="calc-help" aria-expanded="false">
+          <summary>Como funciona</summary>
+          <p>Shining Plates são produzidas em blocos de 30. 1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.</p>
+        </details>
       </div>
     </div>
 
@@ -906,7 +919,10 @@
     </footer>
     </main>
     </div>
-     <script src="js/main.js" defer></script>
+    <script src="js/main.js" defer></script>
+
+    <!-- Local config (gitignored) — defines window.POKE_YT_API_KEY for local testing -->
+    <script src="js/config.local.js" defer></script>
 
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>

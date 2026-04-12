@@ -2307,9 +2307,35 @@ p {
 .variant-options { padding-left: 0; }
 .calc-outputs { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
 
-@media (max-width: 600px) {
-  .calc-grid { grid-template-columns: 1fr; }
-  .calc-outputs { order: -1; }
+/* New calculator split layout */
+.calc-card.calc-shell { max-width: 1100px; padding: 1rem 1.2rem; }
+.calc-grid--split { display: grid; grid-template-columns: 360px 1fr; gap: 1.5rem; align-items: start; }
+.calc-left .inputs-card { padding: 1rem; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.03); }
+.inputs-header h3 { margin: 0 0 0.5rem 0; font-size: 1rem; }
+.calc-section { margin-bottom: 0.75rem; }
+.calc-section label { display: block; margin-bottom: 0.35rem; font-weight: 600; color: #e9eef6; }
+.calc-section input[type="number"], .calc-section select { width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.25); color: #fff; }
+.variant-options { display: flex; gap: 0.5rem; }
+.variant-label { background: rgba(255,255,255,0.02); padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; font-weight: 500; }
+.variant-label input { margin-right: 0.45rem; vertical-align: middle; }
+
+.result-card { padding: 1rem; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.03); margin-bottom: 1rem; }
+.result-card__header { display:flex; align-items:center; justify-content:space-between; }
+.result-card h3, .result-card h4 { margin: 0 0 0.5rem 0; }
+.result-block p { margin: 0.25rem 0; }
+.num { font-weight: 700; font-size: 1.35rem; color: #ffd27a; margin-right: 0.35rem; }
+
+.info-btn { background: transparent; border: 0; font-weight: 700; color: rgba(255,255,255,0.85); width: 26px; height: 26px; border-radius: 13px; display:inline-flex; align-items:center; justify-content:center; cursor: help; }
+.info-btn[data-tooltip]:hover::after { content: attr(data-tooltip); position: absolute; background: rgba(10,10,10,0.95); color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 0.85rem; transform: translateY(-8px); white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+
+.calc-help { margin-top: 1rem; color: rgba(255,255,255,0.75); max-width: 900px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+
+@media (max-width: 900px) {
+  .calc-grid--split { grid-template-columns: 1fr; }
+  .calc-right { order: 2; }
+  .calc-left { order: 1; }
+  .result-card { margin-top: 0.6rem; }
+  .num { font-size: 1.15rem; }
 }
 
 #calc-instructions {

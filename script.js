@@ -270,6 +270,191 @@ function getCommunityTopicItems(topic){
         });
 }
 
+/* New community video loader
+   - Fetches videos from YouTube Data API (v3 search) for a topic hashtag
+   - Always requests on initial load (showCommunity) and when topic changes
+   - Sorts by publishedAt (desc), then applies hashtag filter (case-insensitive)
+   - Limits displayed videos and logs debugging information
+   - Uses a small TTL cache as fallback, but initial load forces a network request
+*/
+function getYouTubeApiKey(){
+    try{ return (window.POKE_YT_API_KEY || localStorage.getItem('POKE_YT_API_KEY') || '').toString().trim(); }catch(e){ return ''; }
+}
+const COMMUNITY_FETCH_CACHE_TTL = 1000 * 60 * 5; // 5 minutes fallback cache
+const COMMUNITY_MAX_RESULTS = 50; // how many results to request from API
+const COMMUNITY_MAX_DISPLAY = 15; // how many to show after filtering/sorting
+const COMMUNITY_AUTO_REFRESH_MS = 1000 * 60 * 5; // default 5 minutes
+let COMMUNITY_FETCH_LOCKS = {};
+let communityAutoRefreshTimer = null;
+// Last YouTube API error details (for debugging/fallback messaging)
+let LAST_YT_API_ERROR = null;
+// Per-topic last fetch error (populated when API fetch fails)
+let COMMUNITY_LAST_FETCH_ERROR = {};
+
+function _getCommunityCacheKey(topicKey){ return `community_cache_${topicKey}`; }
+function getCachedCommunityItems(topicKey){
+    try{
+        const raw = localStorage.getItem(_getCommunityCacheKey(topicKey));
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        if(!parsed || !parsed.ts || !parsed.items) return null;
+        if(Date.now() - parsed.ts > COMMUNITY_FETCH_CACHE_TTL){ localStorage.removeItem(_getCommunityCacheKey(topicKey)); return null; }
+        return parsed.items;
+    }catch(e){ try{ localStorage.removeItem(_getCommunityCacheKey(topicKey)); }catch(_){} return null; }
+}
+function setCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
+
+async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RESULTS){
+    const key = getYouTubeApiKey();
+    if(!key) return null;
+    if(!hashtag) return null;
+
+    // Strip leading '#' from the search term to avoid encoding issues
+    const rawQuery = String(hashtag || '').replace(/^#/, '').trim();
+    if(!rawQuery) return null;
+
+    const q = encodeURIComponent(rawQuery);
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&maxResults=${maxResults}&q=${q}&key=${encodeURIComponent(key)}`;
+    try{
+        const resp = await fetch(url);
+        if(!resp.ok) {
+            // Try to surface the API error body for easier debugging
+            let errText = '';
+            try{
+                const json = await resp.clone().json();
+                errText = json?.error?.message || JSON.stringify(json);
+            }catch(e){
+                try{ errText = await resp.clone().text(); }catch(e2){ errText = '(no body)'; }
+            }
+            LAST_YT_API_ERROR = { status: resp.status, statusText: resp.statusText, message: errText };
+            console.warn('YouTube API fetch failed', resp.status, resp.statusText, errText);
+            return null;
+        }
+        const data = await resp.json();
+        // clear previous error on success
+        LAST_YT_API_ERROR = null;
+        if(!data || !Array.isArray(data.items)) return null;
+        return data.items.map(it => ({ id: it?.id?.videoId || '', snippet: it.snippet || {} })).filter(x=>x.id);
+    }catch(err){ LAST_YT_API_ERROR = { message: String(err) }; console.warn('YouTube fetch error', err); return null; }
+}
+
+async function loadCommunityVideos(topicKey, options = {}){
+    const { force = false, maxResults = COMMUNITY_MAX_RESULTS } = options;
+    if(!getYouTubeApiKey()) return false; // no API key -> do not override manual lists
+    if(COMMUNITY_FETCH_LOCKS[topicKey]) return COMMUNITY_FETCH_LOCKS[topicKey];
+
+    const promise = (async ()=>{
+        try{
+            const topic = COMMUNITY_FEED_TOPICS[topicKey];
+            if(!topic) return false;
+
+            // If not forced, allow cache to short-circuit
+            if(!force){
+                const cached = getCachedCommunityItems(topicKey);
+                if(cached) { topic.items = cached; return false; }
+            }
+
+            const raw = await fetchVideosFromYouTubeRaw(topic.hashtag, maxResults);
+            if(!raw || !raw.length) {
+                console.info('No videos returned from YouTube for', topic.hashtag);
+                // Record per-topic error for UI feedback (grab last recorded error if any)
+                COMMUNITY_LAST_FETCH_ERROR[topicKey] = LAST_YT_API_ERROR || { message: 'No results' };
+
+                // Fallback: use static topic items (local list + metadata) so UI still shows content
+                try{
+                    const fallback = getCommunityTopicItems(topic).slice(0, COMMUNITY_MAX_DISPLAY);
+                    if(fallback && fallback.length){
+                        topic.items = fallback;
+                        setCachedCommunityItems(topicKey, topic.items);
+                    }
+                }catch(e){ /* ignore fallback failure */ }
+
+                return false;
+            }
+
+            // clear any previous per-topic fetch error if we have results
+            delete COMMUNITY_LAST_FETCH_ERROR[topicKey];
+
+            // Map required fields
+            const mapped = raw.map(r => ({
+                id: r.id,
+                title: r.snippet.title || '',
+                description: r.snippet.description || '',
+                channelName: r.snippet.channelTitle || '',
+                channelId: r.snippet.channelId || '',
+                channelUrl: r.snippet.channelId ? `https://www.youtube.com/channel/${r.snippet.channelId}` : '',
+                publishedAt: r.snippet.publishedAt || '',
+                thumbnailUrl: r.snippet.thumbnails?.high?.url || getCommunityVideoThumbnailUrl(r.id)
+            }));
+
+            // Sort by publishedAt desc
+            mapped.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
+
+            // Previously we filtered results by title/description which could
+            // accidentally exclude recent uploads. Instead, keep the chronological
+            // search results (newest first) and use the match set only for stats.
+            const needle = (topic.hashtag || '').replace(/^#/, '').toLowerCase();
+            const matched = mapped.filter(v => {
+                const t = (v.title || '').toLowerCase();
+                const d = (v.description || '').toLowerCase();
+                return (t.includes(needle) || d.includes(needle) || t.includes('#'+needle) || d.includes('#'+needle));
+            });
+
+            // Take the top N from the chronological results so newest uploads always appear
+            const finalRaw = mapped.slice(0, COMMUNITY_MAX_DISPLAY);
+
+            const final = finalRaw.map(v=>({ id:v.id, title:v.title, channelName:v.channelName, channelUrl:v.channelUrl, publishedAt:v.publishedAt, thumbnailUrl:v.thumbnailUrl, description:v.description }));
+
+            // Debug logs (preserve useful output)
+            try{
+                console.groupCollapsed(`Community loader: ${topicKey} ${topic.hashtag}`);
+                console.log('fetched_raw_count:', mapped.length);
+                console.log('first_raw_dates:', mapped.slice(0,10).map(x=>`${x.id} ${x.publishedAt}`));
+                console.log('matched_count:', matched.length);
+                console.log('displaying_first_ids:', final.map(x=>`${x.id} (${x.publishedAt})`));
+                console.groupEnd();
+            }catch(e){}
+
+            // Debug logs
+            try{
+                console.groupCollapsed(`Community loader: ${topicKey} ${topic.hashtag}`);
+                console.log('fetched_raw_count:', mapped.length);
+                console.log('first_raw_dates:', mapped.slice(0,10).map(x=>`${x.id} ${x.publishedAt}`));
+                console.log('after_filter_count:', final.length);
+                console.log('final_ids_order:', final.map(x=>`${x.id} (${x.publishedAt})`));
+                console.groupEnd();
+            }catch(e){}
+
+            const existingIds = (topic.items || []).map(i=>i.id).filter(Boolean);
+            const newIds = final.map(i=>i.id);
+            const same = existingIds.length === newIds.length && existingIds.every((v,i)=>v===newIds[i]);
+
+            topic.items = final;
+            setCachedCommunityItems(topicKey, topic.items);
+            return !same;
+        } finally{
+            delete COMMUNITY_FETCH_LOCKS[topicKey];
+        }
+    })();
+
+    COMMUNITY_FETCH_LOCKS[topicKey] = promise;
+    return promise;
+}
+
+function startCommunityAutoRefresh(){
+    try{ stopCommunityAutoRefresh(); }catch(e){}
+    communityAutoRefreshTimer = setInterval(()=>{
+        if(!activeCommunityTopicKey) return;
+        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{ if(changed) try{ renderCommunityFeedPanel(); }catch(e){} }).catch(console.error);
+    }, COMMUNITY_AUTO_REFRESH_MS);
+}
+function stopCommunityAutoRefresh(){ if(communityAutoRefreshTimer){ clearInterval(communityAutoRefreshTimer); communityAutoRefreshTimer = null; } }
+
+// Expose helper for debugging from console
+window.loadCommunityVideos = loadCommunityVideos;
+window.startCommunityAutoRefresh = startCommunityAutoRefresh;
+window.stopCommunityAutoRefresh = stopCommunityAutoRefresh;
+
 function formatCommunityPublishedAt(publishedAt){
     if(!publishedAt) return 'Data de postagem indisponivel';
     const publishedDate = new Date(publishedAt);
@@ -785,6 +970,21 @@ function setCommunityTopic(topicKey, options = {}){
     }
 
     renderCommunityFeedPanel();
+    // Force-load fresh videos on opening the Community tab
+    try{
+        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{
+            if(changed) renderCommunityFeedPanel();
+        }).catch(console.error);
+    }catch(e){}
+    // start periodic refresh
+    try{ startCommunityAutoRefresh(); }catch(e){}
+
+    // Always request fresh videos for this topic (non-blocking)
+    try{
+        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed => {
+            if(changed) renderCommunityFeedPanel();
+        }).catch(console.error);
+    }catch(e){}
 
     if(!skipStorage){
         localStorage.setItem(COMMUNITY_TOPIC_STORAGE_KEY, activeCommunityTopicKey);
@@ -842,7 +1042,7 @@ const strings = {
         calculatorTitle: 'Calculadora de Treinamento',
         rangeLabel: 'Faixa de nível',
         platesLabel: 'Plates',
-        goldCoinsLabel: 'Moedas douradas',
+        goldCoinsLabel: 'Golden Tickets',
         commonPlatesLabel: 'Plates comuns',
         shinyPlatesLabel: 'Shining Plates',
         tabTypes: 'Tipos',
@@ -1234,6 +1434,8 @@ function renderCommunityFeed(){
 }
 
 function renderCommunityFeedPanel(){
+    // Community data is loaded by `showCommunity` / `setCommunityTopic`.
+    // This function only renders current `COMMUNITY_FEED_TOPICS` state.
     const frame = document.getElementById('community-video-frame');
     const titleEl = document.getElementById('community-featured-title');
     const linkEl = document.getElementById('community-video-link');
@@ -1281,6 +1483,33 @@ function renderCommunityFeedPanel(){
             highlightsFragment.appendChild(badge);
         });
         topicHighlightsEl.replaceChildren(highlightsFragment);
+    }
+
+    // If the last fetch failed for this topic, show a small warning above the list
+    const lastErr = COMMUNITY_LAST_FETCH_ERROR[activeCommunityTopicKey];
+    const existingWarning = document.getElementById('community-fetch-warning');
+    if(lastErr){
+        const msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
+        if(existingWarning){
+            existingWarning.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
+            existingWarning.hidden = false;
+        } else {
+            const warn = document.createElement('div');
+            warn.id = 'community-fetch-warning';
+            warn.className = 'community-fetch-warning';
+            warn.setAttribute('role','status');
+            warn.style.margin = '0 0 12px 0';
+            warn.style.padding = '8px 12px';
+            warn.style.background = 'rgba(255,235,205,0.9)';
+            warn.style.border = '1px solid rgba(0,0,0,0.06)';
+            warn.style.borderRadius = '6px';
+            warn.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
+            if(listEl && listEl.parentElement){
+                listEl.parentElement.insertBefore(warn, listEl);
+            }
+        }
+    } else if(existingWarning) {
+        existingWarning.hidden = true;
     }
 
     if(!topicItems.length){
@@ -4022,6 +4251,23 @@ function showCommunity(){
         gsap.from(contentCommunity.querySelectorAll('.community-player-panel, .community-list-panel'), {opacity:0, y:18, duration:0.45, stagger:0.08});
     }
     updateUrl();
+
+    // Force a fresh load of community videos every time the user opens the Community tab
+    try{
+        const listEl = document.getElementById('community-video-list');
+        if(listEl){
+            listEl.innerHTML = '<div class="community-loading">Carregando vídeos...</div>';
+        }
+        // start periodic refresh (ensures auto-refresh runs while tab is open)
+        try{ startCommunityAutoRefresh(); }catch(e){}
+
+        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{
+            try{ renderCommunityFeedPanel(); }catch(e){}
+        }).catch(err=>{
+            console.error('Error loading community videos on tab open', err);
+            try{ renderCommunityFeedPanel(); }catch(e){}
+        });
+    }catch(e){}
 }
 
 // attempt to load tab from URL query first, fallback to localStorage
@@ -4390,18 +4636,19 @@ function updateRangeResults(){
 
         let html = `<p><strong>${t('pokemonTypeLabel')}:</strong> ${variantLabel}</p>`;
         if(variant === 'normal'){
-            html += `<p><strong>${t('commonPlatesLabel')}:</strong> ${plateCount}</p>`;
+            html += `<p><strong>${t('commonPlatesLabel')}:</strong> <span class="num" data-value="${plateCount}">${plateCount.toLocaleString()}</span></p>`;
         } else {
-            html += `<p><strong>${t('shinyPlatesLabel')}:</strong> ${plateCount}</p>`;
-            html += `<p><strong>${t('roundedProductionLabel')}:</strong> ${totalInBlocks}</p>`;
-            html += `<p><strong>${t('commonPlatesLabel')}:</strong> ${requiredCommonPlates}</p>`;
-            html += `<p><strong>${t('shiningStonesLabel')}:</strong> ${blocks}</p>`;
+            html += `<p><strong>${t('shinyPlatesLabel')}:</strong> <span class="num" data-value="${plateCount}">${plateCount.toLocaleString()}</span></p>`;
+            html += `<p><strong>${t('roundedProductionLabel')}:</strong> <span class="num" data-value="${totalInBlocks}">${totalInBlocks.toLocaleString()}</span></p>`;
+            html += `<p><strong>${t('commonPlatesLabel')}:</strong> <span class="num" data-value="${requiredCommonPlates}">${requiredCommonPlates.toLocaleString()}</span></p>`;
+            html += `<p><strong>${t('shiningStonesLabel')}:</strong> <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span></p>`;
         }
-        html += `<p><strong>${t('goldCoinsLabel')}:</strong> ${data.gold}</p>`;
-        html += `<p><strong>${t('materialsForRangeLabel')}:</strong><br>${t('calcInfoItems')
-            .replace('{elementItems}', elementItems.toLocaleString())
-            .replace('{charItems}', charItems.toLocaleString())
-            .replace('{stones}', stones.toLocaleString())}</p>`;
+        html += `<p><strong>${t('goldCoinsLabel')}:</strong> <span class="num" data-value="${data.gold}">${typeof data.gold === 'number' && data.gold.toLocaleString ? data.gold.toLocaleString() : data.gold}</span></p>`;
+        const materialsHtml = t('calcInfoItems')
+            .replace('{elementItems}', `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span>`)
+            .replace('{charItems}', `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span>`)
+            .replace('{stones}', `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span>`);
+        html += `<p><strong>${t('materialsForRangeLabel')}:</strong><br>${materialsHtml}</p>`;
         html += `<p><em>${variant === 'normal' ? t('sameQuantityNote') : t('shiningBlockNote')}</em></p>`;
         rangeResults.innerHTML = html;
         animateCalcResult(rangeResults);
@@ -4415,12 +4662,44 @@ function animateCalcResult(target){
         gsap.killTweensOf(target);
         gsap.fromTo(target,
             {opacity: 0, y: 10},
-            {opacity: 1, y: 0, duration: 0.28, overwrite: 'auto', clearProps: 'opacity,transform'}
+            {opacity: 1, y: 0, duration: 0.28, overwrite: 'auto', clearProps: 'opacity,transform', onComplete: ()=> animateNumbersIn(target)}
         );
     } else {
         target.style.opacity = '1';
         target.style.transform = 'translateY(0)';
+        animateNumbersIn(target);
     }
+}
+function animateNumbersIn(target){
+    if(!target) return;
+    const elems = target.querySelectorAll('.num[data-value]');
+    if(!elems.length) return;
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+    elems.forEach(el => {
+        const final = Number(el.getAttribute('data-value')) || 0;
+        if(useGsap && typeof gsap !== 'undefined'){
+            const obj = {val: 0};
+            gsap.to(obj, {
+                val: final,
+                duration: 0.7,
+                roundProps: 'val',
+                onUpdate: function(){
+                    el.textContent = obj.val.toLocaleString();
+                }
+            });
+        } else {
+            const start = Date.now();
+            const duration = 700;
+            function tick(){
+                const now = Date.now();
+                const t = Math.min(1, (now - start) / duration);
+                const v = Math.round(easeOutCubic(t) * final);
+                el.textContent = v.toLocaleString();
+                if(t < 1) requestAnimationFrame(tick);
+            }
+            tick();
+        }
+    });
 }
 function updateCommon(){
     const n = parseInt(commonInput.value) || 0;
@@ -4430,11 +4709,11 @@ function updateCommon(){
     const elementItems = n * perPlateElement;
     const charItems = n * perPlateChar;
     const stones = n * perPlateStone;
-    // build using translations
-    const header = t('forCommonLabel').replace('{n}', n);
-    const itemsText = `${elementItems.toLocaleString()} itens do elemento (${perPlateElement}×${n}), ` +
-                      `${charItems.toLocaleString()} itens característicos (${perPlateChar}×${n}), ` +
-                      `${stones.toLocaleString()} pedra(s) do elemento (${perPlateStone}×${n})`;
+    // build using translations (visual only)
+    const header = t('forCommonLabel').replace('{n}', `<span class="num" data-value="${n}">${n.toLocaleString()}</span>`);
+    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}×${n}), ` +
+                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens característicos (${perPlateChar}×${n}), ` +
+                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}×${n})`;
     commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
     animateCalcResult(commonResults);
 }
@@ -4443,14 +4722,14 @@ function updateShiny(){
     let html = '';
     if(n % SHINING_PLATE_BLOCK_SIZE !== 0){
         const rounded = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE) * SHINING_PLATE_BLOCK_SIZE;
-        html += `<p><em>${t('adjustNote').replace('{rounded}', rounded)}</em></p>`;
+        html += `<p><em>${t('adjustNote').replace('{rounded}', `<span class="num" data-value="${rounded}">${rounded.toLocaleString()}</span>`)}</em></p>`;
         n = rounded;
     }
     const blocks = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE);
     const commonNeeded = blocks * SHINING_PLATE_BLOCK_SIZE;
     const shiningStones = blocks;
-    html += `<p>${n} shining plate(s) requer ${commonNeeded} plate(s) comum(ns)` +
-            ` e ${shiningStones} shining stone(s) (em ${blocks} bloco(s) de 30).</p>`;
+    html += `<p><span class="num" data-value="${n}">${n.toLocaleString()}</span> shining plate(s) requer <span class="num" data-value="${commonNeeded}">${commonNeeded.toLocaleString()}</span> plate(s) comum(ns)` +
+            ` e <span class="num" data-value="${shiningStones}">${shiningStones.toLocaleString()}</span> shining stone(s) (em <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span> bloco(s) de 30).</p>`;
     shinyResults.innerHTML = html;
     animateCalcResult(shinyResults);
 }
