@@ -2124,10 +2124,10 @@ const bossConsumableCatalog = Object.freeze({
       image: 'rations/tanga_ration.png',
       description: 'Aumenta a resistencia contra ataques Bug em 30% por 60 minutos.'
     }),
-    papaya: Object.freeze({
-      label: 'Papaya Ration',
-      shortLabel: 'Papaya',
-      image: 'rations/papaya_ration.png',
+    payapa: Object.freeze({
+      label: 'payapa Ration',
+      shortLabel: 'payapa',
+      image: 'rations/payapa_ration.png',
       description: 'Aumenta a resistencia contra ataques Psychic em 30% por 60 minutos.'
     }),
     haban: Object.freeze({
@@ -2173,7 +2173,7 @@ const bossRationByAttackType = Object.freeze({
   ghost: bossConsumableCatalog.rations.kasib,
   electric: bossConsumableCatalog.rations.wacan,
   bug: bossConsumableCatalog.rations.tanga,
-  psychic: bossConsumableCatalog.rations.papaya,
+  psychic: bossConsumableCatalog.rations.payapa,
   dragon: bossConsumableCatalog.rations.haban,
   ground: bossConsumableCatalog.rations.shuca,
   flying: bossConsumableCatalog.rations.coba,
