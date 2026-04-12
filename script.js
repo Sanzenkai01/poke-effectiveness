@@ -2117,14 +2117,26 @@ const streamerStatusRequests = new Map();
 const streamerAvatarCache = new Map();
 const streamerAvatarRequests = new Map();
 const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
-const TWITCH_BEARER_TOKEN = '64x58lwsqijyp2cq6s102opfymvyd4';
+const TWITCH_BEARER_TOKEN = 'cwi0gfzerzkms3tnkwei7vymasc5mm';
 const TWITCH_CHAT_USERNAME = 'linikerquadrado2';
 const TWITCH_CHAT_OAUTH_TOKEN = 'oauth:ir0wi4tuxkv7c8xhsk0ivx52d3pf48';
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v1';
+const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-credentials-v1';
 const STREAMER_RAT_PERSIST_HEARTBEAT_MS = 15 * 1000;
+
+function computeTwitchCredentialsFingerprint(){
+    const raw = `${TWITCH_CLIENT_ID || ''}::${TWITCH_BEARER_TOKEN || ''}`;
+    let h = 0;
+    for(let i = 0; i < raw.length; i++){
+        h = ((h << 5) - h) + raw.charCodeAt(i);
+        h |= 0;
+    }
+    return String(h);
+}
+let twitchCredentialsInvalidUntil = 0;
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 const STREAMER_RAT_RECONNECT_DELAY_MS = 5000;
@@ -2345,6 +2357,20 @@ function loadPersistedStreamerStatusCache(){
     if(typeof window === 'undefined' || !window.localStorage) return;
 
     try {
+        // Invalidate persisted caches if Twitch credentials changed since
+        // the last time the site stored cached streamer state.
+        try {
+            const currentFingerprint = computeTwitchCredentialsFingerprint();
+            const storedFingerprint = window.localStorage.getItem(TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY);
+            if(storedFingerprint && storedFingerprint !== currentFingerprint){
+                window.localStorage.removeItem(STREAMER_STATUS_CACHE_STORAGE_KEY);
+                window.localStorage.removeItem(STREAMER_RAT_TIMER_STORAGE_KEY);
+            }
+            window.localStorage.setItem(TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY, currentFingerprint);
+        } catch(e) {
+            // ignore fingerprint errors and continue loading cache normally
+        }
+
         const raw = window.localStorage.getItem(STREAMER_STATUS_CACHE_STORAGE_KEY);
         if(!raw) return;
 
@@ -3263,6 +3289,12 @@ function fetchStreamerStatus(name, isNonDrop = false){
             return queryDecapi();
         }
 
+        // If we've recently observed invalid credentials (401), avoid
+        // calling Helix again for a short period to reduce repeated 401s.
+        if(Date.now() < twitchCredentialsInvalidUntil){
+            return queryDecapi();
+        }
+
         const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
         return fetch(url, {
             headers: {
@@ -3273,6 +3305,12 @@ function fetchStreamerStatus(name, isNonDrop = false){
         })
         .then(r => {
             if(!r.ok){
+                if(r.status === 401){
+                    // Mark credentials as invalid for a short TTL to avoid spam
+                    // of unauthorized requests while the client updates tokens.
+                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000); // 60s
+                    console.warn('Twitch API returned 401 Unauthorized; falling back to decapi.me for 60s');
+                }
                 return queryDecapi();
             }
             return r.json().then(data => {
