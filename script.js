@@ -290,6 +290,57 @@ let communityAutoRefreshTimer = null;
 let LAST_YT_API_ERROR = null;
 // Per-topic last fetch error (populated when API fetch fails)
 let COMMUNITY_LAST_FETCH_ERROR = {};
+// When quota is exceeded, suspend further API calls for this duration
+const COMMUNITY_API_QUOTA_COOLDOWN_MS = 1000 * 60 * 30; // 30 minutes
+let LAST_YT_QUOTA_EXCEEDED_UNTIL = 0;
+// Next scheduled daily refresh timestamp (ms since epoch) — for debug/inspection
+let NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
+
+function computeNextDailyRefreshTime(hour = 10, minute = 30){
+    const now = new Date();
+    let next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0, 0);
+    if(next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+    return next;
+}
+
+async function runDailyCommunityRefresh(){
+    if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
+        console.warn('Skipping daily community refresh: YouTube quota suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+        return;
+    }
+
+    const topicKeys = Object.keys(COMMUNITY_FEED_TOPICS || {});
+    for(const topicKey of topicKeys){
+        try{
+            // Load each hashtag individually to avoid broad queries
+            const changed = await loadCommunityVideos(topicKey, { force: true });
+            if(changed && activeCommunityTopicKey === topicKey){
+                try{ renderCommunityFeedPanel(); }catch(e){}
+            }
+        }catch(err){
+            console.error('Daily refresh error for topic', topicKey, err);
+        }
+        // small delay between topic fetches to reduce burst rate
+        await new Promise(r => setTimeout(r, 1200));
+        if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
+            console.warn('Aborting remaining daily refresh topics due to quota suspension');
+            break;
+        }
+    }
+}
+
+function scheduleDailyCommunityRefresh(hour = 10, minute = 30){
+    try{ if(communityAutoRefreshTimer){ clearTimeout(communityAutoRefreshTimer); communityAutoRefreshTimer = null; } }catch(e){}
+    const next = computeNextDailyRefreshTime(hour, minute);
+    const ms = next.getTime() - Date.now();
+    NEXT_DAILY_COMMUNITY_REFRESH_AT = next.getTime();
+    communityAutoRefreshTimer = setTimeout(async function _dailyRunner(){
+        try{ await runDailyCommunityRefresh(); }catch(e){ console.error('Error running scheduled daily community refresh', e); }
+        // schedule next occurrence (handles DST)
+        try{ scheduleDailyCommunityRefresh(hour, minute); }catch(e){ console.error(e); }
+    }, ms);
+    console.info('Scheduled daily community refresh at', new Date(NEXT_DAILY_COMMUNITY_REFRESH_AT).toString());
+}
 
 function _getCommunityCacheKey(topicKey){ return `community_cache_${topicKey}`; }
 function getCachedCommunityItems(topicKey){
@@ -304,38 +355,200 @@ function getCachedCommunityItems(topicKey){
 }
 function setCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
 
+// Persistent cache for last-successful fetches (longer TTL so recent videos survive longer)
+const COMMUNITY_PERSISTENT_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+function _getPersistentCommunityCacheKey(topicKey){ return `community_persistent_cache_${topicKey}`; }
+function getPersistentCachedCommunityItems(topicKey){
+    try{
+        const raw = localStorage.getItem(_getPersistentCommunityCacheKey(topicKey));
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        if(!parsed || !parsed.ts || !parsed.items) return null;
+        if(Date.now() - parsed.ts > COMMUNITY_PERSISTENT_CACHE_TTL){ localStorage.removeItem(_getPersistentCommunityCacheKey(topicKey)); return null; }
+        return parsed.items;
+    }catch(e){ try{ localStorage.removeItem(_getPersistentCommunityCacheKey(topicKey)); }catch(_){} return null; }
+}
+function setPersistentCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getPersistentCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
+
 async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RESULTS){
     const key = getYouTubeApiKey();
     if(!key) return null;
     if(!hashtag) return null;
 
-    // Strip leading '#' from the search term to avoid encoding issues
+    // If we've previously detected a quota exhaustion, skip network calls until cooldown expires
+    if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
+        LAST_YT_API_ERROR = { message: 'YouTube API quota suspended', quota: true, resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString() };
+        console.warn('YouTube API quota suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+        return null;
+    }
+    // Strip leading '#' from the search term for canonical form
     const rawQuery = String(hashtag || '').replace(/^#/, '').trim();
     if(!rawQuery) return null;
+    const lc = rawQuery.toLowerCase();
 
-    const q = encodeURIComponent(rawQuery);
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&maxResults=${maxResults}&q=${q}&key=${encodeURIComponent(key)}`;
-    try{
+    // First, try exact variants only to avoid broad matches leaking into specific topics
+    const initialVariants = [rawQuery, `#${rawQuery}`];
+    const tried = [];
+    const resultsAcc = [];
+
+    const doQuery = async (qRaw) => {
+        tried.push(qRaw);
+        const q = encodeURIComponent(qRaw);
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&maxResults=${maxResults}&q=${q}&key=${encodeURIComponent(key)}`;
         const resp = await fetch(url);
-        if(!resp.ok) {
-            // Try to surface the API error body for easier debugging
+        if(!resp.ok){
             let errText = '';
+            let isQuota = false;
             try{
                 const json = await resp.clone().json();
                 errText = json?.error?.message || JSON.stringify(json);
+                const reason = json?.error?.errors?.[0]?.reason;
+                if(reason === 'quotaExceeded' || reason === 'dailyLimitExceeded' || /quota/i.test(errText)){
+                    isQuota = true;
+                }
             }catch(e){
                 try{ errText = await resp.clone().text(); }catch(e2){ errText = '(no body)'; }
             }
-            LAST_YT_API_ERROR = { status: resp.status, statusText: resp.statusText, message: errText };
-            console.warn('YouTube API fetch failed', resp.status, resp.statusText, errText);
-            return null;
+
+            LAST_YT_API_ERROR = { status: resp.status, statusText: resp.statusText, message: errText, query: qRaw, quota: isQuota };
+            console.warn('YouTube API fetch failed', resp.status, resp.statusText, errText, 'query:', qRaw, 'quota:', isQuota);
+
+            if(isQuota){
+                // mark cooldown window and stop auto refresh to avoid further quota usage
+                LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
+                try{ stopCommunityAutoRefresh(); }catch(e){}
+                console.warn('YouTube API quota exceeded — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+            }
+
+            throw new Error(errText || 'YouTube API error');
         }
         const data = await resp.json();
-        // clear previous error on success
         LAST_YT_API_ERROR = null;
-        if(!data || !Array.isArray(data.items)) return null;
+        if(!data || !Array.isArray(data.items)) return [];
         return data.items.map(it => ({ id: it?.id?.videoId || '', snippet: it.snippet || {} })).filter(x=>x.id);
-    }catch(err){ LAST_YT_API_ERROR = { message: String(err) }; console.warn('YouTube fetch error', err); return null; }
+    };
+
+    try{
+        for(const v of initialVariants){
+            const mapped = await doQuery(v);
+            if(mapped.length) resultsAcc.push(...mapped);
+        }
+    }catch(err){
+        return null;
+    }
+
+    // If no results from exact variants, try broader variants (e.g., 'pstory')
+    if(!resultsAcc.length){
+        const broader = new Set();
+        if(lc.startsWith('pstory')){
+            broader.add('pstory');
+            const suffix = lc.slice('pstory'.length).trim();
+            if(suffix) broader.add(`pstory ${suffix}`);
+            if(suffix) broader.add(`${suffix} pstory`);
+        }
+
+        if(broader.size){
+            try{
+                for(const v of Array.from(broader)){
+                    const mapped = await doQuery(v);
+                    if(mapped.length) resultsAcc.push(...mapped);
+                }
+            }catch(err){
+                return null;
+            }
+        }
+    }
+
+    if(!resultsAcc.length){
+        console.info('No results from any query variants:', tried);
+        return null;
+    }
+
+    // Deduplicate by id, keeping the latest publishedAt entry when duplicates exist
+    const byId = {};
+    resultsAcc.forEach(item => {
+        if(!item || !item.id) return;
+        const existing = byId[item.id];
+        if(!existing) byId[item.id] = item;
+        else {
+            const a = new Date(existing.snippet.publishedAt || 0).getTime();
+            const b = new Date(item.snippet.publishedAt || 0).getTime();
+            if(b > a) byId[item.id] = item;
+        }
+    });
+
+    const combined = Object.values(byId);
+
+    // If the newest found video is older than RECENT_THRESHOLD_MS,
+    // attempt a targeted search limited to recent uploads (publishedAfter) for the same tried queries
+    const RECENT_THRESHOLD_MS = 1000 * 60 * 60 * 48; // 48 hours
+    const newestTs = combined.reduce((acc, it) => {
+        const t = Date.parse(it.snippet?.publishedAt || '') || 0;
+        return Math.max(acc, t);
+    }, 0);
+
+    if(Date.now() - newestTs > RECENT_THRESHOLD_MS){
+        console.info('Community loader: no recent items found; attempting publishedAfter fallback for variants', tried);
+        const recentAfterIso = new Date(Date.now() - RECENT_THRESHOLD_MS).toISOString();
+
+        try{
+            for(const qRaw of tried){
+                const q = encodeURIComponent(qRaw);
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&publishedAfter=${encodeURIComponent(recentAfterIso)}&maxResults=${maxResults}&q=${q}&key=${encodeURIComponent(key)}`;
+                const resp = await fetch(url);
+                if(!resp.ok){
+                    let errText = '';
+                    let isQuota = false;
+                    try{
+                        const json = await resp.clone().json();
+                        errText = json?.error?.message || JSON.stringify(json);
+                        const reason = json?.error?.errors?.[0]?.reason;
+                        if(reason === 'quotaExceeded' || reason === 'dailyLimitExceeded' || /quota/i.test(errText)){
+                            isQuota = true;
+                        }
+                    }catch(e){ try{ errText = await resp.clone().text(); }catch(e2){ errText = '(no body)'; } }
+
+                    LAST_YT_API_ERROR = { status: resp.status, statusText: resp.statusText, message: errText, query: qRaw, fallback: true, quota: isQuota };
+                    console.warn('YouTube API fetch failed (fallback)', resp.status, resp.statusText, errText, 'query:', qRaw, 'quota:', isQuota);
+
+                    if(isQuota){
+                        LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
+                        try{ stopCommunityAutoRefresh(); }catch(e){}
+                        console.warn('YouTube API quota exceeded (fallback) — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                    }
+
+                    return null;
+                }
+                const data = await resp.json();
+                LAST_YT_API_ERROR = null;
+                if(data && Array.isArray(data.items) && data.items.length){
+                    const mappedRecent = data.items.map(it => ({ id: it?.id?.videoId || '', snippet: it.snippet || {} })).filter(x=>x.id);
+                    mappedRecent.forEach(item => {
+                        if(!item || !item.id) return;
+                        const existing = byId[item.id];
+                        if(!existing) byId[item.id] = item;
+                        else {
+                            const a = new Date(existing.snippet.publishedAt || 0).getTime();
+                            const b = new Date(item.snippet.publishedAt || 0).getTime();
+                            if(b > a) byId[item.id] = item;
+                        }
+                    });
+                }
+            }
+        }catch(err){
+            LAST_YT_API_ERROR = { message: String(err), fallback: true };
+            console.warn('YouTube fetch error (fallback)', err);
+            return null;
+        }
+
+        const finalCombined = Object.values(byId);
+        if(finalCombined.length){
+            console.info('Community loader: fallback added recent items, total now', finalCombined.length);
+            return finalCombined;
+        }
+    }
+
+    return combined;
 }
 
 async function loadCommunityVideos(topicKey, options = {}){
@@ -348,24 +561,52 @@ async function loadCommunityVideos(topicKey, options = {}){
             const topic = COMMUNITY_FEED_TOPICS[topicKey];
             if(!topic) return false;
 
-            // If not forced, allow cache to short-circuit
+            // If quota is suspended globally, do not attempt network fetches — use persistent/cache/local fallback
+            if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
+                console.warn('Skipping YouTube fetch for', topicKey, 'because quota is suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                COMMUNITY_LAST_FETCH_ERROR[topicKey] = { message: 'YouTube API quota exceeded; using cached/local items', resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString(), quota: true };
+                try{
+                    const persistent = getPersistentCachedCommunityItems(topicKey);
+                    if(persistent && persistent.length){ topic.items = persistent.slice(0, COMMUNITY_MAX_DISPLAY); setCachedCommunityItems(topicKey, topic.items); return false; }
+                    const cached = getCachedCommunityItems(topicKey);
+                    if(cached){ topic.items = cached; return false; }
+                    const fallback = getCommunityTopicItems(topic).slice(0, COMMUNITY_MAX_DISPLAY);
+                    if(fallback && fallback.length){ topic.items = fallback; setCachedCommunityItems(topicKey, topic.items); }
+                }catch(e){ /* ignore fallback failure */ }
+                return false;
+            }
+
+            // If not forced, allow cache (short or persistent) to short-circuit
             if(!force){
                 const cached = getCachedCommunityItems(topicKey);
                 if(cached) { topic.items = cached; return false; }
+                const persistent = getPersistentCachedCommunityItems(topicKey);
+                if(persistent && persistent.length){ topic.items = persistent; return false; }
             }
 
             const raw = await fetchVideosFromYouTubeRaw(topic.hashtag, maxResults);
             if(!raw || !raw.length) {
                 console.info('No videos returned from YouTube for', topic.hashtag);
                 // Record per-topic error for UI feedback (grab last recorded error if any)
-                COMMUNITY_LAST_FETCH_ERROR[topicKey] = LAST_YT_API_ERROR || { message: 'No results' };
+                const lastErrCopy = LAST_YT_API_ERROR ? { ...LAST_YT_API_ERROR } : { message: 'No results' };
+                if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
+                    lastErrCopy.quota = true;
+                    lastErrCopy.resumeAt = new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString();
+                }
+                COMMUNITY_LAST_FETCH_ERROR[topicKey] = lastErrCopy;
 
-                // Fallback: use static topic items (local list + metadata) so UI still shows content
+                // Fallback: prefer persistent cache, then static topic items (local list + metadata)
                 try{
-                    const fallback = getCommunityTopicItems(topic).slice(0, COMMUNITY_MAX_DISPLAY);
-                    if(fallback && fallback.length){
-                        topic.items = fallback;
+                    const persistentCached = getPersistentCachedCommunityItems(topicKey);
+                    if(persistentCached && persistentCached.length){
+                        topic.items = persistentCached.slice(0, COMMUNITY_MAX_DISPLAY);
                         setCachedCommunityItems(topicKey, topic.items);
+                    } else {
+                        const fallback = getCommunityTopicItems(topic).slice(0, COMMUNITY_MAX_DISPLAY);
+                        if(fallback && fallback.length){
+                            topic.items = fallback;
+                            setCachedCommunityItems(topicKey, topic.items);
+                        }
                     }
                 }catch(e){ /* ignore fallback failure */ }
 
@@ -390,9 +631,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             // Sort by publishedAt desc
             mapped.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
 
-            // Previously we filtered results by title/description which could
-            // accidentally exclude recent uploads. Instead, keep the chronological
-            // search results (newest first) and use the match set only for stats.
+            // Prioritize items that explicitly contain the hashtag in title/description
             const needle = (topic.hashtag || '').replace(/^#/, '').toLowerCase();
             const matched = mapped.filter(v => {
                 const t = (v.title || '').toLowerCase();
@@ -400,10 +639,16 @@ async function loadCommunityVideos(topicKey, options = {}){
                 return (t.includes(needle) || d.includes(needle) || t.includes('#'+needle) || d.includes('#'+needle));
             });
 
-            // Take the top N from the chronological results so newest uploads always appear
-            const finalRaw = mapped.slice(0, COMMUNITY_MAX_DISPLAY);
+            // If there are explicit matches (title/description contains hashtag), show only those.
+            // Otherwise fall back to the mapped results returned by the API.
+            let finalCandidates;
+            if(matched.length){
+                finalCandidates = matched.slice(0, COMMUNITY_MAX_DISPLAY);
+            } else {
+                finalCandidates = mapped.slice(0, COMMUNITY_MAX_DISPLAY);
+            }
 
-            const final = finalRaw.map(v=>({ id:v.id, title:v.title, channelName:v.channelName, channelUrl:v.channelUrl, publishedAt:v.publishedAt, thumbnailUrl:v.thumbnailUrl, description:v.description }));
+            const final = finalCandidates.map(v=>({ id:v.id, title:v.title, channelName:v.channelName, channelUrl:v.channelUrl, publishedAt:v.publishedAt, thumbnailUrl:v.thumbnailUrl, description:v.description }));
 
             // Debug logs (preserve useful output)
             try{
@@ -431,6 +676,8 @@ async function loadCommunityVideos(topicKey, options = {}){
 
             topic.items = final;
             setCachedCommunityItems(topicKey, topic.items);
+            // Persist last-successful fetch to longer-lived cache so recent videos remain available
+            try{ setPersistentCachedCommunityItems(topicKey, topic.items); }catch(e){}
             return !same;
         } finally{
             delete COMMUNITY_FETCH_LOCKS[topicKey];
@@ -441,19 +688,40 @@ async function loadCommunityVideos(topicKey, options = {}){
     return promise;
 }
 
-function startCommunityAutoRefresh(){
+function startCommunityAutoRefresh(hour = 10, minute = 30){
     try{ stopCommunityAutoRefresh(); }catch(e){}
-    communityAutoRefreshTimer = setInterval(()=>{
-        if(!activeCommunityTopicKey) return;
-        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{ if(changed) try{ renderCommunityFeedPanel(); }catch(e){} }).catch(console.error);
-    }, COMMUNITY_AUTO_REFRESH_MS);
+    // Schedule a daily refresh at the given hour:minute (local time)
+    try{ scheduleDailyCommunityRefresh(hour, minute); }catch(e){ console.error('Failed to schedule daily community refresh', e); }
 }
-function stopCommunityAutoRefresh(){ if(communityAutoRefreshTimer){ clearInterval(communityAutoRefreshTimer); communityAutoRefreshTimer = null; } }
+function stopCommunityAutoRefresh(){
+    try{
+        if(communityAutoRefreshTimer){ clearTimeout(communityAutoRefreshTimer); communityAutoRefreshTimer = null; }
+    }catch(e){}
+    NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
+}
 
 // Expose helper for debugging from console
 window.loadCommunityVideos = loadCommunityVideos;
 window.startCommunityAutoRefresh = startCommunityAutoRefresh;
 window.stopCommunityAutoRefresh = stopCommunityAutoRefresh;
+
+// Debug helper to inspect recent fetch errors, locks and cached items from console
+window.getCommunityDebug = function(){
+    try{
+        return {
+            LAST_YT_API_ERROR: LAST_YT_API_ERROR,
+            COMMUNITY_LAST_FETCH_ERROR: COMMUNITY_LAST_FETCH_ERROR,
+            COMMUNITY_FETCH_LOCKS: COMMUNITY_FETCH_LOCKS,
+            activeCommunityTopicKey: activeCommunityTopicKey,
+            cachedItems: typeof activeCommunityTopicKey === 'string' ? getCachedCommunityItems(activeCommunityTopicKey) : null,
+            persistentCachedItems: typeof activeCommunityTopicKey === 'string' ? getPersistentCachedCommunityItems(activeCommunityTopicKey) : null,
+            COMMUNITY_PERSISTENT_CACHE_TTL: COMMUNITY_PERSISTENT_CACHE_TTL,
+            LAST_YT_QUOTA_EXCEEDED_UNTIL: LAST_YT_QUOTA_EXCEEDED_UNTIL || null,
+            COMMUNITY_API_QUOTA_COOLDOWN_MS: COMMUNITY_API_QUOTA_COOLDOWN_MS,
+            NEXT_DAILY_COMMUNITY_REFRESH_AT: NEXT_DAILY_COMMUNITY_REFRESH_AT || null
+        };
+    }catch(e){ return { error: String(e) }; }
+};
 
 function formatCommunityPublishedAt(publishedAt){
     if(!publishedAt) return 'Data de postagem indisponivel';
@@ -1489,7 +1757,12 @@ function renderCommunityFeedPanel(){
     const lastErr = COMMUNITY_LAST_FETCH_ERROR[activeCommunityTopicKey];
     const existingWarning = document.getElementById('community-fetch-warning');
     if(lastErr){
-        const msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
+        // Prefer a sanitized user-facing message for quota-related failures
+        let msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
+        if(lastErr.quota){
+            msg = 'Cota da API do YouTube excedida';
+            if(lastErr.resumeAt) msg += ` — retomando a partir de ${lastErr.resumeAt}`;
+        }
         if(existingWarning){
             existingWarning.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
             existingWarning.hidden = false;
@@ -4252,22 +4525,12 @@ function showCommunity(){
     }
     updateUrl();
 
-    // Force a fresh load of community videos every time the user opens the Community tab
+    // Start scheduled daily refresh (default 10:30 local time) instead of fetching immediately on tab open
     try{
-        const listEl = document.getElementById('community-video-list');
-        if(listEl){
-            listEl.innerHTML = '<div class="community-loading">Carregando vídeos...</div>';
-        }
-        // start periodic refresh (ensures auto-refresh runs while tab is open)
-        try{ startCommunityAutoRefresh(); }catch(e){}
-
-        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{
-            try{ renderCommunityFeedPanel(); }catch(e){}
-        }).catch(err=>{
-            console.error('Error loading community videos on tab open', err);
-            try{ renderCommunityFeedPanel(); }catch(e){}
-        });
-    }catch(e){}
+        startCommunityAutoRefresh(10, 30);
+    }catch(e){
+        console.error('Failed to start community daily refresh', e);
+    }
 }
 
 // attempt to load tab from URL query first, fallback to localStorage
