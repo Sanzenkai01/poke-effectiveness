@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tochas — Acenda Todas</title>
+  <style>
+    :root{
+      --bg-1: #071028;
+      --bg-2: #0b1a2b;
+      --accent: #ffb85c;
+      --accent-2: #ff6a00;
+      --muted: rgba(255,255,255,0.14);
+      --glass: rgba(255,255,255,0.04);
+      --easing: cubic-bezier(.2,.9,.2,1);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,200,80,0.02), transparent 10%), linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:18px;
+    }
+
+    .wrap{
+      width:min(96vw,1200px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;
+      padding:18px;
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      position:relative;
+      overflow:visible;
+      max-height:92vh;
+    }
+
+    .hud{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .title{
+      font-weight:700;
+      letter-spacing:0.4px;
+      font-size:1.15rem;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-left:auto;
+    }
+
+    .counter{
+      background:var(--glass);
+      padding:8px 12px;
+      border-radius:10px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-weight:600;
+      color:#fff;
+      font-size:0.95rem;
+      white-space:nowrap;
+    }
+
+    button.btn{
+      background: linear-gradient(180deg,#ffd98a,#ffb64a);
+      border:none;
+      color:#111;
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      transition: transform 140ms var(--easing), box-shadow 140ms var(--easing), opacity 140ms var(--easing), background 140ms var(--easing);
+      box-shadow: 0 6px 18px rgba(255,140,20,0.14);
+    }
+
+    button.btn:active{transform:translateY(1px) scale(0.99)}
+    button.btn:disabled{
+      opacity:0.55;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    button.btn.secondary{
+      background: rgba(255,255,255,0.06);
+      color:#fff;
+      box-shadow:none;
+      border:1px solid rgba(255,255,255,0.10);
+    }
+
+    button.btn.secondary:hover{
+      background: rgba(255,255,255,0.10);
+    }
+
+    .scene{
+      position:relative;
+      flex:0 0 auto;
+      width:100%;
+      aspect-ratio: 1094 / 606;
+      border-radius:12px;
+      background: radial-gradient(600px 220px at 50% 30%, rgba(255,255,255,0.02), transparent 10%), linear-gradient(180deg, rgba(0,0,0,0.06), transparent 30%);
+      overflow:visible;
+    }
+
+    .central-rock{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:42%;
+      height:42%;
+      background: radial-gradient(circle at 30% 30%, #2e3a44, #11161a);
+      border-radius:50%;
+      filter:brightness(0.9);
+      box-shadow: 0 18px 60px rgba(2,8,20,0.6) inset;
+      pointer-events:none;
+    }
+
+    .torch{
+      position:absolute;
+      width:clamp(40px,5.6vmin,74px);
+      height:clamp(82px,11vmin,148px);
+      transform:translate(-50%,-50%);
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      cursor:pointer;
+      transition: transform 180ms var(--easing), filter 180ms var(--easing);
+      will-change:transform;
+      user-select:none;
+      outline:none;
+    }
+
+    .torch:focus{
+      box-shadow:0 6px 18px rgba(255,200,80,0.1);
+      transform:translate(-50%,-50%) scale(1.02);
+    }
+
+    .torch.clicked{
+      transform:translate(-50%,-50%) scale(0.96);
+    }
+
+    .stick{
+      width:18%;
+      height:66%;
+      background: linear-gradient(180deg,#6b3f2b,#3b2418);
+      border-radius:12px;
+      box-shadow: inset 0 6px 14px rgba(255,255,255,0.03), 0 6px 18px rgba(0,0,0,0.6);
+      position:relative;
+      z-index:1;
+    }
+
+    .flame{
+      position:absolute;
+      bottom:64%;
+      width:44%;
+      height:44%;
+      transform-origin:50% 90%;
+      transition: opacity 230ms var(--easing), transform 230ms var(--easing), filter 230ms var(--easing);
+      z-index:2;
+      pointer-events:none;
+    }
+
+    .flame .core{
+      position:absolute;
+      left:50%;
+      top:40%;
+      transform:translate(-50%,-50%);
+      width:100%;
+      height:100%;
+      border-radius:50% 50% 40% 40% / 60% 60% 40% 40%;
+      background: radial-gradient(circle at 30% 30%, #fff6b8 0% 12%, #ffd36a 26%, #ff6a00 64%, transparent 66%);
+      filter:drop-shadow(0 6px 16px rgba(255,140,0,0.18));
+      transition: transform 300ms var(--easing), opacity 200ms var(--easing);
+      mix-blend-mode: screen;
+    }
+
+    .flame::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:52%;
+      transform:translate(-50%,-50%);
+      width:220%;
+      height:220%;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(255,160,60,0.18), rgba(255,120,20,0.06), transparent 60%);
+      filter: blur(6px);
+      opacity:0;
+      transition: opacity 260ms var(--easing);
+    }
+
+    .num-badge{
+      position:absolute;
+      bottom:-8px;
+      left:50%;
+      transform:translate(-50%, 50%);
+      background: linear-gradient(180deg,#ffd98a,#ffb64a);
+      color:#111;
+      font-weight:800;
+      min-width:24px;
+      height:24px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:0.8rem;
+      box-shadow:0 6px 18px rgba(255,140,20,0.12);
+      z-index:3;
+      pointer-events:none;
+    }
+    .torch.active-solve{ transform:translate(-50%,-50%) scale(1.04); z-index:60; }
+    .torch.active-solve .core{ transform:translate(-50%,-50%) scale(1.18); filter: drop-shadow(0 12px 30px rgba(255,140,20,0.28)); }
+    .torch.active-solve .flame::after{ opacity:1; filter: blur(8px); }
+
+    .torch.on .core{opacity:1; transform:translate(-50%,-50%) scale(1)}
+    .torch.on .flame::after{opacity:1}
+    .torch.off .core{opacity:0; transform:translate(-50%,-50%) scale(0.55)}
+
+    .torch.pulse{animation: pulse 360ms ease forwards}
+    @keyframes pulse{
+      0%{transform:translate(-50%,-50%) scale(1)}
+      60%{transform:translate(-50%,-50%) scale(1.08)}
+      100%{transform:translate(-50%,-50%) scale(1)}
+    }
+
+    .torch.on .core{animation: flicker 900ms linear infinite}
+    @keyframes flicker{
+      0%{transform:translate(-50%,-50%) scale(1)}
+      40%{transform:translate(-50%,-48%) scale(1.04)}
+      70%{transform:translate(-50%,-50%) scale(0.98)}
+      100%{transform:translate(-50%,-50%) scale(1)}
+    }
+
+    .overlay{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(94vw,720px);
+      max-width:720px;
+      padding:18px;
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(8,10,12,0.92), rgba(8,10,12,0.88));
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      text-align:center;
+      display:none;
+      z-index:9999;
+      max-height:86vh;
+      overflow:auto;
+    }
+
+    .overlay.show{display:block}
+    .overlay h2{margin:0 0 8px;font-size:1.4rem}
+    .overlay p{margin:0 0 14px; color:var(--muted)}
+
+    .solution-overlay{
+      width:92%;
+      max-width:720px;
+      text-align:left;
+    }
+
+    .solution-list{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+      max-height:min(48vh,420px);
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .solution-step{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:12px 12px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .step-badge{
+      min-width:30px;
+      height:30px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#111;
+      background: linear-gradient(180deg,#ffd98a,#ffb64a);
+      flex:0 0 auto;
+    }
+
+    .step-text{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      line-height:1.25;
+    }
+
+    .step-text strong{
+      font-size:0.98rem;
+    }
+
+    .step-text span{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .solution-actions{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+
+    .confetti-piece{
+      position:absolute;
+      width:10px;
+      height:14px;
+      border-radius:2px;
+      opacity:0.95;
+      transform-origin:center;
+      z-index:40;
+      pointer-events:none;
+      animation: confetti-fall 1600ms linear forwards;
+    }
+
+    @keyframes confetti-fall{
+      0%{transform:translateY(-10vh) rotate(0); opacity:1}
+      100%{transform:translateY(70vh) rotate(720deg); opacity:0}
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    @media (max-width:520px){
+      .title{font-size:1rem}
+      .counter{font-size:0.88rem}
+      .controls{width:100%; justify-content:flex-end}
+      .hud{align-items:flex-start}
+      .overlay{width:94%}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="Tochas: Acenda todas">
+    <div class="hud">
+      <div>
+        <div class="title">Tochas — Acenda todas</div>
+        <div class="hint">Clique em uma tocha para alternar ela e suas vizinhas</div>
+      </div>
+      <div class="controls">
+        <button id="solveBtn" class="btn secondary">Acender todas</button>
+          <button id="configBtn" class="btn secondary" aria-pressed="false">Configurar</button>
+        <div class="counter" aria-live="polite">Movimentos: <span id="moves">0</span></div>
+        <button id="restart" class="btn">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="scene" id="scene">
+      <div class="central-rock" aria-hidden="true"></div>
+    </div>
+
+    <div class="overlay" id="victoryOverlay" role="dialog" aria-modal="true">
+      <h2>Parabéns!</h2>
+      <p>Todas as 8 tochas estão acesas.</p>
+      <p class="hint">Movimentos: <strong id="overlay-moves">0</strong></p>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
+        <button id="overlay-restart" class="btn">Jogar novamente</button>
+      </div>
+    </div>
+
+    <div class="overlay solution-overlay" id="solutionOverlay" role="dialog" aria-modal="true" aria-labelledby="solutionTitle">
+      <h2 id="solutionTitle">Resolver</h2>
+      <p id="solutionText">
+        Os passos abaixo mostram exatamente quais tochas precisam ser clicadas para acender todas.
+      </p>
+      <div class="solution-list" id="solutionList"></div>
+      <div class="solution-actions">
+        <button id="applySolutionBtn" class="btn">Resolver</button>
+        <button id="closeSolutionBtn" class="btn secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const N = 8;
+    const TORCH_NAMES = [
+      'Topo-esquerda',
+      'Topo-centro',
+      'Topo-direita',
+      'Meio-esquerda',
+      'Meio-direita',
+      'Baixo-esquerda',
+      'Baixo-centro',
+      'Baixo-direita',
+    ];
+
+    const scene = document.getElementById('scene');
+    const movesEl = document.getElementById('moves');
+    const victoryOverlay = document.getElementById('victoryOverlay');
+    const overlayMoves = document.getElementById('overlay-moves');
+    const restartBtn = document.getElementById('restart');
+    const overlayRestart = document.getElementById('overlay-restart');
+
+    const solveBtn = document.getElementById('solveBtn');
+    const configBtn = document.getElementById('configBtn');
+    const solutionOverlay = document.getElementById('solutionOverlay');
+    const solutionText = document.getElementById('solutionText');
+    const solutionList = document.getElementById('solutionList');
+    const applySolutionBtn = document.getElementById('applySolutionBtn');
+    const closeSolutionBtn = document.getElementById('closeSolutionBtn');
+    const hintEl = document.querySelector('.hud .hint');
+
+    let initialOff = Math.floor(Math.random() * N);
+    let torchState = Array.from({ length: N }, (_, i) => (i === initialOff ? false : true));
+    let moves = 0;
+    let gameOver = false;
+    let isAutoSolving = false;
+    let currentSolution = [];
+    let autoSolveTimer = null;
+    let configMode = false;
+
+    function setConfigMode(on) {
+      configMode = Boolean(on);
+      try {
+        if (configBtn) {
+          configBtn.setAttribute('aria-pressed', String(configMode));
+          configBtn.classList.toggle('active', configMode);
+        }
+      } catch (e) {}
+      try {
+        if (hintEl) {
+          hintEl.textContent = configMode
+            ? 'Modo configurar: clique em uma tocha para alternar apenas ela.'
+            : 'Clique em uma tocha para alternar ela e suas vizinhas';
+        }
+      } catch (e) {}
+    }
+
+    function createTorchElement(index){
+      const t = document.createElement('div');
+      t.className = 'torch';
+      t.dataset.index = index;
+      t.tabIndex = 0;
+      t.setAttribute('role', 'button');
+      t.setAttribute('aria-pressed', String(torchState[index]));
+      t.title = `Tocha ${index + 1} — ${TORCH_NAMES[index]}`;
+
+      const stick = document.createElement('div');
+      stick.className = 'stick';
+
+      const flame = document.createElement('div');
+      flame.className = 'flame';
+
+      const core = document.createElement('div');
+      core.className = 'core';
+
+      flame.appendChild(core);
+      t.appendChild(stick);
+      t.appendChild(flame);
+
+      // number badge for easy identification (moved to bottom)
+      const numBadge = document.createElement('div');
+      numBadge.className = 'num-badge';
+      numBadge.textContent = String(index + 1);
+      t.appendChild(numBadge);
+
+      t.addEventListener('click', () => handleClick(index));
+      t.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          handleClick(index);
+        }
+      });
+
+      return t;
+    }
+
+    const TORCH_POSITIONS = [
+      { x: 0.228, y: 0.116 },
+      { x: 0.484, y: 0.066 },
+      { x: 0.718, y: 0.099 },
+      { x: 0.069, y: 0.479 },
+      { x: 0.869, y: 0.479 },
+      { x: 0.251, y: 0.866 },
+      { x: 0.512, y: 0.866 },
+      { x: 0.722, y: 0.858 },
+    ];
+
+    function positionTorches(){
+      const rect = scene.getBoundingClientRect();
+      const nodes = scene.querySelectorAll('.torch');
+
+      nodes.forEach((el, i) => {
+        const p = TORCH_POSITIONS[i];
+        const x = rect.width * p.x;
+        const y = rect.height * p.y;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+      });
+    }
+
+    function render(highlightIndices = []){
+      const nodes = scene.querySelectorAll('.torch');
+
+      nodes.forEach(node => {
+        const i = Number(node.dataset.index);
+        node.classList.toggle('on', !!torchState[i]);
+        node.classList.toggle('off', !torchState[i]);
+        node.setAttribute('aria-pressed', String(!!torchState[i]));
+      });
+
+      highlightIndices.forEach(i => {
+        const el = scene.querySelector(`.torch[data-index='${i}']`);
+        if (el) {
+          el.classList.add('pulse');
+          setTimeout(() => el.classList.remove('pulse'), 420);
+        }
+      });
+
+      movesEl.textContent = String(moves);
+    }
+
+    function clearSolutionPreview(){
+      const nodes = scene.querySelectorAll('.torch');
+      nodes.forEach(t => {
+        t.classList.remove('preview', 'active-solve');
+      });
+    }
+
+    function togglePattern(index){
+      // Ordem circular correta das tochas pelo contorno:
+      // topo-esquerda -> topo-centro -> topo-direita -> meio-direita -> baixo-direita
+      // -> baixo-centro -> baixo-esquerda -> meio-esquerda
+      const ring = [0, 1, 2, 4, 7, 6, 5, 3];
+
+      const pos = ring.indexOf(index);
+      if (pos === -1) return [index];
+
+      const left = ring[(pos - 1 + ring.length) % ring.length];
+      const right = ring[(pos + 1) % ring.length];
+
+      return [left, index, right];
+    }
+
+    const CLICK_MASKS = Array.from({ length: N }, (_, i) => {
+      return togglePattern(i).reduce((mask, idx) => mask | (1 << idx), 0);
+    });
+
+    function stateToMask(state){
+      let mask = 0;
+      for (let i = 0; i < state.length; i++) {
+        if (state[i]) mask |= (1 << i);
+      }
+      return mask;
+    }
+
+    function findSolutionFromCurrentState(){
+      const start = stateToMask(torchState);
+      const goal = (1 << N) - 1;
+
+      if (start === goal) return [];
+
+      const visited = new Array(1 << N).fill(false);
+      const prev = new Array(1 << N).fill(-1);
+      const move = new Array(1 << N).fill(-1);
+      const queue = [start];
+
+      visited[start] = true;
+
+      for (let qi = 0; qi < queue.length; qi++) {
+        const cur = queue[qi];
+
+        for (let i = 0; i < N; i++) {
+          const next = cur ^ CLICK_MASKS[i];
+
+          if (!visited[next]) {
+            visited[next] = true;
+            prev[next] = cur;
+            move[next] = i;
+            queue.push(next);
+
+            if (next === goal) {
+              qi = queue.length;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!visited[goal]) return null;
+
+      const path = [];
+      let cur = goal;
+
+      while (cur !== start) {
+        path.push(move[cur]);
+        cur = prev[cur];
+      }
+
+      path.reverse();
+      return path;
+    }
+
+    function showSolutionOverlay(){
+      clearSolutionPreview();
+      currentSolution = findSolutionFromCurrentState();
+      solutionList.innerHTML = '';
+
+      if (currentSolution === null) {
+        solutionText.textContent = 'Não encontrei uma solução para este estado.';
+        applySolutionBtn.disabled = true;
+        applySolutionBtn.textContent = 'Resolver';
+        solutionOverlay.classList.add('show');
+        return;
+      }
+
+      if (currentSolution.length === 0) {
+        solutionText.textContent = 'As tochas já estão todas acesas.';
+        applySolutionBtn.disabled = true;
+        applySolutionBtn.textContent = 'Resolver';
+        solutionOverlay.classList.add('show');
+        return;
+      }
+
+      // map torch index -> array of step numbers (1-based)
+      const stepMap = {};
+      currentSolution.forEach((idx, s) => {
+        stepMap[idx] = stepMap[idx] || [];
+        stepMap[idx].push(s + 1);
+      });
+
+      solutionText.textContent = `Esses são os ${currentSolution.length} passo(s) exatos para acender todas as tochas a partir do estado atual.`;
+      applySolutionBtn.disabled = false;
+      applySolutionBtn.textContent = 'Resolver';
+
+      currentSolution.forEach((index, step) => {
+        const item = document.createElement('div');
+        item.className = 'solution-step';
+
+        const badge = document.createElement('div');
+        badge.className = 'step-badge';
+        badge.textContent = String(step + 1);
+
+        const text = document.createElement('div');
+        text.className = 'step-text';
+
+        const strong = document.createElement('strong');
+        strong.textContent = `Clique na tocha ${index + 1} (${TORCH_NAMES[index]})`;
+
+        const span = document.createElement('span');
+        const toggled = togglePattern(index).map(i => `${i + 1} ${TORCH_NAMES[i]}`).join(' • ');
+        span.textContent = `Isso alterna: ${toggled}`;
+
+        text.appendChild(strong);
+        text.appendChild(span);
+
+        item.appendChild(badge);
+        item.appendChild(text);
+        solutionList.appendChild(item);
+      });
+
+      // no inline/top badges on the torches — preview kept in overlay only
+
+      solutionOverlay.classList.add('show');
+    }
+
+    function performMove(index, animate = true){
+      if (gameOver || isAutoSolving) return;
+
+      if (animate) {
+        const el = scene.querySelector(`.torch[data-index='${index}']`);
+        if (el) {
+          el.classList.add('clicked');
+          setTimeout(() => el.classList.remove('clicked'), 160);
+        }
+      }
+
+      const toToggle = togglePattern(index);
+      toToggle.forEach(i => {
+        torchState[i] = !torchState[i];
+      });
+
+      moves += 1;
+      render(toToggle);
+
+      if (checkVictory()) onVictory();
+    }
+
+    function performConfigToggle(index, animate = true) {
+      if (gameOver || isAutoSolving) return;
+
+      if (animate) {
+        const el = scene.querySelector(`.torch[data-index='${index}']`);
+        if (el) {
+          el.classList.add('clicked');
+          setTimeout(() => el.classList.remove('clicked'), 160);
+        }
+      }
+
+      torchState[index] = !torchState[index];
+      moves += 1;
+      render([index]);
+
+      if (checkVictory()) onVictory();
+    }
+
+    function handleClick(index){
+      if (gameOver || isAutoSolving) return;
+      if (configMode) {
+        performConfigToggle(index, true);
+        return;
+      }
+      performMove(index, true);
+    }
+
+    function checkVictory(){
+      return torchState.every(Boolean);
+    }
+
+    function onVictory(){
+      gameOver = true;
+      victoryOverlay.classList.add('show');
+      overlayMoves.textContent = String(moves);
+      spawnConfetti(28);
+    }
+
+    function spawnConfetti(count){
+      const colors = ['#FFD166','#EF476F','#06D6A0','#118AB2','#FFA62B','#C77DFF'];
+
+      for (let i = 0; i < count; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti-piece';
+        c.style.background = colors[i % colors.length];
+        const left = 10 + Math.random() * 80;
+        c.style.left = left + '%';
+        c.style.top = (Math.random() * 10 - 10) + '%';
+        c.style.width = (6 + Math.random() * 10) + 'px';
+        c.style.height = (8 + Math.random() * 12) + 'px';
+        c.style.opacity = 0.95;
+        c.style.animationDelay = (Math.random() * 200) + 'ms';
+        scene.appendChild(c);
+
+        setTimeout(() => { c.remove(); }, 1800 + Math.random() * 600);
+      }
+    }
+
+    function resetGame(){
+      if (autoSolveTimer) {
+        clearInterval(autoSolveTimer);
+        autoSolveTimer = null;
+      }
+
+      initialOff = Math.floor(Math.random() * N);
+      torchState = Array.from({ length: N }, (_, i) => (i === initialOff ? false : true));
+      moves = 0;
+      gameOver = false;
+      isAutoSolving = false;
+      currentSolution = [];
+
+      victoryOverlay.classList.remove('show');
+      solutionOverlay.classList.remove('show');
+      clearSolutionPreview();
+      setConfigMode(false);
+      render();
+    }
+
+    function autoSolveCurrentState(){
+      if (gameOver || isAutoSolving) return;
+
+      if (!currentSolution || currentSolution.length === 0) {
+        return;
+      }
+
+      solutionOverlay.classList.remove('show');
+      isAutoSolving = true;
+
+      let step = 0;
+      autoSolveTimer = setInterval(() => {
+        if (step >= currentSolution.length) {
+          clearInterval(autoSolveTimer);
+          autoSolveTimer = null;
+          isAutoSolving = false;
+          clearSolutionPreview();
+          return;
+        }
+
+        const index = currentSolution[step];
+        const el = scene.querySelector(`.torch[data-index='${index}']`);
+        if (el) {
+          el.classList.add('clicked', 'active-solve');
+          setTimeout(() => {
+            el.classList.remove('clicked');
+            el.classList.remove('active-solve');
+          }, 420);
+        }
+
+        const toToggle = togglePattern(index);
+        toToggle.forEach(i => {
+          torchState[i] = !torchState[i];
+        });
+
+        moves += 1;
+        render(toToggle);
+
+        if (checkVictory()) {
+          clearInterval(autoSolveTimer);
+          autoSolveTimer = null;
+          isAutoSolving = false;
+          clearSolutionPreview();
+          return;
+        }
+
+        step += 1;
+      }, 500);
+    }
+
+    restartBtn.addEventListener('click', resetGame);
+    overlayRestart.addEventListener('click', resetGame);
+    solveBtn.addEventListener('click', showSolutionOverlay);
+    if (configBtn) configBtn.addEventListener('click', () => setConfigMode(!configMode));
+    closeSolutionBtn.addEventListener('click', () => {
+      solutionOverlay.classList.remove('show');
+      clearSolutionPreview();
+    });
+    applySolutionBtn.addEventListener('click', () => {
+      setConfigMode(false);
+      autoSolveCurrentState();
+    });
+
+    function init(){
+      for (let i = 0; i < N; i++) {
+        const t = createTorchElement(i);
+        scene.appendChild(t);
+      }
+
+      positionTorches();
+      render();
+
+      window.addEventListener('resize', () => positionTorches());
+    }
+
+    init();
+    setConfigMode(false);
+
+    window._tog = togglePattern;
+    window._state = () => torchState.slice();
+    window._initialOff = () => initialOff;
+    window._solve = findSolutionFromCurrentState;
+  </script>
+</body>
+</html>

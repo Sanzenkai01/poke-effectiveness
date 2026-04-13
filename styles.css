@@ -1364,6 +1364,46 @@ p {
   max-width: 1080px;
 }
 
+/* Embedded page iframe wrapper used for showing standalone pages (e.g. tochas.html) */
+.speedster-modal-iframe-wrap {
+  width: 100%;
+  display: block;
+  min-height: 60vh;
+}
+
+.speedster-modal-iframe {
+  width: 100%;
+  height: min(75vh, 820px);
+  max-height: calc(90vh - 120px);
+  border: none;
+  border-radius: 0.6rem;
+  background: transparent;
+}
+
+/* Position the Tochas trigger on the bosses page in the top-right of the bosses shell */
+.bosses-shell {
+  position: relative;
+}
+.bosses-shell .bosses-tochas-btn {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 12;
+}
+
+/* Modal-specific Tochas button placement (near the close button) */
+.speedster-modal[data-mode="tochas"] .speedster-modal-tochas-btn {
+  position: absolute;
+  top: 1rem;
+  right: 3.4rem; /* leave space for the close button */
+  z-index: 30;
+}
+
+@media (max-width: 640px) {
+  .bosses-shell .bosses-tochas-btn { top: 0.6rem; right: 0.6rem; }
+  .speedster-modal[data-mode="tochas"] .speedster-modal-tochas-btn { right: 2.6rem; }
+}
+
 .speedster-modal-close {
   position: absolute;
   top: 1rem;

@@ -3492,6 +3492,34 @@ function renderBossModeIntro() {
       });
   }
 
+  // If viewing the Mewtwo tab, add a small "Tochas" action button into the intro area
+  try {
+    const existingTochasBtn = document.querySelector('.bosses-tochas-btn');
+    if (catalog && String(catalog.id || '').toLowerCase() === 'mew2') {
+      if (!existingTochasBtn && introEl) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'speedster-modal-location-btn bosses-tochas-btn';
+        btn.setAttribute('aria-label', 'Abrir Tochas');
+        btn.textContent = 'Tochas';
+        btn.style.marginTop = '0.5rem';
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          openTochasInModal();
+        });
+        if (shell) {
+          // ensure shell is a positioned container for absolute placement
+          try { shell.style.position = shell.style.position || 'relative'; } catch (e) {}
+          shell.appendChild(btn);
+        } else {
+          introEl.appendChild(btn);
+        }
+      }
+    } else if (existingTochasBtn) {
+      existingTochasBtn.remove();
+    }
+  } catch (e) {}
+
   if (shell) {
     shell.dataset.searchEnabled = catalog.searchEnabled ? 'true' : 'false';
   }
@@ -4224,6 +4252,8 @@ function openSpeedsterBossesModal(speedster) {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  const modalContentEl = modal.querySelector('.speedster-modal-content');
+  if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -4472,6 +4502,71 @@ function ensureModalLocationButton() {
   }
 
   return modalLocationBtn;
+}
+
+function ensureModalTochasButton() {
+  const modalHeader = modal?.querySelector('.speedster-modal-header');
+  if (!modalHeader) return null;
+
+  let tochasBtn = modalHeader.querySelector('.speedster-modal-tochas-btn');
+  if (!tochasBtn) {
+    tochasBtn = document.createElement('button');
+    tochasBtn.type = 'button';
+    tochasBtn.className = 'speedster-modal-location-btn speedster-modal-tochas-btn';
+    tochasBtn.setAttribute('aria-label', 'Abrir Tochas');
+    tochasBtn.title = 'Tochas';
+    tochasBtn.textContent = 'Tochas';
+    modalHeader.appendChild(tochasBtn);
+  }
+
+  return tochasBtn;
+}
+
+function openTochasInModal() {
+  if (!modal || !modalBody) return;
+
+  const tochasPath = (String(location.pathname || '').toLowerCase().includes('/bosses')) ? '../tochas.html' : 'tochas.html';
+
+  modalTitle.textContent = 'Tochas — Acenda todas';
+  modalSubtitle.textContent = '';
+
+  // mark modal as displaying tochas so we can apply specific chrome rules
+  try { modal.dataset.mode = 'tochas'; } catch (e) {}
+
+  // hide tier legend and corner images specifically for tochas modal
+  try { setModalChrome({ showLegend: false, showImages: false, showLocation: false }); } catch (e) {}
+
+  modalBody.innerHTML = '';
+  modalBody.classList.remove('speedster-modal-body--roleboard', 'speedster-modal-body--split');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'speedster-modal-iframe-wrap';
+
+  const iframe = document.createElement('iframe');
+  iframe.className = 'speedster-modal-iframe';
+  iframe.src = tochasPath;
+  iframe.setAttribute('aria-label', 'Tochas — Acenda todas');
+  iframe.loading = 'lazy';
+  iframe.allow = 'fullscreen';
+
+  wrap.appendChild(iframe);
+  modalBody.appendChild(wrap);
+
+  modal.setAttribute('data-open', 'true');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  // ensure modal content has roleboard width to give more space for the embedded page
+  const modalContentEl = modal.querySelector('.speedster-modal-content');
+  if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
+
+  if (typeof gsap !== 'undefined') {
+    gsap.fromTo(
+      modal.querySelector('.speedster-modal-content'),
+      { opacity: 0, y: 40, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
+    );
+  }
 }
 
 function setModalChrome({ bosses = [], locationImage = '', showLocation = false, showLegend = true, showImages = true } = {}) {
@@ -4910,6 +5005,19 @@ function openRoleBossModal(boss) {
     showImages: true
   });
   setModalBossWeaknesses(boss);
+
+  // Add "Tochas" button only for Mewtwo (keep UI clean for others)
+  try {
+    const existingTochas = modal?.querySelector('.speedster-modal-tochas-btn');
+    if (String(boss.id || '').toLowerCase() === 'mewtwo') {
+      const tb = ensureModalTochasButton();
+      if (tb) tb.onclick = (ev) => { ev.stopPropagation(); openTochasInModal(); };
+    } else if (existingTochas) {
+      existingTochas.remove();
+    }
+  } catch (e) {
+    // fail silently to avoid breaking modal behavior
+  }
 
   modalBody.innerHTML = '';
   modalBody.classList.remove('speedster-modal-body--split', 'speedster-modal-body--roleboard');
@@ -5517,12 +5625,16 @@ function closeModal() {
         modal.setAttribute('data-open', 'false');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        try { modalBody.innerHTML = ''; } catch (e) {}
+        try { modal.removeAttribute('data-mode'); } catch (e) {}
       }
     });
   } else {
     modal.setAttribute('data-open', 'false');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    try { modalBody.innerHTML = ''; } catch (e) {}
+    try { modal.removeAttribute('data-mode'); } catch (e) {}
   }
   closeLocationOverlay();
 }
