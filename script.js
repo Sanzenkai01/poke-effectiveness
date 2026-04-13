@@ -303,6 +303,43 @@ function computeNextDailyRefreshTime(hour = 10, minute = 30){
     return next;
 }
 
+// Try to load a server-generated community JSON (created by a scheduled job)
+// This allows updates to be applied even when client browsers were not open
+async function loadServerCommunityData(){
+    try{
+        const resp = await fetch('/community.json', { cache: 'no-store' });
+        if(!resp.ok) return false;
+        const json = await resp.json();
+        if(!json || !json.topics) return false;
+        Object.keys(json.topics).forEach(key => {
+            try{
+                const topic = json.topics[key];
+                if(!topic) return;
+                // If our client already defines the topic, override its items
+                if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
+                    COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
+                        id: i.id,
+                        title: i.title || '',
+                        description: i.description || '',
+                        channelName: i.channelName || '',
+                        channelUrl: i.channelUrl || '',
+                        publishedAt: i.publishedAt || '',
+                        thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
+                    }));
+                } else {
+                    // otherwise attach the topic object directly
+                    COMMUNITY_FEED_TOPICS[key] = topic;
+                }
+            }catch(e){/* ignore per-topic failures */}
+        });
+        return true;
+    }catch(e){
+        // network errors or file not present are non-fatal
+        console.info('No server community data available or fetch failed', e && e.message);
+        return false;
+    }
+}
+
 async function runDailyCommunityRefresh(){
     if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
         console.warn('Skipping daily community refresh: YouTube quota suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
@@ -4585,7 +4622,9 @@ function showStreamers(){
     updateUrl();
 }
 
-function showCommunity(){
+async function showCommunity(){
+    // Try to load server-provided community data (if available)
+    try{ await loadServerCommunityData(); }catch(e){}
     clearTabHighlights();
     setActiveTabTheme('community');
     if(tabCommunityBtn) {

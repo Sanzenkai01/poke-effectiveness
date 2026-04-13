@@ -1,0 +1,28 @@
+name: Update Community Videos
+
+on:
+  schedule:
+    # Runs daily at 12:40 UTC — adjust cron if you need a different timezone
+    - cron: '40 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment: YOUTUBE_API_KEY
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run community updater
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          node .github/scripts/update-community.js
