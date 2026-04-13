@@ -99,6 +99,12 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  if(url.pathname.endsWith('/community.json') || url.pathname.endsWith('community.json')){
+    // Always try network first for community.json so scheduled updates propagate
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   if(CACHEABLE_PATH.test(url.pathname)){
     event.respondWith(cacheFirst(request));
   }

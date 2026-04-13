@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs').promises;
 const path = require('path');
-const { execSync } = require('child_process');
+// no direct git actions here; workflow will create a PR when files change
 
 const YT_API_KEY = process.env.YOUTUBE_API_KEY;
 if(!YT_API_KEY){
@@ -71,22 +71,8 @@ async function run(){
   await fs.writeFile(fp, JSON.stringify(out, null, 2), 'utf8');
   console.log('Wrote', fp);
 
-  try{
-    execSync('git config user.name "github-actions[bot]"');
-    execSync('git config user.email "41898282+github-actions[bot]@users.noreply.github.com"');
-    execSync('git add community.json');
-    execSync('git commit -m "chore: update community.json (scheduled)"', { stdio: 'inherit' });
-    execSync('git push', { stdio: 'inherit' });
-    console.log('Committed and pushed changes');
-  }catch(e){
-    const msg = String(e && e.message ? e.message : e);
-    if(/nothing to commit|no changes/i.test(msg)){
-      console.log('No changes to commit');
-      process.exit(0);
-    }
-    console.error('Failed to commit/push changes', msg);
-    process.exit(1);
-  }
+  // The file is written; the workflow will create a pull request if changes exist.
+  console.info('community.json written. Workflow will create a PR if changes are present.');
 }
 
 run().catch(err=>{ console.error(err); process.exit(1); });

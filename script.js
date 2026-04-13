@@ -307,34 +307,72 @@ function computeNextDailyRefreshTime(hour = 10, minute = 30){
 // This allows updates to be applied even when client browsers were not open
 async function loadServerCommunityData(){
     try{
+        // Try site-root first (if hosting already has community.json)
         const resp = await fetch('/community.json', { cache: 'no-store' });
-        if(!resp.ok) return false;
-        const json = await resp.json();
-        if(!json || !json.topics) return false;
-        Object.keys(json.topics).forEach(key => {
-            try{
-                const topic = json.topics[key];
-                if(!topic) return;
-                // If our client already defines the topic, override its items
-                if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
-                    COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
-                        id: i.id,
-                        title: i.title || '',
-                        description: i.description || '',
-                        channelName: i.channelName || '',
-                        channelUrl: i.channelUrl || '',
-                        publishedAt: i.publishedAt || '',
-                        thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
-                    }));
-                } else {
-                    // otherwise attach the topic object directly
-                    COMMUNITY_FEED_TOPICS[key] = topic;
-                }
-            }catch(e){/* ignore per-topic failures */}
-        });
-        return true;
+        if(resp && resp.ok){
+            const json = await resp.json();
+            if(json && json.topics){
+                Object.keys(json.topics).forEach(key => {
+                    try{
+                        const topic = json.topics[key];
+                        if(!topic) return;
+                        if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
+                            COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
+                                id: i.id,
+                                title: i.title || '',
+                                description: i.description || '',
+                                channelName: i.channelName || '',
+                                channelUrl: i.channelUrl || '',
+                                publishedAt: i.publishedAt || '',
+                                thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
+                            }));
+                        } else {
+                            COMMUNITY_FEED_TOPICS[key] = topic;
+                        }
+                    }catch(e){/* ignore per-topic failures */}
+                });
+                try{ window.COMMUNITY_LOADED_SOURCE = 'site'; window.COMMUNITY_LOADED_AT = Date.now(); localStorage.setItem('COMMUNITY_LOADED_SOURCE','site'); localStorage.setItem('COMMUNITY_LOADED_AT', String(window.COMMUNITY_LOADED_AT)); }catch(e){}
+                return true;
+            }
+        }
+
+        // Fallback: attempt to fetch from the workflow-updated branch on GitHub (raw)
+        // This allows clients to pick up updates even if the file hasn't been merged to main.
+        try{
+            const owner = 'Sanzenkai01';
+            const repo = 'poke-effectiveness';
+            const branch = 'community-data';
+            const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/community.json`;
+            const r2 = await fetch(rawUrl, { cache: 'no-store' });
+            if(!r2.ok) return false;
+            const json2 = await r2.json();
+            if(!json2 || !json2.topics) return false;
+            Object.keys(json2.topics).forEach(key => {
+                try{
+                    const topic = json2.topics[key];
+                    if(!topic) return;
+                    if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
+                        COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
+                            id: i.id,
+                            title: i.title || '',
+                            description: i.description || '',
+                            channelName: i.channelName || '',
+                            channelUrl: i.channelUrl || '',
+                            publishedAt: i.publishedAt || '',
+                            thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
+                        }));
+                    } else {
+                        COMMUNITY_FEED_TOPICS[key] = topic;
+                    }
+                }catch(e){/* ignore per-topic failures */}
+            });
+            try{ window.COMMUNITY_LOADED_SOURCE = 'raw'; window.COMMUNITY_LOADED_AT = Date.now(); localStorage.setItem('COMMUNITY_LOADED_SOURCE','raw'); localStorage.setItem('COMMUNITY_LOADED_AT', String(window.COMMUNITY_LOADED_AT)); }catch(e){}
+            return true;
+        }catch(e){
+            console.info('No server community data available or fetch failed', e && e.message);
+            return false;
+        }
     }catch(e){
-        // network errors or file not present are non-fatal
         console.info('No server community data available or fetch failed', e && e.message);
         return false;
     }
@@ -1877,6 +1915,30 @@ function renderCommunityFeedPanel(){
         });
         topicHighlightsEl.replaceChildren(highlightsFragment);
     }
+
+    // Show community data source / last loaded (debug info)
+    try{
+        const existingMeta = document.getElementById('community-data-meta');
+        const src = window.COMMUNITY_LOADED_SOURCE || localStorage.getItem('COMMUNITY_LOADED_SOURCE') || 'local';
+        const atTs = parseInt(localStorage.getItem('COMMUNITY_LOADED_AT') || String(window.COMMUNITY_LOADED_AT || 0),10) || 0;
+        const atText = atTs ? new Date(atTs).toLocaleString() : 'desconhecido';
+        const metaText = `Fonte: ${src} • Atualizado: ${atText}`;
+        if(existingMeta){
+            existingMeta.textContent = metaText;
+            existingMeta.hidden = false;
+        } else {
+            const meta = document.createElement('div');
+            meta.id = 'community-data-meta';
+            meta.className = 'community-data-meta';
+            meta.style.fontSize = '12px';
+            meta.style.color = 'rgba(255,255,255,0.75)';
+            meta.style.margin = '0 0 8px 0';
+            meta.textContent = metaText;
+            if(listEl && listEl.parentElement){
+                listEl.parentElement.insertBefore(meta, listEl);
+            }
+        }
+    }catch(e){/* ignore meta render errors */}
 
     // If the last fetch failed for this topic, show a small warning above the list
     const lastErr = COMMUNITY_LAST_FETCH_ERROR[activeCommunityTopicKey];

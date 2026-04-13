@@ -29,3 +29,18 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
           node .github/scripts/update-community.js
+
+      - name: Commit community.json to community-data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin
+          # create or switch to the community-data branch
+          git checkout -B community-data
+          git add community.json || true
+          if git diff --cached --quiet; then
+            echo "No changes to community.json"
+          else
+            git commit -m "chore: update community.json (scheduled)"
+            git push -u origin community-data --force
+          fi
