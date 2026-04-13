@@ -2,6 +2,7 @@ name: Update Community Videos
 
 permissions:
   contents: write
+  workflows: write
 
 on:
   schedule:
@@ -31,6 +32,8 @@ jobs:
           node .github/scripts/update-community.js
 
       - name: Commit community.json to community-data branch
+        env:
+          REPO_PAT: ${{ secrets.REPO_PAT }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -42,5 +45,11 @@ jobs:
             echo "No changes to community.json"
           else
             git commit -m "chore: update community.json (scheduled)"
-            git push -u origin community-data --force
+            if [ -n "$REPO_PAT" ]; then
+              echo "Pushing using provided REPO_PAT secret"
+              git push "https://${REPO_PAT}@github.com/${{ github.repository }}" community-data --force
+            else
+              echo "Pushing using default GITHUB_TOKEN (may be blocked by repo policies)"
+              git push -u origin community-data --force
+            fi
           fi
