@@ -2321,6 +2321,65 @@ p {
 
 .result-card { padding: 1rem; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.03); margin-bottom: 1rem; }
 .result-card__header { display:flex; align-items:center; justify-content:space-between; }
+.calc-left .video-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+  max-width: none; /* garantir que ocupe 100% da coluna */
+}
+
+.calc-left .video-card .video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+.calc-left .video-card .video-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.calc-left .video-card .training-video-play {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-play-badge {
+  position: absolute;
+  z-index: 3;
+  font-size: 2.2rem;
+  color: rgba(255,255,255,0.95);
+  background: rgba(0,0,0,0.45);
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+}
+
+.video-caption {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 3;
+  color: #fff;
+  font-size: 0.85rem;
+  background: rgba(0,0,0,0.35);
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+}
 .result-card h3, .result-card h4 { margin: 0 0 0.5rem 0; }
 .result-block p { margin: 0.25rem 0; }
 .num { font-weight: 700; font-size: 1.35rem; color: #ffd27a; margin-right: 0.35rem; }

@@ -797,6 +797,26 @@ function extractYouTubeVideoId(value){
     return '';
 }
 
+// Garantir carregamento da YouTube IFrame API (singleton promise)
+let siteYouTubeApiReadyPromise = null;
+function ensureYouTubeAPI(){
+    if(window.YT && typeof window.YT.Player === 'function') return Promise.resolve();
+    if(siteYouTubeApiReadyPromise) return siteYouTubeApiReadyPromise;
+    siteYouTubeApiReadyPromise = new Promise((resolve, reject) => {
+        const previous = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function(){
+            try{ if(typeof previous === 'function') previous(); }catch(e){}
+            resolve();
+        };
+        const s = document.createElement('script');
+        s.src = 'https://www.youtube.com/iframe_api';
+        s.async = true;
+        s.onerror = () => reject(new Error('Falha ao carregar YouTube IFrame API'));
+        document.head.appendChild(s);
+    });
+    return siteYouTubeApiReadyPromise;
+}
+
 function ensureSiteYouTubeModal(){
     if(siteYouTubeModalState?.modal?.isConnected){
         return siteYouTubeModalState;
@@ -848,7 +868,7 @@ function ensureSiteYouTubeModal(){
 
     document.body.appendChild(modal);
 
-    siteYouTubeModalState = { modal, content, closeBtn, title, player };
+    siteYouTubeModalState = { modal, content, closeBtn, title, player, playerInstance: null };
     return siteYouTubeModalState;
 }
 
@@ -858,17 +878,79 @@ function openSiteYouTubeModal(options = {}){
 
     const { modal, content, closeBtn, title, player } = ensureSiteYouTubeModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
+
+    // Destroy any previous player instance if present
+    if(siteYouTubeModalState?.playerInstance && typeof siteYouTubeModalState.playerInstance.destroy === 'function'){
+        try{ siteYouTubeModalState.playerInstance.destroy(); }catch(e){}
+        siteYouTubeModalState.playerInstance = null;
+    }
+
+    // Clear player region
     player.replaceChildren();
 
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-    iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
-    iframe.loading = 'eager';
-    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    iframe.allowFullscreen = true;
+    // Try to use the YouTube IFrame API to set playback quality; fallback to plain iframe
+    ensureYouTubeAPI().then(() => {
+        const containerId = 'site-youtube-player';
+        const existing = player.querySelector(`#${containerId}`);
+        if(existing) existing.remove();
+        const container = document.createElement('div');
+        container.id = containerId;
+        container.style.width = '100%';
+        container.style.height = '100%';
+        player.appendChild(container);
 
-    player.appendChild(iframe);
+        try{
+            siteYouTubeModalState.playerInstance = new YT.Player(containerId, {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    rel: 0,
+                    playsinline: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: (event) => {
+                        try{
+                            const available = event.target.getAvailableQualityLevels && event.target.getAvailableQualityLevels();
+                            if(Array.isArray(available) && available.length){
+                                const preferred = ['highres','hd2160','hd1440','hd1080','hd720','large','medium','small'];
+                                const pick = preferred.find(q => available.includes(q)) || available[0];
+                                event.target.setPlaybackQuality(pick);
+                            } else {
+                                event.target.setPlaybackQuality('highres');
+                            }
+                        }catch(err){}
+                        try{ event.target.playVideo(); }catch(e){}
+                    }
+                }
+            });
+        }catch(err){
+            // fallback to iframe if construction fails
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
+            iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
+            iframe.loading = 'eager';
+            iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            iframe.allowFullscreen = true;
+            player.replaceChildren(iframe);
+            siteYouTubeModalState.playerInstance = null;
+        }
+    }).catch(() => {
+        // Fallback: insert iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
+        iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
+        iframe.loading = 'eager';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        player.appendChild(iframe);
+        siteYouTubeModalState.playerInstance = null;
+    });
+
     title.textContent = options.title || 'Vídeo do YouTube';
 
     if(!wasOpen){
@@ -899,6 +981,12 @@ function closeSiteYouTubeModal(options = {}){
     if(!siteYouTubeModalState?.modal) return;
     const { modal, player } = siteYouTubeModalState;
     if(modal.getAttribute('data-open') !== 'true' && !player.childElementCount) return;
+
+    // Destroy YT player instance if present
+    if(siteYouTubeModalState?.playerInstance && typeof siteYouTubeModalState.playerInstance.destroy === 'function'){
+        try{ siteYouTubeModalState.playerInstance.destroy(); }catch(e){}
+        siteYouTubeModalState.playerInstance = null;
+    }
 
     player.replaceChildren();
     modal.setAttribute('data-open', 'false');
@@ -6083,3 +6171,43 @@ function loadTypesData(){
 
 initializeSidebarNavigation();
 loadTypesData();
+// Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
+function initTrainingVideo(){
+    // Helper to open modal safely
+    const openModal = (videoId) => {
+        if(!videoId) return;
+        if(typeof openSiteYouTubeModal === 'function'){
+            openSiteYouTubeModal({ videoId: videoId, title: 'Tutorial de Treinamento' });
+        } else if(typeof window.openSiteYouTubeModal === 'function'){
+            window.openSiteYouTubeModal({ videoId: videoId, title: 'Tutorial de Treinamento' });
+        }
+    };
+
+    // Attach handlers to the wrapper so clicks on the image, badge or button all open the modal.
+    document.querySelectorAll('.training-video-wrapper').forEach(wrapper => {
+        if(!wrapper) return;
+        // avoid double-initialization
+        if(wrapper.dataset.trainingInit === '1') return;
+        wrapper.dataset.trainingInit = '1';
+
+        // Make wrapper keyboard-focusable for accessibility (Enter / Space)
+        if(!wrapper.hasAttribute('tabindex')) wrapper.setAttribute('tabindex', '0');
+
+        wrapper.addEventListener('click', (e) => {
+            // allow clicks anywhere inside the wrapper (image, badge, caption, button)
+            const videoId = wrapper.dataset.videoId || wrapper.getAttribute('data-video-id');
+            openModal(videoId);
+        });
+
+        wrapper.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' '){
+                e.preventDefault();
+                const videoId = wrapper.dataset.videoId || wrapper.getAttribute('data-video-id');
+                openModal(videoId);
+            }
+        });
+    });
+}
+
+// Como o script é carregado com `defer`, o DOM já estará pronto
+initTrainingVideo();
