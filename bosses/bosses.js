@@ -2124,9 +2124,9 @@ const bossConsumableCatalog = Object.freeze({
       image: 'rations/tanga_ration.png',
       description: 'Aumenta a resistencia contra ataques Bug em 30% por 60 minutos.'
     }),
-    payapa: Object.freeze({
-      label: 'payapa Ration',
-      shortLabel: 'payapa',
+    Payapa: Object.freeze({
+      label: 'Payapa Ration',
+      shortLabel: 'Payapa',
       image: 'rations/payapa_ration.png',
       description: 'Aumenta a resistencia contra ataques Psychic em 30% por 60 minutos.'
     }),
@@ -2147,6 +2147,24 @@ const bossConsumableCatalog = Object.freeze({
       shortLabel: 'Coba',
       image: 'rations/coba_ration.png',
       description: 'Aumenta a resistencia contra ataques Flying em 30% por 60 minutos.'
+    }),
+    pokemon: Object.freeze({
+      label: 'Pokémon Ration',
+      shortLabel: 'Pokemon',
+      image: 'rations/pokemon_ration.png',
+      description: 'Aumenta a resistencia contra ataques Neutral em 30% por 60 minutos.'
+    }),
+    yache: Object.freeze({
+      label: 'Yache Ration',
+      shortLabel: 'Yache',
+      image: 'rations/yache_ration.png',
+      description: 'Aumenta a resistencia contra ataques Ice em 30% por 60 minutos.'
+    }),
+    occa: Object.freeze({
+      label: 'Occa Ration',
+      shortLabel: 'Occa',
+      image: 'rations/occa_ration.png',
+      description: 'Aumenta a resistencia contra ataques Fire em 30% por 60 minutos.'
     }),
     chople: Object.freeze({
       label: 'Chople Ration',
@@ -2173,12 +2191,16 @@ const bossRationByAttackType = Object.freeze({
   ghost: bossConsumableCatalog.rations.kasib,
   electric: bossConsumableCatalog.rations.wacan,
   bug: bossConsumableCatalog.rations.tanga,
-  psychic: bossConsumableCatalog.rations.payapa,
+  psychic: bossConsumableCatalog.rations.Payapa,
   dragon: bossConsumableCatalog.rations.haban,
   ground: bossConsumableCatalog.rations.shuca,
   flying: bossConsumableCatalog.rations.coba,
   fighting: bossConsumableCatalog.rations.chople,
-  water: bossConsumableCatalog.rations.passho
+  fire: bossConsumableCatalog.rations.occa,
+  ice: bossConsumableCatalog.rations.yache,
+  water: bossConsumableCatalog.rations.passho,
+  normal: bossConsumableCatalog.rations.pokemon,
+  neutral: bossConsumableCatalog.rations.pokemon
 });
 
 const bossPokeblockByAttackType = Object.freeze({
@@ -4662,6 +4684,30 @@ function ensureBossWeaknessPanel() {
   };
 }
 
+function ensureNeutralBadge() {
+  const titleWrap = modal?.querySelector('.speedster-modal-title');
+  if (!titleWrap) return null;
+
+  let badge = titleWrap.querySelector('.boss-neutral-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.className = 'boss-neutral-badge';
+    badge.hidden = true;
+    badge.setAttribute('aria-hidden', 'true');
+    badge.setAttribute('role', 'status');
+    badge.textContent = 'Defesa Neutra';
+
+    const tierLegend = titleWrap.querySelector('.tier-legend');
+    if (tierLegend) {
+      tierLegend.insertAdjacentElement('afterend', badge);
+    } else {
+      titleWrap.appendChild(badge);
+    }
+  }
+
+  return badge;
+}
+
 function hideBossWeaknessPanel() {
   const surface = ensureBossWeaknessPanel();
   if (!surface) return;
@@ -4692,6 +4738,7 @@ function getBossWeaknessDisplayEntries(source) {
 
   const sourceTypes = getBossOffenseTargetTypes(source);
   const sourceImmunities = mergeLowercaseUniqueValues(source.immunities);
+  const sourceEffectivenessConfig = getBossEffectivenessConfig(source);
   const groupMap = new Map();
 
   Object.values(source.clans || {}).forEach((clanData) => {
@@ -4717,18 +4764,34 @@ function getBossWeaknessDisplayEntries(source) {
     return source.bosses.map((entry, index) => {
       const entryNameKey = getRecommendationNameKey(entry?.name || `${source.name || 'boss'}-${index}`);
       const groupMatch = Array.from(groupMap.values()).find((candidate) => getRecommendationNameKey(candidate.name) === entryNameKey);
+      const types = mergeLowercaseUniqueValues(getBossOffenseTargetTypes(entry), groupMatch?.types, sourceTypes);
+      const entryEffectivenessConfig = getBossEffectivenessConfig(entry);
+      const neutral = entryEffectivenessConfig.offenseMode === 'neutral' || sourceEffectivenessConfig.offenseMode === 'neutral';
       return {
         id: groupMatch?.id || `${source.id || 'boss'}-${index}`,
         name: entry?.name || groupMatch?.name || source.name || 'Chefe',
         image: entry?.image || groupMatch?.image || source.image || '',
-        types: mergeLowercaseUniqueValues(getBossOffenseTargetTypes(entry), groupMatch?.types, sourceTypes),
-        immunities: mergeLowercaseUniqueValues(entry?.immunities, groupMatch?.immunities, sourceImmunities)
+        types,
+        immunities: mergeLowercaseUniqueValues(entry?.immunities, groupMatch?.immunities, sourceImmunities),
+        neutral: Boolean(neutral)
       };
-    }).filter((entry) => entry.types.length);
+    }).filter((entry) => entry.types.length || entry.neutral);
   }
 
   if (groupMap.size > 1) {
     return Array.from(groupMap.values());
+  }
+
+  // If the boss (single source) is configured as neutral, return a neutral marker
+  if (sourceEffectivenessConfig && sourceEffectivenessConfig.offenseMode === 'neutral') {
+    return [{
+      id: source.id || source.name || 'boss',
+      name: source.name || 'Chefe',
+      image: source.image || '',
+      types: [],
+      immunities: sourceImmunities,
+      neutral: true
+    }];
   }
 
   if (sourceTypes.length) {
@@ -4767,12 +4830,19 @@ function setModalBossWeaknesses(source, options = {}) {
   const surface = ensureBossWeaknessPanel();
   if (!surface) return;
 
+  const neutralBadge = ensureNeutralBadge();
+
   if (!show || !source) {
     hideBossWeaknessPanel();
     return;
   }
 
   const entries = getBossWeaknessDisplayEntries(source);
+  const anyNeutralEntry = Array.isArray(entries) && entries.some((e) => Boolean(e.neutral));
+  if (neutralBadge) {
+    neutralBadge.hidden = !anyNeutralEntry;
+    neutralBadge.setAttribute('aria-hidden', neutralBadge.hidden ? 'true' : 'false');
+  }
   const renderedEntries = entries
     .map((entry) => ({
       ...entry,
@@ -4781,8 +4851,21 @@ function setModalBossWeaknesses(source, options = {}) {
     .filter((entry) => entry.weaknesses.length);
 
   if (!renderedEntries.length) {
-    hideBossWeaknessPanel();
+    // show neutral badge even when there are no explicit weaknesses
+    if (neutralBadge) {
+      neutralBadge.hidden = !anyNeutralEntry;
+      if (neutralBadge.hidden) neutralBadge.setAttribute('aria-hidden', 'true'); else neutralBadge.setAttribute('aria-hidden', 'false');
+    }
+    if (!anyNeutralEntry) {
+      hideBossWeaknessPanel();
+    }
     return;
+  }
+
+  // If we have actual weakness entries, hide the neutral badge.
+  if (neutralBadge) {
+    neutralBadge.hidden = true;
+    neutralBadge.setAttribute('aria-hidden', 'true');
   }
 
   const showBossName = renderedEntries.length > 1;
@@ -4802,24 +4885,26 @@ function setModalBossWeaknesses(source, options = {}) {
     const list = document.createElement('div');
     list.className = 'boss-weakness-list';
 
-    entry.weaknesses.forEach((item) => {
-      const chip = document.createElement('span');
-      chip.className = 'boss-weakness-chip';
-      chip.title = `${formatTypeLabel(item.type)} ${formatTypeMultiplier(item.multiplier)}`;
+    if (entry.weaknesses.length) {
+      entry.weaknesses.forEach((item) => {
+        const chip = document.createElement('span');
+        chip.className = 'boss-weakness-chip';
+        chip.title = `${formatTypeLabel(item.type)} ${formatTypeMultiplier(item.multiplier)}`;
 
-      const icon = document.createElement('img');
-      icon.className = 'boss-weakness-chip-icon';
-      icon.src = iconBase + `${item.type}.png`;
-      icon.alt = formatTypeLabel(item.type);
-      icon.loading = 'lazy';
+        const icon = document.createElement('img');
+        icon.className = 'boss-weakness-chip-icon';
+        icon.src = iconBase + `${item.type}.png`;
+        icon.alt = formatTypeLabel(item.type);
+        icon.loading = 'lazy';
 
-      const value = document.createElement('span');
-      value.className = 'boss-weakness-chip-value';
-      value.textContent = formatTypeMultiplier(item.multiplier);
+        const value = document.createElement('span');
+        value.className = 'boss-weakness-chip-value';
+        value.textContent = formatTypeMultiplier(item.multiplier);
 
-      chip.append(icon, value);
-      list.appendChild(chip);
-    });
+        chip.append(icon, value);
+        list.appendChild(chip);
+      });
+    }
 
     group.appendChild(list);
     fragment.appendChild(group);

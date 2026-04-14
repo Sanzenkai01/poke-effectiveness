@@ -1987,6 +1987,24 @@ p {
   line-height: 1;
 }
 
+.boss-neutral-badge {
+  margin-top: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.26rem 0.6rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  color: rgba(236, 244, 252, 0.9);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.boss-neutral-badge[hidden] {
+  display: none !important;
+}
+
 .tier-dot {
   width: 10px;
   height: 10px;
