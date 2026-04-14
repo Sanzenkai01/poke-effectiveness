@@ -711,6 +711,18 @@ const modalSubtitle = document.getElementById('modal-subtitle');
 const modalBody = document.getElementById('modal-body');
 const modalClan = document.getElementById('modal-clan');
 const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
+let activeSpeedsterContextName = null;
+let knownSpeedsterNames = null;
+
+function refreshKnownSpeedsterNames() {
+  try {
+    const list = typeof getRecommendedSpeedsters === 'function' ? getRecommendedSpeedsters() : [];
+    knownSpeedsterNames = new Set((list || []).map((s) => String(s?.name || '').toLowerCase()));
+  } catch (e) {
+    knownSpeedsterNames = new Set();
+  }
+  return knownSpeedsterNames;
+}
 
 function setBossModalLayout(isRoleboard = false) {
   const content = modal?.querySelector('.speedster-modal-content');
@@ -1688,7 +1700,7 @@ const bossCatalogs = {
     searchEnabled: true,
     introLines: [
       'Clique em um chefe para ver recomenda\u00E7\u00F5es de pok\u00E9mons para enfrent\u00E1-lo.',
-      '\u2694\uFE0F Ofensiva: quanto maior, melhor. \uD83D\uDEE1\uFE0F Defesa: quanto menor, melhor (0 = imune, 2 = super eficaz).',
+      '\u2694\uFE0F Ofensiva: quanto maior, melhor. \uD83D\uDEE1\uFE0F Defesa: quanto menor, melhor (0.5 = imune / super inafetivo, 2 = super eficaz).',
       '\u26A0\uFE0F Recomendado usar pok\u00E9mons pelo menos bronze 5 para as recomenda\u00E7\u00F5es apresentadas.'
     ],
     data: hoopaPortalsData
@@ -2611,6 +2623,41 @@ function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = [
   return multiplier;
 }
 
+// Normaliza valores de multiplicador de tipo para a nova escala de ATK.
+// Entrada: multiplicador bruto (ex: 0, 0.5, 1, 2, 4).
+// Saída: ATK na nova escala — 0 (imune), <1 (resistência), 1.0 (neutro), 1.75 (efetivo), 2.0 (super efetivo).
+function normalizeOffenseValue(raw) {
+  if (typeof raw !== 'number' || isNaN(raw)) return 1.0;
+  if (raw === 0) return 0;
+  if (raw >= 4) return 2.0;
+  if (raw >= 2) return 1.75;
+  if (raw >= 1) return 1.0;
+  // Mantemos resistências abaixo de 1 (ex: 0.5)
+  return raw;
+}
+
+// Normaliza valores de multiplicador de defesa para a nova regra de DEF.
+// Dois modos:
+// - automatico (isExplicit = false): valores derivados do matchup entre tipos
+//   mapeiam: 0 -> 0.5 (nulo), 0.25 -> 0.5 (super inafetivo), 0.5 -> 0.75 (inafetivo)
+// - explicito (isExplicit = true): valores definidos em dados (passivas/overrides)
+//   são tratados como autoritativos: qualquer valor <= 0.5 é considerado super inafetivo/mitigado -> 0.5
+// Valores maiores que 1 (vulnerabilidades) permanecem inalterados.
+function normalizeDefenseValue(raw, isExplicit = false) {
+  if (typeof raw !== 'number' || isNaN(raw)) return 1;
+  if (isExplicit) {
+    // Valores explicitamente definidos pelo dataset devem ser respeitados;
+    // mapear imunidade/valores muito baixos para 0.5 para manter consistência
+    if (raw <= 0.5) return 0.5;
+    return raw;
+  }
+
+  // Automático (resultado de getTypeMultiplier)
+  if (raw <= 0.25) return 0.5; // dupla resistência / imunidade -> 0.5
+  if (raw === 0.5) return 0.75; // resistência simples -> 0.75
+  return raw;
+}
+
 function normalizeMoveTypeValues(value) {
   return Array.from(new Set(
     (Array.isArray(value) ? value : [value])
@@ -3166,26 +3213,35 @@ function getBossRecommendationRankMode(boss) {
 }
 
 function classifyRecommendationTier(offense, worstDefense) {
-  if (offense >= 4) {
-    if (worstDefense <= 1) return 'green';
-    if (worstDefense <= 2) return 'yellow';
-    return 'red';
-  }
-
   if (offense >= 2) {
-    if (worstDefense <= 0.5) return 'otimo';
+    // Super efetivo: mapeamento específico solicitado
+    // - DEF <= 0.5 => Ideal (green)
+    // - DEF <= 0.75 => Muito bom (otimo)
+    // - DEF <= 1 => Bom (yellow)
+    // - DEF <= 2 => Aceitavel (red)
+    if (worstDefense <= 0.5) return 'green';
+    if (worstDefense <= 0.75) return 'otimo';
     if (worstDefense <= 1) return 'yellow';
     if (worstDefense <= 2) return 'red';
     return 'solo';
   }
 
-  if (offense >= 1) {
-    if (worstDefense <= 0.5) return 'yellow';
-    if (worstDefense <= 2) return 'red';
+  if (offense >= 1.75) {
+    // Efetivo
+    if (worstDefense <= 0.5) return 'otimo';
+    if (worstDefense <= 0.75) return 'yellow';
+    if (worstDefense <= 1) return 'red';
     return 'solo';
   }
 
-  if (offense > 0 && worstDefense <= 0.5) {
+  if (offense >= 1) {
+    // Neutro
+    if (worstDefense <= 0.75) return 'yellow';
+    if (worstDefense <= 1) return 'red';
+    return 'solo';
+  }
+
+  if (offense > 0 && worstDefense <= 0.75) {
     return 'red';
   }
 
@@ -3193,8 +3249,8 @@ function classifyRecommendationTier(offense, worstDefense) {
 }
 
 function classifyDefenseOnlyRecommendationTier(worstDefense) {
-  if (worstDefense <= 0.25) return 'green';
-  if (worstDefense <= 0.5) return 'otimo';
+  if (worstDefense <= 0.5) return 'green';
+  if (worstDefense <= 0.75) return 'otimo';
   if (worstDefense <= 1) return 'yellow';
   if (worstDefense <= 2) return 'red';
   return 'solo';
@@ -3203,47 +3259,127 @@ function classifyDefenseOnlyRecommendationTier(worstDefense) {
 function scoreRecommendationForBoss(bossOrTypes, poke) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
-  const bossAttackTypes = getBossAttackTypes(boss);
+  const bossMoveTypes = getBossMoveTypes(boss);
+  // Considere tanto os `types` do chefe quanto o `moveType` explícito ao calcular DEF.
+  // Isso garante que chefes multi-type (ex: Steel+Flying) e movesets explícitos
+  // (ex: Ground em Mega Tyranitar) sejam avaliados juntos, preservando passivas
+  // como `Levitate` e permitindo detecção de dupla resistência.
+  const bossAttackTypes = mergeLowercaseUniqueValues(getBossAttackTypes(boss), bossMoveTypes);
   const offenseTargetTypes = getBossOffenseTargetTypes(boss);
   const rankMode = getBossRecommendationRankMode(boss);
   const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
   const matchupOverride = getMatchupOverride(poke, boss);
-  const offense = typeof matchupOverride?.offense === 'number'
+  const offenseRaw = typeof matchupOverride?.offense === 'number'
     ? matchupOverride.offense
     : (offenseTargetTypes.length
       ? getTypeMultiplier(moveType, offenseTargetTypes, [], poke.passiveSuperEffectiveTypes)
       : 1);
 
+  // Normalizamos o valor de ATK para a nova escala (1.0 / 1.75 / 2.0) e garantimos teto de 2.0
+  const offense = normalizeOffenseValue(offenseRaw);
+
+  // Regra especial: quando estivermos avaliando recomendações no contexto de um "speedster"
+  // (objetos construídos por `getRecommendedSpeedsters` possuem `bossEntries`), e o Pokémon
+  // sendo avaliado for o próprio speedster, promover ATK 1.75 -> 2.0.
+  try {
+    const isSpeedsterContext = Boolean(boss && Array.isArray(boss.bossEntries));
+    const nameLower = String(poke.name || '').toLowerCase();
+    const isSamePokemon = (isSpeedsterContext && String(boss.name || '').toLowerCase() === nameLower)
+      || (activeSpeedsterContextName && String(activeSpeedsterContextName).toLowerCase() === nameLower);
+
+    // Detectar se o próprio Pokémon avaliado é um speedster (presente no mapa de speedsters)
+    if (knownSpeedsterNames === null) refreshKnownSpeedsterNames();
+    const isPokeSpeedster = (Array.isArray(poke?.bossEntries) && poke.bossEntries.length) || knownSpeedsterNames.has(nameLower);
+
+    // Promover 1.75 -> 2.0 quando o Pokémon for um speedster ou estivermos no contexto do próprio speedster
+    if ((isSamePokemon || isPokeSpeedster) && offense === 1.75) {
+      // Aplicar promoção antes de qualquer clamp final/score
+      // (respeita o teto global de 2.0)
+      // Usamos uma cópia local para evitar modificar offenseRaw
+      // e garantir que o valor apresentado e usado em scoring seja 2.0
+      // quando o speedster é efetivo.
+      // eslint-disable-next-line no-param-reassign
+      // (não queremos reatribuir poke._offense aqui ainda porque _offense
+      // é atribuído mais abaixo; apenas ajustamos a variável usada.)
+      // eslint-disable-next-line prefer-const
+      var _promotedOffense = 2.0;
+      // substituir o valor de `offense` usado a seguir nas pontuações
+      // (reinserimos no escopo por nome 'offense' para continuidade)
+      // nota: não usamos `let offense = ...` para manter compatibilidade
+      // com código existente; em JS, reassigning const isn't allowed, então
+      // iremos shadowar via novo bloco abaixo ao calcular offenseScore.
+    }
+  } catch (e) {
+    /* ignore */
+  }
+
   const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
-  const defenseMultipliers = (bossAttackTypes.length ? bossAttackTypes : [getBossMoveType(boss) || null])
-    .filter(Boolean)
-    .map((attackType) => {
-      const customMultiplier = matchupOverride?.defenseByBossType?.[attackType];
-      if (typeof customMultiplier === 'number') return customMultiplier;
-      const passiveMultiplier = poke.defenseByBossType?.[attackType];
-      if (typeof passiveMultiplier === 'number') return passiveMultiplier;
-      return getTypeMultiplier(attackType, pokeTypes, poke.immunities);
-    });
+  const attackTypesList = (bossAttackTypes.length ? bossAttackTypes : [getBossMoveType(boss) || null])
+    .filter(Boolean);
+
+  // Collect both raw and normalized multipliers so we can apply rules that
+  // consider the combination of boss attack types (e.g. if all attack types
+  // are resisted, treat as super inafetivo = 0.5).
+  const defenseMeta = attackTypesList.map((attackType) => {
+    const customMultiplier = matchupOverride?.defenseByBossType?.[attackType];
+    if (typeof customMultiplier === 'number') {
+      const raw = customMultiplier;
+      return { attackType, raw, normalized: normalizeDefenseValue(raw, true), explicit: true };
+    }
+    const passiveMultiplier = poke.defenseByBossType?.[attackType];
+    if (typeof passiveMultiplier === 'number') {
+      const raw = passiveMultiplier;
+      return { attackType, raw, normalized: normalizeDefenseValue(raw, true), explicit: true };
+    }
+    const raw = getTypeMultiplier(attackType, pokeTypes, poke.immunities);
+    return { attackType, raw, normalized: normalizeDefenseValue(raw, false), explicit: false };
+  });
+
+  const defenseMultipliers = defenseMeta.map((m) => m.normalized);
+  const rawMultipliers = defenseMeta.map((m) => m.raw);
+
+  let worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
   const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1;
-  const worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
+
+  // If the boss has explicit move types, prioritize them: if any move type
+  // results in immunity or strong mitigation (normalized <= 0.5), treat the
+  // overall interaction as super-inafetivo (0.5). This ensures Levitate/ground
+  // cases (e.g., Bronzong vs Mega Tyranitar) are scored correctly.
+  if (Array.isArray(bossMoveTypes) && bossMoveTypes.length) {
+    const moveMeta = defenseMeta.filter((m) => bossMoveTypes.includes(m.attackType));
+    if (moveMeta.length && moveMeta.some((m) => typeof m.normalized === 'number' && m.normalized <= 0.5)) {
+      worstDefense = 0.5;
+    }
+  }
+
+  // If every boss attack type produces a resistance (normalized <= 0.75),
+  // consider the overall interaction as "super inafetivo" (0.5). This handles
+  // cases like Mega Skarmory (steel + flying) where a Pokemon resists both
+  // attack types and should therefore be treated as more strongly resisted.
+  if (defenseMultipliers.length > 1 && defenseMultipliers.every((v) => typeof v === 'number' && v <= 0.75)) {
+    worstDefense = 0.5;
+  }
+
+  // Use promoted offense value for scoring when set (speedster case)
+  const effectiveOffenseForScoring = (typeof _promotedOffense === 'number' ? _promotedOffense : offense);
 
   const offenseScore =
-    offense === 0 ? 0 :
-    offense >= 4 ? 1 :
-    offense >= 2 ? 0.8 :
-    offense >= 1 ? 0.48 :
+    effectiveOffenseForScoring === 0 ? 0 :
+    effectiveOffenseForScoring >= 2 ? 1 :
+    effectiveOffenseForScoring >= 1.75 ? 0.8 :
+    effectiveOffenseForScoring >= 1 ? 0.48 :
     0.18;
 
   const defenseScore =
-    bestDefense === 0 ? 1 :
-    worstDefense <= 0.25 ? 0.96 :
-    worstDefense <= 0.5 ? 0.9 :
+    bestDefense <= 0.5 ? 1 :
+    worstDefense <= 0.5 ? 0.96 :
+    worstDefense <= 0.75 ? 0.9 :
     worstDefense <= 1 ? 0.68 :
     worstDefense <= 2 ? 0.18 :
     0.03;
 
   const combined = rankMode === 'defense-only'
-    ? ((worstDefense === 0 ? 100 : 1 / worstDefense) + (bestDefense === 0 ? 1 : 1 / (bestDefense * 10)))
+    ? ((worstDefense <= 0.5 ? 100 : 1 / worstDefense) + (bestDefense <= 0.5 ? 1 : 1 / (bestDefense * 10)))
     : ((offenseScore * 0.6) + (defenseScore * 0.4));
   const explicitTier = poke?.tierLocked && typeof poke?.tier === 'string'
     ? poke.tier.trim().toLowerCase()
@@ -3252,12 +3388,13 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
     ? explicitTier
     : (rankMode === 'defense-only'
       ? classifyDefenseOnlyRecommendationTier(worstDefense)
-      : classifyRecommendationTier(offense, worstDefense));
+      : classifyRecommendationTier(effectiveOffenseForScoring, worstDefense));
 
   return {
     ...poke,
     _score: combined,
-    _offense: offense,
+    // Reportar o valor promovido para o contexto speedster quando aplicável
+    _offense: (typeof _promotedOffense === 'number' ? _promotedOffense : offense),
     _defenseWorst: worstDefense,
     _defenseBest: bestDefense,
     _moveType: moveType,
@@ -4195,7 +4332,20 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
       const ranked = rankRecommendedForBoss(group.boss, group.recommended);
       const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
       if (found) {
-        bestTier = pickBetterTier(bestTier, found.tier || 'unknown');
+        // Regra especial: speedsters que causam Efetivo (1.75) viram Super Efetivo (2.0).
+        // Aplicar apenas na computação de tiers para speedsters.
+        let effectiveTier = found.tier || 'unknown';
+        try {
+          const isSpeedsterMatch = String(found.name || '').toLowerCase() === lower;
+          const offenseVal = typeof found._offense === 'number' ? found._offense : null;
+          if (isSpeedsterMatch && offenseVal === 1.75) {
+            effectiveTier = classifyRecommendationTier(2.0, found._defenseWorst);
+          }
+        } catch (e) {
+          // fallback para o tier já calculado
+        }
+
+        bestTier = pickBetterTier(bestTier, effectiveTier);
       }
     });
   }
@@ -4209,6 +4359,8 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
 
 function openSpeedsterBossesModal(speedster) {
   setBossModalLayout(false);
+  // marcar contexto ativo para que o sistema saiba qual speedster foi aberto
+  activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
   const bosses = getBossesForSpeedster(speedster.name);
   modalTitle.textContent = `${speedster.name} (Pokemon)`;
   setModalChrome({
@@ -4812,10 +4964,17 @@ function getWeaknessesForBossEntry(entry) {
   const bossImmunities = mergeLowercaseUniqueValues(entry?.immunities);
 
   return Object.keys(typeEffectiveness)
-    .map((type) => ({
-      type,
-      multiplier: getTypeMultiplier(type, bossTypes, bossImmunities)
-    }))
+    .map((type) => {
+      const raw = getTypeMultiplier(type, bossTypes, bossImmunities);
+      const normalized = normalizeOffenseValue(raw);
+      return {
+        type,
+        // `multiplier` passa a ser o valor normalizado conforme a escala de ATK
+        multiplier: normalized,
+        // mantemos raw para eventuais debug ou lógica futura
+        rawMultiplier: raw
+      };
+    })
     .filter((item) => item.multiplier > 1)
     .sort((left, right) => {
       if (right.multiplier !== left.multiplier) {
@@ -5500,6 +5659,11 @@ function openBossModalV2(speedster) {
   }
 
   setBossModalLayout(false);
+  // Se abrimos o modal diretamente a partir de um card de speedster,
+  // marcar contexto ativo para aplicar promoção de speedster (1.75 -> 2.0)
+  if (Array.isArray(speedster?.bossEntries)) {
+    activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
+  }
   currentBoss = speedster;
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
   const bossNames = bosses.map((boss) => boss.name).join(' + ');
@@ -5698,6 +5862,8 @@ function openBossModalV2(speedster) {
 function closeModal() {
   currentBoss = null;
   setBossModalLayout(false);
+  // limpar contexto de speedster ativo ao fechar modal
+  activeSpeedsterContextName = null;
   const content = modal.querySelector('.speedster-modal-content');
   if (typeof gsap !== 'undefined') {
     gsap.to(content, {
