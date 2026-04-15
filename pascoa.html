@@ -89,6 +89,16 @@
 
       <section id="pascoa-gallery" class="pascoa-gallery pascoa-hidden" aria-live="polite"></section>
 
+      <section id="pascoa-location" class="pascoa-gallery" aria-label="Localização da Ilha de Páscoa">
+        <h2>Ilha de Páscoa — Localização</h2>
+        <figure class="pascoa-figure" style="max-width:520px; margin:0.6rem auto;">
+          <div class="pascoa-thumb" style="height:220px; background:#fff; display:flex; align-items:center; justify-content:center;">
+            <img src="/pascoa/ilha_de_pascoa.png" alt="Ilha de Páscoa" loading="lazy" style="object-fit:contain; max-height:100%; max-width:100%;" />
+          </div>
+          <figcaption class="pascoa-caption">Ilha de Páscoa.</figcaption>
+        </figure>
+      </section>
+
       <div class="pascoa-credits">Agradecimentos aos jogadores que buscaram os ovos e postaram as imagens: Gunko, Must Be Vitão, Bidaoo, Petros, Piol, Texugo, GnR, Rodrigo., Gui, EdzYエドソン, Gimli, Indy Pereira, Daan, Recco e Saulo.</div>
     </div>
   </main>
@@ -133,6 +143,7 @@
     const continentButtons = Array.from(root.querySelectorAll('.pascoa-continent-btn'));
     const citiesContainer = root.querySelector('#pascoa-cities');
     const galleryEl = root.querySelector('#pascoa-gallery');
+    const locationEl = root.querySelector('#pascoa-location');
 
     // --- Egg collection state and UI (persistence via localStorage + IndexedDB) ---
     const EGG_TARGET = 50;
@@ -221,6 +232,24 @@
     }
 
     function setImgWithFallback(img, continent, cityKey, file){
+      const raw = String(file || '');
+      // if the provided file is an absolute path or a remote URL (or already contains /pascoa/), load it directly
+      if(/^\/(.*)|^https?:\/\//i.test(raw) || raw.indexOf('/pascoa/') !== -1){
+        img.onerror = function(){
+          this.style.opacity = 0.4;
+          this.alt = 'Imagem não encontrada';
+          const fig = this.closest('.pascoa-figure');
+          if(fig && !fig.querySelector('.pascoa-missing')){
+            const miss = document.createElement('div');
+            miss.className = 'pascoa-missing';
+            miss.textContent = 'Imagem não encontrada';
+            fig.appendChild(miss);
+          }
+        };
+        const src = raw.startsWith('/') || /^https?:\/\//i.test(raw) ? raw : ('/' + raw);
+        img.src = src;
+        return;
+      }
       const srcs = buildImageCandidates(continent, cityKey, file);
       let i = 0;
       img.onerror = function(){
@@ -335,6 +364,7 @@
     function renderCities(continent){
       clearChildren(citiesContainer);
       galleryEl.classList.add('pascoa-hidden');
+      if(locationEl) locationEl.classList.remove('pascoa-hidden');
       const cont = DATA[continent];
       if(!cont) return;
       // highlight continent button
@@ -359,6 +389,7 @@
     async function renderGallery(continent, cityKey){
       const city = DATA[continent] && DATA[continent].cities[cityKey];
       if(!city) return;
+      if(locationEl) locationEl.classList.add('pascoa-hidden');
       clearChildren(galleryEl);
       galleryEl.classList.remove('pascoa-hidden');
       const title = document.createElement('h2');
@@ -539,7 +570,16 @@
       overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeViewer(); });
 
       // expose some actions
-      _viewer = { overlay, img, caption, show(showState){ viewerState.continent = showState.continent; viewerState.cityKey = showState.cityKey; viewerState.images = showState.images || []; viewerState.currentIndex = showState.index || 0; updateViewerImage(); showViewer(); }, close: closeViewer, prev: prevImage, next: nextImage };
+      _viewer = { overlay, img, caption, show(showState){
+          viewerState.continent = showState.continent;
+          viewerState.cityKey = showState.cityKey;
+          viewerState.images = showState.images || [];
+          viewerState.currentIndex = showState.index || 0;
+          // allow callers to hide the collect button (e.g. map view)
+          try{ if(showState && showState.noCollect){ collectBtn.style.display = 'none'; } else { collectBtn.style.display = ''; } }catch(e){}
+          updateViewerImage();
+          showViewer();
+        }, close: closeViewer, prev: prevImage, next: nextImage };
       return _viewer;
     }
 
@@ -552,6 +592,20 @@
       const key = btn.dataset.continent;
       renderCities(key);
     }));
+
+    // make the island map open in the same image viewer (supports zoom/pan)
+    try{
+      const mapImg = root.querySelector('#pascoa-location img');
+      if(mapImg){
+        mapImg.style.cursor = 'zoom-in';
+        mapImg.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          const v = ensureImageViewer();
+          const images = [{ file: '/pascoa/ilha_de_pascoa.png', folder: '', comment: 'Ilha de Páscoa — localização aproximada no Oceano Pacífico.' }];
+          v.show({ continent: 'pascoa', cityKey: '', images, index: 0, noCollect: true });
+        });
+      }
+    }catch(e){ /* ignore */ }
 
     // initial state: show nothing until user clicks a continent (keeps it lightweight)
   })();

@@ -6487,8 +6487,9 @@ function initTrainingVideo(){
 // Como o script é carregado com `defer`, o DOM já estará pronto
 initTrainingVideo();
 
-// --- Pascoa modal (iframe) ---
+// --- Pascoa modal (inject pascoa.html into modal body) ---
 let _pascoaModalKeyHandler = null;
+let _pascoaContentLoaded = false;
 function ensurePascoaModal(){
     if(document.getElementById('pascoa-modal')) return;
     const modal = document.createElement('div');
@@ -6509,15 +6510,13 @@ function ensurePascoaModal(){
     closeBtn.addEventListener('click', closePascoaModal);
     content.appendChild(closeBtn);
 
-    const frame = document.createElement('iframe');
-    frame.id = 'pascoa-modal-iframe';
-    frame.className = 'pascoa-modal__iframe';
-    frame.src = 'about:blank';
-    frame.title = 'Páscoa';
-    frame.style.width = '100%';
-    frame.style.border = '0';
-    frame.style.background = 'transparent';
-    content.appendChild(frame);
+    const body = document.createElement('div');
+    body.id = 'pascoa-modal-body';
+    body.className = 'pascoa-modal-body';
+    body.style.width = '100%';
+    body.style.maxHeight = '80vh';
+    body.style.overflow = 'auto';
+    content.appendChild(body);
 
     modal.appendChild(content);
     document.body.appendChild(modal);
@@ -6525,12 +6524,61 @@ function ensurePascoaModal(){
     modal.addEventListener('click', (e)=>{ if(e.target === modal) closePascoaModal(); });
 }
 
+async function loadPascoaIntoModal(){
+    if(_pascoaContentLoaded) return;
+    try{
+        const res = await fetch('pascoa.html');
+        if(!res.ok) throw new Error('Falha ao buscar pascoa.html: ' + res.status);
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // copy inline style blocks
+        const styleTags = Array.from(doc.querySelectorAll('style'));
+        if(styleTags.length){
+            let combined = '';
+            styleTags.forEach(s=> combined += s.textContent + '\n');
+            if(!document.getElementById('pascoa-inline-styles')){
+                const styleEl = document.createElement('style');
+                styleEl.id = 'pascoa-inline-styles';
+                styleEl.textContent = combined;
+                document.head.appendChild(styleEl);
+            }
+        }
+
+        const modalBody = document.getElementById('pascoa-modal-body');
+        if(!modalBody) return;
+
+        // insert main pascoa root (if present) or whole body as fallback
+        const mainRoot = doc.getElementById('pascoa-root') || doc.body;
+        modalBody.innerHTML = '';
+        const imported = document.importNode(mainRoot, true);
+        modalBody.appendChild(imported);
+
+        // execute inline scripts from pascoa.html
+        const scripts = Array.from(doc.querySelectorAll('script')).filter(s => !s.src && s.textContent && s.textContent.trim());
+        scripts.forEach((s, idx)=>{
+            const newScript = document.createElement('script');
+            newScript.type = 'text/javascript';
+            newScript.textContent = s.textContent;
+            // mark injected scripts so we can clean them up when closing the modal
+            newScript.setAttribute('data-pascoa-inline', '1');
+            document.body.appendChild(newScript);
+        });
+
+        _pascoaContentLoaded = true;
+    }catch(err){
+        console.error('Erro carregando pascoa no modal', err);
+        const modalBody = document.getElementById('pascoa-modal-body');
+        if(modalBody) modalBody.innerHTML = '<p>Falha ao carregar conteúdo de Páscoa.</p>';
+    }
+}
+
 function openPascoaModal(){
     ensurePascoaModal();
     const modal = document.getElementById('pascoa-modal');
     if(!modal) return;
-    const iframe = document.getElementById('pascoa-modal-iframe');
-    if(iframe) iframe.src = 'pascoa.html';
+    loadPascoaIntoModal().catch(()=>{});
     modal.setAttribute('aria-hidden','false');
     // lock scroll
     document.body.style.overflow = 'hidden';
@@ -6541,9 +6589,22 @@ function openPascoaModal(){
 function closePascoaModal(){
     const modal = document.getElementById('pascoa-modal');
     if(!modal) return;
-    const iframe = document.getElementById('pascoa-modal-iframe');
-    if(iframe){ try{ iframe.src = 'about:blank'; }catch{} }
     modal.setAttribute('aria-hidden','true');
+    // cleanup injected pascoa artifacts (counter, viewer, inline styles, injected scripts)
+    try{
+        const modalBody = document.getElementById('pascoa-modal-body');
+        if(modalBody) modalBody.innerHTML = '';
+        const counter = document.getElementById('pascoa-counter');
+        if(counter) counter.remove();
+        const viewer = document.getElementById('pascoa-viewer');
+        if(viewer) viewer.remove();
+        const styleEl = document.getElementById('pascoa-inline-styles');
+        if(styleEl) styleEl.remove();
+        // remove any inline scripts we injected earlier
+        document.querySelectorAll('script[data-pascoa-inline="1"]').forEach(s => s.remove());
+    }catch(e){ console.warn('Erro ao limpar modal pascoa:', e); }
+    // allow reloading content next time
+    _pascoaContentLoaded = false;
     document.body.style.overflow = '';
     if(_pascoaModalKeyHandler) document.removeEventListener('keydown', _pascoaModalKeyHandler);
     _pascoaModalKeyHandler = null;

@@ -1679,7 +1679,7 @@ const mew2Bosses = createManualRoleboardBosses([
   { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', effectiveness: mew2NeutralBossEffectiveness, description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
   { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
   { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', effectiveness: mew2NeutralBossEffectiveness, description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
-  { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.' },
+  { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.', ration: { label: 'Rindo Ration', shortLabel: 'Rindo', image: 'rations/rindo_ration.png', description: 'Aumenta a resistencia contra ataques Grass em 30% por 60 minutos.' } },
   { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
   { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', effectiveness: mew2NeutralBossEffectiveness, description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
   { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
@@ -2160,6 +2160,12 @@ const bossConsumableCatalog = Object.freeze({
       image: 'rations/coba_ration.png',
       description: 'Aumenta a resistencia contra ataques Flying em 30% por 60 minutos.'
     }),
+    rindo: Object.freeze({
+      label: 'Rindo Ration',
+      shortLabel: 'Rindo',
+      image: 'rations/rindo_ration.png',
+      description: 'Aumenta a resistencia contra ataques Grass em 30% por 60 minutos.'
+    }),
     pokemon: Object.freeze({
       label: 'Pokémon Ration',
       shortLabel: 'Pokemon',
@@ -2203,6 +2209,7 @@ const bossRationByAttackType = Object.freeze({
   ghost: bossConsumableCatalog.rations.kasib,
   electric: bossConsumableCatalog.rations.wacan,
   bug: bossConsumableCatalog.rations.tanga,
+  grass: bossConsumableCatalog.rations.rindo,
   psychic: bossConsumableCatalog.rations.Payapa,
   dragon: bossConsumableCatalog.rations.haban,
   ground: bossConsumableCatalog.rations.shuca,
