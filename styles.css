@@ -3364,6 +3364,38 @@ p {
   z-index: 100;
 }
 .modal[aria-hidden="false"] { display:flex; }
+
+/* Pascoa modal sizing and layout overrides */
+.pascoa-modal {
+  align-items: center;
+  justify-content: center;
+}
+.pascoa-modal .modal-content{
+  width: 94%;
+  max-width: 1200px;
+  height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.pascoa-modal .modal-content .modal-close{
+  right: 0.8rem;
+  top: 0.6rem;
+}
+.pascoa-modal__iframe{
+  width: 100%;
+  border: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: 8px;
+  background: transparent;
+}
+@media (max-width:720px){
+  .pascoa-modal .modal-content{ width:95%; height:92vh; padding:24px; }
+}
 .modal-content {
   background: var(--card-bg);
   padding: 1rem;
@@ -3960,6 +3992,7 @@ h2 {
 #elemental-balls-btn,
 #respawns-btn,
 #fishing-btn,
+#pascoa-btn,
 #theme-toggle,
 #share-btn,
 #matrix-btn {
@@ -3979,11 +4012,11 @@ h2 {
 }
 
 #commands-btn {
-  left: 1.25rem;
+  left: 5rem;
 }
 
 #elemental-balls-btn {
-  left: 5rem;
+  left: 8.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3991,11 +4024,15 @@ h2 {
 }
 
 #respawns-btn {
-  left: 8.75rem;
+  left: 12.5rem;
 }
 
 #fishing-btn {
-  left: 12.5rem;
+  left: 16.25rem;
+}
+
+#pascoa-btn {
+  left: 1.25rem;
 }
 
 #respawns-btn[hidden] + #fishing-btn {
@@ -4014,6 +4051,7 @@ h2 {
 #elemental-balls-btn:hover,
 #respawns-btn:hover,
 #fishing-btn:hover,
+#pascoa-btn:hover,
 #theme-toggle:hover,
 #share-btn:hover,
 #matrix-btn:hover {
@@ -4263,6 +4301,7 @@ textarea:focus {
   #elemental-balls-btn,
   #respawns-btn,
   #fishing-btn,
+  #pascoa-btn,
   #home-btn,
   #share-btn,
   #matrix-btn {

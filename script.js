@@ -55,6 +55,7 @@ const tabSpeedstersBtn = document.getElementById('tab-bosses');
 const tabStreamersBtn = document.getElementById('tab-streamers');
 const tabCommunityBtn = document.getElementById('tab-community');
 const homeBtn = document.getElementById('home-btn');
+const pascoaBtn = document.getElementById('pascoa-btn');
 const homeExploreBtn = document.getElementById('home-explore-btn');
 const homeStreamerInfo = document.getElementById('home-streamer-info');
 const homeStreamerCount = document.getElementById('home-streamer-count');
@@ -2844,6 +2845,7 @@ if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness()
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 if(homeBtn) homeBtn.addEventListener('click',()=>{ showHome(); localStorage.setItem('selectedTab','home'); updateUrl(); });
+if(pascoaBtn) pascoaBtn.addEventListener('click',(e)=>{ e.preventDefault(); openPascoaModal(); });
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
         openHomeDestination(button.dataset.homeTarget);
@@ -6484,3 +6486,65 @@ function initTrainingVideo(){
 
 // Como o script é carregado com `defer`, o DOM já estará pronto
 initTrainingVideo();
+
+// --- Pascoa modal (iframe) ---
+let _pascoaModalKeyHandler = null;
+function ensurePascoaModal(){
+    if(document.getElementById('pascoa-modal')) return;
+    const modal = document.createElement('div');
+    modal.className = 'modal pascoa-modal';
+    modal.id = 'pascoa-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.id = 'pascoa-modal-content';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'modal-close';
+    closeBtn.setAttribute('aria-label','Fechar');
+    closeBtn.innerHTML = '✖';
+    closeBtn.addEventListener('click', closePascoaModal);
+    content.appendChild(closeBtn);
+
+    const frame = document.createElement('iframe');
+    frame.id = 'pascoa-modal-iframe';
+    frame.className = 'pascoa-modal__iframe';
+    frame.src = 'about:blank';
+    frame.title = 'Páscoa';
+    frame.style.width = '100%';
+    frame.style.border = '0';
+    frame.style.background = 'transparent';
+    content.appendChild(frame);
+
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) closePascoaModal(); });
+}
+
+function openPascoaModal(){
+    ensurePascoaModal();
+    const modal = document.getElementById('pascoa-modal');
+    if(!modal) return;
+    const iframe = document.getElementById('pascoa-modal-iframe');
+    if(iframe) iframe.src = 'pascoa.html';
+    modal.setAttribute('aria-hidden','false');
+    // lock scroll
+    document.body.style.overflow = 'hidden';
+    _pascoaModalKeyHandler = (e)=>{ if(e.key === 'Escape') closePascoaModal(); };
+    document.addEventListener('keydown', _pascoaModalKeyHandler);
+}
+
+function closePascoaModal(){
+    const modal = document.getElementById('pascoa-modal');
+    if(!modal) return;
+    const iframe = document.getElementById('pascoa-modal-iframe');
+    if(iframe){ try{ iframe.src = 'about:blank'; }catch{} }
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    if(_pascoaModalKeyHandler) document.removeEventListener('keydown', _pascoaModalKeyHandler);
+    _pascoaModalKeyHandler = null;
+}
