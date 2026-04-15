@@ -1093,6 +1093,132 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
+// --- Site stream modal (Twitch) -------------------------------------------------
+let siteStreamModalState = null;
+let siteStreamModalPreviousOverflow = '';
+let siteStreamModalLastFocus = null;
+
+function ensureSiteStreamModal(){
+    if(siteStreamModalState?.modal?.isConnected) return siteStreamModalState;
+
+    const modal = document.createElement('div');
+    modal.className = 'site-stream-modal';
+    modal.setAttribute('data-open', 'false');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'site-stream-modal-title');
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'site-stream-modal__backdrop';
+    backdrop.setAttribute('data-close', 'true');
+
+    const content = document.createElement('div');
+    content.className = 'site-stream-modal__content';
+    content.setAttribute('role', 'document');
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'site-stream-modal__close';
+    closeBtn.setAttribute('aria-label', 'Fechar transmissão');
+    closeBtn.textContent = '✖';
+
+    const header = document.createElement('div');
+    header.className = 'site-stream-modal__header';
+
+    const title = document.createElement('h2');
+    title.id = 'site-stream-modal-title';
+    title.className = 'site-stream-modal__title';
+    title.textContent = 'Transmissão';
+
+    const player = document.createElement('div');
+    player.className = 'site-stream-modal__player';
+
+    header.appendChild(title);
+    content.append(closeBtn, header, player);
+    modal.append(backdrop, content);
+
+    modal.addEventListener('click', (event) => {
+        if(event.target === modal || event.target.matches('[data-close]')){
+            closeSiteStreamModal();
+        }
+    });
+    closeBtn.addEventListener('click', closeSiteStreamModal);
+
+    document.body.appendChild(modal);
+
+    siteStreamModalState = { modal, content, closeBtn, title, player };
+    return siteStreamModalState;
+}
+
+function openSiteStreamModal(options = {}){
+    const channel = String(options.channel || '').trim();
+    if(!channel) return false;
+    const titleText = options.title || `Transmissão de ${channel}`;
+
+    const { modal, content, closeBtn, title, player } = ensureSiteStreamModal();
+    const wasOpen = modal.getAttribute('data-open') === 'true';
+
+    // Clear previous player
+    player.replaceChildren();
+
+    const parentDomain = location.hostname || 'localhost';
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&parent=${encodeURIComponent(parentDomain)}&autoplay=true`;
+    iframe.title = titleText;
+    iframe.width = '100%';
+    iframe.height = '480';
+    iframe.style.border = '0';
+    iframe.style.minHeight = '260px';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+    player.appendChild(iframe);
+
+    title.textContent = titleText;
+
+    if(!wasOpen){
+        siteStreamModalPreviousOverflow = document.body.style.overflow;
+        siteStreamModalLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    }
+
+    modal.setAttribute('data-open', 'true');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(() => { closeBtn.focus({ preventScroll: true }); });
+
+    return true;
+}
+
+function closeSiteStreamModal(options = {}){
+    if(!siteStreamModalState?.modal) return;
+    const { modal, player } = siteStreamModalState;
+    if(modal.getAttribute('data-open') !== 'true' && !player.childElementCount) return;
+
+    // remove iframe/player
+    player.replaceChildren();
+    modal.setAttribute('data-open', 'false');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = siteStreamModalPreviousOverflow || '';
+    siteStreamModalPreviousOverflow = '';
+
+    if(!options.skipFocusRestore && siteStreamModalLastFocus && document.contains(siteStreamModalLastFocus)){
+        siteStreamModalLastFocus.focus({ preventScroll: true });
+    }
+    siteStreamModalLastFocus = null;
+}
+
+window.openSiteStreamModal = openSiteStreamModal;
+window.closeSiteStreamModal = closeSiteStreamModal;
+
+window.addEventListener('keydown', (event) => {
+    if(event.key === 'Escape' && siteStreamModalState?.modal?.getAttribute('data-open') === 'true'){
+        event.preventDefault();
+        closeSiteStreamModal();
+    }
+});
+
+
 function setCommunityPlayerLoaded(video){
     const frame = document.getElementById('community-video-frame');
     const preview = document.getElementById('community-video-preview');
@@ -4522,7 +4648,27 @@ function renderStreamers(){
             iframe.setAttribute('webkitallowfullscreen', '');
             iframe.setAttribute('mozallowfullscreen', '');
             clearMiniPreview();
+            // place iframe preview and an invisible overlay so clicks open the site modal
+            miniPreview.style.position = 'relative';
             miniPreview.appendChild(iframe);
+            const overlay = document.createElement('button');
+            overlay.type = 'button';
+            overlay.className = 'streamer-mini-preview__overlay';
+            overlay.setAttribute('aria-label', `Abrir transmissão de ${displayName}`);
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.border = '0';
+            overlay.style.background = 'transparent';
+            overlay.style.cursor = 'pointer';
+            overlay.style.zIndex = '6';
+            overlay.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
+            });
+            miniPreview.appendChild(overlay);
             miniPreview.style.display = 'block';
         };
 
@@ -4541,7 +4687,26 @@ function renderStreamers(){
             img.style.objectFit = 'cover';
             img.style.borderRadius = '0.5rem';
             clearMiniPreview();
+            miniPreview.style.position = 'relative';
             miniPreview.appendChild(img);
+            const overlayOffline = document.createElement('button');
+            overlayOffline.type = 'button';
+            overlayOffline.className = 'streamer-mini-preview__overlay';
+            overlayOffline.setAttribute('aria-label', `Abrir transmissão de ${displayName}`);
+            overlayOffline.style.position = 'absolute';
+            overlayOffline.style.top = '0';
+            overlayOffline.style.left = '0';
+            overlayOffline.style.width = '100%';
+            overlayOffline.style.height = '100%';
+            overlayOffline.style.border = '0';
+            overlayOffline.style.background = 'transparent';
+            overlayOffline.style.cursor = 'pointer';
+            overlayOffline.style.zIndex = '6';
+            overlayOffline.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
+            });
+            miniPreview.appendChild(overlayOffline);
             miniPreview.style.display = 'block';
         };
 
@@ -4638,14 +4803,21 @@ function renderStreamers(){
                 refreshRatSummary();
             });
 
-        openBtn.addEventListener('click', ()=>{
+        openBtn.addEventListener('click', (ev)=>{
+            ev.stopPropagation();
             openExternalWindow(`https://www.twitch.tv/${name}`);
         });
 
-        discordBtn.addEventListener('click', ()=>{
+        discordBtn.addEventListener('click', (ev)=>{
+            ev.stopPropagation();
             if(discordLink){
                 openExternalWindow(discordLink);
             }
+        });
+
+        // clicking the whole card opens the stream modal as well
+        card.addEventListener('click', () => {
+            try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
         });
     });
 

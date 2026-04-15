@@ -1503,6 +1503,94 @@ p {
   display: block;
 }
 
+/* Stream modal styles (mirror do site-youtube-modal) */
+.site-stream-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 2200;
+}
+
+.site-stream-modal[data-open="true"] {
+  display: flex;
+}
+
+.site-stream-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  /* Use a plain semi-opaque backdrop to avoid heavy repaints that can cause flicker */
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.site-stream-modal__content {
+  position: relative;
+  width: min(100%, 980px);
+  max-height: 92vh;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, rgba(17, 27, 40, 0.96), rgba(9, 15, 24, 0.98));
+  box-shadow: 0 28px 70px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.site-stream-modal__header {
+  padding-right: 2.5rem;
+}
+
+.site-stream-modal__title {
+  margin: 0;
+  color: #f4f7fb;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  line-height: 1.3;
+}
+
+.site-stream-modal__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  color: #f7fbff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.site-stream-modal__close:hover,
+.site-stream-modal__close:focus-visible {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.22);
+  transform: scale(1.04);
+}
+
+.site-stream-modal__player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.95rem;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.site-stream-modal__player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 @media (max-width: 640px) {
   .site-youtube-modal {
     padding: 0.75rem;
