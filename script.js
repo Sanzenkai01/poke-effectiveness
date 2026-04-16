@@ -2680,6 +2680,8 @@ function renderSelection(){
                 m *= 0.5;        // defender resists attacker
             }
         });
+        // Não permitir multiplicador zero — limite mínimo 0.5x
+        m = Math.max(m, 0.5);
         multipliers[att] = m;
     });
 

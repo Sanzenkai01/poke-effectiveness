@@ -1073,6 +1073,7 @@ const rolePickImageOverrides = {
   shinyscyther: 'scyther.png',
   ribombee: 'Ribombee.png',
   venusaurtwo: 'venusaur.png'
+  ,shinyclaydol: 'claydol.png'
 };
 
 function getRolePickAssetKey(name) {
@@ -1203,7 +1204,8 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Tangrowth', ['grass'], 'grass'),
           createRolePick('Appletun', ['grass', 'dragon'], 'grass'),
           createRolePick('Chesnaught', ['grass', 'fighting'], 'grass'),
-          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
+          createRolePick('Shiny Claydol', ['ground', 'psychic'], 'ground')
         ],
         support: [
           createRolePick('Bellossom', ['grass'], 'grass'),
@@ -1357,7 +1359,8 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
           createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire'),
-          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark')
+          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark'),
+          // Lopunny é suporte — removida de DPS
         ],
         tank: [
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
@@ -1367,6 +1370,7 @@ const championPathBosses = createManualRoleboardBosses([
         support: [
           createRolePick('Zorua', ['dark'], 'dark'),
           createRolePick('Ponyta', ['fire'], 'fire')
+          ,createRolePick('Lopunny', ['normal'], 'fighting')
         ]
       }
     }
@@ -1472,13 +1476,15 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Cramorant', ['flying', 'water'], 'flying'),
           createRolePick('Mega Absol Z', ['dark'], 'dark'),
-          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark')
+          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark'),
+          // Lopunny é suporte — removida de DPS
         ],
         tank: [
           createRolePick('Sableye', ['dark', 'ghost'], 'ghost')
         ],
         support: [
-          createRolePick('Zorua', ['dark'], 'dark')
+          createRolePick('Zorua', ['dark'], 'dark'),
+          createRolePick('Lopunny', ['normal'], 'fighting')
         ]
       }
     }
@@ -2016,6 +2022,40 @@ function getImplicitRecommendationProfile(poke) {
       },
       passiveName: 'Gooey',
       passiveDescription: 'Sua gosma espessa torna o Pokemon resistente contra ataques do tipo Dragon.'
+    };
+  }
+
+  if (nameKey === 'claydol') {
+    return {
+      defenseByBossType: {
+        psychic: 0.5,
+        ghost: 0.5
+      },
+      passiveName: 'Force Cosmik',
+      passiveDescription: 'A sua ligação transcendental com o cosmos torna a sua mente um vazio impenetrável, garantindo resistência contra ataques dos tipos Psychic e Ghost.'
+    };
+  }
+
+  if (nameKey === 'shinyclaydol') {
+    return {
+      immunities: ['ground'],
+      defenseByBossType: {
+        psychic: 0.5,
+        ghost: 0.5
+      },
+      passiveName: 'Force Cosmik + Mystery Charge',
+      passiveDescription: 'A sua ligação transcendental com o cosmos torna a sua mente um vazio impenetrável, garantindo resistência contra ataques dos tipos Psychic e Ghost.; A telecinese em seu corpo de barro gera um campo magnético, concedendo imunidade a ataques do tipo Ground.'
+    };
+  }
+
+  if (nameKey === 'dusclops' || nameKey === 'shinydusclops') {
+    return {
+      defenseByBossType: {
+        ghost: 0.5,
+        psychic: 0.5
+      },
+      passiveName: 'Cursed Glare',
+      passiveDescription: 'O olhar vazio deste Pokémon atua como um buraco negro para energias místicas, garantindo resistência contra ataques dos tipos Ghost e Psychic.'
     };
   }
 
@@ -2635,7 +2675,8 @@ function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = [
 // Saída: ATK na nova escala — 0 (imune), <1 (resistência), 1.0 (neutro), 1.75 (efetivo), 2.0 (super efetivo).
 function normalizeOffenseValue(raw) {
   if (typeof raw !== 'number' || isNaN(raw)) return 1.0;
-  if (raw === 0) return 0;
+  // Não permitir ATK 0 — tratar imunidades como resistência mínima 0.5x
+  if (raw === 0) return 0.5;
   if (raw >= 4) return 2.0;
   if (raw >= 2) return 1.75;
   if (raw >= 1) return 1.0;
