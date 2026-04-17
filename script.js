@@ -6448,6 +6448,213 @@ function loadTypesData(){
 
 initializeSidebarNavigation();
 loadTypesData();
+// Build home landing main buttons from the sidebar groups and mount dropdown menus
+(function initHomeLandingGroups(){
+    try {
+        const homeTools = document.querySelector('.home-landing__tools');
+        if(!homeTools) return;
+
+        // Order to present on the landing page (must match sidebar group keys)
+        const preferredOrder = ['bosses','systems','utilities','community'];
+
+        const sidebarGroups = Array.from(document.querySelectorAll('.sidebar-group'))
+            .map(group => {
+                const key = String(group.dataset.sidebarGroup || '').toLowerCase();
+                const titleEl = group.querySelector('.sidebar-group__copy strong');
+                const subtitleEl = group.querySelector('.sidebar-group__copy span');
+                const title = titleEl ? titleEl.textContent.trim() : (key || '');
+                const subtitle = subtitleEl ? subtitleEl.textContent.trim() : '';
+                const items = Array.from(group.querySelectorAll('.sidebar-sublink')).map(s => {
+                    const spans = s.querySelectorAll('span');
+                    const labelSpan = spans.length ? spans[spans.length - 1] : null;
+                    return {
+                        label: labelSpan ? labelSpan.textContent.trim() : s.textContent.trim(),
+                        navTarget: s.dataset.navTarget || '',
+                        navAction: s.dataset.navAction || '',
+                        bossMode: s.dataset.bossMode || ''
+                    };
+                });
+
+                return { key, title, subtitle, items };
+            });
+
+        const groupsByKey = Object.fromEntries(sidebarGroups.map(g => [g.key, g]));
+
+        const ordered = preferredOrder.map(k => groupsByKey[k]).filter(Boolean);
+
+        // Replace the home tools area with one button per main group
+        homeTools.replaceChildren();
+
+        ordered.forEach((group, index) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'home-tool-card';
+            btn.dataset.homeGroup = group.key;
+            btn.dataset.homeIndex = String(index);
+            btn.setAttribute('aria-expanded','false');
+
+            const idx = String(index + 1).padStart(2, '0');
+            btn.innerHTML = `
+                <span class="home-tool-card__index">${idx}</span>
+                <strong class="home-tool-card__title">${group.title}</strong>
+                <span class="home-tool-card__desc">${group.subtitle}</span>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            `;
+
+            homeTools.appendChild(btn);
+
+            btn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                toggleExpandedCard(btn, group);
+            });
+        });
+
+        let expandedCard = null;
+
+        function closeExpandedCard(){
+            if(!expandedCard) return;
+            try{ expandedCard.button.setAttribute('aria-expanded','false'); }catch(e){}
+            const el = expandedCard.el;
+            const btn = expandedCard.button;
+            if(el && el.parentNode){
+                try{ el.style.maxHeight = el.scrollHeight + 'px'; }catch(e){}
+                requestAnimationFrame(() => {
+                    try{
+                        el.style.transition = 'max-height 220ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease';
+                        el.style.maxHeight = '0px';
+                        el.style.opacity = '0';
+                        el.setAttribute('aria-hidden','true');
+                    }catch(e){}
+                });
+
+                const cleanup = (ev) => {
+                    if(ev && ev.target !== el) return;
+                    try{ if(el && el.parentNode) el.parentNode.removeChild(el); }catch(e){}
+                    el.removeEventListener('transitionend', cleanup);
+                    try{ if(btn){ btn.removeAttribute('aria-controls'); try{ btn.focus({preventScroll:true}); }catch(e){} } }catch(e){}
+                };
+                el.addEventListener('transitionend', cleanup);
+            }
+            expandedCard = null;
+        }
+
+        function openExpandedCard(button, group){
+            closeExpandedCard();
+
+            const exp = document.createElement('div');
+            const expId = 'home-expander-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,6);
+            exp.className = 'home-tool-card__expander';
+            exp.id = expId;
+            exp.setAttribute('role','region');
+            exp.setAttribute('aria-hidden','true');
+            exp.setAttribute('aria-label', (group && group.title) ? `${group.title} — opções` : 'Opções');
+
+            const list = document.createElement('div');
+            list.className = 'home-tool-card__expander-list';
+
+            const itemButtons = [];
+
+            (group.items || []).forEach((item, idx) => {
+                const itemBtn = document.createElement('button');
+                itemBtn.type = 'button';
+                itemBtn.className = 'home-tool-card__expander-item sidebar-sublink';
+                if(item.navTarget) itemBtn.dataset.navTarget = item.navTarget;
+                if(item.navAction) itemBtn.dataset.navAction = item.navAction;
+                if(item.bossMode) itemBtn.dataset.bossMode = item.bossMode;
+
+                itemBtn.innerHTML = `<span class="sidebar-sublink__bullet" aria-hidden="true"></span><span>${item.label}</span>`;
+
+                // initial state for entrance animation
+                itemBtn.style.opacity = '0';
+                itemBtn.style.transform = 'translateY(6px)';
+                itemBtn.style.transition = 'transform 220ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease';
+                itemBtn.style.transitionDelay = `${Math.min(260, idx * 45)}ms`;
+
+                itemBtn.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    activateSidebarTarget(itemBtn);
+                    closeExpandedCard();
+                });
+
+                list.appendChild(itemBtn);
+                itemButtons.push(itemBtn);
+            });
+
+            exp.appendChild(list);
+
+            // append inside the clicked card so only it expands
+            button.appendChild(exp);
+
+            // announce control relationship
+            try{ button.setAttribute('aria-controls', expId); }catch(e){}
+
+            // start collapsed for animation
+            exp.style.maxHeight = '0px';
+            exp.style.opacity = '0';
+            exp.style.boxSizing = 'border-box';
+
+            // Allow layout then expand; animate items in with stagger
+            requestAnimationFrame(() => {
+                try{
+                    exp.style.transition = 'max-height 240ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease';
+                    exp.style.maxHeight = exp.scrollHeight + 'px';
+                    exp.style.opacity = '1';
+                    exp.setAttribute('aria-hidden','false');
+
+                    // animate items (stagger via transitionDelay set above)
+                    itemButtons.forEach(b => {
+                        b.style.opacity = '1';
+                        b.style.transform = 'none';
+                    });
+
+                    // focus first actionable item for keyboard users
+                    if(itemButtons.length){
+                        try{ itemButtons[0].focus({preventScroll:true}); }catch(e){}
+                    }
+                }catch(e){}
+            });
+
+            button.setAttribute('aria-expanded','true');
+            expandedCard = { el: exp, button };
+        }
+
+        function toggleExpandedCard(button, group){
+            if(expandedCard && expandedCard.button === button){
+                closeExpandedCard();
+                return;
+            }
+            openExpandedCard(button, group);
+        }
+
+        // Close when clicking outside the expanded card
+        document.addEventListener('click', (e) => {
+            if(!expandedCard) return;
+            const path = e.composedPath ? e.composedPath() : (e.path || []);
+            if(path && path.length){
+                if(path.includes(expandedCard.el) || path.includes(expandedCard.button)) return;
+            } else {
+                if(expandedCard.el && expandedCard.el.contains(e.target)) return;
+                if(expandedCard.button && expandedCard.button.contains(e.target)) return;
+            }
+            closeExpandedCard();
+        });
+
+        // Close on ESC and adjust on resize
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closeExpandedCard();
+        });
+
+        window.addEventListener('resize', () => {
+            if(!expandedCard || !expandedCard.el) return;
+            // adjust maxHeight to content to accommodate layout changes
+            try{ expandedCard.el.style.maxHeight = expandedCard.el.scrollHeight + 'px'; }catch(e){}
+        }, { passive: true });
+
+    } catch (err) {
+        // gracefully ignore initialization errors
+        console.error('Home landing groups init failed', err);
+    }
+})();
 // Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
     // Helper to open modal safely
@@ -6492,40 +6699,7 @@ initTrainingVideo();
 // --- Pascoa modal (inject pascoa.html into modal body) ---
 let _pascoaModalKeyHandler = null;
 let _pascoaContentLoaded = false;
-function ensurePascoaModal(){
-    if(document.getElementById('pascoa-modal')) return;
-    const modal = document.createElement('div');
-    modal.className = 'modal pascoa-modal';
-    modal.id = 'pascoa-modal';
-    modal.setAttribute('aria-hidden', 'true');
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-
-    const content = document.createElement('div');
-    content.className = 'modal-content';
-    content.id = 'pascoa-modal-content';
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'modal-close';
-    closeBtn.setAttribute('aria-label','Fechar');
-    closeBtn.innerHTML = '✖';
-    closeBtn.addEventListener('click', closePascoaModal);
-    content.appendChild(closeBtn);
-
-    const body = document.createElement('div');
-    body.id = 'pascoa-modal-body';
-    body.className = 'pascoa-modal-body';
-    body.style.width = '100%';
-    body.style.maxHeight = '80vh';
-    body.style.overflow = 'auto';
-    content.appendChild(body);
-
-    modal.appendChild(content);
-    document.body.appendChild(modal);
-
-    modal.addEventListener('click', (e)=>{ if(e.target === modal) closePascoaModal(); });
-}
-
+        
 async function loadPascoaIntoModal(){
     if(_pascoaContentLoaded) return;
     try{
@@ -6574,7 +6748,7 @@ async function loadPascoaIntoModal(){
         const modalBody = document.getElementById('pascoa-modal-body');
         if(modalBody) modalBody.innerHTML = '<p>Falha ao carregar conteúdo de Páscoa.</p>';
     }
-}
+    }
 
 function openPascoaModal(){
     ensurePascoaModal();

@@ -2376,20 +2376,22 @@ function removeGoodraRecommendation(list) {
 }
 
 function applyGoodraTankRolesToDragonBosses() {
-  Object.values(bossCatalogs).forEach((catalog) => {
+  Object.entries(bossCatalogs).forEach(([catalogId, catalog]) => {
     (catalog.data || []).forEach((boss) => {
       ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
         const clanData = boss?.clans?.[clanKey];
         if (!clanData) return;
-        const shouldIncludeForClan = clanKey === 'instinct';
+
+        const isChampionCatalog = String(catalogId || '').toLowerCase() === 'champion';
+        const shouldIncludeForClan = clanKey === 'instinct' && (isChampionCatalog || bossHasDragonMoveset(boss));
 
         if (clanData.roles) {
-          syncGoodraRecommendation(
-            clanData.roles?.tank,
-            shouldIncludeForClan && bossHasDragonMoveset(boss)
-          );
+          // Garantir Goodra como Tank no cla Instinct para todos os Champion bosses
+          // e tambem manter a insercao para chefes com moveset Dragon nas outras listas.
+          syncGoodraRecommendation(clanData.roles?.tank, shouldIncludeForClan);
         }
 
+        // Manter listas "recommended" limpas removendo duplicatas de Goodra
         if (Array.isArray(clanData.recommended)) {
           removeGoodraRecommendation(clanData.recommended);
         }

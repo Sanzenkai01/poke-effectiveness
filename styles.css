@@ -6821,6 +6821,234 @@ body.home-view .main-footer {
   line-height: 1.7;
 }
 
+/* Home dropdown used by the main landing buttons to show sidebar group children */
+.home-dropdown {
+  position: absolute;
+  z-index: 1100;
+  min-width: 220px;
+  max-width: 420px;
+  padding: 0.6rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(7,12,23,0.9), rgba(5,9,16,0.88));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 18px 40px rgba(2,8,20,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  will-change: opacity, transform;
+}
+
+.home-dropdown[data-open="true"]{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.home-dropdown__list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.2rem;
+}
+
+.home-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.64rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  color: #d7e2ef;
+  text-align: left;
+  border: 1px solid transparent;
+  transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+
+.home-dropdown__item:hover,
+.home-dropdown__item:focus-visible {
+  transform: translateX(6px);
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .home-dropdown {
+    left: 12px !important;
+    right: 12px !important;
+    min-width: auto;
+    max-width: none;
+    border-radius: 14px;
+  }
+}
+
+/* Integrated expansion panel (replaces floating dropdown) */
+.home-expanded-panel {
+  margin-top: 0.7rem;
+  grid-column: 1 / -1;
+  padding: 0.5rem;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background:
+    radial-gradient(circle at top right, rgba(88, 196, 255, 0.04), transparent 30%),
+    linear-gradient(180deg, rgba(12, 21, 35, 0.92), rgba(8, 14, 25, 0.88));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.02),
+    0 20px 48px rgba(1, 8, 18, 0.42);
+  overflow: visible;
+  transition: max-height 260ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, transform 220ms ease;
+  will-change: max-height, opacity, transform;
+  position: relative;
+}
+
+.home-expanded-panel__inner {
+  padding: 0.6rem;
+  border-radius: 18px;
+  overflow: hidden;
+  /* make the inner block look like a card (matches .home-tool-card) */
+  background:
+    radial-gradient(circle at top right, rgba(117, 191, 255, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(14, 24, 41, 0.96), rgba(8, 15, 27, 0.92));
+  border: 1px solid rgba(113, 173, 227, 0.06);
+  box-shadow: 0 12px 32px rgba(1, 8, 18, 0.24);
+}
+
+.home-expanded-panel__list {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.home-expanded-panel__item {
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+  padding: 0.72rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.02);
+  color: #e6f0fb;
+  border: 1px solid transparent;
+  transition: transform 0.22s cubic-bezier(.2,.9,.2,1), background 0.14s ease, border-color 0.14s ease, opacity 220ms ease;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.home-expanded-panel__item:hover,
+.home-expanded-panel__item:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  outline: none;
+}
+
+/* connector visual: a small diamond that links the clicked button with the panel */
+.home-expanded-panel::before{
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: var(--connector-left, 50%);
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-left: 1px solid rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(255,255,255,0.02);
+  box-shadow: 0 6px 18px rgba(1,8,18,0.28);
+  border-radius: 2px;
+  z-index: 2;
+}
+
+/* show items after panel opens */
+.home-expanded-panel[aria-hidden="false"] .home-expanded-panel__item{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 720px) {
+  /* On mobile, anchor to full width with small side padding */
+  .home-expanded-panel__inner {
+    width: calc(100% - 24px) !important;
+    margin-left: 12px !important;
+  }
+  .home-expanded-panel::before{
+    left: 24px !important;
+  }
+}
+
+/* chevron on home buttons */
+.home-tool-card__chev{
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  font-size: 0.95rem;
+  color: rgba(121, 207, 255, 0.9);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), color 160ms ease;
+  pointer-events: none;
+}
+.home-tool-card[aria-expanded="true"] .home-tool-card__chev{
+  transform: rotate(180deg) translateY(-2px);
+  color: #ffffff;
+}
+
+/* Inline expander inside each home tool card (minimizes layout shift) */
+.home-tool-card__expander {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  transition: max-height 240ms cubic-bezier(.2,.9,.2,1), opacity 200ms ease;
+  will-change: max-height, opacity;
+}
+
+.home-tool-card__expander-list {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+}
+
+.home-tool-card__expander-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  color: #e6f0fb;
+  border: 1px solid transparent;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease, background 0.14s ease, border-color 0.14s ease;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.home-tool-card__expander-item:hover,
+.home-tool-card__expander-item:focus-visible {
+  transform: translateX(6px);
+  border-color: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  outline: none;
+}
+
+/* visible focus ring for keyboard users */
+.home-tool-card__expander-item:focus-visible{
+  box-shadow: 0 0 0 4px rgba(79,161,255,0.08);
+}
+
+/* subtle emphasis on the parent card when expanded */
+.home-tool-card[aria-expanded="true"]{
+  border-color: rgba(113,173,227,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 26px 64px rgba(1,8,18,0.44);
+}
+
+@media (max-width: 720px) {
+  .home-expanded-panel__list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .community-shell {
   max-width: 1180px;
 }
