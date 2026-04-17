@@ -349,7 +349,8 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Marowak', image: 'marowak.png', types: ['ground'], description: 'Tipo move: Ground.', matchupOverrides: { 'mega-scolipede': { defenseByBossType: { poison: 0.5 } } } }
         ]
       },
       mystic: {
