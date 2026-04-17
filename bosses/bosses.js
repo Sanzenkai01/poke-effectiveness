@@ -1494,22 +1494,19 @@ const championPathBosses = createManualRoleboardBosses([
     id: 'mega-golisopod',
     name: 'Mega Golisopod',
     tutorialUrl: 'https://youtu.be/deZnrmwZ2bo?si=vMLsf4_aXM4wlY6W',
-    types: ['bug', 'water'],
+    types: ['bug', 'steel'],
     moveType: 'bug',
     description: 'Encontro de trio que favorece cobertura ampla e cadencia boa entre os clans.',
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'steel')
+          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
-          createRolePick('Magnezone', ['electric', 'steel'], 'steel'),
-          createRolePick('Weezing', ['poison'], 'poison', {
-            immunities: ['ground'],
-            passiveName: 'Levitate',
-            passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
-          }),
-          createRolePick('Toxapex', ['poison'], 'poison')
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric'),
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
+          createRolePick('Toxapex', ['water', 'poison'], 'poison')
         ],
         support: [
           createRolePick('Pachirisu', ['electric'], 'electric'),
@@ -1518,9 +1515,12 @@ const championPathBosses = createManualRoleboardBosses([
       },
       mystic: {
         dps: [
-          createRolePick('drifloon', ['ghost', 'flying'], 'ghost', { tier: 'otimo' })
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
+          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
           createRolePick('Dusclops', ['ghost'], 'ghost')
         ],
         support: [
@@ -1532,9 +1532,9 @@ const championPathBosses = createManualRoleboardBosses([
       },
       valor: {
         dps: [
-          createRolePick('Delphox', ['fire', 'psychic'], 'fire', { tier: 'otimo' }),
-          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire', { tier: 'otimo' }),
-          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire', { tier: 'otimo' })
+          createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
+          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire'),
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire')
         ],
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
@@ -1544,10 +1544,10 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Shieldon', ['rock', 'steel'], 'rock'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
           createRolePick('Probopass', ['rock', 'steel'], 'rock'),
-          createRolePick('Torkoal', ['fire'], 'fire', { tier: 'otimo' })
+          createRolePick('Torkoal', ['fire'], 'fire')
         ],
         support: [
-          createRolePick('Ponyta', ['fire'], 'fire', { tier: 'otimo' }),
+          createRolePick('Ponyta', ['fire'], 'fire'),
           createRolePick('Blissey', ['normal'], 'fairy'),
           createRolePick('Porygon2', ['normal'], 'normal'),
           createRolePick('Lopunny', ['normal'], 'fighting'),
