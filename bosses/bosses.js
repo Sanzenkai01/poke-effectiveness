@@ -225,7 +225,7 @@ const hoopaPortalsData = [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
           { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass.' },
-          { name: 'Mega Raichu Y/Z', image: 'mega-raichu-y.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
