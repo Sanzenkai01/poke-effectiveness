@@ -128,6 +128,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/hawlucha.png',
     description: 'Movimentos de luta e voo para dominar o campo.',
     types: ['fighting','flying'],
+    moveType: 'fighting',
     clans: {
       instinct: {
         label: 'Instinct',
@@ -178,7 +179,7 @@ const hoopaPortalsData = [
           { name: 'Shiftry', image: 'shiftry.png', tier: 'green', types: ['grass','dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'yellow', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
           { name: "Rosa's Serperior", image: 'serperior.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Grass.' },
-          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
@@ -214,6 +215,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/greninja.png',
     description: 'Furtivo e rápido, aproveite vantagem de tipos.',
     types: ['water','dark'],
+    moveType: 'water',
     clans: {
       instinct: {
         label: 'Instinct',
@@ -259,6 +261,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/chesnaught.png',
     description: 'Tanque com defesa alta; utilize golpes precisos.',
     types: ['grass','fighting'],
+    moveType: 'grass',
     clans: {
       instinct: {
         label: 'Instinct',
@@ -304,6 +307,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/delphox.png',
     description: 'Fogo e psíquico combinados para controle de campo.',
     types: ['fire','psychic'],
+    moveType: 'fire',
     clans: {
       instinct: {
         label: 'Instinct',
@@ -324,7 +328,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' },
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
@@ -384,6 +388,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/meganium.png',
     description: 'Folhas que curam a equipe enquanto controla o campo.',
     types: ['grass','fairy'],
+    moveType: 'grass',
     clans: {
       instinct: {
         label: 'Instinct',
@@ -404,8 +409,8 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Electric.' },
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
@@ -462,11 +467,12 @@ const hoopaPortalsData = [
     locationImage: 'localizações/clefable.png',
     description: 'Milagre brilhante; suporte com magia.',
     types: ['fairy','flying'],
+    moveType: 'fairy',
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
           { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
           { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' },
           { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
@@ -475,7 +481,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' },
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
           { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
@@ -504,12 +510,13 @@ const hoopaPortalsData = [
     locationImage: 'localizações/skarmory.png',
     description: 'Assassino aéreo com armadura de metal.',
     types: ['steel','flying'],
+    moveType: 'steel',
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
           { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
@@ -540,6 +547,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/raichu.png',
     description: 'Dupla Mega Raichu (X/Y).',
     types: ['electric'],
+    moveType: 'electric',
     duo: true,
     bosses: [
       { name: 'Mega Raichu X', image: 'mega-raichu-x.png' },
@@ -562,7 +570,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal','ground'], description: 'Tipo move: Ground.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' }
         ]
       }
     }
@@ -577,6 +585,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/lucario.png',
     description: 'Dupla Mega Lucario (Padrão/Z).',
     types: ['fighting','steel'],
+    moveType: 'fighting',
     duo: true,
     bosses: [
       { name: 'Mega Lucario', image: 'mega-lucario.png' },
@@ -617,6 +626,7 @@ const hoopaPortalsData = [
     locationImage: 'localizações/absol.png',
     description: 'Mega Absol e Mega Absol Z sofrem dano super efetivo de Fairy, Fighting e Bug.',
     types: ['dark'],
+    moveType: 'dark',
     duo: true,
     bosses: [
       { name: 'Mega Absol', image: 'mega-absol.png' },
@@ -963,7 +973,7 @@ const roleboardPickPools = {
   ],
   tank: [
     { name: 'Orthworm', image: 'orthworm.png', types: ['steel'] },
-    { name: 'Bouffalant', image: 'bouffalant.png', types: ['normal', 'ground'] },
+    { name: 'Bouffalant', image: 'bouffalant.png', types: ['normal'], moveType: 'ground' },
     { name: 'Tauros', image: 'tauros.png', types: ['normal'] },
     { name: 'Kabutops', image: 'kabutops.png', types: ['rock', 'water'] },
     { name: 'Duraludon', image: 'duraludon.png', types: ['steel', 'dragon'] },
@@ -4284,21 +4294,35 @@ function getRecommendedSpeedsters() {
   return Array.from(map.values()).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR'));
 }
 
+function normalizeSpeedsterSearchText(value = '') {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['’`.]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getSpeedsterSearchBase(speedster) {
+  return normalizeSpeedsterSearchText([
+    speedster?.name,
+    Array.isArray(speedster?.types) ? speedster.types.join(' ') : '',
+    speedster?.description,
+    speedster?.note
+  ].filter(Boolean).join(' '));
+}
+
 function renderSearchResults(query = '') {
   if (!speedsterSearchResults || !speedsterSearchNoResults) return;
   if (!getActiveBossCatalog().searchEnabled) {
     hideSearchResults();
     return;
   }
-  const q = String(query || '').trim().toLowerCase();
+  const q = normalizeSpeedsterSearchText(query);
 
   const availableSpeedsters = getRecommendedSpeedsters();
   const filtered = q
-    ? availableSpeedsters.filter((st) => {
-        const bossNames = (st.bossEntries || []).map((entry) => entry.bossName || '').join(' ');
-        const base = `${st.name} ${bossNames} ${(st.types || []).join(' ')} ${st.description || ''}`.toLowerCase();
-        return base.includes(q);
-      })
+    ? availableSpeedsters.filter((st) => getSpeedsterSearchBase(st).includes(q))
     : availableSpeedsters;
 
   if (filtered.length === 0) {
@@ -4408,11 +4432,189 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
   return staticTier || 'unknown';
 }
 
+function getTierUiLabel(tier = 'unknown') {
+  const tierLabels = {
+    green: 'Ideal',
+    otimo: 'Muito bom',
+    yellow: 'Bom',
+    red: 'Aceitavel',
+    solo: 'Ruim',
+    unknown: 'Sem informacao'
+  };
+
+  return tierLabels[tier] || tierLabels.unknown;
+}
+
+function getBossResultEncounterLabel(boss) {
+  if (activeBossMode === 'hoopa') {
+    return boss?.duo ? 'Dupla' : 'Solo';
+  }
+
+  if (typeof boss?.encounterLabel === 'string' && boss.encounterLabel.trim()) {
+    return boss.encounterLabel.trim();
+  }
+
+  return getActiveBossCatalog().label || 'Chefe';
+}
+
+function createSpeedsterSearchSummaryChip(label, value, types = []) {
+  const chip = document.createElement('div');
+  chip.className = 'speedster-search-results-chip';
+
+  if (label) {
+    const chipLabel = document.createElement('span');
+    chipLabel.className = 'speedster-search-results-chip__label';
+    chipLabel.textContent = label;
+    chip.appendChild(chipLabel);
+  }
+
+  const content = document.createElement('span');
+  content.className = 'speedster-search-results-chip__content';
+  getBossTypeIcons((types || []).slice(0, 2)).forEach((icon) => content.appendChild(icon));
+
+  const valueText = document.createElement('span');
+  valueText.className = 'speedster-search-results-chip__value';
+  valueText.textContent = value;
+  content.appendChild(valueText);
+
+  chip.appendChild(content);
+  return chip;
+}
+
+function createSpeedsterSearchMetric(label, value, tone = '') {
+  const card = document.createElement('div');
+  card.className = 'speedster-search-results-metric';
+  if (tone) {
+    card.dataset.tone = tone;
+  }
+
+  const metricLabel = document.createElement('span');
+  metricLabel.className = 'speedster-search-results-metric__label';
+  metricLabel.textContent = label;
+
+  const metricValue = document.createElement('strong');
+  metricValue.className = 'speedster-search-results-metric__value';
+  metricValue.textContent = value;
+
+  card.append(metricLabel, metricValue);
+  return card;
+}
+
+function createSpeedsterBossResultMetaChip(label, values = []) {
+  const normalizedValues = Array.isArray(values) ? values.filter(Boolean) : [];
+  if (!normalizedValues.length) return null;
+
+  const chip = document.createElement('div');
+  chip.className = 'speedster-boss-result-card__chip';
+
+  const chipLabel = document.createElement('span');
+  chipLabel.className = 'speedster-boss-result-card__chip-label';
+  chipLabel.textContent = label;
+  chip.appendChild(chipLabel);
+
+  getBossTypeIcons(normalizedValues.slice(0, 2)).forEach((icon) => chip.appendChild(icon));
+
+  const chipValue = document.createElement('span');
+  chipValue.className = 'speedster-boss-result-card__chip-value';
+  chipValue.textContent = normalizedValues.map((type) => formatTypeLabel(type)).join(' / ');
+  chip.appendChild(chipValue);
+
+  return chip;
+}
+
+function createSpeedsterBossResultCard(boss, speedsterName) {
+  const tier = getComputedSpeedsterTierInBoss(boss, speedsterName) || 'unknown';
+  const moveTypes = getBossMoveTypes(boss);
+  const bossTypes = Array.isArray(boss?.types) ? boss.types : [];
+  const catalogLabel = getActiveBossCatalog().label || 'Bosses';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'speedster-boss-result-card';
+  button.dataset.tier = tier;
+  button.setAttribute('aria-label', `Abrir detalhes de ${boss.name}. Tier ${getTierUiLabel(tier)}.`);
+
+  const avatar = document.createElement('div');
+  avatar.className = 'speedster-boss-result-card__avatar';
+
+  const avatarImage = document.createElement('img');
+  avatarImage.className = 'speedster-boss-result-card__avatar-image';
+  avatarImage.src = basePath + (boss.image || `${boss.id}.png`);
+  avatarImage.alt = boss.name;
+  avatarImage.loading = 'lazy';
+  avatar.appendChild(avatarImage);
+
+  const encounterBadge = document.createElement('span');
+  encounterBadge.className = 'speedster-boss-result-card__encounter';
+  encounterBadge.textContent = getBossResultEncounterLabel(boss);
+  avatar.appendChild(encounterBadge);
+
+  const content = document.createElement('div');
+  content.className = 'speedster-boss-result-card__content';
+
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'speedster-boss-result-card__eyebrow';
+  eyebrow.textContent = catalogLabel;
+
+  const title = document.createElement('div');
+  title.className = 'speedster-boss-result-card__title';
+  title.textContent = boss.name;
+
+  const chips = document.createElement('div');
+  chips.className = 'speedster-boss-result-card__chips';
+
+  const bossTypesChip = createSpeedsterBossResultMetaChip('Tipos', bossTypes);
+  if (bossTypesChip) {
+    chips.appendChild(bossTypesChip);
+  }
+
+  const moveTypesChip = createSpeedsterBossResultMetaChip('Moveset', moveTypes);
+  if (moveTypesChip) {
+    chips.appendChild(moveTypesChip);
+  }
+
+  content.append(eyebrow, title);
+
+  const aside = document.createElement('div');
+  aside.className = 'speedster-boss-result-card__aside';
+
+  const tierBadge = document.createElement('div');
+  tierBadge.className = 'speedster-boss-result-card__tier';
+
+  const tierDot = document.createElement('span');
+  tierDot.className = `tier-dot tier-${tier}`;
+  tierDot.setAttribute('aria-hidden', 'true');
+
+  const tierText = document.createElement('span');
+  tierText.className = 'speedster-boss-result-card__tier-text';
+  tierText.textContent = getTierUiLabel(tier);
+
+  tierBadge.append(tierDot, tierText);
+
+  const cta = document.createElement('span');
+  cta.className = 'speedster-boss-result-card__cta';
+  cta.textContent = 'Abrir detalhes';
+
+  aside.append(tierBadge, cta);
+
+  button.append(avatar, content, aside, chips);
+  button.addEventListener('click', () => {
+    openBossModalV2(boss);
+  });
+
+  return button;
+}
+
 function openSpeedsterBossesModal(speedster) {
   setBossModalLayout(false);
   // marcar contexto ativo para que o sistema saiba qual speedster foi aberto
   activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
   const bosses = getBossesForSpeedster(speedster.name);
+  const catalog = getActiveBossCatalog();
+  const moveTypes = getBossMoveTypes(speedster);
+  const bestTier = bosses.reduce((best, boss) => pickBetterTier(best, getComputedSpeedsterTierInBoss(boss, speedster.name)), '');
+  const idealCount = bosses.filter((boss) => getComputedSpeedsterTierInBoss(boss, speedster.name) === 'green').length;
+
   modalTitle.textContent = `${speedster.name} (Pokemon)`;
   setModalChrome({
     bosses: [{ name: speedster.name, image: speedster.image }],
@@ -4436,11 +4638,67 @@ function openSpeedsterBossesModal(speedster) {
 
   modalBody.innerHTML = '';
   modalBody.classList.remove('speedster-modal-body--split', 'speedster-modal-body--roleboard');
-  const section = document.createElement('div');
-  section.className = 'speedster-clan-section';
+  modalBody.classList.add('speedster-modal-body--search-results');
+
+  const shell = document.createElement('section');
+  shell.className = 'speedster-clan-section speedster-search-results-shell';
+
+  const summary = document.createElement('div');
+  summary.className = 'speedster-search-results-summary';
+
+  const summaryCopy = document.createElement('div');
+  summaryCopy.className = 'speedster-search-results-summary__copy';
+
+  const summaryEyebrow = document.createElement('span');
+  summaryEyebrow.className = 'speedster-search-results-summary__eyebrow';
+  summaryEyebrow.textContent = 'Pokemon pesquisado';
+
+  const summaryLead = document.createElement('h3');
+  summaryLead.className = 'speedster-search-results-summary__title';
+  summaryLead.textContent = `${speedster.name} no catalogo ${catalog.label}`;
+
+  const summaryText = document.createElement('p');
+  summaryText.className = 'speedster-search-results-summary__text';
+  summaryText.textContent = 'Clique em um chefe para abrir a ficha completa com composicao, tiers e detalhes do encontro.';
+
+  const summaryChips = document.createElement('div');
+  summaryChips.className = 'speedster-search-results-chip-row';
+  summaryChips.appendChild(createSpeedsterSearchSummaryChip('Catalogo', catalog.label));
+
+  if (Array.isArray(speedster?.types) && speedster.types.length) {
+    summaryChips.appendChild(
+      createSpeedsterSearchSummaryChip(
+        'Tipos',
+        speedster.types.map((type) => formatTypeLabel(type)).join(' / '),
+        speedster.types
+      )
+    );
+  }
+
+  if (moveTypes.length) {
+    summaryChips.appendChild(
+      createSpeedsterSearchSummaryChip(
+        'Moveset',
+        moveTypes.map((type) => formatTypeLabel(type)).join(' / '),
+        moveTypes
+      )
+    );
+  }
+
+  summaryCopy.append(summaryEyebrow, summaryLead, summaryText, summaryChips);
+
+  const summaryMetrics = document.createElement('div');
+  summaryMetrics.className = 'speedster-search-results-metrics';
+  summaryMetrics.append(
+    createSpeedsterSearchMetric('Chefes', String(bosses.length), 'count'),
+    createSpeedsterSearchMetric('Melhor tier', getTierUiLabel(bestTier || 'unknown'), bestTier || 'unknown'),
+    createSpeedsterSearchMetric('Tier ideal', idealCount > 0 ? `${idealCount}x` : '0x', idealCount > 0 ? 'green' : 'unknown')
+  );
+
+  summary.append(summaryCopy, summaryMetrics);
 
   const list = document.createElement('div');
-  list.className = 'speedster-clan-list';
+  list.className = 'speedster-boss-result-grid';
 
   if (bosses.length === 0) {
     const empty = document.createElement('div');
@@ -4449,36 +4707,20 @@ function openSpeedsterBossesModal(speedster) {
     list.appendChild(empty);
   } else {
     bosses.forEach((boss) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'speedster-search-item';
-      button.style.justifyContent = 'space-between';
-      button.textContent = boss.name;
-
-      const tier = getComputedSpeedsterTierInBoss(boss, speedster.name);
-      if (tier) {
-        const dot = document.createElement('span');
-        dot.className = `tier-dot tier-${tier}`;
-        dot.style.marginLeft = '0.5rem';
-        dot.setAttribute('aria-label', `Tier ${tier}`);
-        button.appendChild(dot);
-      }
-
-      button.addEventListener('click', () => {
-        openBossModalV2(boss);
-      });
-      list.appendChild(button);
+      list.appendChild(createSpeedsterBossResultCard(boss, speedster.name));
     });
   }
 
-  section.appendChild(list);
-  modalBody.appendChild(section);
+  shell.append(summary, list);
+  modalBody.appendChild(shell);
 
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
   const modalContentEl = modal.querySelector('.speedster-modal-content');
-  if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
+  if (modalContentEl) {
+    modalContentEl.classList.add('speedster-modal-content--roleboard', 'speedster-modal-content--search-results');
+  }
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -4486,6 +4728,15 @@ function openSpeedsterBossesModal(speedster) {
       { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
     );
+
+    const animatedCards = shell.querySelectorAll('.speedster-search-results-summary, .speedster-search-results-metric, .speedster-boss-result-card');
+    if (animatedCards.length) {
+      gsap.fromTo(
+        animatedCards,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.32, ease: 'power2.out', stagger: 0.04, delay: 0.06 }
+      );
+    }
   }
 }
 
@@ -4801,6 +5052,15 @@ function setModalChrome({ bosses = [], locationImage = '', showLocation = false,
   const tierLegend = modal?.querySelector('.tier-legend');
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
   const pokemonImgRight = document.getElementById('modal-pokemon-img');
+  const modalContent = modal?.querySelector('.speedster-modal-content');
+
+  if (modalBody) {
+    modalBody.classList.remove('speedster-modal-body--search-results');
+  }
+
+  if (modalContent) {
+    modalContent.classList.remove('speedster-modal-content--search-results');
+  }
 
   if (modalLocationBtn) {
     if (!showLocation) {
@@ -5928,6 +6188,8 @@ function closeModal() {
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         try { modalBody.innerHTML = ''; } catch (e) {}
+        try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
+        try { content.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
         try { modal.removeAttribute('data-mode'); } catch (e) {}
       }
     });
@@ -5936,6 +6198,8 @@ function closeModal() {
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     try { modalBody.innerHTML = ''; } catch (e) {}
+    try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
+    try { content.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
     try { modal.removeAttribute('data-mode'); } catch (e) {}
   }
   closeLocationOverlay();

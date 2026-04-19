@@ -57,6 +57,8 @@ const tabCommunityBtn = document.getElementById('tab-community');
 const homeBtn = document.getElementById('home-btn');
 const pascoaBtn = document.getElementById('pascoa-btn');
 const homeExploreBtn = document.getElementById('home-explore-btn');
+const homeFocusNumber = document.getElementById('home-focus-number');
+const homeFocusCaption = document.getElementById('home-focus-caption');
 const homeStreamerInfo = document.getElementById('home-streamer-info');
 const homeStreamerCount = document.getElementById('home-streamer-count');
 const homeStreamerText = document.getElementById('home-streamer-text');
@@ -5746,6 +5748,11 @@ if(elementalBallsKurtImage){
     elementalBallsKurtImage.alt = 'Imagem do local do NPC Kurt para fabricar as pokebolas elementais';
 }
 
+function syncBasicModalPageState(){
+    const hasOpenBasicModal = Boolean(document.querySelector('.modal[aria-hidden="false"]'));
+    document.body.classList.toggle('modal-open', hasOpenBasicModal);
+}
+
 function wireBasicModal(triggerEl, modalEl, onOpen){
     if(!triggerEl || !modalEl) return;
 
@@ -5753,6 +5760,7 @@ function wireBasicModal(triggerEl, modalEl, onOpen){
     const onClose = modalEl._onClose;
     const openModal = () => {
         modalEl.setAttribute('aria-hidden','false');
+        syncBasicModalPageState();
         if(typeof onOpen === 'function'){
             onOpen();
         }
@@ -5762,6 +5770,7 @@ function wireBasicModal(triggerEl, modalEl, onOpen){
         if(typeof onClose === 'function'){
             onClose();
         }
+        syncBasicModalPageState();
     };
 
     triggerEl.addEventListener('click', openModal);
@@ -6448,6 +6457,26 @@ function loadTypesData(){
 
 initializeSidebarNavigation();
 loadTypesData();
+
+function syncHomeLandingFocusSummary(cards = []){
+    const cardList = Array.isArray(cards) && cards.length
+        ? cards.filter(card => card instanceof HTMLElement)
+        : Array.from(document.querySelectorAll('.home-landing__tools .home-tool-card'));
+
+    const usesGroupedCards = cardList.some(card => card.dataset.homeGroup);
+    const count = cardList.length;
+    const caption = usesGroupedCards
+        ? (count === 1 ? 'grupo principal' : 'grupos principais')
+        : (count === 1 ? 'ferramenta em um so painel' : 'ferramentas em um so painel');
+
+    if(homeFocusNumber){
+        homeFocusNumber.textContent = String(count).padStart(2, '0');
+    }
+    if(homeFocusCaption){
+        homeFocusCaption.textContent = caption;
+    }
+}
+
 // Build home landing main buttons from the sidebar groups and mount dropdown menus
 (function initHomeLandingGroups(){
     try {
@@ -6484,6 +6513,7 @@ loadTypesData();
 
         // Replace the home tools area with one button per main group
         homeTools.replaceChildren();
+        const nextHomeCards = [];
 
         ordered.forEach((group, index) => {
             const btn = document.createElement('button');
@@ -6502,12 +6532,15 @@ loadTypesData();
             `;
 
             homeTools.appendChild(btn);
+            nextHomeCards.push(btn);
 
             btn.addEventListener('click', (ev) => {
                 ev.stopPropagation();
                 toggleExpandedCard(btn, group);
             });
         });
+
+        syncHomeLandingFocusSummary(nextHomeCards);
 
         let expandedCard = null;
 
@@ -6653,6 +6686,7 @@ loadTypesData();
     } catch (err) {
         // gracefully ignore initialization errors
         console.error('Home landing groups init failed', err);
+        syncHomeLandingFocusSummary();
     }
 })();
 // Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
