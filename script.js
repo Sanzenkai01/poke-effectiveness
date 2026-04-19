@@ -2998,7 +2998,8 @@ const STREAMER_DISCORD_LINKS = {
     dravokh: '',
     catarktv: '',
     espantacorvos: '',
-    kiwoe: 'https://discord.com/invite/nazX2vTjGB'
+    kiwoe: 'https://discord.com/invite/nazX2vTjGB',
+    OKAMIulv: 'https://discord.gg/NJCJn7anYQ'
 };
 
 let streamerFiltersInitialized = false;
