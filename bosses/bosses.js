@@ -1,3 +1,17 @@
+// Edite apenas este bloco diariamente para atualizar o aviso em rolagem do Hoopa.
+// `mode` aceita:
+// - 'daily': monta "Os Hoopa Portais de hoje sao: ..."
+// - 'all-open': mostra "Portal Break! Todos os Hoopas estao disponiveis."
+// - 'custom': usa `customMessage` exatamente como foi escrito
+// - 'hidden': esconde o aviso
+// Em `bosses`, voce pode usar nome ou id do boss.
+const hoopaPortalTickerConfig = {
+  mode: 'daily',
+  bosses: ['Mega Hawlucha', 'Mega Feraligatr'],
+  prefix: 'Os Hoopa Portais de hoje sao:',
+  customMessage: ''
+};
+
 const hoopaPortalsData = [
   {
     id: 'mega-staraptor',
@@ -1838,6 +1852,59 @@ function getRecommendationNameKey(nameOrPokemon) {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+function formatNaturalLanguageList(items = []) {
+  const normalizedItems = (items || []).map((item) => String(item || '').trim()).filter(Boolean);
+  if (!normalizedItems.length) return '';
+  if (normalizedItems.length === 1) return normalizedItems[0];
+  if (normalizedItems.length === 2) return `${normalizedItems[0]} e ${normalizedItems[1]}`;
+  return `${normalizedItems.slice(0, -1).join(', ')} e ${normalizedItems[normalizedItems.length - 1]}`;
+}
+
+function resolveHoopaPortalTickerBossLabel(value) {
+  const rawValue = String(value || '').trim();
+  if (!rawValue) return '';
+
+  const normalizedRaw = rawValue.toLowerCase();
+  const rawKey = getRecommendationNameKey(rawValue);
+  const matchedBoss = hoopaPortalsData.find((boss) => (
+    String(boss?.id || '').trim().toLowerCase() === normalizedRaw
+    || getRecommendationNameKey(boss?.id) === rawKey
+    || getRecommendationNameKey(boss?.name) === rawKey
+  ));
+
+  return matchedBoss?.name || rawValue;
+}
+
+function getHoopaPortalTickerMessage() {
+  const mode = String(hoopaPortalTickerConfig?.mode || 'daily').trim().toLowerCase();
+
+  if (mode === 'hidden' || mode === 'off' || mode === 'disabled') {
+    return '';
+  }
+
+  if (mode === 'all-open') {
+    return String(hoopaPortalTickerConfig?.customMessage || 'Portal Break! Todos os Hoopas estao disponiveis.')
+      .trim();
+  }
+
+  if (mode === 'custom') {
+    return String(hoopaPortalTickerConfig?.customMessage || '').trim();
+  }
+
+  const bosses = Array.isArray(hoopaPortalTickerConfig?.bosses)
+    ? hoopaPortalTickerConfig.bosses.map(resolveHoopaPortalTickerBossLabel).filter(Boolean)
+    : [];
+
+  if (!bosses.length) {
+    return '';
+  }
+
+  const prefix = String(hoopaPortalTickerConfig?.prefix || 'Os Hoopa Portais de hoje sao:')
+    .trim();
+
+  return `${prefix} ${formatNaturalLanguageList(bosses)}.`;
+}
+
 const mirroredRecommendationVariantNames = Object.freeze({
   alakazam: 'Shiny Alakazam',
   delphox: 'Shiny Delphox',
@@ -2774,7 +2841,7 @@ const tierLabels = {
   solo: 'Ruim',
   unknown: 'Sem informacao'
 };
-const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
+const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do moveset do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
 function refreshTierLegendLabels() {
   const legendEntries = [
@@ -3255,15 +3322,19 @@ function getBossAttackTypes(boss) {
   const bossTypes = mergeLowercaseUniqueValues(Array.isArray(boss?.types) ? boss.types : []);
   const moveTypes = getBossMoveTypes(boss);
 
-  if (config.attackMode === 'move-only') {
-    return moveTypes;
+  if (config.attackMode === 'neutral') {
+    return [];
   }
 
-  if (config.attackMode === 'types-only') {
+  if (config.attackMode === 'types-only' || config.attackMode === 'types') {
     return bossTypes;
   }
 
-  return mergeLowercaseUniqueValues(bossTypes, moveTypes);
+  if (config.attackMode === 'all') {
+    return mergeLowercaseUniqueValues(bossTypes, moveTypes);
+  }
+
+  return moveTypes.length ? moveTypes : bossTypes;
 }
 
 function getBossRecommendationRankMode(boss) {
@@ -3321,11 +3392,10 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
   const bossMoveTypes = getBossMoveTypes(boss);
-  // Considere tanto os `types` do chefe quanto o `moveType` explícito ao calcular DEF.
-  // Isso garante que chefes multi-type (ex: Steel+Flying) e movesets explícitos
-  // (ex: Ground em Mega Tyranitar) sejam avaliados juntos, preservando passivas
-  // como `Levitate` e permitindo detecção de dupla resistência.
-  const bossAttackTypes = mergeLowercaseUniqueValues(getBossAttackTypes(boss), bossMoveTypes);
+  // Para DEF, o boss passa a ser lido pelo moveset sempre que ele existir.
+  // Os tipos do chefe so entram quando um override explicito pedir isso
+  // ou quando o dataset nao informar um moveset dedicado.
+  const bossAttackTypes = getBossAttackTypes(boss);
   const offenseTargetTypes = getBossOffenseTargetTypes(boss);
   const rankMode = getBossRecommendationRankMode(boss);
   const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
@@ -3375,8 +3445,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
   }
 
   const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
-  const attackTypesList = (bossAttackTypes.length ? bossAttackTypes : [getBossMoveType(boss) || null])
-    .filter(Boolean);
+  const attackTypesList = bossAttackTypes.filter(Boolean);
 
   // Collect both raw and normalized multipliers so we can apply rules that
   // consider the combination of boss attack types (e.g. if all attack types
@@ -3685,6 +3754,40 @@ function getBossTypeIcons(types = []) {
   });
 }
 
+function createHoopaPortalTickerElement() {
+  const message = getHoopaPortalTickerMessage();
+  if (!message) return null;
+
+  const ticker = document.createElement('div');
+  ticker.className = 'hoopa-portal-ticker';
+  ticker.setAttribute('role', 'status');
+  ticker.setAttribute('aria-label', message);
+
+  const viewport = document.createElement('div');
+  viewport.className = 'hoopa-portal-ticker__viewport';
+
+  const track = document.createElement('div');
+  track.className = 'hoopa-portal-ticker__track';
+
+  const firstItem = document.createElement('span');
+  firstItem.className = 'hoopa-portal-ticker__item';
+  firstItem.textContent = message;
+
+  const secondItem = document.createElement('span');
+  secondItem.className = 'hoopa-portal-ticker__item';
+  secondItem.textContent = message;
+  secondItem.setAttribute('aria-hidden', 'true');
+
+  track.append(firstItem, secondItem);
+  viewport.appendChild(track);
+  ticker.appendChild(viewport);
+
+  const durationSeconds = Math.max(18, Math.min(42, Math.round(message.length * 0.34)));
+  ticker.style.setProperty('--hoopa-ticker-duration', `${durationSeconds}s`);
+
+  return ticker;
+}
+
 function renderBossModeIntro() {
   const titleEl = document.getElementById('bosses-mode-title');
   const introEl = document.getElementById('bosses-mode-intro');
@@ -3710,6 +3813,13 @@ function renderBossModeIntro() {
         summary.textContent = line;
         introEl.appendChild(summary);
       });
+
+    if (String(catalog?.id || '').toLowerCase() === 'hoopa') {
+      const ticker = createHoopaPortalTickerElement();
+      if (ticker) {
+        introEl.appendChild(ticker);
+      }
+    }
   }
 
   // If viewing the Mewtwo tab, add a small "Tochas" action button into the intro area
