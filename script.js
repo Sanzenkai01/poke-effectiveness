@@ -1314,12 +1314,14 @@ function normalizeBossModeParam(value){
     if(normalized === 'hoopa-portais') return 'hoopa';
     if(normalized === 'champion-path') return 'champion';
     if(normalized === 'mewtwo') return 'mew2';
-    return ['hoopa', 'champion', 'mew2'].includes(normalized) ? normalized : '';
+    if(normalized === 'planejador') return 'planner';
+    return ['hoopa', 'champion', 'mew2', 'planner'].includes(normalized) ? normalized : '';
 }
 
 function getBossModeQueryValue(value){
     const normalized = normalizeBossModeParam(value);
     if(normalized === 'mew2') return 'mewtwo';
+    if(normalized === 'planner') return 'planejador';
     return normalized;
 }
 
@@ -5399,6 +5401,7 @@ function updateUrl(){
         params.delete('tab');
         params.delete('topic');
         params.delete('bossmode');
+        params.delete('plan');
     } else if(currentSelection.length) params.set('types',currentSelection.join(','));
     else params.delete('types');
     const activeTab = isHomeView ? '' :
@@ -5414,6 +5417,9 @@ function updateUrl(){
         : activeTab;
     if(tabQueryValue) params.set('tab', tabQueryValue); else params.delete('tab');
     params.delete('bossmode');
+    if(!(activeTab === 'bosses' && getCurrentBossMode() === 'planner')){
+        params.delete('plan');
+    }
     if(activeTab === 'youtube'){
         if(activeCommunityTopicKey && activeCommunityTopicKey !== 'all') params.set('topic', activeCommunityTopicKey);
         else params.delete('topic');

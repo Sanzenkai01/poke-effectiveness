@@ -9263,3 +9263,1164 @@ body.home-view .app-shell {
 #fishing-btn {
   display: none !important;
 }
+
+.speedster-grid[data-catalog-variant="planner"] {
+  display: block;
+}
+
+.planner-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.planner-hero,
+.planner-panel,
+.planner-composition-card,
+.planner-role-slot {
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.18);
+  background:
+    linear-gradient(180deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.08), rgba(6, 12, 24, 0.62)),
+    rgba(7, 13, 24, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 34px rgba(0, 0, 0, 0.22);
+}
+
+.planner-hero {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem;
+  border-radius: 1.25rem;
+}
+
+.planner-hero__copy,
+.planner-panel__header {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.planner-hero__eyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.planner-hero__title,
+.planner-panel__title,
+.planner-composition-card__title {
+  color: var(--text-strong);
+}
+
+.planner-hero__title {
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.planner-hero__text,
+.planner-panel__text,
+.planner-role-slot__meta,
+.planner-composition-card__empty-summary,
+.planner-empty-state,
+.planner-item-field__hint,
+.planner-metric-card__description,
+.planner-recommendation-card__detail {
+  color: var(--text-soft);
+}
+
+.planner-hero__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.planner-metric-card {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.planner-metric-card__label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.planner-metric-card__value {
+  font-size: 1.25rem;
+  color: var(--text-strong);
+}
+
+.planner-hero__actions {
+  display: grid;
+  grid-template-columns: auto auto minmax(240px, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.planner-hero__button,
+.planner-source-filter,
+.planner-clan-filter,
+.planner-composition-card__remove,
+.planner-role-slot__clear,
+.planner-boss-picker,
+.planner-recommendation-card {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.planner-hero__button {
+  padding: 0.78rem 1rem;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.24);
+  border-radius: 999px;
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-hero__button--primary {
+  background: linear-gradient(135deg, var(--module-accent-alt, #b4f4ff), var(--module-accent, #68d7ff));
+  color: #05101d;
+  font-weight: 700;
+}
+
+.planner-hero__button--ghost,
+.planner-composition-card__remove,
+.planner-role-slot__clear,
+.planner-source-filter,
+.planner-clan-filter {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.planner-hero__button:disabled,
+.planner-boss-picker:disabled,
+.planner-clan-filter:disabled,
+.planner-role-slot__clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.planner-hero__button:hover:not(:disabled),
+.planner-source-filter:hover:not(:disabled),
+.planner-clan-filter:hover:not(:disabled),
+.planner-composition-card__remove:hover:not(:disabled),
+.planner-role-slot__clear:hover:not(:disabled),
+.planner-boss-picker:hover:not(:disabled),
+.planner-recommendation-card:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.planner-hero__share-input,
+.planner-item-field__select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.2);
+  /* Use the card background for better contrast with options */
+  background: var(--card-bg);
+  color: var(--text-strong);
+}
+
+/* Improve contrast for Pokéblock / Ration dropdown options
+   (some browsers allow styling of <option>; helps visibility) */
+.planner-item-field__select option {
+  color: var(--text-strong);
+  background: rgba(8, 15, 28, 0.96);
+}
+
+.planner-hero__feedback {
+  grid-column: 1 / -1;
+  font-size: 0.92rem;
+}
+
+.planner-hero__feedback[data-tone="success"] {
+  color: var(--accent-green);
+}
+
+.planner-hero__feedback[data-tone="muted"] {
+  color: var(--text-soft);
+}
+
+.planner-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.planner-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  border-radius: 1.2rem;
+}
+
+.planner-source-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.planner-source-filter {
+  padding: 0.72rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.2);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-source-filter[data-active="true"] {
+  background: linear-gradient(135deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.28), rgba(var(--module-accent-alt-rgb, 180, 244, 255), 0.18));
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.42);
+  box-shadow: 0 10px 20px rgba(var(--module-accent-rgb, 104, 215, 255), 0.14);
+}
+
+.planner-boss-list {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+}
+
+.planner-composition-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.planner-boss-picker {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.95rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.planner-boss-picker[data-state="added"] {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.planner-boss-picker__image,
+.planner-composition-card__image,
+.planner-recommendation-card__image {
+  object-fit: contain;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 72%);
+}
+
+.planner-boss-picker__image {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.planner-boss-picker__content,
+.planner-composition-card__copy,
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.planner-composition-card--only-dps .planner-composition-card__copy {
+  align-items: center;
+  text-align: center;
+}
+
+.planner-composition-card--only-dps .planner-composition-card__title-row {
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.planner-composition-card--only-dps .planner-role-slot__clans {
+  justify-content: center;
+}
+
+
+.planner-meta-chip--no-label .planner-meta-chip__label {
+  display: none;
+}
+.planner-boss-picker__header,
+.planner-role-slot__header,
+.planner-recommendation-card__title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+/* For composition cards, keep the title group compact and left-aligned
+   so the name, types and moveset stay near the boss image. */
+.planner-composition-card__title-row {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.planner-boss-picker__title,
+.planner-recommendation-card__name {
+  color: var(--text-strong);
+}
+
+.planner-boss-picker__badge,
+.planner-composition-card__source {
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(var(--module-accent-rgb, 104, 215, 255), 0.14);
+  color: var(--module-accent-alt, #b4f4ff);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.planner-boss-picker__chips,
+.planner-composition-card__info,
+.planner-recommendation-card__chips,
+.planner-composition-card__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.planner-boss-picker__action {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.planner-meta-chip,
+.planner-summary-pill,
+.planner-consumable-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.64rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.planner-meta-chip .type-icon,
+.planner-summary-pill .type-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.planner-meta-chip__label,
+.planner-summary-pill__label {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.planner-meta-chip__value,
+.planner-summary-pill__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  color: var(--text-strong);
+}
+
+.planner-composition-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+}
+
+.planner-composition-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+
+.planner-composition-card__boss {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+}
+
+.planner-composition-card__image {
+  width: 82px;
+  height: 82px;
+  flex-shrink: 0;
+}
+
+.planner-composition-card__remove,
+.planner-role-slot__clear {
+  padding: 0.62rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-composition-card__roles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+/* When a composition card is for a Hoopa Portais boss, show only DPS
+   and make its slot expand to fill the available width for better layout. */
+.planner-composition-card--hoopa .planner-composition-card__roles {
+  grid-template-columns: 1fr;
+}
+
+.planner-composition-card--hoopa .planner-role-slot {
+  padding: 1.25rem; /* slightly larger padding to emphasize the single slot */
+}
+
+.planner-role-slot {
+  --planner-role-accent: rgba(255, 255, 255, 0.12);
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border-radius: 1rem;
+  border-color: var(--planner-role-accent);
+}
+
+.planner-role-slot[data-role="tank"] {
+  --planner-role-accent: rgba(116, 170, 255, 0.24);
+}
+
+.planner-role-slot[data-role="dps"] {
+  --planner-role-accent: rgba(255, 170, 80, 0.24);
+}
+
+.planner-role-slot[data-role="support"] {
+  --planner-role-accent: rgba(80, 217, 179, 0.24);
+}
+
+.planner-role-slot__eyebrow {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.planner-role-slot__copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; /* occupy available header space so inner text can be centered */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Center header content while keeping the clear button anchored to the top-right */
+.planner-role-slot__header {
+  position: relative;
+  justify-content: center; /* center the copy area horizontally */
+  align-items: center; /* center vertically */
+}
+
+.planner-role-slot__clear {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+  margin: 0;
+}
+
+.planner-role-slot__current {
+  color: var(--text-strong);
+}
+
+.planner-role-slot__clans {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.planner-clan-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.56rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-clan-filter[data-active="true"] {
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.4);
+  background: rgba(var(--module-accent-rgb, 104, 215, 255), 0.12);
+}
+
+.planner-clan-filter__icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.planner-role-slot__list {
+  display: grid;
+  gap: 0.6rem;
+  max-height: 380px;
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.planner-recommendation-card {
+  display: flex;
+  gap: 0.72rem;
+  width: 100%;
+  padding: 0.78rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.planner-recommendation-card.is-selected {
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.44);
+  background:
+    linear-gradient(135deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.18), rgba(var(--module-accent-alt-rgb, 180, 244, 255), 0.1)),
+    rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px rgba(var(--module-accent-rgb, 104, 215, 255), 0.12);
+}
+
+.planner-recommendation-card__image {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.planner-recommendation-card__name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+.planner-recommendation-card__tier {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.84rem;
+  white-space: nowrap;
+}
+
+.planner-composition-card__items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.planner-member-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.planner-member-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.planner-member-card {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.planner-member-card__info {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+
+.planner-member-card__remove {
+  padding: 0.42rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+/* Subtabs in planner hero */
+.planner-subtabs {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 0.35rem;
+}
+
+.planner-subtab {
+  padding: 0.56rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-subtab[data-active="true"] {
+  background: linear-gradient(135deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.18), rgba(var(--module-accent-alt-rgb, 180, 244, 255), 0.08));
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.36);
+  box-shadow: 0 10px 20px rgba(var(--module-accent-rgb, 104, 215, 255), 0.08);
+}
+
+/* Ready subpage list */
+.planner-ready-list {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: start;
+}
+
+.planner-ready-boss-group {
+  padding: 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.planner-ready-boss-group__title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text-strong);
+}
+
+/* Ready member card (boss-like) */
+.planner-ready-boss-group {
+  padding: 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.planner-ready-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.planner-ready-member-card {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.3rem 4rem 0.9rem; /* increase right padding to make room for badges */
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.planner-ready-member-card__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.planner-ready-member-card__title {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.planner-ready-member-card__tutorial {
+  margin-left: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+}
+
+.planner-ready-member-card__tutorial-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+.planner-ready-member-card__consumables {
+  position: absolute;
+  /* Anchor badges relative to card center and shift left of the avatar.
+     This keeps badges consistently positioned next to the boss artwork. */
+  left: 50%;
+  top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-end;
+  transform: translateX(calc(-50% - 76px)); /* center -> move left by half avatar (48px) + 28px spacing (moved left 20px) */
+}
+
+.planner-ready-member-card__consumable {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.78rem;
+}
+
+.planner-ready-member-card__consumable-image {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.planner-ready-member-card__consumable-text {
+  color: var(--text-strong);
+  display: inline-block;
+}
+
+.planner-ready-member-card__pick-tier {
+  display: inline-block;
+  margin-top: 2px;
+  margin-left: 0.35rem;
+  font-size: 0.65rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  color: #061018;
+  background: rgba(255,255,255,0.06);
+  vertical-align: middle;
+}
+
+.planner-ready-member-card__pick-tier.tier-green { background: #5ee9b4; color: #022; }
+.planner-ready-member-card__pick-tier.tier-otimo { background: #7fe9ff; color: #022; }
+.planner-ready-member-card__pick-tier.tier-yellow { background: #ffd166; color: #222; }
+.planner-ready-member-card__pick-tier.tier-red { background: #ff8a8a; color: #222; }
+.planner-ready-member-card__pick-tier.tier-solo { background: #cda0ff; color: #111; }
+.planner-ready-member-card__pick-tier.tier-unknown { background: rgba(255,255,255,0.03); color: var(--text-strong); border: 1px solid rgba(255,255,255,0.02); }
+
+.planner-ready-member-card__avatar img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: contain;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+.planner-ready-member-card__picks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.planner-ready-member-card__pick {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  background: rgba(255,255,255,0.02);
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+}
+
+.planner-ready-member-card__pick-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.planner-ready-member-card__pick-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.planner-ready-member-card__pick-role {
+  font-size: 0.66rem;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+}
+
+.planner-ready-member-card__pick-name {
+  font-size: 0.85rem;
+  color: var(--text-strong);
+}
+
+.planner-ready-member-card__movechip {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.45rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.planner-ready-member-card__pokeblock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  cursor: default;
+  background: linear-gradient(135deg, var(--module-accent-alt, #b4f4ff), var(--module-accent, #68d7ff));
+  color: #05101d;
+  font-weight: 700;
+}
+
+.planner-ready-member-card__pokeblock-image {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.planner-ready-member-card__ration {
+  margin-top: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  color: var(--text-strong);
+  font-size: 0.86rem;
+}
+
+.planner-ready-member-card__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.planner-item-field {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.planner-item-field__label,
+.planner-item-field__hint-label {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.planner-item-field__preview,
+.planner-item-field__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.planner-consumable-token {
+  color: var(--text-strong);
+}
+
+.planner-consumable-token[data-tone="suggested"] {
+  border-color: rgba(255, 209, 102, 0.18);
+  background: rgba(255, 209, 102, 0.08);
+}
+
+.planner-consumable-token--empty {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.planner-consumable-token__image,
+.planner-consumable-token__fallback {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.planner-consumable-token__image {
+  object-fit: contain;
+}
+
+.planner-consumable-token__fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+}
+
+.planner-empty-state {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgba(var(--module-accent-rgb, 104, 215, 255), 0.24);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.planner-empty-state--large {
+  padding: 1.4rem;
+}
+
+.planner-role-slot__empty {
+  padding: 0.9rem;
+  border-radius: 0.95rem;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  color: var(--text-soft);
+}
+
+.planner-summary-pill .tier-dot {
+  width: 12px;
+  height: 12px;
+}
+
+.planner-hero__button:focus-visible,
+.planner-source-filter:focus-visible,
+.planner-clan-filter:focus-visible,
+.planner-boss-picker:focus-visible,
+.planner-recommendation-card:focus-visible,
+.planner-composition-card__remove:focus-visible,
+.planner-role-slot__clear:focus-visible,
+.planner-hero__share-input:focus-visible,
+.planner-item-field__select:focus-visible {
+  outline: none;
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.72);
+  box-shadow:
+    0 0 0 3px rgba(var(--module-accent-rgb, 104, 215, 255), 0.14),
+    0 10px 22px rgba(var(--module-accent-rgb, 104, 215, 255), 0.12);
+}
+
+@media (max-width: 1100px) {
+  .planner-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-composition-card__roles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .planner-hero__metrics,
+  .planner-composition-card__roles,
+  .planner-composition-card__items {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-hero__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-composition-card__header,
+  .planner-composition-card__boss,
+  .planner-boss-picker,
+  .planner-recommendation-card {
+    flex-direction: column;
+  }
+
+  .planner-boss-picker__image,
+  .planner-composition-card__image,
+  .planner-recommendation-card__image {
+    width: 72px;
+    height: 72px;
+  }
+
+  .planner-boss-picker__header,
+  .planner-composition-card__title-row,
+  .planner-role-slot__header,
+  .planner-recommendation-card__title-row {
+    flex-direction: column;
+  }
+}
+
+/* Compact planner layout: reduce padding, sizes and hide redundant labels
+   to make the composition/recommendation lists cleaner and more objective. */
+.planner-composition-card {
+  padding: 0.6rem;
+  border-radius: 0.8rem;
+}
+
+.planner-composition-card__image {
+  width: 64px;
+  height: 64px;
+}
+
+.planner-recommendation-card {
+  gap: 0.4rem;
+  padding: 0.48rem;
+  border-radius: 0.6rem;
+  background: rgba(255,255,255,0.02);
+}
+
+.planner-recommendation-card__image {
+  width: 44px;
+  height: 44px;
+}
+
+.planner-recommendation-card__name-wrap {
+  gap: 0.3rem;
+}
+
+.planner-recommendation-card__tier {
+  font-size: 0.78rem;
+}
+
+.planner-role-slot {
+  --planner-role-accent: rgba(255, 255, 255, 0.08);
+  gap: 0.4rem;
+  padding: 0.5rem;
+  border-radius: 0.85rem;
+}
+
+.planner-role-slot__list {
+  gap: 0.4rem;
+  max-height: 260px;
+}
+
+.planner-meta-chip,
+.planner-summary-pill,
+.planner-consumable-token {
+  padding: 0.22rem 0.38rem;
+  border-radius: 0.6rem;
+  font-size: 0.72rem;
+}
+
+/* hide the verbose labels like 'TIPOS' to make chips more compact */
+.planner-meta-chip__label {
+  display: none;
+}
+
+/* Keep consumable hint labels visible so recommended items are explicit */
+.planner-item-field__hint-label {
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-right: 0.4rem;
+}
+
+.planner-item-field {
+  padding: 0.5rem;
+}
+
+.planner-item-field__select {
+  min-height: 40px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.94rem;
+}
+
+.planner-composition-card__roles {
+  gap: 0.6rem;
+}
+
+.planner-composition-card__remove,
+.planner-role-slot__clear {
+  padding: 0.36rem 0.5rem;
+  font-size: 0.86rem;
+}
+
+.planner-ready-member-card {
+  padding: 0.9rem 2.6rem 0.6rem;
+  max-width: 300px;
+}
+
+.planner-ready-member-card__pick {
+  padding: 0.28rem 0.48rem;
+}
+
+.planner-ready-member-card__consumable {
+  padding: 0.25rem 0.45rem;
+  font-size: 0.78rem;
+}
+
+.planner-clan-filter {
+  padding: 0.36rem 0.5rem;
+  font-size: 0.86rem;
+}
+
+/* slightly denser appearance for small screens */
+@media (max-width: 760px) {
+  .planner-composition-card__image,
+  .planner-recommendation-card__image {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Prevent clan buttons and recommendation cards from stretching
+   when there are few items. Keep consistent compact sizing. */
+.planner-role-slot__clans {
+  align-items: center; /* keep icons aligned */
+  justify-content: flex-start; /* don't center / stretch clan buttons */
+}
+
+.planner-clan-filter {
+  flex: 0 0 auto; /* never grow to fill remaining space */
+  max-width: 160px;
+  min-width: 64px;
+  height: 34px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.planner-clan-filter__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.planner-role-slot__list {
+  align-content: start; /* prevent grid from stretching rows */
+  align-items: start;
+  grid-auto-rows: min-content; /* rows size to their content */
+}
+
+.planner-recommendation-card {
+  align-self: start; /* don't stretch within grid tracks */
+  min-height: 56px; /* keep cards compact and uniform */
+}
+
+.planner-recommendation-card__content {
+  gap: 0.4rem;
+}
+
+/* Planner-specific adjustments for global clan controls used inside planner */
+.planner-panel .clan-controls,
+.planner-shell .clan-controls {
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.planner-panel .clan-btn,
+.planner-shell .clan-btn {
+  padding: 0.22rem 0.6rem;
+  min-width: 64px;
+  height: 34px;
+  box-sizing: border-box;
+  border-radius: 999px;
+}
+
+.planner-panel .clan-icon,
+.planner-shell .clan-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+}

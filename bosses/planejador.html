@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bosses | Hoopa Portais</title>
+  <title>Bosses | Planejador</title>
   <link rel="icon" type="image/x-icon" href="../icons-type/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css?v=20260419d">
 </head>
-<body data-active-tab="bosses" data-initial-boss-mode="hoopa">
+<body data-active-tab="bosses" data-initial-boss-mode="planner">
   <header class="header">
-    <button id="back-btn" class="icon-button" onclick="location.href='../index.html'" aria-label="Voltar ao site">â†©ï¸</button>
+    <button id="back-btn" class="icon-button" onclick="location.href='../index.html?tab=planejador'+(location.search ? '&amp;'+location.search.slice(1) : '')" aria-label="Voltar ao site">&#x21a9;&#xfe0f;</button>
     <h1>Bosses</h1>
     <div style="width:48px;" aria-hidden="true"></div>
   </header>
@@ -21,39 +21,39 @@
     <div class="card calc-card bosses-shell bosses-shell--standalone">
       <div class="bosses-header">
         <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
-          <label for="speedster-search" class="speedster-search-label">Buscar PokÃ©mon</label>
-          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um PokÃ©mon" aria-label="Buscar PokÃ©mon" autocomplete="off" />
+          <label for="speedster-search" class="speedster-search-label">Buscar Pok&eacute;mon</label>
+          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pok&eacute;mon" aria-label="Buscar Pok&eacute;mon" autocomplete="off" />
           <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
-          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este PokÃ©mon ainda nÃ£o foi adicionado.</div>
+          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pok&eacute;mon ainda n&atilde;o foi adicionado.</div>
         </aside>
       </div>
       <div class="bosses-hero">
         <div class="bosses-copy">
-          <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
+          <h2 id="bosses-mode-title" class="bosses-mode-title">Planejador</h2>
           <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
         </div>
       </div>
 
-      <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
+      <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Planejador de bosses"></div>
     </div>
   </div>
 
   <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
     <div class="speedster-modal-backdrop" data-close="true"></div>
     <div class="speedster-modal-content" role="document">
-      <button class="speedster-modal-close" aria-label="Fechar">âœ–</button>
+      <button class="speedster-modal-close" aria-label="Fechar">&#10006;</button>
       <div class="speedster-modal-header">
         <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
         <div class="speedster-modal-title">
           <h2 id="modal-title"></h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
-          <div class="tier-legend" aria-label="Legenda de cores de recomendaÃ§Ã£o">
+          <div class="tier-legend" aria-label="Legenda de cores de recomenda&ccedil;&atilde;o">
             <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
             <span class="tier-dot tier-otimo" aria-hidden="true"></span>Otimo
             <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
-            <span class="tier-dot tier-red" aria-hidden="true"></span>AceitÃ¡vel
-            <span class="tier-dot tier-solo" aria-hidden="true"></span>Ãšnica opÃ§Ã£o
-            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informaÃ§Ã£o
+            <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitavel
+            <span class="tier-dot tier-solo" aria-hidden="true"></span>Unica opcao
+            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informacao
           </div>
         </div>
         <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
@@ -63,6 +63,8 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="bosses.js?v=20260419d"></script>
 </body>
 </html>

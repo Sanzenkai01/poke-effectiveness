@@ -1753,6 +1753,19 @@ const bossCatalogs = {
     summary: 'Abra um chefe do Mewtwo para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.',
     pills: ['Tanque / DPS / Suporte', 'Busca por Pokémon', 'Exemplos temporários'],
     data: mew2Bosses
+  },
+  planner: {
+    id: 'planner',
+    label: 'Planejador',
+    variant: 'planner',
+    searchEnabled: false,
+    summary: 'Monte uma composicao de bosses com picks, papeis e itens em um link compartilhavel.',
+    introLines: [
+      'Selecione um conteudo, adicione Tank, DPS e Suporte por chefe.',
+      'Use as recomendacoes ja existentes de Mewtwo, Champion Path e Hoopa Portais para acelerar o planejamento.',
+      'Ao final, gere um link unico para abrir exatamente a mesma composicao em qualquer dispositivo.'
+    ],
+    data: []
   }
 };
 
@@ -1762,14 +1775,32 @@ const bossModeAliases = Object.freeze({
   champion: 'champion',
   'champion-path': 'champion',
   mew2: 'mew2',
-  mewtwo: 'mew2'
+  mewtwo: 'mew2',
+  planner: 'planner',
+  planejador: 'planner'
 });
 
 const standaloneBossModePages = Object.freeze({
   hoopa: 'hoopa-portais.html',
   champion: 'champion-path.html',
-  mew2: 'mewtwo.html'
+  mew2: 'mewtwo.html',
+  planner: 'planejador.html'
 });
+
+const plannerContentOrder = Object.freeze(['mew2', 'champion', 'hoopa']);
+const plannerClanOrder = Object.freeze(['instinct', 'mystic', 'valor']);
+const plannerStateCache = {
+  index: null,
+  map: null
+};
+const plannerRecommendationCache = new Map();
+let plannerState = createEmptyPlannerState();
+let plannerSubpage = 'compose';
+let plannerShowBrowser = true; // when true, show step 1 (filter browser). set false to focus composition (step 2)
+let plannerShareFeedback = {
+  message: '',
+  tone: ''
+};
 
 function normalizeBossMode(mode) {
   const normalizedMode = String(mode || '').trim().toLowerCase();
@@ -1793,7 +1824,8 @@ function getStandaloneBossModePath(mode) {
     currentFile === 'index.html' ||
     currentFile === 'hoopa-portais.html' ||
     currentFile === 'champion-path.html' ||
-    currentFile === 'mewtwo.html'
+    currentFile === 'mewtwo.html' ||
+    currentFile === 'planejador.html'
   ) {
     segments[segments.length - 1] = targetFile;
   } else {
@@ -3872,6 +3904,9 @@ function renderBossModeIntro() {
 function setBossMode(mode, options = {}) {
   const nextMode = normalizeBossMode(mode) || 'hoopa';
   activeBossMode = nextMode;
+  if (nextMode !== 'planner') {
+    clearPlannerUrlState();
+  }
   if (options.syncUrl !== false) {
     syncStandaloneBossModeUrl(activeBossMode);
   }
@@ -3891,6 +3926,1620 @@ function setBossMode(mode, options = {}) {
 }
 
 window.setBossMode = setBossMode;
+
+function createEmptyPlannerState() {
+  return {
+    sourceFilter: '',
+    entries: []
+  };
+}
+
+function normalizePlannerSourceFilter(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return plannerContentOrder.includes(normalized) ? normalized : '';
+}
+
+function normalizePlannerClanKey(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return plannerClanOrder.includes(normalized) ? normalized : '';
+}
+
+function getPlannerContentLabel(sourceKey) {
+  return bossCatalogs[sourceKey]?.label || 'Bosses';
+}
+
+function buildPlannerBossIndex() {
+  const list = [];
+  const map = new Map();
+
+  plannerContentOrder.forEach((sourceKey) => {
+    const catalog = bossCatalogs[sourceKey];
+    (catalog?.data || []).forEach((boss) => {
+      const plannerBossId = `${sourceKey}:${boss.id}`;
+      const entry = {
+        id: plannerBossId,
+        sourceKey,
+        sourceLabel: catalog.label,
+        bossId: boss.id,
+        bossRef: boss,
+        name: boss.name,
+        image: boss.image || `${boss.id}.png`
+      };
+
+      list.push(entry);
+      map.set(plannerBossId, entry);
+    });
+  });
+
+  plannerStateCache.index = list;
+  plannerStateCache.map = map;
+  return plannerStateCache;
+}
+
+function getPlannerBossEntries() {
+  if (!plannerStateCache.index || !plannerStateCache.map) {
+    buildPlannerBossIndex();
+  }
+  return plannerStateCache.index || [];
+}
+
+function getPlannerBossById(plannerBossId) {
+  if (!plannerStateCache.index || !plannerStateCache.map) {
+    buildPlannerBossIndex();
+  }
+  return plannerStateCache.map.get(String(plannerBossId || '').trim()) || null;
+}
+
+function getPlannerPokemonKey(value) {
+  if (typeof value === 'string') {
+    return getRecommendationNameKey(value);
+  }
+  return getRecommendationNameKey(value?.name || value?.pokemonKey || value?.pokemon);
+}
+
+function getPlannerConsumableOptions(kind) {
+  const source = kind === 'pokeblock'
+    ? bossConsumableCatalog.pokeblocks
+    : bossConsumableCatalog.rations;
+
+  return Object.entries(source || {}).map(([key, entry]) => ({
+    id: String(key || '').trim().toLowerCase(),
+    ...cloneBossConsumableConfig(entry)
+  }));
+}
+
+function normalizePlannerConsumableId(kind, value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return '';
+  return getPlannerConsumableOptions(kind).some((option) => option.id === normalized) ? normalized : '';
+}
+
+function getPlannerConsumableOptionById(kind, value) {
+  const normalized = normalizePlannerConsumableId(kind, value);
+  if (!normalized) return null;
+  return getPlannerConsumableOptions(kind).find((option) => option.id === normalized) || null;
+}
+
+function getPlannerRoleSourceList(bossEntry, roleKey, clanKey) {
+  const boss = bossEntry?.bossRef;
+  const clanData = boss?.clans?.[clanKey];
+  if (!boss || !clanData) return [];
+
+  if (clanData.roles) {
+    return Array.isArray(clanData.roles?.[roleKey]) ? clanData.roles[roleKey] : [];
+  }
+
+  return getAllRecommendedForClan(boss, clanData);
+}
+
+function getPlannerRoleRecommendations(bossEntry, roleKey, clanKey) {
+  if (!bossEntry || !roleKey || !clanKey) return [];
+
+  const cacheKey = `${bossEntry.id}|${roleKey}|${clanKey}`;
+  if (plannerRecommendationCache.has(cacheKey)) {
+    return plannerRecommendationCache.get(cacheKey);
+  }
+
+  const boss = bossEntry.bossRef;
+  const rawList = getPlannerRoleSourceList(bossEntry, roleKey, clanKey);
+  const ranked = dedupeRecommendedPicksByName(rankRecommendedForBoss(boss, rawList || []))
+    .map((pick) => ({
+      ...pick,
+      plannerKey: getPlannerPokemonKey(pick)
+    }));
+
+  plannerRecommendationCache.set(cacheKey, ranked);
+  return ranked;
+}
+
+function findPlannerRecommendationOwner(bossEntry, roleKey, pokemonKey) {
+  const normalizedKey = getPlannerPokemonKey(pokemonKey);
+  if (!bossEntry || !normalizedKey) return '';
+
+  for (const clanKey of plannerClanOrder) {
+    const matches = getPlannerRoleRecommendations(bossEntry, roleKey, clanKey);
+    if (matches.some((pick) => pick.plannerKey === normalizedKey)) {
+      return clanKey;
+    }
+  }
+
+  return '';
+}
+
+function getPlannerDefaultClanForRole(bossEntry, roleKey) {
+  const preferredClan = normalizePlannerClanKey(bossEntry?.bossRef?.clan);
+  if (preferredClan && getPlannerRoleRecommendations(bossEntry, roleKey, preferredClan).length) {
+    return preferredClan;
+  }
+
+  return plannerClanOrder.find((clanKey) => getPlannerRoleRecommendations(bossEntry, roleKey, clanKey).length) || 'instinct';
+}
+
+function createPlannerBossState(plannerBossId) {
+  const bossEntry = getPlannerBossById(plannerBossId);
+  const roles = {};
+
+  roleboardRoleOrder.forEach((roleKey) => {
+    roles[roleKey] = {
+      clan: bossEntry ? getPlannerDefaultClanForRole(bossEntry, roleKey) : 'instinct',
+      pokemonKey: ''
+    };
+  });
+
+  return {
+    bossId: plannerBossId,
+    roles,
+    pokeblock: '',
+    ration: '',
+    members: []
+  };
+}
+
+function clonePlannerState(state = plannerState) {
+  try {
+    return JSON.parse(JSON.stringify(state || createEmptyPlannerState()));
+  } catch {
+    return createEmptyPlannerState();
+  }
+}
+
+function sanitizePlannerState(rawState) {
+  const nextState = createEmptyPlannerState();
+  nextState.sourceFilter = normalizePlannerSourceFilter(rawState?.sourceFilter);
+
+  const seenBosses = new Set();
+  const rawEntries = Array.isArray(rawState?.entries)
+    ? rawState.entries
+    : Array.isArray(rawState?.bosses)
+      ? rawState.bosses
+      : [];
+
+  rawEntries.forEach((rawEntry) => {
+    const plannerBossId = String(rawEntry?.bossId || rawEntry?.id || '').trim();
+    const bossEntry = getPlannerBossById(plannerBossId);
+    if (!bossEntry || seenBosses.has(plannerBossId)) return;
+
+    seenBosses.add(plannerBossId);
+    const nextEntry = createPlannerBossState(plannerBossId);
+
+    roleboardRoleOrder.forEach((roleKey) => {
+      const rawRole = rawEntry?.roles?.[roleKey] || rawEntry?.[roleKey] || {};
+      const requestedPokemonKey = getPlannerPokemonKey(
+        rawRole?.pokemonKey || rawRole?.pokemon || rawRole?.name
+      );
+      const ownerClan = requestedPokemonKey
+        ? findPlannerRecommendationOwner(bossEntry, roleKey, requestedPokemonKey)
+        : '';
+      const requestedClan = normalizePlannerClanKey(rawRole?.clan);
+      const nextClan = ownerClan || requestedClan || nextEntry.roles[roleKey].clan;
+
+      nextEntry.roles[roleKey].clan = nextClan;
+
+      if (requestedPokemonKey) {
+        const matches = getPlannerRoleRecommendations(bossEntry, roleKey, nextClan);
+        if (matches.some((pick) => pick.plannerKey === requestedPokemonKey)) {
+          nextEntry.roles[roleKey].pokemonKey = requestedPokemonKey;
+        }
+      }
+    });
+
+    nextEntry.pokeblock = normalizePlannerConsumableId(
+      'pokeblock',
+      rawEntry?.pokeblock || rawEntry?.items?.pokeblock
+    );
+    nextEntry.ration = normalizePlannerConsumableId(
+      'ration',
+      rawEntry?.ration || rawEntry?.items?.ration
+    );
+
+    // restore saved members (player selections) if present
+    nextEntry.members = [];
+    if (Array.isArray(rawEntry?.members)) {
+      rawEntry.members.forEach((rawMember) => {
+        const member = {
+          id: String(rawMember?.id || Math.random().toString(36).slice(2)),
+          roles: {},
+          pokeblock: normalizePlannerConsumableId('pokeblock', rawMember?.pokeblock || rawMember?.items?.pokeblock || ''),
+          ration: normalizePlannerConsumableId('ration', rawMember?.ration || rawMember?.items?.ration || '')
+        };
+
+        roleboardRoleOrder.forEach((roleKey) => {
+          const requested = rawMember?.roles?.[roleKey] || rawMember?.[roleKey] || '';
+          member.roles[roleKey] = getPlannerPokemonKey(requested) || '';
+        });
+
+        nextEntry.members.push(member);
+      });
+    }
+
+    nextState.entries.push(nextEntry);
+  });
+
+  return nextState;
+}
+
+// Compact planner state for URL to reduce payload size.
+function compactPlannerStateForUrl(state) {
+  const payload = sanitizePlannerState(state);
+  const s = normalizePlannerSourceFilter(payload.sourceFilter) || '';
+  const entries = (Array.isArray(payload.entries) ? payload.entries : []).map((entry) => {
+    const bossId = String(entry.bossId || '').trim();
+    const rolesClans = roleboardRoleOrder.map((rk) => normalizePlannerClanKey(entry.roles?.[rk]?.clan || ''));
+    const rolesPks = roleboardRoleOrder.map((rk) => String(entry.roles?.[rk]?.pokemonKey || ''));
+    const pokeblock = normalizePlannerConsumableId('pokeblock', entry.pokeblock || '');
+    const ration = normalizePlannerConsumableId('ration', entry.ration || '');
+    const members = (Array.isArray(entry.members) ? entry.members : []).map((m) => {
+      const id = String(m.id || '');
+      const memberRoles = roleboardRoleOrder.map((rk) => String(m.roles?.[rk] || ''));
+      const mPokeblock = normalizePlannerConsumableId('pokeblock', m.pokeblock || '');
+      const mRation = normalizePlannerConsumableId('ration', m.ration || '');
+      return [id, memberRoles, mPokeblock || '', mRation || ''];
+    });
+    return [bossId, rolesClans, rolesPks, pokeblock || '', ration || '', members];
+  });
+  return { s, e: entries };
+}
+
+function expandPlannerStateFromUrl(compact) {
+  const next = createEmptyPlannerState();
+  next.sourceFilter = normalizePlannerSourceFilter(compact?.s || '');
+  (compact?.e || []).forEach((entryArr) => {
+    const bossId = String(entryArr[0] || '').trim();
+    if (!bossId) return;
+    const rolesClans = Array.isArray(entryArr[1]) ? entryArr[1] : [];
+    const rolesPks = Array.isArray(entryArr[2]) ? entryArr[2] : [];
+    const pokeblock = normalizePlannerConsumableId('pokeblock', entryArr[3] || '');
+    const ration = normalizePlannerConsumableId('ration', entryArr[4] || '');
+    const membersArr = Array.isArray(entryArr[5]) ? entryArr[5] : [];
+
+    const entry = createPlannerBossState(bossId);
+    roleboardRoleOrder.forEach((rk, idx) => {
+      entry.roles[rk].clan = normalizePlannerClanKey(rolesClans[idx] || entry.roles[rk].clan);
+      entry.roles[rk].pokemonKey = getPlannerPokemonKey(rolesPks[idx] || '') || '';
+    });
+    entry.pokeblock = pokeblock;
+    entry.ration = ration;
+    entry.members = membersArr.map((m) => {
+      const id = String(m[0] || Math.random().toString(36).slice(2));
+      const memberRoles = Array.isArray(m[1]) ? m[1] : [];
+      const mpb = normalizePlannerConsumableId('pokeblock', m[2] || '');
+      const mr = normalizePlannerConsumableId('ration', m[3] || '');
+      const member = { id, roles: {}, pokeblock: mpb, ration: mr };
+      roleboardRoleOrder.forEach((rk, idx2) => {
+        member.roles[rk] = getPlannerPokemonKey(memberRoles[idx2] || '') || '';
+      });
+      return member;
+    });
+
+    next.entries.push(entry);
+  });
+  return sanitizePlannerState(next);
+}
+
+function encodePlannerStateToParam(state) {
+  const payload = sanitizePlannerState(state);
+  const compact = compactPlannerStateForUrl(payload);
+  const json = JSON.stringify(compact);
+
+  // try LZ-String first (existing fast, URL-safe encoder)
+  let lz = '';
+  try {
+    if (typeof LZString === 'object' && typeof LZString.compressToEncodedURIComponent === 'function') {
+      lz = LZString.compressToEncodedURIComponent(json) || '';
+    }
+  } catch (e) {
+    lz = '';
+  }
+
+  // try pako (gzip) compression and base64-url encode the result
+  let pakoStr = '';
+  try {
+    if (typeof pako === 'object' && typeof pako.deflate === 'function') {
+      const deflated = pako.deflate(json);
+      let binary = '';
+      for (let i = 0; i < deflated.length; i++) binary += String.fromCharCode(deflated[i]);
+      pakoStr = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    }
+  } catch (e) {
+    pakoStr = '';
+  }
+
+  // legacy: base64 of raw JSON (kept for compatibility)
+  let legacy = '';
+  try {
+    const bytes = new TextEncoder().encode(json);
+    let binary = '';
+    bytes.forEach((value) => { binary += String.fromCharCode(value); });
+    legacy = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  } catch (e) {
+    legacy = '';
+  }
+
+  // choose the shortest non-empty encoding (pako or lzstring or legacy)
+  const candidates = [];
+  if (lz) candidates.push(lz);
+  if (pakoStr) candidates.push(pakoStr);
+  if (legacy) candidates.push(legacy);
+  if (!candidates.length) return '';
+  let best = candidates[0];
+  for (let i = 1; i < candidates.length; i++) {
+    if (candidates[i].length < best.length) best = candidates[i];
+  }
+  return best;
+}
+
+function decodePlannerStateFromParam(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized) return createEmptyPlannerState();
+
+  try {
+    if (typeof LZString === 'object' && typeof LZString.decompressFromEncodedURIComponent === 'function') {
+      const json = LZString.decompressFromEncodedURIComponent(normalized);
+      if (json) {
+        const parsed = JSON.parse(json);
+        // if compact format detected, expand it
+        if (parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 's') && Object.prototype.hasOwnProperty.call(parsed, 'e')) {
+          return expandPlannerStateFromUrl(parsed);
+        }
+        return parsed;
+      }
+      // if decompression returned null/empty, fall through to legacy decode
+    }
+  } catch (e) {
+    // fall through to legacy decode
+  }
+
+  const base64 = normalized.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`;
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+
+  // try legacy JSON first
+  try {
+    const parsed = JSON.parse(new TextDecoder().decode(bytes));
+    if (parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 's') && Object.prototype.hasOwnProperty.call(parsed, 'e')) {
+      return expandPlannerStateFromUrl(parsed);
+    }
+    return parsed;
+  } catch (e) {
+    // not raw JSON; try pako inflate (gzip)
+  }
+
+  try {
+    if (typeof pako === 'object' && typeof pako.inflate === 'function') {
+      const inflated = pako.inflate(bytes);
+      const text = new TextDecoder().decode(inflated);
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 's') && Object.prototype.hasOwnProperty.call(parsed, 'e')) {
+        return expandPlannerStateFromUrl(parsed);
+      }
+      return parsed;
+    }
+  } catch (e) {
+    // fallthrough
+  }
+
+  return createEmptyPlannerState();
+}
+
+function loadPlannerStateFromLocation() {
+  if (typeof location === 'undefined') return createEmptyPlannerState();
+
+  const params = new URLSearchParams(location.search);
+  const rawPlan = params.get('plan');
+  if (!rawPlan) return createEmptyPlannerState();
+
+  try {
+    return sanitizePlannerState(decodePlannerStateFromParam(rawPlan));
+  } catch {
+    return createEmptyPlannerState();
+  }
+}
+
+function replacePlannerUrlParam(encodedPlan = '') {
+  if (typeof history === 'undefined' || typeof location === 'undefined') return;
+
+  const url = new URL(location.href);
+  if (encodedPlan) {
+    url.searchParams.set('plan', encodedPlan);
+  } else {
+    url.searchParams.delete('plan');
+  }
+
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+  const currentUrl = `${location.pathname}${location.search}${location.hash}`;
+  if (nextUrl !== currentUrl) {
+    history.replaceState(null, '', nextUrl);
+  }
+}
+
+function clearPlannerUrlState() {
+  replacePlannerUrlParam('');
+}
+
+function syncPlannerStateToUrl() {
+  if (activeBossMode !== 'planner') return;
+  const encodedPlan = plannerState.entries.length ? encodePlannerStateToParam(plannerState) : '';
+  replacePlannerUrlParam(encodedPlan);
+}
+
+function setPlannerShareFeedback(message = '', tone = '') {
+  plannerShareFeedback = {
+    message: String(message || '').trim(),
+    tone: String(tone || '').trim()
+  };
+}
+
+function commitPlannerState(mutator, options = {}) {
+  const draft = clonePlannerState(plannerState);
+  if (typeof mutator === 'function') {
+    mutator(draft);
+  }
+
+  plannerState = sanitizePlannerState(draft);
+
+  if (options.feedback) {
+    setPlannerShareFeedback(options.feedback.message, options.feedback.tone);
+  } else if (options.resetFeedback !== false) {
+    setPlannerShareFeedback('', '');
+  }
+
+  syncPlannerStateToUrl();
+
+  if (activeBossMode === 'planner') {
+    renderGrid();
+  }
+}
+
+function getPlannerSelectedPick(plannerEntry, roleKey, bossEntry = getPlannerBossById(plannerEntry?.bossId)) {
+  if (!plannerEntry || !roleKey || !bossEntry) return null;
+
+  const slot = plannerEntry.roles?.[roleKey];
+  const selectedKey = getPlannerPokemonKey(slot?.pokemonKey);
+  if (!selectedKey) return null;
+
+  const recommendations = getPlannerRoleRecommendations(bossEntry, roleKey, slot?.clan);
+  return recommendations.find((pick) => pick.plannerKey === selectedKey) || null;
+}
+
+function countFilledPlannerSelections() {
+  return plannerState.entries.reduce((total, entry) => (
+    total + roleboardRoleOrder.filter((roleKey) => Boolean(getPlannerSelectedPick(entry, roleKey))).length
+  ), 0);
+}
+
+function countSelectedPlannerItems() {
+  return plannerState.entries.reduce((total, entry) => (
+    total + (entry?.pokeblock ? 1 : 0) + (entry?.ration ? 1 : 0)
+  ), 0);
+}
+
+function createPlannerMetricCard(label, value, description = '') {
+  const card = document.createElement('div');
+  card.className = 'planner-metric-card';
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'planner-metric-card__label';
+  labelEl.textContent = label;
+
+  const valueEl = document.createElement('strong');
+  valueEl.className = 'planner-metric-card__value';
+  valueEl.textContent = value;
+
+  card.append(labelEl, valueEl);
+
+  if (description) {
+    const descEl = document.createElement('span');
+    descEl.className = 'planner-metric-card__description';
+    descEl.textContent = description;
+    card.appendChild(descEl);
+  }
+
+  return card;
+}
+
+function createPlannerMetaChip(label, value, types = []) {
+  const chip = document.createElement('div');
+  chip.className = 'planner-meta-chip';
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'planner-meta-chip__label';
+  labelEl.textContent = label;
+  chip.appendChild(labelEl);
+
+  const valueWrap = document.createElement('span');
+  valueWrap.className = 'planner-meta-chip__value';
+  getBossTypeIcons(types).forEach((icon) => valueWrap.appendChild(icon));
+
+  const valueText = document.createElement('span');
+  valueText.textContent = value;
+  valueWrap.appendChild(valueText);
+
+  chip.appendChild(valueWrap);
+  return chip;
+}
+
+function createPlannerSummaryPill(label, value, tier = '') {
+  const pill = document.createElement('div');
+  pill.className = 'planner-summary-pill';
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'planner-summary-pill__label';
+  labelEl.textContent = label;
+  pill.appendChild(labelEl);
+
+  const valueWrap = document.createElement('span');
+  valueWrap.className = 'planner-summary-pill__value';
+
+  if (tier) {
+    const tierDot = document.createElement('span');
+    tierDot.className = `tier-dot tier-${tier}`;
+    tierDot.setAttribute('aria-hidden', 'true');
+    valueWrap.appendChild(tierDot);
+  }
+
+  const valueText = document.createElement('span');
+  valueText.textContent = value;
+  valueWrap.appendChild(valueText);
+
+  pill.appendChild(valueWrap);
+  return pill;
+}
+
+function createPlannerConsumableToken(kind, entry, tone = 'selected') {
+  const normalizedEntry = normalizeBossConsumableEntry(entry);
+  const token = document.createElement('div');
+  token.className = `planner-consumable-token planner-consumable-token--${kind}`;
+  token.dataset.tone = tone;
+
+  if (!normalizedEntry) {
+    token.classList.add('planner-consumable-token--empty');
+    token.textContent = 'Nenhum';
+    return token;
+  }
+
+  if (normalizedEntry.image) {
+    const image = document.createElement('img');
+    image.className = 'planner-consumable-token__image';
+    image.src = /^(?:https?:)?\/\//i.test(normalizedEntry.image)
+      ? normalizedEntry.image
+      : basePath + normalizedEntry.image;
+    image.alt = '';
+    image.setAttribute('aria-hidden', 'true');
+    image.loading = 'lazy';
+    token.appendChild(image);
+  } else {
+    const fallback = document.createElement('span');
+    fallback.className = 'planner-consumable-token__fallback';
+    fallback.textContent = kind === 'pokeblock' ? 'PB' : 'RT';
+    fallback.setAttribute('aria-hidden', 'true');
+    token.appendChild(fallback);
+  }
+
+  const text = document.createElement('span');
+  text.className = 'planner-consumable-token__text';
+  text.textContent = normalizedEntry.shortLabel || normalizedEntry.label;
+  token.appendChild(text);
+
+  return token;
+}
+
+function createPlannerBossPickerCard(bossEntry, isAdded) {
+  const boss = bossEntry.bossRef;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'planner-boss-picker';
+  button.disabled = Boolean(isAdded);
+  button.dataset.state = isAdded ? 'added' : 'available';
+  button.setAttribute('aria-label', isAdded ? `${bossEntry.name} ja esta no planejamento` : `Adicionar ${bossEntry.name} ao planejamento`);
+
+  const image = document.createElement('img');
+  image.className = 'planner-boss-picker__image';
+  image.src = basePath + bossEntry.image;
+  image.alt = bossEntry.name;
+  image.loading = 'lazy';
+
+  const content = document.createElement('div');
+  content.className = 'planner-boss-picker__content';
+
+  const header = document.createElement('div');
+  header.className = 'planner-boss-picker__header';
+
+  const title = document.createElement('strong');
+  title.className = 'planner-boss-picker__title';
+  title.textContent = bossEntry.name;
+
+  const badge = document.createElement('span');
+  badge.className = 'planner-boss-picker__badge';
+  badge.textContent = bossEntry.sourceLabel;
+
+  header.append(title, badge);
+
+  const chips = document.createElement('div');
+  chips.className = 'planner-boss-picker__chips';
+  chips.appendChild(createPlannerMetaChip('Tipos', (boss.types || []).map((type) => formatTypeLabel(type)).join(' / '), boss.types || []));
+
+  const moveTypes = getBossMoveTypes(boss);
+  if (moveTypes.length) {
+    chips.appendChild(createPlannerMetaChip('Moveset', moveTypes.map((type) => formatTypeLabel(type)).join(' / '), moveTypes));
+  }
+
+  const action = document.createElement('span');
+  action.className = 'planner-boss-picker__action';
+  action.textContent = isAdded ? 'Ja adicionado' : 'Adicionar boss';
+
+  content.append(header, chips, action);
+  button.append(image, content);
+
+  if (!isAdded) {
+    button.addEventListener('click', () => {
+      // Focus composition (step 2) when a boss is chosen from the browser
+      plannerShowBrowser = false;
+      plannerSubpage = 'compose';
+      commitPlannerState((draft) => {
+        // Clear selections on existing entries so only the newly added boss is "active"
+        draft.entries.forEach((e) => {
+          if (e.roles) {
+            roleboardRoleOrder.forEach((rk) => {
+              if (e.roles[rk]) e.roles[rk].pokemonKey = '';
+            });
+          }
+          e.pokeblock = '';
+          e.ration = '';
+        });
+        draft.entries.push(createPlannerBossState(bossEntry.id));
+      }, {
+        feedback: {
+          message: `${bossEntry.name} foi adicionado ao planejamento.`,
+          tone: 'success'
+        }
+      });
+    });
+  }
+
+  return button;
+}
+
+function createPlannerRecommendationCard(plannerEntry, bossEntry, roleKey, pick) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'planner-recommendation-card';
+  button.dataset.tier = pick.tier || 'unknown';
+  if (plannerEntry.roles?.[roleKey]?.pokemonKey === pick.plannerKey) {
+    button.classList.add('is-selected');
+  }
+
+  const image = document.createElement('img');
+  image.className = 'planner-recommendation-card__image';
+  image.src = basePath + (pick.image || '');
+  image.alt = pick.name;
+  image.loading = 'lazy';
+
+  const content = document.createElement('div');
+  content.className = 'planner-recommendation-card__content';
+
+  const titleRow = document.createElement('div');
+  titleRow.className = 'planner-recommendation-card__title-row';
+
+  const nameWrap = document.createElement('div');
+  nameWrap.className = 'planner-recommendation-card__name-wrap';
+
+  const tierDot = document.createElement('span');
+  tierDot.className = `tier-dot tier-${pick.tier || 'unknown'}`;
+  tierDot.setAttribute('aria-hidden', 'true');
+
+  const name = document.createElement('strong');
+  name.className = 'planner-recommendation-card__name';
+  name.textContent = pick.name;
+  nameWrap.append(tierDot, name);
+
+  const tierText = document.createElement('span');
+  tierText.className = 'planner-recommendation-card__tier';
+  tierText.textContent = getTierUiLabel(pick.tier || 'unknown');
+
+  titleRow.append(nameWrap, tierText);
+
+  const chips = document.createElement('div');
+  chips.className = 'planner-recommendation-card__chips';
+
+  if (Array.isArray(pick.types) && pick.types.length) {
+    chips.appendChild(
+      createPlannerMetaChip(
+        'Tipos',
+        pick.types.map((type) => formatTypeLabel(type)).join(' / '),
+        pick.types
+      )
+    );
+  }
+
+  const moveTypes = parseMoveTypes(pick);
+  if (moveTypes.length) {
+    chips.appendChild(
+      createPlannerMetaChip(
+        'Moveset',
+        moveTypes.map((type) => formatTypeLabel(type)).join(' / '),
+        moveTypes
+      )
+    );
+  }
+
+  const detail = getRecommendationExtraDescription(pick.description || pick.note || '');
+  if (detail) {
+    const detailEl = document.createElement('p');
+    detailEl.className = 'planner-recommendation-card__detail';
+    detailEl.textContent = detail;
+    content.append(titleRow, chips, detailEl);
+  } else {
+    content.append(titleRow, chips);
+  }
+
+  button.append(image, content);
+  button.addEventListener('click', () => {
+    commitPlannerState((draft) => {
+      const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+      if (!targetEntry) return;
+      targetEntry.roles[roleKey].pokemonKey = pick.plannerKey;
+    });
+  });
+
+  return button;
+}
+
+function createPlannerRoleSlot(plannerEntry, bossEntry, roleKey) {
+  const slot = plannerEntry.roles?.[roleKey] || { clan: getPlannerDefaultClanForRole(bossEntry, roleKey), pokemonKey: '' };
+  const card = document.createElement('section');
+  card.className = 'planner-role-slot';
+  card.dataset.role = roleKey;
+
+  const header = document.createElement('div');
+  header.className = 'planner-role-slot__header';
+
+  const copy = document.createElement('div');
+  copy.className = 'planner-role-slot__copy';
+
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'planner-role-slot__eyebrow';
+  eyebrow.textContent = roleboardRoleLabels[roleKey] || roleKey;
+
+  const selectedPick = getPlannerSelectedPick(plannerEntry, roleKey, bossEntry);
+  const current = document.createElement('strong');
+  current.className = 'planner-role-slot__current';
+  current.textContent = selectedPick ? selectedPick.name : 'Nenhum pokemon selecionado';
+
+  const meta = document.createElement('span');
+  meta.className = 'planner-role-slot__meta';
+  meta.textContent = selectedPick
+    ? `${bossEntry.bossRef.clans?.[slot.clan]?.label || slot.clan} - ${getTierUiLabel(selectedPick.tier || 'unknown')}`
+    : '';
+
+  // add line breaks: after role label (eyebrow) and after selected pokemon name (current)
+  const brAfterEyebrow = document.createElement('br');
+  const brAfterCurrent = document.createElement('br');
+  copy.append(eyebrow, brAfterEyebrow, current, brAfterCurrent, meta);
+
+  const clearButton = document.createElement('button');
+  clearButton.type = 'button';
+  clearButton.className = 'planner-role-slot__clear';
+  clearButton.textContent = 'Limpar';
+  clearButton.disabled = !selectedPick;
+  clearButton.addEventListener('click', () => {
+    commitPlannerState((draft) => {
+      const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+      if (!targetEntry) return;
+      targetEntry.roles[roleKey].pokemonKey = '';
+    });
+  });
+
+  header.append(copy, clearButton);
+  card.appendChild(header);
+
+  const clans = document.createElement('div');
+  clans.className = 'planner-role-slot__clans';
+
+  plannerClanOrder.forEach((clanKey) => {
+    const options = getPlannerRoleRecommendations(bossEntry, roleKey, clanKey);
+    const clanButton = document.createElement('button');
+    clanButton.type = 'button';
+    clanButton.className = 'planner-clan-filter';
+    clanButton.dataset.active = slot.clan === clanKey ? 'true' : 'false';
+    clanButton.disabled = options.length === 0;
+    clanButton.setAttribute('aria-pressed', slot.clan === clanKey ? 'true' : 'false');
+    clanButton.setAttribute('aria-label', `${bossEntry.bossRef.clans?.[clanKey]?.label || clanKey} para ${roleboardRoleLabels[roleKey] || roleKey}`);
+
+    const icon = document.createElement('img');
+    icon.className = 'planner-clan-filter__icon';
+    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.alt = '';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.loading = 'lazy';
+
+    const text = document.createElement('span');
+    text.className = 'planner-clan-filter__text';
+    text.textContent = bossEntry.bossRef.clans?.[clanKey]?.label || clanKey;
+
+    clanButton.append(icon, text);
+    clanButton.addEventListener('click', () => {
+      commitPlannerState((draft) => {
+        const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+        if (!targetEntry) return;
+
+        const currentKey = targetEntry.roles?.[roleKey]?.pokemonKey || '';
+        targetEntry.roles[roleKey].clan = clanKey;
+
+        if (currentKey) {
+          const nextOptions = getPlannerRoleRecommendations(bossEntry, roleKey, clanKey);
+          if (!nextOptions.some((pick) => pick.plannerKey === currentKey)) {
+            targetEntry.roles[roleKey].pokemonKey = '';
+          }
+        }
+      });
+    });
+
+    clans.appendChild(clanButton);
+  });
+
+  card.appendChild(clans);
+
+  const recommendations = getPlannerRoleRecommendations(bossEntry, roleKey, slot.clan);
+  if (!recommendations.length) {
+    const empty = document.createElement('div');
+    empty.className = 'planner-role-slot__empty';
+    empty.textContent = 'Nenhuma recomendacao disponivel para esse cla.';
+    card.appendChild(empty);
+    return card;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'planner-role-slot__list';
+  recommendations.forEach((pick) => {
+    list.appendChild(createPlannerRecommendationCard(plannerEntry, bossEntry, roleKey, pick));
+  });
+
+  card.appendChild(list);
+  return card;
+}
+
+function createPlannerConsumableField(plannerEntry, bossEntry, kind) {
+  const field = document.createElement('label');
+  field.className = 'planner-item-field';
+
+  const label = document.createElement('span');
+  label.className = 'planner-item-field__label';
+  label.textContent = kind === 'pokeblock' ? 'Pokeblock' : 'Ration';
+
+  const select = document.createElement('select');
+  select.className = 'planner-item-field__select';
+
+  const emptyOption = document.createElement('option');
+  emptyOption.value = '';
+  emptyOption.textContent = 'Nenhum';
+  select.appendChild(emptyOption);
+
+  getPlannerConsumableOptions(kind).forEach((option) => {
+    const optionEl = document.createElement('option');
+    optionEl.value = option.id;
+    optionEl.textContent = option.label;
+    select.appendChild(optionEl);
+  });
+
+  select.value = plannerEntry?.[kind] || '';
+  select.addEventListener('change', () => {
+    commitPlannerState((draft) => {
+      const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+      if (!targetEntry) return;
+      targetEntry[kind] = normalizePlannerConsumableId(kind, select.value);
+    });
+  });
+
+  const selected = getPlannerConsumableOptionById(kind, plannerEntry?.[kind]);
+  const previewWrap = document.createElement('div');
+  previewWrap.className = 'planner-item-field__preview';
+  previewWrap.appendChild(createPlannerConsumableToken(kind, selected));
+
+  const suggested = normalizeBossConsumableEntry(
+    kind === 'pokeblock'
+      ? (bossEntry?.bossRef?.pokeblock || bossEntry?.bossRef?.pokebloc)
+      : bossEntry?.bossRef?.ration
+  );
+
+  const hint = document.createElement('div');
+  hint.className = 'planner-item-field__hint';
+
+  if (suggested) {
+    const hintLabel = document.createElement('span');
+    hintLabel.className = 'planner-item-field__hint-label';
+    // Show a clear, contextual label for the suggested consumable
+    hintLabel.textContent = kind === 'ration' ? 'Ration Recomendada' : 'Pokéblock Recomendada';
+    hint.append(hintLabel, createPlannerConsumableToken(kind, suggested, 'suggested'));
+  } else {
+    hint.textContent = 'Opcional';
+  }
+
+  field.append(label, select, previewWrap, hint);
+  return field;
+}
+
+function createPlannerCompositionCard(plannerEntry) {
+  const bossEntry = getPlannerBossById(plannerEntry?.bossId);
+  if (!bossEntry) return null;
+
+  const boss = bossEntry.bossRef;
+  const card = document.createElement('article');
+  card.className = 'planner-composition-card';
+  // Mark hoopa-sourced bosses so we can style their composition card differently
+  if (bossEntry && bossEntry.sourceKey === 'hoopa') {
+    card.classList.add('planner-composition-card--hoopa');
+  }
+
+  // Decide which roles we'll render for this boss (hoopa bosses only render DPS)
+  const rolesToRender = (bossEntry && bossEntry.sourceKey === 'hoopa') ? ['dps'] : roleboardRoleOrder;
+
+  // If only DPS will be shown (either because the boss is DPS-only, or because
+  // only the DPS slot has a selected pick), add a modifier class so we can
+  // center the title/clans and optionally hide some labels.
+  const onlyDpsSelected = (rolesToRender.length === 1 && rolesToRender[0] === 'dps')
+    || (rolesToRender.includes('dps') && rolesToRender.every((rk) => rk === 'dps' || !getPlannerSelectedPick(plannerEntry, rk, bossEntry)));
+  if (onlyDpsSelected) card.classList.add('planner-composition-card--only-dps');
+
+  const header = document.createElement('div');
+  header.className = 'planner-composition-card__header';
+
+  const bossWrap = document.createElement('div');
+  bossWrap.className = 'planner-composition-card__boss';
+
+  const image = document.createElement('img');
+  image.className = 'planner-composition-card__image';
+  image.src = basePath + bossEntry.image;
+  image.alt = bossEntry.name;
+  image.loading = 'lazy';
+
+  const copy = document.createElement('div');
+  copy.className = 'planner-composition-card__copy';
+
+  const titleRow = document.createElement('div');
+  titleRow.className = 'planner-composition-card__title-row';
+
+  const title = document.createElement('h3');
+  title.className = 'planner-composition-card__title';
+  title.textContent = bossEntry.name;
+
+  const source = document.createElement('span');
+  source.className = 'planner-composition-card__source';
+  source.textContent = bossEntry.sourceLabel;
+
+  titleRow.append(title, source);
+
+  const infoRow = document.createElement('div');
+  infoRow.className = 'planner-composition-card__info';
+  infoRow.appendChild(createPlannerMetaChip('Tipos', (boss.types || []).map((type) => formatTypeLabel(type)).join(' / '), boss.types || []));
+
+  const moveTypes = getBossMoveTypes(boss);
+  if (moveTypes.length) {
+    const moveChip = createPlannerMetaChip('Moveset', moveTypes.map((type) => formatTypeLabel(type)).join(' / '), moveTypes);
+    if (onlyDpsSelected) moveChip.classList.add('planner-meta-chip--no-label');
+    infoRow.appendChild(moveChip);
+  }
+
+  copy.append(titleRow, infoRow);
+  bossWrap.append(image, copy);
+
+  const removeButton = document.createElement('button');
+  removeButton.type = 'button';
+  removeButton.className = 'planner-composition-card__remove';
+  removeButton.textContent = 'Remover';
+  removeButton.addEventListener('click', () => {
+    // ensure UI returns to step 1 (browser) when removing a boss
+    plannerShowBrowser = true;
+    commitPlannerState((draft) => {
+      draft.entries = draft.entries.filter((entry) => entry.bossId !== plannerEntry.bossId);
+      // clear source filter so the browser panel resets to step 1
+      draft.sourceFilter = '';
+    }, {
+      feedback: {
+        message: `${bossEntry.name} foi removido do planejamento.`,
+        tone: 'muted'
+      }
+    });
+  });
+
+  header.append(bossWrap, removeButton);
+  card.appendChild(header);
+
+  const rolesGrid = document.createElement('div');
+  rolesGrid.className = 'planner-composition-card__roles';
+  rolesToRender.forEach((roleKey) => {
+    rolesGrid.appendChild(createPlannerRoleSlot(plannerEntry, bossEntry, roleKey));
+  });
+  card.appendChild(rolesGrid);
+
+  const itemsGrid = document.createElement('div');
+  itemsGrid.className = 'planner-composition-card__items';
+  itemsGrid.append(
+    createPlannerConsumableField(plannerEntry, bossEntry, 'pokeblock'),
+    createPlannerConsumableField(plannerEntry, bossEntry, 'ration')
+  );
+  card.appendChild(itemsGrid);
+
+  // Add player (member) actions: allow saving current role/item selections as a member
+  const memberActions = document.createElement('div');
+  memberActions.className = 'planner-member-actions';
+
+  const addMemberBtn = document.createElement('button');
+  addMemberBtn.type = 'button';
+  addMemberBtn.className = 'planner-hero__button planner-hero__button--ghost';
+  addMemberBtn.textContent = 'Finalizar';
+
+  // Require at least one Pokémon pick to consider a member "ready".
+  // Pokeblock / ration alone are not enough to finalize a member.
+  const isMemberReady = () => (
+    rolesToRender.some((roleKey) => Boolean(getPlannerSelectedPick(plannerEntry, roleKey, bossEntry)))
+  );
+
+  addMemberBtn.disabled = !isMemberReady();
+  addMemberBtn.addEventListener('click', () => {
+    // ensure UI returns to step 1 (browser) when finalizing
+    plannerShowBrowser = true;
+    commitPlannerState((draft) => {
+      const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+      if (!targetEntry) return;
+
+      const member = {
+        id: `m_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        roles: {},
+        pokeblock: targetEntry.pokeblock || '',
+        ration: targetEntry.ration || ''
+      };
+
+      roleboardRoleOrder.forEach((roleKey) => {
+        member.roles[roleKey] = getPlannerPokemonKey(targetEntry.roles?.[roleKey]?.pokemonKey) || '';
+      });
+
+      targetEntry.members = targetEntry.members || [];
+      targetEntry.members.push(member);
+
+      // Reset selections for the current boss only (clear steps 2/3/4), but keep the boss and any saved members
+      if (targetEntry) {
+        if (targetEntry.roles) {
+          roleboardRoleOrder.forEach((roleKey) => {
+            if (targetEntry.roles[roleKey]) targetEntry.roles[roleKey].pokemonKey = '';
+          });
+        }
+        targetEntry.pokeblock = '';
+        targetEntry.ration = '';
+      }
+      // Keep the source filter cleared so the browser panel resets to step 1
+      draft.sourceFilter = '';
+    }, {
+      feedback: {
+        message: 'Jogador finalizado.',
+        tone: 'success'
+      }
+    });
+  });
+
+  memberActions.appendChild(addMemberBtn);
+  card.appendChild(memberActions);
+
+  const summary = document.createElement('div');
+  summary.className = 'planner-composition-card__summary';
+
+  rolesToRender.forEach((roleKey) => {
+    const selectedPick = getPlannerSelectedPick(plannerEntry, roleKey, bossEntry);
+    if (!selectedPick) return;
+    summary.appendChild(
+      createPlannerSummaryPill(
+        roleboardRoleLabels[roleKey] || roleKey,
+        selectedPick.name,
+        selectedPick.tier || 'unknown'
+      )
+    );
+  });
+
+  if (plannerEntry?.pokeblock) {
+    const option = getPlannerConsumableOptionById('pokeblock', plannerEntry.pokeblock);
+    summary.appendChild(createPlannerSummaryPill('Pokeblock', option?.shortLabel || option?.label || 'Pokeblock'));
+  }
+
+  if (plannerEntry?.ration) {
+    const option = getPlannerConsumableOptionById('ration', plannerEntry.ration);
+    summary.appendChild(createPlannerSummaryPill('Ration', option?.shortLabel || option?.label || 'Ration'));
+  }
+
+  // if summary is empty, intentionally render nothing (no placeholder text)
+
+  card.appendChild(summary);
+
+  // Render saved members (players)
+  const memberList = document.createElement('div');
+  memberList.className = 'planner-member-list';
+
+  (plannerEntry.members || []).forEach((member) => {
+    memberList.appendChild(createPlannerMemberCard(member, bossEntry, plannerEntry));
+  });
+
+  card.appendChild(memberList);
+  return card;
+}
+
+function createPlannerMemberCard(member, bossEntry, plannerEntry) {
+  // Render a richer boss-like card for finalized members (ready view)
+  const wrap = document.createElement('article');
+  wrap.className = 'planner-ready-member-card card';
+
+  const header = document.createElement('div');
+  header.className = 'planner-ready-member-card__header';
+  // Note: boss name is shown by the group title above the cards to avoid redundancy.
+
+  // Replace the tutorial icon with consumable badges (pokeblock / ration)
+  const consumablesWrap = document.createElement('div');
+  consumablesWrap.className = 'planner-ready-member-card__consumables';
+  // Show ration first, then pokeblock (inverted order compared to composition view)
+  if (member.ration) {
+    const option = getPlannerConsumableOptionById('ration', member.ration);
+    if (option) {
+      const c = document.createElement('div');
+      c.className = 'planner-ready-member-card__consumable planner-ready-member-card__consumable--ration';
+      c.setAttribute('aria-label', option.label || option.shortLabel || '');
+      if (option.description) {
+        c.classList.add('passive-tooltip-trigger');
+        c.dataset.passiveTooltipItems = JSON.stringify([option.description]);
+      }
+      if (option.image) {
+        const img = document.createElement('img');
+        img.src = basePath + option.image;
+        img.alt = option.label || '';
+        img.loading = 'lazy';
+        img.className = 'planner-ready-member-card__consumable-image';
+        c.appendChild(img);
+      }
+      const lbl = document.createElement('span');
+      lbl.className = 'planner-ready-member-card__consumable-text';
+      lbl.textContent = option.shortLabel || option.label || '';
+      c.appendChild(lbl);
+      consumablesWrap.appendChild(c);
+    }
+  }
+
+  if (member.pokeblock) {
+    const option = getPlannerConsumableOptionById('pokeblock', member.pokeblock);
+    if (option) {
+      const c = document.createElement('div');
+      c.className = 'planner-ready-member-card__consumable planner-ready-member-card__consumable--pokeblock';
+      c.setAttribute('aria-label', option.label || option.shortLabel || '');
+      if (option.description) {
+        c.classList.add('passive-tooltip-trigger');
+        c.dataset.passiveTooltipItems = JSON.stringify([option.description]);
+      }
+      if (option.image) {
+        const img = document.createElement('img');
+        img.src = basePath + option.image;
+        img.alt = option.label || '';
+        img.loading = 'lazy';
+        img.className = 'planner-ready-member-card__consumable-image';
+        c.appendChild(img);
+      }
+      const lbl = document.createElement('span');
+      lbl.className = 'planner-ready-member-card__consumable-text';
+      lbl.textContent = option.shortLabel || option.label || '';
+      c.appendChild(lbl);
+      consumablesWrap.appendChild(c);
+    }
+  }
+
+  if (consumablesWrap.childElementCount) {
+    header.appendChild(consumablesWrap);
+  }
+
+  wrap.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'planner-ready-member-card__body';
+
+  // Boss avatar (restore image element) — show boss artwork above picks
+  const avatarWrap = document.createElement('div');
+  avatarWrap.className = 'planner-ready-member-card__avatar';
+  const avatarImg = document.createElement('img');
+  avatarImg.src = basePath + bossEntry.image;
+  avatarImg.alt = bossEntry.name;
+  avatarImg.loading = 'lazy';
+  avatarWrap.appendChild(avatarImg);
+  body.appendChild(avatarWrap);
+
+  const picks = document.createElement('div');
+  picks.className = 'planner-ready-member-card__picks';
+
+  roleboardRoleOrder.forEach((roleKey) => {
+    const pkey = member.roles?.[roleKey];
+    if (!pkey) return;
+
+    const ownerClan = findPlannerRecommendationOwner(bossEntry, roleKey, pkey);
+    const picksForRole = getPlannerRoleRecommendations(bossEntry, roleKey, ownerClan || getPlannerDefaultClanForRole(bossEntry, roleKey));
+    const pick = picksForRole.find((pk) => pk.plannerKey === getPlannerPokemonKey(pkey));
+    if (!pick) return;
+
+    const pickWrap = document.createElement('div');
+    pickWrap.className = 'planner-ready-member-card__pick';
+
+    const pickImg = document.createElement('img');
+    pickImg.className = 'planner-ready-member-card__pick-image';
+    pickImg.src = basePath + (pick.image || '');
+    pickImg.alt = pick.name;
+    pickImg.loading = 'lazy';
+
+    const pickLabel = document.createElement('div');
+    pickLabel.className = 'planner-ready-member-card__pick-label';
+    const roleSpan = document.createElement('span');
+    roleSpan.className = 'planner-ready-member-card__pick-role';
+    roleSpan.textContent = roleboardRoleLabels[roleKey] || roleKey;
+    const nameStrong = document.createElement('strong');
+    nameStrong.className = 'planner-ready-member-card__pick-name';
+    nameStrong.textContent = pick.name;
+    // Add tier badge (human-friendly label) next to the pick name
+    const tierSpan = document.createElement('span');
+    tierSpan.className = 'planner-ready-member-card__pick-tier ' + (pick.tier ? `tier-${pick.tier}` : 'tier-unknown');
+    try {
+      tierSpan.textContent = (typeof tierLabels === 'object' && tierLabels[pick.tier]) ? tierLabels[pick.tier] : (pick.tier || '');
+    } catch (e) {
+      tierSpan.textContent = pick.tier || '';
+    }
+
+    pickLabel.append(roleSpan, nameStrong, tierSpan);
+    pickWrap.append(pickImg, pickLabel);
+    picks.appendChild(pickWrap);
+  });
+
+  body.appendChild(picks);
+
+  // intentionally omitted: boss move type chip (e.g., "Ground") — removed per request
+
+  // Consumables are displayed in the header (badges with tooltips).
+  // The bottom copies (prominent pokeblock button / ration badge) were removed to avoid duplication.
+
+  wrap.appendChild(body);
+
+  const actions = document.createElement('div');
+  actions.className = 'planner-ready-member-card__actions';
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'planner-member-card__remove';
+  removeBtn.textContent = 'Remover';
+  removeBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    commitPlannerState((draft) => {
+      const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
+      if (!targetEntry || !Array.isArray(targetEntry.members)) return;
+      targetEntry.members = targetEntry.members.filter((m) => String(m.id) !== String(member.id));
+    }, {
+      feedback: {
+        message: 'Jogador removido.',
+        tone: 'muted'
+      }
+    });
+  });
+
+  actions.appendChild(removeBtn);
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
+function renderPlannerGrid() {
+  if (!grid) return;
+
+  syncPlannerStateToUrl();
+  grid.innerHTML = '';
+  grid.dataset.catalogVariant = 'planner';
+  grid.dataset.bossMode = 'planner';
+  grid.setAttribute('aria-label', 'Planejador de bosses');
+
+  const shell = document.createElement('div');
+  shell.className = 'planner-shell';
+
+  const hero = document.createElement('section');
+  hero.className = 'planner-hero';
+
+  const heroCopy = document.createElement('div');
+  heroCopy.className = 'planner-hero__copy';
+
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'planner-hero__eyebrow';
+  eyebrow.textContent = 'Planejamento compartilhavel';
+
+  const title = document.createElement('h3');
+  title.className = 'planner-hero__title';
+  title.textContent = 'Planeje seus bosses com Tank, DPS e Suporte organizados.';
+
+  const text = document.createElement('p');
+  text.className = 'planner-hero__text';
+  text.textContent = plannerState.sourceFilter
+    ? `Filtro atual: ${getPlannerContentLabel(plannerState.sourceFilter)}.`
+    : 'Escolha um conteudo para liberar a lista de bosses disponiveis.';
+
+  heroCopy.append(eyebrow, title, text);
+
+  // Subtabs: Montar / Cards prontos
+  const subtabs = document.createElement('div');
+  subtabs.className = 'planner-subtabs';
+
+  const composeTab = document.createElement('button');
+  composeTab.type = 'button';
+  composeTab.className = 'planner-subtab';
+  composeTab.textContent = 'Montar';
+  composeTab.dataset.active = plannerSubpage === 'compose' ? 'true' : 'false';
+  composeTab.addEventListener('click', () => {
+    plannerSubpage = 'compose';
+    renderGrid();
+  });
+
+  const readyTab = document.createElement('button');
+  readyTab.type = 'button';
+  readyTab.className = 'planner-subtab';
+  readyTab.textContent = 'Cards prontos';
+  readyTab.dataset.active = plannerSubpage === 'ready' ? 'true' : 'false';
+  readyTab.addEventListener('click', () => {
+    plannerSubpage = 'ready';
+    renderGrid();
+  });
+
+  subtabs.append(composeTab, readyTab);
+
+  const metrics = document.createElement('div');
+  metrics.className = 'planner-hero__metrics';
+  metrics.append(
+    createPlannerMetricCard('Bosses montados', String(plannerState.entries.length), 'Sem limite de cards'),
+    createPlannerMetricCard('Papeis preenchidos', `${countFilledPlannerSelections()}/${plannerState.entries.length * roleboardRoleOrder.length || 0}`, 'Tank, DPS e Suporte'),
+    createPlannerMetricCard('Itens escolhidos', String(countSelectedPlannerItems()), 'Pokeblock e ration sao opcionais')
+  );
+
+  const actions = document.createElement('div');
+  actions.className = 'planner-hero__actions';
+
+  const shareButton = document.createElement('button');
+  shareButton.type = 'button';
+  shareButton.className = 'planner-hero__button planner-hero__button--primary';
+  shareButton.textContent = 'Gerar link';
+  shareButton.disabled = plannerState.entries.length === 0;
+  shareButton.addEventListener('click', async () => {
+    syncPlannerStateToUrl();
+    const shareUrl = location.href;
+
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        await navigator.clipboard.writeText(shareUrl);
+        setPlannerShareFeedback('Link copiado para a area de transferencia.', 'success');
+      } else {
+        setPlannerShareFeedback('Link gerado. Copie manualmente se precisar.', 'muted');
+      }
+    } catch {
+      setPlannerShareFeedback('Link gerado. Copie manualmente se precisar.', 'muted');
+    }
+
+    renderGrid();
+
+    requestAnimationFrame(() => {
+      const shareField = document.getElementById('planner-share-url');
+      if (!shareField) return;
+      shareField.focus();
+      shareField.select();
+    });
+  });
+
+  const clearButton = document.createElement('button');
+  clearButton.type = 'button';
+  clearButton.className = 'planner-hero__button planner-hero__button--ghost';
+  clearButton.textContent = 'Limpar';
+  clearButton.disabled = plannerState.entries.length === 0 && !plannerState.sourceFilter;
+  clearButton.addEventListener('click', () => {
+    commitPlannerState((draft) => {
+      draft.sourceFilter = '';
+      draft.entries = [];
+    }, {
+      feedback: {
+        message: 'Planejamento limpo.',
+        tone: 'muted'
+      }
+    });
+  });
+
+  const shareInput = document.createElement('input');
+  shareInput.id = 'planner-share-url';
+  shareInput.className = 'planner-hero__share-input';
+  shareInput.type = 'text';
+  shareInput.readOnly = true;
+  shareInput.value = location.href;
+  shareInput.setAttribute('aria-label', 'Link atual do planejamento');
+
+  actions.append(shareButton, clearButton, shareInput);
+
+  if (plannerShareFeedback.message) {
+    const feedback = document.createElement('p');
+    feedback.className = 'planner-hero__feedback';
+    feedback.dataset.tone = plannerShareFeedback.tone || 'muted';
+    feedback.setAttribute('aria-live', 'polite');
+    feedback.textContent = plannerShareFeedback.message;
+    actions.appendChild(feedback);
+  }
+
+  hero.append(heroCopy, subtabs, metrics, actions);
+  shell.appendChild(hero);
+
+  const layout = document.createElement('div');
+  layout.className = 'planner-layout';
+
+  const browser = document.createElement('section');
+  browser.className = 'planner-panel planner-panel--browser';
+
+  const browserHeader = document.createElement('div');
+  browserHeader.className = 'planner-panel__header';
+
+  const browserTitle = document.createElement('h4');
+  browserTitle.className = 'planner-panel__title';
+  browserTitle.textContent = 'Etapa 1: selecionar o boss';
+
+  const browserText = document.createElement('p');
+  browserText.className = 'planner-panel__text';
+  browserText.textContent = 'Escolha um conteudo primeiro.';
+
+  browserHeader.append(browserTitle, browserText);
+  browser.appendChild(browserHeader);
+
+  const filters = document.createElement('div');
+  filters.className = 'planner-source-filters';
+
+  plannerContentOrder.forEach((sourceKey) => {
+    const filterButton = document.createElement('button');
+    filterButton.type = 'button';
+    filterButton.className = 'planner-source-filter';
+    filterButton.dataset.active = plannerState.sourceFilter === sourceKey ? 'true' : 'false';
+    filterButton.textContent = getPlannerContentLabel(sourceKey);
+    filterButton.setAttribute('aria-pressed', plannerState.sourceFilter === sourceKey ? 'true' : 'false');
+    filterButton.addEventListener('click', () => {
+      commitPlannerState((draft) => {
+        draft.sourceFilter = draft.sourceFilter === sourceKey ? '' : sourceKey;
+      });
+    });
+    filters.appendChild(filterButton);
+  });
+
+  browser.appendChild(filters);
+
+  const browserList = document.createElement('div');
+  browserList.className = 'planner-boss-list';
+
+  if (!plannerState.sourceFilter) {
+    const empty = document.createElement('div');
+    empty.className = 'planner-empty-state';
+    empty.textContent = 'Selecione Mewtwo, Champion Path ou Hoopa Portais para exibir os bosses.';
+    browserList.appendChild(empty);
+  } else {
+    const selectedSourceBosses = getPlannerBossEntries().filter((entry) => entry.sourceKey === plannerState.sourceFilter);
+    selectedSourceBosses.forEach((entry) => {
+      // Consider a boss "added" only when it has at least one saved member
+      // (i.e., the user clicked "Finalizar"). Entries that are merely
+      // pending (selected but not finalized) should not mark the boss as added.
+      const isAdded = plannerState.entries.some((plannerEntry) => (
+        plannerEntry.bossId === entry.id && Array.isArray(plannerEntry.members) && plannerEntry.members.length > 0
+      ));
+      browserList.appendChild(createPlannerBossPickerCard(entry, isAdded));
+    });
+  }
+
+  browser.appendChild(browserList);
+
+  const composition = document.createElement('section');
+  composition.className = 'planner-panel planner-panel--composition';
+
+  const compositionHeader = document.createElement('div');
+  compositionHeader.className = 'planner-panel__header';
+
+  const compositionTitle = document.createElement('h4');
+  compositionTitle.className = 'planner-panel__title';
+  compositionTitle.textContent = 'Etapas 2, 3 e 4: montar a composicao';
+
+  const compositionText = document.createElement('p');
+  compositionText.className = 'planner-panel__text';
+  compositionText.textContent = 'Cada boss aceita 1 Tank, 1 DPS, 1 Suporte, 1 Pokeblock e 1 Ration. Itens podem ficar como nenhum.';
+
+  compositionHeader.append(compositionTitle, compositionText);
+  composition.appendChild(compositionHeader);
+
+  const compositionList = document.createElement('div');
+  compositionList.className = 'planner-composition-list';
+
+  // Show only the single active composition card (the most-recent pending entry).
+  // Entries that already have saved members are considered completed and
+  // should not appear in the composition step.
+  const pendingEntries = plannerState.entries.filter((entry) => !Array.isArray(entry.members) || entry.members.length === 0);
+  if (!pendingEntries.length) {
+    const empty = document.createElement('div');
+    empty.className = 'planner-empty-state planner-empty-state--large';
+    empty.textContent = 'Adicione um boss para abrir os slots de Tank, DPS, Suporte e itens.';
+    compositionList.appendChild(empty);
+  } else {
+    const activeEntry = pendingEntries[pendingEntries.length - 1];
+    const card = createPlannerCompositionCard(activeEntry);
+    if (card) compositionList.appendChild(card);
+  }
+
+  composition.appendChild(compositionList);
+
+  if (plannerSubpage === 'compose') {
+    // If there are entries and the UI is focused on composition, show composition only.
+    // Otherwise show the browser (step 1). This makes step 2/3/4 appear only after a boss is chosen.
+    if (plannerState.entries.length > 0 && !plannerShowBrowser) {
+      layout.append(composition);
+    } else {
+      layout.append(browser);
+    }
+  } else {
+    const readyPanel = document.createElement('section');
+    readyPanel.className = 'planner-panel planner-panel--ready';
+
+    const readyHeader = document.createElement('div');
+    readyHeader.className = 'planner-panel__header';
+
+    const readyTitle = document.createElement('h4');
+    readyTitle.className = 'planner-panel__title';
+    readyTitle.textContent = 'Cards prontos';
+
+    const readyText = document.createElement('p');
+    readyText.className = 'planner-panel__text';
+    readyText.textContent = 'Cards finalizados ou carregados pelo link.';
+
+    readyHeader.append(readyTitle, readyText);
+    readyPanel.appendChild(readyHeader);
+
+    const readyList = document.createElement('div');
+    readyList.className = 'planner-ready-list';
+
+    plannerState.entries.forEach((entry) => {
+      const bossEntry = getPlannerBossById(entry.bossId);
+      if (!bossEntry || !Array.isArray(entry.members) || !entry.members.length) return;
+
+      const group = document.createElement('div');
+      group.className = 'planner-ready-boss-group';
+
+      const groupTitle = document.createElement('h4');
+      groupTitle.className = 'planner-ready-boss-group__title';
+      groupTitle.textContent = bossEntry.name;
+      group.appendChild(groupTitle);
+
+      const cardsRow = document.createElement('div');
+      cardsRow.className = 'planner-ready-cards';
+      entry.members.forEach((member) => {
+        cardsRow.appendChild(createPlannerMemberCard(member, bossEntry, entry));
+      });
+      group.appendChild(cardsRow);
+
+      readyList.appendChild(group);
+    });
+
+    readyPanel.appendChild(readyList);
+    layout.appendChild(readyPanel);
+  }
+  shell.appendChild(layout);
+  grid.appendChild(shell);
+}
 
 function getBossTutorialUrl(boss) {
   return typeof boss?.tutorialUrl === 'string' && boss.tutorialUrl.trim()
@@ -4179,10 +5828,11 @@ function createBossConsumableBadge(kind, entry) {
   badge.className = `boss-role-card__consumable-trigger boss-role-card__consumable-trigger--${kind}`;
   badge.setAttribute('aria-label', `${kindLabel}: ${normalizedEntry.label}`);
   badge.setAttribute('aria-expanded', 'false');
-  if (normalizedEntry.tooltipItems.length) {
+  // expose external passive tooltip (not native `title`) so the tooltip panel
+  // appears outside the card. Keep `title` unset to avoid native browser tooltips
+  // which can overlap card content.
+  if (Array.isArray(normalizedEntry.tooltipItems) && normalizedEntry.tooltipItems.length) {
     badge.dataset.tooltipItems = JSON.stringify(normalizedEntry.tooltipItems);
-  } else {
-    badge.title = `${kindLabel}: ${normalizedEntry.label}`;
   }
 
   if (normalizedEntry.image) {
@@ -4326,6 +5976,10 @@ function renderGrid() {
   const catalog = getActiveBossCatalog();
   grid.dataset.catalogVariant = catalog.variant;
   grid.dataset.bossMode = activeBossMode;
+  if (catalog.variant === 'planner') {
+    renderPlannerGrid();
+    return;
+  }
   getActiveBossesData().forEach((boss) => {
     grid.appendChild(makeSpeedsterCard(boss));
   });
@@ -6497,5 +8151,12 @@ document.querySelectorAll('.bosses-mode-btn').forEach((button) => {
 ensureHoopaBossProgressFresh();
 scheduleHoopaBossProgressReset();
 initPassiveTooltipSystem();
+plannerState = loadPlannerStateFromLocation();
+try {
+  const params = new URLSearchParams(location.search);
+  plannerSubpage = params.get('plan') ? 'ready' : 'compose';
+} catch {
+  plannerSubpage = 'compose';
+}
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
