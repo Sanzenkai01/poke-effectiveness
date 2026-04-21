@@ -4025,8 +4025,96 @@ body.modal-open .main-footer {
   border-radius: 8px;
   background: transparent;
 }
+/* Constrain images when pascoa content is injected into the modal
+   (affects only the modal opened via the Páscoa button, not pascoa.html itself) */
+.pascoa-modal img {
+  max-width: 520px !important;
+  max-height: calc(80vh) !important;
+  width: auto !important;
+  height: auto !important;
+  display: block;
+  margin: 0.6rem auto;
+  object-fit: contain !important;
+}
+.pascoa-modal .pascoa-figure {
+  max-width: 520px;
+  margin: 0.6rem auto;
+}
+.pascoa-modal .pascoa-viewer-content{
+  max-width: 1100px;
+  max-height: 92vh;
+  height: auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+/* Force gallery thumbnails (Lavender-sized) only when pascoa content is inside the site's modal
+   so standalone pascoa.html remains unchanged. This locks small-image galleries (ex: Magma Island)
+   to the same thumbnail size used by Lavender (220×220). */
+.pascoa-modal .pascoa-gallery-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 220px)) !important;
+  justify-content: center;
+  gap: 0.6rem !important;
+}
+.pascoa-modal .pascoa-gallery-grid .pascoa-figure {
+  max-width: 220px !important;
+  width: 220px !important;
+  margin: 0.6rem !important;
+  box-sizing: border-box !important;
+}
+.pascoa-modal .pascoa-gallery-grid .pascoa-thumb {
+  height: 220px !important;
+  width: 100% !important;
+  max-width: 220px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #0a0a0a !important;
+}
+.pascoa-modal .pascoa-gallery-grid .pascoa-figure img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
 @media (max-width:720px){
   .pascoa-modal .modal-content{ width:95%; height:92vh; padding:24px; }
+}
+/* Scoped viewer inside the site's pascoa modal (only when we've moved the
+   standalone viewer into the modal via script). This prevents the viewer
+   from expanding to full viewport when opened from the Páscoa button. */
+.pascoa-modal.pascoa-modal--scoped-viewer .pascoa-viewer-overlay {
+  position: absolute !important;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0,0,0,0.88) !important;
+  z-index: 2701 !important;
+  pointer-events: auto !important;
+}
+.pascoa-modal.pascoa-modal--scoped-viewer .pascoa-viewer-content {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 220px !important; /* Lavender reference */
+  max-height: 220px !important;
+  height: auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+}
+.pascoa-modal.pascoa-modal--scoped-viewer .pascoa-viewer-img {
+  max-width: 220px !important;
+  max-height: 220px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: cover !important;
+  display: block !important;
 }
 .modal-content {
   background: var(--card-bg);

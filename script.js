@@ -6828,6 +6828,49 @@ async function loadPascoaIntoModalLegacy(){
             document.body.appendChild(newScript);
         });
 
+        // If the injected scripts created the standalone viewer overlay, move it
+        // into the modal body and decide whether to apply the scoped-viewer class.
+        // We avoid forcing the small viewer when the overlay is used for the
+        // Ilha de Páscoa map image.
+        setTimeout(() => {
+            try{
+                const viewer = document.getElementById('pascoa-viewer') || document.querySelector('.pascoa-viewer-overlay');
+                const modalBody = document.getElementById('pascoa-modal-body');
+                if(viewer && modalBody && !modalBody.contains(viewer)){
+                    modalBody.appendChild(viewer);
+                    const modalEl = modalBody.closest('.pascoa-modal');
+
+                    function decideScope(){
+                        try{
+                            const img = viewer.querySelector('.pascoa-viewer-img');
+                            const src = img && (img.currentSrc || img.src || '');
+                            // If the displayed image looks like the Ilha de Páscoa map,
+                            // do not force the small scoped viewer so the map stays large.
+                            if(/ilha[_-]?de[_-]?pascoa/i.test(src)){
+                                if(modalEl) modalEl.classList.remove('pascoa-modal--scoped-viewer');
+                            } else {
+                                if(modalEl) modalEl.classList.add('pascoa-modal--scoped-viewer');
+                            }
+                        }catch(e){}
+                    }
+
+                    // initial decision (image might not be set yet)
+                    decideScope();
+
+                    // watch for image src/DOM changes inside the viewer so we can
+                    // re-evaluate when the viewer content is populated.
+                    const mo = new MutationObserver((mutations)=>{ decideScope(); });
+                    mo.observe(viewer, { attributes: true, childList: true, subtree: true });
+
+                    const imgEl = viewer.querySelector('.pascoa-viewer-img');
+                    if(imgEl) imgEl.addEventListener('load', decideScope);
+
+                    // cleanup observer after a short while to avoid leaks
+                    setTimeout(()=>{ try{ mo.disconnect(); if(imgEl) imgEl.removeEventListener('load', decideScope); }catch(e){} }, 30000);
+                }
+            }catch(e){ /* ignore */ }
+        }, 0);
+
         _pascoaContentLoaded = true;
     }catch(err){
         console.error('Erro carregando pascoa no modal', err);
@@ -6878,6 +6921,40 @@ async function loadPascoaIntoModal(loadToken = _pascoaLoadToken){
                 newScript.setAttribute('data-pascoa-inline', '1');
                 document.body.appendChild(newScript);
             });
+
+            // Move any viewer overlay created by pascoa inline scripts into the
+            // modal body and decide whether to apply the scoped-viewer class.
+            // We avoid forcing the small viewer when the overlay is used for the
+            // Ilha de Páscoa map image.
+            setTimeout(() => {
+                try{
+                    const viewer = document.getElementById('pascoa-viewer') || document.querySelector('.pascoa-viewer-overlay');
+                    const modalBody = document.getElementById('pascoa-modal-body');
+                    if(viewer && modalBody && !modalBody.contains(viewer)){
+                        modalBody.appendChild(viewer);
+                        const modalEl = modalBody.closest('.pascoa-modal');
+
+                        function decideScope(){
+                            try{
+                                const img = viewer.querySelector('.pascoa-viewer-img');
+                                const src = img && (img.currentSrc || img.src || '');
+                                if(/ilha[_-]?de[_-]?pascoa/i.test(src)){
+                                    if(modalEl) modalEl.classList.remove('pascoa-modal--scoped-viewer');
+                                } else {
+                                    if(modalEl) modalEl.classList.add('pascoa-modal--scoped-viewer');
+                                }
+                            }catch(e){}
+                        }
+
+                        decideScope();
+                        const mo = new MutationObserver((mutations)=>{ decideScope(); });
+                        mo.observe(viewer, { attributes: true, childList: true, subtree: true });
+                        const imgEl = viewer.querySelector('.pascoa-viewer-img');
+                        if(imgEl) imgEl.addEventListener('load', decideScope);
+                        setTimeout(()=>{ try{ mo.disconnect(); if(imgEl) imgEl.removeEventListener('load', decideScope); }catch(e){} }, 30000);
+                    }
+                }catch(e){}
+            }, 0);
 
             _pascoaContentLoaded = true;
         }catch(err){
