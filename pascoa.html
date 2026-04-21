@@ -32,7 +32,7 @@
     .pascoa-egg-marker.collected { background: linear-gradient(180deg, rgba(60,160,90,0.95), rgba(30,120,60,0.95)); border-color: rgba(255,255,255,0.06); transform: scale(1.05); }
 
     /* Global counter (fixed, top-left) */
-    #pascoa-counter { position:fixed; top:12px; left:12px; z-index:2400; background:rgba(10,14,20,0.9); color:#fff; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:0.95rem; box-shadow:0 6px 18px rgba(0,0,0,0.45); backdrop-filter: blur(4px); }
+    #pascoa-counter { position:fixed; top:12px; left:12px; z-index:2702; background:rgba(10,14,20,0.9); color:#fff; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); font-weight:700; font-size:0.95rem; box-shadow:0 6px 18px rgba(0,0,0,0.45); backdrop-filter: blur(4px); }
     #pascoa-counter .small { font-weight:600; font-size:0.85rem; color:#d7e6d9; margin-left:6px; }
     .pascoa-figure img { width:100%; height:100%; object-fit:cover; border-radius:6px; display:block; }
     .pascoa-missing { margin-top:0.4rem; color:#ffb3b3; font-size:0.95rem; }
@@ -55,7 +55,7 @@
     }
 
     /* Image viewer modal (isolated to this page) */
-    .pascoa-viewer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); display:none; align-items:center; justify-content:center; z-index:2200; transition:opacity 220ms ease; }
+    .pascoa-viewer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); display:none; align-items:center; justify-content:center; z-index:2701; transition:opacity 220ms ease; }
     .pascoa-viewer-overlay[aria-hidden="false"]{ display:flex; opacity:1; }
     .pascoa-viewer-overlay[aria-hidden="true"]{ opacity:0; pointer-events:none; }
     .pascoa-viewer-content{ position:relative; width:100%; max-width:1100px; max-height:92vh; height:92vh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
@@ -197,7 +197,17 @@
 
     // counter element
     const counterEl = document.createElement('div'); counterEl.id = 'pascoa-counter'; counterEl.setAttribute('aria-live','polite'); counterEl.innerHTML = `<span id="pascoa-counter-value">${getCollectedCount()}</span> / ${EGG_TARGET} ovos`;
-    document.body.appendChild(counterEl);
+    // if this pascoa UI was injected into a modal, prefer appending the counter inside the modal
+    try{
+      const modalContainer = root ? root.closest('.modal') : null;
+      if(modalContainer instanceof HTMLElement){
+        modalContainer.appendChild(counterEl);
+        // ensure counter is above global modal overlay
+        counterEl.style.zIndex = '2702';
+      } else {
+        document.body.appendChild(counterEl);
+      }
+    }catch(e){ document.body.appendChild(counterEl); }
     function updateCounterDisplay(){ const v = getCollectedCount(); const el = document.getElementById('pascoa-counter-value'); if(el) el.textContent = String(v); if(v >= EGG_TARGET) counterEl.style.boxShadow = '0 6px 18px rgba(20,160,80,0.45)'; }
     updateCounterDisplay();
 
