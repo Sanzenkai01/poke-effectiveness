@@ -6,8 +6,8 @@
 // - 'hidden': esconde o aviso
 // Em `bosses`, voce pode usar nome ou id do boss.
 const hoopaPortalTickerConfig = {
-  mode: 'all-open',
-  bosses: ['Mega Starmie', 'Mega Chesnaught'],
+  mode: 'daily',
+  bosses: ['Mega Malamar', 'Mega Skarmory'],
   prefix: 'Os Hoopa Portais de hoje sao:',
   customMessage: ''
 };
