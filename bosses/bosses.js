@@ -449,7 +449,7 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: o multiplicador defensivo final contra ataques do tipo Dragon e tratado como 1x.', matchupOverrides: { 'mega-feraligatr': { defenseByBossType: { dragon: 1 } } } },
+          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: Marvel Scale: O Pokémon sofre menos dano de ataques super efetivos (0.5x).' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
           { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon e toma 0.5x de Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2, defenseByBossType: { dragon: 0.5 } } } }
         ]
@@ -1723,6 +1723,20 @@ const mew2Bosses = createManualRoleboardBosses([
   encounterNote: 'Layout inicial por cla e funcao para a raid de Mewtwo.'
 });
 
+// Aplicar Dragonair (Marvel Scale) como DPS/speedster recomendado para Mewtwo
+// em chefes cujos movimentos sao super efetivos contra Dragon (Fairy/Ice/Dragon).
+['clefable', 'jynx'].forEach((id) => {
+  const boss = mew2Bosses.find((b) => b.id === id);
+  if (!boss) return;
+  ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
+    boss.clans[clanKey].dps = boss.clans[clanKey].dps || [];
+    const exists = boss.clans[clanKey].dps.some((p) => getRecommendationNameKey(p) === 'dragonair');
+    if (!exists) {
+      boss.clans[clanKey].dps.push(createRolePick('Dragonair', ['dragon'], 'dragon', { tier: 'green' }));
+    }
+  });
+});
+
 const bossCatalogs = {
   hoopa: {
     id: 'hoopa',
@@ -2046,9 +2060,12 @@ function getImplicitRecommendationProfile(poke) {
   if (nameKey === 'dragonair' || nameKey === 'shinydragonair') {
     return {
       defenseByBossType: {
-        dragon: 1
+        dragon: 0.5,
+        fairy: 0.5,
+        ice: 0.5
       },
-      passiveDescription: 'O multiplicador defensivo final contra ataques do tipo Dragon e tratado como 1x.'
+      passiveName: 'Marvel Scale',
+      passiveDescription: 'O Pokémon sofre menos dano de ataques super efetivos (0.5x).'
     };
   }
 

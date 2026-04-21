@@ -2351,7 +2351,7 @@ const captureData = {
         65: [{ultra:46}],
         80: [{ultra:169}],
         95: [{ultra:192}],
-        pre:[{ultra:658}],
+        pre:[{ultra:750},{story:390},{elemental:300},{safari:750}],
         ace:[{ultra:889}]
     },
     shiny: {
@@ -5493,8 +5493,21 @@ const logResult = document.getElementById('log-result');
 const catchVariantInputs = document.querySelectorAll('input[name="catch-variant"]');
 
 function getCatchOptionItems(lvl, variant, chosen){
-    const reqList = computeRequired(lvl, variant);
-    return reqList
+    const reqList = computeRequired(lvl, variant) || [];
+    const requirementBall = getCatchRequirementBallKey(chosen);
+
+    // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
+    // If found, present only that option. Otherwise, if multiple alternatives exist,
+    // fall back to the second option (Opção 2) which is considered the correct one.
+    let selected = reqList;
+    const explicit = reqList.find((opt) => typeof opt === 'object' && opt !== null && typeof opt[requirementBall] === 'number' && opt[requirementBall] > 0);
+    if (explicit) {
+        selected = [explicit];
+    } else if (reqList.length > 1) {
+        selected = [reqList[1]];
+    }
+
+    return selected
         .map(opt=>{
             const needed = getCatchRequiredAmount(opt, chosen, variant);
             if(needed === 0) return null;
