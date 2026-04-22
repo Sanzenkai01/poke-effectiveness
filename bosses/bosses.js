@@ -7,7 +7,7 @@
 // Em `bosses`, voce pode usar nome ou id do boss.
 const hoopaPortalTickerConfig = {
   mode: 'daily',
-  bosses: ['Mega Malamar', 'Mega Skarmory'],
+  bosses: ['Mega Victribeel', 'Mega Scolipede'],
   prefix: 'Os Hoopa Portais de hoje sao:',
   customMessage: ''
 };
@@ -1098,6 +1098,7 @@ const rolePickImageOverrides = {
   shinyscyther: 'scyther.png',
   ribombee: 'Ribombee.png',
   venusaurtwo: 'venusaur.png'
+  ,rosasserperior: 'serperior.png'
   ,shinyclaydol: 'claydol.png'
 };
 
@@ -1199,6 +1200,8 @@ function createManualRoleboardBosses(entries, catalogMeta) {
     ration: cloneBossConsumableConfig(entry.ration),
     disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
     emblem: entry.emblem || bossInitials(entry.name),
+    comingSoon: Boolean(entry.comingSoon),
+    filterSolo: Boolean(entry.filterSolo),
     clans: {
       instinct: createManualRoleboardClan(catalogMeta.id, 'instinct', entry.clans?.instinct),
       mystic: createManualRoleboardClan(catalogMeta.id, 'mystic', entry.clans?.mystic),
@@ -1223,7 +1226,8 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('VenusaurTwo', ['grass', 'poison'], 'grass'),
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass')
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
+          createRolePick("Rosa's Serperior", ['grass'], 'grass', { tier: 'otimo', matchupOverrides: { 'mega-tyranitar': { offense: 2, defenseByBossType: { ground: 0.5 } } } })
         ],
         tank: [
           createRolePick('Tangrowth', ['grass'], 'grass'),
@@ -1576,6 +1580,174 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Porygon2', ['normal'], 'normal'),
           createRolePick('Lopunny', ['normal'], 'fighting'),
           createRolePick('Zorua', ['dark'], 'dark')
+        ]
+      }
+    }
+  },
+  {
+    id: 'mega-aerodactyl',
+    name: 'Mega Aerodactyl',
+    types: ['rock', 'flying'],
+    moveType: 'rock',
+    comingSoon: true,
+    filterSolo: true,
+    description: 'Chefe veloz que abusa de ataques Rock/Flying; atenção ao burst inicial.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting')
+        ],
+        tank: [
+          createRolePick('Onix', ['rock', 'ground'], 'rock'),
+          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
+        ],
+        support: [
+          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Comfey', ['fairy'], 'fairy')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Dewgong', ['water', 'ice'], 'ice'),
+          createRolePick('Kingdra', ['water', 'dragon'], 'dragon'),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+        ],
+        tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+        ],
+        support: [
+          createRolePick('Politoed', ['water'], 'water'),
+          createRolePick('Bellossom', ['grass'], 'grass')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Kabutops', ['rock', 'water'], 'rock'),
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
+          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
+        ],
+        tank: [
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
+          createRolePick('Probopass', ['rock', 'steel'], 'rock')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Ponyta', ['fire'], 'fire')
+        ]
+      }
+    }
+  },
+  {
+    id: 'mega-aggron',
+    name: 'Mega Aggron',
+    types: ['steel', 'rock'],
+    moveType: 'steel',
+    comingSoon: true,
+    filterSolo: true,
+    description: 'Chefe resistente que recompensa picks com supereficacia contra Steel/Rock.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Marowak', ['ground'], 'ground'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting')
+        ],
+        tank: [
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
+          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Orthworm', ['steel'], 'ground'),
+          createRolePick('Seaking', ['water'], 'ground'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+        ],
+        support: [
+          createRolePick('Politoed', ['water'], 'water'),
+          createRolePick('Misdreavus', ['ghost'], 'ghost')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
+          createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
+          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Onix', ['rock', 'ground'], 'rock'),
+          createRolePick('Probopass', ['rock', 'steel'], 'rock')
+        ],
+        support: [
+          createRolePick('Ponyta', ['fire'], 'fire'),
+          createRolePick('Blissey', ['normal'], 'fairy')
+        ]
+      }
+    }
+  },
+  {
+    id: 'mega-salamence',
+    name: 'Mega Salamence',
+    types: ['dragon', 'flying'],
+    moveType: 'dragon',
+    comingSoon: true,
+    filterSolo: true,
+    description: 'Chefe Dragon/Flying que pede boa cobertura de Dragon e controle de voo.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Dragonair', ['dragon'], 'dragon'),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+        ],
+        tank: [
+          createRolePick('Magnezone', ['electric', 'steel'], 'steel'),
+          createRolePick('Onix', ['rock', 'ground'], 'rock')
+        ],
+        support: [
+          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Comfey', ['fairy'], 'fairy')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Dewgong', ['water', 'ice'], 'ice'),
+          createRolePick('Kingdra', ['water', 'dragon'], 'dragon'),
+          createRolePick('Mega Feraligatr', ['water', 'dragon'], 'dragon')
+        ],
+        tank: [
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
+        ],
+        support: [
+          createRolePick('Smoochum', ['ice', 'psychic'], 'ice'),
+          createRolePick('Comfey', ['fairy'], 'fairy')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Kabutops', ['rock', 'water'], 'rock'),
+          createRolePick('Weavile', ['dark', 'ice'], 'ice'),
+          createRolePick('Cramorant', ['flying', 'water'], 'flying')
+        ],
+        tank: [
+          createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Lopunny', ['normal'], 'fighting')
         ]
       }
     }
@@ -3320,10 +3492,20 @@ function getRecommendationGroupsForClan(boss, clanData) {
 }
 
 function getAllRecommendedForClan(boss, clanData) {
+  let picks;
   if (clanData?.roles) {
-    return roleboardRoleOrder.flatMap((roleKey) => clanData.roles?.[roleKey] || []);
+    picks = roleboardRoleOrder.flatMap((roleKey) => clanData.roles?.[roleKey] || []);
+  } else {
+    picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
-  return getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
+
+  // Se o boss definir filterSolo, ranqueamos e removemos picks com tier 'solo'
+  if (boss?.filterSolo) {
+    const ranked = rankRecommendedForBoss(boss, picks || []);
+    return dedupeRecommendedPicksByName((ranked || []).filter((p) => (String(p?.tier || '').toLowerCase() !== 'solo')));
+  }
+
+  return dedupeRecommendedPicksByName(picks || []);
 }
 
 function pickBetterTier(currentTier, nextTier) {
@@ -3774,6 +3956,55 @@ injectHeracrossRecommendations();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
+// Remover picks classificados como 'solo' ("Ruim") em chefes do Champion Path especificados
+function removeRuimPicksFromChampionPath() {
+  const targets = new Set(['mega-aerodactyl', 'mega-aggron', 'mega-salamence']);
+  (championPathBosses || []).forEach((boss) => {
+    if (!boss || !targets.has(boss.id)) return;
+    Object.values(boss.clans || {}).forEach((clanData) => {
+      if (!clanData || !clanData.roles) return;
+      roleboardRoleOrder.forEach((roleKey) => {
+        const list = Array.isArray(clanData.roles[roleKey]) ? clanData.roles[roleKey] : [];
+        const filtered = list.filter((poke) => {
+          try {
+            const scored = scoreRecommendationForBoss(boss, poke);
+            return String(scored?.tier || '').toLowerCase() !== 'solo';
+          } catch (e) {
+            return true;
+          }
+        });
+        clanData.roles[roleKey] = filtered;
+      });
+
+      if (Array.isArray(clanData.recommended)) {
+        clanData.recommended = clanData.recommended.filter((poke) => {
+          try {
+            const scored = scoreRecommendationForBoss(boss, poke);
+            return String(scored?.tier || '').toLowerCase() !== 'solo';
+          } catch (e) {
+            return true;
+          }
+        });
+      }
+
+      if (Array.isArray(clanData.recommendationGroups)) {
+        clanData.recommendationGroups.forEach((group) => {
+          if (!Array.isArray(group.recommended)) return;
+          group.recommended = group.recommended.filter((poke) => {
+            try {
+              const scored = scoreRecommendationForBoss(getRecommendationGroupBossRef(boss, group), poke);
+              return String(scored?.tier || '').toLowerCase() !== 'solo';
+            } catch (e) {
+              return true;
+            }
+          });
+        });
+      }
+    });
+  });
+}
+
+removeRuimPicksFromChampionPath();
 ensureMew2BossRolePicks('charizard', 'mystic', 'tank', [
   createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
 ]);
@@ -5929,6 +6160,8 @@ function makeRoleBossCard(boss) {
   title.textContent = boss.name;
   title.title = boss.name;
 
+  // Badge será inserido no botão (não diretamente no título) para evitar sobrescritas
+
   const avatar = createRoleBossAvatar(boss);
   const chips = document.createElement('div');
   chips.className = 'boss-role-card__chips boss-role-card__chips--types';
@@ -5974,6 +6207,15 @@ function makeRoleBossCard(boss) {
       openBossModalV2(boss);
     }
   });
+  if (boss?.comingSoon) {
+    // garantir posicionamento relativo para o badge
+    button.style.position = button.style.position || 'relative';
+    const soon = document.createElement('span');
+    soon.className = 'boss-role-card__coming-soon';
+    soon.textContent = 'Em Breve!';
+    soon.style.cssText = 'position:absolute;top:0.5rem;right:0.5rem;background:#ff9800;color:#fff;padding:0.12rem 0.45rem;border-radius:12px;font-size:0.75rem;font-weight:600;z-index:3;';
+    button.appendChild(soon);
+  }
   return button;
 }
 
@@ -7925,7 +8167,12 @@ function openBossModalV2(speedster) {
         empty.textContent = 'Nenhuma recomendação disponível.';
         list.appendChild(empty);
       } else {
-        const ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended);
+        let ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended || []);
+        // Para bosses marcados com filterSolo, remover picks de tiers pior ou igual a 'red' (ruim)
+        if (speedster?.filterSolo) {
+          const threshold = tierPriority['red'] ?? tierPriority.red ?? 3;
+          ranked = (ranked || []).filter((p) => (tierPriority[p?.tier] ?? tierPriority.unknown) < threshold);
+        }
         ranked.forEach((poke) => {
           list.appendChild(createRecommendationCard(poke, { showDescription: false }));
         });
