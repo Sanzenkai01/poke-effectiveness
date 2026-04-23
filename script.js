@@ -82,6 +82,73 @@ const mobileSidebarQuery = typeof window !== 'undefined' && typeof window.matchM
     ? window.matchMedia('(max-width: 980px)')
     : null;
 let sidebarNavigationInitialized = false;
+let typesDataLoaded = false;
+let typesDataLoadPromise = null;
+let fossilsPageInitialized = false;
+let calculatorPageInitialized = false;
+let catchPageInitialized = false;
+let bossesPageLoadPromise = null;
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260419d';
+
+function loadDeferredScript(src, globalCheck){
+    try{
+        if(typeof globalCheck === 'function' && globalCheck()) return Promise.resolve();
+    }catch(e){}
+
+    const resolvedSrc = new URL(src, window.location.href).href;
+    const existing = Array.from(document.scripts).find(script => script.src === resolvedSrc);
+    if(existing){
+        if(existing.dataset.loaded === 'true') return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            existing.addEventListener('load', () => {
+                existing.dataset.loaded = 'true';
+                resolve();
+            }, { once: true });
+            existing.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once: true });
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.defer = true;
+        script.addEventListener('load', () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        }, { once: true });
+        script.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once: true });
+        document.body.appendChild(script);
+    });
+}
+
+function createInlineStatusMessage(className, message){
+    const status = document.createElement('div');
+    status.className = className;
+    status.textContent = message;
+    status.style.padding = '1rem';
+    status.style.color = '#eee';
+    status.style.background = 'rgba(255,255,255,0.06)';
+    status.style.border = '1px solid rgba(255,255,255,0.08)';
+    status.style.borderRadius = '0.75rem';
+    return status;
+}
+
+function showTypesLoadingState(){
+    if(!chart || menuTypes.length) return;
+    chart.replaceChildren(createInlineStatusMessage('load-pending-message', 'Carregando tabela de tipos...'));
+}
+
+function renderBossesDeferredState(message, options = {}){
+    const { error = false } = options;
+    const speedsterGrid = document.getElementById('speedster-grid');
+    if(!speedsterGrid) return;
+    const card = createInlineStatusMessage(error ? 'bosses-load-error-message' : 'bosses-load-pending-message', message);
+    if(error){
+        card.style.background = 'rgba(255,0,0,0.08)';
+        card.style.borderColor = 'rgba(255,0,0,0.18)';
+    }
+    speedsterGrid.replaceChildren(card);
+}
 
 const COMMUNITY_FEED_ITEMS = [
     { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÉM TAMBÉM TEM SEU VALOR!' },
@@ -1986,7 +2053,9 @@ function updateTextContent(){
             if(key) item.lastChild.textContent = t(key);
         });
     }
-    buildPokemonGallery();
+    if(fossilsPageInitialized){
+        buildPokemonGallery();
+    }
 
     const shareBtn = document.getElementById('share-btn');
     if(shareBtn){
@@ -2318,6 +2387,7 @@ function openHomeDestination(target){
 }
 
 function showFossils(){
+    initializeFossilsPage();
     clearTabHighlights();
     setActiveTabTheme('fossils');
     if(tabFossilsBtn) {
@@ -2898,15 +2968,19 @@ function showEffectiveness(){
     document.body.classList.add('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = '';
+    showTypesLoadingState();
+    ensureTypesDataLoaded().then(() => {
+        if(useGsap && contentEffect && !contentEffect.hidden){
+            gsap.from(contentEffect, {opacity:0, y:-10, duration:0.4});
+        }
+    }).catch(()=>{});
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('pageTitle');
     updateBrowserTitle();
-    if(useGsap){
-        gsap.from(contentEffect, {opacity:0, y:-10, duration:0.4});
-    }
     updateUrl();
 }
 function showCalculator(){
+    initializeCalculatorPage();
     clearTabHighlights();
     setActiveTabTheme('calculator');
     if(tabCalcBtn) {
@@ -2946,6 +3020,7 @@ document.querySelectorAll('[data-home-target]').forEach(button => {
 });
 
 function showCatch(){
+    initializeCatchPage();
     clearTabHighlights();
     setActiveTabTheme('catch');
     if(tabCatchBtn) {
@@ -2991,6 +3066,23 @@ function showSpeedsters(requestedBossMode=''){
         || getRequestedBossModeFromUrl()
         || getCurrentBossMode()
         || 'hoopa';
+
+    if(document.body){
+        document.body.dataset.bossMode = targetBossMode;
+    }
+
+    if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
+        renderBossesDeferredState('Carregando catÃ¡logo de bosses...');
+        updateUrl();
+        ensureBossesPageReady().then(() => {
+            if(!contentSpeedsters?.hidden){
+                showSpeedsters(targetBossMode);
+            }
+        }).catch(error => {
+            console.error('Bosses load failed', error);
+        });
+        return;
+    }
 
     if(typeof window.setBossMode === 'function') {
         window.setBossMode(targetBossMode);
@@ -3052,6 +3144,10 @@ const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 const STREAMER_RAT_RECONNECT_DELAY_MS = 5000;
 const STREAMER_RAT_JOIN_DELAY_MS = 900;
 let homeStreamerInfoRequestToken = 0;
+let globalRatMonitorRefreshPromise = null;
+let globalRatMonitorRefreshTimer = 0;
+let globalRatMonitorBootstrapStarted = false;
+let globalRatMonitorCurrentChannel = '';
 const homeStreamerInfoState = {
     status: 'loading',
     resolvedCount: 0,
@@ -3151,6 +3247,36 @@ function pickPreferredRatMonitorInfo(candidates){
     )[0] || null;
 }
 
+function createRatMonitorCandidate(name, info){
+    if(info?.status !== 'online' || !info?.isPstoryDrop) return null;
+    return {
+        name,
+        startedAt: info.startedAt || '',
+        isPstoryDrop: true
+    };
+}
+
+function setGlobalRatMonitorTarget(target){
+    const nextChannel = normalizeStreamerChannelName(
+        typeof target === 'string' ? target : (target?.name || '')
+    );
+    globalRatMonitorCurrentChannel = nextChannel;
+    streamerRatChatMonitor.updateDesiredChannels(nextChannel ? [nextChannel] : []);
+    return nextChannel;
+}
+
+function getPreferredRatMonitorInfoFromCache(){
+    const cachedCandidates = new Map();
+    STREAMERS.forEach(name => {
+        const info = getCachedStreamerStatusSnapshot(name);
+        const candidate = createRatMonitorCandidate(name, info);
+        if(candidate){
+            cachedCandidates.set(normalizeStreamerChannelName(name), candidate);
+        }
+    });
+    return pickPreferredRatMonitorInfo(cachedCandidates.values());
+}
+
 function renderHomeStreamerInfo(){
     if(!homeStreamerInfo || !homeStreamerCount || !homeStreamerText) return;
 
@@ -3222,14 +3348,13 @@ function refreshHomeStreamerInfo(){
         homeStreamerInfoState.totalPstoryOnline = totalPstoryOnline;
         renderHomeStreamerInfo();
 
+        const selectedInfo = pickPreferredRatMonitorInfo(onlineRatCandidates.values());
+        setGlobalRatMonitorTarget(selectedInfo);
+
         if(contentHome?.hidden){
             clearHomeStreamerRatSummary();
             return;
         }
-
-        const selectedInfo = pickPreferredRatMonitorInfo(onlineRatCandidates.values());
-        const nextChannel = normalizeStreamerChannelName(selectedInfo?.name || '');
-        streamerRatChatMonitor.updateDesiredChannels(nextChannel ? [nextChannel] : []);
 
         const emptyMessage = totalPstoryOnline === 0
             ? 'Sem live de PStory online para acompanhar o Rattata.'
@@ -4267,6 +4392,67 @@ function fetchStreamerAvatar(name){
     );
 }
 
+function refreshGlobalRatMonitor(){
+    if(globalRatMonitorRefreshPromise) return globalRatMonitorRefreshPromise;
+
+    const onlineRatCandidates = new Map();
+    globalRatMonitorRefreshPromise = Promise.allSettled(
+        STREAMERS.map(name => {
+            const isNonDrop = NON_DROP_STREAMERS.has(name);
+            return fetchStreamerStatus(name, isNonDrop)
+                .then(info => {
+                    const candidate = createRatMonitorCandidate(name, info);
+                    if(candidate){
+                        onlineRatCandidates.set(normalizeStreamerChannelName(name), candidate);
+                    }
+                })
+                .catch(() => {});
+        })
+    ).then(() => {
+        const selectedInfo = pickPreferredRatMonitorInfo(onlineRatCandidates.values());
+        setGlobalRatMonitorTarget(selectedInfo);
+        return selectedInfo;
+    }).catch(err => {
+        console.error('refreshGlobalRatMonitor error', err);
+        return null;
+    }).finally(() => {
+        globalRatMonitorRefreshPromise = null;
+    });
+
+    return globalRatMonitorRefreshPromise;
+}
+
+function scheduleGlobalRatMonitorRefresh(){
+    if(typeof window === 'undefined') return;
+    if(globalRatMonitorRefreshTimer){
+        window.clearTimeout(globalRatMonitorRefreshTimer);
+    }
+    globalRatMonitorRefreshTimer = window.setTimeout(async () => {
+        try{
+            await refreshGlobalRatMonitor();
+        }catch(err){
+            console.error('scheduled global rat monitor refresh failed', err);
+        }finally{
+            scheduleGlobalRatMonitorRefresh();
+        }
+    }, STREAMER_CACHE_TTL_MS);
+}
+
+function startGlobalRatMonitorBootstrap(){
+    if(globalRatMonitorBootstrapStarted) return;
+    globalRatMonitorBootstrapStarted = true;
+
+    const cachedInfo = getPreferredRatMonitorInfoFromCache();
+    if(cachedInfo){
+        setGlobalRatMonitorTarget(cachedInfo);
+    }
+
+    refreshGlobalRatMonitor().catch(err => {
+        console.error('initial global rat monitor refresh failed', err);
+    });
+    scheduleGlobalRatMonitorRefresh();
+}
+
 function formatStreamerRatCountdown(msUntilNext){
     const totalSeconds = Math.max(0, Math.ceil(msUntilNext / 1000));
     const minutes = Math.floor(totalSeconds / 60);
@@ -4373,7 +4559,6 @@ function renderStreamers(){
 
     grid.style.display = 'grid';
     grid.innerHTML = '';
-    streamerRatChatMonitor.updateDesiredChannels([]);
     if(ratSummary){
         ratSummary.replaceChildren();
     }
@@ -4393,7 +4578,7 @@ function renderStreamers(){
     let totalOnline = 0;
     let resolvedCount = 0;
     const onlineRatCandidates = new Map();
-    let selectedRatMonitorChannel = '';
+    let selectedRatMonitorChannel = globalRatMonitorCurrentChannel;
     let ratSummaryCleanup = () => {};
 
     streamerCardCleanupFns.push(() => {
@@ -4402,18 +4587,13 @@ function renderStreamers(){
 
     const syncRatMonitorTarget = () => {
         if(resolvedCount < STREAMERS.length){
-            if(selectedRatMonitorChannel){
-                selectedRatMonitorChannel = '';
-                streamerRatChatMonitor.updateDesiredChannels([]);
-            }
             return null;
         }
 
         const selectedInfo = pickPreferredRatMonitorInfo(onlineRatCandidates.values());
-        const nextChannel = normalizeStreamerChannelName(selectedInfo?.name || '');
+        const nextChannel = setGlobalRatMonitorTarget(selectedInfo);
         if(nextChannel !== selectedRatMonitorChannel){
             selectedRatMonitorChannel = nextChannel;
-            streamerRatChatMonitor.updateDesiredChannels(nextChannel ? [nextChannel] : []);
         }
 
         return selectedInfo;
@@ -4952,6 +5132,8 @@ function showStreamers(){
     updateUrl();
 }
 
+startGlobalRatMonitorBootstrap();
+
 async function showCommunity(){
     // Try to load server-provided community data (if available)
     try{ await loadServerCommunityData(); }catch(e){}
@@ -5134,7 +5316,6 @@ function showDropHints(type, elem){
         }
     }
 }
-buildPokemonGallery();
 
 function fossilClearSelection(){
     fossilSelections.length = 0;
@@ -5187,13 +5368,6 @@ function showByPokemon(pokemon){
 }
 
 const hintEl = document.getElementById('fossil-hint');
-    
-    document.querySelectorAll('.fossil-label').forEach(span=>{
-        const type = span.previousElementSibling?.dataset.type;
-        if(type && strings[lang] && strings[lang][type.toLowerCase()]){
-            span.textContent = strings[lang][type.toLowerCase()];
-        }
-    });
 
 function buildPokemonGallery(){
     const gallery = document.getElementById('pokemon-gallery');
@@ -5248,9 +5422,6 @@ function buildPokemonGallery(){
     });
 }
 
-// build gallery early so fossils appear even if fetch fails
-buildPokemonGallery();
-
 function showComboForPokemon(pokemon){
     // clear any drop hints when coming from gallery
     const drop = document.getElementById('drop-hints');
@@ -5281,58 +5452,75 @@ function showComboForPokemon(pokemon){
     }
 }
 
-Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
-    img.addEventListener('click', ()=>{
-        const type = img.dataset.type;
-        if(fossilSelections.includes(type)) return;
-        fossilSelections.push(type);
-        img.classList.add('selected');
-        img.classList.add('active');
-        if(fossilSelections.length===1){
-            // show drop hints for solo click, positioned under clicked item
-            showDropHints(type, img);
+function initializeFossilsPage(){
+    if(fossilsPageInitialized) return;
 
-            const partners = getPartners(type);
-            document.querySelectorAll('.fossil-img').forEach(i=>{
-                const t=i.dataset.type;
-                if(t===type) return;
-                if(partners.has(t)){
-                    i.classList.add('compatible');
-                    i.classList.remove('incompatible');
-                } else {
-                    i.classList.add('incompatible');
-                    i.classList.remove('compatible');
-                }
-            });
-            if(partners.size>0){
-                const names = [...partners].map(p=> t(p.toLowerCase()) || p);
-                hintEl.textContent = t('fossilHintCombines') + names.join(', ');
-            } else {
-                hintEl.textContent = t('fossilHintNone');
-            }
-        }
-        if(fossilSelections.length === 2){
-            // clear drop hints when forming pair
-            const dropEl = document.getElementById('drop-hints');
-            if(dropEl) dropEl.innerHTML = '';
-
-            const key = `${fossilSelections[0]},${fossilSelections[1]}`;
-            if(useGsap){
-                // brief pop effect on selected fossils before showing result
-                const selectedImgs = document.querySelectorAll('.fossil-img.selected');
-                gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
-            }
-            fossilShowResult(key);
-            setTimeout(()=>{
-                fossilClearSelection();
-                document.querySelectorAll('.fossil-img').forEach(i=>{
-                    i.classList.remove('active','compatible','incompatible');
-                });
-                hintEl.textContent = '';
-            }, 3000);
+    document.querySelectorAll('.fossil-label').forEach(span=>{
+        const type = span.previousElementSibling?.dataset.type;
+        if(type && strings[lang] && strings[lang][type.toLowerCase()]){
+            span.textContent = strings[lang][type.toLowerCase()];
         }
     });
-});
+
+    if(fossilsPageInitialized){
+        buildPokemonGallery();
+    }
+
+    Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
+        img.addEventListener('click', ()=>{
+            const type = img.dataset.type;
+            if(fossilSelections.includes(type)) return;
+            fossilSelections.push(type);
+            img.classList.add('selected');
+            img.classList.add('active');
+            if(fossilSelections.length===1){
+                // show drop hints for solo click, positioned under clicked item
+                showDropHints(type, img);
+
+                const partners = getPartners(type);
+                document.querySelectorAll('.fossil-img').forEach(i=>{
+                    const t=i.dataset.type;
+                    if(t===type) return;
+                    if(partners.has(t)){
+                        i.classList.add('compatible');
+                        i.classList.remove('incompatible');
+                    } else {
+                        i.classList.add('incompatible');
+                        i.classList.remove('compatible');
+                    }
+                });
+                if(partners.size>0){
+                    const names = [...partners].map(p=> t(p.toLowerCase()) || p);
+                    hintEl.textContent = t('fossilHintCombines') + names.join(', ');
+                } else {
+                    hintEl.textContent = t('fossilHintNone');
+                }
+            }
+            if(fossilSelections.length === 2){
+                // clear drop hints when forming pair
+                const dropEl = document.getElementById('drop-hints');
+                if(dropEl) dropEl.innerHTML = '';
+
+                const key = `${fossilSelections[0]},${fossilSelections[1]}`;
+                if(useGsap){
+                    // brief pop effect on selected fossils before showing result
+                    const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+                    gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
+                }
+                fossilShowResult(key);
+                setTimeout(()=>{
+                    fossilClearSelection();
+                    document.querySelectorAll('.fossil-img').forEach(i=>{
+                        i.classList.remove('active','compatible','incompatible');
+                    });
+                    hintEl.textContent = '';
+                }, 3000);
+            }
+        });
+    });
+
+    fossilsPageInitialized = true;
+}
 
 function updateRangeResults(){
     const val = rangeSelect.value;
@@ -5461,31 +5649,37 @@ function updateShiny(){
     animateCalcResult(shinyResults);
 }
 
-if(rangeSelect) rangeSelect.addEventListener('change', updateRangeResults);
-variantRadios.forEach(r=>r.addEventListener('change', ()=>{
-    updateRangeResults();
-    localStorage.setItem('pokeVariant', document.querySelector('input[name="poke-variant"]:checked').value);
-}));
+function initializeCalculatorPage(){
+    if(calculatorPageInitialized) return;
 
-if(shinyInput){
-    shinyInput.addEventListener('input', ()=>{
-        updateShiny();
-        if(commonInput) commonInput.value = shinyInput.value;
-        updateCommon();
-    });
+    if(rangeSelect) rangeSelect.addEventListener('change', updateRangeResults);
+    variantRadios.forEach(r=>r.addEventListener('change', ()=>{
+        updateRangeResults();
+        localStorage.setItem('pokeVariant', document.querySelector('input[name="poke-variant"]:checked').value);
+    }));
+
+    if(shinyInput){
+        shinyInput.addEventListener('input', ()=>{
+            updateShiny();
+            if(commonInput) commonInput.value = shinyInput.value;
+            updateCommon();
+        });
+    }
+    if(commonInput) commonInput.addEventListener('input', updateCommon);
+    if(shinyInput) shinyInput.addEventListener('input', updateShiny);
+
+    const savedVariant = localStorage.getItem('pokeVariant');
+    if(savedVariant){
+        const savedRadio = document.querySelector(`input[name="poke-variant"][value="${savedVariant}"]`);
+        if(savedRadio) savedRadio.checked = true;
+    }
+
+    if(rangeSelect) updateRangeResults();
+    if(commonInput) updateCommon();
+    if(shinyInput) updateShiny();
+
+    calculatorPageInitialized = true;
 }
-if(commonInput) commonInput.addEventListener('input', updateCommon);
-if(shinyInput) shinyInput.addEventListener('input', updateShiny);
-
-const savedVariant = localStorage.getItem('pokeVariant');
-if(savedVariant){
-    const savedRadio = document.querySelector(`input[name="poke-variant"][value="${savedVariant}"]`);
-    if(savedRadio) savedRadio.checked = true;
-}
-
-if(rangeSelect) updateRangeResults();
-if(commonInput) updateCommon();
-if(shinyInput) updateShiny();
 
 function updateUrl(){
     const isHomeView = document.body.classList.contains('home-view');
@@ -5672,49 +5866,55 @@ function processLogText(text){
     renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over);
 }
 
-if(ballSelect){
-    ballSelect.addEventListener('change',()=>{
-        updateBallPreview();
-        if(catchResult && catchResult.innerHTML.trim() !== ''){
-            renderCatchCalculation();
-        } else if(logResult && logResult.innerHTML.trim() !== ''){
-            processLogText(document.getElementById('log-input')?.value || '');
-        }
+function initializeCatchPage(){
+    if(catchPageInitialized) return;
+
+    if(ballSelect){
+        ballSelect.addEventListener('change',()=>{
+            updateBallPreview();
+            if(catchResult && catchResult.innerHTML.trim() !== ''){
+                renderCatchCalculation();
+            } else if(logResult && logResult.innerHTML.trim() !== ''){
+                processLogText(document.getElementById('log-input')?.value || '');
+            }
+        });
+    }
+
+    if(levelSelect){
+        levelSelect.addEventListener('change',()=>{
+            if(catchResult && catchResult.innerHTML.trim() !== ''){
+                renderCatchCalculation();
+            } else if(logResult && logResult.innerHTML.trim() !== ''){
+                processLogText(document.getElementById('log-input')?.value || '');
+            }
+        });
+    }
+
+    catchVariantInputs.forEach(input=>{
+        input.addEventListener('change',()=>{
+            if(catchResult && catchResult.innerHTML.trim() !== ''){
+                renderCatchCalculation();
+            } else if(logResult && logResult.innerHTML.trim() !== ''){
+                processLogText(document.getElementById('log-input')?.value || '');
+            }
+        });
     });
+
+    if(calcCatchBtn){
+        calcCatchBtn.addEventListener('click', renderCatchCalculation);
+    }
+
+    if(parseLogBtn){
+        parseLogBtn.addEventListener('click',()=>{
+            const text = document.getElementById('log-input').value;
+            processLogText(text);
+        });
+    }
+
+    updateBallPreview();
+    initTrainingVideo();
+    catchPageInitialized = true;
 }
-
-if(levelSelect){
-    levelSelect.addEventListener('change',()=>{
-        if(catchResult && catchResult.innerHTML.trim() !== ''){
-            renderCatchCalculation();
-        } else if(logResult && logResult.innerHTML.trim() !== ''){
-            processLogText(document.getElementById('log-input')?.value || '');
-        }
-    });
-}
-
-catchVariantInputs.forEach(input=>{
-    input.addEventListener('change',()=>{
-        if(catchResult && catchResult.innerHTML.trim() !== ''){
-            renderCatchCalculation();
-        } else if(logResult && logResult.innerHTML.trim() !== ''){
-            processLogText(document.getElementById('log-input')?.value || '');
-        }
-    });
-});
-
-if(calcCatchBtn){
-    calcCatchBtn.addEventListener('click', renderCatchCalculation);
-}
-
-if(parseLogBtn){
-    parseLogBtn.addEventListener('click',()=>{
-        const text = document.getElementById('log-input').value;
-        processLogText(text);
-    });
-}
-
-updateBallPreview();
 
 document.body.classList.add('dark');
 
@@ -6447,7 +6647,7 @@ function createTypesLoadErrorMessage(){
     retryButton.type = 'button';
     retryButton.className = 'load-error-retry';
     retryButton.textContent = 'Tentar novamente';
-    retryButton.addEventListener('click', loadTypesData);
+    retryButton.addEventListener('click', ()=>{ ensureTypesDataLoaded({ force: true }).catch(()=>{}); });
 
     wrapper.appendChild(title);
     wrapper.appendChild(description);
@@ -6456,6 +6656,7 @@ function createTypesLoadErrorMessage(){
 }
 
 function showTypesLoadError(error){
+    typesDataLoaded = false;
     clearTypeDataStore();
     menuTypes = [];
     currentSelection = [];
@@ -6565,12 +6766,60 @@ function loadTypesData(){
         .then(data => {
             resetTypesLoadErrorState();
             applyTypesData(data);
+            typesDataLoaded = true;
+            return true;
         })
-        .catch(showTypesLoadError);
+        .catch(error => {
+            showTypesLoadError(error);
+            throw error;
+        });
+}
+
+function ensureTypesDataLoaded(options = {}){
+    const { force = false } = options;
+    if(typesDataLoaded && !force) return Promise.resolve(true);
+    if(typesDataLoadPromise && !force) return typesDataLoadPromise;
+
+    if(force){
+        typesDataLoaded = false;
+        typesDataLoadPromise = null;
+    }
+
+    showTypesLoadingState();
+    typesDataLoadPromise = loadTypesData()
+        .finally(() => {
+            typesDataLoadPromise = null;
+        });
+
+    return typesDataLoadPromise;
+}
+
+function ensureBossesPageReady(){
+    if(typeof window.setBossMode === 'function' && typeof renderGrid === 'function'){
+        return Promise.resolve(true);
+    }
+    if(bossesPageLoadPromise) return bossesPageLoadPromise;
+
+    renderBossesDeferredState('Carregando catálogo de bosses...');
+    bossesPageLoadPromise = loadDeferredScript(
+        DEFERRED_BOSSES_SCRIPT_SRC,
+        () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
+    ).then(() => {
+        if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
+            throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
+        }
+        return true;
+    }).catch(error => {
+        renderBossesDeferredState('Não foi possível carregar os bosses. Tente atualizar a página.', { error: true });
+        throw error;
+    }).finally(() => {
+        bossesPageLoadPromise = null;
+    });
+
+    return bossesPageLoadPromise;
 }
 
 initializeSidebarNavigation();
-loadTypesData();
 
 function syncHomeLandingFocusSummary(cards = []){
     const cardList = Array.isArray(cards) && cards.length
@@ -6840,9 +7089,6 @@ function initTrainingVideo(){
         });
     });
 }
-
-// Como o script é carregado com `defer`, o DOM já estará pronto
-initTrainingVideo();
 
 // --- Pascoa modal (inject pascoa.html into modal body) ---
 let _pascoaModalKeyHandler = null;
