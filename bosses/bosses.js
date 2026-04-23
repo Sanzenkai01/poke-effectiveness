@@ -7,7 +7,7 @@
 // Em `bosses`, voce pode usar nome ou id do boss.
 const hoopaPortalTickerConfig = {
   mode: 'daily',
-  bosses: ['Mega Victribeel', 'Mega Scolipede'],
+  bosses: ['Mega Victribeel', 'Mega Skarmory'],
   prefix: 'Os Hoopa Portais de hoje sao:',
   customMessage: ''
 };
@@ -47,9 +47,9 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -87,7 +87,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
@@ -166,8 +166,8 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
@@ -301,11 +301,11 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
-          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' }
         ]
       }
@@ -346,7 +346,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
@@ -385,8 +385,8 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' }
         ]
       }
@@ -424,11 +424,11 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['flying','normal'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['flying','bug'], description: 'Tipo move: Flying.' }
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -507,7 +507,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
           { name: 'Scizor', image: 'scizor.png', tier: 'green', types: ['bug','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
@@ -546,7 +546,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -1388,7 +1388,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
           createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire'),
-          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark'),
+          createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
         ],
         tank: [
@@ -1505,7 +1505,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Cramorant', ['flying', 'water'], 'flying'),
           createRolePick('Mega Absol Z', ['dark'], 'dark'),
-          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark'),
+          createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
         ],
         tank: [
@@ -1534,7 +1534,7 @@ const championPathBosses = createManualRoleboardBosses([
         tank: [
           createRolePick('Magnezone', ['electric', 'steel'], 'electric'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
-          createRolePick('Toxapex', ['water', 'poison'], 'poison')
+          createRolePick('Toxapex', ['poison', 'water'], 'poison')
         ],
         support: [
           createRolePick('Pachirisu', ['electric'], 'electric'),
@@ -1683,7 +1683,7 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
           createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
-          createRolePick('Mega Houndoom', ['fire', 'dark'], 'dark')
+          createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark')
         ],
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
@@ -1900,13 +1900,13 @@ const mew2Bosses = createManualRoleboardBosses([
 ['clefable', 'jynx'].forEach((id) => {
   const boss = mew2Bosses.find((b) => b.id === id);
   if (!boss) return;
-  ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
-    boss.clans[clanKey].dps = boss.clans[clanKey].dps || [];
-    const exists = boss.clans[clanKey].dps.some((p) => getRecommendationNameKey(p) === 'dragonair');
-    if (!exists) {
-      boss.clans[clanKey].dps.push(createRolePick('Dragonair', ['dragon'], 'dragon', { tier: 'green' }));
-    }
-  });
+  const instinctDpsList = boss.clans?.instinct?.roles?.dps;
+  if (!Array.isArray(instinctDpsList)) return;
+
+  const exists = instinctDpsList.some((pick) => getRecommendationNameKey(pick) === 'dragonair');
+  if (!exists) {
+    instinctDpsList.push(createRolePick('Dragonair', ['dragon'], 'dragon', { tier: 'green' }));
+  }
 });
 
 const bossCatalogs = {
@@ -2068,6 +2068,277 @@ function getRecommendationNameKey(nameOrPokemon) {
   return String(rawName || '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '');
+}
+
+const fixedRecommendationClanTypes = Object.freeze({
+  mystic: Object.freeze(['fairy', 'fighting', 'ghost', 'ice', 'steel', 'water']),
+  instinct: Object.freeze(['dragon', 'electric', 'grass', 'ground', 'poison', 'psychic']),
+  valor: Object.freeze(['bug', 'dark', 'fire', 'flying', 'normal', 'rock'])
+});
+
+const fixedRecommendationClanByPrimaryType = Object.freeze(
+  Object.entries(fixedRecommendationClanTypes).reduce((acc, [clanKey, types]) => {
+    types.forEach((type) => {
+      acc[type] = clanKey;
+    });
+    return acc;
+  }, {})
+);
+
+function createFixedRecommendationDefinition(name, primaryType, role, expectedClan = '') {
+  const normalizedPrimaryType = String(primaryType || '').trim().toLowerCase();
+  const normalizedRole = String(role || '').trim().toLowerCase();
+  const derivedClan = fixedRecommendationClanByPrimaryType[normalizedPrimaryType] || '';
+
+  if (!derivedClan && typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(`[bosses] ${name} usa um tipo principal invalido no registro global: ${primaryType}.`);
+  }
+
+  if (expectedClan && derivedClan && expectedClan !== derivedClan && typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(`[bosses] ${name} foi listado em ${expectedClan}, mas ${normalizedPrimaryType} pertence a ${derivedClan}.`);
+  }
+
+  return Object.freeze({
+    name,
+    primaryType: normalizedPrimaryType,
+    clan: derivedClan || String(expectedClan || '').trim().toLowerCase(),
+    role: normalizedRole
+  });
+}
+
+// Fonte de verdade global:
+// cada Pokemon recomendado precisa existir aqui com tipo principal e funcao fixos.
+// O clan sempre eh derivado do tipo principal pelas regras do projeto.
+const fixedRecommendationPokemonPools = Object.freeze({
+  instinct: Object.freeze({
+    dps: Object.freeze([
+      createFixedRecommendationDefinition("Alakazam", 'psychic', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Dedenne", 'electric', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Dragonair", 'dragon', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Excadrill", 'ground', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Lurantis", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Marowak", 'ground', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Mega Gardevoir", 'psychic', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Mega Raichu X", 'electric', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Mega Raichu Y", 'electric', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Mega Sceptile", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Pikachu", 'electric', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Rosa's Serperior", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Seviper", 'poison', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Shiftry", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("VenusaurTwo", 'grass', 'dps', 'instinct')
+    ]),
+    tank: Object.freeze([
+      createFixedRecommendationDefinition("Appletun", 'grass', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Chesnaught", 'grass', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Claydol", 'ground', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Goodra", 'dragon', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Magnezone", 'electric', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Tangrowth", 'grass', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Toxapex", 'poison', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Wobbuffet", 'psychic', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Wynaut", 'psychic', 'tank', 'instinct')
+    ]),
+    support: Object.freeze([
+      createFixedRecommendationDefinition("Bellossom", 'grass', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Kadabra", 'psychic', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Kirlia", 'psychic', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Pachirisu", 'electric', 'support', 'instinct')
+    ])
+  }),
+  mystic: Object.freeze({
+    dps: Object.freeze([
+      createFixedRecommendationDefinition("Banette", 'ghost', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("BlastoiseTwo", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Dachsbun", 'fairy', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Dewgong", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Drifloom", 'ghost', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Duraludon", 'steel', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Greninja", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Hawlucha", 'fighting', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Kingdra", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Lombre", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mantine", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Feraligatr", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Greninja", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Gyarados", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Hawlucha", 'fighting', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Lucario", 'fighting', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Lucario Z", 'fighting', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Skarmory", 'steel', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Mega Starmie", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Melony's Frosmoth", 'ice', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Orthworm", 'steel', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Qwilfish", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Seaking", 'water', 'dps', 'mystic')
+    ]),
+    tank: Object.freeze([
+      createFixedRecommendationDefinition("Aegislash", 'steel', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Bronzong", 'steel', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Carracosta", 'water', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Drifblim", 'ghost', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Dusclops", 'ghost', 'tank', 'mystic')
+    ]),
+    support: Object.freeze([
+      createFixedRecommendationDefinition("Comfey", 'fairy', 'support', 'mystic'),
+      createFixedRecommendationDefinition("Misdreavus", 'ghost', 'support', 'mystic'),
+      createFixedRecommendationDefinition("Politoed", 'water', 'support', 'mystic'),
+      createFixedRecommendationDefinition("Smoochum", 'ice', 'support', 'mystic')
+    ])
+  }),
+  valor: Object.freeze({
+    dps: Object.freeze([
+      createFixedRecommendationDefinition("Absol", 'dark', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Bouffalant", 'normal', 'dps', 'valor'),
+      createFixedRecommendationDefinition("CharizardTwo", 'fire', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Cramorant", 'flying', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Delphox", 'fire', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Farfetch'd", 'normal', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Heracross", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Kabutops", 'rock', 'dps', 'valor'),
+      createFixedRecommendationDefinition("May's Beautifly", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Mega Absol Z", 'dark', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Mega Delphox", 'fire', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Mega Houndoom", 'dark', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Mega Scizor", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Pyroar Female", 'fire', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Ribombee", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Scizor", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Scolipede", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Scyther", 'bug', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Tauros", 'normal', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Weavile", 'dark', 'dps', 'valor')
+    ]),
+    tank: Object.freeze([
+      createFixedRecommendationDefinition("Armarouge", 'fire', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Bastiodon", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Magcargo", 'fire', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Nosepass", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Onix", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Orbeetle", 'bug', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Probopass", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Sableye", 'dark', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Shieldon", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Shuckle", 'bug', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Torkoal", 'fire', 'tank', 'valor')
+    ]),
+    support: Object.freeze([
+      createFixedRecommendationDefinition("Blissey", 'normal', 'support', 'valor'),
+      createFixedRecommendationDefinition("Lopunny", 'normal', 'support', 'valor'),
+      createFixedRecommendationDefinition("Ponyta", 'fire', 'support', 'valor'),
+      createFixedRecommendationDefinition("Porygon2", 'normal', 'support', 'valor'),
+      createFixedRecommendationDefinition("Zorua", 'dark', 'support', 'valor')
+    ])
+  })
+});
+
+function createFixedRecommendationRegistry(pools = {}) {
+  const registry = {};
+  const conflicts = [];
+
+  Object.entries(pools || {}).forEach(([clanKey, roles]) => {
+    Object.entries(roles || {}).forEach(([roleKey, names]) => {
+      (names || []).forEach((entry) => {
+        const normalizedKey = getRecommendationNameKey(entry?.name);
+        if (!normalizedKey) return;
+
+        const existing = registry[normalizedKey];
+        if (existing && (
+          existing.clan !== entry?.clan
+          || existing.role !== entry?.role
+          || existing.primaryType !== entry?.primaryType
+        )) {
+          conflicts.push(`${entry?.name}: ${existing.clan}/${existing.role}/${existing.primaryType} -> ${entry?.clan}/${entry?.role}/${entry?.primaryType}`);
+          return;
+        }
+
+        if (clanKey !== entry?.clan || roleKey !== entry?.role) {
+          conflicts.push(`${entry?.name}: bloco ${clanKey}/${roleKey} != registro ${entry?.clan}/${entry?.role}`);
+          return;
+        }
+
+        registry[normalizedKey] = entry;
+      });
+    });
+  });
+
+  if (conflicts.length && typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(`[bosses] Cadastro global de pokemons com conflito: ${conflicts.join('; ')}`);
+  }
+
+  return registry;
+}
+
+const fixedRecommendationPokemonRegistry = Object.freeze(createFixedRecommendationRegistry(fixedRecommendationPokemonPools));
+const recommendationRegistryWarnings = new Set();
+const recommendationAssignmentWarnings = new Set();
+
+function resolveFixedRecommendationRegistryKey(nameOrPokemon) {
+  const rawKey = getRecommendationNameKey(nameOrPokemon);
+  if (!rawKey) return '';
+  if (fixedRecommendationPokemonRegistry[rawKey]) return rawKey;
+
+  if (rawKey.startsWith('shiny')) {
+    const baseKey = rawKey.replace(/^shiny/, '');
+    if (fixedRecommendationPokemonRegistry[baseKey]) {
+      return baseKey;
+    }
+  }
+
+  return '';
+}
+
+function getFixedRecommendationEntry(nameOrPokemon) {
+  const registryKey = resolveFixedRecommendationRegistryKey(nameOrPokemon);
+  return registryKey ? fixedRecommendationPokemonRegistry[registryKey] : null;
+}
+
+function normalizeRecommendationTypesByRegistry(types = [], primaryType = '') {
+  const normalizedPrimaryType = String(primaryType || '').trim().toLowerCase();
+  const uniqueTypes = mergeLowercaseUniqueValues(types || []);
+  if (!normalizedPrimaryType) return uniqueTypes;
+  return [normalizedPrimaryType, ...uniqueTypes.filter((type) => type !== normalizedPrimaryType)];
+}
+
+function applyFixedRecommendationMetadata(pick, registryEntry) {
+  if (!pick || !registryEntry) return pick;
+
+  pick.types = normalizeRecommendationTypesByRegistry(pick.types, registryEntry.primaryType);
+  pick._fixedClan = registryEntry.clan;
+  pick._fixedRole = registryEntry.role;
+  pick._fixedPrimaryType = registryEntry.primaryType;
+  return pick;
+}
+
+function warnRecommendationWithoutRegistry(boss, pick) {
+  const nameKey = getRecommendationNameKey(pick);
+  if (!nameKey || recommendationRegistryWarnings.has(nameKey)) return;
+
+  recommendationRegistryWarnings.add(nameKey);
+
+  if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+    console.warn(
+      `[bosses] ${pick?.name || nameKey} precisa ser registrado em fixedRecommendationPokemonPools para aparecer corretamente em qualquer boss (${boss?.name || boss?.id || 'boss'}).`
+    );
+  }
+}
+
+function warnRecommendationAssignmentMismatch(context = {}, registryEntry) {
+  const bossId = String(context?.boss?.id || '').trim().toLowerCase();
+  const nameKey = getRecommendationNameKey(context?.pick);
+  const currentRole = String(context?.roleKey || 'dps').trim().toLowerCase() || 'dps';
+  const currentClan = String(context?.clanKey || '').trim().toLowerCase();
+  if (!bossId || !nameKey || !currentClan || !registryEntry) return;
+
+  const warningKey = `${bossId}|${currentClan}|${currentRole}|${nameKey}`;
+  if (recommendationAssignmentWarnings.has(warningKey)) return;
+  recommendationAssignmentWarnings.add(warningKey);
+
+  if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+    console.warn(
+      `[bosses] ${context?.pick?.name || nameKey} foi listado em ${currentClan}/${currentRole} no boss ${context?.boss?.name || bossId}, mas o registro global fixa ${registryEntry.clan}/${registryEntry.role} pelo tipo principal ${registryEntry.primaryType}.`
+    );
+  }
 }
 
 function formatNaturalLanguageList(items = []) {
@@ -2789,26 +3060,209 @@ function applyImplicitRecommendationEnhancements(poke) {
   return poke;
 }
 
-function visitAllRecommendationPicks(visitor) {
+function visitAllRecommendationPicksWithContext(visitor) {
   Object.values(bossCatalogs).forEach((catalog) => {
     (catalog.data || []).forEach((boss) => {
-      Object.values(boss.clans || {}).forEach((clanData) => {
+      Object.entries(boss.clans || {}).forEach(([clanKey, clanData]) => {
         if (Array.isArray(clanData.recommended)) {
-          clanData.recommended.forEach(visitor);
+          clanData.recommended.forEach((pick, index) => {
+            visitor({
+              catalogId: catalog?.id || '',
+              boss,
+              clanKey,
+              roleKey: 'dps',
+              sourceType: 'recommended',
+              index,
+              pick
+            });
+          });
         }
 
         if (Array.isArray(clanData.recommendationGroups)) {
-          clanData.recommendationGroups.forEach((group) => {
-            (group.recommended || []).forEach(visitor);
+          clanData.recommendationGroups.forEach((group, groupIndex) => {
+            (group.recommended || []).forEach((pick, index) => {
+              visitor({
+                catalogId: catalog?.id || '',
+                boss,
+                clanKey,
+                roleKey: 'dps',
+                sourceType: 'recommendation-group',
+                group,
+                groupIndex,
+                index,
+                pick
+              });
+            });
           });
         }
 
         if (clanData.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
-            (clanData.roles?.[roleKey] || []).forEach(visitor);
+            (clanData.roles?.[roleKey] || []).forEach((pick, index) => {
+              visitor({
+                catalogId: catalog?.id || '',
+                boss,
+                clanKey,
+                roleKey,
+                sourceType: 'role',
+                index,
+                pick
+              });
+            });
           });
         }
       });
+    });
+  });
+}
+
+function visitAllRecommendationPicks(visitor) {
+  visitAllRecommendationPicksWithContext(({ pick }) => {
+    visitor(pick);
+  });
+}
+
+function applyFixedRecommendationRegistryChecks() {
+  visitAllRecommendationPicksWithContext((context) => {
+    const registryEntry = getFixedRecommendationEntry(context?.pick);
+    if (!registryEntry) {
+      warnRecommendationWithoutRegistry(context?.boss, context?.pick);
+      return;
+    }
+
+    applyFixedRecommendationMetadata(context.pick, registryEntry);
+
+    if (registryEntry.clan !== context.clanKey || registryEntry.role !== context.roleKey) {
+      warnRecommendationAssignmentMismatch(context, registryEntry);
+    }
+  });
+}
+
+function createEmptyFixedClanBuckets() {
+  return {
+    instinct: [],
+    mystic: [],
+    valor: []
+  };
+}
+
+function createEmptyFixedRoleBuckets() {
+  return {
+    instinct: { support: [], dps: [], tank: [] },
+    mystic: { support: [], dps: [], tank: [] },
+    valor: { support: [], dps: [], tank: [] }
+  };
+}
+
+function normalizeBossRecommendationAssignments(boss) {
+  if (!boss || !boss.clans) return;
+
+  const clanKeys = Object.keys(boss.clans);
+  const hasRoleLists = clanKeys.some((clanKey) => boss.clans?.[clanKey]?.roles);
+  const hasGroupedRecommendations = clanKeys.some((clanKey) => Array.isArray(boss.clans?.[clanKey]?.recommendationGroups) && boss.clans[clanKey].recommendationGroups.length);
+  const hasFlatRecommendations = !hasRoleLists && !hasGroupedRecommendations && clanKeys.some((clanKey) => Array.isArray(boss.clans?.[clanKey]?.recommended));
+
+  if (hasRoleLists) {
+    const nextBuckets = createEmptyFixedRoleBuckets();
+
+    collectRawRecommendationPicksForBoss(boss).forEach((pick) => {
+      const registryEntry = getFixedRecommendationEntry(pick);
+      if (!registryEntry) {
+        warnRecommendationWithoutRegistry(boss, pick);
+        return;
+      }
+
+      applyFixedRecommendationMetadata(pick, registryEntry);
+      nextBuckets[registryEntry.clan]?.[registryEntry.role]?.push(pick);
+    });
+
+    clanKeys.forEach((clanKey) => {
+      const clanData = boss.clans?.[clanKey];
+      if (!clanData?.roles) return;
+
+      roleboardRoleOrder.forEach((roleKey) => {
+        clanData.roles[roleKey] = dedupeRecommendedPicksByName(nextBuckets[clanKey]?.[roleKey] || []);
+      });
+    });
+
+    return;
+  }
+
+  if (hasGroupedRecommendations) {
+    const groupTemplates = new Map();
+    const nextBuckets = {
+      instinct: new Map(),
+      mystic: new Map(),
+      valor: new Map()
+    };
+
+    clanKeys.forEach((clanKey) => {
+      (boss.clans?.[clanKey]?.recommendationGroups || []).forEach((group) => {
+        const groupKey = getRecommendationGroupKey(boss, group);
+        if (!groupTemplates.has(groupKey)) {
+          groupTemplates.set(groupKey, { ...group, recommended: [] });
+        }
+
+        (group?.recommended || []).forEach((pick) => {
+          const registryEntry = getFixedRecommendationEntry(pick);
+          if (!registryEntry) {
+            warnRecommendationWithoutRegistry(boss, pick);
+            return;
+          }
+
+          applyFixedRecommendationMetadata(pick, registryEntry);
+          if (registryEntry.role !== 'dps') return;
+
+          if (!nextBuckets[registryEntry.clan].has(groupKey)) {
+            nextBuckets[registryEntry.clan].set(groupKey, []);
+          }
+
+          nextBuckets[registryEntry.clan].get(groupKey).push(pick);
+        });
+      });
+    });
+
+    clanKeys.forEach((clanKey) => {
+      const clanData = boss.clans?.[clanKey];
+      if (!clanData) return;
+
+      clanData.recommendationGroups = Array.from(groupTemplates.entries()).map(([groupKey, template]) => ({
+        ...template,
+        recommended: dedupeRecommendedPicksByName(nextBuckets[clanKey].get(groupKey) || [])
+      }));
+    });
+
+    return;
+  }
+
+  if (hasFlatRecommendations) {
+    const nextBuckets = createEmptyFixedClanBuckets();
+
+    collectRawRecommendationPicksForBoss(boss).forEach((pick) => {
+      const registryEntry = getFixedRecommendationEntry(pick);
+      if (!registryEntry) {
+        warnRecommendationWithoutRegistry(boss, pick);
+        return;
+      }
+
+      applyFixedRecommendationMetadata(pick, registryEntry);
+      if (registryEntry.role !== 'dps') return;
+
+      nextBuckets[registryEntry.clan]?.push(pick);
+    });
+
+    clanKeys.forEach((clanKey) => {
+      const clanData = boss.clans?.[clanKey];
+      if (!clanData || !Array.isArray(clanData.recommended)) return;
+      clanData.recommended = dedupeRecommendedPicksByName(nextBuckets[clanKey] || []);
+    });
+  }
+}
+
+function normalizeAllBossRecommendationAssignments() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      normalizeBossRecommendationAssignments(boss);
     });
   });
 }
@@ -3469,32 +3923,149 @@ function getRecommendationGroupBossRef(boss, group = {}) {
   };
 }
 
+function resolveBossClanKey(boss, clanData) {
+  return Object.entries(boss?.clans || {}).find(([, candidate]) => candidate === clanData)?.[0] || '';
+}
+
+function getRecommendationGroupKey(boss, group = {}) {
+  return `${String(group?.bossId || boss?.id || '').trim().toLowerCase()}::${getRecommendationNameKey(group?.title || boss?.name || '')}`;
+}
+
+function collectRawRecommendationPicksForBoss(boss) {
+  const picks = [];
+
+  Object.values(boss?.clans || {}).forEach((clanData) => {
+    if (Array.isArray(clanData?.recommended)) {
+      picks.push(...clanData.recommended);
+    }
+
+    if (Array.isArray(clanData?.recommendationGroups)) {
+      clanData.recommendationGroups.forEach((group) => {
+        picks.push(...(group?.recommended || []));
+      });
+    }
+
+    if (clanData?.roles) {
+      roleboardRoleOrder.forEach((roleKey) => {
+        picks.push(...(clanData.roles?.[roleKey] || []));
+      });
+    }
+  });
+
+  return picks;
+}
+
+function getFixedRecommendationRolePicks(boss, clanKey, roleKey) {
+  const normalizedClanKey = normalizePlannerClanKey(clanKey);
+  const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+  if (!boss || !normalizedClanKey || !roleboardRoleOrder.includes(normalizedRoleKey)) return [];
+
+  return dedupeRecommendedPicksByName(
+    collectRawRecommendationPicksForBoss(boss).filter((pick) => {
+      const registryEntry = getFixedRecommendationEntry(pick);
+      if (!registryEntry) {
+        warnRecommendationWithoutRegistry(boss, pick);
+        return false;
+      }
+
+      applyFixedRecommendationMetadata(pick, registryEntry);
+      return registryEntry.clan === normalizedClanKey && registryEntry.role === normalizedRoleKey;
+    })
+  );
+}
+
+function getFixedRecommendationGroupsForClan(boss, clanKey) {
+  const normalizedClanKey = normalizePlannerClanKey(clanKey);
+  if (!boss || !normalizedClanKey) return [];
+
+  const groupMap = new Map();
+
+  Object.values(boss?.clans || {}).forEach((clanData) => {
+    (clanData?.recommendationGroups || []).forEach((group) => {
+      const groupKey = getRecommendationGroupKey(boss, group);
+      if (groupMap.has(groupKey)) return;
+
+      groupMap.set(groupKey, {
+        groupKey,
+        bossImage: group.bossImage || (Array.isArray(boss.bosses)
+          ? boss.bosses.find((entry) => entry.name === (group.title || boss.name))?.image || boss.image
+          : boss.image),
+        title: group.title || boss.name,
+        boss: getRecommendationGroupBossRef(boss, group)
+      });
+    });
+  });
+
+  if (!groupMap.size) {
+    groupMap.set(getRecommendationGroupKey(boss), {
+      groupKey: getRecommendationGroupKey(boss),
+      bossImage: boss.image,
+      title: boss.name,
+      boss
+    });
+  }
+
+  return Array.from(groupMap.values()).map((groupMeta) => {
+    const rawPicks = [];
+
+    if (groupMap.size > 1) {
+      Object.values(boss?.clans || {}).forEach((clanData) => {
+        (clanData?.recommendationGroups || []).forEach((group) => {
+          if (getRecommendationGroupKey(boss, group) !== groupMeta.groupKey) return;
+          rawPicks.push(...(group?.recommended || []));
+        });
+      });
+    } else {
+      Object.values(boss?.clans || {}).forEach((clanData) => {
+        rawPicks.push(...(clanData?.recommended || []));
+      });
+    }
+
+    const recommended = dedupeRecommendedPicksByName(
+      rawPicks.filter((pick) => {
+        const registryEntry = getFixedRecommendationEntry(pick);
+        if (!registryEntry) {
+          warnRecommendationWithoutRegistry(boss, pick);
+          return false;
+        }
+
+        applyFixedRecommendationMetadata(pick, registryEntry);
+        return registryEntry.clan === normalizedClanKey && registryEntry.role === 'dps';
+      })
+    );
+
+    return {
+      bossImage: groupMeta.bossImage,
+      title: groupMeta.title,
+      boss: groupMeta.boss,
+      recommended
+    };
+  });
+}
+
 function getRecommendationGroupsForClan(boss, clanData) {
   if (!boss || !clanData) return [];
-  if (Array.isArray(clanData.recommendationGroups) && clanData.recommendationGroups.length) {
-    return clanData.recommendationGroups.map((group) => ({
-      bossImage: group.bossImage || (Array.isArray(boss.bosses)
-        ? boss.bosses.find((entry) => entry.name === (group.title || boss.name))?.image || boss.image
-        : boss.image),
-      title: group.title || boss.name,
-      boss: getRecommendationGroupBossRef(boss, group),
-      recommended: Array.isArray(group.recommended) ? group.recommended : []
-    }));
+
+  const clanKey = resolveBossClanKey(boss, clanData);
+  if (!clanKey) return [];
+
+  if (clanData?.roles) {
+    return [{
+      bossImage: boss.image,
+      title: boss.name,
+      boss,
+      recommended: roleboardRoleOrder.flatMap((roleKey) => getFixedRecommendationRolePicks(boss, clanKey, roleKey))
+    }];
   }
-  return [{
-    bossImage: boss.image,
-    title: boss.name,
-    boss,
-    recommended: clanData?.roles
-      ? roleboardRoleOrder.flatMap((roleKey) => clanData.roles?.[roleKey] || [])
-      : (Array.isArray(clanData.recommended) ? clanData.recommended : [])
-  }];
+
+  return getFixedRecommendationGroupsForClan(boss, clanKey);
 }
 
 function getAllRecommendedForClan(boss, clanData) {
+  const clanKey = resolveBossClanKey(boss, clanData);
   let picks;
-  if (clanData?.roles) {
-    picks = roleboardRoleOrder.flatMap((roleKey) => clanData.roles?.[roleKey] || []);
+  if (clanData?.roles && clanKey) {
+    picks = roleboardRoleOrder.flatMap((roleKey) => getFixedRecommendationRolePicks(boss, clanKey, roleKey));
   } else {
     picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
@@ -3931,21 +4502,21 @@ function addHeracrossIfCompatible(bossRef, picks = []) {
 function injectHeracrossRecommendations() {
   Object.values(bossCatalogs).forEach((catalog) => {
     (catalog.data || []).forEach((boss) => {
-      const mysticClan = boss?.clans?.mystic;
-      if (!mysticClan) return;
+      const valorClan = boss?.clans?.valor;
+      if (!valorClan) return;
 
-      if (Array.isArray(mysticClan.recommended)) {
-        addHeracrossIfCompatible(boss, mysticClan.recommended);
+      if (Array.isArray(valorClan.recommended)) {
+        addHeracrossIfCompatible(boss, valorClan.recommended);
       }
 
-      if (Array.isArray(mysticClan.recommendationGroups)) {
-        mysticClan.recommendationGroups.forEach((group) => {
+      if (Array.isArray(valorClan.recommendationGroups)) {
+        valorClan.recommendationGroups.forEach((group) => {
           addHeracrossIfCompatible(getRecommendationGroupBossRef(boss, group), group.recommended);
         });
       }
 
-      if (Array.isArray(mysticClan.roles?.dps)) {
-        addHeracrossIfCompatible(boss, mysticClan.roles.dps);
+      if (Array.isArray(valorClan.roles?.dps)) {
+        addHeracrossIfCompatible(boss, valorClan.roles.dps);
       }
     });
   });
@@ -3953,6 +4524,8 @@ function injectHeracrossRecommendations() {
 
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
+normalizeAllBossRecommendationAssignments();
+applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
@@ -4270,14 +4843,9 @@ function getPlannerConsumableOptionById(kind, value) {
 
 function getPlannerRoleSourceList(bossEntry, roleKey, clanKey) {
   const boss = bossEntry?.bossRef;
-  const clanData = boss?.clans?.[clanKey];
-  if (!boss || !clanData) return [];
+  if (!boss || !roleKey || !clanKey) return [];
 
-  if (clanData.roles) {
-    return Array.isArray(clanData.roles?.[roleKey]) ? clanData.roles[roleKey] : [];
-  }
-
-  return getAllRecommendedForClan(boss, clanData);
+  return getFixedRecommendationRolePicks(boss, clanKey, roleKey);
 }
 
 function getPlannerRoleRecommendations(bossEntry, roleKey, clanKey) {
@@ -7642,9 +8210,7 @@ function openRoleBossModal(boss) {
       label.className = 'boss-role-label';
       label.textContent = roleboardRoleLabels[roleKey];
 
-      const picks = Array.isArray(clanData.roles?.[roleKey])
-        ? rankRecommendedForBoss(boss, clanData.roles[roleKey])
-        : [];
+      const picks = rankRecommendedForBoss(boss, getFixedRecommendationRolePicks(boss, clanKey, roleKey));
       const count = document.createElement('span');
       count.className = 'boss-role-count';
       count.textContent = `${picks.length} picks`;
@@ -7746,7 +8312,7 @@ function openModal(speedster) {
     const list = document.createElement('div');
     list.className = 'speedster-clan-list';
 
-const recommended = rankRecommendedForBoss(speedster, clanData?.recommended || []);
+const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(speedster, clanData));
 
       if (recommended.length === 0) {
         const empty = document.createElement('div');

@@ -275,10 +275,11 @@ function getCommunityTopicItems(topic){
 
 /* New community video loader
    - Fetches videos from YouTube Data API (v3 search) for a topic hashtag
-   - Always requests on initial load (showCommunity) and when topic changes
+   - Prefers the freshest server snapshot between /community.json and community-data
+   - Refreshes on topic entry only when the current data is stale
    - Sorts by publishedAt (desc), then applies hashtag filter (case-insensitive)
    - Limits displayed videos and logs debugging information
-   - Uses a small TTL cache as fallback, but initial load forces a network request
+   - Uses short-lived fallback cache plus a 24h persistent cache
 */
 function getYouTubeApiKey(){
     try{ return (window.POKE_YT_API_KEY || localStorage.getItem('POKE_YT_API_KEY') || '').toString().trim(); }catch(e){ return ''; }
@@ -306,79 +307,106 @@ function computeNextDailyRefreshTime(hour = 10, minute = 30){
     return next;
 }
 
+function getCommunityDataUpdatedAt(){
+    try{
+        const raw = window.COMMUNITY_DATA_UPDATED_AT || localStorage.getItem('COMMUNITY_DATA_UPDATED_AT') || '0';
+        const parsed = parseInt(raw, 10);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }catch(e){
+        return 0;
+    }
+}
+
+function setCommunityDataSourceState(source, updatedAt = 0, options = {}){
+    const { fallbackUpdatedAtToNow = false } = options;
+    const now = Date.now();
+    const normalizedUpdatedAt = updatedAt || (fallbackUpdatedAtToNow ? now : 0);
+    try{
+        window.COMMUNITY_LOADED_SOURCE = source;
+        window.COMMUNITY_LOADED_AT = now;
+        window.COMMUNITY_DATA_UPDATED_AT = normalizedUpdatedAt;
+        localStorage.setItem('COMMUNITY_LOADED_SOURCE', source);
+        localStorage.setItem('COMMUNITY_LOADED_AT', String(now));
+        if(normalizedUpdatedAt){
+            localStorage.setItem('COMMUNITY_DATA_UPDATED_AT', String(normalizedUpdatedAt));
+        } else {
+            localStorage.removeItem('COMMUNITY_DATA_UPDATED_AT');
+        }
+    }catch(e){}
+}
+
+function getCommunityPayloadUpdatedAt(payload){
+    const parsed = Date.parse(payload?.updatedAt || '');
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function applyServerCommunityDataPayload(payload, source){
+    if(!payload || !payload.topics) return false;
+    Object.keys(payload.topics).forEach(key => {
+        try{
+            const topic = payload.topics[key];
+            if(!topic) return;
+            if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
+                COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
+                    id: i.id,
+                    title: i.title || '',
+                    description: i.description || '',
+                    channelName: i.channelName || '',
+                    channelUrl: i.channelUrl || '',
+                    publishedAt: i.publishedAt || '',
+                    thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
+                }));
+            } else {
+                COMMUNITY_FEED_TOPICS[key] = topic;
+            }
+        }catch(e){/* ignore per-topic failures */}
+    });
+    setCommunityDataSourceState(source, getCommunityPayloadUpdatedAt(payload));
+    return true;
+}
+
+async function fetchServerCommunityPayload(url, source){
+    try{
+        const resp = await fetch(url, { cache: 'no-store' });
+        if(!resp || !resp.ok) return null;
+        const json = await resp.json();
+        if(!json || !json.topics) return null;
+        return {
+            source,
+            payload: json,
+            updatedAt: getCommunityPayloadUpdatedAt(json)
+        };
+    }catch(e){
+        console.info('No server community data available or fetch failed', source, e && e.message);
+        return null;
+    }
+}
+
 // Try to load a server-generated community JSON (created by a scheduled job)
 // This allows updates to be applied even when client browsers were not open
 async function loadServerCommunityData(){
-    try{
-        // Try site-root first (if hosting already has community.json)
-        const resp = await fetch('/community.json', { cache: 'no-store' });
-        if(resp && resp.ok){
-            const json = await resp.json();
-            if(json && json.topics){
-                Object.keys(json.topics).forEach(key => {
-                    try{
-                        const topic = json.topics[key];
-                        if(!topic) return;
-                        if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
-                            COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
-                                id: i.id,
-                                title: i.title || '',
-                                description: i.description || '',
-                                channelName: i.channelName || '',
-                                channelUrl: i.channelUrl || '',
-                                publishedAt: i.publishedAt || '',
-                                thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
-                            }));
-                        } else {
-                            COMMUNITY_FEED_TOPICS[key] = topic;
-                        }
-                    }catch(e){/* ignore per-topic failures */}
-                });
-                try{ window.COMMUNITY_LOADED_SOURCE = 'site'; window.COMMUNITY_LOADED_AT = Date.now(); localStorage.setItem('COMMUNITY_LOADED_SOURCE','site'); localStorage.setItem('COMMUNITY_LOADED_AT', String(window.COMMUNITY_LOADED_AT)); }catch(e){}
-                return true;
-            }
-        }
+    const owner = 'Sanzenkai01';
+    const repo = 'poke-effectiveness';
+    const branch = 'community-data';
+    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/community.json`;
 
-        // Fallback: attempt to fetch from the workflow-updated branch on GitHub (raw)
-        // This allows clients to pick up updates even if the file hasn't been merged to main.
-        try{
-            const owner = 'Sanzenkai01';
-            const repo = 'poke-effectiveness';
-            const branch = 'community-data';
-            const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/community.json`;
-            const r2 = await fetch(rawUrl, { cache: 'no-store' });
-            if(!r2.ok) return false;
-            const json2 = await r2.json();
-            if(!json2 || !json2.topics) return false;
-            Object.keys(json2.topics).forEach(key => {
-                try{
-                    const topic = json2.topics[key];
-                    if(!topic) return;
-                    if(COMMUNITY_FEED_TOPICS[key] && Array.isArray(topic.items)){
-                        COMMUNITY_FEED_TOPICS[key].items = topic.items.map(i => ({
-                            id: i.id,
-                            title: i.title || '',
-                            description: i.description || '',
-                            channelName: i.channelName || '',
-                            channelUrl: i.channelUrl || '',
-                            publishedAt: i.publishedAt || '',
-                            thumbnailUrl: i.thumbnailUrl || (`https://i.ytimg.com/vi/${encodeURIComponent(i.id)}/hqdefault.jpg`)
-                        }));
-                    } else {
-                        COMMUNITY_FEED_TOPICS[key] = topic;
-                    }
-                }catch(e){/* ignore per-topic failures */}
-            });
-            try{ window.COMMUNITY_LOADED_SOURCE = 'raw'; window.COMMUNITY_LOADED_AT = Date.now(); localStorage.setItem('COMMUNITY_LOADED_SOURCE','raw'); localStorage.setItem('COMMUNITY_LOADED_AT', String(window.COMMUNITY_LOADED_AT)); }catch(e){}
-            return true;
-        }catch(e){
-            console.info('No server community data available or fetch failed', e && e.message);
-            return false;
-        }
-    }catch(e){
-        console.info('No server community data available or fetch failed', e && e.message);
-        return false;
-    }
+    const candidates = (await Promise.all([
+        fetchServerCommunityPayload('/community.json', 'site'),
+        fetchServerCommunityPayload(rawUrl, 'raw')
+    ])).filter(Boolean);
+
+    if(!candidates.length) return false;
+
+    candidates.sort((a, b) => {
+        const updatedDiff = (b.updatedAt || 0) - (a.updatedAt || 0);
+        if(updatedDiff !== 0) return updatedDiff;
+        if(a.source === b.source) return 0;
+        if(a.source === 'raw') return -1;
+        if(b.source === 'raw') return 1;
+        return 0;
+    });
+
+    return applyServerCommunityDataPayload(candidates[0].payload, candidates[0].source);
 }
 
 async function runDailyCommunityRefresh(){
@@ -447,6 +475,69 @@ function getPersistentCachedCommunityItems(topicKey){
     }catch(e){ try{ localStorage.removeItem(_getPersistentCommunityCacheKey(topicKey)); }catch(_){} return null; }
 }
 function setPersistentCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getPersistentCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
+
+const COMMUNITY_ENTRY_REFRESH_SUCCESS_TTL = COMMUNITY_PERSISTENT_CACHE_TTL;
+const COMMUNITY_ENTRY_REFRESH_FAILURE_TTL = COMMUNITY_FETCH_CACHE_TTL;
+function _getCommunityEntryRefreshStateKey(topicKey){ return `community_entry_refresh_${topicKey}`; }
+function getCommunityEntryRefreshState(topicKey){
+    try{
+        const raw = localStorage.getItem(_getCommunityEntryRefreshStateKey(topicKey));
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        if(!parsed || !parsed.ts) return null;
+        return parsed;
+    }catch(e){
+        try{ localStorage.removeItem(_getCommunityEntryRefreshStateKey(topicKey)); }catch(_){}
+        return null;
+    }
+}
+function setCommunityEntryRefreshState(topicKey, state){
+    try{ localStorage.setItem(_getCommunityEntryRefreshStateKey(topicKey), JSON.stringify(state)); }catch(e){}
+}
+function shouldRefreshCommunityTopicOnEntry(topicKey, options = {}){
+    const { force = false } = options;
+    if(!getYouTubeApiKey()) return false;
+    if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL) return false;
+    if(force) return true;
+
+    const dataUpdatedAt = getCommunityDataUpdatedAt();
+    if(dataUpdatedAt && (Date.now() - dataUpdatedAt) < COMMUNITY_ENTRY_REFRESH_SUCCESS_TTL){
+        return false;
+    }
+
+    const lastState = getCommunityEntryRefreshState(topicKey);
+    if(!lastState || !lastState.ts) return true;
+
+    const ttl = lastState.status === 'success'
+        ? COMMUNITY_ENTRY_REFRESH_SUCCESS_TTL
+        : COMMUNITY_ENTRY_REFRESH_FAILURE_TTL;
+    return (Date.now() - lastState.ts) >= ttl;
+}
+
+async function refreshCommunityTopicOnEntry(topicKey, options = {}){
+    if(!shouldRefreshCommunityTopicOnEntry(topicKey, options)) return false;
+
+    const startedAt = Date.now();
+    setCommunityEntryRefreshState(topicKey, { ts: startedAt, status: 'pending' });
+
+    try{
+        const changed = await loadCommunityVideos(topicKey, { force: true });
+        const hadError = !!COMMUNITY_LAST_FETCH_ERROR[topicKey];
+        setCommunityEntryRefreshState(topicKey, {
+            ts: Date.now(),
+            status: hadError ? 'error' : 'success',
+            changed: !!changed
+        });
+        return changed;
+    }catch(err){
+        setCommunityEntryRefreshState(topicKey, {
+            ts: Date.now(),
+            status: 'error',
+            message: err?.message || String(err)
+        });
+        throw err;
+    }
+}
 
 async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RESULTS){
     const key = getYouTubeApiKey();
@@ -756,6 +847,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             setCachedCommunityItems(topicKey, topic.items);
             // Persist last-successful fetch to longer-lived cache so recent videos remain available
             try{ setPersistentCachedCommunityItems(topicKey, topic.items); }catch(e){}
+            setCommunityDataSourceState('live', Date.now(), { fallbackUpdatedAtToNow: true });
             return !same;
         } finally{
             delete COMMUNITY_FETCH_LOCKS[topicKey];
@@ -1532,21 +1624,14 @@ function setCommunityTopic(topicKey, options = {}){
     }
 
     renderCommunityFeedPanel();
-    // Force-load fresh videos on opening the Community tab
+    // Refresh this topic on entry only when the current dataset is stale.
     try{
-        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed=>{
+        refreshCommunityTopicOnEntry(activeCommunityTopicKey).then(changed=>{
             if(changed) renderCommunityFeedPanel();
         }).catch(console.error);
     }catch(e){}
     // start periodic refresh
     try{ startCommunityAutoRefresh(); }catch(e){}
-
-    // Always request fresh videos for this topic (non-blocking)
-    try{
-        loadCommunityVideos(activeCommunityTopicKey, {force:true}).then(changed => {
-            if(changed) renderCommunityFeedPanel();
-        }).catch(console.error);
-    }catch(e){}
 
     if(!skipStorage){
         localStorage.setItem(COMMUNITY_TOPIC_STORAGE_KEY, activeCommunityTopicKey);
@@ -2051,9 +2136,11 @@ function renderCommunityFeedPanel(){
     try{
         const existingMeta = document.getElementById('community-data-meta');
         const src = window.COMMUNITY_LOADED_SOURCE || localStorage.getItem('COMMUNITY_LOADED_SOURCE') || 'local';
-        const atTs = parseInt(localStorage.getItem('COMMUNITY_LOADED_AT') || String(window.COMMUNITY_LOADED_AT || 0),10) || 0;
-        const atText = atTs ? new Date(atTs).toLocaleString() : 'desconhecido';
-        const metaText = `Fonte: ${src} • Atualizado: ${atText}`;
+        const loadedAtTs = parseInt(localStorage.getItem('COMMUNITY_LOADED_AT') || String(window.COMMUNITY_LOADED_AT || 0),10) || 0;
+        const dataUpdatedAtTs = getCommunityDataUpdatedAt();
+        const loadedAtText = loadedAtTs ? new Date(loadedAtTs).toLocaleString() : 'desconhecido';
+        const dataUpdatedAtText = dataUpdatedAtTs ? new Date(dataUpdatedAtTs).toLocaleString() : 'desconhecido';
+        const metaText = `Fonte: ${src} • Dados: ${dataUpdatedAtText} • Carregado: ${loadedAtText}`;
         if(existingMeta){
             existingMeta.textContent = metaText;
             existingMeta.hidden = false;
@@ -4895,7 +4982,14 @@ async function showCommunity(){
     }
     updateUrl();
 
-    // Start scheduled daily refresh (default 10:30 local time) instead of fetching immediately on tab open
+    // Refresh current topic on entry when server data is stale, while keeping the 24h cooldown.
+    try{
+        refreshCommunityTopicOnEntry(activeCommunityTopicKey).then(changed => {
+            if(changed) renderCommunityFeedPanel();
+        }).catch(console.error);
+    }catch(e){}
+
+    // Keep the scheduled refresh running as a backup when the page stays open.
     try{
         startCommunityAutoRefresh(10, 30);
     }catch(e){
