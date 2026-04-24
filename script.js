@@ -3118,10 +3118,11 @@ const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
 const streamerAvatarCache = new Map();
 const streamerAvatarRequests = new Map();
-const TWITCH_CLIENT_ID = 'udxsp2yf1c6qg7c1bdg0ijquzuux0b';
-const TWITCH_BEARER_TOKEN = 'cwi0gfzerzkms3tnkwei7vymasc5mm';
-const TWITCH_CHAT_USERNAME = 'linikerquadrado2';
-const TWITCH_CHAT_OAUTH_TOKEN = 'oauth:ir0wi4tuxkv7c8xhsk0ivx52d3pf48';
+const TWITCH_CLIENT_ID = 'g5zg0400k4vhrx2g6xi4hgveruamlv';
+const TWITCH_BEARER_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
+const TWITCH_CHAT_USERNAME = 'selflessbot';
+const TWITCH_CHAT_USER_ID = '1486894991';
+const TWITCH_CHAT_OAUTH_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
@@ -3130,7 +3131,7 @@ const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-cr
 const STREAMER_RAT_PERSIST_HEARTBEAT_MS = 15 * 1000;
 
 function computeTwitchCredentialsFingerprint(){
-    const raw = `${TWITCH_CLIENT_ID || ''}::${TWITCH_BEARER_TOKEN || ''}`;
+    const raw = `${TWITCH_CLIENT_ID || ''}::${TWITCH_BEARER_TOKEN || ''}::${TWITCH_CHAT_USERNAME || ''}::${TWITCH_CHAT_USER_ID || ''}`;
     let h = 0;
     for(let i = 0; i < raw.length; i++){
         h = ((h << 5) - h) + raw.charCodeAt(i);
@@ -3924,7 +3925,9 @@ async function validateStreamerRatChatToken(){
         const scopes = Array.isArray(data?.scopes) ? data.scopes.map(scope => scope.toString()) : [];
         const hasChatScope = scopes.includes('chat:read') || scopes.includes('user:read:chat');
         const login = data?.login ? data.login.toString() : '';
+        const userId = data?.user_id ? data.user_id.toString() : '';
         const configuredUsername = normalizeStreamerChannelName(TWITCH_CHAT_USERNAME);
+        const configuredUserId = (TWITCH_CHAT_USER_ID || '').toString().trim();
 
         if(!login){
             return {
@@ -3939,6 +3942,14 @@ async function validateStreamerRatChatToken(){
                 ok: false,
                 reason: 'chat-username-mismatch',
                 message: 'O usuário configurado para o chat não corresponde ao token da Twitch.'
+            };
+        }
+
+        if(configuredUserId && userId && configuredUserId !== userId){
+            return {
+                ok: false,
+                reason: 'chat-user-id-mismatch',
+                message: 'O user_id configurado para o chat nao corresponde ao token da Twitch.'
             };
         }
 
