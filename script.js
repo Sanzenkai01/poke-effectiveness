@@ -89,9 +89,53 @@ let calculatorPageInitialized = false;
 let catchPageInitialized = false;
 let bossesPageLoadPromise = null;
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260419d';
+const APP_ROUTE_ALIASES = {
+    home: { path: '/home', tab: 'home' },
+    effectiveness: { path: '/effectiveness', tab: 'effectiveness' },
+    fossils: { path: '/fossils', tab: 'fossils' },
+    calculator: { path: '/calculator', tab: 'calculator' },
+    catch: { path: '/catch', tab: 'catch' },
+    streamers: { path: '/streamers', tab: 'streamers' },
+    youtube: { path: '/youtube', tab: 'youtube' },
+    community: { path: '/youtube', tab: 'youtube' },
+    feed: { path: '/youtube', tab: 'youtube' },
+    bosses: { path: '/hoopa', tab: 'bosses', bossMode: 'hoopa' },
+    hoopa: { path: '/hoopa', tab: 'bosses', bossMode: 'hoopa' },
+    champion: { path: '/champion', tab: 'bosses', bossMode: 'champion' },
+    'champion-path': { path: '/champion', tab: 'bosses', bossMode: 'champion' },
+    mewtwo: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
+    mew2: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
+    planejador: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
+    planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' }
+};
+
+function getRouteInfo(routeKey){
+    return APP_ROUTE_ALIASES[String(routeKey || '').trim().toLowerCase()] || null;
+}
+
+function getRouteInfoFromPathname(pathname = location.pathname){
+    const normalizedPath = String(pathname || '')
+        .toLowerCase()
+        .replace(/\/index\.html?$/, '')
+        .replace(/\/+$/, '');
+    const slug = normalizedPath.split('/').filter(Boolean).pop() || '';
+    if(!slug || slug === 'app.html' || slug === 'index.html') return null;
+    return getRouteInfo(slug);
+}
+
+function getRoutePathForTab(activeTab = '', bossMode = ''){
+    const normalizedTab = String(activeTab || '').trim().toLowerCase();
+    if(normalizedTab === 'bosses'){
+        const normalizedBossMode = normalizeBossModeParam(bossMode) || 'hoopa';
+        const bossRoute = getRouteInfo(normalizedBossMode);
+        return bossRoute?.path || '/hoopa';
+    }
+    const routeInfo = getRouteInfo(normalizedTab);
+    return routeInfo?.path || '/effectiveness';
+}
 
 function getHomePageUrl(){
-    return new URL('home/', window.location.href).toString();
+    return new URL(getRoutePathForTab('home').replace(/^\//, ''), document.baseURI).toString();
 }
 
 function navigateToHomePage(){
@@ -103,7 +147,7 @@ function loadDeferredScript(src, globalCheck){
         if(typeof globalCheck === 'function' && globalCheck()) return Promise.resolve();
     }catch(e){}
 
-    const resolvedSrc = new URL(src, window.location.href).href;
+    const resolvedSrc = new URL(src, document.baseURI).href;
     const existing = Array.from(document.scripts).find(script => script.src === resolvedSrc);
     if(existing){
         if(existing.dataset.loaded === 'true') return Promise.resolve();
@@ -1526,8 +1570,10 @@ function getBossModeQueryValue(value){
 
 function getRequestedBossModeFromUrl(){
     const params = new URLSearchParams(location.search);
+    const pathRouteInfo = getRouteInfoFromPathname();
     return normalizeBossModeParam(params.get('tab'))
-        || normalizeBossModeParam(params.get('bossmode') || params.get('boss') || params.get('mode'));
+        || normalizeBossModeParam(params.get('bossmode') || params.get('boss') || params.get('mode'))
+        || normalizeBossModeParam(pathRouteInfo?.bossMode || '');
 }
 
 function getCurrentBossMode(){
@@ -5245,10 +5291,11 @@ async function showCommunity(){
 
 // attempt to load tab from URL query first, fallback to localStorage
 function initTabFromUrl(){
-    const params=new URLSearchParams(location.search);
-    const tabparam=params.get('tab');
+    const params = new URLSearchParams(location.search);
+    const pathRouteInfo = getRouteInfoFromPathname();
+    const tabparam = params.get('tab') || pathRouteInfo?.tab || '';
     const hasQuery = params.toString().length > 0;
-    if(!hasQuery) return showHome();
+    if(!hasQuery && !pathRouteInfo) return showHome();
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(tabparam==='calculator') return showCalculator();
@@ -5776,11 +5823,9 @@ function updateUrl(){
                       (tabCommunityBtn && tabCommunityBtn.classList.contains('active')) ? 'youtube' :
                       (tabStreamersBtn && tabStreamersBtn.classList.contains('active')) ? 'streamers' :
                       (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
-    const tabQueryValue = activeTab === 'bosses'
-        ? (getBossModeQueryValue(getCurrentBossMode()) || 'hoopa')
-        : activeTab;
-    if(tabQueryValue) params.set('tab', tabQueryValue); else params.delete('tab');
+    params.delete('tab');
     params.delete('bossmode');
+    params.delete('quick');
     if(!(activeTab === 'bosses' && getCurrentBossMode() === 'planner')){
         params.delete('plan');
     }
@@ -5791,7 +5836,8 @@ function updateUrl(){
         params.delete('topic');
     }
     const query = params.toString();
-    const newUrl = location.pathname + (query ? `?${query}` : '');
+    const routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
+    const newUrl = routePath + (query ? `?${query}` : '');
     history.replaceState(null, '', newUrl);
     syncSidebarNavigationState();
 
@@ -5995,14 +6041,14 @@ function initializeCatchPage(){
 document.body.classList.add('dark');
 
 const APP_CACHE_PREFIX = 'poke-effectiveness-';
-const TYPES_DATA_URL = 'types.json';
+const TYPES_DATA_URL = new URL('types.json', document.baseURI).toString();
 
 // Service worker stays disabled by default while the project is updated manually.
 const enableSW = false;
 
 async function cleanupDisabledServiceWorker(){
     if(!('serviceWorker' in navigator)) return;
-    const expectedScriptPath = new URL('sw.js', location.href).pathname;
+    const expectedScriptPath = new URL('sw.js', document.baseURI).pathname;
     try {
         const registrations = await navigator.serviceWorker.getRegistrations();
         const matchingRegistrations = registrations.filter(registration => {

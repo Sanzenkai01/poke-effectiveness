@@ -30,9 +30,37 @@
     <script>
         (function(){
             var params = new URLSearchParams(window.location.search);
-            var appKeys = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'plan', 'quick'];
-            var shouldOpenApp = appKeys.some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
-            var target = shouldOpenApp ? ('./app.html' + window.location.search + window.location.hash) : './home/';
+            var tab = String(params.get('tab') || params.get('bossmode') || params.get('boss') || params.get('mode') || '').toLowerCase();
+            var routeMap = {
+                effectiveness: './effectiveness',
+                fossils: './fossils',
+                calculator: './calculator',
+                catch: './catch',
+                streamers: './streamers',
+                youtube: './youtube',
+                community: './youtube',
+                feed: './youtube',
+                bosses: './hoopa',
+                speedsters: './hoopa',
+                hoopa: './hoopa',
+                champion: './champion',
+                'champion-path': './champion',
+                mewtwo: './mewtwo',
+                mew2: './mewtwo',
+                planejador: './planejador',
+                planner: './planejador'
+            };
+            var hasAppParams = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'plan', 'quick'].some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
+            var targetPath = routeMap[tab] || (params.has('types') || params.has('quick') ? './effectiveness' : './home/');
+            params.delete('tab');
+            params.delete('bossmode');
+            params.delete('boss');
+            params.delete('mode');
+            var cleanQuery = params.toString();
+            var target = targetPath + (cleanQuery ? ('?' + cleanQuery) : '') + window.location.hash;
+            if(!hasAppParams){
+                target = './home/';
+            }
             window.location.replace(target);
         })();
     </script>
