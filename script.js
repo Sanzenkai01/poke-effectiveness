@@ -90,6 +90,14 @@ let catchPageInitialized = false;
 let bossesPageLoadPromise = null;
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260419d';
 
+function getHomePageUrl(){
+    return new URL('home/', window.location.href).toString();
+}
+
+function navigateToHomePage(){
+    window.location.assign(getHomePageUrl());
+}
+
 function loadDeferredScript(src, globalCheck){
     try{
         if(typeof globalCheck === 'function' && globalCheck()) return Promise.resolve();
@@ -330,14 +338,18 @@ function getCommunityVideoTimestamp(video){
     return Number.isFinite(timestamp) ? timestamp : 0;
 }
 
+function limitCommunityItems(items){
+    return Array.isArray(items) ? items.slice(0, COMMUNITY_MAX_DISPLAY) : [];
+}
+
 function getCommunityTopicItems(topic){
-    return (topic?.items || [])
+    return limitCommunityItems((topic?.items || [])
         .map((item, index) => getCommunityVideoData(item, index))
         .sort((a, b) => {
             const timeDiff = getCommunityVideoTimestamp(b) - getCommunityVideoTimestamp(a);
             if(timeDiff !== 0) return timeDiff;
             return (a._originalIndex || 0) - (b._originalIndex || 0);
-        });
+        }));
 }
 
 /* New community video loader
@@ -353,7 +365,7 @@ function getYouTubeApiKey(){
 }
 const COMMUNITY_FETCH_CACHE_TTL = 1000 * 60 * 5; // 5 minutes fallback cache
 const COMMUNITY_MAX_RESULTS = 50; // how many results to request from API
-const COMMUNITY_MAX_DISPLAY = 15; // how many to show after filtering/sorting
+const COMMUNITY_MAX_DISPLAY = 10; // how many to show after filtering/sorting
 const COMMUNITY_AUTO_REFRESH_MS = 1000 * 60 * 5; // default 5 minutes
 let COMMUNITY_FETCH_LOCKS = {};
 let communityAutoRefreshTimer = null;
@@ -523,10 +535,10 @@ function getCachedCommunityItems(topicKey){
         const parsed = JSON.parse(raw);
         if(!parsed || !parsed.ts || !parsed.items) return null;
         if(Date.now() - parsed.ts > COMMUNITY_FETCH_CACHE_TTL){ localStorage.removeItem(_getCommunityCacheKey(topicKey)); return null; }
-        return parsed.items;
+        return limitCommunityItems(parsed.items);
     }catch(e){ try{ localStorage.removeItem(_getCommunityCacheKey(topicKey)); }catch(_){} return null; }
 }
-function setCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
+function setCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items: limitCommunityItems(items)})); }catch(e){} }
 
 // Persistent cache for last-successful fetches (longer TTL so recent videos survive longer)
 const COMMUNITY_PERSISTENT_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
@@ -538,10 +550,10 @@ function getPersistentCachedCommunityItems(topicKey){
         const parsed = JSON.parse(raw);
         if(!parsed || !parsed.ts || !parsed.items) return null;
         if(Date.now() - parsed.ts > COMMUNITY_PERSISTENT_CACHE_TTL){ localStorage.removeItem(_getPersistentCommunityCacheKey(topicKey)); return null; }
-        return parsed.items;
+        return limitCommunityItems(parsed.items);
     }catch(e){ try{ localStorage.removeItem(_getPersistentCommunityCacheKey(topicKey)); }catch(_){} return null; }
 }
-function setPersistentCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getPersistentCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items})); }catch(e){} }
+function setPersistentCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getPersistentCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items: limitCommunityItems(items)})); }catch(e){} }
 
 const COMMUNITY_ENTRY_REFRESH_SUCCESS_TTL = COMMUNITY_PERSISTENT_CACHE_TTL;
 const COMMUNITY_ENTRY_REFRESH_FAILURE_TTL = COMMUNITY_FETCH_CACHE_TTL;
@@ -1386,6 +1398,7 @@ function setCommunityPlayerLoaded(video){
     const preview = document.getElementById('community-video-preview');
     const previewImage = document.getElementById('community-video-preview-image');
     const previewCaption = document.getElementById('community-video-preview-caption');
+    const previewNote = document.getElementById('community-player-frame-note');
     if(!preview || !video) return;
 
     if(previewImage){
@@ -1393,7 +1406,11 @@ function setCommunityPlayerLoaded(video){
         previewImage.alt = video.title || 'Miniatura do vídeo selecionado';
     }
     if(previewCaption){
-        previewCaption.textContent = 'Clique para abrir este vídeo.';
+        previewCaption.textContent = 'Clique para carregar este video aqui.';
+    }
+    if(previewNote){
+        previewNote.hidden = false;
+        previewNote.textContent = 'Escolha um video da lista ou clique na capa para carregar o player aqui sem sair da aba.';
     }
 
     if(frame){
@@ -1403,6 +1420,29 @@ function setCommunityPlayerLoaded(video){
     preview.hidden = false;
     activeCommunityVideoLoaded = false;
     loadedCommunityVideoId = '';
+}
+
+function loadCommunityVideoFrame(video, options = {}){
+    const frame = document.getElementById('community-video-frame');
+    const preview = document.getElementById('community-video-preview');
+    const previewNote = document.getElementById('community-player-frame-note');
+    const videoId = extractYouTubeVideoId(video?.id || video?.url || video?.href || '');
+    if(!frame || !preview || !videoId) return false;
+
+    const autoplay = options.autoplay === false ? '0' : '1';
+    const nextSrc = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=${autoplay}&rel=0&playsinline=1`;
+    if(frame.getAttribute('src') !== nextSrc){
+        frame.src = nextSrc;
+    }
+    frame.title = video?.title ? `Player de video: ${video.title}` : 'Player de video da comunidade';
+    frame.hidden = false;
+    preview.hidden = true;
+    if(previewNote){
+        previewNote.hidden = true;
+    }
+    activeCommunityVideoLoaded = true;
+    loadedCommunityVideoId = videoId;
+    return true;
 }
 
 function setVisiblePanel(activePanel){
@@ -1558,7 +1598,7 @@ function activateSidebarTarget(button){
         fossils: showFossils,
         calculator: showCalculator,
         catch: showCatch,
-        bosses: showSpeedsters,
+        bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
         youtube: showCommunity
     };
@@ -1783,7 +1823,7 @@ const strings = {
         amber: 'Amber',
         amber: 'Âmbar',
         fossilWord: 'fóssil',
-        fossilIntro: 'Selecione dois fósseis para formar um Pokémon. Cada par produz um resultado diferente e exige uma certa quantia de DNA.',
+        fossilIntro: '1. Escolha o primeiro fossil. 2. Escolha o segundo. 3. Confira o Pokemon e o DNA necessario logo abaixo.',
         calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
         pokemonTypeLabel: 'Tipo de Pokémon',
         normal: 'Normal',
@@ -2082,8 +2122,7 @@ function updateTextContent(){
             });
             const hintEl2 = document.getElementById('fossil-hint');
             if(hintEl2) hintEl2.textContent = '';
-            const resultDiv = document.getElementById('result');
-            if(resultDiv) resultDiv.innerHTML = '';
+            renderFossilEmptyState();
             lastFossilPair = null;
         });
     }
@@ -2125,24 +2164,7 @@ function updateColumns(){
 }
 
 function showHome(){
-    clearTabHighlights();
-    setActiveTabTheme('home');
-    setVisiblePanel(contentHome);
-    document.body.classList.remove('show-instructions');
-    const legend = document.getElementById('legend');
-    if(legend) legend.style.display = 'none';
-    const titleEl = document.getElementById('page-title');
-    if(titleEl) titleEl.textContent = t('siteName');
-    updateBrowserTitle();
-    if(useGsap && contentHome){
-        gsap.fromTo(
-            contentHome.querySelector('.home-landing__shell'),
-            { opacity: 0, y: 20, scale: 0.98 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'power2.out' }
-        );
-    }
-    refreshHomeStreamerInfo();
-    updateUrl();
+    navigateToHomePage();
 }
 
 function renderCommunityFeed(){
@@ -2178,16 +2200,11 @@ function renderCommunityFeedPanel(){
     renderCommunityTopicFilters();
 
     if(heroTitleEl) heroTitleEl.textContent = 'Vídeos recentes da comunidade';
-    if(heroLeadEl) heroLeadEl.textContent = 'Veja os uploads mais recentes da comunidade.';
-    if(heroSupportingEl) heroSupportingEl.textContent = 'Lista cronológica, sem ranking.';
+    if(heroLeadEl) heroLeadEl.textContent = 'Escolha um tema e carregue o player sem sair da lista.';
+    if(heroSupportingEl) heroSupportingEl.textContent = 'Seleção cronológica com player na própria aba.';
     if(playerTagEl) playerTagEl.textContent = 'Recentes';
-    if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} A lista abaixo segue ordem cronológica de postagem dentro de ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo na lista ou clique na capa para abrir o player em pop-up.';
-    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Últimos vídeos' : `Últimos vídeos de ${topic.label}`;
-    if(listDescriptionEl) listDescriptionEl.textContent = `Resultados em ordem cronológica de postagem para ${topic.hashtag}, do mais recente para o mais antigo.`;
-
-    if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} Filtro: ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo e clique na capa para abrir o player.';
+    if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} Filtro atual: ${topic.hashtag}.`;
+    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo na lista ou clique na capa para carregar o player aqui.';
     if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Vídeos recentes' : `Vídeos de ${topic.label}`;
     if(listDescriptionEl) listDescriptionEl.textContent = `Mais recentes em ${topic.hashtag}.`;
 
@@ -2309,15 +2326,16 @@ function renderCommunityFeedPanel(){
     }
     if(previewEl){
         previewEl.disabled = false;
-        previewEl.setAttribute('aria-label', `Abrir vídeo em pop-up: ${activeVideo.title}`);
+        previewEl.setAttribute('aria-label', `Carregar vídeo em destaque: ${activeVideo.title}`);
         previewEl.onclick = () => {
-            openSiteYouTubeModal({
-                videoId: activeVideo.id,
-                title: activeVideo.title
-            });
+            loadCommunityVideoFrame(activeVideo);
         };
     }
-    setCommunityPlayerLoaded(activeVideo);
+    if(activeCommunityVideoLoaded && loadedCommunityVideoId === activeVideo.id){
+        loadCommunityVideoFrame(activeVideo, { autoplay: false });
+    } else {
+        setCommunityPlayerLoaded(activeVideo);
+    }
 
     const fragment = document.createDocumentFragment();
     topicItems.forEach(item => {
@@ -2355,10 +2373,10 @@ function renderCommunityFeedPanel(){
         button.append(thumb, body);
         button.addEventListener('click', () => {
             activeCommunityVideoId = item.id;
+            activeCommunityVideoLoaded = false;
             renderCommunityFeedPanel();
-            openSiteYouTubeModal({
-                videoId: item.id,
-                title: item.title
+            requestAnimationFrame(() => {
+                loadCommunityVideoFrame(item);
             });
         });
         fragment.appendChild(button);
@@ -2374,7 +2392,7 @@ function openHomeDestination(target){
         fossils: showFossils,
         calculator: showCalculator,
         catch: showCatch,
-        bosses: showSpeedsters,
+        bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
         community: showCommunity,
         youtube: showCommunity
@@ -2406,9 +2424,8 @@ function showFossils(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabFossils');
     updateBrowserTitle();
-    const fres = document.getElementById('result');
-    if(fres) fres.innerHTML = '';
     lastFossilPair = null;
+    renderFossilEmptyState();
     if(useGsap){
         gsap.from(contentFossils, {opacity:0, y:-10, duration:0.4});
     }
@@ -3011,7 +3028,7 @@ function showCalculator(){
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
-if(homeBtn) homeBtn.addEventListener('click',()=>{ showHome(); localStorage.setItem('selectedTab','home'); updateUrl(); });
+if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
 if(pascoaBtn) pascoaBtn.addEventListener('click', openPascoaModal);
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
@@ -4886,6 +4903,7 @@ function renderStreamers(){
         const discordLink = STREAMER_DISCORD_LINKS[name];
         discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponível';
         discordBtn.disabled = !discordLink;
+        discordBtn.hidden = !discordLink;
 
         const openBtn = document.createElement('button');
         openBtn.textContent = 'Abrir na Twitch';
@@ -4896,16 +4914,11 @@ function renderStreamers(){
 
         const miniPreview = document.createElement('div');
         miniPreview.className = 'streamer-mini-preview';
-        miniPreview.style.display = 'none';
+        miniPreview.style.display = 'block';
         miniPreview.style.marginTop = '0.5rem';
 
         const clearMiniPreview = () => {
             miniPreview.replaceChildren();
-        };
-
-        const hidePreview = () => {
-            clearMiniPreview();
-            miniPreview.style.display = 'none';
         };
 
         const safeAssetUrl = (url) => {
@@ -4921,83 +4934,118 @@ function renderStreamers(){
             }
         };
 
-        const setOnlinePreview = () => {
-            const parentDomain = location.hostname || 'localhost';
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://player.twitch.tv/?channel=${encodeURIComponent(name)}&parent=${encodeURIComponent(parentDomain)}&autoplay=false`;
-            iframe.title = `Prévia da transmissão de ${name}`;
-            iframe.height = '180';
-            iframe.width = '100%';
-            iframe.style.border = '0';
-            iframe.style.borderRadius = '0.5rem';
-            iframe.style.minHeight = '160px';
-            iframe.setAttribute('allowfullscreen', '');
-            iframe.setAttribute('webkitallowfullscreen', '');
-            iframe.setAttribute('mozallowfullscreen', '');
-            clearMiniPreview();
-            // place iframe preview and an invisible overlay so clicks open the site modal
-            miniPreview.style.position = 'relative';
-            miniPreview.appendChild(iframe);
-            const overlay = document.createElement('button');
-            overlay.type = 'button';
-            overlay.className = 'streamer-mini-preview__overlay';
-            overlay.setAttribute('aria-label', `Abrir transmissão de ${displayName}`);
-            overlay.style.position = 'absolute';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.border = '0';
-            overlay.style.background = 'transparent';
-            overlay.style.cursor = 'pointer';
-            overlay.style.zIndex = '6';
-            overlay.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
-            });
-            miniPreview.appendChild(overlay);
-            miniPreview.style.display = 'block';
-        };
+        const createPreviewInitials = () => displayName
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(part => part.charAt(0).toUpperCase())
+            .join('') || displayName.charAt(0).toUpperCase();
 
-        const setOfflineAvatar = (avatarUrl) => {
+        const renderPreviewCard = (options = {}) => {
+            const {
+                state = 'loading',
+                avatarUrl = '',
+                eyebrow = 'Preparando',
+                title = 'Buscando o status do canal...',
+                meta = 'A prévia do canal aparece aqui assim que a verificação terminar.',
+                action = 'Abrir na Twitch'
+            } = options;
+
+            clearMiniPreview();
             const safeUrl = safeAssetUrl(avatarUrl);
-            if(!safeUrl){
-                hidePreview();
-                return;
-            }
-            const img = document.createElement('img');
-            img.src = safeUrl;
-            img.alt = `Avatar offline de ${name}`;
-            img.loading = 'lazy';
-            img.style.width = '100%';
-            img.style.height = '160px';
-            img.style.objectFit = 'cover';
-            img.style.borderRadius = '0.5rem';
-            clearMiniPreview();
-            miniPreview.style.position = 'relative';
-            miniPreview.appendChild(img);
-            const overlayOffline = document.createElement('button');
-            overlayOffline.type = 'button';
-            overlayOffline.className = 'streamer-mini-preview__overlay';
-            overlayOffline.setAttribute('aria-label', `Abrir transmissão de ${displayName}`);
-            overlayOffline.style.position = 'absolute';
-            overlayOffline.style.top = '0';
-            overlayOffline.style.left = '0';
-            overlayOffline.style.width = '100%';
-            overlayOffline.style.height = '100%';
-            overlayOffline.style.border = '0';
-            overlayOffline.style.background = 'transparent';
-            overlayOffline.style.cursor = 'pointer';
-            overlayOffline.style.zIndex = '6';
-            overlayOffline.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
-            });
-            miniPreview.appendChild(overlayOffline);
+
+            miniPreview.dataset.state = state;
             miniPreview.style.display = 'block';
+
+            const previewCard = document.createElement('div');
+            previewCard.className = 'streamer-mini-preview__card';
+
+            const media = document.createElement('div');
+            media.className = 'streamer-mini-preview__media';
+
+            if(safeUrl){
+                const img = document.createElement('img');
+                img.src = safeUrl;
+                img.alt = `Avatar de ${displayName}`;
+                img.loading = 'lazy';
+                img.className = 'streamer-mini-preview__image';
+                media.appendChild(img);
+            } else {
+                const fallback = document.createElement('div');
+                fallback.className = 'streamer-mini-preview__fallback';
+                fallback.textContent = createPreviewInitials();
+                media.appendChild(fallback);
+            }
+
+            const badge = document.createElement('span');
+            badge.className = 'streamer-mini-preview__badge';
+            badge.textContent = state === 'drop'
+                ? 'PStory com drops'
+                : state === 'pstory'
+                    ? 'PStory ao vivo'
+                    : state === 'live'
+                        ? 'Ao vivo'
+                        : state === 'offline'
+                            ? 'Offline'
+                            : 'Verificando';
+            media.appendChild(badge);
+
+            const body = document.createElement('div');
+            body.className = 'streamer-mini-preview__body';
+
+            const eyebrowEl = document.createElement('span');
+            eyebrowEl.className = 'streamer-mini-preview__eyebrow';
+            eyebrowEl.textContent = eyebrow;
+
+            const titleEl = document.createElement('strong');
+            titleEl.className = 'streamer-mini-preview__title';
+            titleEl.textContent = title;
+
+            const metaEl = document.createElement('span');
+            metaEl.className = 'streamer-mini-preview__meta';
+            metaEl.textContent = meta;
+
+            const actionEl = document.createElement('span');
+            actionEl.className = 'streamer-mini-preview__action';
+            actionEl.textContent = action;
+
+            body.append(eyebrowEl, titleEl, metaEl, actionEl);
+            previewCard.append(media, body);
+            miniPreview.appendChild(previewCard);
         };
 
-        hidePreview();
+        const setPreviewFromInfo = (info = {}, avatarUrl = '') => {
+            const liveMeta = info.isPstoryDrop
+                ? 'PStory com drops ativos agora.'
+                : info.isPstoryNoDrop
+                    ? 'PStory ao vivo sem drops.'
+                    : info.isPstory
+                        ? 'PStory ao vivo no canal.'
+                        : 'Transmissão ao vivo na Twitch.';
+
+            renderPreviewCard({
+                state: info.status === 'online'
+                    ? (info.isPstoryDrop ? 'drop' : info.isPstory ? 'pstory' : 'live')
+                    : info.status === 'offline'
+                        ? 'offline'
+                        : 'unknown',
+                avatarUrl,
+                eyebrow: info.status === 'online' ? 'Ao vivo agora' : info.status === 'offline' ? 'Canal offline' : 'Status parcial',
+                title: info.status === 'online'
+                    ? (info.title || 'Transmissão ao vivo da comunidade.')
+                    : info.status === 'offline'
+                        ? 'Abra o canal para acompanhar a próxima live.'
+                        : 'Não foi possível montar uma prévia confiável do canal.',
+                meta: info.status === 'online'
+                    ? liveMeta
+                    : info.status === 'offline'
+                        ? 'O card continua clicável para abrir o canal ou a última transmissão.'
+                        : 'Você ainda pode abrir o canal pela Twitch enquanto o status é atualizado.',
+                action: info.status === 'online' ? 'Clique no card para abrir a transmissão' : 'Clique no card para abrir o canal'
+            });
+        };
+
+        renderPreviewCard();
 
         card.style.position = 'relative';
         card.dataset.drop = (!isNonDrop).toString();
@@ -5035,7 +5083,6 @@ function renderStreamers(){
                             isPstoryDrop: true
                         });
                     }
-                    setOnlinePreview();
                     // show Pstory indicator
                     if(info.isPstoryDrop){
                         pstoryInfo.textContent = 'Transmitindo PStory!';
@@ -5055,20 +5102,22 @@ function renderStreamers(){
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Canal offline no momento.';
                     pstoryInfo.style.color = '#fa0505';
-                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 } else if(info.status === 'unknown'){
                     status.textContent = 'Status desconhecido';
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Não foi possível verificar o título.';
                     pstoryInfo.style.color = '#aaa';
-                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 } else {
                     status.textContent = 'Erro ao obter';
                     status.classList.add('offline');
                     pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
                     pstoryInfo.style.color = '#faa';
-                    fetchStreamerAvatar(name).then(setOfflineAvatar);
                 }
+                setPreviewFromInfo(info);
+                fetchStreamerAvatar(name).then((avatarUrl) => {
+                    if(renderToken !== streamerRenderToken) return;
+                    setPreviewFromInfo(info, avatarUrl || '');
+                });
                 applyStreamerVisualState(card, info);
                 placeStreamerCard(card, info);
                 openBtn.disabled = false;
@@ -5084,7 +5133,11 @@ function renderStreamers(){
                 resolvedCount += 1;
                 status.textContent = 'Erro ao obter';
                 status.classList.add('offline');
-                fetchStreamerAvatar(name).then(setOfflineAvatar);
+                setPreviewFromInfo(fallbackInfo);
+                fetchStreamerAvatar(name).then((avatarUrl) => {
+                    if(renderToken !== streamerRenderToken) return;
+                    setPreviewFromInfo(fallbackInfo, avatarUrl || '');
+                });
                 openBtn.disabled = false;
                 updateStatusInfo();
                 refreshRatSummary();
@@ -5357,6 +5410,18 @@ function fossilShowResult(pair){
             <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
             <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
             ${combo.dna ? `<p>DNA necessário: ${combo.dna}</p>` : ''}
+        </div>
+    `;
+}
+
+function renderFossilEmptyState(){
+    const resultDiv = document.getElementById('result');
+    if(!resultDiv) return;
+
+    resultDiv.innerHTML = `
+        <div class="fossil-empty-state">
+            <strong>Combine dois fosseis para revelar o Pokemon.</strong>
+            <span>Assim que o segundo fossil for escolhido, o resultado aparece aqui com o DNA necessario.</span>
         </div>
     `;
 }
@@ -6611,6 +6676,29 @@ if(fossilLocationBtn && fossilLocationModal){
     });
 }
 
+function openQuickActionFromUrl(){
+    const params = new URLSearchParams(location.search);
+    const action = String(params.get('quick') || '').trim().toLowerCase();
+    if(!action) return;
+    const triggerMap = {
+        commands: commandsBtn,
+        'elemental-balls': elementalBallsBtn,
+        respawns: respawnsBtn,
+        fishing: fishingBtn
+    };
+    const trigger = triggerMap[action];
+    if(!trigger) return;
+    window.setTimeout(() => {
+        try{
+            trigger.click();
+        }catch(error){
+            console.error('Nao foi possivel abrir o atalho rapido', action, error);
+        }
+    }, 180);
+}
+
+openQuickActionFromUrl();
+
 function buildMatrix(){
     const types = menuTypes;
     const rows = types.map(att=>{
@@ -6898,11 +6986,22 @@ function syncHomeLandingFocusSummary(cards = []){
             btn.setAttribute('aria-expanded','false');
 
             const idx = String(index + 1).padStart(2, '0');
+            const previewItems = group.items || [];
+            const previewMarkup = previewItems.length
+                ? `<div class="home-tool-card__summary">${previewItems.map(item => `<span class="home-tool-card__pill">${item.label}</span>`).join('')}</div>`
+                : '';
+            const actionLabel = (group.items || []).length === 1
+                ? `Abrir ${group.items[0].label}`
+                : `Explorar ${group.title}`;
             btn.innerHTML = `
                 <span class="home-tool-card__index">${idx}</span>
                 <strong class="home-tool-card__title">${group.title}</strong>
-                <span class="home-tool-card__desc">${group.subtitle}</span>
-                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+                ${previewMarkup}
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">${actionLabel}</span>
+                    <span class="home-tool-card__meta">${(group.items || []).length} modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">&#9662;</span>
             `;
 
             homeTools.appendChild(btn);

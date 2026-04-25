@@ -12,7 +12,7 @@
 </head>
 <body data-active-tab="bosses" data-initial-boss-mode="planner">
   <header class="header">
-    <button id="back-btn" class="icon-button" onclick="location.href='../index.html?tab=planejador'+(location.search ? '&amp;'+location.search.slice(1) : '')" aria-label="Voltar ao site">&#x21a9;&#xfe0f;</button>
+    <button id="back-btn" class="icon-button" onclick="(function(){const params=new URLSearchParams(location.search);const plan=params.get('plan');location.href='../index.html?tab=planejador'+(plan ? '&plan='+encodeURIComponent(plan) : '');})();" aria-label="Voltar ao site">&#8592;</button>
     <h1>Bosses</h1>
     <div style="width:48px;" aria-hidden="true"></div>
   </header>
@@ -47,7 +47,7 @@
         <div class="speedster-modal-title">
           <h2 id="modal-title"></h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
-          <div class="tier-legend" aria-label="Legenda de cores de recomenda&ccedil;&atilde;o">
+          <div class="tier-legend" aria-label="Legenda de cores de recomendacao">
             <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
             <span class="tier-dot tier-otimo" aria-hidden="true"></span>Otimo
             <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom

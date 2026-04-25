@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Home do Poke Utilities com acesso rapido aos modulos principais do PStory.">
+    <title>Poke Utilities Home</title>
+    <link rel="icon" type="image/x-icon" href="../icons-type/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=20260424d">
+</head>
+<body class="dark home-view">
+    <main>
+        <section class="home-landing" aria-labelledby="home-hero-title">
+            <div class="home-landing__shell">
+                <div class="home-landing__hero">
+                    <div class="home-landing__copy">
+                        <p class="home-landing__eyebrow">Hub da comunidade</p>
+                        <h1 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h1>
+                        <p class="home-landing__lead">Uma entrada propria para chegar no PStory do jeito mais rapido, sem mostrar o app antes da home quando a conexao estiver lenta.</p>
+                        <p class="home-landing__supporting">Escolha o grupo certo e siga direto para tipos, fosseis, treinamento, captura, bosses, streamers e videos da comunidade.</p>
+                        <div class="home-landing__actions">
+                            <a class="home-landing__cta" href="../app.html?tab=hoopa">Explorar</a>
+                            <a
+                                class="home-landing__icon-link"
+                                href="https://discord.com/invite/Gn2x6F5vB6"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Entrar no Discord do PStory"
+                                title="Entrar no Discord do PStory"
+                            >
+                                <img src="../icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <aside class="home-landing__focus" aria-label="Resumo da plataforma">
+                        <p class="home-landing__focus-label">Hub tatico</p>
+                        <div class="home-landing__focus-orbit">
+                            <div class="home-landing__focus-core">
+                                <span class="home-landing__focus-number">04</span>
+                                <span class="home-landing__focus-caption">grupos principais</span>
+                            </div>
+                        </div>
+                        <div class="home-landing__focus-note">
+                            <strong>Consulta rapida, sem excesso.</strong>
+                            <p>Abra o modulo certo em um clique e continue o que precisa fazer no jogo.</p>
+                        </div>
+                        <div id="home-streamer-info" class="home-landing__focus-streamers" data-state="loading" aria-live="polite">
+                            <span class="home-landing__focus-streamers-label">PStory ao vivo</span>
+                            <strong id="home-streamer-count" class="home-landing__focus-streamers-count">--</strong>
+                            <span id="home-streamer-text" class="home-landing__focus-streamers-text">Consultando canais...</span>
+                        </div>
+                        <div id="home-streamer-rat-summary" class="home-landing__focus-rattata" aria-live="polite"></div>
+                    </aside>
+                </div>
+
+                <section class="home-landing__quick" aria-labelledby="home-quick-title">
+                    <div class="home-landing__quick-head">
+                        <div class="home-landing__quick-copy">
+                            <span class="home-landing__quick-eyebrow">Acesso rapido</span>
+                            <h2 id="home-quick-title">Atalhos do sistema</h2>
+                            <p>Os comandos mais usados ficam visiveis logo na entrada, sem precisar descer ate o fim da sidebar.</p>
+                        </div>
+                        <a
+                            class="home-landing__quick-discord"
+                            href="https://discord.com/invite/Gn2x6F5vB6"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img src="../icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                            Entrar no Discord
+                        </a>
+                    </div>
+                    <div class="home-landing__quick-grid" role="group" aria-label="Atalhos do sistema">
+                        <a class="sidebar-quick-link home-landing__quick-link" href="../app.html?tab=effectiveness&quick=commands">
+                            <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
+                            <span>Comandos</span>
+                        </a>
+                        <a class="sidebar-quick-link home-landing__quick-link" href="../app.html?tab=effectiveness&quick=elemental-balls">
+                            <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
+                                <img src="../balls/pokebola.png" alt="" loading="lazy" decoding="async" />
+                            </span>
+                            <span>Pokebolas</span>
+                        </a>
+                        <a class="sidebar-quick-link home-landing__quick-link" href="../app.html?tab=effectiveness&quick=respawns">
+                            <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
+                            <span>Respawns</span>
+                        </a>
+                        <a class="sidebar-quick-link home-landing__quick-link" href="../app.html?tab=effectiveness&quick=fishing">
+                            <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
+                            <span>Pescaria</span>
+                        </a>
+                    </div>
+                </section>
+
+                <div class="home-landing__tools" aria-label="Ferramentas disponiveis">
+                    <a class="home-tool-card" href="../app.html?tab=hoopa">
+                        <span class="home-tool-card__index">01</span>
+                        <strong class="home-tool-card__title">Bosses</strong>
+                        <div class="home-tool-card__summary">
+                            <span class="home-tool-card__pill">Hoopa Portais</span>
+                            <span class="home-tool-card__pill">Champion Path</span>
+                            <span class="home-tool-card__pill">Mewtwo</span>
+                            <span class="home-tool-card__pill">Planejador</span>
+                        </div>
+                        <div class="home-tool-card__footer">
+                            <span class="home-tool-card__action">Explorar Bosses</span>
+                            <span class="home-tool-card__meta">4 modulos</span>
+                        </div>
+                    </a>
+                    <a class="home-tool-card" href="../app.html?tab=catch">
+                        <span class="home-tool-card__index">02</span>
+                        <strong class="home-tool-card__title">Sistemas</strong>
+                        <div class="home-tool-card__summary">
+                            <span class="home-tool-card__pill">Catch</span>
+                            <span class="home-tool-card__pill">Fosseis</span>
+                        </div>
+                        <div class="home-tool-card__footer">
+                            <span class="home-tool-card__action">Explorar Sistemas</span>
+                            <span class="home-tool-card__meta">2 modulos</span>
+                        </div>
+                    </a>
+                    <a class="home-tool-card" href="../app.html?tab=effectiveness">
+                        <span class="home-tool-card__index">03</span>
+                        <strong class="home-tool-card__title">Utilidades</strong>
+                        <div class="home-tool-card__summary">
+                            <span class="home-tool-card__pill">Tipos</span>
+                            <span class="home-tool-card__pill">Treinamento</span>
+                        </div>
+                        <div class="home-tool-card__footer">
+                            <span class="home-tool-card__action">Explorar Utilidades</span>
+                            <span class="home-tool-card__meta">2 modulos</span>
+                        </div>
+                    </a>
+                    <a class="home-tool-card" href="../app.html?tab=youtube">
+                        <span class="home-tool-card__index">04</span>
+                        <strong class="home-tool-card__title">Comunidade</strong>
+                        <div class="home-tool-card__summary">
+                            <span class="home-tool-card__pill">YouTube</span>
+                            <span class="home-tool-card__pill">Streamers</span>
+                        </div>
+                        <div class="home-tool-card__footer">
+                            <span class="home-tool-card__action">Explorar Comunidade</span>
+                            <span class="home-tool-card__meta">2 modulos</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="./home.js?v=20260424b" defer></script>
+</body>
+</html>

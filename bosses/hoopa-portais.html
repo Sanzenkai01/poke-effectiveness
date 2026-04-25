@@ -12,7 +12,7 @@
 </head>
 <body data-active-tab="bosses" data-initial-boss-mode="hoopa">
   <header class="header">
-    <button id="back-btn" class="icon-button" onclick="location.href='../index.html'" aria-label="Voltar ao site">â†©ï¸</button>
+    <button id="back-btn" class="icon-button" onclick="location.href='../index.html?tab=hoopa'" aria-label="Voltar ao site">&#8592;</button>
     <h1>Bosses</h1>
     <div style="width:48px;" aria-hidden="true"></div>
   </header>
@@ -21,10 +21,10 @@
     <div class="card calc-card bosses-shell bosses-shell--standalone">
       <div class="bosses-header">
         <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
-          <label for="speedster-search" class="speedster-search-label">Buscar PokÃ©mon</label>
-          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um PokÃ©mon" aria-label="Buscar PokÃ©mon" autocomplete="off" />
+          <label for="speedster-search" class="speedster-search-label">Buscar Pok&#233;mon</label>
+          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pok&#233;mon" aria-label="Buscar Pok&#233;mon" autocomplete="off" />
           <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
-          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este PokÃ©mon ainda nÃ£o foi adicionado.</div>
+          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pok&#233;mon ainda n&#227;o foi adicionado.</div>
         </aside>
       </div>
       <div class="bosses-hero">
@@ -41,19 +41,19 @@
   <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
     <div class="speedster-modal-backdrop" data-close="true"></div>
     <div class="speedster-modal-content" role="document">
-      <button class="speedster-modal-close" aria-label="Fechar">âœ–</button>
+      <button class="speedster-modal-close" aria-label="Fechar">&#10006;</button>
       <div class="speedster-modal-header">
         <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
         <div class="speedster-modal-title">
           <h2 id="modal-title"></h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
-          <div class="tier-legend" aria-label="Legenda de cores de recomendaÃ§Ã£o">
+          <div class="tier-legend" aria-label="Legenda de cores de recomendacao">
             <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
             <span class="tier-dot tier-otimo" aria-hidden="true"></span>Otimo
             <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
-            <span class="tier-dot tier-red" aria-hidden="true"></span>AceitÃ¡vel
-            <span class="tier-dot tier-solo" aria-hidden="true"></span>Ãšnica opÃ§Ã£o
-            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informaÃ§Ã£o
+            <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitavel
+            <span class="tier-dot tier-solo" aria-hidden="true"></span>Unica opcao
+            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informacao
           </div>
         </div>
         <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />

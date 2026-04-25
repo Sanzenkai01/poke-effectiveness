@@ -1983,6 +1983,7 @@ const plannerRecommendationCache = new Map();
 let plannerState = createEmptyPlannerState();
 let plannerSubpage = 'compose';
 let plannerShowBrowser = true; // when true, show step 1 (filter browser). set false to focus composition (step 2)
+let plannerShareFieldVisible = false;
 let plannerShareFeedback = {
   message: '',
   tone: ''
@@ -5213,6 +5214,9 @@ function commitPlannerState(mutator, options = {}) {
   }
 
   plannerState = sanitizePlannerState(draft);
+  if (!plannerState.entries.length) {
+    plannerShareFieldVisible = false;
+  }
 
   if (options.feedback) {
     setPlannerShareFeedback(options.feedback.message, options.feedback.tone);
@@ -6137,6 +6141,7 @@ function renderPlannerGrid() {
   shareButton.disabled = plannerState.entries.length === 0;
   shareButton.addEventListener('click', async () => {
     syncPlannerStateToUrl();
+    plannerShareFieldVisible = true;
     const shareUrl = location.href;
 
     try {
@@ -6177,15 +6182,18 @@ function renderPlannerGrid() {
     });
   });
 
-  const shareInput = document.createElement('input');
-  shareInput.id = 'planner-share-url';
-  shareInput.className = 'planner-hero__share-input';
-  shareInput.type = 'text';
-  shareInput.readOnly = true;
-  shareInput.value = location.href;
-  shareInput.setAttribute('aria-label', 'Link atual do planejamento');
+  actions.append(shareButton, clearButton);
 
-  actions.append(shareButton, clearButton, shareInput);
+  if (plannerState.entries.length > 0 && plannerShareFieldVisible) {
+    const shareInput = document.createElement('input');
+    shareInput.id = 'planner-share-url';
+    shareInput.className = 'planner-hero__share-input';
+    shareInput.type = 'text';
+    shareInput.readOnly = true;
+    shareInput.value = location.href;
+    shareInput.setAttribute('aria-label', 'Link atual do planejamento');
+    actions.appendChild(shareInput);
+  }
 
   if (plannerShareFeedback.message) {
     const feedback = document.createElement('p');
@@ -8984,8 +8992,10 @@ initPassiveTooltipSystem();
 plannerState = loadPlannerStateFromLocation();
 try {
   const params = new URLSearchParams(location.search);
+  plannerShareFieldVisible = Boolean(params.get('plan'));
   plannerSubpage = params.get('plan') ? 'ready' : 'compose';
 } catch {
+  plannerShareFieldVisible = false;
   plannerSubpage = 'compose';
 }
 setBossMode(getInitialBossModeFromLocation(), { render: false });

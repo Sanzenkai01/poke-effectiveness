@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <title>Tochas — Acenda Todas</title>
   <style>
     :root{
@@ -19,43 +23,98 @@
     html,body{height:100%}
     body{
       margin:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,200,80,0.02), transparent 10%), linear-gradient(180deg,var(--bg-1),var(--bg-2));
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:
+        radial-gradient(900px 420px at 12% 10%, rgba(104,215,255,0.08), transparent 40%),
+        radial-gradient(780px 420px at 88% 12%, rgba(255,184,92,0.08), transparent 42%),
+        linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      font-family:'Montserrat','Segoe UI',Arial,sans-serif;
       color:#fff;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      padding:18px;
+      padding:0;
+    }
+
+    .page-shell{
+      max-width:1240px;
+      margin:0 auto;
+      padding:1rem 1rem 1.75rem;
+    }
+
+    .tochas-topbar{
+      display:flex;
+      align-items:center;
+      gap:0.85rem;
+      margin-bottom:0.95rem;
+    }
+
+    .tochas-back{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.06);
+      color:#f4fbff;
+      font-size:1.2rem;
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(0,0,0,0.22);
+    }
+
+    .tochas-topbar__copy{
+      display:grid;
+      gap:0.18rem;
+    }
+
+    .tochas-topbar__eyebrow{
+      color:#9fdfff;
+      font-size:0.72rem;
+      font-weight:700;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+    }
+
+    .tochas-topbar__title{
+      color:#f5fbff;
+      font-family:'Space Grotesk','Montserrat',sans-serif;
+      font-size:1.15rem;
+      font-weight:700;
+    }
+
+    body[data-embedded="true"] .page-shell{
+      padding:0.35rem;
+    }
+
+    body[data-embedded="true"] .tochas-topbar{
+      display:none;
     }
 
     .wrap{
-      width:min(96vw,1200px);
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:16px;
+      width:100%;
+      background:
+        radial-gradient(circle at top right, rgba(104,215,255,0.08), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+      border-radius:24px;
       padding:18px;
       box-shadow: 0 12px 40px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:16px;
       position:relative;
       overflow:visible;
-      max-height:92vh;
+      border:1px solid rgba(255,255,255,0.08);
     }
 
     .hud{
-      display:flex;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
       align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
+      gap:16px;
     }
 
     .title{
+      font-family:'Space Grotesk','Montserrat',sans-serif;
       font-weight:700;
-      letter-spacing:0.4px;
-      font-size:1.15rem;
+      font-size:clamp(1.35rem, 3vw, 1.8rem);
+      color:#f5fbff;
     }
 
     .controls{
@@ -81,10 +140,10 @@
 
     button.btn{
       background: linear-gradient(180deg,#ffd98a,#ffb64a);
-      border:none;
+      border:1px solid rgba(255,255,255,0.06);
       color:#111;
       padding:8px 12px;
-      border-radius:10px;
+      border-radius:999px;
       cursor:pointer;
       font-weight:700;
       transition: transform 140ms var(--easing), box-shadow 140ms var(--easing), opacity 140ms var(--easing), background 140ms var(--easing);
@@ -114,7 +173,8 @@
       flex:0 0 auto;
       width:100%;
       aspect-ratio: 1094 / 606;
-      border-radius:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.08);
       background: radial-gradient(600px 220px at 50% 30%, rgba(255,255,255,0.02), transparent 10%), linear-gradient(180deg, rgba(0,0,0,0.06), transparent 30%);
       overflow:visible;
     }
@@ -351,20 +411,31 @@
     }
 
     .hint{
-      color:var(--muted);
-      font-size:0.9rem;
+      color:rgba(221,233,245,0.72);
+      font-size:0.95rem;
+      line-height:1.6;
+      max-width:58ch;
     }
 
     @media (max-width:520px){
       .title{font-size:1rem}
       .counter{font-size:0.88rem}
-      .controls{width:100%; justify-content:flex-end}
-      .hud{align-items:flex-start}
+      .controls{width:100%; justify-content:flex-start}
+      .hud{grid-template-columns:1fr; align-items:flex-start}
       .overlay{width:94%}
     }
   </style>
 </head>
 <body>
+  <div class="page-shell">
+    <header class="tochas-topbar">
+      <button class="tochas-back" type="button" onclick="location.href='index.html?tab=hoopa'" aria-label="Voltar ao site">&#8592;</button>
+      <div class="tochas-topbar__copy">
+        <span class="tochas-topbar__eyebrow">Puzzle auxiliar</span>
+        <strong class="tochas-topbar__title">Tochas</strong>
+      </div>
+    </header>
+
   <div class="wrap" role="application" aria-label="Tochas: Acenda todas">
     <div class="hud">
       <div>
@@ -404,8 +475,15 @@
       </div>
     </div>
   </div>
+  </div>
 
   <script>
+    try {
+      document.body.dataset.embedded = window.self !== window.top ? 'true' : 'false';
+    } catch (e) {
+      document.body.dataset.embedded = 'false';
+    }
+
     const N = 8;
     const TORCH_NAMES = [
       'Topo-esquerda',
@@ -433,6 +511,17 @@
     const applySolutionBtn = document.getElementById('applySolutionBtn');
     const closeSolutionBtn = document.getElementById('closeSolutionBtn');
     const hintEl = document.querySelector('.hud .hint');
+
+    document.title = 'Tochas - Acenda Todas';
+    const titleEl = document.querySelector('.title');
+    if (titleEl) titleEl.textContent = 'Tochas - Acenda todas';
+    const victoryTitleEl = document.querySelector('#victoryOverlay h2');
+    if (victoryTitleEl) victoryTitleEl.textContent = 'Parabens!';
+    const victoryTextEl = document.querySelector('#victoryOverlay p');
+    if (victoryTextEl) victoryTextEl.textContent = 'Todas as 8 tochas estao acesas.';
+    if (hintEl) {
+      hintEl.textContent = 'Clique em uma tocha para alternar ela e suas vizinhas. Use o modo configurar para montar um estado manual e o resolver para descobrir a sequencia exata.';
+    }
 
     let initialOff = Math.floor(Math.random() * N);
     let torchState = Array.from({ length: N }, (_, i) => (i === initialOff ? false : true));
@@ -836,6 +925,99 @@
 
         step += 1;
       }, 500);
+    }
+
+    function createTorchElement(index){
+      const t = document.createElement('div');
+      t.className = 'torch';
+      t.dataset.index = index;
+      t.tabIndex = 0;
+      t.setAttribute('role', 'button');
+      t.setAttribute('aria-pressed', String(torchState[index]));
+      const torchLabel = `Tocha ${index + 1} - ${TORCH_NAMES[index]}`;
+      t.title = torchLabel;
+      t.setAttribute('aria-label', torchLabel);
+
+      const stick = document.createElement('div');
+      stick.className = 'stick';
+
+      const flame = document.createElement('div');
+      flame.className = 'flame';
+
+      const core = document.createElement('div');
+      core.className = 'core';
+
+      flame.appendChild(core);
+      t.appendChild(stick);
+      t.appendChild(flame);
+
+      const numBadge = document.createElement('div');
+      numBadge.className = 'num-badge';
+      numBadge.textContent = String(index + 1);
+      t.appendChild(numBadge);
+
+      t.addEventListener('click', () => handleClick(index));
+      t.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          handleClick(index);
+        }
+      });
+
+      return t;
+    }
+
+    function showSolutionOverlay(){
+      clearSolutionPreview();
+      currentSolution = findSolutionFromCurrentState();
+      solutionList.innerHTML = '';
+
+      if (currentSolution === null) {
+        solutionText.textContent = 'Nao encontrei uma solucao para este estado.';
+        applySolutionBtn.disabled = true;
+        applySolutionBtn.textContent = 'Resolver';
+        solutionOverlay.classList.add('show');
+        return;
+      }
+
+      if (currentSolution.length === 0) {
+        solutionText.textContent = 'As tochas ja estao todas acesas.';
+        applySolutionBtn.disabled = true;
+        applySolutionBtn.textContent = 'Resolver';
+        solutionOverlay.classList.add('show');
+        return;
+      }
+
+      currentSolution.forEach((index, step) => {
+        const item = document.createElement('div');
+        item.className = 'solution-step';
+
+        const badge = document.createElement('div');
+        badge.className = 'step-badge';
+        badge.textContent = String(step + 1);
+
+        const text = document.createElement('div');
+        text.className = 'step-text';
+
+        const strong = document.createElement('strong');
+        strong.textContent = `Clique na tocha ${index + 1} (${TORCH_NAMES[index]})`;
+
+        const span = document.createElement('span');
+        const toggled = togglePattern(index).map(i => `${i + 1} ${TORCH_NAMES[i]}`).join(' | ');
+        span.textContent = `Isso alterna: ${toggled}`;
+
+        text.appendChild(strong);
+        text.appendChild(span);
+
+        item.appendChild(badge);
+        item.appendChild(text);
+        solutionList.appendChild(item);
+      });
+
+      solutionText.textContent = `Esses sao os ${currentSolution.length} passo(s) exatos para acender todas as tochas a partir do estado atual.`;
+      applySolutionBtn.disabled = false;
+      applySolutionBtn.textContent = 'Resolver';
+      solutionOverlay.classList.add('show');
     }
 
     restartBtn.addEventListener('click', resetGame);
