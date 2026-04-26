@@ -7,7 +7,7 @@
 // Em `bosses`, voce pode usar nome ou id do boss.
 const hoopaPortalTickerConfig = {
   mode: 'daily',
-  bosses: ['Mega Absol', 'Mega Lucario'],
+  bosses: ['Mega Hawlucha', 'Mega Staraptor'],
   prefix: 'Os Hoopa Portais de hoje sao:',
   customMessage: ''
 };
