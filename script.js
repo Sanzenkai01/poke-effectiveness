@@ -93,6 +93,7 @@ const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/effectiveness', tab: 'effectiveness' },
     fossils: { path: '/fossils', tab: 'fossils' },
+    fosseis: { path: '/fossils', tab: 'fossils' },
     calculator: { path: '/calculator', tab: 'calculator' },
     catch: { path: '/catch', tab: 'catch' },
     streamers: { path: '/streamers', tab: 'streamers' },
@@ -1655,6 +1656,11 @@ function activateSidebarTarget(button){
     if(target === 'bosses' && typeof window.setBossMode === 'function'){
         window.setBossMode(String(button.dataset.bossMode || 'hoopa').toLowerCase());
     }
+
+    // Ensure the URL reflects the newly opened target when navigation happens via the sidebar
+    try{
+        if(typeof updateUrl === 'function') updateUrl();
+    }catch(e){}
 
     syncSidebarNavigationState();
     setSidebarOpen(false);
