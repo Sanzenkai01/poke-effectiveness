@@ -8,7 +8,7 @@ const HOME_STREAMERS = [
 ];
 
 const HOME_NON_DROP_STREAMERS = new Set([
-    'FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr',
+    'FernandoAlcatraz','gordallink','lordjuregi','mofexxx','reiisuperr',
     'rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari',
     'linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1',
     'OKAMIulv','eddiegomes','terryzao','nazgulplayer'
