@@ -110,6 +110,26 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' }
 };
 
+// Global delegated handler to guarantee the fossils Reset button always works
+if(!window._fossilResetGlobalAttached){
+    document.addEventListener('click', (ev)=>{
+        const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
+        if(!btn) return;
+        try{
+            showFossils();
+        }catch(e){
+            // fallback manual reset
+            try{ fossilClearSelection(); }catch(e2){}
+            try{ document.querySelectorAll('.fossil-img').forEach(i=> i.classList.remove('active','compatible','incompatible')); }catch(e3){}
+            const hintEl2 = document.getElementById('fossil-hint'); if(hintEl2) hintEl2.textContent = '';
+            try{ renderFossilEmptyState(); }catch(e4){}
+            lastFossilPair = null;
+            try{ buildPokemonGallery(); }catch(e5){}
+        }
+    }, true);
+    window._fossilResetGlobalAttached = true;
+}
+
 function getRouteInfo(routeKey){
     return APP_ROUTE_ALIASES[String(routeKey || '').trim().toLowerCase()] || null;
 }
@@ -2168,15 +2188,31 @@ function updateTextContent(){
     const fossilReset = document.getElementById('fossil-reset-btn');
     if(fossilReset){
         fossilReset.addEventListener('click', ()=>{
-            fossilClearSelection();
-            document.querySelectorAll('.fossil-img').forEach(i=>{
-                i.classList.remove('active','compatible','incompatible');
-            });
-            const hintEl2 = document.getElementById('fossil-hint');
-            if(hintEl2) hintEl2.textContent = '';
-            renderFossilEmptyState();
-            lastFossilPair = null;
+            // Reset the fossils view to its initial state (same as entering the tab)
+            try{
+                showFossils();
+            }catch(e){
+                // Fallback: if showFossils fails, perform a hard reset
+                fossilHardReset();
+            }
+            // ensure a robust hard-reset runs to clear any persistent highlights
+            fossilHardReset();
         });
+    }
+
+    // Delegated fallback: ensure Reset works even if the direct handler wasn't attached
+    if(!window._fossilResetDelegationAttached){
+        document.addEventListener('click', (ev)=>{
+            const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
+            if(!btn) return;
+            try{
+                showFossils();
+            }catch(e){
+                // ignore — we'll perform a hard reset below to be robust
+            }
+            fossilHardReset();
+        }, true);
+        window._fossilResetDelegationAttached = true;
     }
     // translate icon alt texts on calculator page
     const plateIcon = document.getElementById('icon-plate');
@@ -2478,6 +2514,15 @@ function showFossils(){
     updateBrowserTitle();
     lastFossilPair = null;
     renderFossilEmptyState();
+    // ensure any persistent highlights are cleared when entering/resetting the fossils tab
+    try{ fossilClearSelection(); }catch(e){}
+    const clearGallerySelection = ()=>{
+        try{ document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected')); }catch(e){}
+    };
+    clearGallerySelection();
+    // run again on next frame and shortly after to catch any async re-creations
+    try{ requestAnimationFrame(clearGallerySelection); }catch(e){}
+    setTimeout(clearGallerySelection, 150);
     if(useGsap){
         gsap.from(contentFossils, {opacity:0, y:-10, duration:0.4});
     }
@@ -5434,11 +5479,42 @@ function showDropHints(type, elem){
     }
 }
 
+// Return a Set of partner fossil types that combine with `type` according to `fossilCombos`
+function getPartners(type){
+    const result = new Set();
+    if(!type || typeof type !== 'string') return result;
+    if(!fossilCombos) return result;
+    for(const k in fossilCombos){
+        if(!Object.prototype.hasOwnProperty.call(fossilCombos, k)) continue;
+        const parts = k.split(',');
+        if(parts.length !== 2) continue;
+        const a = parts[0];
+        const b = parts[1];
+        if(a === type) result.add(b);
+        if(b === type) result.add(a);
+    }
+    return result;
+}
+
 function fossilClearSelection(){
     fossilSelections.length = 0;
-    document.querySelectorAll('.fossil-img.selected').forEach(img=>{
-        img.classList.remove('selected');
+    // remove any visual selection/transient classes from all fossil images
+    document.querySelectorAll('.fossil-img').forEach(img=>{
+        img.classList.remove('selected','active','compatible','incompatible');
         if(useGsap) gsap.to(img, {scale:1, duration:0.2});
+    });
+    const drop = document.getElementById('drop-hints');
+    if(drop) drop.innerHTML = '';
+}
+
+// finalize selection after showing a result but keep the visual "selected" highlight
+function fossilFinalizeSelection(){
+    // clear internal selection state so user can pick a new pair
+    fossilSelections.length = 0;
+    // remove transient visual states but keep the `selected` highlight
+    document.querySelectorAll('.fossil-img').forEach(img=>{
+        img.classList.remove('active','compatible','incompatible');
+        if(useGsap) gsap.to(img, {scale:1, duration:0.15});
     });
     const drop = document.getElementById('drop-hints');
     if(drop) drop.innerHTML = '';
@@ -5456,13 +5532,20 @@ function fossilShowResult(pair){
     const pokemonName = combo.pokemon.split('.')[0];
     const normalizedName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
 
+    // prepare DNA display: render as image when a dna resource is provided
+    let dnaHtml = '';
+    if(combo.dna){
+        const dna = String(combo.dna || '');
+        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessário: <img src="fosseis/${dna}" alt="DNA necessário" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
+    }
+
     resultDiv.innerHTML = `
         <div class="fossil-result" style="text-align:center; color:#fff;">
             <h3>${normalizedName}</h3>
             <img src="fosseis/${combo.pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
             <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
             <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
-            ${combo.dna ? `<p>DNA necessário: ${combo.dna}</p>` : ''}
+            ${dnaHtml}
         </div>
     `;
 }
@@ -5479,6 +5562,36 @@ function renderFossilEmptyState(){
     `;
 }
 
+// Robust reset for the fossils tab — idempotent and safe to call repeatedly
+function fossilHardReset(){
+    try{
+        // clear internal state
+        lastFossilPair = null;
+        fossilSelections.length = 0;
+
+        // clear visual states on fossil images
+        document.querySelectorAll('.fossil-img').forEach(i=>{
+            i.classList.remove('selected','active','compatible','incompatible');
+            if(useGsap) gsap.to(i, {scale:1, duration:0.15});
+        });
+
+        // clear gallery card highlights
+        document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
+
+        // clear drop hints and result area
+        const drop = document.getElementById('drop-hints'); if(drop) drop.innerHTML = '';
+        renderFossilEmptyState();
+
+        // rebuild gallery only if missing to avoid flicker when already present
+        const gallery = document.getElementById('pokemon-gallery');
+        if(gallery && gallery.children.length === 0){
+            try{ buildPokemonGallery(); }catch(e){}
+        }
+    }catch(e){
+        // swallow — reset should be resilient
+    }
+}
+
 
 
 function showByPokemon(pokemon){
@@ -5487,13 +5600,17 @@ function showByPokemon(pokemon){
     fossilClearSelection();
     highlightFossils(pair);
     fossilShowResult(pair);
-    setTimeout(()=>{
-        fossilClearSelection();
-        document.querySelectorAll('.fossil-img').forEach(i=>{
-            i.classList.remove('active','compatible','incompatible');
-        });
+    // keep the yellow highlight persistent; finalize internal state so user can pick again
+    if(useGsap){
+        const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+        gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
+            fossilFinalizeSelection();
+            hintEl.textContent = '';
+        }});
+    } else {
+        fossilFinalizeSelection();
         hintEl.textContent = '';
-    }, 3000);
+    }
 }
 
 const hintEl = document.getElementById('fossil-hint');
@@ -5524,6 +5641,7 @@ function buildPokemonGallery(){
     entries.forEach(poke=>{
         const card = document.createElement('div');
         card.className = 'pokemon-card';
+        card.dataset.pokemon = poke;
         const base = poke.split('.')[0];
         const display = base.charAt(0).toUpperCase() + base.slice(1);
         const img = document.createElement('img');
@@ -5537,6 +5655,9 @@ function buildPokemonGallery(){
         label.textContent = display + sideText;
         card.appendChild(label);
         card.addEventListener('click', ()=>{
+            // mark clicked gallery card as selected (persistent)
+            document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
+            card.classList.add('selected');
             showComboForPokemon(poke);
         });
         if(useGsap){
@@ -5558,24 +5679,34 @@ function showComboForPokemon(pokemon){
     for(const k in fossilCombos){
         if(fossilCombos[k].pokemon === pokemon){
             const [a,b] = k.split(',');
+            // remove any previous transient states but keep persisted selections
             fossilClearSelection();
             document.querySelectorAll('.fossil-img').forEach(i=>{
                 i.classList.remove('active','compatible','incompatible');
             });
+            // mark the corresponding fossils as selected (persistent)
             [a,b].forEach(t=>{
                 const img = document.querySelector(`.fossil-img[data-type="${t}"]`);
                 if(img){
                     img.classList.add('selected','active');
                 }
             });
+            // highlight the clicked gallery card (use data attribute)
+            document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
+            const matched = document.querySelector(`.pokemon-card[data-pokemon="${pokemon}"]`);
+            if(matched) matched.classList.add('selected');
             fossilShowResult(k);
-            setTimeout(()=>{
-                fossilClearSelection();
-                document.querySelectorAll('.fossil-img').forEach(i=>{
-                    i.classList.remove('active','compatible','incompatible');
-                });
+            // finalize internal state while keeping visual 'selected' highlight
+            if(useGsap){
+                const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+                gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
+                    fossilFinalizeSelection();
+                    hintEl.textContent = '';
+                }});
+            } else {
+                fossilFinalizeSelection();
                 hintEl.textContent = '';
-            }, 3000);
+            }
             break;
         }
     }
@@ -5591,9 +5722,8 @@ function initializeFossilsPage(){
         }
     });
 
-    if(fossilsPageInitialized){
-        buildPokemonGallery();
-    }
+    // build the footer gallery showing resulting pokémons
+    buildPokemonGallery();
 
     Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
         img.addEventListener('click', ()=>{
@@ -5637,13 +5767,17 @@ function initializeFossilsPage(){
                     gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
                 }
                 fossilShowResult(key);
-                setTimeout(()=>{
-                    fossilClearSelection();
-                    document.querySelectorAll('.fossil-img').forEach(i=>{
-                        i.classList.remove('active','compatible','incompatible');
-                    });
+                // finalize internal state but keep selected highlight on the two fossils
+                if(useGsap){
+                    const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+                    gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
+                        fossilFinalizeSelection();
+                        hintEl.textContent = '';
+                    }});
+                } else {
+                    fossilFinalizeSelection();
                     hintEl.textContent = '';
-                }, 3000);
+                }
             }
         });
     });
@@ -7009,9 +7143,21 @@ function syncHomeLandingFocusSummary(cards = []){
                 const subtitle = subtitleEl ? subtitleEl.textContent.trim() : '';
                 const items = Array.from(group.querySelectorAll('.sidebar-sublink')).map(s => {
                     const spans = s.querySelectorAll('span');
-                    const labelSpan = spans.length ? spans[spans.length - 1] : null;
+                    let labelSpan = null;
+                    if (spans && spans.length) {
+                        for (let i = spans.length - 1; i >= 0; i--) {
+                            const sp = spans[i];
+                            if (!sp.classList.contains('sidebar-sublink__badge') && !sp.classList.contains('sidebar-sublink__bullet')) {
+                                labelSpan = sp;
+                                break;
+                            }
+                        }
+                        if (!labelSpan) labelSpan = spans[spans.length - 1];
+                    }
+                    const badgeEl = s.querySelector('.sidebar-sublink__badge');
                     return {
                         label: labelSpan ? labelSpan.textContent.trim() : s.textContent.trim(),
+                        badge: badgeEl ? badgeEl.textContent.trim() : '',
                         navTarget: s.dataset.navTarget || '',
                         navAction: s.dataset.navAction || '',
                         bossMode: s.dataset.bossMode || ''
@@ -7040,7 +7186,7 @@ function syncHomeLandingFocusSummary(cards = []){
             const idx = String(index + 1).padStart(2, '0');
             const previewItems = group.items || [];
             const previewMarkup = previewItems.length
-                ? `<div class="home-tool-card__summary">${previewItems.map(item => `<span class="home-tool-card__pill">${item.label}</span>`).join('')}</div>`
+                ? `<div class="home-tool-card__summary">${previewItems.map(item => `<span class="home-tool-card__pill">${item.label}${item.badge ? `<span class="home-tool-card__pill-badge">${item.badge}</span>` : ''}</span>`).join('')}</div>`
                 : '';
             const actionLabel = (group.items || []).length === 1
                 ? `Abrir ${group.items[0].label}`
@@ -7120,7 +7266,7 @@ function syncHomeLandingFocusSummary(cards = []){
                 if(item.navAction) itemBtn.dataset.navAction = item.navAction;
                 if(item.bossMode) itemBtn.dataset.bossMode = item.bossMode;
 
-                itemBtn.innerHTML = `<span class="sidebar-sublink__bullet" aria-hidden="true"></span><span>${item.label}</span>`;
+                itemBtn.innerHTML = `<span class="sidebar-sublink__bullet" aria-hidden="true"></span><span>${item.label}</span>${item.badge ? `<span class="sidebar-sublink__badge" aria-hidden="true">${item.badge}</span>` : ''}`;
 
                 // initial state for entrance animation
                 itemBtn.style.opacity = '0';

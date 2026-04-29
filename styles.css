@@ -3003,6 +3003,14 @@ p {
   text-align: center;
 }
 
+/* persistent selected state for gallery cards */
+.pokemon-card.selected {
+  border: 3px solid #ffd700;
+  border-radius: 8px;
+  padding: 0.25rem;
+  box-shadow: 0 0 12px rgba(255,215,0,0.45);
+}
+
 .tabs {
   display: flex;
   justify-content: center;
@@ -8069,6 +8077,19 @@ body.home-view .main-footer {
   font-weight: 600;
 }
 
+.home-tool-card__pill-badge {
+  margin-left: 0.5rem;
+  background: #ff9800;
+  color: #ffffff;
+  padding: 0.08rem 0.45rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
 .home-tool-card__footer {
   display: flex;
   align-items: center;
@@ -9451,6 +9472,18 @@ body.home-view .main-footer {
   border-radius: 999px;
   background: linear-gradient(135deg, var(--module-accent, #68d7ff), #ffd166);
   box-shadow: 0 0 0 4px rgba(var(--module-accent-rgb, 104, 215, 255), 0.14);
+  flex: 0 0 auto;
+}
+
+.sidebar-sublink__badge {
+  margin-left: auto;
+  background: #ff9800;
+  color: #ffffff;
+  padding: 0.12rem 0.45rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
   flex: 0 0 auto;
 }
 

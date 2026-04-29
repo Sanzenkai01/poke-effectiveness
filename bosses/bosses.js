@@ -1953,6 +1953,16 @@ const bossCatalogs = {
     ],
     data: []
   }
+  ,horizons: {
+    id: 'horizons',
+    label: 'Horizons',
+    variant: 'hoopa',
+    searchEnabled: false,
+    introLines: [
+      'Em breve.'
+    ],
+    data: []
+  }
 };
 
 const bossModeAliases = Object.freeze({
@@ -1964,6 +1974,7 @@ const bossModeAliases = Object.freeze({
   mewtwo: 'mew2',
   planner: 'planner',
   planejador: 'planner'
+  ,horizons: 'horizons'
 });
 
 const standaloneBossModePages = Object.freeze({
@@ -1971,6 +1982,7 @@ const standaloneBossModePages = Object.freeze({
   champion: 'champion-path.html',
   mew2: 'mewtwo.html',
   planner: 'planejador.html'
+  ,horizons: 'horizons.html'
 });
 
 const plannerContentOrder = Object.freeze(['mew2', 'champion', 'hoopa']);
