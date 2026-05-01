@@ -42,7 +42,7 @@
     <script>
       // Minimal fallback: load the same app shell body by fetching app.html and replacing
       (function(){
-        fetch('/poke-effectiveness/app.html', { cache: 'no-store' })
+        fetch('/app.html', { cache: 'no-store' })
           .then(function(r){ if(!r.ok) throw new Error('fetch'); return r.text(); })
           .then(function(html){ document.open(); document.write(html); document.close(); })
           .catch(function(){ /* silent fallback */ });
