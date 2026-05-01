@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Poke Utilities reúne consulta de tipos, fósseis, treinamento, captura, chefes, transmissões e vídeos da comunidade PStory em um só lugar.">
+    <title>Poke Utilities</title>
+    <base href="/">
+    <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260424d">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="dark">
+    <header class="header">
+      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">☰</button>
+      <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
+      <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
+        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
+      </button>
+      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">🗺️</button>
+      <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">🎣</button>
+      <h1 id="page-title">Poke Utilities</h1>
+      <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
+      <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
+      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
+    </header>
+    <nav class="tabs" role="tablist" aria-label="Seções principais">
+      <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
+      <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
+      <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
+      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Captura</button>
+      <button id="tab-bosses" class="tab" role="tab" aria-selected="false" aria-controls="content-bosses">Chefes</button>
+      <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">Transmissões</button>
+      <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">Vídeos</button>
+    </nav>
+
+    <!-- The rest of the app shell is identical to app.html; the SPA scripts will run and open the right tab/modal based on pathname -->
+
+    <script>
+      // Minimal fallback: load the same app shell body by fetching app.html and replacing
+      (function(){
+        fetch('/poke-effectiveness/app.html', { cache: 'no-store' })
+          .then(function(r){ if(!r.ok) throw new Error('fetch'); return r.text(); })
+          .then(function(html){ document.open(); document.write(html); document.close(); })
+          .catch(function(){ /* silent fallback */ });
+      })();
+    </script>
+</body>
+</html>
