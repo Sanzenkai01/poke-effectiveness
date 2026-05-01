@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -47,7 +47,7 @@
             <p id="home-eyebrow" class="home-landing__eyebrow">Hub da comunidade</p>
             <h2 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h2>
             <p id="home-lead" class="home-landing__lead">Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.</p>
-            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.</p>
+            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, pokémons, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.</p>
             <div class="home-landing__actions">
               <button id="home-explore-btn" class="home-landing__cta" type="button" data-home-target="bosses">Explorar</button>
               <a
@@ -68,7 +68,7 @@
             <p class="home-landing__focus-label">Hub tático</p>
             <div class="home-landing__focus-orbit">
               <div class="home-landing__focus-core">
-                <span id="home-focus-number" class="home-landing__focus-number">07</span>
+                <span id="home-focus-number" class="home-landing__focus-number">08</span>
                 <span id="home-focus-caption" class="home-landing__focus-caption">ferramentas em um só painel</span>
               </div>
             </div>
@@ -140,23 +140,28 @@
             <strong class="home-tool-card__title">Treinamento</strong>
             <span class="home-tool-card__desc">Planeje placas, ouro e recursos antes de investir no treino.</span>
           </button>
-          <button class="home-tool-card" type="button" data-home-target="catch">
+          <button class="home-tool-card" type="button" data-home-target="pokemons">
             <span class="home-tool-card__index">04</span>
+            <strong class="home-tool-card__title">Pokémons</strong>
+            <span class="home-tool-card__desc">Consulte cards com moveset, elementos naturais, médias e fraquezas.</span>
+          </button>
+          <button class="home-tool-card" type="button" data-home-target="catch">
+            <span class="home-tool-card__index">05</span>
             <strong class="home-tool-card__title">Captura</strong>
             <span class="home-tool-card__desc">Consulte cálculos de captura com um fluxo mais direto e claro.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="bosses">
-            <span class="home-tool-card__index">05</span>
+            <span class="home-tool-card__index">06</span>
             <strong class="home-tool-card__title">Chefes</strong>
             <span class="home-tool-card__desc">Veja escolhas e funções ideais para cada chefe sem perder tempo.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="streamers">
-            <span class="home-tool-card__index">06</span>
+            <span class="home-tool-card__index">07</span>
             <strong class="home-tool-card__title">Transmissões</strong>
             <span class="home-tool-card__desc">Acompanhe canais e sinais úteis da comunidade em uma visão só.</span>
           </button>
           <button class="home-tool-card" type="button" data-home-target="youtube">
-            <span class="home-tool-card__index">07</span>
+            <span class="home-tool-card__index">08</span>
             <strong class="home-tool-card__title">Vídeos</strong>
             <span class="home-tool-card__desc">Assista a vídeos úteis da comunidade sem sair do Poke Utilities.</span>
           </button>
@@ -279,6 +284,10 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Treinamento</span>
               </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Pokémons</span>
+              </button>
             </div>
           </section>
 
@@ -310,6 +319,15 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Streamers</span>
               </button>
+              <a
+                class="sidebar-sublink sidebar-sublink--discord"
+                href="https://discord.com/invite/Gn2x6F5vB6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Entrar no Discord</span>
+              </a>
             </div>
           </section>
         </nav>
@@ -336,15 +354,6 @@
               <span>Pescaria</span>
             </button>
           </div>
-          <a
-            class="sidebar-footer__link"
-            href="https://discord.com/invite/Gn2x6F5vB6"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="icons-type/discord.png" alt="" aria-hidden="true" class="sidebar-footer__link-icon" loading="lazy" decoding="async" />
-            Entrar no Discord
-          </a>
         </div>
       </aside>
 
@@ -725,6 +734,84 @@
       </div>
     </div>
 
+    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden>
+      <div class="card calc-card pokemon-hub">
+        <div class="pokemon-hub__hero">
+          <div class="pokemon-hub__copy">
+            <p class="pokemon-hub__eyebrow">Utilidades</p>
+            <h2>Pokémons registrados</h2>
+            <p class="pokemon-hub__lead">Cards com leitura rápida de moveset, elementos naturais, time e médias de captura.</p>
+          </div>
+        </div>
+
+        <section class="pokemon-filter-panel" aria-labelledby="pokemon-filters-title">
+          <div class="pokemon-filter-panel__head">
+            <div class="pokemon-filter-panel__copy">
+              <span class="pokemon-filter-panel__eyebrow">Busca avançada</span>
+              <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
+              <p>Combine nome, role, clã, level, tipos e moveset para refinar os cards sem sair da página.</p>
+            </div>
+            <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
+          </div>
+
+          <div class="pokemon-filter-grid">
+            <label class="pokemon-filter-field pokemon-filter-field--search" for="pokemon-filter-name">
+              <span>Nome do Pokémon</span>
+              <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off" />
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-role">
+              <span>Role</span>
+              <select id="pokemon-filter-role">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-clan">
+              <span>Clã</span>
+              <select id="pokemon-filter-clan">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-level">
+              <span>Level</span>
+              <select id="pokemon-filter-level">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type1">
+              <span>Tipo 1</span>
+              <select id="pokemon-filter-type1">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type2">
+              <span>Tipo 2</span>
+              <select id="pokemon-filter-type2">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-moveset">
+              <span>Moveset</span>
+              <select id="pokemon-filter-moveset">
+                <option value="">Todos</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <div class="pokemon-hub__status-row">
+          <p id="pokemon-catalog-status" class="pokemon-hub__status" aria-live="polite">Carregando catálogo...</p>
+        </div>
+
+        <div id="pokemon-card-grid" class="pokemon-card-grid" role="list" aria-label="Lista de pokémons registrados"></div>
+      </div>
+    </div>
+
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card catch-card">
         <div class="catch-hero">
@@ -962,6 +1049,48 @@
       </div>
     </div>
 
+    <div class="modal pokemon-details-modal" id="pokemon-details-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pokemon-details-title">
+      <div class="modal-content pokemon-details-modal__content" role="document">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+
+        <div class="pokemon-details-modal__hero">
+          <div class="pokemon-details-modal__art">
+            <img id="pokemon-details-image" class="pokemon-details-modal__image" src="pokemons/placeholder.svg" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="pokemon-details-modal__copy">
+            <p id="pokemon-details-role" class="pokemon-details-modal__role"></p>
+            <h2 id="pokemon-details-title">Pokémon</h2>
+            <div id="pokemon-details-meta" class="pokemon-details-modal__meta"></div>
+          </div>
+        </div>
+
+        <div class="pokemon-details-modal__body">
+          <section class="pokemon-details-modal__section pokemon-details-modal__section--info" aria-labelledby="pokemon-details-info-title">
+            <div class="pokemon-details-modal__section-head">
+              <span class="pokemon-details-modal__section-kicker">Combate</span>
+              <p id="pokemon-details-subtitle" class="pokemon-details-modal__subtitle"></p>
+            </div>
+            <div id="pokemon-details-info" class="pokemon-details-grid"></div>
+
+            <!-- Fraquezas movida para dentro de Combate (Opção B) -->
+            <div class="pokemon-details-modal__section-head" style="margin-top:0.28rem">
+              <span class="pokemon-details-modal__section-kicker">Fraquezas</span>
+            </div>
+            <div id="pokemon-details-weaknesses" class="pokemon-weakness-list"></div>
+          </section>
+
+          <section class="pokemon-details-modal__section pokemon-details-modal__section--averages" aria-labelledby="pokemon-details-averages-title">
+            <div class="pokemon-details-modal__section-head">
+              <span class="pokemon-details-modal__section-kicker">Médias</span>
+            </div>
+            <div id="pokemon-details-averages" class="pokemon-averages-grid"></div>
+          </section>
+
+          <!-- removed duplicate weaknesses section (moved into Combate) -->
+        </div>
+      </div>
+    </div>
+
     <footer class="main-footer">
       <a
         class="footer-discord-link footer-discord-link-left"
@@ -1002,3 +1131,4 @@
     <script src="script.js?v=20260424f" defer></script>
 </body>
 </html>
+

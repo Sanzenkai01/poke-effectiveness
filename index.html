@@ -32,10 +32,13 @@
             var params = new URLSearchParams(window.location.search);
             var tab = String(params.get('tab') || params.get('bossmode') || params.get('boss') || params.get('mode') || '').toLowerCase();
             var routeMap = {
-                effectiveness: './effectiveness',
+                effectiveness: './tipos',
+                tipos: './tipos',
                 fossils: './fossils',
                 fosseis: './fossils',
-                calculator: './calculator',
+                calculator: './treinamento',
+                treinamento: './treinamento',
+                pokemons: './pokemons',
                 catch: './catch',
                 streamers: './streamers',
                 youtube: './youtube',
@@ -49,10 +52,11 @@
                 mewtwo: './mewtwo',
                 mew2: './mewtwo',
                 planejador: './planejador',
-                planner: './planejador'
+                planner: './planejador',
+                horizons: './horizons'
             };
             var hasAppParams = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'plan', 'quick'].some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
-            var targetPath = routeMap[tab] || (params.has('types') || params.has('quick') ? './effectiveness' : './home/');
+            var targetPath = routeMap[tab] || (params.has('types') || params.has('quick') ? './tipos' : './home/');
             params.delete('tab');
             params.delete('bossmode');
             params.delete('boss');

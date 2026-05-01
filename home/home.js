@@ -4,14 +4,15 @@ const HOME_STREAMERS = [
     'corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme',
     'lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos',
     'kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd',
-    'lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr'
+    'lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer',
+    'especialbr','eaisantinho'
 ];
 
 const HOME_NON_DROP_STREAMERS = new Set([
     'FernandoAlcatraz','gordallink','lordjuregi','mofexxx','reiisuperr',
     'rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari',
     'linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1',
-    'OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr'
+    'OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','eaisantinho'
 ]);
 
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
