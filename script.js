@@ -55,7 +55,6 @@ const tabSpeedstersBtn = document.getElementById('tab-bosses');
 const tabStreamersBtn = document.getElementById('tab-streamers');
 const tabCommunityBtn = document.getElementById('tab-community');
 const homeBtn = document.getElementById('home-btn');
-const pascoaBtn = document.getElementById('pascoa-btn');
 const homeExploreBtn = document.getElementById('home-explore-btn');
 const homeFocusNumber = document.getElementById('home-focus-number');
 const homeFocusCaption = document.getElementById('home-focus-caption');
@@ -116,6 +115,11 @@ let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonCatalogFiltersInitialized = false;
 let pokemonCatalogRenderFrame = null;
+// If the page was loaded directly with a deep-link to a pokemon (eg /pokemons/001)
+// this holds the requested dex number until the catalog is loaded.
+let initialDeepLinkedPokemonDex = null;
+// Tracks whether we created a history entry for the open pokemon modal.
+let pokemonModalHistoryPushed = false;
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260419d';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
@@ -3276,7 +3280,7 @@ if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness()
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
-if(pascoaBtn) pascoaBtn.addEventListener('click', openPascoaModal);
+// Páscoa button removed — no-op
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
         openHomeDestination(button.dataset.homeTarget);
@@ -5494,15 +5498,39 @@ async function showCommunity(){
 function initTabFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
+
+    // Detect deep-link to a specific pokemon: /pokemons/NNN
+    const pathname = String(location.pathname || '');
+    const pokemonMatch = pathname.match(/\/pokemons\/(\d{1,})\/?$/i);
+    if(pokemonMatch){
+        initialDeepLinkedPokemonDex = parseInt(pokemonMatch[1], 10);
+    }
+
     const tabparam = params.get('tab') || pathRouteInfo?.tab || '';
     const requestedRouteInfo = getRouteInfo(tabparam);
-    const resolvedTab = requestedRouteInfo?.tab || tabparam;
+    let resolvedTab = requestedRouteInfo?.tab || tabparam;
     const hasQuery = params.toString().length > 0;
-    if(!hasQuery && !pathRouteInfo) return showHome();
+    if(!hasQuery && !pathRouteInfo && initialDeepLinkedPokemonDex == null) return showHome();
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(resolvedTab==='calculator') return showCalculator();
     if(resolvedTab==='fossils') return showFossils();
+    // If the URL targeted a specific pokemon number, open the pokemons tab and
+    // open the requested modal once the catalog is loaded.
+    if(initialDeepLinkedPokemonDex !== null){
+        showPokemons();
+        ensurePokemonCatalogLoaded().then(() => {
+            const idx = initialDeepLinkedPokemonDex - 1;
+            if(idx >= 0 && idx < pokemonCatalog.length){
+                const entry = pokemonCatalog[idx];
+                // Ensure base route is /pokemons so back navigation returns here
+                try{ history.replaceState(null, '', getRoutePathForTab('pokemons')); }catch(e){}
+                openPokemonDetailsModal(entry, { pushState: true });
+            }
+        }).catch(console.error);
+        return;
+    }
+
     if(resolvedTab==='pokemons') return showPokemons();
     if(resolvedTab==='catch') return showCatch();
     if(requestedBossTab) return showSpeedsters(requestedBossTab);
@@ -6131,7 +6159,13 @@ function updateUrl(){
         params.delete('topic');
     }
     const query = params.toString();
-    const routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
+    // If a pokemon details modal is open, prefer the per-pokemon deep-link path
+    let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
+    try{
+        if(!isHomeView && (activeTab === 'pokemons') && pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true' && activePokemonCatalogEntry && Number.isFinite(activePokemonCatalogEntry.dex)){
+            routePath = getRoutePathForTab('pokemons') + '/' + String(activePokemonCatalogEntry.dex).padStart(3, '0');
+        }
+    }catch(e){}
     const newUrl = routePath + (query ? `?${query}` : '');
     history.replaceState(null, '', newUrl);
     syncSidebarNavigationState();
@@ -7875,6 +7909,7 @@ function normalizePokemonCatalogEntry(entry, index){
 
     return {
         id: slug,
+        dex: Number.isFinite(index) ? (index + 1) : null,
         name,
         searchName: normalizePokemonSearchText(name),
         role: roleInfo.label,
@@ -7982,7 +8017,7 @@ function renderPokemonCatalog(options = {}){
 
         card.append(header, media, sections, footer);
         card.addEventListener('click', () => {
-            openPokemonDetailsModal(entry);
+            openPokemonDetailsModal(entry, { pushState: true });
         });
 
         fragment.appendChild(card);
@@ -8165,9 +8200,9 @@ function renderPokemonDetailsModal(entry){
         }
     }
 }
-
-function openPokemonDetailsModal(entry){
-    if(!pokemonDetailsModal) return;
+function openPokemonDetailsModal(entry, options = {}){
+    const { pushState = true } = options || {};
+    if(!pokemonDetailsModal || !entry) return;
 
     renderPokemonDetailsModal(entry);
     pokemonDetailsLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -8186,11 +8221,50 @@ function openPokemonDetailsModal(entry){
         if(event.key === 'Escape') closePokemonDetailsModal();
     };
     document.addEventListener('keydown', pokemonDetailsKeyHandler);
+
+    // Manage history for deep-linking
+    if(pushState && Number.isFinite(entry.dex)){
+        const padded = String(entry.dex).padStart(3, '0');
+        const newPath = getRoutePathForTab('pokemons') + '/' + padded;
+        try{
+            history.pushState({ tab: 'pokemons', pokemonDex: entry.dex }, '', newPath);
+            pokemonModalHistoryPushed = true;
+        }catch(e){
+            pokemonModalHistoryPushed = false;
+        }
+    } else {
+        pokemonModalHistoryPushed = false;
+    }
 }
 
-function closePokemonDetailsModal(){
+function closePokemonDetailsModal(options = {}){
+    const { viaPopstate = false } = options || {};
     if(!pokemonDetailsModal) return;
 
+    // If this close is the result of history navigation, just update UI
+    if(viaPopstate){
+        pokemonDetailsModal.setAttribute('aria-hidden', 'true');
+        syncBasicModalPageState();
+
+        if(pokemonDetailsKeyHandler){
+            document.removeEventListener('keydown', pokemonDetailsKeyHandler);
+            pokemonDetailsKeyHandler = null;
+        }
+
+        if(pokemonDetailsLastFocus instanceof HTMLElement && pokemonDetailsLastFocus.isConnected){
+            try { pokemonDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
+        }
+        pokemonDetailsLastFocus = null;
+        pokemonModalHistoryPushed = false;
+        return;
+    }
+
+    // If we previously pushed a history entry for this modal, navigate back so the URL reverts
+    if(pokemonModalHistoryPushed){
+        try{ history.back(); return; }catch(e){}
+    }
+
+    // Fallback: close immediately without touching history
     pokemonDetailsModal.setAttribute('aria-hidden', 'true');
     syncBasicModalPageState();
 
@@ -8203,9 +8277,41 @@ function closePokemonDetailsModal(){
         try { pokemonDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
     }
     pokemonDetailsLastFocus = null;
+    pokemonModalHistoryPushed = false;
 }
 
 initializeSidebarNavigation();
+
+// Sync modal open/close with browser history (back/forward)
+window.addEventListener('popstate', () => {
+    const pathname = String(location.pathname || '');
+    const match = pathname.match(/\/pokemons\/(\d{1,})\/?$/i);
+    if(match){
+        const dex = parseInt(match[1], 10);
+        const idx = dex - 1;
+        if(!pokemonCatalogLoaded){
+            ensurePokemonCatalogLoaded().then(() => {
+                if(idx >= 0 && idx < pokemonCatalog.length){
+                    const entry = pokemonCatalog[idx];
+                    if(entry){
+                        openPokemonDetailsModal(entry, { pushState: false });
+                    }
+                }
+            }).catch(console.error);
+        } else {
+            const entry = pokemonCatalog[idx];
+            if(entry){
+                openPokemonDetailsModal(entry, { pushState: false });
+            }
+        }
+    } else {
+        // Path no longer points to a pokemon — close modal if open
+        if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'){
+            closePokemonDetailsModal({ viaPopstate: true });
+        }
+    }
+    syncSidebarNavigationState();
+});
 
 function syncHomeLandingFocusSummary(cards = []){
     const cardList = Array.isArray(cards) && cards.length
@@ -8499,290 +8605,4 @@ function initTrainingVideo(){
     });
 }
 
-// --- Pascoa modal (inject pascoa.html into modal body) ---
-let _pascoaModalKeyHandler = null;
-let _pascoaContentLoaded = false;
-let _pascoaModalLastFocus = null;
-let _pascoaLoadToken = 0;
-let _pascoaContentPromise = null;
-
-function syncPascoaButtonState(isOpen){
-    if(!pascoaBtn) return;
-    pascoaBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    pascoaBtn.classList.toggle('is-open', Boolean(isOpen));
-}
-
-function ensurePascoaModal(){
-    const existingModal = document.getElementById('pascoa-modal');
-    if(existingModal?.isConnected) return existingModal;
-
-    const modal = document.createElement('div');
-    modal.id = 'pascoa-modal';
-    modal.className = 'modal pascoa-modal';
-    modal.setAttribute('aria-hidden', 'true');
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Pascoa');
-
-    const content = document.createElement('div');
-    content.className = 'modal-content';
-    content.setAttribute('role', 'document');
-
-    const closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.className = 'modal-close';
-    closeBtn.setAttribute('aria-label', 'Fechar');
-    closeBtn.innerHTML = '&#10006;';
-
-    const modalBody = document.createElement('div');
-    modalBody.id = 'pascoa-modal-body';
-
-    closeBtn.addEventListener('click', closePascoaModal);
-    modal.addEventListener('click', (event) => {
-        if(event.target === modal) closePascoaModal();
-    });
-
-    content.append(closeBtn, modalBody);
-    modal.appendChild(content);
-    document.body.appendChild(modal);
-    return modal;
-}
-        
-async function loadPascoaIntoModalLegacy(){
-    if(_pascoaContentLoaded) return;
-    try{
-        const res = await fetch('pascoa.html');
-        if(!res.ok) throw new Error('Falha ao buscar pascoa.html: ' + res.status);
-        const html = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        // copy inline style blocks
-        const styleTags = Array.from(doc.querySelectorAll('style'));
-        if(styleTags.length){
-            let combined = '';
-            styleTags.forEach(s=> combined += s.textContent + '\n');
-            if(!document.getElementById('pascoa-inline-styles')){
-                const styleEl = document.createElement('style');
-                styleEl.id = 'pascoa-inline-styles';
-                styleEl.textContent = combined;
-                document.head.appendChild(styleEl);
-            }
-        }
-
-        const modalBody = document.getElementById('pascoa-modal-body');
-        if(!modalBody) return;
-
-        // insert main pascoa root (if present) or whole body as fallback
-        const mainRoot = doc.getElementById('pascoa-root') || doc.body;
-        modalBody.innerHTML = '';
-        const imported = document.importNode(mainRoot, true);
-        modalBody.appendChild(imported);
-
-        // execute inline scripts from pascoa.html
-        const scripts = Array.from(doc.querySelectorAll('script')).filter(s => !s.src && s.textContent && s.textContent.trim());
-        scripts.forEach((s, idx)=>{
-            const newScript = document.createElement('script');
-            newScript.type = 'text/javascript';
-            newScript.textContent = s.textContent;
-            // mark injected scripts so we can clean them up when closing the modal
-            newScript.setAttribute('data-pascoa-inline', '1');
-            document.body.appendChild(newScript);
-        });
-
-        // If the injected scripts created the standalone viewer overlay, move it
-        // into the modal body and decide whether to apply the scoped-viewer class.
-        // We avoid forcing the small viewer when the overlay is used for the
-        // Ilha de Páscoa map image.
-        setTimeout(() => {
-            try{
-                const viewer = document.getElementById('pascoa-viewer') || document.querySelector('.pascoa-viewer-overlay');
-                const modalBody = document.getElementById('pascoa-modal-body');
-                if(viewer && modalBody && !modalBody.contains(viewer)){
-                    modalBody.appendChild(viewer);
-                    const modalEl = modalBody.closest('.pascoa-modal');
-
-                    function decideScope(){
-                        try{
-                            const img = viewer.querySelector('.pascoa-viewer-img');
-                            const src = img && (img.currentSrc || img.src || '');
-                            // If the displayed image looks like the Ilha de Páscoa map,
-                            // do not force the small scoped viewer so the map stays large.
-                            if(/ilha[_-]?de[_-]?pascoa/i.test(src)){
-                                if(modalEl) modalEl.classList.remove('pascoa-modal--scoped-viewer');
-                            } else {
-                                if(modalEl) modalEl.classList.add('pascoa-modal--scoped-viewer');
-                            }
-                        }catch(e){}
-                    }
-
-                    // initial decision (image might not be set yet)
-                    decideScope();
-
-                    // watch for image src/DOM changes inside the viewer so we can
-                    // re-evaluate when the viewer content is populated.
-                    const mo = new MutationObserver((mutations)=>{ decideScope(); });
-                    mo.observe(viewer, { attributes: true, childList: true, subtree: true });
-
-                    const imgEl = viewer.querySelector('.pascoa-viewer-img');
-                    if(imgEl) imgEl.addEventListener('load', decideScope);
-
-                    // cleanup observer after a short while to avoid leaks
-                    setTimeout(()=>{ try{ mo.disconnect(); if(imgEl) imgEl.removeEventListener('load', decideScope); }catch(e){} }, 30000);
-                }
-            }catch(e){ /* ignore */ }
-        }, 0);
-
-        _pascoaContentLoaded = true;
-    }catch(err){
-        console.error('Erro carregando pascoa no modal', err);
-        const modalBody = document.getElementById('pascoa-modal-body');
-        if(modalBody) modalBody.innerHTML = '<p>Falha ao carregar conteúdo de Páscoa.</p>';
-    }
-    }
-
-async function loadPascoaIntoModal(loadToken = _pascoaLoadToken){
-    if(_pascoaContentLoaded) return;
-    if(_pascoaContentPromise) return _pascoaContentPromise;
-
-    _pascoaContentPromise = (async () => {
-        try{
-            const res = await fetch('pascoa.html');
-            if(!res.ok) throw new Error('Falha ao buscar pascoa.html: ' + res.status);
-            const html = await res.text();
-            if(loadToken !== _pascoaLoadToken) return;
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            const styleTags = Array.from(doc.querySelectorAll('style'));
-            if(styleTags.length){
-                let combined = '';
-                styleTags.forEach(s=> combined += s.textContent + '\n');
-                if(!document.getElementById('pascoa-inline-styles')){
-                    const styleEl = document.createElement('style');
-                    styleEl.id = 'pascoa-inline-styles';
-                    styleEl.textContent = combined;
-                    document.head.appendChild(styleEl);
-                }
-            }
-
-            const modalBody = document.getElementById('pascoa-modal-body');
-            if(!modalBody || loadToken !== _pascoaLoadToken) return;
-
-            const mainRoot = doc.getElementById('pascoa-root') || doc.body;
-            modalBody.innerHTML = '';
-            const imported = document.importNode(mainRoot, true);
-            modalBody.appendChild(imported);
-
-            const scripts = Array.from(doc.querySelectorAll('script')).filter(s => !s.src && s.textContent && s.textContent.trim());
-            scripts.forEach((s)=>{
-                const newScript = document.createElement('script');
-                newScript.type = 'text/javascript';
-                newScript.textContent = s.textContent;
-                newScript.setAttribute('data-pascoa-inline', '1');
-                document.body.appendChild(newScript);
-            });
-
-            // Move any viewer overlay created by pascoa inline scripts into the
-            // modal body and decide whether to apply the scoped-viewer class.
-            // We avoid forcing the small viewer when the overlay is used for the
-            // Ilha de Páscoa map image.
-            setTimeout(() => {
-                try{
-                    const viewer = document.getElementById('pascoa-viewer') || document.querySelector('.pascoa-viewer-overlay');
-                    const modalBody = document.getElementById('pascoa-modal-body');
-                    if(viewer && modalBody && !modalBody.contains(viewer)){
-                        modalBody.appendChild(viewer);
-                        const modalEl = modalBody.closest('.pascoa-modal');
-
-                        function decideScope(){
-                            try{
-                                const img = viewer.querySelector('.pascoa-viewer-img');
-                                const src = img && (img.currentSrc || img.src || '');
-                                if(/ilha[_-]?de[_-]?pascoa/i.test(src)){
-                                    if(modalEl) modalEl.classList.remove('pascoa-modal--scoped-viewer');
-                                } else {
-                                    if(modalEl) modalEl.classList.add('pascoa-modal--scoped-viewer');
-                                }
-                            }catch(e){}
-                        }
-
-                        decideScope();
-                        const mo = new MutationObserver((mutations)=>{ decideScope(); });
-                        mo.observe(viewer, { attributes: true, childList: true, subtree: true });
-                        const imgEl = viewer.querySelector('.pascoa-viewer-img');
-                        if(imgEl) imgEl.addEventListener('load', decideScope);
-                        setTimeout(()=>{ try{ mo.disconnect(); if(imgEl) imgEl.removeEventListener('load', decideScope); }catch(e){} }, 30000);
-                    }
-                }catch(e){}
-            }, 0);
-
-            _pascoaContentLoaded = true;
-        }catch(err){
-            if(loadToken !== _pascoaLoadToken) return;
-            console.error('Erro carregando pascoa no modal', err);
-            const modalBody = document.getElementById('pascoa-modal-body');
-            if(modalBody) modalBody.innerHTML = '<p>Falha ao carregar conteudo de Pascoa.</p>';
-        } finally {
-            _pascoaContentPromise = null;
-        }
-    })();
-
-    return _pascoaContentPromise;
-}
-
-function openPascoaModal(){
-    const modal = ensurePascoaModal();
-    if(!modal) return;
-    const modalBody = document.getElementById('pascoa-modal-body');
-    const loadToken = ++_pascoaLoadToken;
-    _pascoaModalLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    if(modalBody && !_pascoaContentLoaded){
-        modalBody.innerHTML = '<div class="pascoa-modal__status" role="status" aria-live="polite">Carregando Pascoa...</div>';
-    }
-    loadPascoaIntoModal(loadToken).catch(()=>{});
-    modal.setAttribute('aria-hidden','false');
-    syncPascoaButtonState(true);
-    syncBasicModalPageState();
-    const closeBtn = modal.querySelector('.modal-close');
-    if(closeBtn instanceof HTMLElement){
-        requestAnimationFrame(() => {
-            try { closeBtn.focus({ preventScroll: true }); } catch(e) {}
-        });
-    }
-    if(_pascoaModalKeyHandler) document.removeEventListener('keydown', _pascoaModalKeyHandler);
-    _pascoaModalKeyHandler = (e)=>{ if(e.key === 'Escape') closePascoaModal(); };
-    document.addEventListener('keydown', _pascoaModalKeyHandler);
-}
-
-function closePascoaModal(){
-    const modal = document.getElementById('pascoa-modal');
-    if(!modal) return;
-    modal.setAttribute('aria-hidden','true');
-    syncPascoaButtonState(false);
-    // cleanup injected pascoa artifacts (counter, viewer, inline styles, injected scripts)
-    try{
-        const modalBody = document.getElementById('pascoa-modal-body');
-        if(modalBody) modalBody.innerHTML = '';
-        const counter = document.getElementById('pascoa-counter');
-        if(counter) counter.remove();
-        const viewer = document.getElementById('pascoa-viewer');
-        if(viewer) viewer.remove();
-        const styleEl = document.getElementById('pascoa-inline-styles');
-        if(styleEl) styleEl.remove();
-        // remove any inline scripts we injected earlier
-        document.querySelectorAll('script[data-pascoa-inline="1"]').forEach(s => s.remove());
-    }catch(e){ console.warn('Erro ao limpar modal pascoa:', e); }
-    // allow reloading content next time
-    _pascoaLoadToken += 1;
-    _pascoaContentLoaded = false;
-    _pascoaContentPromise = null;
-    syncBasicModalPageState();
-    if(_pascoaModalKeyHandler) document.removeEventListener('keydown', _pascoaModalKeyHandler);
-    _pascoaModalKeyHandler = null;
-    if(_pascoaModalLastFocus instanceof HTMLElement && _pascoaModalLastFocus.isConnected){
-        try { _pascoaModalLastFocus.focus({ preventScroll: true }); } catch(e) {}
-    }
-    _pascoaModalLastFocus = null;
-}
+// Páscoa feature removed
