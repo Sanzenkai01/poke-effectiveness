@@ -315,6 +315,7 @@ function createInlineStatusMessage(className, message){
 function showTypesLoadingState(){
     if(!chart || menuTypes.length) return;
     chart.replaceChildren(createInlineStatusMessage('load-pending-message', 'Carregando tabela de tipos...'));
+    renderTypeInfoEmptyState('Os dados da tabela estão sendo carregados para a consulta.');
 }
 
 function renderBossesDeferredState(message, options = {}){
@@ -1960,16 +1961,17 @@ const strings = {
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
         instructions: '',
-        superEffective: 'super eficaz contra',
-        vulnerable: 'vulnerável a',
-        immune: 'imune a',
+        superEffective: 'Super Efetivo',
+        vulnerable: 'Vulnerável',
+        immune: 'Imune',
         noRelation: 'nenhuma relação especial.',
         shareSuccess: 'Link copiado para a área de transferência!',
         shareFail: 'Falha ao copiar link.',
         shareLabel: 'Compartilhar',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
-        legendStrength: 'Super eficaz',
+        legendEffective: 'Efetivo 1.5x',
+        legendStrength: 'Super Efetivo',
         legendWeakness: 'Vulnerável',
         legendImmune: 'Imune',
         legendNeutral: 'Neutro',
@@ -1981,6 +1983,7 @@ const strings = {
         commonPlatesLabel: 'Plates comuns',
         shinyPlatesLabel: 'Shining Plates',
         tabTypes: 'Tipos',
+        typeLabel: 'Tipo',
         tabCalculator: 'Calculadora de Treinamento',
         tabFossils: 'Fósseis',
         tabSpeedsters: 'Chefes',
@@ -1996,7 +1999,7 @@ const strings = {
         left: 'esquerda',
         right: 'direita',
         drake: 'Drake',
-        resistLabel: 'resiste a',
+        resistLabel: 'Resiste',
         legendResist: 'Resiste',
         bird: 'Pássaro',
         dino: 'Dino',
@@ -2272,7 +2275,7 @@ function updateTextContent(){
     const legend = document.getElementById('legend');
     if(legend){
         legend.querySelectorAll('.legend-item').forEach((item,i)=>{
-            const key = ['legendSelected','legendStrength','legendResist','legendWeakness','legendImmune','legendNeutral'][i];
+            const key = ['legendSelected','legendEffective','legendStrength','legendResist','legendImmune','legendNeutral'][i];
             if(key) item.lastChild.textContent = t(key);
         });
     }
@@ -2713,6 +2716,83 @@ function tally(arrs){
     arrs.flat().forEach(t=>{m[t]=(m[t]||0)+1;});
     return m;
 }
+const TYPE_EFFECTIVE_MULTIPLIER = 1.5;
+const TYPE_SUPER_EFFECTIVE_MULTIPLIER = 2;
+const TYPE_RESIST_MULTIPLIER = 0.75;
+const TYPE_STRONG_RESIST_MULTIPLIER = 0.5;
+const TYPE_SUPER_EFFECTIVE_OVERRIDES = Object.freeze({
+    ice: ['dragon'],
+    fairy: ['dragon']
+});
+
+function getTypeDisplayName(type){
+    if(!type) return '';
+    return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+function formatTypeMultiplierValue(multiplier){
+    if(!Number.isFinite(multiplier)) return '-';
+    if(Number.isInteger(multiplier)) return `${multiplier}x`;
+    return `${String(Number(multiplier.toFixed(2))).replace(/\.0+$/,'').replace(/(\.\d*[1-9])0+$/,'$1')}x`;
+}
+
+function computeTypeRawMultiplier(attackingType, defendingTypes = []){
+    let multiplier = 1;
+    for(const defendingType of defendingTypes){
+        if(!defendingType) continue;
+        if(immunities[defendingType] && immunities[defendingType].includes(attackingType)){
+            return 0;
+        }
+        if(effectiveness[attackingType] && effectiveness[attackingType].includes(defendingType)){
+            multiplier *= 2;
+        } else if(resistances[defendingType] && resistances[defendingType].includes(attackingType)){
+            multiplier *= 0.5;
+        }
+    }
+    return multiplier;
+}
+
+function hasTypeSuperEffectiveOverride(attackingType, defendingTypes = []){
+    const overrides = TYPE_SUPER_EFFECTIVE_OVERRIDES[String(attackingType || '').toLowerCase()];
+    if(!Array.isArray(overrides) || !overrides.length) return false;
+    return defendingTypes.some(type => overrides.includes(String(type || '').toLowerCase()));
+}
+
+function normalizeTypeMatchupMultiplier(raw, attackingType = '', defendingTypes = []){
+    if(typeof raw !== 'number' || Number.isNaN(raw)) return 1;
+    if(raw === 0) return 0;
+    if(raw >= 4) return TYPE_SUPER_EFFECTIVE_MULTIPLIER;
+    if(raw >= 2 && hasTypeSuperEffectiveOverride(attackingType, defendingTypes)) return TYPE_SUPER_EFFECTIVE_MULTIPLIER;
+    if(raw >= 2) return TYPE_EFFECTIVE_MULTIPLIER;
+    if(raw >= 1) return 1;
+    if(raw <= 0.25) return TYPE_STRONG_RESIST_MULTIPLIER;
+    if(raw === 0.5) return TYPE_RESIST_MULTIPLIER;
+    return raw;
+}
+
+function renderTypeInfoEmptyState(message){
+    const info = document.getElementById('info');
+    if(!info) return;
+    info.innerHTML = `
+        <div class="types-empty-state">
+            <div class="types-empty-state__copy">
+                <span class="types-empty-state__eyebrow">${message ? 'Carregando' : 'Sem seleção'}</span>
+                <h3>${message ? 'Preparando a tabela de tipos' : 'Escolha um ou dois tipos'}</h3>
+                <p>${message || 'O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistência e imunidade.'}</p>
+            </div>
+            <div class="types-empty-state__grid">
+                <article class="types-empty-card">
+                    <strong>Ataque</strong>
+                    <span>Veja onde sua combinação bate com 1.5x ou 2x.</span>
+                </article>
+                <article class="types-empty-card">
+                    <strong>Defesa</strong>
+                    <span>Confira vulnerabilidades, resistências e imunidades sem poluição visual.</span>
+                </article>
+            </div>
+        </div>
+    `;
+}
 // catch calculator data
 const catchBallOrder = ['ultra', 'story', 'elemental', 'safari'];
 const catchBallRequirementAliases = Object.freeze(
@@ -3031,7 +3111,7 @@ function drawConnections(type){
 function renderSelection(){
     connectionsSvg.innerHTML='';
     document.querySelectorAll('.type-button').forEach(btn=>{
-        btn.classList.remove('active','effectiveness','weakness','immune','mixed','neutral');
+        btn.classList.remove('active','effectiveness','weakness','immune','mixed','neutral','resist','strength-from-selection');
         btn.setAttribute('aria-pressed','false');
     });
     const info=document.getElementById('info');
@@ -3102,8 +3182,26 @@ function renderSelection(){
         });
     });
 
-    strengths.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('effectiveness');});
-    weakAgainst.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('weakness');});
+    // Visual state: mark types in the grid according to relation with current selection
+    // NOTE: in the types panel we consider 'effectiveness' as the visual highlight for
+    // types that are "super effective" in the current relation (attackers that hit
+    // the selection for >1x). This ensures e.g. Fairy and Ice appear as super-effective
+    // against Dragon when Dragon is selected.
+    strengths.forEach(t2=>{
+        const b=document.querySelector(`.type-button[data-type="${t2}"]`);
+        if(b){
+            // types that the current selection is effective against: keep subtle mark
+            b.classList.add('strength-from-selection');
+        }
+    });
+    // types that deal >1x damage to the selection (i.e. are super effective against it)
+    weakAgainst.forEach(t2=>{
+        const b=document.querySelector(`.type-button[data-type="${t2}"]`);
+        if(b){
+            b.classList.remove('weakness');
+            b.classList.add('effectiveness');
+        }
+    });
     resistList.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('resist');});
     immuneList.forEach(t2=>{const b=document.querySelector(`.type-button[data-type="${t2}"]`);if(b)b.classList.add('immune');});
 
@@ -3123,39 +3221,239 @@ function renderSelection(){
             if(
                 !btn.classList.contains('active') &&
                 !btn.classList.contains('effectiveness') &&
+                !btn.classList.contains('effective') &&
                 !btn.classList.contains('weakness') &&
+                !btn.classList.contains('resist') &&
                 !btn.classList.contains('immune') &&
-                !btn.classList.contains('mixed')
+                !btn.classList.contains('mixed') &&
+                !btn.classList.contains('strength-from-selection')
             ) {
                 btn.classList.add('neutral');
+            } else {
+                btn.classList.remove('neutral');
             }
         });
     }
-    let html=`<div class="info-title">${currentSelection.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ')}</div>`;
-    function makeIcons(list, counts){
+    // Build a richer info card with clear sections and clickable icons
+    function makeIcons(list){
         return list.map(t2=>{
-            const count = counts[t2] || 0;
-            let multlabel = '';
-            if(count){
-                if(count !== 1) multlabel = ` x${count}`;
-            }
-            return `<div class="info-icon-wrapper" data-type="${t2}">`+
-                   `<img class="info-icon" src="icons-type/${t2}.png" alt="${t2}" title="${t2}" />`+
-                   `<span class="info-label">${t2.charAt(0).toUpperCase()+t2.slice(1)}${multlabel}</span>`+
-                   `</div>`;
+            const label = t2.charAt(0).toUpperCase()+t2.slice(1);
+            return `
+                <button class="info-type" data-type="${t2}" aria-label="Selecionar ${label}" title="${label}">
+                    <img class="info-icon" src="icons-type/${t2}.png" alt="${label}" loading="lazy" decoding="async">
+                    <span class="info-type-label">${label}</span>
+                </button>
+            `;
         }).join('');
     }
-    if(strengths.length) html+=`<div><em>${t('superEffective')}:</em><div class="info-icons">${makeIcons(strengths, strengthsCount)}</div></div>`;
-    if(weakAgainst.length) html+=`<div><em>${t('vulnerable')}:</em><div class="info-icons">${makeIcons(weakAgainst, weakCount)}</div></div>`;
-    if(resistList.length) html+=`<div><em>${t('resistLabel')}:</em><div class="info-icons">${makeIcons(resistList, resistCount)}</div></div>`;
-    if(immuneList.length) html+=`<div><em>${t('immune')}:</em><div class="info-icons">${makeIcons(immuneList, {})}</div></div>`;
-    if(!strengths.length&&!weakAgainst.length&&!resistList.length&&!immuneList.length) html+=`<div>${t('noRelation')}</div>`;
-    info.innerHTML=html;
-    info.querySelectorAll('.info-icon').forEach(img=>{
-        img.style.cursor='pointer';
-        img.addEventListener('click',()=>selectType(img.dataset.type));
+
+    // split strengths into 'efetivo' (count === 1) and 'super efetivo' (count > 1)
+    const superEffectiveTargets = strengths.filter(t2 => (strengthsCount[t2] || 0) > 1);
+    const effectiveTargets = strengths.filter(t2 => (strengthsCount[t2] || 0) === 1);
+
+    let html = `<div class="types-info-shell">`;
+    html += `
+        <div class="types-info__summary">
+            <span class="types-info__eyebrow">Análise atual</span>
+            <div class="info-type-heading">${t('typeLabel')}: ${currentSelection.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ')}</div>
+            <div class="types-selection-pills">
+                ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
+            </div>
+        </div>
+        <div class="types-info__sections">
+    `;
+    if(superEffectiveTargets.length) html += `<section class="info-section info-super"><h4>${t('superEffective')}</h4><div class="info-icons">${makeIcons(superEffectiveTargets)}</div></section>`;
+    if(effectiveTargets.length) html += `<section class="info-section info-effective"><h4>Efetivo</h4><div class="info-icons">${makeIcons(effectiveTargets)}</div></section>`;
+    if(weakAgainst.length) html += `<section class="info-section info-vulnerable"><h4>${t('vulnerable')}</h4><div class="info-icons">${makeIcons(weakAgainst)}</div></section>`;
+    if(resistList.length) html += `<section class="info-section info-resist"><h4>${t('resistLabel')}</h4><div class="info-icons">${makeIcons(resistList)}</div></section>`;
+    if(immuneList.length) html += `<section class="info-section info-immune"><h4>${t('immune')}</h4><div class="info-icons">${makeIcons(immuneList)}</div></section>`;
+    if(!superEffectiveTargets.length && !effectiveTargets.length && !weakAgainst.length && !resistList.length && !immuneList.length) html+=`<div class="info-empty-msg">${t('noRelation')}</div>`;
+    html += `</div></div>`;
+    info.innerHTML = html;
+
+    // Wire up clickable buttons inside the card
+    info.querySelectorAll('.info-type').forEach(btn=>{
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', ()=> selectType(btn.dataset.type));
         if(useGsap){
-            gsap.fromTo(img, {scale:0, opacity:0}, {scale:1, opacity:1, duration:0.3, ease:'back.out(1.7)'});
+            gsap.fromTo(btn, {scale:0.9, opacity:0}, {scale:1, opacity:1, duration:0.32, ease:'back.out(1.4)'});
+        }
+    });
+}
+
+function renderSelection(){
+    connectionsSvg.innerHTML='';
+    document.querySelectorAll('.type-button').forEach(btn=>{
+        btn.classList.remove('active','effective','effectiveness','weakness','immune','mixed','neutral','resist','strength-from-selection');
+        btn.setAttribute('aria-pressed','false');
+    });
+
+    const info = document.getElementById('info');
+    if(!currentSelection.length){
+        renderTypeInfoEmptyState();
+        return;
+    }
+
+    currentSelection.forEach(type=>{
+        const btn=document.querySelector(`.type-button[data-type="${type}"]`);
+        if(btn){
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed','true');
+        }
+    });
+
+    const offenseEntries = menuTypes
+        .map(targetType => {
+            const activeMatches = currentSelection
+                .map(attackingType => {
+                    const rawMultiplier = computeTypeRawMultiplier(attackingType, [targetType]);
+                    return normalizeTypeMatchupMultiplier(rawMultiplier, attackingType, [targetType]);
+                })
+                .filter(multiplier => multiplier > 1);
+            if(!activeMatches.length) return null;
+            const multiplier = activeMatches.some(value => value >= TYPE_SUPER_EFFECTIVE_MULTIPLIER) || activeMatches.length > 1
+                ? TYPE_SUPER_EFFECTIVE_MULTIPLIER
+                : TYPE_EFFECTIVE_MULTIPLIER;
+            return { type: targetType, multiplier };
+        })
+        .filter(Boolean);
+
+    const superEffectiveTargets = offenseEntries
+        .filter(entry => entry.multiplier >= TYPE_SUPER_EFFECTIVE_MULTIPLIER)
+        .sort((left, right) => left.type.localeCompare(right.type));
+    const effectiveTargets = offenseEntries
+        .filter(entry => entry.multiplier > 1 && entry.multiplier < TYPE_SUPER_EFFECTIVE_MULTIPLIER)
+        .sort((left, right) => left.type.localeCompare(right.type));
+
+    const defensiveEntries = menuTypes.map(type => {
+        const rawMultiplier = computeTypeRawMultiplier(type, currentSelection);
+        const multiplier = normalizeTypeMatchupMultiplier(rawMultiplier, type, currentSelection);
+        return { type, rawMultiplier, multiplier };
+    });
+
+    const superWeakEntries = defensiveEntries
+        .filter(entry => entry.multiplier >= TYPE_SUPER_EFFECTIVE_MULTIPLIER)
+        .sort((left, right) => right.multiplier - left.multiplier || left.type.localeCompare(right.type));
+    const weakEntries = defensiveEntries
+        .filter(entry => entry.multiplier > 1 && entry.multiplier < TYPE_SUPER_EFFECTIVE_MULTIPLIER)
+        .sort((left, right) => right.multiplier - left.multiplier || left.type.localeCompare(right.type));
+    const resistEntries = defensiveEntries
+        .filter(entry => entry.multiplier > 0 && entry.multiplier < 1)
+        .sort((left, right) => left.multiplier - right.multiplier || left.type.localeCompare(right.type));
+    const immuneEntries = defensiveEntries
+        .filter(entry => entry.multiplier === 0)
+        .sort((left, right) => left.type.localeCompare(right.type));
+
+    superEffectiveTargets.forEach(entry=>{
+        const btn=document.querySelector(`.type-button[data-type="${entry.type}"]`);
+        if(btn && !btn.classList.contains('active')) btn.classList.add('effectiveness');
+    });
+    effectiveTargets.forEach(entry=>{
+        const btn=document.querySelector(`.type-button[data-type="${entry.type}"]`);
+        if(btn && !btn.classList.contains('active') && !btn.classList.contains('effectiveness')) btn.classList.add('effective');
+    });
+    // Defensive relationships are already computed earlier in this function.
+
+    superWeakEntries.forEach(entry=>{
+        const btn = document.querySelector(`.type-button[data-type="${entry.type}"]`);
+        if(btn && !btn.classList.contains('active')) btn.classList.add('weakness');
+    });
+    weakEntries.forEach(entry=>{
+        const btn = document.querySelector(`.type-button[data-type="${entry.type}"]`);
+        if(btn && !btn.classList.contains('active') && !btn.classList.contains('weakness')) btn.classList.add('weakness');
+    });
+    resistEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('resist'); });
+    immuneEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('immune'); });
+
+    // If a type is both effective (from selection) and also a threat/resist, mark as mixed
+    const offenseTypes = [...new Set([...(superEffectiveTargets||[]).map(e=>e.type), ...(effectiveTargets||[]).map(e=>e.type)])];
+    const defenseThreats = defensiveEntries.filter(e=>e.multiplier>1).map(e=>e.type);
+    const overlapped = offenseTypes.filter(t=> defenseThreats.includes(t));
+    overlapped.forEach(t2=>{
+        const b = document.querySelector(`.type-button[data-type="${t2}"]`);
+        if(b){
+            b.classList.add('mixed');
+            b.classList.remove('effectiveness');
+            b.classList.remove('effective');
+            b.classList.remove('weakness');
+            b.classList.remove('resist');
+            b.classList.remove('immune');
+        }
+    });
+
+    document.querySelectorAll('.type-button').forEach(btn=>{
+        if(
+            !btn.classList.contains('active') &&
+            !btn.classList.contains('effective') &&
+            !btn.classList.contains('effectiveness') &&
+            !btn.classList.contains('weakness') &&
+            !btn.classList.contains('resist') &&
+            !btn.classList.contains('immune') &&
+            !btn.classList.contains('mixed') &&
+            !btn.classList.contains('strength-from-selection')
+        ) {
+            btn.classList.add('neutral');
+        } else {
+            btn.classList.remove('neutral');
+        }
+    });
+
+    function makeIcons(entries, tone){
+        return entries.map(entry=>{
+            const label = getTypeDisplayName(entry.type);
+            return `
+                <button class="info-type info-type--${tone}" data-type="${entry.type}" aria-label="Selecionar ${label}" title="${label}">
+                    <img class="info-icon" src="icons-type/${entry.type}.png" alt="${label}" loading="lazy" decoding="async">
+                    <span class="info-type-copy">
+                        <span class="info-type-label">${label}</span>
+                        <span class="info-type-mult">${formatTypeMultiplierValue(entry.multiplier)}</span>
+                    </span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    function makeSection(title, subtitle, entries, tone){
+        if(!entries.length) return '';
+        return `
+            <section class="info-section info-section--${tone}">
+                <div class="info-section__header">
+                    <h4>${title}</h4>
+                    <span>${subtitle}</span>
+                </div>
+                <div class="info-icons">${makeIcons(entries, tone)}</div>
+            </section>
+        `;
+    }
+
+    let html = `<div class="types-info-shell">`;
+    html += `
+        <div class="types-info__summary">
+            <span class="types-info__eyebrow">Análise atual</span>
+            <div class="info-type-heading">${currentSelection.map(getTypeDisplayName).join(' + ')}</div>
+            <div class="types-selection-pills">
+                ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
+            </div>
+        </div>
+        <div class="types-info__sections">
+    `;
+    html += makeSection(t('superEffective'), 'Ataque 2x', superEffectiveTargets, 'super');
+    html += makeSection('Efetivo', 'Ataque 1.5x', effectiveTargets, 'effective');
+    html += makeSection('Muito vulnerável', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
+    html += makeSection(t('vulnerable'), 'Defesa 1.5x', weakEntries, 'vulnerable');
+    html += makeSection(t('resistLabel'), 'Defesa 0.75x / 0.5x', resistEntries, 'resist');
+    html += makeSection(t('immune'), 'Defesa 0x', immuneEntries, 'immune');
+    if(!superEffectiveTargets.length && !effectiveTargets.length && !superWeakEntries.length && !weakEntries.length && !resistEntries.length && !immuneEntries.length){
+        html += `<div class="info-empty-msg">${t('noRelation')}</div>`;
+    }
+    html += `</div></div>`;
+    info.innerHTML = html;
+
+    info.querySelectorAll('.info-type').forEach(btn=>{
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', ()=> selectType(btn.dataset.type));
+        if(useGsap){
+            gsap.fromTo(btn, {scale:0.9, opacity:0}, {scale:1, opacity:1, duration:0.32, ease:'back.out(1.4)'});
         }
     });
 }
@@ -7090,21 +7388,25 @@ function buildMatrix(){
     const types = menuTypes;
     const rows = types.map(att=>{
         const row = types.map(def=>{
-            let mult = 1;
-            if(immunities[def] && immunities[def].includes(att)){
-                mult = 0;
-            } else if(effectiveness[att] && effectiveness[att].includes(def)){
-                mult *= 2;
-            } else if(resistances[def] && resistances[def].includes(att)){
-                mult *= 0.5;
-            }
-            return mult;
+            const raw = computeTypeRawMultiplier(att, [def]);
+            return normalizeTypeMatchupMultiplier(raw, att, [def]);
         });
         return row;
     });
-    let html = '<table><tr><th></th>' + types.map(t=>`<th>${t}</th>`).join('') + '</tr>';
+    const getMatrixTone = (value) => {
+        if(value >= TYPE_SUPER_EFFECTIVE_MULTIPLIER) return 'is-super';
+        if(value > 1) return 'is-effective';
+        if(value === 0) return 'is-immune';
+        if(value < 1) return 'is-resist';
+        return 'is-neutral';
+    };
+    let html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
     rows.forEach((row,i)=>{
         html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'–':v}</td>`).join('') + '</tr>';
+    });
+    html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
+    rows.forEach((row,i)=>{
+        html += '<tr><th>' + getTypeDisplayName(types[i]) + '</th>' + row.map(v=>`<td class="${getMatrixTone(v)}">${v===1 ? '&ndash;' : formatTypeMultiplierValue(v)}</td>`).join('') + '</tr>';
     });
     html += '</table>';
     matrixBody.innerHTML = html;
@@ -7177,7 +7479,7 @@ function resetTypesLoadErrorState(){
     if(infoPanel){
         infoPanel.classList.remove('load-error-state');
         if(!currentSelection.length){
-            infoPanel.textContent = '';
+            renderTypeInfoEmptyState();
         }
     }
 
@@ -7230,6 +7532,7 @@ function applyTypesData(data){
     createButtons();
     updateTextContent();
     initFromUrl();
+    renderSelection();
     populateTypesDatalist();
 
     if(useGsap){
@@ -7853,20 +8156,11 @@ function getPokemonElementalBallTypeLabel(ballKey, types = []){
 }
 
 function getPokemonTypeMultiplier(attackingType, defendingTypes = []){
-    let multiplier = 1;
-    for(const defendingType of defendingTypes){
-        const normalizedDefendingType = normalizePokemonTypeKey(defendingType);
-        if(!normalizedDefendingType) continue;
-        if(immunities[normalizedDefendingType] && immunities[normalizedDefendingType].includes(attackingType)){
-            return 0;
-        }
-        if(effectiveness[attackingType] && effectiveness[attackingType].includes(normalizedDefendingType)){
-            multiplier *= 2;
-        } else if(resistances[normalizedDefendingType] && resistances[normalizedDefendingType].includes(attackingType)){
-            multiplier *= 0.5;
-        }
-    }
-    return multiplier;
+    const normalizedDefendingTypes = defendingTypes
+        .map(normalizePokemonTypeKey)
+        .filter(Boolean);
+    const rawMultiplier = computeTypeRawMultiplier(attackingType, normalizedDefendingTypes);
+    return normalizeTypeMatchupMultiplier(rawMultiplier, attackingType, normalizedDefendingTypes);
 }
 
 function getPokemonWeaknesses(types = []){
@@ -8182,6 +8476,11 @@ function renderPokemonDetailsModal(entry){
             weaknessEntries.forEach((weakness) => {
                 const pill = document.createElement('span');
                 pill.className = 'pokemon-weakness-pill';
+                pill.classList.add(
+                    weakness.multiplier >= TYPE_SUPER_EFFECTIVE_MULTIPLIER
+                        ? 'pokemon-weakness-pill--super'
+                        : 'pokemon-weakness-pill--effective'
+                );
 
                 const icon = document.createElement('img');
                 icon.src = `icons-type/${weakness.type}.png`;
@@ -8191,7 +8490,7 @@ function renderPokemonDetailsModal(entry){
                 setImageFallback(icon, POKEMON_IMAGE_PLACEHOLDER);
 
                 const text = document.createElement('span');
-                text.textContent = `${formatPokemonTypeLabel(weakness.type)} x${weakness.multiplier}`;
+                text.textContent = `${formatPokemonTypeLabel(weakness.type)} ${formatTypeMultiplierValue(weakness.multiplier)}`;
 
                 pill.append(icon, text);
                 weaknessFragment.appendChild(pill);

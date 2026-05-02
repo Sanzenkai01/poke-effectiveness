@@ -13,6 +13,92 @@
   /* Removido position:sticky/fixed para não seguir o scroll */
 }
 
+/* Final, last-resort overrides: ensure the types panel truly spans full content width
+   Place at EOF so it takes precedence over earlier layout rules. */
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-body {
+  grid-template-columns: 1fr !important;
+}
+
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-panel,
+html body[data-active-tab="effectiveness"] #content-effectiveness .chart-container,
+html body[data-active-tab="effectiveness"] #content-effectiveness #chart {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Center types panel heading overrides */
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-panel-heading {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-panel-heading > div {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+html body[data-active-tab="effectiveness"] #content-effectiveness #types-grid-heading {
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+
+/* Tipos page — center text and make the interactive grid look good on wide screens */
+html body[data-active-tab="effectiveness"] #content-effectiveness {
+  text-align: center;
+}
+
+html body[data-active-tab="effectiveness"] #content-effectiveness h1,
+html body[data-active-tab="effectiveness"] #content-effectiveness h2,
+html body[data-active-tab="effectiveness"] #content-effectiveness h3,
+html body[data-active-tab="effectiveness"] #content-effectiveness p,
+html body[data-active-tab="effectiveness"] #content-effectiveness .info,
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-footer,
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-header {
+  text-align: center !important;
+}
+
+/* Constrain and center the interactive grid on very wide screens */
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 220px)) !important;
+  gap: 1rem 2rem;
+}
+
+/* Keep type buttons a pleasant size/ratio on wide viewports */
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid .type-button {
+  min-width: 140px;
+  max-width: 220px;
+  margin: 0 auto;
+  height: auto;
+  min-height: 120px;
+  padding: 0.9rem;
+  text-align: center;
+}
+
+/* Center and limit info width for readability */
+html body[data-active-tab="effectiveness"] #content-effectiveness .info {
+  max-width: 920px;
+  margin: 0.5rem auto 0;
+  text-align: center !important;
+}
+
+/* Keep footer elements balanced */
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-footer {
+  justify-content: center !important;
+  gap: 1rem;
+}
+
+
 .footer-credits {
   display: inline-block;
 }
@@ -404,6 +490,147 @@ p {
   margin: 0 auto;
 }
 
+/* Types panel specific layout overrides */
+.types-card { padding: 1.25rem; max-width: none; width: 100%; margin: 0; }
+
+/* Make the interactive types grid use full available page width */
+.types-card .chart-container,
+.types-card .chart-container .grid,
+.types-card #chart {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.types-card .chart-container .grid {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem 2.5rem;
+}
+.types-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.types-search { display:flex; justify-content:center; width:100%; max-width:520px; }
+
+/* Footer layout for the types analysis panel (horizontal) */
+.types-footer {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.types-footer .info {
+  flex: 1 1 60%;
+  min-height: 80px;
+  max-width: none;
+  margin: 0;
+}
+
+.types-body { display:grid; grid-template-columns: 1fr; gap:1rem; align-items:start; }
+@media (max-width: 520px) {
+  .types-header { grid-template-columns: 1fr; grid-auto-rows: auto; text-align:center; }
+  .types-search { justify-self: center; }
+  .types-header .legend { justify-self: center; }
+}
+
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem 2rem; /* row-gap column-gap */
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .types-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+}
+.types-grid .type-button { width:100%; height:auto; min-height:120px; border-radius:12px; display:flex; flex-direction:column; gap:0.5rem; padding:0.75rem; align-items:center; justify-content:center; text-align:center; }
+.types-grid .type-button .type-icon { width:48px; height:48px; margin-bottom:4px; }
+.types-grid .type-button .type-label { display:block; font-size:0.95rem; color:#fff; text-transform:capitalize; }
+
+.info { padding:1rem; min-height:120px; background:rgba(255,255,255,0.03); border-radius:12px; color:#e6eef8; text-align:left; }
+.info .info-title { font-weight:700; margin-bottom:0.5rem; color:#fff; font-size:1.05rem; }
+.info-icon-wrapper { display:inline-flex; gap:0.5rem; align-items:center; margin-right:0.5rem; margin-bottom:0.5rem; }
+
+/* Stronger overrides for the types grid to ensure consistent card appearance */
+#chart.types-grid .type-button {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  border: none;
+}
+#chart.types-grid .type-button .type-icon { width:48px; height:48px; margin:0; }
+#chart.types-grid .type-button .type-label { font-size:0.95rem; margin-top:0.4rem; }
+/* Selection / state overrides */
+#chart.types-grid .type-button.active {
+  background: linear-gradient(90deg,#ffd700,#ffcf5c);
+  box-shadow: 0 6px 24px rgba(255,199,63,0.18), 0 2px 6px rgba(0,0,0,0.45);
+  transform: translateY(-4px);
+}
+#chart.types-grid .type-button.effectiveness { box-shadow: 0 6px 20px rgba(139,195,74,0.18); }
+#chart.types-grid .type-button.weakness { box-shadow: 0 6px 20px rgba(229,115,115,0.18); }
+#chart.types-grid .type-button.resist { box-shadow: 0 6px 20px rgba(66,165,245,0.12); }
+#chart.types-grid .type-button.immune { box-shadow: 0 6px 20px rgba(158,158,158,0.12); }
+
+/* Ensure the effectiveness/weakness/resist visuals inside the types panel are explicit */
+#content-effectiveness #chart.types-grid .type-button.effectiveness {
+  background: linear-gradient(180deg,#2b7a2b,#4caf50);
+  color: #06220a;
+  box-shadow: 0 10px 30px rgba(46,125,50,0.18), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+#content-effectiveness #chart.types-grid .type-button.weakness {
+  background: linear-gradient(180deg,#c94a4a,#e57373);
+  color: #2b0a0a;
+  box-shadow: 0 10px 30px rgba(201,67,67,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+#content-effectiveness #chart.types-grid .type-button.resist {
+  background: linear-gradient(180deg,#2e6fa0,#42a5f5);
+  color:#031826;
+}
+#content-effectiveness #chart.types-grid .type-button.immune {
+  background: linear-gradient(180deg,#8f8f8f,#bdbdbd);
+  color:#081018;
+}
+
+/* Info card styles for the types pane */
+.info-card {
+  padding: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+  text-align: center;
+}
+.info-header { margin-bottom: 0.6rem; }
+.info-title { font-weight:700; font-size:1.05rem; color:#fff; }
+.info-type-heading { font-weight:700; font-size:1.05rem; color:#fff; text-align:center; }
+.info-section { margin-bottom:0.65rem; }
+.info-section h4 { font-size:0.9rem; margin:0 0 0.5rem 0; color:#cfe9ff; text-transform:capitalize; text-align:center; }
+.info-icons { display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
+.info-type { display:inline-flex; flex-direction:column; align-items:center; gap:0.25rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); padding:0.45rem 0.6rem; border-radius:12px; cursor:pointer; color:inherit; }
+.info-type img.info-icon { width:34px; height:34px; display:block; }
+.info-type-label { font-size:0.85rem; color:inherit; text-align:center; display:block; }
+.info-mult { display:inline-block; margin-left:0.4rem; font-size:0.8rem; opacity:0.9; }
+.info-empty-msg { color: #8fa6c0; }
+
+
+
 /* quantity label for dna image in fossil results */
 .dna-quantity {
   font-weight: bold;
@@ -556,6 +783,26 @@ p {
   overflow-y: auto;
   transition: background 0.3s, transform 0.3s;
   box-shadow: 0 4px 16px var(--card-shadow);
+}
+
+/* Ensure relation classes in the effectiveness panel are clearly visible
+   and not desaturated by the generic `neutral` rules. Placed late to
+   override earlier rules. */
+#content-effectiveness .type-button.effectiveness,
+#content-effectiveness .type-button.effective,
+#content-effectiveness .type-button.weakness,
+#content-effectiveness .type-button.resist,
+#content-effectiveness .type-button.immune,
+#content-effectiveness .type-button.mixed,
+#content-effectiveness .type-button.strength-from-selection {
+  filter: none !important;
+  opacity: 1 !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+#content-effectiveness .type-button.neutral {
+  filter: grayscale(80%) brightness(0.8);
+  opacity: 0.7;
 }
 
 .info.load-error-state {
@@ -6466,6 +6713,48 @@ body[data-active-tab="streamers"] {
   --module-accent-alt: #9dd6ff;
   --module-accent-alt-rgb: 157, 214, 255;
 }
+/* When the types (effectiveness) panel is active, allow the shell and
+   the types card/chart to break out so the types grid can occupy
+   the full available page width without changing other pages. */
+body[data-active-tab="effectiveness"] .app-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+body[data-active-tab="effectiveness"] .app-main {
+  width: 100%;
+  max-width: none;
+}
+
+body[data-active-tab="effectiveness"] #content-effectiveness .types-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+body[data-active-tab="effectiveness"] #content-effectiveness .chart-container .grid,
+body[data-active-tab="effectiveness"] #content-effectiveness #chart {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Strong overrides to ensure the types panel uses the full content width */
+body[data-active-tab="effectiveness"] #content-effectiveness .types-body {
+  grid-template-columns: 1fr !important;
+}
+
+body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-panel,
+body[data-active-tab="effectiveness"] #content-effectiveness .chart-container,
+body[data-active-tab="effectiveness"] #content-effectiveness #chart {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
 
 body::before {
   background:
@@ -10660,8 +10949,30 @@ body.home-view .app-shell {
 }
 
 .planner-composition-list {
+#content-effectiveness .types-empty-state {
   display: grid;
   gap: 0.9rem;
+}
+#content-effectiveness .types-info-shell {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: minmax(220px, 320px) repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+  grid-auto-rows: minmax(60px, auto);
+}
+
+#content-effectiveness .types-info-shell > .types-info__summary {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+#content-effectiveness .types-info-shell > .info-section,
+#content-effectiveness .types-info-shell > .info-empty-msg {
+  grid-column: 2;
+}
+#content-effectiveness .types-info-shell .info-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.6rem;
 }
 
 .planner-boss-picker {
@@ -11591,4 +11902,659 @@ body.home-view .app-shell {
   width: 18px;
   height: 18px;
   border-radius: 6px;
+}
+
+/* Types page remake */
+.legend-color.effective {
+  background: #60d394;
+}
+
+#content-effectiveness .types-card {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 1.35rem;
+  overflow: hidden;
+}
+
+#content-effectiveness .types-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+#content-effectiveness .types-hero__copy,
+#content-effectiveness .types-grid-panel,
+#content-effectiveness .info {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#content-effectiveness .types-hero__copy {
+  padding: 1.1rem 1.15rem;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(104, 215, 255, 0.18), transparent 38%),
+    linear-gradient(180deg, rgba(7, 13, 24, 0.8), rgba(7, 13, 24, 0.56));
+}
+
+#content-effectiveness .types-hero__eyebrow,
+#content-effectiveness .types-panel-heading__eyebrow,
+#content-effectiveness .types-empty-state__eyebrow,
+#content-effectiveness .types-info__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8adfff;
+}
+
+#content-effectiveness .types-hero__title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.7rem, 2vw, 2.35rem);
+  color: #f5fbff;
+}
+
+#content-effectiveness .types-hero__text {
+  margin: 0.45rem 0 0;
+  max-width: 62ch;
+  color: rgba(225, 234, 244, 0.8);
+  line-height: 1.65;
+}
+
+#content-effectiveness .types-header {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  margin: 0;
+}
+
+#content-effectiveness .types-search,
+#content-effectiveness .search-wrapper {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+#content-effectiveness .types-quick-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+#content-effectiveness .clan-controls {
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+#content-effectiveness .clan-btn {
+  min-height: 48px;
+  padding: 0.42rem 0.9rem 0.42rem 0.42rem;
+  border-radius: 16px;
+  border-color: rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
+    rgba(7, 13, 24, 0.54);
+  box-shadow: 0 14px 24px rgba(2, 8, 18, 0.22);
+}
+
+#content-effectiveness .clan-btn[aria-pressed="true"],
+#content-effectiveness .clan-btn.active {
+  border-color: rgba(255, 209, 102, 0.52);
+  background:
+    linear-gradient(135deg, rgba(255, 209, 102, 0.28), rgba(104, 215, 255, 0.16)),
+    rgba(7, 13, 24, 0.64);
+}
+
+#content-effectiveness .clan-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+
+#content-effectiveness .types-quick-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+#content-effectiveness .types-quick-hint__pill,
+#content-effectiveness .types-selection-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: #eef6ff;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+#content-effectiveness .types-body {
+  display: grid;
+  grid-template-columns: 1fr; /* single column now that info moved to footer */
+  gap: 1rem;
+  align-items: start;
+}
+
+html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-panel {
+  padding: 2.0rem 1rem 1.25rem !important; /* force more top space so heading has breathing room */
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top left, rgba(104, 215, 255, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(7, 13, 24, 0.76), rgba(7, 13, 24, 0.56));
+}
+
+#content-effectiveness .types-panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem; /* more space below heading */
+  padding-top: 0.2rem;
+}
+
+#content-effectiveness .types-panel-heading h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  color: #f5fbff;
+}
+
+#content-effectiveness .types-panel-heading p {
+  margin: 0;
+  max-width: 28rem;
+  color: rgba(220, 230, 240, 0.72);
+  line-height: 1.55;
+  text-align: right;
+}
+
+#content-effectiveness .chart-container {
+  min-height: 540px;
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(6, 10, 18, 0.58);
+}
+
+#content-effectiveness #connections {
+  display: none;
+}
+
+#content-effectiveness #chart.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  gap: 0.82rem;
+  max-width: none;
+  margin: 0;
+}
+
+#content-effectiveness .type-button {
+  --type-accent-rgb: 104, 215, 255;
+  position: relative;
+  min-height: 124px;
+  padding: 0.95rem 0.82rem;
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(9, 15, 28, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 28px rgba(2, 8, 18, 0.22);
+  transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease;
+}
+
+#content-effectiveness .type-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(var(--type-accent-rgb), 0.3), transparent 62%),
+    linear-gradient(180deg, rgba(var(--type-accent-rgb), 0.09), transparent 45%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+#content-effectiveness .type-button .type-icon,
+#content-effectiveness .types-selection-pill img {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  z-index: 1;
+}
+
+#content-effectiveness .type-button .type-label {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.5rem;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #f4f8ff;
+}
+
+#content-effectiveness .type-button .type-label mark {
+  padding: 0 0.16rem;
+  border-radius: 0.35rem;
+  background: rgba(255, 209, 102, 0.2);
+  color: #fff2c0;
+}
+
+#content-effectiveness .type-button:hover {
+  transform: translateY(-4px);
+}
+
+#content-effectiveness .type-button.neutral {
+  opacity: 0.72;
+}
+
+#content-effectiveness .type-button.effective {
+  border-color: rgba(96, 211, 148, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 30px rgba(25, 97, 62, 0.18);
+}
+
+#content-effectiveness .type-button.effectiveness {
+  border-color: rgba(255, 191, 102, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 30px rgba(164, 102, 11, 0.2);
+}
+
+#content-effectiveness .type-button.active {
+  transform: translateY(-2px);
+  border-color: rgba(255, 209, 102, 0.62);
+  background:
+    linear-gradient(180deg, rgba(255, 234, 176, 0.26), rgba(255, 189, 89, 0.08)),
+    rgba(18, 14, 8, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 20px 34px rgba(171, 126, 26, 0.24);
+}
+
+#content-effectiveness .type-button.active:hover {
+  transform: translateY(-2px);
+}
+
+#content-effectiveness .type-button.fire { --type-accent-rgb: 240, 128, 48; }
+#content-effectiveness .type-button.water { --type-accent-rgb: 100, 147, 235; }
+#content-effectiveness .type-button.grass { --type-accent-rgb: 120, 200, 80; }
+#content-effectiveness .type-button.electric { --type-accent-rgb: 248, 208, 48; }
+#content-effectiveness .type-button.ice { --type-accent-rgb: 152, 216, 216; }
+#content-effectiveness .type-button.fighting { --type-accent-rgb: 192, 48, 40; }
+#content-effectiveness .type-button.poison { --type-accent-rgb: 160, 64, 160; }
+#content-effectiveness .type-button.ground { --type-accent-rgb: 224, 192, 104; }
+#content-effectiveness .type-button.flying { --type-accent-rgb: 168, 144, 240; }
+#content-effectiveness .type-button.psychic { --type-accent-rgb: 248, 88, 136; }
+#content-effectiveness .type-button.bug { --type-accent-rgb: 168, 184, 32; }
+#content-effectiveness .type-button.rock { --type-accent-rgb: 184, 160, 56; }
+#content-effectiveness .type-button.ghost { --type-accent-rgb: 112, 88, 152; }
+#content-effectiveness .type-button.dragon { --type-accent-rgb: 112, 56, 248; }
+#content-effectiveness .type-button.dark { --type-accent-rgb: 112, 88, 72; }
+#content-effectiveness .type-button.steel { --type-accent-rgb: 184, 184, 208; }
+#content-effectiveness .type-button.fairy { --type-accent-rgb: 238, 153, 172; }
+#content-effectiveness .type-button.normal { --type-accent-rgb: 168, 168, 120; }
+
+#content-effectiveness .info {
+  min-height: 360px;
+  padding: 1rem;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top right, rgba(104, 215, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(7, 13, 24, 0.8), rgba(7, 13, 24, 0.62));
+}
+
+#content-effectiveness .types-empty-state {
+  display: grid;
+  gap: 0.9rem;
+}
+
+/* New layout: summary spans the top, sections flow in a responsive grid below */
+#content-effectiveness .types-info-shell {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 1fr;
+}
+
+#content-effectiveness .types-info__summary {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+#content-effectiveness .types-info__sections {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  align-items: start;
+}
+
+#content-effectiveness .info-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+}
+
+/* Slightly reduce padding in info sections to keep layout compact */
+#content-effectiveness .info-section {
+  padding: 0.8rem;
+}
+
+/* On narrower screens keep a single column */
+@media (max-width: 980px) {
+  #content-effectiveness .types-info-shell {
+    grid-template-columns: 1fr;
+  }
+  #content-effectiveness .types-info__sections {
+    grid-template-columns: 1fr;
+  }
+  #content-effectiveness .types-info__summary {
+    max-width: none;
+  }
+}
+
+#content-effectiveness .types-empty-state__copy h3,
+#content-effectiveness .info-type-heading {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.22rem;
+  color: #f5fbff;
+}
+
+#content-effectiveness .types-empty-state__copy p {
+  margin: 0.38rem 0 0;
+  color: rgba(224, 233, 242, 0.74);
+  line-height: 1.6;
+}
+
+#content-effectiveness .types-empty-state__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.72rem;
+}
+
+#content-effectiveness .types-empty-card,
+#content-effectiveness .types-info__summary {
+  padding: 0.92rem 0.96rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#content-effectiveness .types-empty-card strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #f0f7ff;
+}
+
+#content-effectiveness .types-empty-card span {
+  display: block;
+  color: rgba(220, 230, 240, 0.74);
+  line-height: 1.55;
+}
+
+/* Highlight the types heading to make it stand out */
+#content-effectiveness .types-panel-heading #types-grid-heading {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,209,102,0.12), rgba(104,215,255,0.08));
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.08rem;
+  letter-spacing: 0.6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px rgba(2,8,18,0.36), inset 0 1px 0 rgba(255,255,255,0.03);
+  margin-top: 0.9rem; /* push badge down from top edge */
+  margin-bottom: 0.6rem;
+  padding: 0.6rem 1rem;
+}
+
+@media (max-width: 520px) {
+  #content-effectiveness .types-panel-heading #types-grid-heading {
+    font-size: 1rem;
+    padding: 0.36rem 0.7rem;
+  }
+}
+
+#content-effectiveness .types-selection-pills {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+#content-effectiveness .types-selection-pill img {
+  width: 18px;
+  height: 18px;
+}
+
+#content-effectiveness .info-section {
+  --section-accent: 104, 215, 255;
+  padding: 0.95rem;
+  border-radius: 22px;
+  border: 1px solid rgba(var(--section-accent), 0.22);
+  background:
+    linear-gradient(180deg, rgba(var(--section-accent), 0.12), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.03);
+}
+
+#content-effectiveness .info-section--effective { --section-accent: 96, 211, 148; }
+#content-effectiveness .info-section--super { --section-accent: 255, 191, 102; }
+#content-effectiveness .info-section--vulnerable { --section-accent: 255, 125, 125; }
+#content-effectiveness .info-section--super-vulnerable { --section-accent: 255, 89, 89; }
+#content-effectiveness .info-section--resist { --section-accent: 94, 166, 255; }
+#content-effectiveness .info-section--immune { --section-accent: 154, 166, 182; }
+
+#content-effectiveness .info-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin-bottom: 0.7rem;
+}
+
+#content-effectiveness .info-section__header h4 {
+  margin: 0;
+  font-size: 0.96rem;
+  color: #f4f8ff;
+}
+
+#content-effectiveness .info-section__header span {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(231, 240, 248, 0.72);
+}
+
+#content-effectiveness .info-icons {
+  gap: 0.6rem;
+  justify-content: flex-start;
+}
+
+#content-effectiveness .info-type {
+  --chip-accent: 104, 215, 255;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  min-width: 0;
+  padding: 0.56rem 0.68rem;
+  border-radius: 16px;
+  border: 1px solid rgba(var(--chip-accent), 0.22);
+  background: rgba(7, 13, 24, 0.5);
+  text-align: left;
+}
+
+#content-effectiveness .info-type--effective { --chip-accent: 96, 211, 148; }
+#content-effectiveness .info-type--super { --chip-accent: 255, 191, 102; }
+#content-effectiveness .info-type--vulnerable { --chip-accent: 255, 125, 125; }
+#content-effectiveness .info-type--super-vulnerable { --chip-accent: 255, 89, 89; }
+#content-effectiveness .info-type--resist { --chip-accent: 94, 166, 255; }
+#content-effectiveness .info-type--immune { --chip-accent: 154, 166, 182; }
+
+#content-effectiveness .info-type .info-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+}
+
+#content-effectiveness .info-type-copy {
+  display: grid;
+  gap: 0.16rem;
+}
+
+#content-effectiveness .info-type-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #f4f8ff;
+}
+
+#content-effectiveness .info-type-mult {
+  font-size: 0.76rem;
+  color: rgba(220, 230, 240, 0.78);
+}
+
+#content-effectiveness .info-empty-msg {
+  padding: 0.86rem 0.92rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(220, 230, 240, 0.7);
+}
+
+#matrix-body {
+  overflow: auto;
+}
+
+.types-matrix {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  color: #eef6ff;
+}
+
+.types-matrix th,
+.types-matrix td {
+  padding: 0.52rem 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.types-matrix th {
+  position: sticky;
+  top: 0;
+  background: rgba(8, 14, 25, 0.94);
+  z-index: 1;
+}
+
+.types-matrix td.is-effective {
+  background: rgba(96, 211, 148, 0.18);
+}
+
+.types-matrix td.is-super {
+  background: rgba(255, 191, 102, 0.22);
+}
+
+.types-matrix td.is-resist {
+  background: rgba(94, 166, 255, 0.16);
+}
+
+.types-matrix td.is-immune {
+  background: rgba(154, 166, 182, 0.2);
+}
+
+.pokemon-weakness-pill--effective {
+  border-color: rgba(96, 211, 148, 0.22);
+  background: rgba(96, 211, 148, 0.12);
+}
+
+.pokemon-weakness-pill--super {
+  border-color: rgba(255, 191, 102, 0.3);
+  background: rgba(255, 191, 102, 0.14);
+}
+
+@media (max-width: 980px) {
+  #content-effectiveness .types-hero,
+  #content-effectiveness .types-body {
+    grid-template-columns: 1fr;
+  }
+
+  #content-effectiveness .types-panel-heading p {
+    text-align: left;
+  }
+
+  #content-effectiveness .types-quick-meta {
+    align-items: stretch;
+  }
+
+  #content-effectiveness .types-quick-hint {
+    justify-content: flex-start;
+  }
+  #content-effectiveness .types-info-shell {
+    grid-template-columns: 1fr;
+  }
+  #content-effectiveness .types-info-shell > .types-info__summary {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  #content-effectiveness .types-info-shell > .info-section,
+  #content-effectiveness .types-info-shell > .info-empty-msg {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  #content-effectiveness .types-card {
+    padding: 1rem;
+  }
+
+  #content-effectiveness .types-empty-state__grid {
+    grid-template-columns: 1fr;
+  }
+
+  #content-effectiveness .chart-container,
+  #content-effectiveness .info {
+    min-height: auto;
+  }
+
+  #content-effectiveness #chart.types-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #content-effectiveness .type-button {
+    min-height: 116px;
+    padding: 0.88rem 0.65rem;
+  }
+
+  #content-effectiveness .info-section__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #content-effectiveness .types-quick-hint {
+    display: none;
+  }
 }

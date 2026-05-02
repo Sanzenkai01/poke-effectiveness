@@ -368,9 +368,9 @@
         <h2 id="legend-title" class="visually-hidden">Legenda da efetividade</h2>
         <ul class="legend-list">
           <li class="legend-item"><span class="legend-color selected" aria-hidden="true"></span><span class="legend-item__label">Selecionado</span></li>
-          <li class="legend-item"><span class="legend-color strength" aria-hidden="true"></span><span class="legend-item__label">Super eficaz</span></li>
-          <li class="legend-item"><span class="legend-color resist" aria-hidden="true"></span><span class="legend-item__label">Resistente</span></li>
-          <li class="legend-item"><span class="legend-color weakness" aria-hidden="true"></span><span class="legend-item__label">Vulnerável</span></li>
+          <li class="legend-item"><span class="legend-color effective" aria-hidden="true"></span><span class="legend-item__label">Efetivo 1.5x</span></li>
+          <li class="legend-item"><span class="legend-color strength" aria-hidden="true"></span><span class="legend-item__label">Super Efetivo 2x</span></li>
+          <li class="legend-item"><span class="legend-color resist" aria-hidden="true"></span><span class="legend-item__label">Resiste</span></li>
           <li class="legend-item"><span class="legend-color immune" aria-hidden="true"></span><span class="legend-item__label">Imune</span></li>
           <li class="legend-item"><span class="legend-color neutral" aria-hidden="true"></span><span class="legend-item__label">Neutro</span></li>
         </ul>
@@ -594,29 +594,69 @@
     </div>
 
     <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden>
-      <div class="card">
-        <h2 class="visually-hidden">Consulta de tipos</h2>
-        <div class="search-wrapper">
-          <label class="visually-hidden" for="type-search">Buscar tipo</label>
-          <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
-          <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
+      <div class="card types-card">
+        <div class="types-hero">
+          <div class="types-header">
+            <div class="types-search">
+              <label class="visually-hidden" for="type-search">Buscar tipo</label>
+              <div class="search-wrapper">
+                <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
+                <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
+
+        <div class="types-quick-meta">
+          <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
             <button class="clan-btn" data-clan="instinct" aria-pressed="false" title="Instinct">
-              <img src="bosses/Instinct.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Instinct
+              <img src="bosses/Instinct.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Instinct
             </button>
             <button class="clan-btn" data-clan="mystic" aria-pressed="false" title="Mystic">
-              <img src="bosses/Mystic.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Mystic
+              <img src="bosses/Mystic.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Mystic
             </button>
             <button class="clan-btn" data-clan="valor" aria-pressed="false" title="Valor">
-              <img src="bosses/Valor.png" alt="" aria-hidden="true" class="clan-icon" style="width:32px;height:32px;vertical-align:middle;" loading="lazy" decoding="async"> Valor
+              <img src="bosses/Valor.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Valor
             </button>
+          </div>
         </div>
-        <div id="chart-container" class="chart-container">
-          <svg id="connections"></svg>
-          <div id="chart" class="grid" role="grid"></div>
+
+        <div class="types-body">
+          <section class="types-grid-panel" aria-labelledby="types-grid-heading">
+            <div class="types-panel-heading">
+              <div>
+                <h3 id="types-grid-heading">Escolha seus tipos</h3>
+              </div>
+            </div>
+
+            <div id="chart-container" class="chart-container">
+              <svg id="connections" aria-hidden="true"></svg>
+              <div id="chart" class="grid types-grid" role="grid" aria-label="Grade de tipos"></div>
+            </div>
+          </section>
         </div>
-        <div id="info" class="info" aria-live="polite"></div>
+
+        <footer class="types-footer" aria-hidden="false">
+          <aside id="info" class="info" aria-live="polite" aria-label="Detalhes dos tipos">
+            <div class="types-empty-state">
+              <div class="types-empty-state__copy">
+                <span class="types-empty-state__eyebrow">Sem seleção</span>
+                <h3>Escolha um ou dois tipos</h3>
+                <p>O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistência e imunidade.</p>
+              </div>
+              <div class="types-empty-state__grid">
+                <article class="types-empty-card">
+                  <strong>Ataque</strong>
+                  <span>Veja onde sua combinação bate com 1.5x ou 2x.</span>
+                </article>
+                <article class="types-empty-card">
+                  <strong>Defesa</strong>
+                  <span>Confira vulnerabilidades, resistências e imunidades sem poluição visual.</span>
+                </article>
+              </div>
+            </div>
+          </aside>
+        </footer>
       </div>
     </div>
 
@@ -1127,4 +1167,3 @@
     <script src="script.js?v=20260424f" defer></script>
 </body>
 </html>
-

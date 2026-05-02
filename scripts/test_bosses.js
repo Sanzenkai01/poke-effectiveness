@@ -34,7 +34,7 @@ const typeResistances = {
   psychic: ['fighting','psychic'],
   bug: ['fighting','ground','grass'],
   rock: ['normal','fire','poison','flying'],
-  ghost: ['poison','bug','grass','fighting'],
+  ghost: ['poison','bug'],
   dragon: ['fire','water','electric','grass'],
   dark: ['ghost','dark'],
   steel: ['normal','grass','ice','flying','psychic','bug','rock','dragon','steel','fairy'],
@@ -48,6 +48,11 @@ const typeImmunities = {
   ghost: ['normal','fighting'],
   dark: ['psychic'],
   steel: ['poison']
+};
+
+const typeSuperEffectivenessOverrides = {
+  ice: ['dragon'],
+  fairy: ['dragon']
 };
 
 function mergeLowercaseUniqueValues(...lists) {
@@ -84,6 +89,11 @@ function getTypeMultiplier(attackingType, defendingTypes, defenderImmunities = [
 
   if (hasImmunity) {
     return 0;
+  }
+
+  const overrides = typeSuperEffectivenessOverrides[String(attackingType || '').toLowerCase()];
+  if (multiplier >= 2 && Array.isArray(overrides) && defendingTypes.some((type) => overrides.includes(String(type || '').toLowerCase()))) {
+    return Math.max(multiplier, 4);
   }
 
   return multiplier;
