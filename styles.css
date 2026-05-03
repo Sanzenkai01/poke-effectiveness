@@ -1,3 +1,11 @@
+/* Corrige ícone de role esticado nos cards e modais de Pokémon */
+.pokemon-role-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+}
 /* Rodapé fixo apenas no final da página */
 .main-footer {
   margin-top: 1rem;
@@ -9709,31 +9717,97 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-hub__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: end;
+  width: 100%;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+    rgba(12, 20, 34, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 34px rgba(2, 8, 18, 0.18);
 }
 
-.pokemon-hub__copy,
-.pokemon-hub__note {
-  padding: 1rem 1.05rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(9, 16, 28, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+.pokemon-hub__copy {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  text-align: center;
 }
 
 .pokemon-hub__eyebrow {
-  margin: 0 0 0.45rem;
-  color: #ffd58f;
-  font-size: 0.78rem;
+  margin: 0;
+  color: #f3cf7a;
+  font-size: 0.88rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
+
+.pokemon-hub__mega-link{
+  position: relative;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  min-height:44px;
+  padding:0.6rem 0.95rem 0.6rem 1.1rem;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:999px;
+  background: rgba(255,255,255,0.04);
+  color:#eef7ff;
+  font-size:0.76rem;
+  font-weight:800;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  cursor:pointer;
+  overflow:visible;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 18px rgba(12,28,48,0.22);
+}
+.pokemon-hub__mega-link::before{
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.98);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,213,122,0.18), rgba(255,128,81,0.06) 36%, transparent 60%);
+  filter: blur(6px);
+  opacity: 0.95;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  z-index: 0;
+}
+.pokemon-hub__mega-icon{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  flex: 0 0 20px;
+  margin-right:0.35rem;
+  z-index: 1;
+}
+.pokemon-hub__mega-icon{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  flex: 0 0 20px;
+  margin-right:0.35rem;
+  z-index: 1;
+  object-fit:contain;
+}
+.pokemon-hub__mega-label{ z-index:1; display:inline-block; }
+.pokemon-hub__mega-link:hover,.pokemon-hub__mega-link:focus-visible{
+  border-color: rgba(120,210,255,0.3);
+  background: rgba(120,210,255,0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(100,120,255,0.14);
+  outline: none;
+}
+.pokemon-hub__mega-link:hover::before{ transform: translateY(-50%) scale(1.12); opacity:1; }
 
 .pokemon-hub__copy h2,
 .pokemon-hub__note strong {
@@ -9746,6 +9820,45 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   margin: 0;
   color: rgba(229, 238, 249, 0.76);
   line-height: 1.65;
+}
+
+/* Title row inside Pokemon hub: title left, actions (Mega) right */
+.pokemon-hub__title-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.75rem;
+  width: 100%;
+}
+.pokemon-hub__title-row h2{
+  margin:0;
+  font-size: clamp(2rem, 3.1vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.pokemon-hub__lead {
+  max-width: 760px;
+}
+
+.pokemon-hub__mega-link{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.38rem 0.75rem;
+  border-radius:12px;
+  text-decoration:none;
+  background: linear-gradient(135deg, #7f91ff, #6dd9ff);
+  color:#fff;
+  font-weight:700;
+  font-size:0.95rem;
+  box-shadow: 0 8px 20px rgba(100,120,255,0.12);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.pokemon-hub__mega-link:hover,.pokemon-hub__mega-link:focus-visible{
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+  outline: none;
 }
 
 .pokemon-hub__note {
@@ -9761,7 +9874,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 .pokemon-hub__status-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 0.8rem;
 }
 
@@ -9984,35 +10097,46 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 .pokemon-entry-card__header .pokemon-role-badge {
   justify-self: end;
   align-self: start;
-  background: transparent;
-  border: 0;
+  min-height: 2.1rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.95rem;
   padding: 0;
 }
 .pokemon-entry-card__header .pokemon-role-badge .pokemon-role-badge__label {
   display: none;
 }
 .pokemon-entry-card__header .pokemon-role-badge .pokemon-role-badge__icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .pokemon-role-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  justify-content: center;
-  padding: 0.42rem 0.66rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    linear-gradient(135deg, rgba(255, 209, 102, 0.12), rgba(118, 214, 255, 0.14)),
-    rgba(255, 255, 255, 0.05);
-  color: #eef7ff;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  min-height:44px;
+  padding:0.7rem 1rem;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:999px;
+  background: rgba(255,255,255,0.06);
+  color:#eef7ff;
+  font-size:0.76rem;
+  font-weight:800;
+  letter-spacing:0;
+  text-transform:none;
+  text-decoration:none;
+  cursor:pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.pokemon-hub__mega-link:hover,.pokemon-hub__mega-link:focus-visible{
+  border-color: rgba(120, 210, 255, 0.3);
+  background: rgba(120, 210, 255, 0.12);
+  transform: translateY(-1px);
+  outline: none;
 }
 
 .pokemon-role-badge__icon {
@@ -10038,9 +10162,19 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-role-badge--modal {
+  min-height: 0;
   width: fit-content;
+  gap: 0.34rem;
   padding: 0.3rem 0.5rem;
+  border-radius: 999px;
   font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.pokemon-role-badge--modal .pokemon-role-badge__icon {
+  width: 14px;
+  height: 14px;
 }
 
 .pokemon-role-badge[data-role="attacker"],
@@ -10074,6 +10208,21 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   background:
     linear-gradient(135deg, rgba(108, 156, 255, 0.16), rgba(118, 214, 255, 0.14)),
     rgba(255, 255, 255, 0.05);
+}
+
+.pokemon-entry-card__header .pokemon-role-badge {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.pokemon-details-modal__meta .pokemon-role-badge {
+  min-height: 0;
+  gap: 0.34rem;
+  padding: 0.3rem 0.5rem;
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .pokemon-entry-card__media {
@@ -10458,7 +10607,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-weakness-empty {
   display: block;
-  text-align: left;
+  text-align: center;
   color: rgba(216, 229, 244, 0.7);
   font-size: 0.74rem;
 }
@@ -10496,6 +10645,15 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 @media (max-width: 720px) {
   .pokemon-hub {
     padding: 1rem;
+  }
+
+  .pokemon-hub__hero {
+    padding: 1.1rem 1rem;
+  }
+
+  .pokemon-hub__eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
   }
 
   .pokemon-filter-grid,

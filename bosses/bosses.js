@@ -88,6 +88,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
@@ -1352,6 +1353,11 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel', {
+            passiveName: 'Mold Breaker',
+            passiveDescription: 'O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
+            passiveSuperEffectiveTypes: ['steel']
+          }),
           createRolePick('Marowak', ['ground'], 'ground'),
           createRolePick('Shiftry', ['grass', 'dark'], 'dark')
         ],

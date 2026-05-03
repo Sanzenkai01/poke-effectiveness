@@ -80,6 +80,8 @@ const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggl
 const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
 const pokemonCatalogStatus = document.getElementById('pokemon-catalog-status');
 const pokemonCardGrid = document.getElementById('pokemon-card-grid');
+const pokemonVariantMegaLink = document.getElementById('pokemon-variant-mega-link');
+const pokemonVariantMegaLabel = pokemonVariantMegaLink?.querySelector('.pokemon-hub__mega-label') || null;
 const pokemonDetailsModal = document.getElementById('pokemon-details-modal');
 const pokemonDetailsImage = document.getElementById('pokemon-details-image');
 const pokemonDetailsRole = document.getElementById('pokemon-details-role');
@@ -88,6 +90,7 @@ const pokemonDetailsSubtitle = document.getElementById('pokemon-details-subtitle
 const pokemonDetailsMeta = document.getElementById('pokemon-details-meta');
 const pokemonDetailsInfo = document.getElementById('pokemon-details-info');
 const pokemonDetailsAverages = document.getElementById('pokemon-details-averages');
+const pokemonDetailsAveragesKicker = document.querySelector('.pokemon-details-modal__section--averages .pokemon-details-modal__section-kicker');
 const pokemonDetailsWeaknesses = document.getElementById('pokemon-details-weaknesses');
 const pokemonFilterNameInput = document.getElementById('pokemon-filter-name');
 const pokemonFilterRoleSelect = document.getElementById('pokemon-filter-role');
@@ -110,17 +113,22 @@ let bossesPageLoadPromise = null;
 let pokemonCatalogLoaded = false;
 let pokemonCatalogLoadPromise = null;
 let pokemonCatalog = [];
+let pokemonCatalogEntriesByVariant = {
+    default: [],
+    mega: []
+};
+let activePokemonCatalogVariant = 'default';
 let activePokemonCatalogEntry = null;
 let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonCatalogFiltersInitialized = false;
 let pokemonCatalogRenderFrame = null;
-// If the page was loaded directly with a deep-link to a pokemon (eg /pokemons/001)
+// If the page was loaded directly with a deep-link to a pokemon (eg /pokemon/001)
 // this holds the requested dex number until the catalog is loaded.
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260419d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260503a';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -129,6 +137,7 @@ const APP_ROUTE_ALIASES = {
     fosseis: { path: '/fossils', tab: 'fossils' },
     calculator: { path: '/treinamento', tab: 'calculator' },
     treinamento: { path: '/treinamento', tab: 'calculator' },
+    pokemon: { path: '/pokemon', tab: 'pokemons' },
     pokemons: { path: '/pokemons', tab: 'pokemons' },
     catch: { path: '/catch', tab: 'catch' },
     streamers: { path: '/streamers', tab: 'streamers' },
@@ -146,8 +155,11 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
+const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
+const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
 const ELEMENTAL_BALL_TYPE_MAP = Object.freeze({
     bug: { key: 'net', label: 'Net Ball' },
     insect: { key: 'net', label: 'Net Ball' },
@@ -250,8 +262,67 @@ function getRouteInfoFromPathname(pathname = location.pathname){
     return getRouteInfo(slug);
 }
 
+function normalizePokemonCatalogVariant(value){
+    return String(value || '').trim().toLowerCase() === POKEMON_CATALOG_VARIANT_MEGA
+        ? POKEMON_CATALOG_VARIANT_MEGA
+        : POKEMON_CATALOG_VARIANT_DEFAULT;
+}
+
+function getPokemonCatalogVariantFromUrl(){
+    try{
+        return normalizePokemonCatalogVariant(new URLSearchParams(location.search).get('variant'));
+    }catch(error){
+        return POKEMON_CATALOG_VARIANT_DEFAULT;
+    }
+}
+
+function getCurrentPokemonCatalogVariant(){
+    return normalizePokemonCatalogVariant(document.body?.dataset?.pokemonVariant || '');
+}
+
+function getPokemonRoutePathForVariant(variant = getCurrentPokemonCatalogVariant()){
+    return normalizePokemonCatalogVariant(variant) === POKEMON_CATALOG_VARIANT_MEGA
+        ? '/pokemons'
+        : '/pokemon';
+}
+
+function setCurrentPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT){
+    const normalizedVariant = normalizePokemonCatalogVariant(variant);
+    const isMegaVariant = normalizedVariant === POKEMON_CATALOG_VARIANT_MEGA;
+    if(document.body){
+        if(isMegaVariant){
+            document.body.dataset.pokemonVariant = POKEMON_CATALOG_VARIANT_MEGA;
+        } else {
+            delete document.body.dataset.pokemonVariant;
+        }
+    }
+    if(pokemonVariantMegaLink){
+        pokemonVariantMegaLink.hidden = false;
+        pokemonVariantMegaLink.href = isMegaVariant ? '/pokemon' : '/pokemons?variant=mega';
+        pokemonVariantMegaLink.title = isMegaVariant ? 'Voltar aos Pokémons normais' : 'Abrir Pokémons Mega';
+        pokemonVariantMegaLink.setAttribute('aria-label', isMegaVariant ? 'Voltar aos Pokémons normais' : 'Abrir Pokémons Mega');
+    }
+    if(pokemonVariantMegaLabel){
+        pokemonVariantMegaLabel.textContent = isMegaVariant ? 'Normais' : 'Mega';
+    }
+    return normalizedVariant;
+}
+
+function getPokemonCatalogSubjectLabel(variant = getCurrentPokemonCatalogVariant()){
+    return normalizePokemonCatalogVariant(variant) === POKEMON_CATALOG_VARIANT_MEGA
+        ? 'pokemons Mega'
+        : 'pokemons registrados';
+}
+
+function getPokemonDetailRouteMatch(pathname = location.pathname){
+    return String(pathname || '').match(/\/pokemon(?:s)?\/(\d{1,})\/?$/i);
+}
+
 function getRoutePathForTab(activeTab = '', bossMode = ''){
     const normalizedTab = String(activeTab || '').trim().toLowerCase();
+    if(normalizedTab === 'pokemons'){
+        return getPokemonRoutePathForVariant();
+    }
     if(normalizedTab === 'bosses'){
         const normalizedBossMode = normalizeBossModeParam(bossMode) || 'hoopa';
         const bossRoute = getRouteInfo(normalizedBossMode);
@@ -2917,6 +2988,10 @@ function formatCurrencyValue(value){
     return `$${(Number(value) || 0).toFixed(2)}`;
 }
 
+function formatPokemonPriceLabel(value){
+    return `$${Math.round(Number(value) || 0)}`;
+}
+
 function formatBallAmount(count, ball){
     return `${count}x ${getBallLabel(ball)}`;
 }
@@ -3545,7 +3620,7 @@ function showCalculator(){
     updateUrl();
 }
 
-function showPokemons(){
+function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT){
     initializePokemonCatalogFilters();
     clearTabHighlights();
     setActiveTabTheme('pokemons');
@@ -3556,14 +3631,19 @@ function showPokemons(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('pokemonsTitle');
     updateBrowserTitle();
+    const normalizedVariant = setCurrentPokemonCatalogVariant(requestedVariant);
+    const shouldResetFilters = activePokemonCatalogVariant !== normalizedVariant;
+    if(pokemonCatalogLoaded){
+        applyPokemonCatalogVariant(normalizedVariant, { resetFilters: shouldResetFilters });
+    }
     if(!pokemonCatalogLoaded){
-        showPokemonCatalogLoadingState();
+        showPokemonCatalogLoadingState(normalizedVariant);
     }
     Promise.all([
         ensureTypesDataLoaded(),
         ensurePokemonCatalogLoaded()
     ]).then(() => {
-        populatePokemonFilterControls();
+        applyPokemonCatalogVariant(normalizedVariant, { resetFilters: shouldResetFilters });
         renderPokemonCatalog({ animate: true });
         if(useGsap && contentPokemons){
             gsap.from(contentPokemons, { opacity: 0, y: -10, duration: 0.4 });
@@ -3676,8 +3756,8 @@ function showSpeedsters(requestedBossMode=''){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt'];
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir'];
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
 const streamerStatusCache = new Map();
@@ -5797,9 +5877,9 @@ function initTabFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
 
-    // Detect deep-link to a specific pokemon: /pokemons/NNN
+    // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/NNN
     const pathname = String(location.pathname || '');
-    const pokemonMatch = pathname.match(/\/pokemons\/(\d{1,})\/?$/i);
+    const pokemonMatch = getPokemonDetailRouteMatch(pathname);
     if(pokemonMatch){
         initialDeepLinkedPokemonDex = parseInt(pokemonMatch[1], 10);
     }
@@ -5816,12 +5896,12 @@ function initTabFromUrl(){
     // If the URL targeted a specific pokemon number, open the pokemons tab and
     // open the requested modal once the catalog is loaded.
     if(initialDeepLinkedPokemonDex !== null){
-        showPokemons();
+        showPokemons(getPokemonCatalogVariantFromUrl());
         ensurePokemonCatalogLoaded().then(() => {
             const idx = initialDeepLinkedPokemonDex - 1;
             if(idx >= 0 && idx < pokemonCatalog.length){
                 const entry = pokemonCatalog[idx];
-                // Ensure base route is /pokemons so back navigation returns here
+                // Ensure the base route is canonical before opening the modal
                 try{ history.replaceState(null, '', getRoutePathForTab('pokemons')); }catch(e){}
                 openPokemonDetailsModal(entry, { pushState: true });
             }
@@ -5829,7 +5909,7 @@ function initTabFromUrl(){
         return;
     }
 
-    if(resolvedTab==='pokemons') return showPokemons();
+    if(resolvedTab==='pokemons') return showPokemons(getPokemonCatalogVariantFromUrl());
     if(resolvedTab==='catch') return showCatch();
     if(requestedBossTab) return showSpeedsters(requestedBossTab);
     if(resolvedTab==='bosses' || resolvedTab==='speedsters') return showSpeedsters(requestedBossMode);
@@ -6427,12 +6507,14 @@ function initializeCalculatorPage(){
 function updateUrl(){
     const isHomeView = document.body.classList.contains('home-view');
     const params=new URLSearchParams(location.search);
+    const pokemonVariant = getCurrentPokemonCatalogVariant();
     if(isHomeView){
         params.delete('types');
         params.delete('tab');
         params.delete('topic');
         params.delete('bossmode');
         params.delete('plan');
+        params.delete('variant');
     } else if(currentSelection.length) params.set('types',currentSelection.join(','));
     else params.delete('types');
     const activeTab = isHomeView ? '' :
@@ -6456,12 +6538,17 @@ function updateUrl(){
     } else {
         params.delete('topic');
     }
+    if(activeTab === 'pokemons' && pokemonVariant === POKEMON_CATALOG_VARIANT_MEGA){
+        params.set('variant', POKEMON_CATALOG_VARIANT_MEGA);
+    } else {
+        params.delete('variant');
+    }
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
     let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
     try{
         if(!isHomeView && (activeTab === 'pokemons') && pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true' && activePokemonCatalogEntry && Number.isFinite(activePokemonCatalogEntry.dex)){
-            routePath = getRoutePathForTab('pokemons') + '/' + String(activePokemonCatalogEntry.dex).padStart(3, '0');
+            routePath = getPokemonRoutePathForVariant(pokemonVariant) + '/' + String(activePokemonCatalogEntry.dex).padStart(3, '0');
         }
     }catch(e){}
     const newUrl = routePath + (query ? `?${query}` : '');
@@ -7608,22 +7695,51 @@ function ensureBossesPageReady(){
     return bossesPageLoadPromise;
 }
 
-function showPokemonCatalogLoadingState(){
+function showPokemonCatalogLoadingState(variant = getCurrentPokemonCatalogVariant()){
+    const variantLabel = getPokemonCatalogSubjectLabel(variant);
     if(pokemonCatalogStatus){
-        pokemonCatalogStatus.textContent = 'Carregando catálogo...';
+        pokemonCatalogStatus.textContent = normalizePokemonCatalogVariant(variant) === POKEMON_CATALOG_VARIANT_MEGA
+            ? 'Carregando catalogo Mega...'
+            : 'Carregando catalogo...';
     }
     if(pokemonCardGrid && !pokemonCatalog.length){
-        pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-load-pending-message', 'Carregando pokémons registrados...'));
+        pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-load-pending-message', `Carregando ${variantLabel}...`));
     }
 }
 
-function showPokemonCatalogErrorState(message){
+function showPokemonCatalogErrorState(message, variant = getCurrentPokemonCatalogVariant()){
     if(pokemonCatalogStatus){
-        pokemonCatalogStatus.textContent = 'Não foi possível carregar o catálogo agora.';
+        pokemonCatalogStatus.textContent = 'Nao foi possivel carregar o catalogo agora.';
     }
     if(pokemonCardGrid){
-        pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-load-error-message', message || 'Falha ao carregar os pokémons registrados.'));
+        pokemonCardGrid.replaceChildren(
+            createInlineStatusMessage(
+                'pokemon-load-error-message',
+                message || `Falha ao carregar ${getPokemonCatalogSubjectLabel(variant)}.`
+            )
+        );
     }
+}
+
+function getPokemonCatalogRegistryKey(name){
+    return String(name || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '');
+}
+
+function getPokemonCatalogJsonList(data){
+    return Array.isArray(data?.pokemon) ? data.pokemon : Array.isArray(data) ? data : [];
+}
+
+function fetchPokemonCatalogJson(url){
+    return fetch(url, { cache: 'no-store' })
+        .then(response => {
+            if(!response.ok){
+                throw new Error(`Falha ao carregar ${url} (${response.status})`);
+            }
+            return response.json();
+        });
 }
 
 function normalizePokemonTypeKey(value){
@@ -7666,8 +7782,24 @@ function getPokemonRoleInfo(value){
     };
 }
 
+function hasPokemonVisibleRole(roleValue){
+    const roleInfo = typeof roleValue === 'object' && roleValue
+        ? getPokemonRoleInfo(roleValue.key || roleValue.label || '')
+        : getPokemonRoleInfo(roleValue);
+    return Boolean(roleInfo.key && roleInfo.key !== 'unknown');
+}
+
 function normalizePokemonRole(value){
     return getPokemonRoleInfo(value).label;
+}
+
+function formatPokemonRoleLabel(value){
+    const normalized = String(value || '').trim();
+    if(!normalized) return 'Sem função';
+    return normalized
+        .split('-')
+        .map(part => part ? part.charAt(0).toUpperCase() + part.slice(1) : '')
+        .join('-');
 }
 
 function getPokemonRoleAssetSource(roleKey){
@@ -7697,7 +7829,11 @@ function getPokemonTeamInfo(teamKey){
 
 function getPokemonImageSource(entry){
     const fileName = String(entry?.image || '').trim();
-    return fileName ? `pokemons/${fileName}` : POKEMON_IMAGE_PLACEHOLDER;
+    if(!fileName) return POKEMON_IMAGE_PLACEHOLDER;
+    if(fileName === POKEMON_IMAGE_PLACEHOLDER || /^[./]/.test(fileName) || fileName.includes('/')){
+        return fileName;
+    }
+    return `pokemons/${fileName}`;
 }
 
 function setImageFallback(imageEl, fallbackSrc = POKEMON_IMAGE_PLACEHOLDER){
@@ -7768,6 +7904,34 @@ function readPokemonCatalogFiltersFromDom(){
     };
 }
 
+function writePokemonCatalogFiltersToDom(filters = DEFAULT_POKEMON_CATALOG_FILTERS){
+    if(pokemonFilterNameInput){
+        pokemonFilterNameInput.value = String(filters?.name || '');
+    }
+    const selectEntries = [
+        [pokemonFilterRoleSelect, filters?.role],
+        [pokemonFilterClanSelect, filters?.clan],
+        [pokemonFilterLevelSelect, filters?.level],
+        [pokemonFilterType1Select, filters?.type1],
+        [pokemonFilterType2Select, filters?.type2],
+        [pokemonFilterMovesetSelect, filters?.moveset]
+    ];
+    selectEntries.forEach(([selectEl, value]) => {
+        if(selectEl instanceof HTMLSelectElement){
+            selectEl.value = String(value || '');
+        }
+    });
+}
+
+function resetPokemonCatalogFilters(){
+    if(pokemonCatalogRenderFrame){
+        cancelAnimationFrame(pokemonCatalogRenderFrame);
+        pokemonCatalogRenderFrame = null;
+    }
+    pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    writePokemonCatalogFiltersToDom(pokemonCatalogFilters);
+}
+
 function hasPokemonCatalogActiveFilters(filters = pokemonCatalogFilters){
     return Object.values(filters || {}).some(value => Boolean(value));
 }
@@ -7790,14 +7954,19 @@ function getFilteredPokemonCatalogEntries(filters = pokemonCatalogFilters){
 
 function updatePokemonCatalogStatus(totalCount, visibleCount, filters = pokemonCatalogFilters){
     if(!pokemonCatalogStatus) return;
+    const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
 
     if(!totalCount){
-        pokemonCatalogStatus.textContent = 'Nenhum pokémon registrado ainda.';
+        pokemonCatalogStatus.textContent = isMegaVariant
+            ? 'Nenhum pokemon Mega disponivel ainda.'
+            : 'Nenhum pokemon registrado ainda.';
         return;
     }
 
     if(!hasPokemonCatalogActiveFilters(filters)){
-        pokemonCatalogStatus.textContent = `${totalCount} pokémons registrados.`;
+        pokemonCatalogStatus.textContent = isMegaVariant
+            ? `${totalCount} pokemons Mega disponiveis.`
+            : `${totalCount} pokemons registrados.`;
         return;
     }
 
@@ -7806,7 +7975,7 @@ function updatePokemonCatalogStatus(totalCount, visibleCount, filters = pokemonC
         return;
     }
 
-    pokemonCatalogStatus.textContent = `${visibleCount} de ${totalCount} pokémons exibidos.`;
+    pokemonCatalogStatus.textContent = `${visibleCount} de ${totalCount} pokemons exibidos.`;
 }
 
 function schedulePokemonCatalogRender(){
@@ -7914,20 +8083,7 @@ function syncPokemonCatalogFiltersFromInputs(){
 }
 
 function clearPokemonCatalogFilters(){
-    if(pokemonCatalogRenderFrame){
-        cancelAnimationFrame(pokemonCatalogRenderFrame);
-        pokemonCatalogRenderFrame = null;
-    }
-
-    if(pokemonFilterNameInput) pokemonFilterNameInput.value = '';
-    [pokemonFilterRoleSelect, pokemonFilterClanSelect, pokemonFilterLevelSelect, pokemonFilterType1Select, pokemonFilterType2Select, pokemonFilterMovesetSelect]
-        .forEach((selectEl) => {
-            if(selectEl instanceof HTMLSelectElement){
-                selectEl.value = '';
-            }
-        });
-
-    pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    resetPokemonCatalogFilters();
     if(pokemonCatalogLoaded){
         renderPokemonCatalog();
     }
@@ -8044,7 +8200,7 @@ function createPokemonRoleBadge(roleValue, options = {}){
 
     const label = document.createElement('span');
     label.className = 'pokemon-role-badge__label';
-    label.textContent = roleInfo.label || 'Sem função';
+    label.textContent = formatPokemonRoleLabel(roleInfo.label);
 
     badge.append(icon, label);
     return badge;
@@ -8090,6 +8246,18 @@ function getPokemonCaptureLevelKey(level){
     if(Number.isFinite(numericLevel)) return numericLevel;
     const normalized = String(level || '').trim().toLowerCase();
     return normalized || 0;
+}
+
+function isMegaPokemonCatalogEntry(entry){
+    return normalizePokemonCatalogVariant(entry?.variant) === POKEMON_CATALOG_VARIANT_MEGA;
+}
+
+function getPokemonNormalCaptureAverageForBall(entry, ballKey){
+    const normalizedBallKey = getCatchRequirementBallKey(ballKey);
+    const ballPrice = Number(ballPrices?.[normalizedBallKey] || 0);
+    const pokemonPrice = Number(entry?.price || 0);
+    if(!ballPrice || !pokemonPrice) return 0;
+    return Math.ceil(pokemonPrice / ballPrice);
 }
 
 function getPokemonCaptureAverageForBall(level, variant, ballKey){
@@ -8200,10 +8368,18 @@ function normalizePokemonCatalogEntry(entry, index){
     ));
 
     const roleInfo = getPokemonRoleInfo(entry.role);
+    const explicitDex = Object.prototype.hasOwnProperty.call(entry, 'dex')
+        ? Number(entry.dex)
+        : Number.NaN;
+    const hasImage = Object.prototype.hasOwnProperty.call(entry, 'image');
 
     return {
         id: slug,
-        dex: Number.isFinite(index) ? (index + 1) : null,
+        dex: Number.isFinite(explicitDex) && explicitDex > 0
+            ? explicitDex
+            : (Object.prototype.hasOwnProperty.call(entry, 'dex')
+                ? null
+                : (Number.isFinite(index) ? (index + 1) : null)),
         name,
         searchName: normalizePokemonSearchText(name),
         role: roleInfo.label,
@@ -8215,18 +8391,82 @@ function normalizePokemonCatalogEntry(entry, index){
         naturalElements,
         moveset,
         team: String(entry.team || '').trim().toLowerCase(),
-        image: String(entry.image || `${slug}.png`).trim(),
-        price: Number(entry.price ?? entry.preco ?? 0) || 0
+        image: hasImage ? String(entry.image || '').trim() : `${slug}.png`,
+        price: Number(entry.price ?? entry.preco ?? 0) || 0,
+        registered: entry.registered !== false,
+        variant: normalizePokemonCatalogVariant(entry.variant)
     };
+}
+
+function buildMegaPokemonCatalogEntries(rawMegaEntries = [], registeredEntries = []){
+    const registeredKeys = new Set(
+        (registeredEntries || [])
+            .map(entry => getPokemonCatalogRegistryKey(entry?.name))
+            .filter(Boolean)
+    );
+    const seenMegaKeys = new Set();
+
+    return (rawMegaEntries || [])
+        .map((entry, index) => normalizePokemonCatalogEntry({
+            ...entry,
+            dex: null,
+            image: Object.prototype.hasOwnProperty.call(entry || {}, 'image') ? entry.image : '',
+            level: entry?.level || 'ace',
+            moveset: Array.isArray(entry?.moveset) && entry.moveset.length
+                ? entry.moveset
+                : [entry?.type1, entry?.type2].filter(Boolean),
+            registered: false,
+            variant: POKEMON_CATALOG_VARIANT_MEGA
+        }, index))
+        .filter((entry) => {
+            if(!entry) return false;
+            const registryKey = getPokemonCatalogRegistryKey(entry.name);
+            if(!registryKey || registeredKeys.has(registryKey) || seenMegaKeys.has(registryKey)) return false;
+            seenMegaKeys.add(registryKey);
+            return true;
+        });
+}
+
+function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, options = {}){
+    const { resetFilters = false } = options;
+    const normalizedVariant = setCurrentPokemonCatalogVariant(variant);
+    const variantChanged = activePokemonCatalogVariant !== normalizedVariant;
+    activePokemonCatalogVariant = normalizedVariant;
+    pokemonCatalog = Array.isArray(pokemonCatalogEntriesByVariant[normalizedVariant])
+        ? pokemonCatalogEntriesByVariant[normalizedVariant]
+        : [];
+    if(pokemonCardGrid){
+        pokemonCardGrid.setAttribute(
+            'aria-label',
+            normalizedVariant === POKEMON_CATALOG_VARIANT_MEGA
+                ? 'Lista de pokemons Mega'
+                : 'Lista de pokemons registrados'
+        );
+    }
+
+    if(resetFilters || variantChanged){
+        resetPokemonCatalogFilters();
+    }
+
+    populatePokemonFilterControls();
+    return normalizedVariant;
 }
 
 function renderPokemonCatalog(options = {}){
     const { animate = false } = options;
     if(!pokemonCardGrid) return;
+    const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
 
     if(!pokemonCatalog.length){
         updatePokemonCatalogStatus(0, 0);
-        pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-empty-message', 'Adicione itens em pokemons/pokemons.json para preencher esta página.'));
+        pokemonCardGrid.replaceChildren(
+            createInlineStatusMessage(
+                'pokemon-empty-message',
+                isMegaVariant
+                    ? 'Adicione itens em pokemons/mega-pokemons.json para preencher esta pagina.'
+                    : 'Adicione itens em pokemons/pokemons.json para preencher esta pagina.'
+            )
+        );
         return;
     }
 
@@ -8240,11 +8480,15 @@ function renderPokemonCatalog(options = {}){
 
     const fragment = document.createDocumentFragment();
     filteredEntries.forEach((entry) => {
+        const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'pokemon-entry-card';
         card.setAttribute('role', 'listitem');
-        card.setAttribute('aria-label', `${entry.name}, ${entry.role}, ${formatPokemonLevelLabel(entry.level)}.`);
+        const ariaLabelParts = [entry.name];
+        if(hasRole) ariaLabelParts.push(entry.role);
+        ariaLabelParts.push(formatPokemonLevelLabel(entry.level));
+        card.setAttribute('aria-label', `${ariaLabelParts.join(', ')}.`);
 
         const header = document.createElement('div');
         header.className = 'pokemon-entry-card__header';
@@ -8262,9 +8506,10 @@ function renderPokemonCatalog(options = {}){
 
         titleWrap.append(title, level);
 
-        const role = createPokemonRoleBadge({ key: entry.roleKey, label: entry.role }, { compact: true });
-
-        header.append(titleWrap, role);
+        header.appendChild(titleWrap);
+        if(hasRole){
+            header.appendChild(createPokemonRoleBadge({ key: entry.roleKey, label: entry.role }, { compact: true }));
+        }
 
         const media = document.createElement('div');
         media.className = 'pokemon-entry-card__media';
@@ -8328,25 +8573,32 @@ function renderPokemonCatalog(options = {}){
 }
 
 function loadPokemonCatalog(){
-    return fetch(POKEMON_CATALOG_URL, { cache: 'no-store' })
-        .then(response => {
-            if(!response.ok){
-                throw new Error(`Falha ao carregar ${POKEMON_CATALOG_URL} (${response.status})`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const list = Array.isArray(data?.pokemon) ? data.pokemon : Array.isArray(data) ? data : [];
-            pokemonCatalog = list
+    return Promise.all([
+        fetchPokemonCatalogJson(POKEMON_CATALOG_URL),
+        fetchPokemonCatalogJson(POKEMON_MEGA_CATALOG_URL)
+    ])
+        .then(([registeredData, megaData]) => {
+            const registeredEntries = getPokemonCatalogJsonList(registeredData)
                 .map((entry, index) => normalizePokemonCatalogEntry(entry, index))
                 .filter(Boolean);
+            const megaEntries = buildMegaPokemonCatalogEntries(
+                getPokemonCatalogJsonList(megaData),
+                registeredEntries
+            );
+
+            pokemonCatalogEntriesByVariant = {
+                default: registeredEntries,
+                mega: megaEntries
+            };
             pokemonCatalogLoaded = true;
-            populatePokemonFilterControls();
-            renderPokemonCatalog();
+            applyPokemonCatalogVariant(getCurrentPokemonCatalogVariant(), { resetFilters: false });
             return true;
         })
         .catch(error => {
-            showPokemonCatalogErrorState('Não foi possível carregar os pokémons registrados. Verifique pokemons/pokemons.json.');
+            showPokemonCatalogErrorState(
+                'Nao foi possivel carregar os catalogos de pokemon. Verifique pokemons/pokemons.json e pokemons/mega-pokemons.json.',
+                getCurrentPokemonCatalogVariant()
+            );
             throw error;
         });
 }
@@ -8372,6 +8624,8 @@ function ensurePokemonCatalogLoaded(options = {}){
 
 function renderPokemonDetailsModal(entry){
     if(!entry || !pokemonDetailsModal) return;
+    const isMegaEntry = isMegaPokemonCatalogEntry(entry);
+    const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
 
     activePokemonCatalogEntry = entry;
 
@@ -8390,6 +8644,11 @@ function renderPokemonDetailsModal(entry){
         // Leave subtitle blank — level is displayed in the right-side field
         pokemonDetailsSubtitle.textContent = '';
     }
+    if(pokemonDetailsAveragesKicker){
+        pokemonDetailsAveragesKicker.textContent = Number(entry.price) > 0
+            ? `Médias • ${formatPokemonPriceLabel(entry.price)}`
+            : 'Médias';
+    }
 
     if(pokemonDetailsMeta){
         const metaFragment = document.createDocumentFragment();
@@ -8400,7 +8659,9 @@ function renderPokemonDetailsModal(entry){
         if(entry.type2){
             metaFragment.appendChild(createPokemonTypeToken(entry.type2, { labelPrefix: 'Tipo 2 • ' }));
         }
-        metaFragment.appendChild(createPokemonRoleBadge({ key: entry.roleKey, label: entry.role }, { modal: true }));
+        if(hasRole){
+            metaFragment.appendChild(createPokemonRoleBadge({ key: entry.roleKey, label: entry.role }, { modal: true }));
+        }
         pokemonDetailsMeta.replaceChildren(metaFragment);
     }
 
@@ -8417,50 +8678,57 @@ function renderPokemonDetailsModal(entry){
 
     if(pokemonDetailsAverages){
         const averageFragment = document.createDocumentFragment();
-        const normalCards = [
-            createPokemonBallCard(
-                { key: 'ultra', label: 'Ultra Ball' },
-                getPokemonCaptureAverageForBall(entry.level, 'normal', 'ultra'),
-                'Captura normal'
-            )
-        ];
-        const shinyCards = [
-            createPokemonBallCard(
-                { key: 'ultra', label: 'Ultra Ball' },
-                getPokemonCaptureAverageForBall(entry.level, 'shiny', 'ultra'),
-                'Shiny'
-            ),
-            createPokemonBallCard(
-                { key: 'story', label: 'Story Ball' },
-                getPokemonCaptureAverageForBall(entry.level, 'shiny', 'story'),
-                'Shiny'
-            )
-        ];
-        const elementalOptions = getPokemonElementalBallOptions(entry.naturalElements);
-        if(elementalOptions.length){
-            elementalOptions.forEach((ball) => {
-                shinyCards.push(
-                    createPokemonBallCard(
-                        ball,
-                        getPokemonCaptureAverageForBall(entry.level, 'shiny', ball.key),
-                        `Shiny • ${getPokemonElementalBallTypeLabel(ball.key, entry.naturalElements)}`
-                    )
-                );
-            });
+        if(isMegaEntry){
+            const unavailable = document.createElement('span');
+            unavailable.className = 'pokemon-weakness-empty';
+            unavailable.textContent = 'Mega nao pode ser capturado e nao possui media de balls.';
+            averageFragment.appendChild(unavailable);
         } else {
-            shinyCards.push(
+            const normalCards = [
                 createPokemonBallCard(
-                    { key: 'elemental', label: 'Ball Elemental' },
-                    getPokemonCaptureAverageForBall(entry.level, 'shiny', 'elemental'),
+                    { key: 'ultra', label: 'Ultra Ball' },
+                    getPokemonNormalCaptureAverageForBall(entry, 'ultra'),
+                    'Captura normal'
+                )
+            ];
+            const shinyCards = [
+                createPokemonBallCard(
+                    { key: 'ultra', label: 'Ultra Ball' },
+                    getPokemonCaptureAverageForBall(entry.level, 'shiny', 'ultra'),
+                    'Shiny'
+                ),
+                createPokemonBallCard(
+                    { key: 'story', label: 'Story Ball' },
+                    getPokemonCaptureAverageForBall(entry.level, 'shiny', 'story'),
                     'Shiny'
                 )
+            ];
+            const elementalOptions = getPokemonElementalBallOptions(entry.naturalElements);
+            if(elementalOptions.length){
+                elementalOptions.forEach((ball) => {
+                    shinyCards.push(
+                        createPokemonBallCard(
+                            ball,
+                            getPokemonCaptureAverageForBall(entry.level, 'shiny', ball.key),
+                            `Shiny • ${getPokemonElementalBallTypeLabel(ball.key, entry.naturalElements)}`
+                        )
+                    );
+                });
+            } else {
+                shinyCards.push(
+                    createPokemonBallCard(
+                        { key: 'elemental', label: 'Ball Elemental' },
+                        getPokemonCaptureAverageForBall(entry.level, 'shiny', 'elemental'),
+                        'Shiny'
+                    )
+                );
+            }
+
+            averageFragment.append(
+                createPokemonAverageGroup('Pokémon Normal', 'Preco do pokemon dividido pelo preco da Ultra Ball.', normalCards),
+                createPokemonAverageGroup('Pokémon Shiny', 'Use Ultra Ball, Story Ball e as Elemental Balls do(s) tipo(s).', shinyCards)
             );
         }
-
-        averageFragment.append(
-            createPokemonAverageGroup('Pokémon Normal', 'Recomendado o uso apenas de Ultra Ball.', normalCards),
-            createPokemonAverageGroup('Pokémon Shiny', 'Use Ultra Ball, Story Ball e as Elemental Balls do(s) tipo(s).', shinyCards)
-        );
         pokemonDetailsAverages.replaceChildren(averageFragment);
     }
 
@@ -8524,7 +8792,7 @@ function openPokemonDetailsModal(entry, options = {}){
     // Manage history for deep-linking
     if(pushState && Number.isFinite(entry.dex)){
         const padded = String(entry.dex).padStart(3, '0');
-        const newPath = getRoutePathForTab('pokemons') + '/' + padded;
+        const newPath = getPokemonRoutePathForVariant() + '/' + padded;
         try{
             history.pushState({ tab: 'pokemons', pokemonDex: entry.dex }, '', newPath);
             pokemonModalHistoryPushed = true;
@@ -8584,7 +8852,7 @@ initializeSidebarNavigation();
 // Sync modal open/close with browser history (back/forward)
 window.addEventListener('popstate', () => {
     const pathname = String(location.pathname || '');
-    const match = pathname.match(/\/pokemons\/(\d{1,})\/?$/i);
+    const match = getPokemonDetailRouteMatch(pathname);
     if(match){
         const dex = parseInt(match[1], 10);
         const idx = dex - 1;

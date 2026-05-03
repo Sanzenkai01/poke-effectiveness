@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v62`;
+const CACHE_NAME = `${CACHE_PREFIX}v69`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -20,12 +20,12 @@ const APP_SHELL = [
   new URL('./bosses/champion-path.html', self.registration.scope).toString(),
   new URL('./bosses/mewtwo.html', self.registration.scope).toString(),
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260424d', self.registration.scope).toString(),
-  new URL('./script.js?v=20260424f', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260503d', self.registration.scope).toString(),
+  new URL('./script.js?v=20260503c', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260424b', self.registration.scope).toString(),
   new URL('./route-loader.js', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260419d', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260503a', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()
 ];
@@ -116,6 +116,14 @@ self.addEventListener('fetch', event => {
 
   if(url.pathname.endsWith('/community.json') || url.pathname.endsWith('community.json')){
     // Always try network first for community.json so scheduled updates propagate
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(
+    url.pathname.endsWith('/pokemons/pokemons.json')
+    || url.pathname.endsWith('/pokemons/mega-pokemons.json')
+  ){
     event.respondWith(networkFirst(request));
     return;
   }

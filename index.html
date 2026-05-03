@@ -31,6 +31,7 @@
         (function(){
             var params = new URLSearchParams(window.location.search);
             var tab = String(params.get('tab') || params.get('bossmode') || params.get('boss') || params.get('mode') || '').toLowerCase();
+            var pokemonVariant = String(params.get('variant') || '').toLowerCase();
             var routeMap = {
                 effectiveness: './tipos',
                 tipos: './tipos',
@@ -38,7 +39,8 @@
                 fosseis: './fossils',
                 calculator: './treinamento',
                 treinamento: './treinamento',
-                pokemons: './pokemons',
+                pokemon: './pokemon',
+                pokemons: pokemonVariant === 'mega' ? './pokemons' : './pokemon',
                 catch: './catch',
                 streamers: './streamers',
                 youtube: './youtube',
