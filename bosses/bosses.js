@@ -3849,6 +3849,18 @@ function repositionActivePassiveTooltip() {
   positionPassiveTooltip(activePassiveTooltipTrigger);
 }
 
+function syncPassiveTooltipHoverState(target) {
+  if (isPassiveTooltipTapMode() || passiveTooltipPinned || !activePassiveTooltipTrigger) return;
+
+  const hoveredTrigger = getPassiveTooltipTrigger(target);
+  if (hoveredTrigger === activePassiveTooltipTrigger) {
+    clearPassiveTooltipHideTimer();
+    return;
+  }
+
+  hidePassiveTooltip();
+}
+
 function createPassiveTooltipTrigger(passiveInfo, variant = '') {
   if (!passiveInfo?.text) return null;
 
@@ -3898,6 +3910,15 @@ function initPassiveTooltipSystem() {
     hidePassiveTooltip();
   });
 
+  document.addEventListener('pointermove', (event) => {
+    syncPassiveTooltipHoverState(event.target);
+  }, { passive: true });
+
+  document.addEventListener('pointercancel', () => {
+    if (passiveTooltipPinned) return;
+    hidePassiveTooltip({ immediate: true });
+  });
+
   document.addEventListener('focusin', (event) => {
     const trigger = getPassiveTooltipTrigger(event.target);
     if (!trigger) return;
@@ -3938,6 +3959,10 @@ function initPassiveTooltipSystem() {
 
   window.addEventListener('resize', repositionActivePassiveTooltip, { passive: true });
   window.addEventListener('scroll', repositionActivePassiveTooltip, true);
+  window.addEventListener('blur', () => {
+    if (passiveTooltipPinned) return;
+    hidePassiveTooltip({ immediate: true });
+  });
 }
 
 function getRecommendationExtraDescription(description) {
