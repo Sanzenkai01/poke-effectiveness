@@ -507,7 +507,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Scizor', image: 'scizor.png', tier: 'green', types: ['bug','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'green', types: ['bug','steel'], description: 'Tipo move: Steel.' },
           { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' }
@@ -1601,47 +1601,47 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
           createRolePick('Mega Raichu Y', ['electric'], 'electric'),
-          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting')
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting')
         ],
         tank: [
-          createRolePick('Onix', ['rock', 'ground'], 'rock'),
-          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass')
         ],
         support: [
-          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Comfey', ['fairy'], 'fairy')
+          createRolePick('Pachirisu', ['electric'], 'electric'),
+          createRolePick('Bellossom', ['grass'], 'grass')
         ]
       },
       mystic: {
         dps: [
-          createRolePick('Dewgong', ['water', 'ice'], 'ice'),
-          createRolePick('Kingdra', ['water', 'dragon'], 'dragon'),
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel'),
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water')
         ],
         tank: [
-          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
-          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
         ],
         support: [
           createRolePick('Politoed', ['water'], 'water'),
-          createRolePick('Bellossom', ['grass'], 'grass')
+          createRolePick('Comfey', ['fairy'], 'fairy')
         ]
       },
       valor: {
         dps: [
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
-          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
-          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel'),
+          createRolePick('Tauros', ['normal'], 'electric')
         ],
         tank: [
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
           createRolePick('Probopass', ['rock', 'steel'], 'rock')
         ],
         support: [
-          createRolePick('Blissey', ['normal'], 'fairy'),
-          createRolePick('Ponyta', ['fire'], 'fire')
+          createRolePick('Lopunny', ['normal'], 'fighting'),
+          createRolePick('Blissey', ['normal'], 'fairy')
         ]
       }
     }
@@ -1658,27 +1658,27 @@ const championPathBosses = createManualRoleboardBosses([
       instinct: {
         dps: [
           createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
-          createRolePick('Marowak', ['ground'], 'ground'),
-          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting')
+          createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
+          createRolePick('Marowak', ['ground'], 'ground')
         ],
         tank: [
-          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
-          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric')
         ],
         support: [
-          createRolePick('Blissey', ['normal'], 'fairy'),
-          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Pachirisu', ['electric'], 'electric'),
+          createRolePick('Bellossom', ['grass'], 'grass')
         ]
       },
       mystic: {
         dps: [
           createRolePick('Orthworm', ['steel'], 'ground'),
           createRolePick('Seaking', ['water'], 'ground'),
-          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting')
         ],
         tank: [
-          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
-          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
         ],
         support: [
           createRolePick('Politoed', ['water'], 'water'),
@@ -1687,17 +1687,17 @@ const championPathBosses = createManualRoleboardBosses([
       },
       valor: {
         dps: [
-          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
-          createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
-          createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark')
+          createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
+          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
-          createRolePick('Onix', ['rock', 'ground'], 'rock'),
-          createRolePick('Probopass', ['rock', 'steel'], 'rock')
+          createRolePick('Armarouge', ['fire', 'psychic'], 'fire'),
+          createRolePick('Torkoal', ['fire'], 'fire')
         ],
         support: [
-          createRolePick('Ponyta', ['fire'], 'fire'),
-          createRolePick('Blissey', ['normal'], 'fairy')
+          createRolePick('Lopunny', ['normal'], 'fighting'),
+          createRolePick('Ponyta', ['fire'], 'fire')
         ]
       }
     }
@@ -1713,47 +1713,46 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Pikachu', ['electric'], 'electric'),
           createRolePick('Dragonair', ['dragon'], 'dragon'),
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Mega Raichu Y', ['electric'], 'electric')
         ],
         tank: [
-          createRolePick('Magnezone', ['electric', 'steel'], 'steel'),
-          createRolePick('Onix', ['rock', 'ground'], 'rock')
+          createRolePick('Goodra', ['dragon'], 'dragon'),
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric')
         ],
         support: [
           createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Comfey', ['fairy'], 'fairy')
+          createRolePick('Pachirisu', ['electric'], 'electric')
         ]
       },
       mystic: {
         dps: [
+          createRolePick('Dachsbun', ['fairy'], 'fairy'),
           createRolePick('Dewgong', ['water', 'ice'], 'ice'),
-          createRolePick('Kingdra', ['water', 'dragon'], 'dragon'),
-          createRolePick('Mega Feraligatr', ['water', 'dragon'], 'dragon')
+          createRolePick("Melony's Frosmoth", ['ice', 'bug'], 'ice')
         ],
         tank: [
-          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Carracosta', ['water', 'rock'], 'rock'),
           createRolePick('Bronzong', ['steel', 'psychic'], 'steel')
         ],
         support: [
-          createRolePick('Smoochum', ['ice', 'psychic'], 'ice'),
-          createRolePick('Comfey', ['fairy'], 'fairy')
+          createRolePick('Comfey', ['fairy'], 'fairy'),
+          createRolePick('Smoochum', ['ice', 'psychic'], 'ice')
         ]
       },
       valor: {
         dps: [
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
-          createRolePick('Weavile', ['dark', 'ice'], 'ice'),
-          createRolePick('Cramorant', ['flying', 'water'], 'flying')
+          createRolePick('Weavile', ['dark', 'ice'], 'ice')
         ],
         tank: [
-          createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
-          createRolePick('Bastiodon', ['rock', 'steel'], 'steel')
+          createRolePick('Probopass', ['rock', 'steel'], 'rock'),
+          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
         ],
         support: [
-          createRolePick('Blissey', ['normal'], 'fairy'),
-          createRolePick('Lopunny', ['normal'], 'fighting')
+          createRolePick('Blissey', ['normal'], 'fairy')
         ]
       }
     }
@@ -2222,7 +2221,6 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Mega Scizor", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Pyroar Female", 'fire', 'dps', 'valor'),
       createFixedRecommendationDefinition("Ribombee", 'bug', 'dps', 'valor'),
-      createFixedRecommendationDefinition("Scizor", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Scolipede", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Scyther", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Tauros", 'normal', 'dps', 'valor'),
@@ -2425,7 +2423,6 @@ const mirroredRecommendationVariantNames = Object.freeze({
   bouffalant: 'Shiny Bouffalant',
   dragonair: 'Shiny Dragonair',
   megaferaligatr: 'Shiny Mega Feraligatr',
-  scizor: 'Shiny Scizor',
   scyther: 'Shiny Scyther'
 });
 
@@ -2964,6 +2961,7 @@ function removeGoodraRecommendation(list) {
 }
 
 function applyGoodraTankRolesToDragonBosses() {
+  const excludedChampionBossIds = new Set(['mega-aerodactyl', 'mega-aggron']);
   Object.entries(bossCatalogs).forEach(([catalogId, catalog]) => {
     (catalog.data || []).forEach((boss) => {
       ['instinct', 'mystic', 'valor'].forEach((clanKey) => {
@@ -2971,11 +2969,15 @@ function applyGoodraTankRolesToDragonBosses() {
         if (!clanData) return;
 
         const isChampionCatalog = String(catalogId || '').toLowerCase() === 'champion';
-        const shouldIncludeForClan = clanKey === 'instinct' && (isChampionCatalog || bossHasDragonMoveset(boss));
+        const shouldIncludeForClan = clanKey === 'instinct' && (
+          bossHasDragonMoveset(boss)
+          || (isChampionCatalog && !excludedChampionBossIds.has(String(boss?.id || '').trim().toLowerCase()))
+        );
 
         if (clanData.roles) {
-          // Garantir Goodra como Tank no cla Instinct para todos os Champion bosses
-          // e tambem manter a insercao para chefes com moveset Dragon nas outras listas.
+          // Manter Goodra como tank extra nos Champion bosses em geral,
+          // mas sem forcar a pick em Mega Aerodactyl/Mega Aggron, onde a lista foi curada manualmente.
+          // Fora disso, continuar aplicando a insercao para chefes com moveset Dragon.
           syncGoodraRecommendation(clanData.roles?.tank, shouldIncludeForClan);
         }
 
