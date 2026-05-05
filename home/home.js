@@ -227,7 +227,6 @@ function setHomeStreamerReady(totalPstoryOnline){
 }
 
 function fetchStreamerStatus(name){
-    const isNonDrop = HOME_NON_DROP_STREAMERS.has(name);
     const cacheKey = normalizeStreamerChannelName(name);
     const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
@@ -235,66 +234,34 @@ function fetchStreamerStatus(name){
     const detectPstory = (title) => {
         if(!title || !title.toString) return false;
         const normalized = title.toString().trim();
+        if(!normalized) return false;
 
-        const explicitDrop = /\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized);
-        if(explicitDrop) return 'drop';
+        if(/\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized)) return 'drop';
 
-        {
-            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-            const isCommandMention = (index) => {
-                let cursor = index - 1;
-                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                    cursor -= 1;
-                }
-                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === '\u2757';
-            };
-
-            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-                const index = typeof match.index === 'number' ? match.index : -1;
-                if(index < 0) continue;
-
-                const value = match[0];
-                const before = index > 0 ? normalized.charAt(index - 1) : '';
-                const afterIndex = index + value.length;
-                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-                if(isWordChar(before) || isWordChar(after)) continue;
-                if(isCommandMention(index)) continue;
-                return 'nodrop';
+        const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
+        const isCommandMention = (index) => {
+            let cursor = index - 1;
+            while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
+                cursor -= 1;
             }
+            const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
+            return marker === '!' || marker === '\u2757';
+        };
+
+        for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
+            const index = typeof match.index === 'number' ? match.index : -1;
+            if(index < 0) continue;
+
+            const value = match[0];
+            const before = index > 0 ? normalized.charAt(index - 1) : '';
+            const afterIndex = index + value.length;
+            const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
+
+            if(isWordChar(before) || isWordChar(after)) continue;
+            if(isCommandMention(index)) continue;
+            return 'nodrop';
         }
 
-        if(isNonDrop){
-            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-            const isCommandMention = (index) => {
-                let cursor = index - 1;
-                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                    cursor -= 1;
-                }
-                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === 'â—';
-            };
-
-            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-                const index = typeof match.index === 'number' ? match.index : -1;
-                if(index < 0) continue;
-
-                const value = match[0];
-                const before = index > 0 ? normalized.charAt(index - 1) : '';
-                const afterIndex = index + value.length;
-                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-                if(isWordChar(before) || isWordChar(after)) continue;
-                if(isCommandMention(index)) continue;
-                return 'nodrop';
-            }
-        }
-
-        if(!isNonDrop) return false;
-        if(/(?:!|â—)\s*pstory/i.test(normalized)) return false;
-        if(/pstoryonline\.com/i.test(normalized)) return 'nodrop';
-        if(/(?:^|[^a-zA-Z0-9_])pstory(?:[^a-zA-Z0-9_]|$)/i.test(normalized)) return 'nodrop';
         return false;
     };
 
@@ -379,60 +346,6 @@ function fetchStreamerStatus(name){
         })
     );
 }
-
-function formatStreamerRatCountdown(msUntilNext){
-    const totalSeconds = Math.max(0, Math.ceil(msUntilNext / 1000));
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-function startRatSummaryTimer(initialState){
-    if(!homeStreamerRatSummary) return;
-    if(ratSummaryIntervalId){
-        window.clearInterval(ratSummaryIntervalId);
-        ratSummaryIntervalId = 0;
-    }
-
-    homeStreamerRatSummary.replaceChildren();
-    const chip = document.createElement('div');
-    chip.className = 'streamer-rat-chip';
-    homeStreamerRatSummary.appendChild(chip);
-
-    const render = () => {
-        const freshState = normalizeStreamerRatTimerSnapshot(initialState.channel, initialState, Date.now());
-        if(!freshState || !freshState.lastMessageAt){
-            chip.textContent = 'Aguardando o próximo alerta do Rattata...';
-            chip.style.color = '#d8f3ff';
-            return;
-        }
-
-        if(freshState.remainingMs <= 0){
-            chip.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
-            chip.style.color = '#ffd166';
-            return;
-        }
-
-        chip.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(freshState.remainingMs)}.`;
-        chip.style.color = '#dff8ff';
-    };
-
-    render();
-    ratSummaryIntervalId = window.setInterval(render, 1000);
-}
-
-function pickPreferredCandidate(candidates, timerState){
-    const onlineDrops = candidates.filter((candidate) => candidate.isPstoryDrop);
-    if(!onlineDrops.length) return null;
-
-    const withTimer = onlineDrops.filter((candidate) => timerState.has(normalizeStreamerChannelName(candidate.name)));
-    const pool = withTimer.length ? withTimer : onlineDrops;
-
-    pool.sort((left, right) => HOME_STREAMERS.indexOf(left.name) - HOME_STREAMERS.indexOf(right.name));
-    return pool[0] || null;
-}
-
-loadPersistedStreamerStatusCache();
 
 async function refreshHomeWidget(){
     if(!homeStreamerInfo) return;

@@ -63,7 +63,7 @@ const boostStarResults = document.getElementById('boost-star-results');
 const boostTotalResults = document.getElementById('boost-total-results');
 const boostHelpPanel = document.getElementById('boost-help-panel');
 
-// safe flag for GSAP ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ if CDN fails this prevents errors
+// safe flag for GSAP – if CDN fails this prevents errors
 const useGsap = typeof gsap !== 'undefined';
 
 let fossilSelections = [];
@@ -419,7 +419,7 @@ function createInlineStatusMessage(className, message){
 function showTypesLoadingState(){
     if(!chart || menuTypes.length) return;
     chart.replaceChildren(createInlineStatusMessage('load-pending-message', 'Carregando tabela de tipos...'));
-    renderTypeInfoEmptyState('Os dados da tabela estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o sendo carregados para a consulta.');
+    renderTypeInfoEmptyState('Os dados da tabela estão sendo carregados para a consulta.');
 }
 
 function renderBossesDeferredState(message, options = {}){
@@ -435,12 +435,12 @@ function renderBossesDeferredState(message, options = {}){
 }
 
 const COMMUNITY_FEED_ITEMS = [
-    { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°M TAMBÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°M TEM SEU VALOR!' },
-    { id: 'GZx6IdPyQec', title: 'JOGAMOS O SPEED-SERVER DA PSTORY / NOVA ATUALIZAÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢O QUE PROMETE!' },
+    { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÉM TAMBÉM TEM SEU VALOR!' },
+    { id: 'GZx6IdPyQec', title: 'JOGAMOS O SPEED-SERVER DA PSTORY / NOVA ATUALIZAÇÃO QUE PROMETE!' },
     { id: 'fhoFtfKlPKM', title: 'Como Funciona o Sistema de Captura no PStory' },
-    { id: 'sPcZ-vHxixo', title: 'Tudo sobre o clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£ Mystic no PStory' },
-    { id: 'dxlYaudxPYc', title: 'Qual clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£ escolher no PStory?' },
-    { id: '5N8A1EVYXq8', title: "[PSTORY] VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª precisa fazer o Rotom's Phone antes que seja tarde!" }
+    { id: 'sPcZ-vHxixo', title: 'Tudo sobre o clã Mystic no PStory' },
+    { id: 'dxlYaudxPYc', title: 'Qual clã escolher no PStory?' },
+    { id: '5N8A1EVYXq8', title: "[PSTORY] Você precisa fazer o Rotom's Phone antes que seja tarde!" }
 ];
 const COMMUNITY_VIDEO_METADATA = {
     "FBJKGfzZim4": { "channelName": "Alcatraz", "channelUrl": "https://www.youtube.com/@AlcatrazFernando", "publishedAt": "2026-03-11T12:00:23-07:00" },
@@ -482,7 +482,7 @@ const COMMUNITY_FEED_TOPICS = {
     all: {
         label: 'Geral',
         hashtag: '#pstory',
-        description: 'VisÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ampla do PStory com vÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­deos da comunidade, eventos e conteÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºdos gerais do servidor.',
+        description: 'Visão ampla do PStory com vídeos da comunidade, eventos e conteúdos gerais do servidor.',
         highlights: ['Comunidade', 'Eventos', 'Servidor'],
         items: [
             { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUEM TAMBEM TEM SEU VALOR!' },
@@ -496,7 +496,7 @@ const COMMUNITY_FEED_TOPICS = {
     bosses: {
         label: 'Chefes',
         hashtag: '#pstoryboss',
-        description: 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos sobre chefes, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
+        description: 'Vídeos sobre chefes, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
         highlights: ['Hoopa Portal', 'Drops', 'Rotas'],
         items: [
             { id: 'D0v_bND_wD4', title: 'FIZ TODOS OS BOSSES DO PSTORY! DROPEI ALGO DE BOM?' },
@@ -510,7 +510,7 @@ const COMMUNITY_FEED_TOPICS = {
     catch: {
         label: 'Captura',
         hashtag: '#pstorycatch',
-        description: 'ConteÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºdos focados em captura, shinies, broken e rotinas de captura no servidor.',
+        description: 'Conteúdos focados em captura, shinies, broken e rotinas de captura no servidor.',
         highlights: ['Shinies', 'Broken', 'Rotina'],
         items: [
             { id: 'hLDOoIdjuKk', title: 'TUDO SOBRE BROKEN E CATCH! PSTORY ONLINE!' },
@@ -522,9 +522,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     clans: {
-        label: 'ClÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£s',
+        label: 'Clãs',
         hashtag: '#pstoryclan',
-        description: 'VÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­deos para comparar clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£s, entender diferenÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§as e escolher melhor o seu caminho.',
+        description: 'Vídeos para comparar clãs, entender diferenças e escolher melhor o seu caminho.',
         highlights: ['Mystic', 'Valor', 'Escolha'],
         items: [
             { id: 'sPcZ-vHxixo', title: 'TUDO SOBRE O CLAN MYSTIC PSTORY!' },
@@ -535,9 +535,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     updates: {
-        label: 'AtualizaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
+        label: 'Atualizações',
         hashtag: '#pstoryupdate',
-        description: 'LanÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§amentos, eventos, patches e tudo que movimenta o servidor no momento.',
+        description: 'Lançamentos, eventos, patches e tudo que movimenta o servidor no momento.',
         highlights: ['Patches', 'Eventos', 'News'],
         items: [
             { id: '6Q7UuMg1fyg', title: 'MEGA UPDATE NO PSTORY! LANCAMENTO SPEED SERVER' },
@@ -551,13 +551,13 @@ const COMMUNITY_FEED_TOPICS = {
     guides: {
         label: 'Guias',
         hashtag: '#pstoryguide',
-        description: 'Tutoriais e guias rÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡pidos para quem quer aprender sistemas e evoluir com mais direÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o.',
+        description: 'Tutoriais e guias rápidos para quem quer aprender sistemas e evoluir com mais direção.',
         highlights: ['Iniciantes', 'Tutoriais', 'Progressao'],
         items: [
             { id: 'qRVdDfUCHVc', title: '[PSTORY] DICAS PARA INICIANTES NO PSTORY! COMECE A JOGAR EM 2025! #8' },
             { id: 'zGDi2yR18Jo', title: '[PSTORY] O que ninguem te explica sobre o Hoopa Portal (GUIA COMPLETO)' },
             { id: 'OGuKXY6-Fdo', title: '[PSTORY] NOVA RAID! MEWTWO STRIKES BACK CHEGOU COM TUDO! #15' },
-            { id: '5N8A1EVYXq8', title: "[PSTORY] VOCÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â  PRECISA FAZER O ROTOM'S PHONE ANTES QUE SEJA TARDE!" },
+            { id: '5N8A1EVYXq8', title: "[PSTORY] VOCÊ PRECISA FAZER O ROTOM'S PHONE ANTES QUE SEJA TARDE!" },
             { id: 'wNqXDZanstg', title: '[PSTORY] DICAS INICIANTES PARTE 2 - SISTEMA DE BOOST, TRAINING, CLAS E DICA BONUS! #10' },
             { id: 'Bcjrv8j5g98', title: 'PStory - Guia Lv Up 120-200' }
         ]
@@ -652,7 +652,7 @@ let COMMUNITY_LAST_FETCH_ERROR = {};
 // When quota is exceeded, suspend further API calls for this duration
 const COMMUNITY_API_QUOTA_COOLDOWN_MS = 1000 * 60 * 30; // 30 minutes
 let LAST_YT_QUOTA_EXCEEDED_UNTIL = 0;
-// Next scheduled daily refresh timestamp (ms since epoch) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â for debug/inspection
+// Next scheduled daily refresh timestamp (ms since epoch) — for debug/inspection
 let NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
 
 function computeNextDailyRefreshTime(hour = 10, minute = 30){
@@ -941,7 +941,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
                 // mark cooldown window and stop auto refresh to avoid further quota usage
                 LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
                 try{ stopCommunityAutoRefresh(); }catch(e){}
-                console.warn('YouTube API quota exceeded ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                console.warn('YouTube API quota exceeded — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
             }
 
             throw new Error(errText || 'YouTube API error');
@@ -1038,7 +1038,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
                     if(isQuota){
                         LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
                         try{ stopCommunityAutoRefresh(); }catch(e){}
-                        console.warn('YouTube API quota exceeded (fallback) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                        console.warn('YouTube API quota exceeded (fallback) — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
                     }
 
                     return null;
@@ -1085,7 +1085,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             const topic = COMMUNITY_FEED_TOPICS[topicKey];
             if(!topic) return false;
 
-            // If quota is suspended globally, do not attempt network fetches ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â use persistent/cache/local fallback
+            // If quota is suspended globally, do not attempt network fetches — use persistent/cache/local fallback
             if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
                 console.warn('Skipping YouTube fetch for', topicKey, 'because quota is suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
                 COMMUNITY_LAST_FETCH_ERROR[topicKey] = { message: 'YouTube API quota exceeded; using cached/local items', resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString(), quota: true };
@@ -1366,8 +1366,8 @@ function ensureSiteYouTubeModal(){
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'site-youtube-modal__close';
-    closeBtn.setAttribute('aria-label', 'Fechar vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo');
-    closeBtn.textContent = 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
+    closeBtn.setAttribute('aria-label', 'Fechar vídeo');
+    closeBtn.textContent = '✖';
 
     const header = document.createElement('div');
     header.className = 'site-youtube-modal__header';
@@ -1375,7 +1375,7 @@ function ensureSiteYouTubeModal(){
     const title = document.createElement('h2');
     title.id = 'site-youtube-modal-title';
     title.className = 'site-youtube-modal__title';
-    title.textContent = 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo';
+    title.textContent = 'Vídeo';
 
     const player = document.createElement('div');
     player.className = 'site-youtube-modal__player';
@@ -1455,7 +1455,7 @@ function openSiteYouTubeModal(options = {}){
             // fallback to iframe if construction fails
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-            iframe.title = options.title ? `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube: ${options.title}` : 'Player de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
+            iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
             iframe.loading = 'eager';
             iframe.referrerPolicy = 'strict-origin-when-cross-origin';
             iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -1467,7 +1467,7 @@ function openSiteYouTubeModal(options = {}){
         // Fallback: insert iframe
         const iframe = document.createElement('iframe');
         iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-        iframe.title = options.title ? `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube: ${options.title}` : 'Player de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
+        iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
         iframe.loading = 'eager';
         iframe.referrerPolicy = 'strict-origin-when-cross-origin';
         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -1476,7 +1476,7 @@ function openSiteYouTubeModal(options = {}){
         siteYouTubeModalState.playerInstance = null;
     });
 
-    title.textContent = options.title || 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
+    title.textContent = options.title || 'Vídeo do YouTube';
 
     if(!wasOpen){
         siteYouTubeModalPreviousOverflow = document.body.style.overflow;
@@ -1570,8 +1570,8 @@ function ensureSiteStreamModal(){
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'site-stream-modal__close';
-    closeBtn.setAttribute('aria-label', 'Fechar transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o');
-    closeBtn.textContent = 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
+    closeBtn.setAttribute('aria-label', 'Fechar transmissão');
+    closeBtn.textContent = '✖';
 
     const header = document.createElement('div');
     header.className = 'site-stream-modal__header';
@@ -1579,7 +1579,7 @@ function ensureSiteStreamModal(){
     const title = document.createElement('h2');
     title.id = 'site-stream-modal-title';
     title.className = 'site-stream-modal__title';
-    title.textContent = 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o';
+    title.textContent = 'Transmissão';
 
     const player = document.createElement('div');
     player.className = 'site-stream-modal__player';
@@ -1604,7 +1604,7 @@ function ensureSiteStreamModal(){
 function openSiteStreamModal(options = {}){
     const channel = String(options.channel || '').trim();
     if(!channel) return false;
-    const titleText = options.title || `TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o de ${channel}`;
+    const titleText = options.title || `Transmissão de ${channel}`;
 
     const { modal, content, closeBtn, title, player } = ensureSiteStreamModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
@@ -1679,7 +1679,7 @@ function setCommunityPlayerLoaded(video){
 
     if(previewImage){
         previewImage.src = video.thumbnailUrl;
-        previewImage.alt = video.title || 'Miniatura do vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo selecionado';
+        previewImage.alt = video.title || 'Miniatura do vídeo selecionado';
     }
     if(previewCaption){
         previewCaption.textContent = 'Clique para carregar este video aqui.';
@@ -2105,33 +2105,33 @@ const strings = {
         pokemonsTitle: 'Pokémons',
         boostTitle: 'Calculadora de Boost',
         siteName: 'Poke Utilities',
-        homeLabel: 'InÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­cio',
+        homeLabel: 'Início',
         homeEyebrow: 'Hub da comunidade',
         homeTitleBefore: 'Bem-vindo ao',
         homeTitleAccent: 'Poke Utilities',
         homeLead: 'Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.',
-        homeSupporting: 'Entre por Tipos e navegue por fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³sseis, treinamento, pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons, captura, chefes, transmissÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes e vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos em um fluxo pensado para uso diÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio.',
-        homeDisclaimer: 'Projeto da comunidade, sem vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­nculo oficial com a staff do jogo.',
+        homeSupporting: 'Entre por Tipos e navegue por fósseis, treinamento, pokémons, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.',
+        homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
         instructions: '',
         superEffective: 'Super Efetivo',
-        vulnerable: 'VulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel',
+        vulnerable: 'Vulnerável',
         immune: 'Imune',
-        noRelation: 'nenhuma relaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o especial.',
-        shareSuccess: 'Link copiado para a ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rea de transferÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªncia!',
+        noRelation: 'nenhuma relação especial.',
+        shareSuccess: 'Link copiado para a área de transferência!',
         shareFail: 'Falha ao copiar link.',
         shareLabel: 'Compartilhar',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendEffective: 'Efetivo 1.5x',
         legendStrength: 'Super Efetivo',
-        legendWeakness: 'VulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel',
+        legendWeakness: 'Vulnerável',
         legendImmune: 'Imune',
         legendNeutral: 'Neutro',
         themeToggle: 'Alternar modo claro/escuro',
         calculatorTitle: 'Calculadora de Treinamento',
-        rangeLabel: 'Faixa de nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel',
+        rangeLabel: 'Faixa de nível',
         platesLabel: 'Plates',
         goldCoinsLabel: 'Golden Tickets',
         commonPlatesLabel: 'Plates comuns',
@@ -2139,14 +2139,14 @@ const strings = {
         tabTypes: 'Tipos',
         typeLabel: 'Tipo',
         tabCalculator: 'Calculadora de Treinamento',
-        tabFossils: 'FÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³sseis',
+        tabFossils: 'Fósseis',
         tabSpeedsters: 'Chefes',
-        tabStreamers: 'TransmissÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
-        tabCommunity: 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos',
-        fossilCost: 'Reviver um PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon custa <strong>250K</strong>.',
-        fossilHintCombines: 'Este fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil combina com: ',
-        fossilHintNone: 'Nenhuma combinaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel para este fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil.',
-        galleryTitle: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­veis',
+        tabStreamers: 'Transmissões',
+        tabCommunity: 'Vídeos',
+        fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
+        fossilHintCombines: 'Este fóssil combina com: ',
+        fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
+        galleryTitle: 'Pokémons disponíveis',
         result: 'Resultado:',
         dnaRequired: 'DNA Sample',
         huntSideLabel: 'Lado da hunt',
@@ -2155,76 +2155,76 @@ const strings = {
         drake: 'Drake',
         resistLabel: 'Resiste',
         legendResist: 'Resiste',
-        bird: 'PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ssaro',
+        bird: 'Pássaro',
         dino: 'Dino',
         fish: 'Peixe',
-        amber: 'ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡mbar',
-        fossilWord: 'fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil',
-        fossilIntro: '1. Escolha o primeiro fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil. 2. Escolha o segundo. 3. Confira o PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon e o DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio logo abaixo.',
-        calculatorInstructions: 'Selecione uma faixa de nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel e utilize os campos abaixo para calcular materiais necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rios.',
-        pokemonTypeLabel: 'Tipo de PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon',
+        amber: 'Âmbar',
+        fossilWord: 'fóssil',
+        fossilIntro: '1. Escolha o primeiro fóssil. 2. Escolha o segundo. 3. Confira o Pokémon e o DNA necessário logo abaixo.',
+        calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
+        pokemonTypeLabel: 'Tipo de Pokémon',
         normal: 'Normal',
         shiny: 'Shiny',
-        sameQuantityNote: 'Quantidade idÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªntica; apenas o tipo de plate muda.',
-        shiningBlockNote: 'Shining Plates sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o produzidas em blocos de 30.',
+        sameQuantityNote: 'Quantidade idêntica; apenas o tipo de plate muda.',
+        shiningBlockNote: 'Shining Plates são produzidas em blocos de 30.',
         elementItems: 'itens do elemento',
-        charItems: 'itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos',
+        charItems: 'itens característicos',
         stoneItems: 'pedras do elemento',
         /* catch calculator */
         catchTitle: 'Calculadora de Captura',
         catchEyebrow: 'Captura otimizada',
-        catchDescription: 'Consulte a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas e acompanhe o progresso do log em uma tela mais direta.',
-        selectedBallLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola selecionada',
-        catchCalcTitle: 'Calcule a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas',
-        catchCalcHint: 'Escolha a pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola, o nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel e o tipo de captura para ver uma estimativa rÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡pida.',
-        ballChoiceLabel: 'Escolha a pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola:',
-        pokemonLevelLabel: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel do pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon:',
+        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.',
+        selectedBallLabel: 'Pokébola selecionada',
+        catchCalcTitle: 'Calcule a média de pokébolas',
+        catchCalcHint: 'Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.',
+        ballChoiceLabel: 'Escolha a pokébola:',
+        pokemonLevelLabel: 'Nível do pokémon:',
         catchVariantLabel: 'Tipo de captura',
-        catchVariantNormalHint: 'Estimativa padrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o de captura.',
-        catchVariantShinyHint: 'Mostra a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia para capturas shiny.',
-        optionsLabel: 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
-        catchOptionLabel: 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o',
+        catchVariantNormalHint: 'Estimativa padrão de captura.',
+        catchVariantShinyHint: 'Mostra a média para capturas shiny.',
+        optionsLabel: 'Opções',
+        catchOptionLabel: 'Opção',
         calcCatchBtn: 'Calcular estimativa',
-        catchLogTitle: 'Analise o histÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³rico de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas',
+        catchLogTitle: 'Analise o histórico de pokébolas',
         catchLogHint: 'Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.',
-        logBallsLabel: 'Log de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas usadas:',
+        logBallsLabel: 'Log de pokébolas usadas:',
         parseLogBtn: 'Processar log',
         expensesMsg: 'Despesas',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}, Safari: {safari}',
-        catchResultTitle: 'Estimativa para sua seleÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o',
-        catchResultCountLabel: 'MÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia',
-        catchResultLevelLabel: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel',
+        catchResultTitle: 'Estimativa para sua seleção',
+        catchResultCountLabel: 'Média',
+        catchResultLevelLabel: 'Nível',
         catchResultVariantLabel: 'Variante',
-        catchResultBallLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola',
+        catchResultBallLabel: 'Pokébola',
         catchLogResultTitle: 'Leitura do log',
-        catchLogBallsLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas reconhecidas',
+        catchLogBallsLabel: 'Pokébolas reconhecidas',
         catchLogEquivalentLabel: 'Equivalente em {ball}',
         catchLogSpentLabel: 'Gasto total',
         catchRemainingTitle: 'Ainda faltam',
-        catchAchievedTitle: 'Status da mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia',
+        catchAchievedTitle: 'Status da média',
         /* additional catch and calculator text */
-        ballElemental: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Elemental',
-        ballStory: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Story',
-        ballUltra: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Ultra',
-        ballSafari: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Safari',
-        lvlPrefix: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel ',
-        preLabel: 'PrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© Ace',
+        ballElemental: 'Pokébola Elemental',
+        ballStory: 'Pokébola Story',
+        ballUltra: 'Pokébola Ultra',
+        ballSafari: 'Pokébola Safari',
+        lvlPrefix: 'Nível ',
+        preLabel: 'Pré Ace',
         aceLabel: 'Ace',
-        logPlaceholder: "Utilize !pokeballs 'nome do PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon' no jogo e cole a mensagem aqui.",
-        catchNote: 'Nota: os valores sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o uma mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia aproximada; geralmente gastam-se algumas pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas a mais.',
-        infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos e 1 pedra do elemento.',
+        logPlaceholder: "Utilize !pokeballs 'nome do Pokémon' no jogo e cole a mensagem aqui.",
+        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.',
+        infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
         infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
-        adjustNote: 'Valor ajustado para mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºltiplo de 30: {rounded}',
+        adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
         forCommonLabel: 'Para {n} plate(s) comum(ns):',
-        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos, {stones} pedra(s) do elemento',
+        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento',
         materialsForRangeLabel: 'Materiais para fabricar',
-        roundedProductionLabel: 'ProduÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o ajustada',
+        roundedProductionLabel: 'Produção ajustada',
         shiningStonesLabel: 'Shining Stones',
         /* new messages for log parsing */
-        avgReached: 'ParabÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©ns! VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª jÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ atingiu a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de {avg} {ball}.',
-        overAvg: 'VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª passou da mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia por {over} {ball}.',
-        encouragement: 'Continue assim, vocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ no caminho certo!',
-        noBallsParsed: 'Nenhuma pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola reconhecida no log.'
+        avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
+        overAvg: 'Você passou da média por {over} {ball}.',
+        encouragement: 'Continue assim, você está no caminho certo!',
+        noBallsParsed: 'Nenhuma pokébola reconhecida no log.'
     }
 };
 const lang = 'pt';
@@ -2477,7 +2477,7 @@ function updateTextContent(){
             try{
                 showFossils();
             }catch(e){
-                // ignore ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â we'll perform a hard reset below to be robust
+                // ignore — we'll perform a hard reset below to be robust
             }
             fossilHardReset();
         }, true);
@@ -2556,13 +2556,13 @@ function renderCommunityFeedPanel(){
 
     renderCommunityTopicFilters();
 
-    if(heroTitleEl) heroTitleEl.textContent = 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos recentes da comunidade';
+    if(heroTitleEl) heroTitleEl.textContent = 'Vídeos recentes da comunidade';
     if(heroLeadEl) heroLeadEl.textContent = 'Escolha um tema e carregue o player sem sair da lista.';
-    if(heroSupportingEl) heroSupportingEl.textContent = 'SeleÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o cronolÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³gica com player na prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³pria aba.';
+    if(heroSupportingEl) heroSupportingEl.textContent = 'Seleção cronológica com player na própria aba.';
     if(playerTagEl) playerTagEl.textContent = 'Recentes';
     if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} Filtro atual: ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo na lista ou clique na capa para carregar o player aqui.';
-    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos recentes' : `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos de ${topic.label}`;
+    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo na lista ou clique na capa para carregar o player aqui.';
+    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Vídeos recentes' : `Vídeos de ${topic.label}`;
     if(listDescriptionEl) listDescriptionEl.textContent = `Mais recentes em ${topic.hashtag}.`;
 
     if(topicHighlightsEl){
@@ -2583,7 +2583,7 @@ function renderCommunityFeedPanel(){
         const dataUpdatedAtTs = getCommunityDataUpdatedAt();
         const loadedAtText = loadedAtTs ? new Date(loadedAtTs).toLocaleString() : 'desconhecido';
         const dataUpdatedAtText = dataUpdatedAtTs ? new Date(dataUpdatedAtTs).toLocaleString() : 'desconhecido';
-        const metaText = `Fonte: ${src} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Dados: ${dataUpdatedAtText} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Carregado: ${loadedAtText}`;
+        const metaText = `Fonte: ${src} • Dados: ${dataUpdatedAtText} • Carregado: ${loadedAtText}`;
         if(existingMeta){
             existingMeta.textContent = metaText;
             existingMeta.hidden = false;
@@ -2609,10 +2609,10 @@ function renderCommunityFeedPanel(){
         let msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
         if(lastErr.quota){
             msg = 'Cota da API do YouTube excedida';
-            if(lastErr.resumeAt) msg += ` ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â retomando a partir de ${lastErr.resumeAt}`;
+            if(lastErr.resumeAt) msg += ` — retomando a partir de ${lastErr.resumeAt}`;
         }
         if(existingWarning){
-            existingWarning.textContent = `Falha ao obter vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos ao vivo: ${msg}. Mostrando itens locais.`;
+            existingWarning.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
             existingWarning.hidden = false;
         } else {
             const warn = document.createElement('div');
@@ -2624,7 +2624,7 @@ function renderCommunityFeedPanel(){
             warn.style.background = 'rgba(255,235,205,0.9)';
             warn.style.border = '1px solid rgba(0,0,0,0.06)';
             warn.style.borderRadius = '6px';
-            warn.textContent = `Falha ao obter vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos ao vivo: ${msg}. Mostrando itens locais.`;
+            warn.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
             if(listEl && listEl.parentElement){
                 listEl.parentElement.insertBefore(warn, listEl);
             }
@@ -2635,27 +2635,27 @@ function renderCommunityFeedPanel(){
 
     if(!topicItems.length){
         const fallbackVideoId = COMMUNITY_FEED_ITEMS[0]?.id || 'FBJKGfzZim4';
-        listEl.innerHTML = `<div class="community-empty">Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado para ${topic.hashtag} ainda.</div>`;
-        titleEl.textContent = 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado';
+        listEl.innerHTML = `<div class="community-empty">Nenhum vídeo configurado para ${topic.hashtag} ainda.</div>`;
+        titleEl.textContent = 'Nenhum vídeo configurado';
         if(channelNameEl) channelNameEl.textContent = 'Canal da comunidade';
         if(publishedAtEl) publishedAtEl.textContent = 'Data de postagem indisponivel';
         linkEl.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(topic.hashtag)}`;
         linkEl.textContent = 'Abrir no YouTube';
-        if(frame) frame.setAttribute('title', `Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado para ${topic.label}`);
+        if(frame) frame.setAttribute('title', `Nenhum vídeo configurado para ${topic.label}`);
         if(channelLinkEl){
             channelLinkEl.hidden = true;
             channelLinkEl.removeAttribute('href');
         }
         if(previewEl){
             previewEl.disabled = true;
-            previewEl.setAttribute('aria-label', 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel');
+            previewEl.setAttribute('aria-label', 'Nenhum vídeo disponível');
         }
         if(previewCaptionEl){
-            previewCaptionEl.textContent = `Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo em ${topic.hashtag}.`;
+            previewCaptionEl.textContent = `Nenhum vídeo em ${topic.hashtag}.`;
         }
         setCommunityPlayerLoaded({
             id: fallbackVideoId,
-            title: 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado',
+            title: 'Nenhum vídeo configurado',
             channelName: 'criadores da comunidade',
             thumbnailUrl: getCommunityVideoThumbnailUrl(fallbackVideoId)
         });
@@ -2683,7 +2683,7 @@ function renderCommunityFeedPanel(){
     }
     if(previewEl){
         previewEl.disabled = false;
-        previewEl.setAttribute('aria-label', `Carregar vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo em destaque: ${activeVideo.title}`);
+        previewEl.setAttribute('aria-label', `Carregar vídeo em destaque: ${activeVideo.title}`);
         previewEl.onclick = () => {
             loadCommunityVideoFrame(activeVideo);
         };
@@ -2932,18 +2932,18 @@ function renderTypeInfoEmptyState(message){
     info.innerHTML = `
         <div class="types-empty-state">
             <div class="types-empty-state__copy">
-                <span class="types-empty-state__eyebrow">${message ? 'Carregando' : 'Sem seleÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o'}</span>
+                <span class="types-empty-state__eyebrow">${message ? 'Carregando' : 'Sem seleção'}</span>
                 <h3>${message ? 'Preparando a tabela de tipos' : 'Escolha um ou dois tipos'}</h3>
-                <p>${message || 'O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªncia e imunidade.'}</p>
+                <p>${message || 'O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistência e imunidade.'}</p>
             </div>
             <div class="types-empty-state__grid">
                 <article class="types-empty-card">
                     <strong>Ataque</strong>
-                    <span>Veja onde sua combinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o bate com 1.5x ou 2x.</span>
+                    <span>Veja onde sua combinação bate com 1.5x ou 2x.</span>
                 </article>
                 <article class="types-empty-card">
                     <strong>Defesa</strong>
-                    <span>Confira vulnerabilidades, resistÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âªncias e imunidades sem poluiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o visual.</span>
+                    <span>Confira vulnerabilidades, resistências e imunidades sem poluição visual.</span>
                 </article>
             </div>
         </div>
@@ -3319,7 +3319,7 @@ function renderSelection(){
                 m *= 0.5;        // defender resists attacker
             }
         });
-        // NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o permitir multiplicador zero ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â limite mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 0.5x
+        // Não permitir multiplicador zero — limite mínimo 0.5x
         m = Math.max(m, 0.5);
         multipliers[att] = m;
     });
@@ -3414,7 +3414,7 @@ function renderSelection(){
     let html = `<div class="types-info-shell">`;
     html += `
         <div class="types-info__summary">
-            <span class="types-info__eyebrow">AnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lise atual</span>
+            <span class="types-info__eyebrow">Análise atual</span>
             <div class="info-type-heading">${t('typeLabel')}: ${currentSelection.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ')}</div>
             <div class="types-selection-pills">
                 ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
@@ -3589,7 +3589,7 @@ function renderSelection(){
     let html = `<div class="types-info-shell">`;
     html += `
         <div class="types-info__summary">
-            <span class="types-info__eyebrow">AnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lise atual</span>
+            <span class="types-info__eyebrow">Análise atual</span>
             <div class="info-type-heading">${currentSelection.map(getTypeDisplayName).join(' + ')}</div>
             <div class="types-selection-pills">
                 ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
@@ -3599,7 +3599,7 @@ function renderSelection(){
     `;
     html += makeSection(t('superEffective'), 'Ataque 2x', superEffectiveTargets, 'super');
     html += makeSection('Efetivo', 'Ataque 1.5x', effectiveTargets, 'effective');
-    html += makeSection('Muito vulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
+    html += makeSection('Muito vulnerável', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
     html += makeSection(t('vulnerable'), 'Defesa 1.5x', weakEntries, 'vulnerable');
     html += makeSection(t('resistLabel'), 'Defesa 0.75x / 0.5x', resistEntries, 'resist');
     html += makeSection(t('immune'), 'Defesa 0x', immuneEntries, 'immune');
@@ -3684,7 +3684,7 @@ function showCalculator(){
         tabCalcBtn.setAttribute('aria-selected','true');
     }
     setVisiblePanel(contentCalc);
-    // also clear catch calculator results/log so they donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t linger
+    // also clear catch calculator results/log so they don't linger
     const catchRes = document.getElementById('catch-result');
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
@@ -3771,7 +3771,7 @@ if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness()
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
-// PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡scoa button removed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â no-op
+// Páscoa button removed — no-op
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
         openHomeDestination(button.dataset.homeTarget);
@@ -3831,7 +3831,7 @@ function showSpeedsters(requestedBossMode=''){
     }
 
     if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
-        renderBossesDeferredState('Carregando catÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡logo de bosses...');
+        renderBossesDeferredState('Carregando catálogo de bosses...');
         updateUrl();
         ensureBossesPageReady().then(() => {
             if(!contentSpeedsters?.hidden){
@@ -3856,9 +3856,9 @@ function showSpeedsters(requestedBossMode=''){
             warning.style.padding = '1rem';
             warning.style.color = '#eee';
             warning.style.background = 'rgba(255,0,0,0.08)';
-            warning.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os bosses, tente atualizar a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.';
+            warning.textContent = 'Não foi possível carregar os bosses, tente atualizar a página.';
             speedsterGrid.appendChild(warning);
-            console.warn('Bosses grid estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ vazio apÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³s renderizaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o. PossÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel problema no bosses.js.');
+            console.warn('Bosses grid está vazio após renderização. Possível problema no bosses.js.');
         }
     }
 
@@ -4049,11 +4049,11 @@ function renderHomeStreamerInfo(){
 
     homeStreamerCount.textContent = String(homeStreamerInfoState.totalPstoryOnline);
     if(homeStreamerInfoState.totalPstoryOnline === 0){
-        homeStreamerText.textContent = 'Nenhum canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online em PStory agora.';
+        homeStreamerText.textContent = 'Nenhum canal está online em PStory agora.';
     } else if(homeStreamerInfoState.totalPstoryOnline === 1){
-        homeStreamerText.textContent = 'canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online e em PStory agora.';
+        homeStreamerText.textContent = 'canal está online e em PStory agora.';
     } else {
-        homeStreamerText.textContent = 'canais estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o online e em PStory agora.';
+        homeStreamerText.textContent = 'canais estão online e em PStory agora.';
     }
 }
 
@@ -4661,7 +4661,7 @@ async function validateStreamerRatChatToken(){
         return {
             ok: false,
             reason: 'token-missing',
-            message: 'Token do chat da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o configurado.'
+            message: 'Token do chat da Twitch não configurado.'
         };
     }
 
@@ -4676,7 +4676,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: response.status === 401 ? 'token-invalid' : 'token-unavailable',
-                message: 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel validar o token do chat da Twitch.'
+                message: 'Não foi possível validar o token do chat da Twitch.'
             };
         }
 
@@ -4692,7 +4692,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'token-user-required',
-                message: 'O token atual da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© um token de usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio para leitura de chat.'
+                message: 'O token atual da Twitch não é um token de usuário para leitura de chat.'
             };
         }
 
@@ -4700,7 +4700,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'chat-username-mismatch',
-                message: 'O usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio configurado para o chat nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o corresponde ao token da Twitch.'
+                message: 'O usuário configurado para o chat não corresponde ao token da Twitch.'
             };
         }
 
@@ -4708,7 +4708,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'chat-user-id-mismatch',
-                message: 'O user_id configurado para o chat nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o corresponde ao token da Twitch.'
+                message: 'O user_id configurado para o chat não corresponde ao token da Twitch.'
             };
         }
 
@@ -4716,7 +4716,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'missing-chat-scope',
-                message: 'O token atual da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o tem permissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o para ler o chat.'
+                message: 'O token atual da Twitch não tem permissão para ler o chat.'
             };
         }
 
@@ -4730,7 +4730,7 @@ async function validateStreamerRatChatToken(){
         return {
             ok: false,
             reason: 'validate-failed',
-            message: 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel conectar no chat da Twitch.'
+            message: 'Não foi possível conectar no chat da Twitch.'
         };
     }
 }
@@ -4885,7 +4885,7 @@ function createStreamerRatChatMonitor(){
             }
 
             if(messageData.command === 'NOTICE' && /Login authentication failed/i.test(messageData.trailing || '')){
-                setStatus('unavailable', 'O token atual nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o conseguiu autenticar no chat da Twitch.');
+                setStatus('unavailable', 'O token atual não conseguiu autenticar no chat da Twitch.');
                 manualClose = true;
                 try {
                     socket?.close();
@@ -4921,7 +4921,7 @@ function createStreamerRatChatMonitor(){
 
         const resolvedTokenInfo = await tokenInfoPromise;
         if(!resolvedTokenInfo?.ok){
-            setStatus('unavailable', resolvedTokenInfo?.message || 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel validar o chat da Twitch.');
+            setStatus('unavailable', resolvedTokenInfo?.message || 'Não foi possível validar o chat da Twitch.');
             return;
         }
 
@@ -5007,79 +5007,39 @@ function fetchStreamerStatus(name, isNonDrop = false){
     const detectPstory = (title) => {
         if(!title || !title.toString) return false;
         const normalized = title.toString().trim();
+        if(!normalized) return false;
 
-        const explicitDrop = /\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized);
-        if(explicitDrop) return 'drop';
+        if(/\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized)) return 'drop';
 
-        {
-            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-            const isCommandMention = (index) => {
-                let cursor = index - 1;
-                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                    cursor -= 1;
-                }
-                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === '\u2757';
-            };
-
-            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-                const index = typeof match.index === 'number' ? match.index : -1;
-                if(index < 0) continue;
-
-                const value = match[0];
-                const before = index > 0 ? normalized.charAt(index - 1) : '';
-                const afterIndex = index + value.length;
-                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-                if(isWordChar(before) || isWordChar(after)) continue;
-                if(isCommandMention(index)) continue;
-                return 'nodrop';
+        const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
+        const isCommandMention = (index) => {
+            let cursor = index - 1;
+            while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
+                cursor -= 1;
             }
+            const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
+            return marker === '!' || marker === '\u2757';
+        };
+
+        for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
+            const index = typeof match.index === 'number' ? match.index : -1;
+            if(index < 0) continue;
+
+            const value = match[0];
+            const before = index > 0 ? normalized.charAt(index - 1) : '';
+            const afterIndex = index + value.length;
+            const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
+
+            if(isWordChar(before) || isWordChar(after)) continue;
+            if(isCommandMention(index)) continue;
+            return 'nodrop';
         }
-
-        if(isNonDrop){
-            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-            const isCommandMention = (index) => {
-                let cursor = index - 1;
-                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                    cursor -= 1;
-                }
-                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
-            };
-
-            // Aceita uma menÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o vÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lida no tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulo sem deixar que um "!pstory" posterior anule tudo.
-            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-                const index = typeof match.index === 'number' ? match.index : -1;
-                if(index < 0) continue;
-
-                const value = match[0];
-                const before = index > 0 ? normalized.charAt(index - 1) : '';
-                const afterIndex = index + value.length;
-                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-                if(isWordChar(before) || isWordChar(after)) continue;
-                if(isCommandMention(index)) continue;
-                return 'nodrop';
-            }
-        }
-
-        if(!isNonDrop) return false; // somente para nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o-Drops
-
-        // Ignorar marcadores ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³bvios de false positive
-        if(/(?:!|ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â)\s*pstory/i.test(normalized)) return false;
-
-        // pstoryonline.com em qualquer parte do tÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­tulo (sem DROP explÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­cito)
-        if(/pstoryonline\.com/i.test(normalized)) return 'nodrop';
-
-        // Palavra Pstory isolada, sem prefixo ! ou ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â
-        if(/(?:^|[^a-zA-Z0-9_])pstory(?:[^a-zA-Z0-9_]|$)/i.test(normalized)) return 'nodrop';
 
         return false;
     };
 
-    const makeResult = (status, title='', startedAt = '') => {
-        const pstoryStatus = (status === 'online' ? detectPstory(title || '') : false);
+    const makeResult = (status, title = '', startedAt = '') => {
+        const pstoryStatus = status === 'online' ? detectPstory(title || '') : false;
         return {
             status,
             title: title ? title.toString().trim() : '',
@@ -5090,18 +5050,17 @@ function fetchStreamerStatus(name, isNonDrop = false){
         };
     };
 
-    const fetchDecapiTitle = () => {
-        return fetch(`https://decapi.me/twitch/title/${encodeURIComponent(name)}`)
+    const fetchDecapiTitle = () =>
+        fetch(`https://decapi.me/twitch/title/${encodeURIComponent(name)}`)
             .then(r => r.ok ? r.text() : '')
             .then(text => (text || '').toString().trim())
             .catch(err => {
                 console.error('fetchDecapiTitle error', name, err);
                 return '';
             });
-    };
 
-    const queryDecapi = () => {
-        return fetchDecapiTitle().then(title => {
+    const queryDecapi = () =>
+        fetchDecapiTitle().then(title => {
             if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
                 return makeResult('offline', title);
             }
@@ -5110,7 +5069,6 @@ function fetchStreamerStatus(name, isNonDrop = false){
             console.error('queryDecapi network error', name, err);
             return makeResult('unknown', '');
         });
-    };
 
     const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
                            !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
@@ -5121,8 +5079,6 @@ function fetchStreamerStatus(name, isNonDrop = false){
             return queryDecapi();
         }
 
-        // If we've recently observed invalid credentials (401), avoid
-        // calling Helix again for a short period to reduce repeated 401s.
         if(Date.now() < twitchCredentialsInvalidUntil){
             return queryDecapi();
         }
@@ -5138,9 +5094,7 @@ function fetchStreamerStatus(name, isNonDrop = false){
         .then(r => {
             if(!r.ok){
                 if(r.status === 401){
-                    // Mark credentials as invalid for a short TTL to avoid spam
-                    // of unauthorized requests while the client updates tokens.
-                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000); // 60s
+                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000);
                     console.warn('Twitch API returned 401 Unauthorized; falling back to decapi.me for 60s');
                 }
                 return queryDecapi();
@@ -5148,8 +5102,7 @@ function fetchStreamerStatus(name, isNonDrop = false){
             return r.json().then(data => {
                 if(data && Array.isArray(data.data) && data.data.length > 0){
                     const stream = data.data[0];
-                    const title = stream.title || '';
-                    return makeResult('online', title, stream.started_at || '');
+                    return makeResult('online', stream.title || '', stream.started_at || '');
                 }
                 return makeResult('offline', '', '');
             }).catch(() => queryDecapi());
@@ -5166,24 +5119,64 @@ function fetchStreamerStatus(name, isNonDrop = false){
 }
 
 function fetchStreamerAvatar(name){
-    const cached = getCachedStreamerValue(streamerAvatarCache, name);
+    const cacheKey = normalizeStreamerChannelName(name);
+    const cached = getCachedStreamerValue(streamerAvatarCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
 
-    return shareStreamerRequest(streamerAvatarRequests, name, () =>
-        fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(name)}`)
+    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
+                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
+                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
+
+    const normalizeAvatarUrl = (value) => {
+        const trimmed = (value || '').toString().trim();
+        if(!trimmed || trimmed.startsWith('https://decapi.me/')) return '';
+        if(trimmed.match(/(not found|error|invalid)/i)) return '';
+        return trimmed;
+    };
+
+    const queryDecapiAvatar = () =>
+        fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(cacheKey)}`)
             .then(r => {
-                if(!r.ok) throw new Error('avatar nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
+                if(!r.ok) throw new Error('avatar n\u00e3o encontrado');
                 return r.text();
             })
-            .then(url => {
-                const trimmed = (url || '').trim();
-                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar invÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido');
-                return trimmed;
-            })
+            .then(normalizeAvatarUrl);
+
+    const queryHelixAvatar = () => {
+        if(!credentialsSet || Date.now() < twitchCredentialsInvalidUntil){
+            return queryDecapiAvatar();
+        }
+
+        const url = `https://api.twitch.tv/helix/users?login=${encodeURIComponent(cacheKey)}`;
+        return fetch(url, {
+            headers: {
+                'Client-ID': TWITCH_CLIENT_ID,
+                'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
+                'Accept': 'application/json'
+            }
+        })
+        .then(r => {
+            if(!r.ok){
+                if(r.status === 401){
+                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000);
+                    console.warn('Twitch API returned 401 Unauthorized for avatar lookup; falling back to decapi.me for 60s');
+                }
+                return queryDecapiAvatar();
+            }
+            return r.json().then(data => {
+                const profileImageUrl = normalizeAvatarUrl(data?.data?.[0]?.profile_image_url || '');
+                return profileImageUrl || queryDecapiAvatar();
+            }).catch(() => queryDecapiAvatar());
+        })
+        .catch(() => queryDecapiAvatar());
+    };
+
+    return shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
+        queryHelixAvatar()
             .catch(() => null)
             .then(result => {
                 const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
-                return setCachedStreamerValue(streamerAvatarCache, name, result, ttl);
+                return setCachedStreamerValue(streamerAvatarCache, cacheKey, result, ttl);
             })
     );
 }
@@ -5274,19 +5267,19 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             touchStreamerRatTimerState(monitorInfo.name);
             const msUntilNext = validState.remainingMs;
             if(msUntilNext <= 0){
-                timerEl.textContent = 'O prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo Rattata deve aparecer a qualquer momento.';
+                timerEl.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
                 timerEl.style.color = '#ffd166';
                 return;
             }
 
-            timerEl.textContent = `PrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
+            timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
             timerEl.style.color = '#dff8ff';
             return;
         }
 
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
-            timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel no chat da Twitch.';
+            timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.';
             timerEl.style.color = '#b6c2cf';
             return;
         }
@@ -5302,7 +5295,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             return;
         }
 
-        timerEl.textContent = 'Aguardando o prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo alerta do Rattata...';
+        timerEl.textContent = 'Aguardando o próximo alerta do Rattata...';
         timerEl.style.color = '#d8f3ff';
     };
 
@@ -5337,11 +5330,11 @@ function renderStreamers(){
     const statusInfo = document.getElementById('streamer-status-info');
     const ratSummary = document.getElementById('streamer-rat-summary');
     if(!grid){
-        console.warn('renderStreamers: streamer-grid nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
+        console.warn('renderStreamers: streamer-grid não encontrado');
         return;
     }
     if(!statusInfo){
-        console.warn('renderStreamers: streamer-status-info nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
+        console.warn('renderStreamers: streamer-status-info não encontrado');
     }
 
     streamerCardCleanupFns.forEach(cleanup => {
@@ -5414,7 +5407,7 @@ function renderStreamers(){
         ratSummary.appendChild(summaryEl);
         if(!selectedInfo){
             summaryEl.style.display = 'inline-flex';
-            summaryEl.textContent = 'Nenhum canal com DROP:ON confirmado estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online para monitorar o Rattata.';
+            summaryEl.textContent = 'Nenhum canal com DROP:ON confirmado está online para monitorar o Rattata.';
             summaryEl.style.color = '#b6c2cf';
             return;
         }
@@ -5429,7 +5422,7 @@ function renderStreamers(){
             return;
         }
         if(totalOnline === 0){
-            statusInfo.textContent = 'Nenhum canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online agora. Mas a lista continua visÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel abaixo.';
+            statusInfo.textContent = 'Nenhum canal está online agora. Mas a lista continua visível abaixo.';
         } else {
             statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} canais`;
         }
@@ -5455,7 +5448,7 @@ function renderStreamers(){
     const placeStreamerCard = (card, info) => {
         card.dataset.pstory = info.isPstory ? 'true' : 'false';
         card.dataset.online = info.status === 'online' ? 'true' : 'false';
-        // Remove para reposicionar com ordenaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o correta
+        // Remove para reposicionar com ordenação correta
         if (card.parentElement === grid) {
             grid.removeChild(card);
         }
@@ -5669,7 +5662,7 @@ function renderStreamers(){
 
         const discordBtn = document.createElement('button');
         const discordLink = STREAMER_DISCORD_LINKS[name];
-        discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel';
+        discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponível';
         discordBtn.disabled = !discordLink;
         discordBtn.hidden = !discordLink;
 
@@ -5715,7 +5708,7 @@ function renderStreamers(){
                 avatarUrl = '',
                 eyebrow = 'Preparando',
                 title = 'Buscando o status do canal...',
-                meta = 'A prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©via do canal aparece aqui assim que a verificaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o terminar.',
+                meta = 'A prévia do canal aparece aqui assim que a verificação terminar.',
                 action = 'Abrir na Twitch'
             } = options;
 
@@ -5789,7 +5782,7 @@ function renderStreamers(){
                     ? 'PStory ao vivo sem drops.'
                     : info.isPstory
                         ? 'PStory ao vivo no canal.'
-                        : 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ao vivo na Twitch.';
+                        : 'Transmissão ao vivo na Twitch.';
 
             renderPreviewCard({
                 state: info.status === 'online'
@@ -5800,16 +5793,16 @@ function renderStreamers(){
                 avatarUrl,
                 eyebrow: info.status === 'online' ? 'Ao vivo agora' : info.status === 'offline' ? 'Canal offline' : 'Status parcial',
                 title: info.status === 'online'
-                    ? (info.title || 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ao vivo da comunidade.')
+                    ? (info.title || 'Transmissão ao vivo da comunidade.')
                     : info.status === 'offline'
-                        ? 'Abra o canal para acompanhar a prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³xima live.'
-                        : 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel montar uma prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©via confiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel do canal.',
+                        ? 'Abra o canal para acompanhar a próxima live.'
+                        : 'Não foi possível montar uma prévia confiável do canal.',
                 meta: info.status === 'online'
                     ? liveMeta
                     : info.status === 'offline'
-                        ? 'O card continua clicÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel para abrir o canal ou a ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºltima transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o.'
-                        : 'VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª ainda pode abrir o canal pela Twitch enquanto o status ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© atualizado.',
-                action: info.status === 'online' ? 'Clique no card para abrir a transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o' : 'Clique no card para abrir o canal'
+                        ? 'O card continua clicável para abrir o canal ou a última transmissão.'
+                        : 'Você ainda pode abrir o canal pela Twitch enquanto o status é atualizado.',
+                action: info.status === 'online' ? 'Clique no card para abrir a transmissão' : 'Clique no card para abrir o canal'
             });
         };
 
@@ -5862,7 +5855,7 @@ function renderStreamers(){
                         pstoryInfo.textContent = 'Transmitindo PStory!';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else {
-                        pstoryInfo.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ transmitindo PStory.';
+                        pstoryInfo.textContent = 'Não está transmitindo PStory.';
                         pstoryInfo.style.color = '#fa9005';
                     }
                 } else if(info.status === 'offline'){
@@ -5873,12 +5866,12 @@ function renderStreamers(){
                 } else if(info.status === 'unknown'){
                     status.textContent = 'Status desconhecido';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel verificar o tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulo.';
+                    pstoryInfo.textContent = 'Não foi possível verificar o título.';
                     pstoryInfo.style.color = '#aaa';
                 } else {
                     status.textContent = 'Erro ao obter';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'Erro ao identificar conteÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºdo de PStory.';
+                    pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
                     pstoryInfo.style.color = '#faa';
                 }
                 setPreviewFromInfo(info);
@@ -5931,7 +5924,7 @@ function renderStreamers(){
 
     if(grid.children.length === 0) {
         grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum canal configurado no momento.</div>';
-        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel.';
+        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponível.';
     }
 }
 
@@ -5949,10 +5942,10 @@ function showStreamers(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabStreamers');
     updateBrowserTitle();
-    // Verifica se o grid de streamers existe e mantÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©m visÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel.
+    // Verifica se o grid de streamers existe e mantém visível.
     const grid = document.getElementById('streamer-grid');
     if(!grid){
-        console.warn('showStreamers: streamer-grid nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
+        console.warn('showStreamers: streamer-grid não encontrado');
     } else {
         grid.style.display = 'grid';
     }
@@ -6094,7 +6087,7 @@ const fossilCombos = {
     'Amber,Amber': { pokemon: 'aerodactyl.png', dna: 'dna.gif' }
 };
 
-// mapping from generated pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon to which side of the hunt they appear on
+// mapping from generated pokémon to which side of the hunt they appear on
 const huntSide = {
     dracozolt: 'left',
     dracovish: 'left',
@@ -6129,16 +6122,16 @@ function showDropHints(type, elem){
         if(hints[0] === hints[1]){
             const downArrow = document.createElement('span');
             downArrow.className = 'arrow';
-            downArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
+            downArrow.textContent = '↓';
             arrowRow.appendChild(downArrow);
         } else {
             const leftArrow = document.createElement('span');
             leftArrow.className = 'arrow';
-            leftArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢';
+            leftArrow.textContent = '↙';
             leftArrow.style.transform = 'rotate(-15deg)';
             const rightArrow = document.createElement('span');
             rightArrow.className = 'arrow';
-            rightArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Ãƒâ€¹Ã…â€œ';
+            rightArrow.textContent = '↘';
             rightArrow.style.transform = 'rotate(15deg)';
             arrowRow.appendChild(leftArrow);
             arrowRow.appendChild(rightArrow);
@@ -6237,15 +6230,15 @@ function fossilShowResult(pair){
     let dnaHtml = '';
     if(combo.dna){
         const dna = String(combo.dna || '');
-        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio: <img src="fosseis/${dna}" alt="DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
+        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessário: <img src="fosseis/${dna}" alt="DNA necessário" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
     }
 
     resultDiv.innerHTML = `
         <div class="fossil-result" style="text-align:center; color:#fff;">
             <h3>${normalizedName}</h3>
             <img src="fosseis/${combo.pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
-            <p style="margin-top:0.5rem;">CombinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o: ${a} + ${b}</p>
-            <p>${t('fossilResultText') || 'Use esta combinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o para ver o PokÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©mon resultante.'}</p>
+            <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
+            <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
             ${dnaHtml}
         </div>
     `;
@@ -6263,7 +6256,7 @@ function renderFossilEmptyState(){
     `;
 }
 
-// Robust reset for the fossils tab ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â idempotent and safe to call repeatedly
+// Robust reset for the fossils tab — idempotent and safe to call repeatedly
 function fossilHardReset(){
     try{
         // clear internal state
@@ -6289,7 +6282,7 @@ function fossilHardReset(){
             try{ buildPokemonGallery(); }catch(e){}
         }
     }catch(e){
-        // swallow ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â reset should be resilient
+        // swallow — reset should be resilient
     }
 }
 
@@ -6321,7 +6314,7 @@ function buildPokemonGallery(){
     if(!gallery) return;
     gallery.innerHTML = '';
     const seen = new Set();
-    // use fixed order for gallery so new pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon can be inserted precisely
+    // use fixed order for gallery so new pokémon can be inserted precisely
     const desiredOrder = ['dracozolt.png','dracovish.png','arctovish.png','arctozolt.png','aerodactyl.png'];
     const entries = [];
     Object.keys(fossilCombos).forEach(k=>{
@@ -6423,7 +6416,7 @@ function initializeFossilsPage(){
         }
     });
 
-    // build the footer gallery showing resulting pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons
+    // build the footer gallery showing resulting pokémons
     buildPokemonGallery();
 
     Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
@@ -6590,9 +6583,9 @@ function updateCommon(){
     const stones = n * perPlateStone;
     // build using translations (visual only)
     const header = t('forCommonLabel').replace('{n}', `<span class="num" data-value="${n}">${n.toLocaleString()}</span>`);
-    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n}), ` +
-                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos (${perPlateChar}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n}), ` +
-                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n})`;
+    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}×${n}), ` +
+                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens característicos (${perPlateChar}×${n}), ` +
+                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}×${n})`;
     commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
     animateCalcResult(commonResults);
 }
@@ -7704,10 +7697,10 @@ function renderBoostOverview(state, breakdown){
     const craftCount = breakdown.starCraftItems.length;
 
     if(boostSummaryTarget){
-        boostSummaryTarget.textContent = `Bronze ${state.bronzeLevel} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Silver ${state.silverLevel}`;
+        boostSummaryTarget.textContent = `Bronze ${state.bronzeLevel} • Silver ${state.silverLevel}`;
     }
     if(boostSummaryFlags){
-        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ${naturalTypeCount} tipo(s)`;
+        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} • ${naturalTypeCount} tipo(s)`;
     }
     if(!boostOverviewCards) return;
 
@@ -7731,7 +7724,7 @@ function renderBoostOverview(state, breakdown){
             label: 'Total',
             value: `${formatBoostQuantity(breakdown.distinctMaterialCount)} item(ns)`,
             note: craftCount
-                ? `${formatBoostQuantity(craftCount)} item(ns) de craft ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ inclui boosts anteriores`
+                ? `${formatBoostQuantity(craftCount)} item(ns) de craft • inclui boosts anteriores`
                 : 'Inclui boosts anteriores'
         }
     ];
@@ -8046,7 +8039,7 @@ function getCatchOptionItems(lvl, variant, chosen){
 
     // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
     // If found, present only that option. Otherwise, if multiple alternatives exist,
-    // fall back to the second option (OpÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o 2) which is considered the correct one.
+    // fall back to the second option (Opção 2) which is considered the correct one.
     let selected = reqList;
     const explicit = reqList.find((opt) => typeof opt === 'object' && opt !== null && typeof opt[requirementBall] === 'number' && opt[requirementBall] > 0);
     if (explicit) {
@@ -8218,14 +8211,14 @@ if('serviceWorker' in navigator){
     if(enableSW){
         navigator.serviceWorker.register('sw.js').then(reg=>{
             if(reg.waiting){
-                alert('Nova versÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.');
+                alert('Nova versão disponível. Atualize a página.');
             }
             reg.addEventListener('updatefound',()=>{
                 const newSW = reg.installing;
                 if(!newSW) return;
                 newSW.addEventListener('statechange',()=>{
                     if(newSW.state==='installed' && navigator.serviceWorker.controller){
-                        alert('Nova versÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.');
+                        alert('Nova versão disponível. Atualize a página.');
                     }
                 });
             });
@@ -8913,7 +8906,7 @@ function buildMatrix(){
     };
     let html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
     rows.forEach((row,i)=>{
-        html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“':v}</td>`).join('') + '</tr>';
+        html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'–':v}</td>`).join('') + '</tr>';
     });
     html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
     rows.forEach((row,i)=>{
@@ -8936,11 +8929,11 @@ function createTypesLoadErrorMessage(){
 
     const title = document.createElement('strong');
     title.className = 'load-error-title';
-    title.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os tipos.';
+    title.textContent = 'Não foi possível carregar os tipos.';
 
     const description = document.createElement('p');
     description.className = 'load-error-description';
-    description.textContent = 'Atualize a pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina ou tente novamente em instantes.';
+    description.textContent = 'Atualize a página ou tente novamente em instantes.';
 
     const retryButton = document.createElement('button');
     retryButton.type = 'button';
@@ -8968,18 +8961,18 @@ function showTypesLoadError(error){
     const infoPanel = document.getElementById('info');
     if(infoPanel){
         infoPanel.classList.add('load-error-state');
-        infoPanel.textContent = 'Os dados de efetividade estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o indisponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­veis no momento.';
+        infoPanel.textContent = 'Os dados de efetividade estão indisponíveis no momento.';
     }
 
     const instructions = document.getElementById('instructions');
     if(instructions){
-        instructions.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os dados de efetividade. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina ou tente novamente.';
+        instructions.textContent = 'Não foi possível carregar os dados de efetividade. Atualize a página ou tente novamente.';
     }
 
     if(matrixBtn){
         matrixBtn.disabled = true;
         matrixBtn.setAttribute('aria-disabled', 'true');
-        matrixBtn.title = 'Tabela indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel';
+        matrixBtn.title = 'Tabela indisponível';
     }
 
     console.error('types.json load failed', error);
@@ -9020,7 +9013,7 @@ function populateTypesDatalist(){
 
 function applyTypesData(data){
     if(!data || typeof data !== 'object' || typeof data.effectiveness !== 'object' || typeof data.immunities !== 'object'){
-        throw new Error('Formato invÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido em types.json');
+        throw new Error('Formato inválido em types.json');
     }
 
     clearTypeDataStore();
@@ -9100,17 +9093,17 @@ function ensureBossesPageReady(){
     }
     if(bossesPageLoadPromise) return bossesPageLoadPromise;
 
-    renderBossesDeferredState('Carregando catÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡logo de bosses...');
+    renderBossesDeferredState('Carregando catálogo de bosses...');
     bossesPageLoadPromise = loadDeferredScript(
         DEFERRED_BOSSES_SCRIPT_SRC,
         () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
     ).then(() => {
         if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
-            throw new Error('bosses.js carregou sem inicializar a pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina de bosses corretamente.');
+            throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
         }
         return true;
     }).catch(error => {
-        renderBossesDeferredState('NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os bosses. Tente atualizar a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.', { error: true });
+        renderBossesDeferredState('Não foi possível carregar os bosses. Tente atualizar a página.', { error: true });
         throw error;
     }).finally(() => {
         bossesPageLoadPromise = null;
@@ -9976,7 +9969,7 @@ function renderPokemonCatalog(options = {}){
         footer.className = 'pokemon-entry-card__footer';
         footer.appendChild(createPokemonTeamBadge(entry.team));
 
-        // 'Detalhes' label removed per UI request ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â card click opens details modal
+        // 'Detalhes' label removed per UI request — card click opens details modal
 
         card.append(header, media, sections, footer);
         card.addEventListener('click', () => {
@@ -10065,7 +10058,7 @@ function renderPokemonDetailsModal(entry){
     }
     if(pokemonDetailsTitle) pokemonDetailsTitle.textContent = entry.name;
     if(pokemonDetailsSubtitle){
-        // Leave subtitle blank ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â level is displayed in the right-side field
+        // Leave subtitle blank — level is displayed in the right-side field
         pokemonDetailsSubtitle.textContent = '';
     }
     if(pokemonDetailsAveragesKicker){
@@ -10296,7 +10289,7 @@ window.addEventListener('popstate', () => {
             }
         }
     } else {
-        // Path no longer points to a pokemon ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â close modal if open
+        // Path no longer points to a pokemon — close modal if open
         if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'){
             closePokemonDetailsModal({ viaPopstate: true });
         }
@@ -10449,7 +10442,7 @@ function syncHomeLandingFocusSummary(cards = []){
             exp.id = expId;
             exp.setAttribute('role','region');
             exp.setAttribute('aria-hidden','true');
-            exp.setAttribute('aria-label', (group && group.title) ? `${group.title} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â opÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes` : 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes');
+            exp.setAttribute('aria-label', (group && group.title) ? `${group.title} — opções` : 'Opções');
 
             const list = document.createElement('div');
             list.className = 'home-tool-card__expander-list';
@@ -10558,7 +10551,7 @@ function syncHomeLandingFocusSummary(cards = []){
         syncHomeLandingFocusSummary();
     }
 })();
-// Inicializador do vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo de treinamento ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â abre modal de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do site (estilo Hoopa tutorials)
+// Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
     // Helper to open modal safely
     const openModal = (videoId) => {
@@ -10596,4 +10589,4 @@ function initTrainingVideo(){
     });
 }
 
-// PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡scoa feature removed
+// Páscoa feature removed
