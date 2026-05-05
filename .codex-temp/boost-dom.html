@@ -1,0 +1,1254 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Poke Utilities reúne consulta de tipos, fósseis, treinamento, captura, chefes, transmissões e vídeos da comunidade PStory em um só lugar.">
+    <title>Poke Utilities</title>
+    <base href="/">
+    <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260503e">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="dark" data-active-tab="boost">
+    <header class="header">
+      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">☰</button>
+      <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
+      <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
+        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async">
+      </button>
+      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">🗺</button>
+      <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">🎣</button>
+      <!-- Páscoa button removed -->
+      <h1 id="page-title">Calculadora de Boost</h1>
+      <button id="home-btn" aria-label="InÃ­cio" title="InÃ­cio" style="font-size:1.2rem;">🏠</button>
+      <button id="share-btn" aria-label="Compartilhar" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
+      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
+    </header>
+    <nav class="tabs" role="tablist" aria-label="Seções principais">
+      <button id="tab-effectiveness" class="tab" role="tab" aria-selected="false" aria-controls="content-effectiveness">Tipos</button>
+      <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">FÃ³sseis</button>
+      <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
+      <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Captura</button>
+      <button id="tab-bosses" class="tab" role="tab" aria-selected="false" aria-controls="content-bosses">Chefes</button>
+      <button id="tab-streamers" class="tab" role="tab" aria-selected="false" aria-controls="content-streamers">TransmissÃµes</button>
+      <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">VÃ­deos</button>
+    </nav>
+
+    <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden="">
+      <div class="home-landing__shell">
+        <div class="home-landing__hero">
+          <div class="home-landing__copy">
+            <p id="home-eyebrow" class="home-landing__eyebrow">Hub da comunidade</p>
+            <h2 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h2>
+            <p id="home-lead" class="home-landing__lead">Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.</p>
+            <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fÃ³sseis, treinamento, pokÃ©mons, captura, chefes, transmissÃµes e vÃ­deos em um fluxo pensado para uso diÃ¡rio.</p>
+            <div class="home-landing__actions">
+              <button id="home-explore-btn" class="home-landing__cta" type="button" data-home-target="bosses">Explorar</button>
+              <a class="home-landing__icon-link" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Entrar no Discord do PStory" title="Entrar no Discord do PStory" data-tooltip="Entrar no Discord do PStory">
+                <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </a>
+            </div>
+          </div>
+
+          <aside class="home-landing__focus" aria-label="Resumo da plataforma">
+            <p class="home-landing__focus-label">Hub tático</p>
+            <div class="home-landing__focus-orbit">
+              <div class="home-landing__focus-core">
+                <span id="home-focus-number" class="home-landing__focus-number">04</span>
+                <span id="home-focus-caption" class="home-landing__focus-caption">grupos principais</span>
+              </div>
+            </div>
+            <div class="home-landing__focus-note">
+              <strong>Consulta rápida, sem excesso.</strong>
+              <p>Abra o módulo certo em um clique e continue o que precisa fazer no jogo.</p>
+            </div>
+            <div id="home-streamer-info" class="home-landing__focus-streamers" data-state="loading" aria-live="polite">
+              <span class="home-landing__focus-streamers-label">PStory ao vivo</span>
+              <strong id="home-streamer-count" class="home-landing__focus-streamers-count">--</strong>
+              <span id="home-streamer-text" class="home-landing__focus-streamers-text">Consultando canais...</span>
+            </div>
+            <div id="home-streamer-rat-summary" class="home-landing__focus-rattata" aria-live="polite"></div>
+          </aside>
+        </div>
+
+        <section class="home-landing__quick" aria-labelledby="home-quick-title">
+          <div class="home-landing__quick-head">
+            <div class="home-landing__quick-copy">
+              <span class="home-landing__quick-eyebrow">Acesso rapido</span>
+            </div>
+            <a class="home-landing__quick-discord" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">
+              <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              Entrar no Discord
+            </a>
+          </div>
+          <div class="home-landing__quick-grid" role="group" aria-label="Atalhos do sistema">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="commands">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">💬</span>
+              <span>Comandos</span>
+            </button>
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="elemental-balls">
+              <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
+                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async">
+              </span>
+              <span>Pokebolas</span>
+            </button>
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="respawns">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🗺</span>
+              <span>Respawns</span>
+            </button>
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="fishing">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🎣</span>
+              <span>Pescaria</span>
+            </button>
+          </div>
+        </section>
+
+        <div class="home-landing__tools" aria-label="Ferramentas disponíveis"><button type="button" class="home-tool-card" data-home-group="bosses" data-home-index="0" aria-expanded="false">
+                <span class="home-tool-card__index">01</span>
+                <strong class="home-tool-card__title">Bosses</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Hoopa Portais</span><span class="home-tool-card__pill">Champion Path</span><span class="home-tool-card__pill">Mewtwo</span><span class="home-tool-card__pill">Planejador</span><span class="home-tool-card__pill">Horizons<span class="home-tool-card__pill-badge">Em Breve</span></span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Bosses</span>
+                    <span class="home-tool-card__meta">5 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="systems" data-home-index="1" aria-expanded="false">
+                <span class="home-tool-card__index">02</span>
+                <strong class="home-tool-card__title">Sistemas</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Catch</span><span class="home-tool-card__pill">Fosseis</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Sistemas</span>
+                    <span class="home-tool-card__meta">2 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="utilities" data-home-index="2" aria-expanded="false">
+                <span class="home-tool-card__index">03</span>
+                <strong class="home-tool-card__title">Utilidades</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Tipos</span><span class="home-tool-card__pill">Treinamento</span><span class="home-tool-card__pill">Calculadora de Boost</span><span class="home-tool-card__pill">Pokémons</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Utilidades</span>
+                    <span class="home-tool-card__meta">4 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="community" data-home-index="3" aria-expanded="false">
+                <span class="home-tool-card__index">04</span>
+                <strong class="home-tool-card__title">Comunidade</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">YouTube</span><span class="home-tool-card__pill">Streamers</span><span class="home-tool-card__pill">Entrar no Discord</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Comunidade</span>
+                    <span class="home-tool-card__meta">3 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button></div>
+      </div>
+    </section>
+
+    <div class="app-shell">
+      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site" aria-hidden="true">
+        <button class="sidebar-home" type="button" data-nav-target="home">
+          <span class="sidebar-home__brand-mark">
+            <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          </span>
+          <span class="sidebar-home__copy">
+            <strong>Poke Utilities</strong>
+          </span>
+        </button>
+
+        <nav class="sidebar-nav" aria-label="Navegacao principal">
+          <section class="sidebar-group" data-sidebar-group="bosses" data-expanded="true">
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-bosses">
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.5l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8L12 3.5z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Bosses</strong>
+                <span>Portais, trio e raid</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-bosses" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="hoopa">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Hoopa Portais</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="champion">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Champion Path</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="mew2">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Mewtwo</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="planner">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Planejador</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="horizons" title="Horizons — Em Breve">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Horizons</span>
+                <span class="sidebar-sublink__badge" aria-hidden="true">Em Breve</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group" data-sidebar-group="systems" data-expanded="true">
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-systems">
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10v5H4V6.5zm10 0A2.5 2.5 0 0 1 16.5 4H20v8h-6V6.5zM4 14h6v6H6.5A2.5 2.5 0 0 1 4 17.5V14zm10 0h6v3.5a2.5 2.5 0 0 1-2.5 2.5H14v-6z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Sistemas</strong>
+                <span>Captura, fosseis e craft</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-systems" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="catch">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Catch</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="fossils">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Fosseis</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group is-active" data-sidebar-group="utilities" data-expanded="true">
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-utilities">
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M11.1 3h1.8l.8 3.1a6.3 6.3 0 0 1 1.7.7l2.9-1.5 1.3 1.3-1.5 2.9c.3.5.6 1.1.7 1.7l3.2.8v1.8l-3.2.8a6.3 6.3 0 0 1-.7 1.7l1.5 2.9-1.3 1.3-2.9-1.5c-.5.3-1.1.6-1.7.7L12.9 21h-1.8l-.8-3.2a6.3 6.3 0 0 1-1.7-.7l-2.9 1.5-1.3-1.3 1.5-2.9a6.3 6.3 0 0 1-.7-1.7L2 12.9v-1.8l3.1-.8c.1-.6.4-1.2.7-1.7L4.3 5.7l1.3-1.3 2.9 1.5c.5-.3 1.1-.6 1.7-.7L11.1 3zm.9 5A4 4 0 1 0 12 16a4 4 0 0 0 0-8z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Utilidades</strong>
+                <span>Consulta e planejamento</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-utilities" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="effectiveness">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Tipos</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="calculator">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Treinamento</span>
+              </button>
+              <button class="sidebar-sublink is-active" type="button" data-nav-target="boost" aria-current="page">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Calculadora de Boost</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Pokémons</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="sidebar-group" data-sidebar-group="community" data-expanded="true">
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-community">
+              <span class="sidebar-group__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-4.7l-3.8 3v-3H6.5A2.5 2.5 0 0 1 4 13.5v-8zm6.2 2.7v5.6l4.8-2.8-4.8-2.8z"></path>
+                </svg>
+              </span>
+              <span class="sidebar-group__copy">
+                <strong>Comunidade</strong>
+                <span>Videos e transmissoes</span>
+              </span>
+              <span class="sidebar-group__chevron" aria-hidden="true"></span>
+            </button>
+            <div id="sidebar-group-community" class="sidebar-submenu">
+              <button class="sidebar-sublink" type="button" data-nav-target="youtube">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>YouTube</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="streamers">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Streamers</span>
+              </button>
+              <a class="sidebar-sublink sidebar-sublink--discord" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Entrar no Discord</span>
+              </a>
+            </div>
+          </section>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span class="sidebar-footer__eyebrow">Acesso rapido</span>
+          <div class="sidebar-quick-links" role="group" aria-label="Atalhos do sistema">
+            <button class="sidebar-quick-link" type="button" data-nav-action="commands">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">💬</span>
+              <span>Comandos</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls">
+              <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
+                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async">
+              </span>
+              <span>Pokebolas</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="respawns">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🗺</span>
+              <span>Respawns</span>
+            </button>
+            <button class="sidebar-quick-link" type="button" data-nav-action="fishing">
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🎣</span>
+              <span>Pescaria</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <button id="app-shell-backdrop" class="app-shell__backdrop" type="button" hidden="" aria-label="Fechar navegacao" aria-hidden="true"></button>
+
+      <main class="app-main">
+    <p id="instructions"></p>
+
+    <section id="legend" class="legend legend-panel" aria-labelledby="legend-title" style="display: none;">
+        <h2 id="legend-title" class="visually-hidden">Legenda da efetividade</h2>
+        <ul class="legend-list">
+          <li class="legend-item"><span class="legend-color selected" aria-hidden="true"></span><span class="legend-item__label">Selecionado</span></li>
+          <li class="legend-item"><span class="legend-color effective" aria-hidden="true"></span><span class="legend-item__label">Efetivo 1.5x</span></li>
+          <li class="legend-item"><span class="legend-color strength" aria-hidden="true"></span><span class="legend-item__label">Super Efetivo</span></li>
+          <li class="legend-item"><span class="legend-color resist" aria-hidden="true"></span><span class="legend-item__label">Resiste</span></li>
+          <li class="legend-item"><span class="legend-color immune" aria-hidden="true"></span><span class="legend-item__label">Imune</span></li>
+          <li class="legend-item"><span class="legend-color neutral" aria-hidden="true"></span><span class="legend-item__label">Neutro</span></li>
+        </ul>
+    </section>
+
+    <div class="modal" id="matrix-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2>Tabela de Efetividade</h2>
+        <div id="matrix-body"></div>
+      </div>
+    </div>
+
+    <div class="modal commands-modal" id="commands-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="commands-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="commands-modal-title">Comandos do Jogo</h2>
+        <div class="commands-list">
+          <article class="command-item">
+            <code>!pokeballs NOME DO POKEMON</code>
+            <p>Informa quantas pokebolas foram gastas no pokemon.</p>
+          </article>
+          <article class="command-item">
+            <code>!kick</code>
+            <p>Ao utilizar o comando dentro de uma casa o jogador teleporta até a porta.</p>
+          </article>
+          <article class="command-item">
+            <code>!expboost</code>
+            <p>Mostra o tempo restante do seu boost de exp ativo.</p>
+          </article>
+          <article class="command-item">
+            <code>h"house</code>
+            <p>Teleporta o jogador até a sua casa.</p>
+          </article>
+          <article class="command-item">
+            <code>h"house, nome do dono da casa</code>
+            <p>Teleporta você até a casa do alvo, caso você esteja invitado.</p>
+          </article>
+          <article class="command-item">
+            <code>!invite</code>
+            <p>Se utilizado dentro de uma casa que você tem no mínimo o cargo de sub-dono você consegue liberar a entrada para alguém na casa.</p>
+          </article>
+          <article class="command-item">
+            <code>!hoopa</code>
+            <p>Mostra os bosses hoopa atualmente ativos.</p>
+          </article>
+          <article class="command-item">
+            <code>!task</code>
+            <p>Mostra as tasks ativas do personagem. Este comando não acompanha o Rotom Phone.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="elemental-balls-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="elemental-balls-modal-title">Pokébolas Elementais</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="fishing-modal__actions elemental-balls-modal__actions">
+            <button id="elemental-balls-kurt-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local do NPC Kurt" title="Local do NPC Kurt">
+              <span class="fossil-location-btn__thumb">
+                <img src="mapas/kurt.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </span>
+              <span class="fossil-location-btn__label">Local do Kurt</span>
+            </button>
+          </div>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
+          <div class="image-modal__canvas" id="elemental-balls-canvas">
+            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="elemental-balls-kurt-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-kurt-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="elemental-balls-kurt-modal-title">Local do NPC Kurt</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="elemental-balls-kurt-viewport">
+          <div class="image-modal__canvas" id="elemental-balls-kurt-canvas">
+            <img id="elemental-balls-kurt-image" class="image-modal__image" src="mapas/kurt.png" alt="Imagem do local do NPC Kurt para fabricar as pokebolas elementais" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal respawns-modal" id="respawns-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="respawns-modal-title" data-active-map="kanto">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="respawns-modal-title">Respawns</h2>
+        <div class="image-modal__toolbar image-modal__toolbar--stacked">
+          <p class="image-modal__hint">Escolha a regiao desejada. Em Johto e na Wild Area, use os botoes extras para trocar entre os mapas.</p>
+          <div class="respawns-modal__nav" role="group" aria-label="Mapas de respawns">
+            <button type="button" class="respawns-modal__tab is-active" data-respawn-map="kanto" aria-pressed="true">Kanto</button>
+            <button type="button" class="respawns-modal__tab" data-respawn-map="johto" aria-pressed="false">Johto</button>
+            <button type="button" class="respawns-modal__tab" data-respawn-map="wild-area" aria-pressed="false">Wild Area</button>
+            <button type="button" class="respawns-modal__tab" data-respawn-map="orre" aria-pressed="false">Orre</button>
+          </div>
+          <div class="respawns-modal__subnav" id="respawns-johto-subnav" hidden="" aria-hidden="true">
+            <span class="respawns-modal__subnav-label">Mapas de Johto</span>
+            <div class="respawns-modal__access" role="group" aria-label="Partes do mapa de Johto">
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="1" aria-pressed="false">Parte 1</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="2" aria-pressed="false">Parte 2</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="3" aria-pressed="false">Parte 3</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="4" aria-pressed="false">Parte 4</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="5" aria-pressed="false">Parte 5</button>
+              <button type="button" class="respawns-modal__access-btn" data-johto-page="6" aria-pressed="false">Parte 6</button>
+            </div>
+          </div>
+          <div class="respawns-modal__subnav" hidden="" aria-hidden="true">
+            <span class="respawns-modal__subnav-label">Entradas da Wild Area</span>
+            <div class="respawns-modal__access" role="group" aria-label="Entradas da Wild Area">
+              <button type="button" class="respawns-modal__access-btn" data-wild-access="south" aria-pressed="false">South</button>
+              <button type="button" class="respawns-modal__access-btn" data-wild-access="east" aria-pressed="false">East</button>
+              <button type="button" class="respawns-modal__access-btn" data-wild-access="north" aria-pressed="false">North</button>
+            </div>
+          </div>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <p id="respawns-modal-caption" class="respawns-modal__caption" aria-live="polite">Mapa de Kanto em breve.</p>
+        <p id="respawns-modal-note" class="respawns-modal__note" hidden=""></p>
+        <div class="image-modal__frame image-modal__viewport" id="respawns-viewport">
+          <div class="image-modal__canvas" id="respawns-canvas">
+            <img id="respawns-image" class="image-modal__image" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201600%20900%22%20role%3D%22img%22%20aria-label%3D%22Kanto%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23091423%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23132944%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22card%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237ce7ff%22%20stop-opacity%3D%220.18%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ffd166%22%20stop-opacity%3D%220.12%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20width%3D%221600%22%20height%3D%22900%22%20fill%3D%22url(%23bg)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22260%22%20cy%3D%22180%22%20r%3D%22160%22%20fill%3D%22%237ce7ff%22%20fill-opacity%3D%220.14%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%221320%22%20cy%3D%22720%22%20r%3D%22220%22%20fill%3D%22%23ffd166%22%20fill-opacity%3D%220.12%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20x%3D%22120%22%20y%3D%22120%22%20width%3D%221360%22%20height%3D%22660%22%20rx%3D%2242%22%20fill%3D%22url(%23card)%22%20stroke%3D%22%23d7ecff%22%20stroke-opacity%3D%220.18%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22800%22%20y%3D%22390%22%20text-anchor%3D%22middle%22%20fill%3D%22%23f5fbff%22%20font-size%3D%2294%22%20font-family%3D%22Montserrat%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22700%22%3EKanto%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22800%22%20y%3D%22490%22%20text-anchor%3D%22middle%22%20fill%3D%22%23c4d6ea%22%20font-size%3D%2242%22%20font-family%3D%22Montserrat%2C%20Arial%2C%20sans-serif%22%3EImagem%20em%20breve%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3C%2Fsvg%3E" alt="Aviso de mapa de Kanto em breve">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="fishing-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fishing-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="fishing-modal-title">Pescaria</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom no mapa de pescaria.</p>
+          <div class="fishing-modal__actions">
+            <button id="fishing-bait-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local para comprar iscas" title="Local para comprar iscas">
+              <span class="fossil-location-btn__thumb">
+                <img src="mapas/iscas.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              </span>
+              <span class="fossil-location-btn__label">Comprar iscas</span>
+            </button>
+          </div>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="fishing-viewport">
+          <div class="image-modal__canvas" id="fishing-canvas">
+            <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="bait-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bait-location-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="bait-location-modal-title">Local para comprar iscas</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="bait-location-viewport">
+          <div class="image-modal__canvas" id="bait-location-canvas">
+            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal image-modal" id="fossil-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fossil-location-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="fossil-location-modal-title">Local da troca de fosseis</h2>
+        <div class="image-modal__toolbar">
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
+          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+          </div>
+        </div>
+        <div class="image-modal__frame image-modal__viewport" id="fossil-location-viewport">
+          <div class="image-modal__canvas" id="fossil-location-canvas">
+            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localizacao da troca de fosseis" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden="">
+      <div class="card types-card">
+        <div class="types-hero">
+          <div class="types-header">
+            <div class="types-search">
+              <label class="visually-hidden" for="type-search">Buscar tipo</label>
+              <div class="search-wrapper">
+                <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" list="types-list">
+                <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="types-quick-meta">
+          <div id="clan-controls" class="clan-controls" aria-label="Filtrar por clã">
+            <button class="clan-btn" data-clan="instinct" aria-pressed="false" title="Instinct">
+              <img src="bosses/Instinct.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Instinct
+            </button>
+            <button class="clan-btn" data-clan="mystic" aria-pressed="false" title="Mystic">
+              <img src="bosses/Mystic.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Mystic
+            </button>
+            <button class="clan-btn" data-clan="valor" aria-pressed="false" title="Valor">
+              <img src="bosses/Valor.png" alt="" aria-hidden="true" class="clan-icon" loading="lazy" decoding="async"> Valor
+            </button>
+          </div>
+        </div>
+
+        <div class="types-body">
+          <section class="types-grid-panel" aria-labelledby="types-grid-heading">
+            <div class="types-panel-heading">
+              <div>
+                <h3 id="types-grid-heading">Escolha seus tipos</h3>
+              </div>
+            </div>
+
+            <div id="chart-container" class="chart-container">
+              <svg id="connections" aria-hidden="true"></svg>
+              <div id="chart" class="grid types-grid" role="grid" aria-label="Grade de tipos"><div class="type-button bug" data-type="bug" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/bug.png" alt="bug" class="type-icon"><span class="visually-hidden">Bug</span><span class="type-label">Bug</span></div><div class="type-button dark" data-type="dark" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/dark.png" alt="dark" class="type-icon"><span class="visually-hidden">Dark</span><span class="type-label">Dark</span></div><div class="type-button dragon" data-type="dragon" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/dragon.png" alt="dragon" class="type-icon"><span class="visually-hidden">Dragon</span><span class="type-label">Dragon</span></div><div class="type-button electric" data-type="electric" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/electric.png" alt="electric" class="type-icon"><span class="visually-hidden">Electric</span><span class="type-label">Electric</span></div><div class="type-button fairy" data-type="fairy" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/fairy.png" alt="fairy" class="type-icon"><span class="visually-hidden">Fairy</span><span class="type-label">Fairy</span></div><div class="type-button fighting" data-type="fighting" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/fighting.png" alt="fighting" class="type-icon"><span class="visually-hidden">Fighting</span><span class="type-label">Fighting</span></div><div class="type-button fire" data-type="fire" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/fire.png" alt="fire" class="type-icon"><span class="visually-hidden">Fire</span><span class="type-label">Fire</span></div><div class="type-button flying" data-type="flying" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/flying.png" alt="flying" class="type-icon"><span class="visually-hidden">Flying</span><span class="type-label">Flying</span></div><div class="type-button ghost" data-type="ghost" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/ghost.png" alt="ghost" class="type-icon"><span class="visually-hidden">Ghost</span><span class="type-label">Ghost</span></div><div class="type-button grass" data-type="grass" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/grass.png" alt="grass" class="type-icon"><span class="visually-hidden">Grass</span><span class="type-label">Grass</span></div><div class="type-button ground" data-type="ground" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/ground.png" alt="ground" class="type-icon"><span class="visually-hidden">Ground</span><span class="type-label">Ground</span></div><div class="type-button ice" data-type="ice" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/ice.png" alt="ice" class="type-icon"><span class="visually-hidden">Ice</span><span class="type-label">Ice</span></div><div class="type-button normal" data-type="normal" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/normal.png" alt="normal" class="type-icon"><span class="visually-hidden">Normal</span><span class="type-label">Normal</span></div><div class="type-button poison" data-type="poison" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/poison.png" alt="poison" class="type-icon"><span class="visually-hidden">Poison</span><span class="type-label">Poison</span></div><div class="type-button psychic" data-type="psychic" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/psychic.png" alt="psychic" class="type-icon"><span class="visually-hidden">Psychic</span><span class="type-label">Psychic</span></div><div class="type-button rock" data-type="rock" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/rock.png" alt="rock" class="type-icon"><span class="visually-hidden">Rock</span><span class="type-label">Rock</span></div><div class="type-button steel" data-type="steel" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/steel.png" alt="steel" class="type-icon"><span class="visually-hidden">Steel</span><span class="type-label">Steel</span></div><div class="type-button water" data-type="water" tabindex="0" role="button" aria-pressed="false"><img src="icons-type/water.png" alt="water" class="type-icon"><span class="visually-hidden">Water</span><span class="type-label">Water</span></div></div>
+            </div>
+          </section>
+        </div>
+
+        <footer class="types-footer" aria-hidden="false">
+          <aside id="info" class="info" aria-live="polite" aria-label="Detalhes dos tipos">
+        <div class="types-empty-state">
+            <div class="types-empty-state__copy">
+                <span class="types-empty-state__eyebrow">Sem seleÃ§Ã£o</span>
+                <h3>Escolha um ou dois tipos</h3>
+                <p>O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistÃªncia e imunidade.</p>
+            </div>
+            <div class="types-empty-state__grid">
+                <article class="types-empty-card">
+                    <strong>Ataque</strong>
+                    <span>Veja onde sua combinaÃ§Ã£o bate com 1.5x ou 2x.</span>
+                </article>
+                <article class="types-empty-card">
+                    <strong>Defesa</strong>
+                    <span>Confira vulnerabilidades, resistÃªncias e imunidades sem poluiÃ§Ã£o visual.</span>
+                </article>
+            </div>
+        </div>
+    </aside>
+        </footer>
+      </div>
+    </div>
+
+    <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden="">
+      <div class="card calc-card">
+        <h2 class="visually-hidden">Consulta de fósseis</h2>
+        <p id="fossil-instructions">1. Escolha o primeiro fossil. 2. Escolha o segundo. 3. Confira o Pokemon e o DNA necessario logo abaixo.</p>
+        <div class="fossil-flow" aria-label="Como usar a combinacao de fosseis">
+          <span class="fossil-flow__step"><strong>1.</strong> Escolha o primeiro fóssil</span>
+          <span class="fossil-flow__step"><strong>2.</strong> Escolha o segundo</span>
+          <span class="fossil-flow__step"><strong>3.</strong> Veja o resultado</span>
+        </div>
+        <div class="fossil-header">
+            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fosseis" title="Local da troca de fosseis">
+              <span class="fossil-location-btn__thumb">
+                <img src="fosseis/local.png" alt="" aria-hidden="true">
+              </span>
+              <span class="fossil-location-btn__label">Local da troca</span>
+            </button>
+            <button id="fossil-reset-btn" class="reset-button" aria-label="Resetar fósseis" title="Resetar fósseis">🔄</button>
+        </div>
+        <div id="fossil-hint" class="calc-info"></div>
+        <div id="fossil-grid" class="grid">
+          <div class="fossil-cell"><img class="fossil-img" data-type="Drake" src="fosseis/Bag_Fossilized_Drake_Sprite.png" alt="Drake fÃ³ssil" loading="lazy" decoding="async"><span class="fossil-label">Drake</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Bird" src="fosseis/Bag_Fossilized_Bird_Sprite.png" alt="PÃ¡ssaro fÃ³ssil" loading="lazy" decoding="async"><span class="fossil-label">PÃ¡ssaro</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Dino" src="fosseis/Bag_Fossilized_Dino_Sprite.png" alt="Dino fÃ³ssil" loading="lazy" decoding="async"><span class="fossil-label">Dino</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Fish" src="fosseis/Bag_Fossilized_Fish_Sprite.png" alt="Peixe fÃ³ssil" loading="lazy" decoding="async"><span class="fossil-label">Peixe</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Amber" src="fosseis/old_amber.png" alt="Ã‚mbar fÃ³ssil" loading="lazy" decoding="async"><span class="fossil-label">Ã‚mbar</span></div>
+        </div>
+        <!-- area for drop hint icons shown after clicking one fossil -->
+        <div id="drop-hints" class="drop-hints" aria-live="polite"></div>
+        <div id="result" class="calc-results" style="margin-top:1rem;"></div>
+        <div id="gallery-title" class="calc-info" style="margin-top:1rem;">PokÃ©mons disponÃ­veis</div>
+        <div id="pokemon-gallery" class="pokemon-gallery calc-info"></div>
+        <p id="gallery-cost" class="fossil-cost">Reviver um PokÃ©mon custa <strong>250K</strong>.</p>
+      </div>
+    </div>
+
+    <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden="">
+      <div class="card calc-card calc-shell">
+        <h2 class="visually-hidden">Calculadora de Treinamento</h2>
+        <div class="calc-grid calc-grid--split">
+          <div class="calc-left">
+            <div class="card inputs-card">
+              <div class="inputs-header">
+                <h3>Configuração</h3>
+              </div>
+              <div class="calc-section">
+                <label for="range-select">Faixa de nÃ­vel:</label>
+                <select id="range-select">
+                  <option value="50-100">50 ao 100</option>
+                  <option value="65-100">65 ao 100</option>
+                  <option value="80-100">80 ao 100</option>
+                  <option value="95-100">95 ao 100</option>
+                </select>
+              </div>
+              <div class="calc-section variant-group">
+                <label id="pokemon-type-label">Tipo de PokÃ©mon:</label>
+                <div class="variant-options">
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="normal" checked="">Normal</label>
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="shiny">Shiny</label>
+                </div>
+              </div>
+
+              <div class="inputs-header">
+                <h3>Quantidade</h3>
+              </div>
+              <div class="calc-section">
+                <label for="common-plates">Plates comuns:</label>
+                <input type="number" id="common-plates" min="0" value="0">
+              </div>
+              <div class="calc-section">
+                <label for="shiny-plates">Shining Plates:</label>
+                <input type="number" id="shiny-plates" min="0" value="0" step="30">
+              </div>
+            </div>
+            
+            <!-- Vídeo de treinamento: fica dentro da coluna esquerda, logo abaixo do card "Configuração" -->
+            <div class="card video-card training-video-card" id="training-video-card">
+              <div class="inputs-header"><h3>Tutorial</h3></div>
+              <div class="training-video-wrapper video-wrapper" data-video-id="kTHb6gleV4E" aria-label="Vídeo de treinamento">
+                  <button type="button" class="training-video-play" aria-label="Abrir vídeo de treinamento">
+                    <img src="https://i.ytimg.com/vi/kTHb6gleV4E/hqdefault.jpg" alt="Miniatura do tutorial" loading="lazy" decoding="async">
+                  <span class="video-play-badge">▶</span>
+                  <span class="video-caption">Clique para abrir o vídeo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-right">
+            <div class="result-card main-result">
+              <div class="result-card__header">
+                <h3>Resultado Principal <button class="info-btn" aria-label="Ajuda" data-tooltip="Resumo principal dos resultados.">?</button></h3>
+              </div>
+              <div id="range-results" class="calc-results result-block"></div>
+            </div>
+
+            <div class="result-card resources-result">
+              <h4>Recursos</h4>
+              <div id="common-results" class="calc-results result-block"></div>
+              <div id="shiny-results" class="calc-results result-block"></div>
+            </div>
+          </div>
+        </div>
+
+        <details class="calc-help" aria-expanded="false">
+          <summary>Como funciona</summary>
+          <p>Shining Plates são produzidas em blocos de 30. 1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.</p>
+        </details>
+      </div>
+    </div>
+
+    <div id="content-boost" role="tabpanel" aria-label="Calculadora de Boost" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, -9.5062px, 0px); opacity: 0.0494;">
+      <div class="card calc-card boost-shell" style="translate: none; rotate: none; scale: none; opacity: 0.0331; transform: translate3d(0px, 19.4851px, 0px);">
+        <div class="boost-hero">
+          <div class="boost-hero__copy">
+            <p class="boost-hero__eyebrow">Utilidades</p>
+            <h2 id="boost-heading">Calculadora de Boost</h2>
+            <p class="boost-hero__description">Monte o alvo de Bronze e Silver, separe o custo por etapa e confira os materiais finais sem precisar quebrar a conta manualmente.</p>
+          </div>
+          <aside class="boost-hero__summary" aria-live="polite">
+            <span class="boost-hero__summary-kicker">Resumo do alvo</span>
+            <strong id="boost-summary-target">Charizard • Bronze 5 • Silver 0</strong>
+            <span id="boost-summary-flags">Comum • Tipo duplo • Fire + Flying</span>
+          </aside>
+        </div>
+
+        <div class="boost-layout">
+          <section class="boost-panel boost-panel--form" aria-labelledby="boost-config-title" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 17.1531px, 0px); opacity: 0.0471;">
+            <div class="boost-panel__header">
+              <span class="boost-panel__eyebrow">Configuração</span>
+              <h3 id="boost-config-title">Defina o cenário do Pokémon</h3>
+              <p>Pesquise um Pokémon da base de `/pokemons` e o cálculo reconhece automaticamente as stones necessárias.</p>
+            </div>
+
+            <div class="boost-fieldset">
+              <span class="boost-fieldset__legend">Pokémon alvo</span>
+              <label class="boost-field boost-field--search" for="boost-pokemon-search">
+                <span>Pesquisar Pokémon</span>
+                <input id="boost-pokemon-search" type="search" list="boost-pokemon-list" autocomplete="off" spellcheck="false" placeholder="Digite o nome do Pokemon">
+                <datalist id="boost-pokemon-list"><option value="Abra" label="Abra - Psychic"></option><option value="Alakazam" label="Alakazam - Psychic"></option><option value="Arbok" label="Arbok - Poison"></option><option value="Arcanine" label="Arcanine - Fire"></option><option value="Beedrill" label="Beedrill - Bug + Poison"></option><option value="Bellossom" label="Bellossom - Grass"></option><option value="Bellsprout" label="Bellsprout - Grass + Poison"></option><option value="Blastoise" label="Blastoise - Water"></option><option value="Bulbasaur" label="Bulbasaur - Grass + Poison"></option><option value="Butterfree" label="Butterfree - Bug + Flying"></option><option value="Caterpie" label="Caterpie - Bug"></option><option value="Charizard" label="Charizard - Fire + Flying"></option><option value="Charmander" label="Charmander - Fire"></option><option value="Charmeleon" label="Charmeleon - Fire"></option><option value="Clefable" label="Clefable - Fairy"></option><option value="Clefairy" label="Clefairy - Fairy"></option><option value="Cleffa" label="Cleffa - Fairy"></option><option value="Crobat" label="Crobat - Poison + Flying"></option><option value="Diglett" label="Diglett - Ground"></option><option value="Dugtrio" label="Dugtrio - Ground"></option><option value="Ekans" label="Ekans - Poison"></option><option value="Fearow" label="Fearow - Normal + Flying"></option><option value="Geodude" label="Geodude - Rock + Ground"></option><option value="Gloom" label="Gloom - Grass + Poison"></option><option value="Golbat" label="Golbat - Poison + Flying"></option><option value="Golduck" label="Golduck - Water"></option><option value="Golem" label="Golem - Rock + Ground"></option><option value="Graveler" label="Graveler - Rock + Ground"></option><option value="Growlithe" label="Growlithe - Fire"></option><option value="Igglybuff" label="Igglybuff - Normal"></option><option value="Ivysaur" label="Ivysaur - Grass + Poison"></option><option value="Jigglypuff" label="Jigglypuff - Normal + Fairy"></option><option value="Kadabra" label="Kadabra - Psychic"></option><option value="Kakuna" label="Kakuna - Bug + Poison"></option><option value="Machamp" label="Machamp - Fighting"></option><option value="Machoke" label="Machoke - Fighting"></option><option value="Machop" label="Machop - Fighting"></option><option value="Mankey" label="Mankey - Fighting"></option><option value="Mega Clefable" label="Mega Clefable - Fairy + Flying"></option><option value="Mega Gyarados" label="Mega Gyarados - Water + Dark"></option><option value="Mega Meganium" label="Mega Meganium - Grass + Fairy"></option><option value="Mega Starmie" label="Mega Starmie - Water + Psychic"></option><option value="Mega Steelix" label="Mega Steelix - Steel + Ground"></option><option value="Mega Victreebel" label="Mega Victreebel - Grass + Poison"></option><option value="Meowth" label="Meowth - Normal"></option><option value="Metapod" label="Metapod - Bug"></option><option value="Nidoking" label="Nidoking - Poison + Ground"></option><option value="Nidoqueen" label="Nidoqueen - Poison + Ground"></option><option value="Nidoran (F)" label="Nidoran (F) - Poison"></option><option value="Nidoran (M)" label="Nidoran (M) - Poison"></option><option value="Nidorina" label="Nidorina - Poison"></option><option value="Nidorino" label="Nidorino - Poison"></option><option value="Ninetales" label="Ninetales - Fire"></option><option value="Oddish" label="Oddish - Grass + Poison"></option><option value="Paras" label="Paras - Bug + Grass"></option><option value="Parasect" label="Parasect - Bug + Grass"></option><option value="Persian" label="Persian - Normal"></option><option value="Pichu" label="Pichu - Electric"></option><option value="Pidgeot" label="Pidgeot - Normal + Flying"></option><option value="Pidgeotto" label="Pidgeotto - Normal + Flying"></option><option value="Pidgey" label="Pidgey - Normal + Flying"></option><option value="Pikachu" label="Pikachu - Electric"></option><option value="Poliwag" label="Poliwag - Water"></option><option value="Poliwhirl" label="Poliwhirl - Water"></option><option value="Poliwrath" label="Poliwrath - Water + Fighting"></option><option value="Primeape" label="Primeape - Fighting"></option><option value="Psyduck" label="Psyduck - Water"></option><option value="Raichu" label="Raichu - Electric"></option><option value="Raticate" label="Raticate - Normal"></option><option value="Rattata" label="Rattata - Normal"></option><option value="Sandshrew" label="Sandshrew - Ground"></option><option value="Sandslash" label="Sandslash - Ground"></option><option value="Spearow" label="Spearow - Normal + Flying"></option><option value="Squirtle" label="Squirtle - Water"></option><option value="Tentacool" label="Tentacool - Water + Poison"></option><option value="Tentacruel" label="Tentacruel - Water + Poison"></option><option value="Venomoth" label="Venomoth - Bug + Poison"></option><option value="Venonat" label="Venonat - Bug + Poison"></option><option value="Venusaur" label="Venusaur - Grass + Poison"></option><option value="Victreebel" label="Victreebel - Grass + Poison"></option><option value="Vileplume" label="Vileplume - Grass + Poison"></option><option value="Vulpix" label="Vulpix - Fire"></option><option value="Wartortle" label="Wartortle - Water"></option><option value="Weedle" label="Weedle - Bug + Poison"></option><option value="Weepinbell" label="Weepinbell - Grass + Poison"></option><option value="Wigglytuff" label="Wigglytuff - Normal + Fairy"></option><option value="Zubat" label="Zubat - Poison + Flying"></option></datalist>
+              </label>
+              <div id="boost-pokemon-meta" class="boost-pokemon-meta" aria-live="polite"><div class="boost-pokemon-card"><span class="boost-pokemon-card__kicker">Pokemon reconhecido</span><strong class="boost-pokemon-card__title">Charizard</strong><p class="boost-pokemon-card__subtitle">Tipo duplo identificado automaticamente: Fire + Flying. O Bronze divide o custo entre as duas stones.</p><div class="boost-pokemon-card__chips"><span class="boost-pokemon-chip"><img src="icons-type/fire.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>Fire Stone</span></span><span class="boost-pokemon-chip"><img src="icons-type/flying.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>Flying Stone</span></span></div></div></div>
+            </div>
+
+            <div class="boost-fieldset">
+              <span class="boost-fieldset__legend">Pokémon shiny</span>
+              <div class="boost-choice-grid boost-choice-grid--compact" role="radiogroup" aria-label="Pokémon shiny">
+                <label class="boost-choice-card">
+                  <input type="radio" name="boost-shiny" value="no" checked="">
+                  <span class="boost-choice-card__body">
+                    <strong>Não</strong>
+                    <small>Sem Bronze Star extra</small>
+                  </span>
+                </label>
+                <label class="boost-choice-card">
+                  <input type="radio" name="boost-shiny" value="yes">
+                  <span class="boost-choice-card__body">
+                    <strong>Sim</strong>
+                    <small>Inclui Bronze Star e pieces</small>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="boost-form-grid boost-form-grid--levels">
+              <label class="boost-field" for="boost-bronze-level">
+                <span>Boost Bronze desejado</span>
+                <select id="boost-bronze-level">
+                  <option value="0">Bronze 0</option>
+                  <option value="1">Bronze 1</option>
+                  <option value="2">Bronze 2</option>
+                  <option value="3">Bronze 3</option>
+                  <option value="4">Bronze 4</option>
+                  <option value="5" selected="">Bronze 5</option>
+                </select>
+              </label>
+
+              <label class="boost-field" for="boost-silver-level">
+                <span>Boost Silver desejado</span>
+                <select id="boost-silver-level">
+                  <option value="0" selected="">Silver 0</option>
+                  <option value="1">Silver 1</option>
+                  <option value="2">Silver 2</option>
+                  <option value="3">Silver 3</option>
+                  <option value="4">Silver 4</option>
+                  <option value="5">Silver 5</option>
+                </select>
+              </label>
+            </div>
+
+            <p id="boost-silver-note" class="boost-inline-note">Silver liberado: o custo exibido ja considera Ancient Stone, Silver Star e a receita das Stars.</p>
+            <div id="boost-form-message" class="boost-message" hidden="" aria-live="polite"></div>
+
+            <div class="boost-actions">
+              <button id="boost-reset-btn" class="catch-action-button catch-action-button--ghost" type="button">Resetar</button>
+              <p class="boost-actions__hint">Itens sem receita definida aparecem apenas como materiais necessários, sem tentativa de fabricação automática.</p>
+            </div>
+          </section>
+
+          <div class="boost-results">
+            <section class="boost-panel boost-panel--summary" aria-labelledby="boost-summary-title" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+              <div class="boost-panel__header">
+                <span class="boost-panel__eyebrow">Resumo visual</span>
+                <h3 id="boost-summary-title">Custos consolidados do alvo</h3>
+                <p>Veja rapidamente a combinação, os níveis escolhidos e quantos materiais distintos entram na conta.</p>
+              </div>
+              <div id="boost-overview-cards" class="boost-overview-cards" aria-live="polite" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 9.2985px, 0px); opacity: 0.0702;"><article class="boost-overview-card"><span class="boost-overview-card__label">Pokemon</span><strong class="boost-overview-card__value">Charizard</strong><p class="boost-overview-card__note">Tipo duplo • Fire + Flying</p></article><article class="boost-overview-card"><span class="boost-overview-card__label">Bronze</span><strong class="boost-overview-card__value">125 Fire Stone + 125 Flying Stone</strong><p class="boost-overview-card__note">Sem Bronze Star extra</p></article><article class="boost-overview-card"><span class="boost-overview-card__label">Silver</span><strong class="boost-overview-card__value">Silver 0</strong><p class="boost-overview-card__note">Sem Silver Star</p></article><article class="boost-overview-card"><span class="boost-overview-card__label">Materiais distintos</span><strong class="boost-overview-card__value">2 item(ns)</strong><p class="boost-overview-card__note">Contagem do total geral</p></article></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-bronze-title" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Bronze</span>
+                  <h3 id="boost-bronze-title">Materiais de Bronze</h3>
+                </div>
+              </div>
+              <div id="boost-bronze-results" class="boost-material-grid" aria-live="polite" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 9.2985px, 0px); opacity: 0.0702;"><article class="boost-material-card" data-category="stone"><div class="boost-material-card__media"><img src="calculadora/normal_stone.gif" alt="Fire Stone" loading="eager" decoding="async"><span class="boost-material-card__type">
+            <img src="icons-type/fire.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>Fire</span>
+        </span></div><div class="boost-material-card__content"><strong class="boost-material-card__title">Fire Stone</strong><span class="boost-material-card__quantity num" data-value="125">125</span><p class="boost-material-card__detail">Stone do Elemento 1.</p><div class="boost-material-card__footer"><span class="boost-material-card__badge">Item direto</span></div></div></article><article class="boost-material-card" data-category="stone"><div class="boost-material-card__media"><img src="calculadora/normal_stone.gif" alt="Flying Stone" loading="eager" decoding="async"><span class="boost-material-card__type">
+            <img src="icons-type/flying.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>Flying</span>
+        </span></div><div class="boost-material-card__content"><strong class="boost-material-card__title">Flying Stone</strong><span class="boost-material-card__quantity num" data-value="125">125</span><p class="boost-material-card__detail">Stone do Elemento 2.</p><div class="boost-material-card__footer"><span class="boost-material-card__badge">Item direto</span></div></div></article></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-silver-title" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Silver</span>
+                  <h3 id="boost-silver-title">Materiais de Silver</h3>
+                </div>
+              </div>
+              <div id="boost-silver-results" class="boost-material-grid" aria-live="polite"><div class="boost-empty-state"><strong>Silver 0 selecionado.</strong><span>Escolha um nivel de Silver acima de 0 para incluir esta etapa.</span></div></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-star-title" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Fabricação</span>
+                  <h3 id="boost-star-title">Materiais de fabricação das Stars</h3>
+                </div>
+              </div>
+              <div id="boost-star-results" class="boost-material-grid" aria-live="polite"><div class="boost-empty-state"><strong>Sem fabricacao adicional.</strong><span>A receita das Silver Stars aparece aqui quando houver Silver acima de 0.</span></div></div>
+            </section>
+
+            <section class="boost-panel boost-panel--total" aria-labelledby="boost-total-title" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Total geral</span>
+                  <h3 id="boost-total-title">Tudo o que entra no custo final</h3>
+                </div>
+              </div>
+              <div id="boost-total-results" class="boost-material-grid" aria-live="polite" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 9.2985px, 0px); opacity: 0.0702;"><article class="boost-material-card" data-category="stone"><div class="boost-material-card__media"><img src="calculadora/normal_stone.gif" alt="Fire Stone" loading="eager" decoding="async"><span class="boost-material-card__type">
+            <img src="icons-type/fire.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>Fire</span>
+        </span></div><div class="boost-material-card__content"><strong class="boost-material-card__title">Fire Stone</strong><span class="boost-material-card__quantity num" data-value="125">125</span><p class="boost-material-card__detail">Consolidado entre Bronze, Silver e fabricacao.</p><div class="boost-material-card__footer"><span class="boost-material-card__badge">Total</span></div></div></article><article class="boost-material-card" data-category="stone"><div class="boost-material-card__media"><img src="calculadora/normal_stone.gif" alt="Flying Stone" loading="eager" decoding="async"><span class="boost-material-card__type">
+            <img src="icons-type/flying.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>Flying</span>
+        </span></div><div class="boost-material-card__content"><strong class="boost-material-card__title">Flying Stone</strong><span class="boost-material-card__quantity num" data-value="125">125</span><p class="boost-material-card__detail">Consolidado entre Bronze, Silver e fabricacao.</p><div class="boost-material-card__footer"><span class="boost-material-card__badge">Total</span></div></div></article></div>
+            </section>
+          </div>
+        </div>
+
+        <details class="calc-help boost-help" aria-expanded="false" style="translate: none; rotate: none; scale: none; transform: translate(0px, 18px); opacity: 0;">
+          <summary>Regras usadas no cálculo</summary>
+          <p>Bronze usa custo total por nível alvo. Silver só é liberado com Bronze 5. Quando o Pokémon é shiny, o custo de Bronze Star é exibido junto com o equivalente em Piece of Bronze Star. Para Silver Star, a calculadora mostra apenas a receita informada: Bronze Star, Silver Token, Shining Ancient Stone, Silver Flask e Piece of Silver Star.</p>
+        </details>
+      </div>
+    </div>
+
+    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden="">
+      <div class="card calc-card pokemon-hub">
+        <div class="pokemon-hub__hero">
+          <div class="pokemon-hub__copy">
+            <p class="pokemon-hub__eyebrow">Utilidades</p>
+            <div class="pokemon-hub__title-row">
+              <h2>Pokédex</h2>
+            </div>
+            <p class="pokemon-hub__lead">Cards com leitura rápida de moveset, elementos naturais, time e médias de captura.</p>
+          </div>
+        </div>
+
+        <section class="pokemon-filter-panel" aria-labelledby="pokemon-filters-title">
+          <div class="pokemon-filter-panel__head">
+            <div class="pokemon-filter-panel__copy">
+              <span class="pokemon-filter-panel__eyebrow">Busca avançada</span>
+              <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
+              <p>Combine nome, role, clã, level, tipos e moveset para refinar os cards sem sair da página.</p>
+            </div>
+            <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
+          </div>
+
+          <div class="pokemon-filter-grid">
+            <label class="pokemon-filter-field pokemon-filter-field--search" for="pokemon-filter-name">
+              <span>Nome do Pokémon</span>
+              <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off">
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-role">
+              <span>Role</span>
+              <select id="pokemon-filter-role"><option value="">Todas</option><option value="supporter">supporter</option><option value="all-rounder">all-rounder</option><option value="attacker">attacker</option><option value="defender">defender</option><option value="speedster">speedster</option></select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-clan">
+              <span>Clã</span>
+              <select id="pokemon-filter-clan"><option value="">Todos</option><option value="instinct">Instinct</option><option value="mystic">Mystic</option><option value="valor">Valor</option></select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-level">
+              <span>Level</span>
+              <select id="pokemon-filter-level"><option value="">Todos</option><option value="5">NÃ­vel 5</option><option value="20">NÃ­vel 20</option><option value="30">NÃ­vel 30</option><option value="50">NÃ­vel 50</option><option value="65">NÃ­vel 65</option><option value="80">NÃ­vel 80</option><option value="95">NÃ­vel 95</option></select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type1">
+              <span>Tipo 1</span>
+              <select id="pokemon-filter-type1"><option value="">Todos</option><option value="bug">Bug</option><option value="electric">Electric</option><option value="fairy">Fairy</option><option value="fighting">Fighting</option><option value="fire">Fire</option><option value="grass">Grass</option><option value="ground">Ground</option><option value="normal">Normal</option><option value="poison">Poison</option><option value="psychic">Psychic</option><option value="rock">Rock</option><option value="water">Water</option></select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type2">
+              <span>Tipo 2</span>
+              <select id="pokemon-filter-type2"><option value="">Todos</option><option value="__none__">Sem tipo 2</option><option value="fairy">Fairy</option><option value="fighting">Fighting</option><option value="flying">Flying</option><option value="grass">Grass</option><option value="ground">Ground</option><option value="poison">Poison</option></select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-moveset">
+              <span>Moveset</span>
+              <select id="pokemon-filter-moveset"><option value="">Todos</option><option value="bug">Bug</option><option value="dark">Dark</option><option value="electric">Electric</option><option value="fairy">Fairy</option><option value="fighting">Fighting</option><option value="fire">Fire</option><option value="flying">Flying</option><option value="grass">Grass</option><option value="ground">Ground</option><option value="normal">Normal</option><option value="poison">Poison</option><option value="psychic">Psychic</option><option value="rock">Rock</option><option value="water">Water</option></select>
+            </label>
+          </div>
+        </section>
+
+        <div class="pokemon-hub__status-row">
+          <p id="pokemon-catalog-status" class="pokemon-hub__status" aria-live="polite">Carregando catalogo...</p>
+          <a id="pokemon-variant-mega-link" class="pokemon-hub__mega-link" href="/pokemons?variant=mega" title="Abrir PokÃ©mons Mega" aria-label="Abrir PokÃ©mons Mega">
+            <img src="/mega-stone.png" alt="Mega stone" class="pokemon-hub__mega-icon" width="20" height="20">
+            <span class="pokemon-hub__mega-label">Mega</span>
+          </a>
+        </div>
+
+        <div id="pokemon-card-grid" class="pokemon-card-grid" role="list" aria-label="Lista de pokemons registrados"><div class="pokemon-load-pending-message" style="padding: 1rem; color: rgb(238, 238, 238); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.75rem;">Carregando pokemons registrados...</div></div>
+      </div>
+    </div>
+
+    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden="">
+      <div class="card calc-card catch-card">
+        <div class="catch-hero">
+          <div class="catch-hero__copy">
+            <p id="catch-eyebrow" class="catch-hero__eyebrow">Captura otimizada</p>
+            <h2 id="catch-heading">Calculadora de Captura</h2>
+            <p id="catch-description" class="catch-hero__description">Consulte a mÃ©dia de pokÃ©bolas e acompanhe o progresso do log em uma tela mais direta.</p>
+          </div>
+          <div class="catch-hero__preview" aria-live="polite">
+            <span id="catch-selected-ball-label" class="catch-hero__preview-label">PokÃ©bola selecionada</span>
+            <div class="catch-ball-preview">
+              <img id="ball-img" class="catch-ball-preview__image" src="balls/elemental.png" alt="PokÃ©bola Elemental" decoding="async">
+              <div class="catch-ball-preview__copy">
+                <strong id="ball-preview-name">PokÃ©bola Elemental</strong>
+                <span id="ball-preview-price">$325.00 cada</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="catch-dashboard">
+          <section class="catch-panel catch-panel--primary" aria-labelledby="catch-calc-title">
+            <div class="catch-panel__header">
+              <span class="catch-panel__eyebrow">Estimativa</span>
+              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a mÃ©dia de pokÃ©bolas</h3>
+              <p id="catch-calc-hint" class="catch-panel__hint">Escolha a pokÃ©bola, o nÃ­vel e o tipo de captura para ver uma estimativa rÃ¡pida.</p>
+            </div>
+
+            <div class="catch-form-grid">
+              <div class="catch-section catch-field">
+                <label for="ball-select">Escolha a pokÃ©bola:</label>
+                <select id="ball-select">
+                  <option value="elemental">PokÃ©bola Elemental</option>
+                  <option value="story">PokÃ©bola Story</option>
+                  <option value="ultra">PokÃ©bola Ultra</option>
+                  <option value="safari">PokÃ©bola Safari</option>
+                </select>
+              </div>
+              <div class="catch-section catch-field">
+                <label for="level-select">NÃ­vel do pokÃ©mon:</label>
+                <select id="level-select">
+                  <option value="5">NÃ­vel 5</option>
+                  <option value="20">NÃ­vel 20</option>
+                  <option value="30">NÃ­vel 30</option>
+                  <option value="50">NÃ­vel 50</option>
+                  <option value="65">NÃ­vel 65</option>
+                  <option value="80">NÃ­vel 80</option>
+                  <option value="95">NÃ­vel 95</option>
+                  <option value="pre">PrÃ© Ace</option>
+                  <option value="ace">Ace</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
+              <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
+              <div class="catch-variant-options">
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="normal" checked="">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Normal</strong>
+                    <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrÃ£o de captura.</span>
+                  </span>
+                </label>
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="shiny">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Shiny</strong>
+                    <span id="catch-variant-shiny-hint" class="catch-variant-card__hint">Mostra a mÃ©dia para capturas shiny.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="catch-section catch-actions">
+              <button id="calc-catch-btn" class="catch-action-button">Calcular estimativa</button>
+              <p class="catch-note">Nota: os valores sÃ£o uma mÃ©dia aproximada; geralmente gastam-se algumas pokÃ©bolas a mais.</p>
+            </div>
+
+            <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
+          </section>
+
+          <div class="catch-secondary-grid">
+            <section class="catch-panel catch-panel--focus" aria-labelledby="catch-log-title">
+              <div class="catch-panel__header">
+                <span class="catch-panel__eyebrow">Log</span>
+                <h3 id="catch-log-title" class="catch-panel__title">Analise o histÃ³rico de pokÃ©bolas</h3>
+                <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.</p>
+              </div>
+
+              <div class="catch-section catch-field catch-field--full">
+                <label for="log-input">Log de pokÃ©bolas usadas:</label>
+                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui."></textarea>
+              </div>
+
+              <div class="catch-section catch-actions">
+                <button id="parse-log" class="catch-action-button catch-action-button--ghost">Processar log</button>
+              </div>
+
+              <div id="log-result" class="calc-info catch-result-area" aria-live="polite"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden="">
+      <div class="card calc-card bosses-shell">
+        <div class="bosses-header">
+          <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
+            <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
+            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off">
+            <div id="speedster-search-results" class="speedster-search-results" hidden="" aria-live="polite"></div>
+            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden="">Este Pokémon ainda não foi adicionado.</div>
+          </aside>
+        </div>
+        <div class="bosses-hero">
+          <div class="bosses-copy">
+            <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
+            <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
+          </div>
+        </div>
+        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
+      </div>
+
+    </div> <!-- close content-bosses -->
+
+    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden="">
+      <div class="card calc-card">
+        <div class="streamer-section-header">
+          <h2>Transmissões da comunidade</h2>
+          <p>Acompanhe o status dos canais da comunidade e abra a transmissão no Twitch.</p>
+        </div>
+        <div id="streamer-status-info" class="streamer-status-info" aria-live="polite"></div>
+        <section id="streamer-filters" class="streamer-filters" aria-label="Filtros de transmissões">
+            <fieldset class="streamer-filters__group">
+              <legend class="streamer-filters__legend visually-hidden">Filtrar transmissões</legend>
+              <label><input id="filter-all" type="checkbox" checked="">Mostrar todas</label>
+              <label><input id="filter-drops" type="checkbox">Com drops</label>
+              <label><input id="filter-online" type="checkbox">Online</label>
+              <label><input id="filter-pack" type="checkbox">Com pack</label>
+              <label><input id="filter-pstory" type="checkbox">PStory</label>
+            </fieldset>
+            <div id="streamer-rat-summary" class="streamer-rat-summary" aria-live="polite"></div>
+        </section>
+        <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de canais da comunidade"></div>
+      </div>
+    </div>
+
+    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden="">
+      <div class="card calc-card community-shell">
+        <div class="community-hero">
+          <div class="community-copy">
+            <p class="community-eyebrow">Comunidade no YouTube</p>
+            <h2>Vídeos recentes da comunidade</h2>
+            <p class="community-lead">Veja os uploads mais recentes da comunidade.</p>
+            <p class="community-supporting">Lista cronológica, sem ranking.</p>
+            <p class="community-creator-note">Produz conteúdo de PStory? Use <strong>#pstory</strong> e, se quiser, uma hashtag de tema para aparecer no filtro certo.</p>
+          </div>
+        </div>
+
+        <div id="community-topic-filters" class="community-topic-filters" aria-label="Filtros de vídeos da comunidade"></div>
+
+        <div class="community-layout">
+          <section class="community-player-panel" aria-labelledby="community-featured-title">
+            <div class="community-player-frame">
+              <iframe id="community-video-frame" title="Player de video da comunidade" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" hidden=""></iframe>
+              <button id="community-video-preview" class="community-video-preview" type="button" aria-label="Abrir vídeo em destaque">
+                <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Miniatura do vídeo selecionado" loading="lazy" decoding="async">
+                <span class="community-video-preview-overlay">
+                  <span class="community-video-preview-badge">Abrir vídeo</span>
+                  <span id="community-video-preview-caption">Clique para abrir este vídeo.</span>
+                </span>
+              </button>
+            </div>
+            <p id="community-player-frame-note" class="community-player-frame-note">Escolha um vídeo da lista ou clique na capa para carregar o player aqui sem sair da aba.</p>
+            <div class="community-player-meta">
+              <div class="community-player-context">
+                <span class="community-player-tag">Recentes</span>
+                <span id="community-published-at" class="community-published-at">Carregando data...</span>
+              </div>
+              <h3 id="community-featured-title">Carregando vídeo...</h3>
+              <p id="community-channel-name" class="community-channel-name">Canal da comunidade</p>
+              <div class="community-player-actions">
+                <a id="community-video-link" class="community-watch-link" href="https://www.youtube.com/results?search_query=%23pstory" target="_blank" rel="noopener noreferrer">Abrir no YouTube</a>
+                <a id="community-channel-link" class="community-watch-link community-channel-link" href="https://www.youtube.com/results?search_query=%23pstory" target="_blank" rel="noopener noreferrer">Visitar canal</a>
+              </div>
+              <div class="community-player-details">
+                <div class="community-player-detail-card">
+                  <h4>Tema atual</h4>
+                  <p id="community-topic-description">Carregando tema atual...</p>
+                </div>
+                <div id="community-player-topics" class="community-player-topics" aria-label="Temas do filtro atual"></div>
+                <div class="community-player-detail-card community-player-detail-card--soft">
+                  <h4>Como usar</h4>
+                  <p id="community-topic-helper">Escolha um vídeo e clique na capa para abrir o player.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="community-list-panel">
+            <div class="community-list-head">
+              <h3 id="community-list-title">Vídeos recentes</h3>
+              <p id="community-list-description">Mais recentes em ordem cronológica.</p>
+            </div>
+            <div id="community-video-list" class="community-video-list" aria-live="polite"></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do chefe">
+        <div class="speedster-modal-backdrop" data-close="true"></div>
+        <div class="speedster-modal-content" role="document">
+          <button class="speedster-modal-close" aria-label="Fechar">✖</button>
+          <div class="speedster-modal-header">
+        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true">
+        <div class="speedster-modal-title">
+          <h2 id="modal-title">Detalhes do chefe</h2>
+          <p id="modal-subtitle" class="speedster-subtitle"></p>
+          <div class="tier-legend" aria-label="Legenda de cores de recomendação">
+            <span class="tier-dot tier-green" aria-hidden="true"></span>Ideal
+            <span class="tier-dot tier-otimo" aria-hidden="true"></span>Muito bom
+            <span class="tier-dot tier-yellow" aria-hidden="true"></span>Bom
+            <span class="tier-dot tier-red" aria-hidden="true"></span>Aceitável
+            <span class="tier-dot tier-solo" aria-hidden="true"></span>Única opção
+            <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informação
+          </div>
+        </div>
+        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true">
+      </div>
+          <div id="modal-body" class="speedster-modal-body"></div>
+        </div>
+      </div>
+    </main></div>
+
+    <div class="modal pokemon-details-modal" id="pokemon-details-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pokemon-details-title">
+      <div class="modal-content pokemon-details-modal__content" role="document">
+        <button class="modal-close" aria-label="Fechar">✖</button>
+
+        <div class="pokemon-details-modal__hero">
+          <div class="pokemon-details-modal__art">
+            <img id="pokemon-details-image" class="pokemon-details-modal__image" src="pokemons/placeholder.svg" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="pokemon-details-modal__copy">
+            <p id="pokemon-details-role" class="pokemon-details-modal__role"></p>
+            <h2 id="pokemon-details-title">Pokémon</h2>
+            <div id="pokemon-details-meta" class="pokemon-details-modal__meta"></div>
+          </div>
+        </div>
+
+        <div class="pokemon-details-modal__body">
+          <section class="pokemon-details-modal__section pokemon-details-modal__section--info" aria-labelledby="pokemon-details-info-title">
+            <div class="pokemon-details-modal__section-head">
+              <span class="pokemon-details-modal__section-kicker">Combate</span>
+              <p id="pokemon-details-subtitle" class="pokemon-details-modal__subtitle"></p>
+            </div>
+            <div id="pokemon-details-info" class="pokemon-details-grid"></div>
+
+            <!-- Fraquezas movida para dentro de Combate (Opção B) -->
+            <div class="pokemon-details-modal__section-head" style="margin-top:0.28rem">
+              <span class="pokemon-details-modal__section-kicker">Fraquezas</span>
+            </div>
+            <div id="pokemon-details-weaknesses" class="pokemon-weakness-list"></div>
+          </section>
+
+          <section class="pokemon-details-modal__section pokemon-details-modal__section--averages" aria-labelledby="pokemon-details-averages-title">
+            <div class="pokemon-details-modal__section-head">
+              <span class="pokemon-details-modal__section-kicker">Médias</span>
+            </div>
+            <div id="pokemon-details-averages" class="pokemon-averages-grid"></div>
+          </section>
+
+          <!-- removed duplicate weaknesses section (moved into Combate) -->
+        </div>
+      </div>
+    </div>
+
+    <footer class="main-footer">
+      <a class="footer-discord-link footer-discord-link-left" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Discord do PStory" title="Entrar no Discord do PStory">
+        <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
+      </a>
+      <div class="footer-credits">
+        Desenvolvido por Liniko<br>
+        v10.0.0 - 2026
+      </div>
+      <a class="footer-discord-link footer-discord-link-right" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Discord do PStory" title="Entrar no Discord do PStory">
+        <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
+      </a>
+    </footer>
+    
+    
+    <script src="js/main.js" defer=""></script>
+
+    <!-- Local config (gitignored) — defines window.POKE_YT_API_KEY for local testing -->
+    <script src="js/config.local.js" defer=""></script>
+
+    <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer=""></script>
+    <script src="script.js?v=20260503d" defer=""></script>
+
+
+<datalist id="types-list"><option value="bug"></option><option value="dark"></option><option value="dragon"></option><option value="electric"></option><option value="fairy"></option><option value="fighting"></option><option value="fire"></option><option value="flying"></option><option value="ghost"></option><option value="grass"></option><option value="ground"></option><option value="ice"></option><option value="normal"></option><option value="poison"></option><option value="psychic"></option><option value="rock"></option><option value="steel"></option><option value="water"></option></datalist></body></html>

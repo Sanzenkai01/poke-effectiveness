@@ -5,14 +5,14 @@ const HOME_STREAMERS = [
     'lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos',
     'kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd',
     'lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer',
-    'especialbr','eaisantinho','prodigyz_gameplay', 'BruxoNoir'
+    'especialbr','eaisantinho','prodigyz_gameplay', 'BruxoNoir','likearivergames'
 ];
 
 const HOME_NON_DROP_STREAMERS = new Set([
     'FernandoAlcatraz','gordallink','lordjuregi','mofexxx','reiisuperr',
     'rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari',
     'linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1',
-    'OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir'
+    'OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames'
 ]);
 
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
@@ -21,7 +21,7 @@ const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
-const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v1';
+const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 const TWITCH_CLIENT_ID = 'g5zg0400k4vhrx2g6xi4hgveruamlv';
 const TWITCH_BEARER_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
 
@@ -218,17 +218,17 @@ function setHomeStreamerReady(totalPstoryOnline){
     homeStreamerInfo.dataset.state = 'ready';
     homeStreamerCount.textContent = String(totalPstoryOnline);
     if(totalPstoryOnline === 0){
-        homeStreamerText.textContent = 'Nenhum canal esta online em PStory agora.';
+        homeStreamerText.textContent = 'Nenhum canal está online em PStory agora.';
     } else if(totalPstoryOnline === 1){
-        homeStreamerText.textContent = 'canal esta online e em PStory agora.';
+        homeStreamerText.textContent = 'canal está online e em PStory agora.';
     } else {
-        homeStreamerText.textContent = 'canais estao online e em PStory agora.';
+        homeStreamerText.textContent = 'canais estão online e em PStory agora.';
     }
 }
 
 function fetchStreamerStatus(name){
     const isNonDrop = HOME_NON_DROP_STREAMERS.has(name);
-    const cacheKey = `${name}:${isNonDrop ? 'nodrop' : 'drop'}`;
+    const cacheKey = normalizeStreamerChannelName(name);
     const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
 
@@ -239,6 +239,32 @@ function fetchStreamerStatus(name){
         const explicitDrop = /\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized);
         if(explicitDrop) return 'drop';
 
+        {
+            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
+            const isCommandMention = (index) => {
+                let cursor = index - 1;
+                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
+                    cursor -= 1;
+                }
+                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
+                return marker === '!' || marker === '\u2757';
+            };
+
+            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
+                const index = typeof match.index === 'number' ? match.index : -1;
+                if(index < 0) continue;
+
+                const value = match[0];
+                const before = index > 0 ? normalized.charAt(index - 1) : '';
+                const afterIndex = index + value.length;
+                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
+
+                if(isWordChar(before) || isWordChar(after)) continue;
+                if(isCommandMention(index)) continue;
+                return 'nodrop';
+            }
+        }
+
         if(isNonDrop){
             const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
             const isCommandMention = (index) => {
@@ -247,7 +273,7 @@ function fetchStreamerStatus(name){
                     cursor -= 1;
                 }
                 const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === '❗';
+                return marker === '!' || marker === 'â—';
             };
 
             for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
@@ -266,7 +292,7 @@ function fetchStreamerStatus(name){
         }
 
         if(!isNonDrop) return false;
-        if(/(?:!|❗)\s*pstory/i.test(normalized)) return false;
+        if(/(?:!|â—)\s*pstory/i.test(normalized)) return false;
         if(/pstoryonline\.com/i.test(normalized)) return 'nodrop';
         if(/(?:^|[^a-zA-Z0-9_])pstory(?:[^a-zA-Z0-9_]|$)/i.test(normalized)) return 'nodrop';
         return false;
@@ -376,18 +402,18 @@ function startRatSummaryTimer(initialState){
     const render = () => {
         const freshState = normalizeStreamerRatTimerSnapshot(initialState.channel, initialState, Date.now());
         if(!freshState || !freshState.lastMessageAt){
-            chip.textContent = 'Aguardando o proximo alerta do Rattata...';
+            chip.textContent = 'Aguardando o próximo alerta do Rattata...';
             chip.style.color = '#d8f3ff';
             return;
         }
 
         if(freshState.remainingMs <= 0){
-            chip.textContent = 'O proximo Rattata deve aparecer a qualquer momento.';
+            chip.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
             chip.style.color = '#ffd166';
             return;
         }
 
-        chip.textContent = `Proximo Rattata em ${formatStreamerRatCountdown(freshState.remainingMs)}.`;
+        chip.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(freshState.remainingMs)}.`;
         chip.style.color = '#dff8ff';
     };
 
@@ -449,7 +475,7 @@ async function refreshHomeWidget(){
         return;
     }
 
-    renderStaticRatSummary('Aguardando o proximo alerta do Rattata...', '#d8f3ff');
+    renderStaticRatSummary('Aguardando o próximo alerta do Rattata...','#d8f3ff');
 }
 
 if(document.readyState === 'loading'){

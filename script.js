@@ -39,8 +39,31 @@ const commonResults = document.getElementById('common-results');
 const shinyInput = document.getElementById('shiny-plates');
 const shinyResults = document.getElementById('shiny-results');
 const variantRadios = document.querySelectorAll('input[name="poke-variant"]');
+const boostPokemonSearchInput = document.getElementById('boost-pokemon-search');
+const boostPokemonResults = document.getElementById('boost-pokemon-results');
+const boostPokemonNoResults = document.getElementById('boost-pokemon-no-results');
+const boostSelectionPrompt = document.getElementById('boost-selection-prompt');
+const boostPokemonMeta = document.getElementById('boost-pokemon-meta');
+const boostConfigControls = document.getElementById('boost-config-controls');
+const boostShinyInputs = document.querySelectorAll('input[name="boost-shiny"]');
+const boostBronzeLevelSelect = document.getElementById('boost-bronze-level');
+const boostSilverLevelSelect = document.getElementById('boost-silver-level');
+const boostSilverNote = document.getElementById('boost-silver-note');
+const boostFormMessage = document.getElementById('boost-form-message');
+const boostResetBtn = document.getElementById('boost-reset-btn');
+const boostHeroSummary = document.getElementById('boost-hero-summary');
+const boostSummaryTarget = document.getElementById('boost-summary-target');
+const boostSummaryFlags = document.getElementById('boost-summary-flags');
+const boostLayout = document.getElementById('boost-layout');
+const boostResultsShell = document.getElementById('boost-results-shell');
+const boostOverviewCards = document.getElementById('boost-overview-cards');
+const boostBronzeResults = document.getElementById('boost-bronze-results');
+const boostSilverResults = document.getElementById('boost-silver-results');
+const boostStarResults = document.getElementById('boost-star-results');
+const boostTotalResults = document.getElementById('boost-total-results');
+const boostHelpPanel = document.getElementById('boost-help-panel');
 
-// safe flag for GSAP – if CDN fails this prevents errors
+// safe flag for GSAP ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ if CDN fails this prevents errors
 const useGsap = typeof gsap !== 'undefined';
 
 let fossilSelections = [];
@@ -66,12 +89,13 @@ const contentHome = document.getElementById('content-home');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
+const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentPokemons, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -108,6 +132,13 @@ let typesDataLoaded = false;
 let typesDataLoadPromise = null;
 let fossilsPageInitialized = false;
 let calculatorPageInitialized = false;
+let boostPageInitialized = false;
+let boostPokemonOptionsHydrated = false;
+let boostPokemonEntries = [];
+let boostPokemonSearchIndex = new Map();
+let boostSelectedPokemonEntry = null;
+let boostPokemonSearchHideTimer = 0;
+let boostLastFormMessage = '';
 let catchPageInitialized = false;
 let bossesPageLoadPromise = null;
 let pokemonCatalogLoaded = false;
@@ -137,6 +168,8 @@ const APP_ROUTE_ALIASES = {
     fosseis: { path: '/fossils', tab: 'fossils' },
     calculator: { path: '/treinamento', tab: 'calculator' },
     treinamento: { path: '/treinamento', tab: 'calculator' },
+    boost: { path: '/boost', tab: 'boost' },
+    'calculadora-boost': { path: '/boost', tab: 'boost' },
     pokemon: { path: '/pokemon', tab: 'pokemons' },
     pokemons: { path: '/pokemons', tab: 'pokemons' },
     catch: { path: '/catch', tab: 'catch' },
@@ -386,7 +419,7 @@ function createInlineStatusMessage(className, message){
 function showTypesLoadingState(){
     if(!chart || menuTypes.length) return;
     chart.replaceChildren(createInlineStatusMessage('load-pending-message', 'Carregando tabela de tipos...'));
-    renderTypeInfoEmptyState('Os dados da tabela estão sendo carregados para a consulta.');
+    renderTypeInfoEmptyState('Os dados da tabela estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o sendo carregados para a consulta.');
 }
 
 function renderBossesDeferredState(message, options = {}){
@@ -402,12 +435,12 @@ function renderBossesDeferredState(message, options = {}){
 }
 
 const COMMUNITY_FEED_ITEMS = [
-    { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÉM TAMBÉM TEM SEU VALOR!' },
-    { id: 'GZx6IdPyQec', title: 'JOGAMOS O SPEED-SERVER DA PSTORY / NOVA ATUALIZAÇÃO QUE PROMETE!' },
+    { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°M TAMBÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â°M TEM SEU VALOR!' },
+    { id: 'GZx6IdPyQec', title: 'JOGAMOS O SPEED-SERVER DA PSTORY / NOVA ATUALIZAÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢O QUE PROMETE!' },
     { id: 'fhoFtfKlPKM', title: 'Como Funciona o Sistema de Captura no PStory' },
-    { id: 'sPcZ-vHxixo', title: 'Tudo sobre o clã Mystic no PStory' },
-    { id: 'dxlYaudxPYc', title: 'Qual clã escolher no PStory?' },
-    { id: '5N8A1EVYXq8', title: '[PSTORY] Você precisa fazer o Rotom\'s Phone antes que seja tarde!' }
+    { id: 'sPcZ-vHxixo', title: 'Tudo sobre o clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£ Mystic no PStory' },
+    { id: 'dxlYaudxPYc', title: 'Qual clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£ escolher no PStory?' },
+    { id: '5N8A1EVYXq8', title: "[PSTORY] VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª precisa fazer o Rotom's Phone antes que seja tarde!" }
 ];
 const COMMUNITY_VIDEO_METADATA = {
     "FBJKGfzZim4": { "channelName": "Alcatraz", "channelUrl": "https://www.youtube.com/@AlcatrazFernando", "publishedAt": "2026-03-11T12:00:23-07:00" },
@@ -449,7 +482,7 @@ const COMMUNITY_FEED_TOPICS = {
     all: {
         label: 'Geral',
         hashtag: '#pstory',
-        description: 'Visão ampla do PStory com vídeos da comunidade, eventos e conteúdos gerais do servidor.',
+        description: 'VisÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ampla do PStory com vÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­deos da comunidade, eventos e conteÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºdos gerais do servidor.',
         highlights: ['Comunidade', 'Eventos', 'Servidor'],
         items: [
             { id: 'FBJKGfzZim4', title: '[PStory] UM NINGUEM TAMBEM TEM SEU VALOR!' },
@@ -463,7 +496,7 @@ const COMMUNITY_FEED_TOPICS = {
     bosses: {
         label: 'Chefes',
         hashtag: '#pstoryboss',
-        description: 'Vídeos sobre chefes, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
+        description: 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos sobre chefes, drops, Hoopa Portal e rotas de batalha dentro do PStory.',
         highlights: ['Hoopa Portal', 'Drops', 'Rotas'],
         items: [
             { id: 'D0v_bND_wD4', title: 'FIZ TODOS OS BOSSES DO PSTORY! DROPEI ALGO DE BOM?' },
@@ -477,7 +510,7 @@ const COMMUNITY_FEED_TOPICS = {
     catch: {
         label: 'Captura',
         hashtag: '#pstorycatch',
-        description: 'Conteúdos focados em captura, shinies, broken e rotinas de captura no servidor.',
+        description: 'ConteÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºdos focados em captura, shinies, broken e rotinas de captura no servidor.',
         highlights: ['Shinies', 'Broken', 'Rotina'],
         items: [
             { id: 'hLDOoIdjuKk', title: 'TUDO SOBRE BROKEN E CATCH! PSTORY ONLINE!' },
@@ -489,9 +522,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     clans: {
-        label: 'Clãs',
+        label: 'ClÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£s',
         hashtag: '#pstoryclan',
-        description: 'Vídeos para comparar clãs, entender diferenças e escolher melhor o seu caminho.',
+        description: 'VÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­deos para comparar clÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£s, entender diferenÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§as e escolher melhor o seu caminho.',
         highlights: ['Mystic', 'Valor', 'Escolha'],
         items: [
             { id: 'sPcZ-vHxixo', title: 'TUDO SOBRE O CLAN MYSTIC PSTORY!' },
@@ -502,9 +535,9 @@ const COMMUNITY_FEED_TOPICS = {
         ]
     },
     updates: {
-        label: 'Atualizações',
+        label: 'AtualizaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
         hashtag: '#pstoryupdate',
-        description: 'Lançamentos, eventos, patches e tudo que movimenta o servidor no momento.',
+        description: 'LanÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§amentos, eventos, patches e tudo que movimenta o servidor no momento.',
         highlights: ['Patches', 'Eventos', 'News'],
         items: [
             { id: '6Q7UuMg1fyg', title: 'MEGA UPDATE NO PSTORY! LANCAMENTO SPEED SERVER' },
@@ -518,13 +551,13 @@ const COMMUNITY_FEED_TOPICS = {
     guides: {
         label: 'Guias',
         hashtag: '#pstoryguide',
-        description: 'Tutoriais e guias rápidos para quem quer aprender sistemas e evoluir com mais direção.',
+        description: 'Tutoriais e guias rÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡pidos para quem quer aprender sistemas e evoluir com mais direÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o.',
         highlights: ['Iniciantes', 'Tutoriais', 'Progressao'],
         items: [
             { id: 'qRVdDfUCHVc', title: '[PSTORY] DICAS PARA INICIANTES NO PSTORY! COMECE A JOGAR EM 2025! #8' },
             { id: 'zGDi2yR18Jo', title: '[PSTORY] O que ninguem te explica sobre o Hoopa Portal (GUIA COMPLETO)' },
             { id: 'OGuKXY6-Fdo', title: '[PSTORY] NOVA RAID! MEWTWO STRIKES BACK CHEGOU COM TUDO! #15' },
-            { id: '5N8A1EVYXq8', title: "[PSTORY] VOCÊ PRECISA FAZER O ROTOM'S PHONE ANTES QUE SEJA TARDE!" },
+            { id: '5N8A1EVYXq8', title: "[PSTORY] VOCÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â  PRECISA FAZER O ROTOM'S PHONE ANTES QUE SEJA TARDE!" },
             { id: 'wNqXDZanstg', title: '[PSTORY] DICAS INICIANTES PARTE 2 - SISTEMA DE BOOST, TRAINING, CLAS E DICA BONUS! #10' },
             { id: 'Bcjrv8j5g98', title: 'PStory - Guia Lv Up 120-200' }
         ]
@@ -619,7 +652,7 @@ let COMMUNITY_LAST_FETCH_ERROR = {};
 // When quota is exceeded, suspend further API calls for this duration
 const COMMUNITY_API_QUOTA_COOLDOWN_MS = 1000 * 60 * 30; // 30 minutes
 let LAST_YT_QUOTA_EXCEEDED_UNTIL = 0;
-// Next scheduled daily refresh timestamp (ms since epoch) — for debug/inspection
+// Next scheduled daily refresh timestamp (ms since epoch) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â for debug/inspection
 let NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
 
 function computeNextDailyRefreshTime(hour = 10, minute = 30){
@@ -908,7 +941,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
                 // mark cooldown window and stop auto refresh to avoid further quota usage
                 LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
                 try{ stopCommunityAutoRefresh(); }catch(e){}
-                console.warn('YouTube API quota exceeded — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                console.warn('YouTube API quota exceeded ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
             }
 
             throw new Error(errText || 'YouTube API error');
@@ -1005,7 +1038,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
                     if(isQuota){
                         LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
                         try{ stopCommunityAutoRefresh(); }catch(e){}
-                        console.warn('YouTube API quota exceeded (fallback) — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
+                        console.warn('YouTube API quota exceeded (fallback) ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
                     }
 
                     return null;
@@ -1052,7 +1085,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             const topic = COMMUNITY_FEED_TOPICS[topicKey];
             if(!topic) return false;
 
-            // If quota is suspended globally, do not attempt network fetches — use persistent/cache/local fallback
+            // If quota is suspended globally, do not attempt network fetches ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â use persistent/cache/local fallback
             if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
                 console.warn('Skipping YouTube fetch for', topicKey, 'because quota is suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
                 COMMUNITY_LAST_FETCH_ERROR[topicKey] = { message: 'YouTube API quota exceeded; using cached/local items', resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString(), quota: true };
@@ -1333,8 +1366,8 @@ function ensureSiteYouTubeModal(){
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'site-youtube-modal__close';
-    closeBtn.setAttribute('aria-label', 'Fechar vídeo');
-    closeBtn.textContent = '✖';
+    closeBtn.setAttribute('aria-label', 'Fechar vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo');
+    closeBtn.textContent = 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
 
     const header = document.createElement('div');
     header.className = 'site-youtube-modal__header';
@@ -1342,7 +1375,7 @@ function ensureSiteYouTubeModal(){
     const title = document.createElement('h2');
     title.id = 'site-youtube-modal-title';
     title.className = 'site-youtube-modal__title';
-    title.textContent = 'Vídeo';
+    title.textContent = 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo';
 
     const player = document.createElement('div');
     player.className = 'site-youtube-modal__player';
@@ -1422,7 +1455,7 @@ function openSiteYouTubeModal(options = {}){
             // fallback to iframe if construction fails
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-            iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
+            iframe.title = options.title ? `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube: ${options.title}` : 'Player de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
             iframe.loading = 'eager';
             iframe.referrerPolicy = 'strict-origin-when-cross-origin';
             iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -1434,7 +1467,7 @@ function openSiteYouTubeModal(options = {}){
         // Fallback: insert iframe
         const iframe = document.createElement('iframe');
         iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
-        iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
+        iframe.title = options.title ? `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube: ${options.title}` : 'Player de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
         iframe.loading = 'eager';
         iframe.referrerPolicy = 'strict-origin-when-cross-origin';
         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
@@ -1443,7 +1476,7 @@ function openSiteYouTubeModal(options = {}){
         siteYouTubeModalState.playerInstance = null;
     });
 
-    title.textContent = options.title || 'Vídeo do YouTube';
+    title.textContent = options.title || 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do YouTube';
 
     if(!wasOpen){
         siteYouTubeModalPreviousOverflow = document.body.style.overflow;
@@ -1537,8 +1570,8 @@ function ensureSiteStreamModal(){
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'site-stream-modal__close';
-    closeBtn.setAttribute('aria-label', 'Fechar transmissão');
-    closeBtn.textContent = '✖';
+    closeBtn.setAttribute('aria-label', 'Fechar transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o');
+    closeBtn.textContent = 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
 
     const header = document.createElement('div');
     header.className = 'site-stream-modal__header';
@@ -1546,7 +1579,7 @@ function ensureSiteStreamModal(){
     const title = document.createElement('h2');
     title.id = 'site-stream-modal-title';
     title.className = 'site-stream-modal__title';
-    title.textContent = 'Transmissão';
+    title.textContent = 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o';
 
     const player = document.createElement('div');
     player.className = 'site-stream-modal__player';
@@ -1571,7 +1604,7 @@ function ensureSiteStreamModal(){
 function openSiteStreamModal(options = {}){
     const channel = String(options.channel || '').trim();
     if(!channel) return false;
-    const titleText = options.title || `Transmissão de ${channel}`;
+    const titleText = options.title || `TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o de ${channel}`;
 
     const { modal, content, closeBtn, title, player } = ensureSiteStreamModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
@@ -1646,7 +1679,7 @@ function setCommunityPlayerLoaded(video){
 
     if(previewImage){
         previewImage.src = video.thumbnailUrl;
-        previewImage.alt = video.title || 'Miniatura do vídeo selecionado';
+        previewImage.alt = video.title || 'Miniatura do vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo selecionado';
     }
     if(previewCaption){
         previewCaption.textContent = 'Clique para carregar este video aqui.';
@@ -1740,6 +1773,7 @@ function setSidebarOpen(nextOpen){
 
 function getActiveSiteTarget(){
     if(document.body.classList.contains('home-view')) return 'home';
+    if(contentBoost && !contentBoost.hidden) return 'boost';
     if(contentPokemons && !contentPokemons.hidden) return 'pokemons';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
@@ -1843,6 +1877,7 @@ function activateSidebarTarget(button){
         effectiveness: showEffectiveness,
         fossils: showFossils,
         calculator: showCalculator,
+        boost: showBoostCalculator,
         pokemons: showPokemons,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
@@ -2014,6 +2049,53 @@ const COMMON_PLATE_COST = {
 };
 
 const SHINING_PLATE_BLOCK_SIZE = 30;
+const BOOST_DEFAULT_STATE = Object.freeze({
+    pokemonName: '',
+    shiny: 'no',
+    bronzeLevel: 0,
+    silverLevel: 0
+});
+const BOOST_BRONZE_SINGLE_STONES_PER_LEVEL = 50;
+const BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL = 25;
+const BOOST_BRONZE_STAR_PER_LEVEL = 3;
+const BOOST_BRONZE_PIECES_PER_STAR = 3;
+const BOOST_SILVER_ANCIENT_STONE_PER_LEVEL = 100;
+const BOOST_TYPE_STONE_META = Object.freeze({
+    bug: { name: 'Cocoon Stone', image: 'calculadora/cocoon_stone.gif' },
+    ghost: { name: 'Darkness Stone', image: 'calculadora/darkness_stone.png' },
+    dragon: { name: 'Dragon Stone', image: 'calculadora/dragon_stone.gif' },
+    ground: { name: 'Earth Stone', image: 'calculadora/earth_stone.gif' },
+    psychic: { name: 'Enigma Stone', image: 'calculadora/enigma_stone.gif' },
+    fire: { name: 'Fire Stone', image: 'calculadora/fire_stone.gif' },
+    normal: { name: 'Heart Stone', image: 'calculadora/heart_stone.gif' },
+    grass: { name: 'Leaf Stone', image: 'calculadora/leaf_stone.gif' },
+    steel: { name: 'Metal Stone', image: 'calculadora/metal_stone.png' },
+    flying: { name: 'Feather Stone', image: 'calculadora/feather_stone.gif' },
+    rock: { name: 'Rock Stone', image: 'calculadora/rock_stone.gif' },
+    electric: { name: 'Thunder Stone', image: 'calculadora/thunder_stone.gif' },
+    poison: { name: 'Venom Stone', image: 'calculadora/venom_stone.gif' },
+    water: { name: 'Water Stone', image: 'calculadora/water_stone.gif' },
+    fairy: { name: 'Fairy Stone', image: '' }
+});
+const BOOST_SILVER_STAR_RECIPE = Object.freeze({
+    'Shining Ancient Stone': 1,
+    'Silver Flask': 10,
+    'Piece of Silver Star': 3
+});
+const BOOST_SILVER_PIECE_RECIPE = Object.freeze({
+    'Piece of Bronze Star': 1,
+    'Silver Token': 1
+});
+const BOOST_STATIC_MATERIAL_META = Object.freeze({
+    'Ancient Stone': { image: 'calculadora/ancient_stone.gif', craftable: false, category: 'ancient' },
+    'Bronze Star': { image: 'calculadora/bronze_star.gif', craftable: true, category: 'bronze' },
+    'Piece of Bronze Star': { image: 'calculadora/piece_bronze_star.png', craftable: false, category: 'bronze-piece' },
+    'Shining Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient-shiny' },
+    'Silver Star': { image: '', craftable: true, category: 'silver-star' },
+    'Silver Flask': { image: '', craftable: false, category: 'silver-flask' },
+    'Silver Token': { image: 'calculadora/silver_token.gif', craftable: false, category: 'silver-token' },
+    'Piece of Silver Star': { image: '', craftable: false, category: 'silver-piece' }
+});
 
 
 
@@ -2021,34 +2103,35 @@ const strings = {
     pt: {
         pageTitle: 'Tipos Pokémon',
         pokemonsTitle: 'Pokémons',
+        boostTitle: 'Calculadora de Boost',
         siteName: 'Poke Utilities',
-        homeLabel: 'Início',
+        homeLabel: 'InÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­cio',
         homeEyebrow: 'Hub da comunidade',
         homeTitleBefore: 'Bem-vindo ao',
         homeTitleAccent: 'Poke Utilities',
         homeLead: 'Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.',
-        homeSupporting: 'Entre por Tipos e navegue por fósseis, treinamento, pokémons, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.',
-        homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
+        homeSupporting: 'Entre por Tipos e navegue por fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³sseis, treinamento, pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons, captura, chefes, transmissÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes e vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos em um fluxo pensado para uso diÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio.',
+        homeDisclaimer: 'Projeto da comunidade, sem vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­nculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
         instructions: '',
         superEffective: 'Super Efetivo',
-        vulnerable: 'Vulnerável',
+        vulnerable: 'VulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel',
         immune: 'Imune',
-        noRelation: 'nenhuma relação especial.',
-        shareSuccess: 'Link copiado para a área de transferência!',
+        noRelation: 'nenhuma relaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o especial.',
+        shareSuccess: 'Link copiado para a ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rea de transferÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªncia!',
         shareFail: 'Falha ao copiar link.',
         shareLabel: 'Compartilhar',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendEffective: 'Efetivo 1.5x',
         legendStrength: 'Super Efetivo',
-        legendWeakness: 'Vulnerável',
+        legendWeakness: 'VulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel',
         legendImmune: 'Imune',
         legendNeutral: 'Neutro',
         themeToggle: 'Alternar modo claro/escuro',
         calculatorTitle: 'Calculadora de Treinamento',
-        rangeLabel: 'Faixa de nível',
+        rangeLabel: 'Faixa de nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel',
         platesLabel: 'Plates',
         goldCoinsLabel: 'Golden Tickets',
         commonPlatesLabel: 'Plates comuns',
@@ -2056,14 +2139,14 @@ const strings = {
         tabTypes: 'Tipos',
         typeLabel: 'Tipo',
         tabCalculator: 'Calculadora de Treinamento',
-        tabFossils: 'Fósseis',
+        tabFossils: 'FÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³sseis',
         tabSpeedsters: 'Chefes',
-        tabStreamers: 'Transmissões',
-        tabCommunity: 'Vídeos',
-        fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
-        fossilHintCombines: 'Este fóssil combina com: ',
-        fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
-        galleryTitle: 'Pokémons disponíveis',
+        tabStreamers: 'TransmissÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
+        tabCommunity: 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos',
+        fossilCost: 'Reviver um PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon custa <strong>250K</strong>.',
+        fossilHintCombines: 'Este fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil combina com: ',
+        fossilHintNone: 'Nenhuma combinaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel para este fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil.',
+        galleryTitle: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­veis',
         result: 'Resultado:',
         dnaRequired: 'DNA Sample',
         huntSideLabel: 'Lado da hunt',
@@ -2072,77 +2155,76 @@ const strings = {
         drake: 'Drake',
         resistLabel: 'Resiste',
         legendResist: 'Resiste',
-        bird: 'Pássaro',
+        bird: 'PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ssaro',
         dino: 'Dino',
         fish: 'Peixe',
-        amber: 'Amber',
-        amber: 'Âmbar',
-        fossilWord: 'fóssil',
-        fossilIntro: '1. Escolha o primeiro fossil. 2. Escolha o segundo. 3. Confira o Pokemon e o DNA necessario logo abaixo.',
-        calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
-        pokemonTypeLabel: 'Tipo de Pokémon',
+        amber: 'ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡mbar',
+        fossilWord: 'fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil',
+        fossilIntro: '1. Escolha o primeiro fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ssil. 2. Escolha o segundo. 3. Confira o PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon e o DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio logo abaixo.',
+        calculatorInstructions: 'Selecione uma faixa de nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel e utilize os campos abaixo para calcular materiais necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rios.',
+        pokemonTypeLabel: 'Tipo de PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon',
         normal: 'Normal',
         shiny: 'Shiny',
-        sameQuantityNote: 'Quantidade idêntica; apenas o tipo de plate muda.',
-        shiningBlockNote: 'Shining Plates são produzidas em blocos de 30.',
+        sameQuantityNote: 'Quantidade idÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªntica; apenas o tipo de plate muda.',
+        shiningBlockNote: 'Shining Plates sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o produzidas em blocos de 30.',
         elementItems: 'itens do elemento',
-        charItems: 'itens característicos',
+        charItems: 'itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos',
         stoneItems: 'pedras do elemento',
         /* catch calculator */
         catchTitle: 'Calculadora de Captura',
         catchEyebrow: 'Captura otimizada',
-        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.',
-        selectedBallLabel: 'Pokébola selecionada',
-        catchCalcTitle: 'Calcule a média de pokébolas',
-        catchCalcHint: 'Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.',
-        ballChoiceLabel: 'Escolha a pokébola:',
-        pokemonLevelLabel: 'Nível do pokémon:',
+        catchDescription: 'Consulte a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas e acompanhe o progresso do log em uma tela mais direta.',
+        selectedBallLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola selecionada',
+        catchCalcTitle: 'Calcule a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas',
+        catchCalcHint: 'Escolha a pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola, o nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel e o tipo de captura para ver uma estimativa rÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡pida.',
+        ballChoiceLabel: 'Escolha a pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola:',
+        pokemonLevelLabel: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel do pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon:',
         catchVariantLabel: 'Tipo de captura',
-        catchVariantNormalHint: 'Estimativa padrão de captura.',
-        catchVariantShinyHint: 'Mostra a média para capturas shiny.',
-        optionsLabel: 'Opções',
-        catchOptionLabel: 'Opção',
+        catchVariantNormalHint: 'Estimativa padrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o de captura.',
+        catchVariantShinyHint: 'Mostra a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia para capturas shiny.',
+        optionsLabel: 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes',
+        catchOptionLabel: 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o',
         calcCatchBtn: 'Calcular estimativa',
-        catchLogTitle: 'Analise o histórico de pokébolas',
+        catchLogTitle: 'Analise o histÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³rico de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas',
         catchLogHint: 'Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.',
-        logBallsLabel: 'Log de pokébolas usadas:',
+        logBallsLabel: 'Log de pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas usadas:',
         parseLogBtn: 'Processar log',
         expensesMsg: 'Despesas',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}, Safari: {safari}',
-        catchResultTitle: 'Estimativa para sua seleção',
-        catchResultCountLabel: 'Média',
-        catchResultLevelLabel: 'Nível',
+        catchResultTitle: 'Estimativa para sua seleÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o',
+        catchResultCountLabel: 'MÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia',
+        catchResultLevelLabel: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel',
         catchResultVariantLabel: 'Variante',
-        catchResultBallLabel: 'Pokébola',
+        catchResultBallLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola',
         catchLogResultTitle: 'Leitura do log',
-        catchLogBallsLabel: 'Pokébolas reconhecidas',
+        catchLogBallsLabel: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas reconhecidas',
         catchLogEquivalentLabel: 'Equivalente em {ball}',
         catchLogSpentLabel: 'Gasto total',
         catchRemainingTitle: 'Ainda faltam',
-        catchAchievedTitle: 'Status da média',
+        catchAchievedTitle: 'Status da mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia',
         /* additional catch and calculator text */
-        ballElemental: 'Pokébola Elemental',
-        ballStory: 'Pokébola Story',
-        ballUltra: 'Pokébola Ultra',
-        ballSafari: 'Pokébola Safari',
-        lvlPrefix: 'Nível ',
-        preLabel: 'Pré Ace',
+        ballElemental: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Elemental',
+        ballStory: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Story',
+        ballUltra: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Ultra',
+        ballSafari: 'PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola Safari',
+        lvlPrefix: 'NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel ',
+        preLabel: 'PrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© Ace',
         aceLabel: 'Ace',
-        logPlaceholder: "Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui.",
-        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.',
-        infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
+        logPlaceholder: "Utilize !pokeballs 'nome do PokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon' no jogo e cole a mensagem aqui.",
+        catchNote: 'Nota: os valores sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o uma mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia aproximada; geralmente gastam-se algumas pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bolas a mais.',
+        infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos e 1 pedra do elemento.',
         infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
-        adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
+        adjustNote: 'Valor ajustado para mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºltiplo de 30: {rounded}',
         forCommonLabel: 'Para {n} plate(s) comum(ns):',
-        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens característicos, {stones} pedra(s) do elemento',
+        calcInfoItems: '{elementItems} itens do elemento, {charItems} itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos, {stones} pedra(s) do elemento',
         materialsForRangeLabel: 'Materiais para fabricar',
-        roundedProductionLabel: 'Produção ajustada',
+        roundedProductionLabel: 'ProduÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o ajustada',
         shiningStonesLabel: 'Shining Stones',
         /* new messages for log parsing */
-        avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
-        overAvg: 'Você passou da média por {over} {ball}.',
-        encouragement: 'Continue assim, você está no caminho certo!',
-        noBallsParsed: 'Nenhuma pokébola reconhecida no log.'
+        avgReached: 'ParabÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©ns! VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª jÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ atingiu a mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia de {avg} {ball}.',
+        overAvg: 'VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª passou da mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©dia por {over} {ball}.',
+        encouragement: 'Continue assim, vocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ no caminho certo!',
+        noBallsParsed: 'Nenhuma pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©bola reconhecida no log.'
     }
 };
 const lang = 'pt';
@@ -2158,6 +2240,8 @@ function updateTextContent(){
     const titleEl = document.getElementById('page-title');
     if(document.body.classList.contains('home-view')){
         if(titleEl) titleEl.textContent = t('siteName');
+    } else if(contentBoost && !contentBoost.hidden){
+        if(titleEl) titleEl.textContent = t('boostTitle');
     } else if(contentPokemons && !contentPokemons.hidden){
         if(titleEl) titleEl.textContent = t('pokemonsTitle');
     } else if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
@@ -2393,7 +2477,7 @@ function updateTextContent(){
             try{
                 showFossils();
             }catch(e){
-                // ignore — we'll perform a hard reset below to be robust
+                // ignore ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â we'll perform a hard reset below to be robust
             }
             fossilHardReset();
         }, true);
@@ -2472,13 +2556,13 @@ function renderCommunityFeedPanel(){
 
     renderCommunityTopicFilters();
 
-    if(heroTitleEl) heroTitleEl.textContent = 'Vídeos recentes da comunidade';
+    if(heroTitleEl) heroTitleEl.textContent = 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos recentes da comunidade';
     if(heroLeadEl) heroLeadEl.textContent = 'Escolha um tema e carregue o player sem sair da lista.';
-    if(heroSupportingEl) heroSupportingEl.textContent = 'Seleção cronológica com player na própria aba.';
+    if(heroSupportingEl) heroSupportingEl.textContent = 'SeleÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o cronolÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³gica com player na prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³pria aba.';
     if(playerTagEl) playerTagEl.textContent = 'Recentes';
     if(topicDescriptionEl) topicDescriptionEl.textContent = `${topic.description} Filtro atual: ${topic.hashtag}.`;
-    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vídeo na lista ou clique na capa para carregar o player aqui.';
-    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'Vídeos recentes' : `Vídeos de ${topic.label}`;
+    if(topicHelperEl) topicHelperEl.textContent = 'Escolha um vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo na lista ou clique na capa para carregar o player aqui.';
+    if(listTitleEl) listTitleEl.textContent = topic.label === 'Geral' ? 'VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos recentes' : `VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos de ${topic.label}`;
     if(listDescriptionEl) listDescriptionEl.textContent = `Mais recentes em ${topic.hashtag}.`;
 
     if(topicHighlightsEl){
@@ -2499,7 +2583,7 @@ function renderCommunityFeedPanel(){
         const dataUpdatedAtTs = getCommunityDataUpdatedAt();
         const loadedAtText = loadedAtTs ? new Date(loadedAtTs).toLocaleString() : 'desconhecido';
         const dataUpdatedAtText = dataUpdatedAtTs ? new Date(dataUpdatedAtTs).toLocaleString() : 'desconhecido';
-        const metaText = `Fonte: ${src} • Dados: ${dataUpdatedAtText} • Carregado: ${loadedAtText}`;
+        const metaText = `Fonte: ${src} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Dados: ${dataUpdatedAtText} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Carregado: ${loadedAtText}`;
         if(existingMeta){
             existingMeta.textContent = metaText;
             existingMeta.hidden = false;
@@ -2525,10 +2609,10 @@ function renderCommunityFeedPanel(){
         let msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
         if(lastErr.quota){
             msg = 'Cota da API do YouTube excedida';
-            if(lastErr.resumeAt) msg += ` — retomando a partir de ${lastErr.resumeAt}`;
+            if(lastErr.resumeAt) msg += ` ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â retomando a partir de ${lastErr.resumeAt}`;
         }
         if(existingWarning){
-            existingWarning.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
+            existingWarning.textContent = `Falha ao obter vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos ao vivo: ${msg}. Mostrando itens locais.`;
             existingWarning.hidden = false;
         } else {
             const warn = document.createElement('div');
@@ -2540,7 +2624,7 @@ function renderCommunityFeedPanel(){
             warn.style.background = 'rgba(255,235,205,0.9)';
             warn.style.border = '1px solid rgba(0,0,0,0.06)';
             warn.style.borderRadius = '6px';
-            warn.textContent = `Falha ao obter vídeos ao vivo: ${msg}. Mostrando itens locais.`;
+            warn.textContent = `Falha ao obter vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deos ao vivo: ${msg}. Mostrando itens locais.`;
             if(listEl && listEl.parentElement){
                 listEl.parentElement.insertBefore(warn, listEl);
             }
@@ -2551,27 +2635,27 @@ function renderCommunityFeedPanel(){
 
     if(!topicItems.length){
         const fallbackVideoId = COMMUNITY_FEED_ITEMS[0]?.id || 'FBJKGfzZim4';
-        listEl.innerHTML = `<div class="community-empty">Nenhum vídeo configurado para ${topic.hashtag} ainda.</div>`;
-        titleEl.textContent = 'Nenhum vídeo configurado';
+        listEl.innerHTML = `<div class="community-empty">Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado para ${topic.hashtag} ainda.</div>`;
+        titleEl.textContent = 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado';
         if(channelNameEl) channelNameEl.textContent = 'Canal da comunidade';
         if(publishedAtEl) publishedAtEl.textContent = 'Data de postagem indisponivel';
         linkEl.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(topic.hashtag)}`;
         linkEl.textContent = 'Abrir no YouTube';
-        if(frame) frame.setAttribute('title', `Nenhum vídeo configurado para ${topic.label}`);
+        if(frame) frame.setAttribute('title', `Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado para ${topic.label}`);
         if(channelLinkEl){
             channelLinkEl.hidden = true;
             channelLinkEl.removeAttribute('href');
         }
         if(previewEl){
             previewEl.disabled = true;
-            previewEl.setAttribute('aria-label', 'Nenhum vídeo disponível');
+            previewEl.setAttribute('aria-label', 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel');
         }
         if(previewCaptionEl){
-            previewCaptionEl.textContent = `Nenhum vídeo em ${topic.hashtag}.`;
+            previewCaptionEl.textContent = `Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo em ${topic.hashtag}.`;
         }
         setCommunityPlayerLoaded({
             id: fallbackVideoId,
-            title: 'Nenhum vídeo configurado',
+            title: 'Nenhum vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo configurado',
             channelName: 'criadores da comunidade',
             thumbnailUrl: getCommunityVideoThumbnailUrl(fallbackVideoId)
         });
@@ -2599,7 +2683,7 @@ function renderCommunityFeedPanel(){
     }
     if(previewEl){
         previewEl.disabled = false;
-        previewEl.setAttribute('aria-label', `Carregar vídeo em destaque: ${activeVideo.title}`);
+        previewEl.setAttribute('aria-label', `Carregar vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo em destaque: ${activeVideo.title}`);
         previewEl.onclick = () => {
             loadCommunityVideoFrame(activeVideo);
         };
@@ -2664,6 +2748,7 @@ function openHomeDestination(target){
         effectiveness: showEffectiveness,
         fossils: showFossils,
         calculator: showCalculator,
+        boost: showBoostCalculator,
         pokemons: showPokemons,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
@@ -2847,18 +2932,18 @@ function renderTypeInfoEmptyState(message){
     info.innerHTML = `
         <div class="types-empty-state">
             <div class="types-empty-state__copy">
-                <span class="types-empty-state__eyebrow">${message ? 'Carregando' : 'Sem seleção'}</span>
+                <span class="types-empty-state__eyebrow">${message ? 'Carregando' : 'Sem seleÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o'}</span>
                 <h3>${message ? 'Preparando a tabela de tipos' : 'Escolha um ou dois tipos'}</h3>
-                <p>${message || 'O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistência e imunidade.'}</p>
+                <p>${message || 'O painel vai separar ataque e defesa com destaque para efetivo, super efetivo, resistÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âªncia e imunidade.'}</p>
             </div>
             <div class="types-empty-state__grid">
                 <article class="types-empty-card">
                     <strong>Ataque</strong>
-                    <span>Veja onde sua combinação bate com 1.5x ou 2x.</span>
+                    <span>Veja onde sua combinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o bate com 1.5x ou 2x.</span>
                 </article>
                 <article class="types-empty-card">
                     <strong>Defesa</strong>
-                    <span>Confira vulnerabilidades, resistências e imunidades sem poluição visual.</span>
+                    <span>Confira vulnerabilidades, resistÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âªncias e imunidades sem poluiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o visual.</span>
                 </article>
             </div>
         </div>
@@ -3234,7 +3319,7 @@ function renderSelection(){
                 m *= 0.5;        // defender resists attacker
             }
         });
-        // Não permitir multiplicador zero — limite mínimo 0.5x
+        // NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o permitir multiplicador zero ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â limite mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 0.5x
         m = Math.max(m, 0.5);
         multipliers[att] = m;
     });
@@ -3329,7 +3414,7 @@ function renderSelection(){
     let html = `<div class="types-info-shell">`;
     html += `
         <div class="types-info__summary">
-            <span class="types-info__eyebrow">Análise atual</span>
+            <span class="types-info__eyebrow">AnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lise atual</span>
             <div class="info-type-heading">${t('typeLabel')}: ${currentSelection.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' + ')}</div>
             <div class="types-selection-pills">
                 ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
@@ -3504,7 +3589,7 @@ function renderSelection(){
     let html = `<div class="types-info-shell">`;
     html += `
         <div class="types-info__summary">
-            <span class="types-info__eyebrow">Análise atual</span>
+            <span class="types-info__eyebrow">AnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lise atual</span>
             <div class="info-type-heading">${currentSelection.map(getTypeDisplayName).join(' + ')}</div>
             <div class="types-selection-pills">
                 ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
@@ -3514,7 +3599,7 @@ function renderSelection(){
     `;
     html += makeSection(t('superEffective'), 'Ataque 2x', superEffectiveTargets, 'super');
     html += makeSection('Efetivo', 'Ataque 1.5x', effectiveTargets, 'effective');
-    html += makeSection('Muito vulnerável', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
+    html += makeSection('Muito vulnerÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡vel', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
     html += makeSection(t('vulnerable'), 'Defesa 1.5x', weakEntries, 'vulnerable');
     html += makeSection(t('resistLabel'), 'Defesa 0.75x / 0.5x', resistEntries, 'resist');
     html += makeSection(t('immune'), 'Defesa 0x', immuneEntries, 'immune');
@@ -3599,7 +3684,7 @@ function showCalculator(){
         tabCalcBtn.setAttribute('aria-selected','true');
     }
     setVisiblePanel(contentCalc);
-    // also clear catch calculator results/log so they don’t linger
+    // also clear catch calculator results/log so they donÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢t linger
     const catchRes = document.getElementById('catch-result');
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
@@ -3617,6 +3702,34 @@ function showCalculator(){
         gsap.from(contentCalc, {opacity:0, y:-10, duration:0.4});
         gsap.from(contentCalc.querySelectorAll('.calc-card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
     }
+    updateUrl();
+}
+
+function showBoostCalculator(){
+    clearTabHighlights();
+    setActiveTabTheme('boost');
+    setVisiblePanel(contentBoost);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = t('boostTitle');
+    updateBrowserTitle();
+
+    initializeBoostCalculatorPage().then(() => {
+        if(useGsap && contentBoost){
+            gsap.from(contentBoost, { opacity: 0, y: -10, duration: 0.4 });
+            gsap.from(contentBoost.querySelectorAll('.boost-panel, .boost-help'), {
+                opacity: 0,
+                y: 18,
+                duration: 0.42,
+                stagger: 0.06
+            });
+        }
+    }).catch(error => {
+        console.error('Boost calculator failed to initialize', error);
+    });
+
     updateUrl();
 }
 
@@ -3658,7 +3771,7 @@ if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness()
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
-// Páscoa button removed — no-op
+// PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡scoa button removed ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â no-op
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
         openHomeDestination(button.dataset.homeTarget);
@@ -3718,7 +3831,7 @@ function showSpeedsters(requestedBossMode=''){
     }
 
     if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
-        renderBossesDeferredState('Carregando catÃ¡logo de bosses...');
+        renderBossesDeferredState('Carregando catÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡logo de bosses...');
         updateUrl();
         ensureBossesPageReady().then(() => {
             if(!contentSpeedsters?.hidden){
@@ -3743,9 +3856,9 @@ function showSpeedsters(requestedBossMode=''){
             warning.style.padding = '1rem';
             warning.style.color = '#eee';
             warning.style.background = 'rgba(255,0,0,0.08)';
-            warning.textContent = 'Não foi possível carregar os bosses, tente atualizar a página.';
+            warning.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os bosses, tente atualizar a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.';
             speedsterGrid.appendChild(warning);
-            console.warn('Bosses grid está vazio após renderização. Possível problema no bosses.js.');
+            console.warn('Bosses grid estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ vazio apÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³s renderizaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o. PossÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel problema no bosses.js.');
         }
     }
 
@@ -3756,8 +3869,8 @@ function showSpeedsters(requestedBossMode=''){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir'];
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames']);
+const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames'];
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
 const streamerStatusCache = new Map();
@@ -3772,7 +3885,7 @@ const TWITCH_CHAT_OAUTH_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
-const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v1';
+const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-credentials-v1';
 const STREAMER_RAT_PERSIST_HEARTBEAT_MS = 15 * 1000;
 
@@ -3936,11 +4049,11 @@ function renderHomeStreamerInfo(){
 
     homeStreamerCount.textContent = String(homeStreamerInfoState.totalPstoryOnline);
     if(homeStreamerInfoState.totalPstoryOnline === 0){
-        homeStreamerText.textContent = 'Nenhum canal está online em PStory agora.';
+        homeStreamerText.textContent = 'Nenhum canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online em PStory agora.';
     } else if(homeStreamerInfoState.totalPstoryOnline === 1){
-        homeStreamerText.textContent = 'canal está online e em PStory agora.';
+        homeStreamerText.textContent = 'canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online e em PStory agora.';
     } else {
-        homeStreamerText.textContent = 'canais estão online e em PStory agora.';
+        homeStreamerText.textContent = 'canais estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o online e em PStory agora.';
     }
 }
 
@@ -4102,7 +4215,7 @@ function getCachedStreamerStatusSnapshot(channel){
     const normalizedChannel = normalizeStreamerChannelName(channel);
     if(!normalizedChannel) return null;
 
-    const keys = [`${normalizedChannel}:drop`, `${normalizedChannel}:nodrop`];
+    const keys = [normalizedChannel, `${normalizedChannel}:drop`, `${normalizedChannel}:nodrop`];
     for(const key of keys){
         const cached = getCachedStreamerValue(streamerStatusCache, key);
         if(cached.hit && cached.value){
@@ -4548,7 +4661,7 @@ async function validateStreamerRatChatToken(){
         return {
             ok: false,
             reason: 'token-missing',
-            message: 'Token do chat da Twitch não configurado.'
+            message: 'Token do chat da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o configurado.'
         };
     }
 
@@ -4563,7 +4676,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: response.status === 401 ? 'token-invalid' : 'token-unavailable',
-                message: 'Não foi possível validar o token do chat da Twitch.'
+                message: 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel validar o token do chat da Twitch.'
             };
         }
 
@@ -4579,7 +4692,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'token-user-required',
-                message: 'O token atual da Twitch não é um token de usuário para leitura de chat.'
+                message: 'O token atual da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© um token de usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio para leitura de chat.'
             };
         }
 
@@ -4587,7 +4700,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'chat-username-mismatch',
-                message: 'O usuário configurado para o chat não corresponde ao token da Twitch.'
+                message: 'O usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio configurado para o chat nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o corresponde ao token da Twitch.'
             };
         }
 
@@ -4595,7 +4708,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'chat-user-id-mismatch',
-                message: 'O user_id configurado para o chat nao corresponde ao token da Twitch.'
+                message: 'O user_id configurado para o chat nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o corresponde ao token da Twitch.'
             };
         }
 
@@ -4603,7 +4716,7 @@ async function validateStreamerRatChatToken(){
             return {
                 ok: false,
                 reason: 'missing-chat-scope',
-                message: 'O token atual da Twitch não tem permissão para ler o chat.'
+                message: 'O token atual da Twitch nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o tem permissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o para ler o chat.'
             };
         }
 
@@ -4617,7 +4730,7 @@ async function validateStreamerRatChatToken(){
         return {
             ok: false,
             reason: 'validate-failed',
-            message: 'Não foi possível conectar no chat da Twitch.'
+            message: 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel conectar no chat da Twitch.'
         };
     }
 }
@@ -4772,7 +4885,7 @@ function createStreamerRatChatMonitor(){
             }
 
             if(messageData.command === 'NOTICE' && /Login authentication failed/i.test(messageData.trailing || '')){
-                setStatus('unavailable', 'O token atual não conseguiu autenticar no chat da Twitch.');
+                setStatus('unavailable', 'O token atual nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o conseguiu autenticar no chat da Twitch.');
                 manualClose = true;
                 try {
                     socket?.close();
@@ -4808,7 +4921,7 @@ function createStreamerRatChatMonitor(){
 
         const resolvedTokenInfo = await tokenInfoPromise;
         if(!resolvedTokenInfo?.ok){
-            setStatus('unavailable', resolvedTokenInfo?.message || 'Não foi possível validar o chat da Twitch.');
+            setStatus('unavailable', resolvedTokenInfo?.message || 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel validar o chat da Twitch.');
             return;
         }
 
@@ -4887,7 +5000,7 @@ function createStreamerRatChatMonitor(){
 }
 
 function fetchStreamerStatus(name, isNonDrop = false){
-    const cacheKey = `${name}:${isNonDrop ? 'nodrop' : 'drop'}`;
+    const cacheKey = normalizeStreamerChannelName(name);
     const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
 
@@ -4898,7 +5011,7 @@ function fetchStreamerStatus(name, isNonDrop = false){
         const explicitDrop = /\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized);
         if(explicitDrop) return 'drop';
 
-        if(isNonDrop){
+        {
             const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
             const isCommandMention = (index) => {
                 let cursor = index - 1;
@@ -4906,10 +5019,9 @@ function fetchStreamerStatus(name, isNonDrop = false){
                     cursor -= 1;
                 }
                 const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-                return marker === '!' || marker === '❗';
+                return marker === '!' || marker === '\u2757';
             };
 
-            // Aceita uma menção válida no título sem deixar que um "!pstory" posterior anule tudo.
             for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
                 const index = typeof match.index === 'number' ? match.index : -1;
                 if(index < 0) continue;
@@ -4925,15 +5037,42 @@ function fetchStreamerStatus(name, isNonDrop = false){
             }
         }
 
-        if(!isNonDrop) return false; // somente para não-Drops
+        if(isNonDrop){
+            const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
+            const isCommandMention = (index) => {
+                let cursor = index - 1;
+                while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
+                    cursor -= 1;
+                }
+                const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
+                return marker === '!' || marker === 'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
+            };
 
-        // Ignorar marcadores óbvios de false positive
-        if(/(?:!|❗)\s*pstory/i.test(normalized)) return false;
+            // Aceita uma menÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o vÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lida no tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulo sem deixar que um "!pstory" posterior anule tudo.
+            for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
+                const index = typeof match.index === 'number' ? match.index : -1;
+                if(index < 0) continue;
 
-        // pstoryonline.com em qualquer parte do título (sem DROP explícito)
+                const value = match[0];
+                const before = index > 0 ? normalized.charAt(index - 1) : '';
+                const afterIndex = index + value.length;
+                const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
+
+                if(isWordChar(before) || isWordChar(after)) continue;
+                if(isCommandMention(index)) continue;
+                return 'nodrop';
+            }
+        }
+
+        if(!isNonDrop) return false; // somente para nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o-Drops
+
+        // Ignorar marcadores ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³bvios de false positive
+        if(/(?:!|ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â)\s*pstory/i.test(normalized)) return false;
+
+        // pstoryonline.com em qualquer parte do tÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­tulo (sem DROP explÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­cito)
         if(/pstoryonline\.com/i.test(normalized)) return 'nodrop';
 
-        // Palavra Pstory isolada, sem prefixo ! ou ❗
+        // Palavra Pstory isolada, sem prefixo ! ou ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â
         if(/(?:^|[^a-zA-Z0-9_])pstory(?:[^a-zA-Z0-9_]|$)/i.test(normalized)) return 'nodrop';
 
         return false;
@@ -5033,12 +5172,12 @@ function fetchStreamerAvatar(name){
     return shareStreamerRequest(streamerAvatarRequests, name, () =>
         fetch(`https://decapi.me/twitch/avatar/${encodeURIComponent(name)}`)
             .then(r => {
-                if(!r.ok) throw new Error('avatar não encontrado');
+                if(!r.ok) throw new Error('avatar nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
                 return r.text();
             })
             .then(url => {
                 const trimmed = (url || '').trim();
-                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar inválido');
+                if(!trimmed || trimmed.startsWith('https://decapi.me/') || trimmed.match(/(not found|error|invalid)/i)) throw new Error('avatar invÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido');
                 return trimmed;
             })
             .catch(() => null)
@@ -5135,19 +5274,19 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             touchStreamerRatTimerState(monitorInfo.name);
             const msUntilNext = validState.remainingMs;
             if(msUntilNext <= 0){
-                timerEl.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
+                timerEl.textContent = 'O prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo Rattata deve aparecer a qualquer momento.';
                 timerEl.style.color = '#ffd166';
                 return;
             }
 
-            timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
+            timerEl.textContent = `PrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
             timerEl.style.color = '#dff8ff';
             return;
         }
 
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
-            timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.';
+            timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel no chat da Twitch.';
             timerEl.style.color = '#b6c2cf';
             return;
         }
@@ -5163,7 +5302,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             return;
         }
 
-        timerEl.textContent = 'Aguardando o próximo alerta do Rattata...';
+        timerEl.textContent = 'Aguardando o prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ximo alerta do Rattata...';
         timerEl.style.color = '#d8f3ff';
     };
 
@@ -5198,11 +5337,11 @@ function renderStreamers(){
     const statusInfo = document.getElementById('streamer-status-info');
     const ratSummary = document.getElementById('streamer-rat-summary');
     if(!grid){
-        console.warn('renderStreamers: streamer-grid não encontrado');
+        console.warn('renderStreamers: streamer-grid nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
         return;
     }
     if(!statusInfo){
-        console.warn('renderStreamers: streamer-status-info não encontrado');
+        console.warn('renderStreamers: streamer-status-info nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
     }
 
     streamerCardCleanupFns.forEach(cleanup => {
@@ -5275,7 +5414,7 @@ function renderStreamers(){
         ratSummary.appendChild(summaryEl);
         if(!selectedInfo){
             summaryEl.style.display = 'inline-flex';
-            summaryEl.textContent = 'Nenhum canal com DROP:ON confirmado está online para monitorar o Rattata.';
+            summaryEl.textContent = 'Nenhum canal com DROP:ON confirmado estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online para monitorar o Rattata.';
             summaryEl.style.color = '#b6c2cf';
             return;
         }
@@ -5290,7 +5429,7 @@ function renderStreamers(){
             return;
         }
         if(totalOnline === 0){
-            statusInfo.textContent = 'Nenhum canal está online agora. Mas a lista continua visível abaixo.';
+            statusInfo.textContent = 'Nenhum canal estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ online agora. Mas a lista continua visÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel abaixo.';
         } else {
             statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} canais`;
         }
@@ -5316,7 +5455,7 @@ function renderStreamers(){
     const placeStreamerCard = (card, info) => {
         card.dataset.pstory = info.isPstory ? 'true' : 'false';
         card.dataset.online = info.status === 'online' ? 'true' : 'false';
-        // Remove para reposicionar com ordenação correta
+        // Remove para reposicionar com ordenaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o correta
         if (card.parentElement === grid) {
             grid.removeChild(card);
         }
@@ -5530,7 +5669,7 @@ function renderStreamers(){
 
         const discordBtn = document.createElement('button');
         const discordLink = STREAMER_DISCORD_LINKS[name];
-        discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponível';
+        discordBtn.textContent = discordLink ? 'Discord' : 'Discord indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel';
         discordBtn.disabled = !discordLink;
         discordBtn.hidden = !discordLink;
 
@@ -5576,7 +5715,7 @@ function renderStreamers(){
                 avatarUrl = '',
                 eyebrow = 'Preparando',
                 title = 'Buscando o status do canal...',
-                meta = 'A prévia do canal aparece aqui assim que a verificação terminar.',
+                meta = 'A prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©via do canal aparece aqui assim que a verificaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o terminar.',
                 action = 'Abrir na Twitch'
             } = options;
 
@@ -5650,7 +5789,7 @@ function renderStreamers(){
                     ? 'PStory ao vivo sem drops.'
                     : info.isPstory
                         ? 'PStory ao vivo no canal.'
-                        : 'Transmissão ao vivo na Twitch.';
+                        : 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ao vivo na Twitch.';
 
             renderPreviewCard({
                 state: info.status === 'online'
@@ -5661,16 +5800,16 @@ function renderStreamers(){
                 avatarUrl,
                 eyebrow: info.status === 'online' ? 'Ao vivo agora' : info.status === 'offline' ? 'Canal offline' : 'Status parcial',
                 title: info.status === 'online'
-                    ? (info.title || 'Transmissão ao vivo da comunidade.')
+                    ? (info.title || 'TransmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o ao vivo da comunidade.')
                     : info.status === 'offline'
-                        ? 'Abra o canal para acompanhar a próxima live.'
-                        : 'Não foi possível montar uma prévia confiável do canal.',
+                        ? 'Abra o canal para acompanhar a prÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³xima live.'
+                        : 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel montar uma prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©via confiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel do canal.',
                 meta: info.status === 'online'
                     ? liveMeta
                     : info.status === 'offline'
-                        ? 'O card continua clicável para abrir o canal ou a última transmissão.'
-                        : 'Você ainda pode abrir o canal pela Twitch enquanto o status é atualizado.',
-                action: info.status === 'online' ? 'Clique no card para abrir a transmissão' : 'Clique no card para abrir o canal'
+                        ? 'O card continua clicÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡vel para abrir o canal ou a ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºltima transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o.'
+                        : 'VocÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âª ainda pode abrir o canal pela Twitch enquanto o status ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© atualizado.',
+                action: info.status === 'online' ? 'Clique no card para abrir a transmissÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o' : 'Clique no card para abrir o canal'
             });
         };
 
@@ -5723,7 +5862,7 @@ function renderStreamers(){
                         pstoryInfo.textContent = 'Transmitindo PStory!';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else {
-                        pstoryInfo.textContent = 'Não está transmitindo PStory.';
+                        pstoryInfo.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ transmitindo PStory.';
                         pstoryInfo.style.color = '#fa9005';
                     }
                 } else if(info.status === 'offline'){
@@ -5734,12 +5873,12 @@ function renderStreamers(){
                 } else if(info.status === 'unknown'){
                     status.textContent = 'Status desconhecido';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'Não foi possível verificar o título.';
+                    pstoryInfo.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel verificar o tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­tulo.';
                     pstoryInfo.style.color = '#aaa';
                 } else {
                     status.textContent = 'Erro ao obter';
                     status.classList.add('offline');
-                    pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
+                    pstoryInfo.textContent = 'Erro ao identificar conteÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºdo de PStory.';
                     pstoryInfo.style.color = '#faa';
                 }
                 setPreviewFromInfo(info);
@@ -5792,7 +5931,7 @@ function renderStreamers(){
 
     if(grid.children.length === 0) {
         grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum canal configurado no momento.</div>';
-        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponível.';
+        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel.';
     }
 }
 
@@ -5810,10 +5949,10 @@ function showStreamers(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabStreamers');
     updateBrowserTitle();
-    // Verifica se o grid de streamers existe e mantém visível.
+    // Verifica se o grid de streamers existe e mantÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©m visÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel.
     const grid = document.getElementById('streamer-grid');
     if(!grid){
-        console.warn('showStreamers: streamer-grid não encontrado');
+        console.warn('showStreamers: streamer-grid nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o encontrado');
     } else {
         grid.style.display = 'grid';
     }
@@ -5892,6 +6031,7 @@ function initTabFromUrl(){
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(resolvedTab==='calculator') return showCalculator();
+    if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
     // If the URL targeted a specific pokemon number, open the pokemons tab and
     // open the requested modal once the catalog is loaded.
@@ -5920,6 +6060,7 @@ function initTabFromUrl(){
     if(params.get('types')) return showEffectiveness();
     const saved = localStorage.getItem('selectedTab');
     if(saved==='calculator') return showCalculator();
+    if(saved==='boost') return showBoostCalculator();
     if(saved==='fossils') return showFossils();
     if(saved==='pokemons') return showPokemons();
     if(saved==='catch') return showCatch();
@@ -5953,7 +6094,7 @@ const fossilCombos = {
     'Amber,Amber': { pokemon: 'aerodactyl.png', dna: 'dna.gif' }
 };
 
-// mapping from generated pokémon to which side of the hunt they appear on
+// mapping from generated pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon to which side of the hunt they appear on
 const huntSide = {
     dracozolt: 'left',
     dracovish: 'left',
@@ -5988,16 +6129,16 @@ function showDropHints(type, elem){
         if(hints[0] === hints[1]){
             const downArrow = document.createElement('span');
             downArrow.className = 'arrow';
-            downArrow.textContent = '↓';
+            downArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ';
             arrowRow.appendChild(downArrow);
         } else {
             const leftArrow = document.createElement('span');
             leftArrow.className = 'arrow';
-            leftArrow.textContent = '↙';
+            leftArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢';
             leftArrow.style.transform = 'rotate(-15deg)';
             const rightArrow = document.createElement('span');
             rightArrow.className = 'arrow';
-            rightArrow.textContent = '↘';
+            rightArrow.textContent = 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Ãƒâ€¹Ã…â€œ';
             rightArrow.style.transform = 'rotate(15deg)';
             arrowRow.appendChild(leftArrow);
             arrowRow.appendChild(rightArrow);
@@ -6096,15 +6237,15 @@ function fossilShowResult(pair){
     let dnaHtml = '';
     if(combo.dna){
         const dna = String(combo.dna || '');
-        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessário: <img src="fosseis/${dna}" alt="DNA necessário" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
+        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio: <img src="fosseis/${dna}" alt="DNA necessÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
     }
 
     resultDiv.innerHTML = `
         <div class="fossil-result" style="text-align:center; color:#fff;">
             <h3>${normalizedName}</h3>
             <img src="fosseis/${combo.pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
-            <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
-            <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
+            <p style="margin-top:0.5rem;">CombinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o: ${a} + ${b}</p>
+            <p>${t('fossilResultText') || 'Use esta combinaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o para ver o PokÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©mon resultante.'}</p>
             ${dnaHtml}
         </div>
     `;
@@ -6122,7 +6263,7 @@ function renderFossilEmptyState(){
     `;
 }
 
-// Robust reset for the fossils tab — idempotent and safe to call repeatedly
+// Robust reset for the fossils tab ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â idempotent and safe to call repeatedly
 function fossilHardReset(){
     try{
         // clear internal state
@@ -6148,7 +6289,7 @@ function fossilHardReset(){
             try{ buildPokemonGallery(); }catch(e){}
         }
     }catch(e){
-        // swallow — reset should be resilient
+        // swallow ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â reset should be resilient
     }
 }
 
@@ -6180,7 +6321,7 @@ function buildPokemonGallery(){
     if(!gallery) return;
     gallery.innerHTML = '';
     const seen = new Set();
-    // use fixed order for gallery so new pokémon can be inserted precisely
+    // use fixed order for gallery so new pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mon can be inserted precisely
     const desiredOrder = ['dracozolt.png','dracovish.png','arctovish.png','arctozolt.png','aerodactyl.png'];
     const entries = [];
     Object.keys(fossilCombos).forEach(k=>{
@@ -6282,7 +6423,7 @@ function initializeFossilsPage(){
         }
     });
 
-    // build the footer gallery showing resulting pokémons
+    // build the footer gallery showing resulting pokÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©mons
     buildPokemonGallery();
 
     Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
@@ -6449,9 +6590,9 @@ function updateCommon(){
     const stones = n * perPlateStone;
     // build using translations (visual only)
     const header = t('forCommonLabel').replace('{n}', `<span class="num" data-value="${n}">${n.toLocaleString()}</span>`);
-    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}×${n}), ` +
-                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens característicos (${perPlateChar}×${n}), ` +
-                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}×${n})`;
+    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n}), ` +
+                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens caracterÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­sticos (${perPlateChar}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n}), ` +
+                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â${n})`;
     commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
     animateCalcResult(commonResults);
 }
@@ -6504,6 +6645,1288 @@ function initializeCalculatorPage(){
     calculatorPageInitialized = true;
 }
 
+function formatBoostQuantity(value){
+    return (Number(value) || 0).toLocaleString('pt-BR');
+}
+
+function normalizeBoostLevel(value){
+    const parsed = parseInt(value, 10);
+    if(!Number.isFinite(parsed)) return 0;
+    return Math.max(0, Math.min(5, parsed));
+}
+
+function getBoostAvailablePokemonEntries(){
+    const combinedEntries = [
+        ...(Array.isArray(pokemonCatalogEntriesByVariant.default) ? pokemonCatalogEntriesByVariant.default : []),
+        ...(Array.isArray(pokemonCatalogEntriesByVariant.mega) ? pokemonCatalogEntriesByVariant.mega : [])
+    ].filter(entry => entry && entry.name && entry.type1);
+
+    const seen = new Set();
+    return combinedEntries
+        .filter(entry => {
+            const key = `${entry.variant || 'default'}:${entry.id || entry.name}`;
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+}
+
+function refreshBoostPokemonSearchStore(){
+    boostPokemonEntries = getBoostAvailablePokemonEntries();
+    boostPokemonSearchIndex = new Map();
+
+    boostPokemonEntries.forEach(entry => {
+        const searchKey = entry.searchName || normalizePokemonSearchText(entry.name);
+        if(searchKey && !boostPokemonSearchIndex.has(searchKey)){
+            boostPokemonSearchIndex.set(searchKey, entry);
+        }
+    });
+
+    return boostPokemonEntries;
+}
+
+function clearBoostPokemonSearchHideTimer(){
+    if(boostPokemonSearchHideTimer){
+        clearTimeout(boostPokemonSearchHideTimer);
+        boostPokemonSearchHideTimer = 0;
+    }
+}
+
+function findBoostMatchingPokemonEntries(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    if(!normalizedValue) return [];
+
+    return boostPokemonEntries.filter(entry => {
+        const searchKey = getBoostPokemonEntrySearchKey(entry);
+        return searchKey === normalizedValue || searchKey.includes(normalizedValue);
+    });
+}
+
+function getBoostPokemonSearchResultEntries(value = '', limit = 8){
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    const entries = normalizedValue
+        ? findBoostMatchingPokemonEntries(normalizedValue)
+        : [...boostPokemonEntries];
+
+    return entries
+        .sort((left, right) => {
+            const leftKey = left.searchName || normalizePokemonSearchText(left.name);
+            const rightKey = right.searchName || normalizePokemonSearchText(right.name);
+            const leftStartsWith = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
+            const rightStartsWith = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
+            if(leftStartsWith !== rightStartsWith){
+                return leftStartsWith ? -1 : 1;
+            }
+            return left.name.localeCompare(right.name, 'pt-BR');
+        })
+        .slice(0, limit);
+}
+
+function getBoostPokemonEntrySearchKey(entry){
+    return entry?.searchName || normalizePokemonSearchText(entry?.name || '');
+}
+
+function resolveBoostPokemonEntry(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    if(!normalizedValue) return null;
+    const exactEntry = boostPokemonSearchIndex.get(normalizedValue) || null;
+    if(exactEntry) return exactEntry;
+
+    const matchingEntries = findBoostMatchingPokemonEntries(normalizedValue);
+    return matchingEntries.length === 1 ? matchingEntries[0] : null;
+}
+
+function syncBoostSelectedPokemonEntry(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    if(!normalizedValue){
+        boostSelectedPokemonEntry = null;
+        return null;
+    }
+
+    if(boostSelectedPokemonEntry && getBoostPokemonEntrySearchKey(boostSelectedPokemonEntry) === normalizedValue){
+        return boostSelectedPokemonEntry;
+    }
+
+    boostSelectedPokemonEntry = resolveBoostPokemonEntry(normalizedValue);
+    return boostSelectedPokemonEntry;
+}
+
+function getBoostSelectedPokemonEntry(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    if(!normalizedValue) return null;
+
+    if(boostSelectedPokemonEntry && getBoostPokemonEntrySearchKey(boostSelectedPokemonEntry) === normalizedValue){
+        return boostSelectedPokemonEntry;
+    }
+
+    return resolveBoostPokemonEntry(normalizedValue);
+}
+
+function getBoostDefaultFormState(){
+    return {
+        ...BOOST_DEFAULT_STATE
+    };
+}
+
+function hasBoostSelectedPokemon(state){
+    return Boolean(state?.pokemonEntry && state?.type1);
+}
+
+function getBoostSelectionPromptText(state){
+    if(!boostPokemonEntries.length) return 'Catalogo indisponivel.';
+    if(state?.pokemonEntry) return '';
+    if(!state?.pokemonName) return 'Selecione um Pokemon para liberar o calculo.';
+    if((state.pokemonMatches || []).length > 1) return 'Escolha um Pokemon da lista.';
+    return 'Pokemon nao encontrado.';
+}
+
+function renderBoostSelectionPrompt(state){
+    if(!boostSelectionPrompt) return;
+    const message = getBoostSelectionPromptText(state);
+    boostSelectionPrompt.hidden = !message;
+    boostSelectionPrompt.textContent = message;
+}
+
+function syncBoostCalculatorVisibility(state){
+    const hasSelection = hasBoostSelectedPokemon(state);
+
+    if(boostLayout){
+        boostLayout.dataset.hasSelection = hasSelection ? 'true' : 'false';
+    }
+    if(boostConfigControls){
+        boostConfigControls.hidden = !hasSelection;
+    }
+    if(boostResultsShell){
+        boostResultsShell.hidden = !hasSelection;
+    }
+    if(boostHeroSummary){
+        boostHeroSummary.hidden = !hasSelection;
+    }
+    if(boostHelpPanel){
+        boostHelpPanel.hidden = !hasSelection;
+        if(!hasSelection){
+            boostHelpPanel.open = false;
+        }
+    }
+}
+
+function setBoostFormMessage(message = '', tone = 'info'){
+    boostLastFormMessage = message;
+    if(!boostFormMessage) return;
+
+    if(!message){
+        boostFormMessage.hidden = true;
+        boostFormMessage.textContent = '';
+        boostFormMessage.className = 'boost-message';
+        return;
+    }
+
+    boostFormMessage.hidden = false;
+    boostFormMessage.textContent = message;
+    boostFormMessage.className = `boost-message boost-message--${tone}`;
+}
+
+function hideBoostPokemonSearchResults(){
+    clearBoostPokemonSearchHideTimer();
+    const searchField = boostPokemonSearchInput?.closest('.boost-search-panel__field');
+    if(searchField){
+        searchField.classList.remove('boost-search-panel__field--drop-up');
+    }
+    if(boostPokemonResults){
+        boostPokemonResults.hidden = true;
+        boostPokemonResults.replaceChildren();
+    }
+    if(boostPokemonNoResults){
+        boostPokemonNoResults.hidden = true;
+    }
+}
+
+function syncBoostPokemonSearchResultsDirection(){
+    const searchField = boostPokemonSearchInput?.closest('.boost-search-panel__field');
+    if(!searchField) return;
+
+    searchField.classList.remove('boost-search-panel__field--drop-up');
+    const activePanel = !boostPokemonResults?.hidden
+        ? boostPokemonResults
+        : (!boostPokemonNoResults?.hidden ? boostPokemonNoResults : null);
+    if(!activePanel) return;
+
+    const fieldRect = searchField.getBoundingClientRect();
+    const panelRect = activePanel.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+    const availableBelow = viewportHeight - fieldRect.bottom;
+    const availableAbove = fieldRect.top;
+    const desiredHeight = Math.min(
+        Math.max(panelRect.height, activePanel.scrollHeight || 0),
+        viewportHeight * 0.7
+    );
+
+    if(availableBelow < desiredHeight && availableAbove > availableBelow){
+        searchField.classList.add('boost-search-panel__field--drop-up');
+    }
+}
+
+function createBoostSearchResultContent(entry){
+    const sprite = document.createElement('img');
+    sprite.className = 'speedster-search-item-icon boost-search-item-icon boost-search-item-icon--pokemon';
+    sprite.src = getPokemonImageSource(entry);
+    sprite.alt = entry.name;
+    sprite.title = entry.name;
+    sprite.loading = 'lazy';
+    sprite.decoding = 'async';
+    setImageFallback(sprite, POKEMON_IMAGE_PLACEHOLDER);
+
+    const typeIcons = [entry.type1, entry.type2]
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((typeKey) => {
+            const img = document.createElement('img');
+            img.className = 'speedster-search-item-icon boost-search-item-icon';
+            img.src = `icons-type/${typeKey}.png`;
+            img.alt = typeKey;
+            img.title = getTypeDisplayName(typeKey);
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            return img;
+        });
+
+    const moveIcons = (Array.isArray(entry.moveset) ? entry.moveset : [])
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((typeKey) => {
+            const img = document.createElement('img');
+            img.className = 'speedster-search-item-icon boost-search-item-icon';
+            img.src = `icons-type/${typeKey}.png`;
+            img.alt = typeKey;
+            img.title = `${getTypeDisplayName(typeKey)} move`;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            return img;
+        });
+
+    const name = document.createElement('span');
+    name.className = 'boost-search-item-name';
+    name.textContent = entry.name;
+
+    const content = document.createElement('div');
+    content.className = 'boost-search-item-content';
+    content.appendChild(sprite);
+    typeIcons.forEach((icon) => content.appendChild(icon));
+    content.appendChild(name);
+    moveIcons.forEach((icon) => content.appendChild(icon));
+    return content;
+}
+
+function applyBoostPokemonSearchSelection(entry){
+    if(!entry) return;
+    boostSelectedPokemonEntry = entry;
+    if(boostPokemonSearchInput){
+        boostPokemonSearchInput.value = entry.name;
+    }
+    hideBoostPokemonSearchResults();
+    renderBoostCalculator();
+}
+
+function renderBoostPokemonSearchResults(value = '', options = {}){
+    const { keepClosed = false } = options;
+    if(!boostPokemonResults || !boostPokemonNoResults) return;
+    if(keepClosed){
+        hideBoostPokemonSearchResults();
+        return;
+    }
+
+    const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
+    const entries = getBoostPokemonSearchResultEntries(value);
+
+    if(!entries.length){
+        boostPokemonResults.hidden = true;
+        boostPokemonResults.replaceChildren();
+        boostPokemonNoResults.hidden = !normalizedValue;
+        window.requestAnimationFrame(syncBoostPokemonSearchResultsDirection);
+        return;
+    }
+
+    boostPokemonNoResults.hidden = true;
+    boostPokemonResults.hidden = false;
+    boostPokemonResults.replaceChildren();
+
+    const currentEntry = getBoostSelectedPokemonEntry(value);
+    const fragment = document.createDocumentFragment();
+    entries.forEach(entry => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'speedster-search-item boost-search-item';
+        item.dataset.pokemonName = entry.name;
+        item.setAttribute('aria-label', `Selecionar ${entry.name} para calcular o boost.`);
+        if(currentEntry && currentEntry.id === entry.id){
+            item.dataset.selected = 'true';
+        }
+        item.appendChild(createBoostSearchResultContent(entry));
+        item.addEventListener('click', () => {
+            applyBoostPokemonSearchSelection(entry);
+        });
+        fragment.appendChild(item);
+    });
+
+    boostPokemonResults.appendChild(fragment);
+    window.requestAnimationFrame(syncBoostPokemonSearchResultsDirection);
+}
+
+function hydrateBoostPokemonOptions(){
+    if(!boostPokemonSearchInput) return;
+
+    const entries = refreshBoostPokemonSearchStore();
+    boostPokemonSearchInput.placeholder = entries.length
+        ? 'Digite o nome do Pokemon'
+        : 'Catalogo indisponivel no momento';
+
+    hideBoostPokemonSearchResults();
+    boostSelectedPokemonEntry = resolveBoostPokemonEntry(boostPokemonSearchInput.value || '');
+    boostPokemonOptionsHydrated = true;
+}
+
+function applyBoostFormState(nextState = getBoostDefaultFormState()){
+    const state = {
+        ...getBoostDefaultFormState(),
+        ...nextState
+    };
+
+    if(boostPokemonSearchInput){
+        boostPokemonSearchInput.value = String(state.pokemonName || '').trim();
+    }
+    boostSelectedPokemonEntry = resolveBoostPokemonEntry(state.pokemonName || '');
+    boostShinyInputs.forEach(input => {
+        input.checked = input.value === state.shiny;
+    });
+    if(boostBronzeLevelSelect) boostBronzeLevelSelect.value = String(normalizeBoostLevel(state.bronzeLevel));
+    if(boostSilverLevelSelect) boostSilverLevelSelect.value = String(normalizeBoostLevel(state.silverLevel));
+}
+
+function syncBoostSilverAvailability(options = {}){
+    if(boostSilverLevelSelect){
+        boostSilverLevelSelect.disabled = false;
+    }
+
+    if(boostSilverNote){
+        boostSilverNote.textContent = '';
+        boostSilverNote.hidden = true;
+    }
+
+    return true;
+}
+
+function getBoostFormState(){
+    const pokemonName = String(boostPokemonSearchInput?.value || '').trim();
+    const pokemonMatches = findBoostMatchingPokemonEntries(pokemonName);
+    const pokemonEntry = getBoostSelectedPokemonEntry(pokemonName);
+    const type1 = pokemonEntry?.type1 || '';
+    const type2 = pokemonEntry?.type2 || '';
+
+    return {
+        pokemonName,
+        pokemonMatches,
+        pokemonEntry,
+        typeMode: type2 ? 'double' : 'single',
+        type1,
+        type2,
+        shiny: Array.from(boostShinyInputs).find(input => input.checked)?.value === 'yes' ? 'yes' : 'no',
+        bronzeLevel: normalizeBoostLevel(boostBronzeLevelSelect?.value),
+        silverLevel: normalizeBoostLevel(boostSilverLevelSelect?.value)
+    };
+}
+
+function validateBoostFormState(state){
+    if(!boostPokemonEntries.length){
+        return {
+            valid: false,
+            message: 'Catalogo indisponivel.'
+        };
+    }
+    if(!state.pokemonName){
+        return {
+            valid: false,
+            message: 'Selecione um Pokemon.'
+        };
+    }
+    if(!state.pokemonEntry){
+        if((state.pokemonMatches || []).length > 1){
+            return {
+                valid: false,
+                message: 'Escolha um Pokemon da lista.'
+            };
+        }
+        return {
+            valid: false,
+            message: 'Pokemon nao encontrado.'
+        };
+    }
+    if(!state.type1){
+        return {
+            valid: false,
+            message: 'Tipo do Pokemon indisponivel.'
+        };
+    }
+    return { valid: true, message: '' };
+}
+
+function renderBoostPokemonMeta(state){
+    if(!boostPokemonMeta) return;
+    boostPokemonMeta.replaceChildren();
+
+    const entry = state?.pokemonEntry || null;
+    if(!hasBoostSelectedPokemon(state) || !entry){
+        return;
+    }
+
+    const typeKeys = [entry.type1, entry.type2].filter(Boolean);
+    const moveKeys = (Array.isArray(entry.moveset) ? entry.moveset : [])
+        .map(typeKey => normalizePokemonTypeKey(typeKey))
+        .filter(Boolean);
+    const preview = document.createElement('article');
+    preview.className = 'boost-selected-preview';
+
+    const media = document.createElement('div');
+    media.className = 'boost-selected-preview__media';
+
+    const mountPokemonFallback = () => {
+        if(media.querySelector('.boost-material-card__fallback')) return;
+        media.replaceChildren(createBoostMediaFallback(entry.name));
+    };
+
+    const sprite = document.createElement('img');
+    sprite.src = getPokemonImageSource(entry);
+    sprite.alt = entry.name;
+    sprite.loading = 'eager';
+    sprite.decoding = 'async';
+    sprite.addEventListener('error', mountPokemonFallback, { once: true });
+    media.appendChild(sprite);
+
+    const header = document.createElement('div');
+    header.className = 'boost-selected-preview__header';
+
+    const identity = document.createElement('div');
+    identity.className = 'boost-selected-preview__identity';
+
+    const kicker = document.createElement('span');
+    kicker.className = 'boost-selected-preview__kicker';
+    kicker.textContent = entry.variant === POKEMON_CATALOG_VARIANT_MEGA
+        ? 'Selecionado - Mega'
+        : 'Selecionado';
+
+    const title = document.createElement('strong');
+    title.className = 'boost-selected-preview__title';
+    title.textContent = entry.name;
+
+    identity.append(kicker, title);
+    header.append(media, identity);
+
+    const groups = document.createElement('div');
+    groups.className = 'boost-selected-preview__groups';
+
+    const typeGroup = document.createElement('div');
+    typeGroup.className = 'boost-selected-preview__group';
+
+    const typeLabel = document.createElement('span');
+    typeLabel.className = 'boost-selected-preview__group-label';
+    typeLabel.textContent = 'Tipo';
+
+    const typeChips = document.createElement('div');
+    typeChips.className = 'boost-selected-preview__chips';
+    typeKeys.forEach(typeKey => {
+        typeChips.appendChild(createBoostTypeChip(typeKey));
+    });
+    typeGroup.append(typeLabel, typeChips);
+
+    const stoneGroup = document.createElement('div');
+    stoneGroup.className = 'boost-selected-preview__group';
+
+    const stoneLabel = document.createElement('span');
+    stoneLabel.className = 'boost-selected-preview__group-label';
+    stoneLabel.textContent = typeKeys.length > 1 ? 'Stones' : 'Stone';
+
+    const stoneChips = document.createElement('div');
+    stoneChips.className = 'boost-selected-preview__chips';
+    typeKeys.forEach(typeKey => {
+        stoneChips.appendChild(createBoostStoneChip(typeKey));
+    });
+    stoneGroup.append(stoneLabel, stoneChips);
+
+    const movesetGroup = document.createElement('div');
+    movesetGroup.className = 'boost-selected-preview__group';
+
+    const movesetLabel = document.createElement('span');
+    movesetLabel.className = 'boost-selected-preview__group-label';
+    movesetLabel.textContent = 'Moveset';
+
+    const movesetChips = document.createElement('div');
+    movesetChips.className = 'boost-selected-preview__chips';
+    if(moveKeys.length){
+        moveKeys.forEach(typeKey => {
+            movesetChips.appendChild(createBoostMoveChip(typeKey));
+        });
+    } else {
+        movesetChips.appendChild(createBoostTextChip('Nao informado'));
+    }
+    movesetGroup.append(movesetLabel, movesetChips);
+
+    groups.append(typeGroup, stoneGroup, movesetGroup);
+    preview.append(header, groups);
+    boostPokemonMeta.appendChild(preview);
+}
+
+function getBoostStoneMetaByType(typeKey = ''){
+    const normalizedType = normalizePokemonTypeKey(typeKey);
+    const mappedStone = BOOST_TYPE_STONE_META[normalizedType] || null;
+    return {
+        name: mappedStone?.name || `${getTypeDisplayName(normalizedType)} Stone`,
+        image: mappedStone?.image || '',
+        typeKey: normalizedType,
+        category: 'stone',
+        craftable: false
+    };
+}
+
+function createBoostInlineMedia(label, imageSrc = ''){
+    const media = document.createElement('span');
+    media.className = 'boost-pokemon-chip__media';
+
+    const mountFallback = () => {
+        if(media.querySelector('.boost-material-card__fallback')) return;
+        media.replaceChildren(createBoostMediaFallback(label));
+    };
+
+    if(imageSrc){
+        const image = document.createElement('img');
+        image.src = imageSrc;
+        image.alt = label;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.addEventListener('error', mountFallback, { once: true });
+        media.appendChild(image);
+    } else {
+        mountFallback();
+    }
+
+    return media;
+}
+
+function createBoostTypeChip(typeKey){
+    const normalizedType = normalizePokemonTypeKey(typeKey);
+    const chip = document.createElement('span');
+    chip.className = 'boost-pokemon-chip';
+    chip.innerHTML = `<img src="icons-type/${normalizedType}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(normalizedType)}</span>`;
+    return chip;
+}
+
+function createBoostMoveChip(typeKey){
+    const normalizedType = normalizePokemonTypeKey(typeKey);
+    const chip = document.createElement('span');
+    chip.className = 'boost-pokemon-chip boost-pokemon-chip--move';
+    chip.innerHTML = `<img src="icons-type/${normalizedType}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(normalizedType)}</span>`;
+    return chip;
+}
+
+function createBoostTextChip(label){
+    const chip = document.createElement('span');
+    chip.className = 'boost-pokemon-chip boost-pokemon-chip--text';
+    chip.textContent = label;
+    return chip;
+}
+
+function createBoostStoneChip(typeKey){
+    const stoneMeta = getBoostStoneMetaByType(typeKey);
+    const chip = document.createElement('span');
+    chip.className = 'boost-pokemon-chip boost-pokemon-chip--stone';
+
+    const label = document.createElement('span');
+    label.textContent = stoneMeta.name;
+
+    chip.append(createBoostInlineMedia(stoneMeta.name, stoneMeta.image), label);
+    return chip;
+}
+
+function getBoostMaterialMeta(name, overrides = {}){
+    const staticMeta = BOOST_STATIC_MATERIAL_META[name]
+        ? { ...BOOST_STATIC_MATERIAL_META[name] }
+        : {};
+    const typeKey = overrides.typeKey || staticMeta.typeKey || '';
+    const stoneMeta = typeKey ? getBoostStoneMetaByType(typeKey) : null;
+
+    if(!staticMeta.image && stoneMeta){
+        staticMeta.image = stoneMeta.image;
+        staticMeta.craftable = false;
+        staticMeta.category = 'stone';
+        staticMeta.typeKey = stoneMeta.typeKey;
+    }
+
+    return {
+        image: '',
+        craftable: false,
+        category: 'generic',
+        typeKey: '',
+        ...staticMeta,
+        ...overrides,
+        typeKey
+    };
+}
+
+function createBoostMaterialItem(name, quantity, overrides = {}){
+    if(!quantity) return null;
+    return {
+        name,
+        quantity,
+        ...getBoostMaterialMeta(name, overrides)
+    };
+}
+
+function createBoostStoneMaterialItem(typeKey, quantity, overrides = {}){
+    const stoneMeta = getBoostStoneMetaByType(typeKey);
+    return createBoostMaterialItem(stoneMeta.name, quantity, {
+        ...stoneMeta,
+        ...overrides,
+        typeKey: stoneMeta.typeKey
+    });
+}
+
+function aggregateBoostMaterialItems(groups = [], options = {}){
+    const { asTotal = false } = options;
+    const aggregateMap = new Map();
+
+    groups.flat().forEach(item => {
+        if(!item || !item.name || !item.quantity) return;
+        const existing = aggregateMap.get(item.name);
+        if(existing){
+            existing.quantity += item.quantity;
+            if(!existing.typeKey && item.typeKey){
+                existing.typeKey = item.typeKey;
+            }
+            return;
+        }
+        aggregateMap.set(item.name, {
+            ...item
+        });
+    });
+
+    const items = Array.from(aggregateMap.values());
+    if(!asTotal) return items;
+
+    return items.map(item => ({
+        ...item,
+        detail: '',
+        hideDetail: true,
+        contextLabel: getBoostTotalMaterialBadgeText(item)
+    }));
+}
+
+function getBoostLevelCumulativeStepSum(level){
+    const normalizedLevel = normalizeBoostLevel(level);
+    return (normalizedLevel * (normalizedLevel + 1)) / 2;
+}
+
+function getBoostTotalMaterialBadgeText(item){
+    const materialCategories = new Set([
+        'ancient-shiny',
+        'bronze-piece',
+        'silver-token',
+        'silver-flask'
+    ]);
+    return materialCategories.has(item?.category) ? 'Material' : 'Total';
+}
+
+function sortBoostMaterialItems(items = []){
+    const categoryOrder = {
+        stone: 0,
+        ancient: 1,
+        'ancient-shiny': 2,
+        bronze: 3,
+        'bronze-piece': 4,
+        'silver-star': 5,
+        'silver-token': 6,
+        'silver-piece': 7,
+        'silver-flask': 8,
+        generic: 20
+    };
+
+    return [...items].sort((left, right) => {
+        const leftOrder = categoryOrder[left.category] ?? 99;
+        const rightOrder = categoryOrder[right.category] ?? 99;
+        if(leftOrder !== rightOrder) return leftOrder - rightOrder;
+        return left.name.localeCompare(right.name, 'pt-BR');
+    });
+}
+
+function sortBoostTotalItems(items = []){
+    const badgeOrder = {
+        Total: 0,
+        Material: 1
+    };
+
+    return [...sortBoostMaterialItems(items)].sort((left, right) => {
+        const leftBadgeOrder = badgeOrder[getBoostTotalMaterialBadgeText(left)] ?? 99;
+        const rightBadgeOrder = badgeOrder[getBoostTotalMaterialBadgeText(right)] ?? 99;
+        if(leftBadgeOrder !== rightBadgeOrder){
+            return leftBadgeOrder - rightBadgeOrder;
+        }
+        return sortBoostMaterialItems([left, right])[0] === left ? -1 : 1;
+    });
+}
+
+function calculateBoostTotalDirectItems(state){
+    const totalDirectItems = [];
+    const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
+    const silverStepSum = getBoostLevelCumulativeStepSum(state.silverLevel);
+
+    if(state.bronzeLevel > 0){
+        if(state.typeMode === 'double'){
+            totalDirectItems.push(
+                createBoostStoneMaterialItem(state.type1, bronzeStepSum * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL),
+                createBoostStoneMaterialItem(state.type2, bronzeStepSum * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL)
+            );
+        } else {
+            totalDirectItems.push(
+                createBoostStoneMaterialItem(state.type1, bronzeStepSum * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL)
+            );
+        }
+
+        if(state.shiny === 'yes'){
+            totalDirectItems.push(
+                createBoostMaterialItem('Bronze Star', bronzeStepSum * BOOST_BRONZE_STAR_PER_LEVEL, {
+                    category: 'bronze'
+                })
+            );
+        }
+    }
+
+    if(state.silverLevel > 0){
+        totalDirectItems.push(
+            createBoostMaterialItem('Ancient Stone', silverStepSum * BOOST_SILVER_ANCIENT_STONE_PER_LEVEL, {
+                category: 'ancient'
+            }),
+            createBoostMaterialItem('Silver Star', silverStepSum, {
+                craftable: true,
+                category: 'silver-star'
+            })
+        );
+    }
+
+    return sortBoostMaterialItems(totalDirectItems.filter(Boolean));
+}
+
+function calculateBoostTotalCraftItems(state){
+    const totalCraftItems = [];
+    const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
+    const silverStepSum = getBoostLevelCumulativeStepSum(state.silverLevel);
+    const totalBronzeStarCount = state.shiny === 'yes'
+        ? bronzeStepSum * BOOST_BRONZE_STAR_PER_LEVEL
+        : 0;
+    const totalSilverStarCount = silverStepSum;
+    const totalSilverPieceCount = totalSilverStarCount * (BOOST_SILVER_STAR_RECIPE['Piece of Silver Star'] || 0);
+    const totalPieceBronzeFromBronzeStars = totalBronzeStarCount * BOOST_BRONZE_PIECES_PER_STAR;
+
+    if(totalSilverStarCount > 0){
+        Object.entries(BOOST_SILVER_STAR_RECIPE).forEach(([name, amount]) => {
+            let category = 'generic';
+            if(name === 'Silver Flask') category = 'silver-flask';
+            if(name === 'Piece of Silver Star') category = 'silver-piece';
+            if(name === 'Shining Ancient Stone') category = 'ancient-shiny';
+            totalCraftItems.push(
+                createBoostMaterialItem(name, amount * totalSilverStarCount, {
+                    category
+                })
+            );
+        });
+    }
+
+    if(totalSilverPieceCount > 0){
+        Object.entries(BOOST_SILVER_PIECE_RECIPE).forEach(([name, amount]) => {
+            let category = 'generic';
+            if(name === 'Piece of Bronze Star') category = 'bronze-piece';
+            if(name === 'Silver Token') category = 'silver-token';
+            totalCraftItems.push(
+                createBoostMaterialItem(name, amount * totalSilverPieceCount, {
+                    category
+                })
+            );
+        });
+    }
+
+    if(totalPieceBronzeFromBronzeStars > 0){
+        totalCraftItems.push(
+            createBoostMaterialItem('Piece of Bronze Star', totalPieceBronzeFromBronzeStars, {
+                category: 'bronze-piece'
+            })
+        );
+    }
+
+    return sortBoostMaterialItems(totalCraftItems.filter(Boolean));
+}
+
+function calculateBoostMaterials(state){
+    const bronzeItems = [];
+    const silverItems = [];
+    const starCraftItems = [];
+    let bronzeStarCraftCount = 0;
+    let silverPieceCount = 0;
+
+    if(state.bronzeLevel > 0){
+        if(state.typeMode === 'double'){
+            bronzeItems.push(
+                createBoostStoneMaterialItem(state.type1, state.bronzeLevel * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
+                    detail: `Tipo ${getTypeDisplayName(state.type1)}.`,
+                    contextLabel: 'Direto'
+                }),
+                createBoostStoneMaterialItem(state.type2, state.bronzeLevel * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
+                    detail: `Tipo ${getTypeDisplayName(state.type2)}.`,
+                    contextLabel: 'Direto'
+                })
+            );
+        } else {
+            bronzeItems.push(
+                createBoostStoneMaterialItem(state.type1, state.bronzeLevel * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL, {
+                    detail: `Tipo ${getTypeDisplayName(state.type1)}.`,
+                    contextLabel: 'Direto'
+                })
+            );
+        }
+
+        if(state.shiny === 'yes'){
+            const bronzeStarCount = state.bronzeLevel * BOOST_BRONZE_STAR_PER_LEVEL;
+            bronzeItems.push(
+                createBoostMaterialItem('Bronze Star', bronzeStarCount, {
+                    detail: 'Custo direto do shiny.',
+                    contextLabel: 'Direto'
+                })
+            );
+            bronzeStarCraftCount += bronzeStarCount;
+        }
+    }
+
+    if(state.silverLevel > 0){
+        silverItems.push(
+            createBoostMaterialItem('Ancient Stone', state.silverLevel * BOOST_SILVER_ANCIENT_STONE_PER_LEVEL, {
+                detail: 'Custo direto do Silver.',
+                contextLabel: 'Direto'
+            }),
+            createBoostMaterialItem('Silver Star', state.silverLevel, {
+                craftable: true,
+                category: 'silver-star',
+                detail: 'Custo direto do Silver.',
+                contextLabel: 'Direto'
+            })
+        );
+
+        Object.entries(BOOST_SILVER_STAR_RECIPE).forEach(([name, amount]) => {
+            let category = 'generic';
+            if(name === 'Silver Flask') category = 'silver-flask';
+            if(name === 'Piece of Silver Star') category = 'silver-piece';
+            if(name === 'Shining Ancient Stone') category = 'ancient-shiny';
+            starCraftItems.push(
+                createBoostMaterialItem(name, amount * state.silverLevel, {
+                    category,
+                    detail: name === 'Piece of Silver Star'
+                        ? 'Item usado no craft da Silver Star.'
+                        : 'Receita da Silver Star.',
+                    contextLabel: 'Craft'
+                })
+            );
+            if(name === 'Piece of Silver Star'){
+                silverPieceCount += amount * state.silverLevel;
+            }
+        });
+    }
+
+    if(silverPieceCount > 0){
+        Object.entries(BOOST_SILVER_PIECE_RECIPE).forEach(([name, amount]) => {
+            let category = 'generic';
+            if(name === 'Piece of Bronze Star') category = 'bronze-piece';
+            if(name === 'Silver Token') category = 'silver-token';
+            starCraftItems.push(
+                createBoostMaterialItem(name, amount * silverPieceCount, {
+                    category,
+                    detail: 'Material da Piece of Silver Star.',
+                    contextLabel: 'Craft'
+                })
+            );
+        });
+    }
+
+    if(bronzeStarCraftCount > 0){
+        starCraftItems.push(
+            createBoostMaterialItem('Piece of Bronze Star', bronzeStarCraftCount * BOOST_BRONZE_PIECES_PER_STAR, {
+                category: 'bronze-piece',
+                detail: 'Craft da Bronze Star.',
+                contextLabel: 'Craft'
+            })
+        );
+    }
+
+    const cleanBronzeItems = sortBoostMaterialItems(bronzeItems.filter(Boolean));
+    const cleanSilverItems = sortBoostMaterialItems(silverItems.filter(Boolean));
+    const cleanStarCraftItems = sortBoostMaterialItems(starCraftItems.filter(Boolean));
+    const totalDirectItems = calculateBoostTotalDirectItems(state);
+    const totalCraftItems = calculateBoostTotalCraftItems(state);
+    const totalItems = sortBoostTotalItems(aggregateBoostMaterialItems([
+        totalDirectItems,
+        totalCraftItems
+    ], { asTotal: true }));
+
+    return {
+        bronzeItems: cleanBronzeItems,
+        silverItems: cleanSilverItems,
+        starCraftItems: cleanStarCraftItems,
+        totalItems,
+        bronzeStarCount: cleanBronzeItems
+            .filter(item => item.name === 'Bronze Star')
+            .reduce((sum, item) => sum + item.quantity, 0),
+        silverStarCount: cleanSilverItems
+            .filter(item => item.name === 'Silver Star')
+            .reduce((sum, item) => sum + item.quantity, 0),
+        distinctMaterialCount: totalItems.length
+    };
+}
+
+function getBoostMaterialBadgeText(item){
+    if(item.contextLabel) return item.contextLabel;
+    return item.craftable ? 'Fabricavel' : 'Item direto';
+}
+
+function getBoostMaterialDetailText(item){
+    if(item.detail) return item.detail;
+    if(item.typeKey) return `Tipo ${getTypeDisplayName(item.typeKey)}.`;
+    if(item.name === 'Silver Star') return 'Pode ser fabricada.';
+    if(item.name === 'Bronze Star') return 'Pode ser fabricada.';
+    return item.craftable ? 'Item craftavel.' : 'Material do calculo.';
+}
+
+function createBoostMediaFallback(label){
+    const fallback = document.createElement('span');
+    fallback.className = 'boost-material-card__fallback';
+    fallback.textContent = String(label || 'Sem imagem');
+    fallback.title = String(label || 'Sem imagem');
+    fallback.setAttribute('aria-hidden', 'true');
+    return fallback;
+}
+
+function createBoostMaterialCard(item){
+    const card = document.createElement('article');
+    card.className = 'boost-material-card';
+    if(item.category){
+        card.dataset.category = item.category;
+    }
+
+    const media = document.createElement('div');
+    media.className = 'boost-material-card__media';
+
+    const mountFallback = () => {
+        if(media.querySelector('.boost-material-card__fallback')) return;
+        media.replaceChildren(createBoostMediaFallback(item.name));
+    };
+
+    if(item.image){
+        const image = document.createElement('img');
+        image.src = item.image;
+        image.alt = item.name;
+        image.loading = 'eager';
+        image.decoding = 'async';
+        image.addEventListener('error', mountFallback, { once: true });
+        media.appendChild(image);
+    } else {
+        mountFallback();
+    }
+
+    const content = document.createElement('div');
+    content.className = 'boost-material-card__content';
+
+    const title = document.createElement('strong');
+    title.className = 'boost-material-card__title';
+    title.textContent = item.name;
+
+    const quantity = document.createElement('span');
+    quantity.className = 'boost-material-card__quantity num';
+    quantity.dataset.value = String(item.quantity);
+    quantity.textContent = formatBoostQuantity(item.quantity);
+
+    const footer = document.createElement('div');
+    footer.className = 'boost-material-card__footer';
+
+    const stateBadge = document.createElement('span');
+    stateBadge.className = 'boost-material-card__badge';
+    stateBadge.textContent = getBoostMaterialBadgeText(item);
+
+    footer.appendChild(stateBadge);
+    content.append(title, quantity);
+    if(!item.hideDetail){
+        const detail = document.createElement('p');
+        detail.className = 'boost-material-card__detail';
+        detail.textContent = getBoostMaterialDetailText(item);
+        content.append(detail);
+    }
+    content.append(footer);
+    card.append(media, content);
+    return card;
+}
+
+function createBoostEmptyState(title, description){
+    const emptyState = document.createElement('div');
+    emptyState.className = 'boost-empty-state';
+
+    const strong = document.createElement('strong');
+    strong.textContent = title;
+
+    const span = document.createElement('span');
+    span.textContent = description;
+
+    emptyState.append(strong, span);
+    return emptyState;
+}
+
+function renderBoostMaterialGrid(container, items, emptyTitle, emptyDescription){
+    if(!container) return;
+    container.replaceChildren();
+
+    if(!items.length){
+        container.appendChild(createBoostEmptyState(emptyTitle, emptyDescription));
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    items.forEach(item => {
+        fragment.appendChild(createBoostMaterialCard(item));
+    });
+    container.appendChild(fragment);
+    animateCalcResult(container);
+}
+
+function renderBoostOverview(state, breakdown){
+    const naturalTypeCount = [state.type1, state.type2].filter(Boolean).length;
+    const bronzeDirectCount = breakdown.bronzeItems.length;
+    const craftCount = breakdown.starCraftItems.length;
+
+    if(boostSummaryTarget){
+        boostSummaryTarget.textContent = `Bronze ${state.bronzeLevel} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ Silver ${state.silverLevel}`;
+    }
+    if(boostSummaryFlags){
+        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ${naturalTypeCount} tipo(s)`;
+    }
+    if(!boostOverviewCards) return;
+
+    const cards = [
+        {
+            label: 'Status',
+            value: state.shiny === 'yes' ? 'Shiny' : 'Normal',
+            note: naturalTypeCount > 1 ? 'Pokemon de 2 tipos' : 'Pokemon de 1 tipo'
+        },
+        {
+            label: 'Bronze',
+            value: `Nivel ${state.bronzeLevel}`,
+            note: bronzeDirectCount ? `${formatBoostQuantity(bronzeDirectCount)} material(is) direto(s)` : 'Sem custo direto'
+        },
+        {
+            label: 'Silver',
+            value: `Nivel ${state.silverLevel}`,
+            note: 'Silver disponivel'
+        },
+        {
+            label: 'Total',
+            value: `${formatBoostQuantity(breakdown.distinctMaterialCount)} item(ns)`,
+            note: craftCount
+                ? `${formatBoostQuantity(craftCount)} item(ns) de craft ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ inclui boosts anteriores`
+                : 'Inclui boosts anteriores'
+        }
+    ];
+
+    const fragment = document.createDocumentFragment();
+    cards.forEach(cardData => {
+        const card = document.createElement('article');
+        card.className = 'boost-overview-card';
+
+        const label = document.createElement('span');
+        label.className = 'boost-overview-card__label';
+        label.textContent = cardData.label;
+
+        const value = document.createElement('strong');
+        value.className = 'boost-overview-card__value';
+        value.textContent = cardData.value;
+
+        const note = document.createElement('p');
+        note.className = 'boost-overview-card__note';
+        note.textContent = cardData.note;
+
+        card.append(label, value, note);
+        fragment.appendChild(card);
+    });
+
+    boostOverviewCards.replaceChildren(fragment);
+    animateCalcResult(boostOverviewCards);
+}
+function renderBoostBlockedState(state, message){
+    const emptyBreakdown = {
+        bronzeItems: [],
+        silverItems: [],
+        starCraftItems: [],
+        totalItems: [],
+        bronzeStarCount: 0,
+        silverStarCount: 0,
+        distinctMaterialCount: 0
+    };
+    renderBoostPokemonMeta(state);
+    renderBoostOverview(state, emptyBreakdown);
+    renderBoostMaterialGrid(boostBronzeResults, [], 'Calculo indisponivel', message);
+    renderBoostMaterialGrid(boostSilverResults, [], 'Calculo indisponivel', message);
+    renderBoostMaterialGrid(boostStarResults, [], 'Calculo indisponivel', message);
+    renderBoostMaterialGrid(boostTotalResults, [], 'Calculo indisponivel', message);
+}
+function renderBoostCalculator(options = {}){
+    if(!contentBoost) return;
+    const { announceSilverReset = false } = options;
+
+    syncBoostSilverAvailability({ announceReset: announceSilverReset });
+
+    const state = getBoostFormState();
+    renderBoostSelectionPrompt(state);
+    renderBoostPokemonMeta(state);
+    syncBoostCalculatorVisibility(state);
+    if(!hasBoostSelectedPokemon(state)){
+        setBoostFormMessage('', 'info');
+        return;
+    }
+    const validation = validateBoostFormState(state);
+    if(!validation.valid){
+        setBoostFormMessage(validation.message, 'warning');
+        renderBoostBlockedState(state, validation.message);
+        return;
+    }
+
+    if(announceSilverReset && boostLastFormMessage && boostLastFormMessage.includes('Silver foi resetado')){
+        setBoostFormMessage(boostLastFormMessage, 'warning');
+    } else {
+        setBoostFormMessage('', 'info');
+    }
+
+    const breakdown = calculateBoostMaterials(state);
+    renderBoostOverview(state, breakdown);
+    renderBoostMaterialGrid(
+        boostBronzeResults,
+        breakdown.bronzeItems,
+        state.bronzeLevel > 0 ? 'Sem materiais de Bronze.' : 'Bronze 0.',
+        state.bronzeLevel > 0
+            ? 'Nada para mostrar.'
+            : 'Aumente o Bronze para gerar materiais.'
+    );
+    renderBoostMaterialGrid(
+        boostSilverResults,
+        breakdown.silverItems,
+        'Silver 0.',
+        'Aumente o Silver para incluir esta etapa.'
+    );
+    renderBoostMaterialGrid(
+        boostStarResults,
+        breakdown.starCraftItems,
+        'Sem craft adicional.',
+        'Os crafts aparecem aqui quando forem necessarios.'
+    );
+    renderBoostMaterialGrid(
+        boostTotalResults,
+        breakdown.totalItems,
+        'Sem materiais.',
+        'Ajuste Bronze ou Silver.'
+    );
+}
+function initializeBoostCalculatorPage(){
+    if(!contentBoost) return Promise.resolve(false);
+    if(boostPageInitialized){
+        return Promise.all([
+            ensureTypesDataLoaded(),
+            ensurePokemonCatalogLoaded()
+        ]).then(() => {
+            hydrateBoostPokemonOptions();
+            renderBoostCalculator();
+            return true;
+        }).catch(error => {
+            console.error('Boost calculator load failed', error);
+            setBoostFormMessage('Nao foi possivel carregar o catalogo da calculadora de boost.', 'warning');
+            return false;
+        });
+    }
+
+    const handleBoostChange = (event) => {
+        const shouldAnnounceReset = event?.target === boostBronzeLevelSelect;
+        renderBoostCalculator({ announceSilverReset: shouldAnnounceReset });
+    };
+
+    boostShinyInputs.forEach(input => input.addEventListener('change', handleBoostChange));
+    [boostBronzeLevelSelect, boostSilverLevelSelect]
+        .filter(Boolean)
+        .forEach(element => {
+            element.addEventListener('change', handleBoostChange);
+        });
+
+    if(boostPokemonSearchInput){
+        boostPokemonSearchInput.addEventListener('input', (event) => {
+            clearBoostPokemonSearchHideTimer();
+            syncBoostSelectedPokemonEntry(event.currentTarget?.value || '');
+            renderBoostPokemonSearchResults(event.currentTarget?.value || '');
+            handleBoostChange(event);
+        });
+        boostPokemonSearchInput.addEventListener('focus', (event) => {
+            clearBoostPokemonSearchHideTimer();
+            renderBoostPokemonSearchResults(event.currentTarget?.value || '');
+        });
+        boostPokemonSearchInput.addEventListener('blur', () => {
+            clearBoostPokemonSearchHideTimer();
+            boostPokemonSearchHideTimer = window.setTimeout(() => {
+                hideBoostPokemonSearchResults();
+            }, 140);
+        });
+        boostPokemonSearchInput.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape'){
+                hideBoostPokemonSearchResults();
+                return;
+            }
+            if(event.key !== 'Enter') return;
+
+            const firstEntry = getBoostPokemonSearchResultEntries(boostPokemonSearchInput.value, 1)[0] || null;
+            if(!firstEntry) return;
+
+            event.preventDefault();
+            applyBoostPokemonSearchSelection(firstEntry);
+        });
+    }
+
+    window.addEventListener('resize', syncBoostPokemonSearchResultsDirection);
+
+    document.addEventListener('click', (event) => {
+        const searchPanel = boostPokemonSearchInput?.closest('.boost-search-panel');
+        if(!searchPanel || searchPanel.contains(event.target)) return;
+        hideBoostPokemonSearchResults();
+    });
+
+    if(boostResetBtn){
+        boostResetBtn.addEventListener('click', () => {
+            applyBoostFormState(getBoostDefaultFormState());
+            hideBoostPokemonSearchResults();
+            setBoostFormMessage('', 'info');
+            renderBoostCalculator();
+        });
+    }
+
+    boostPageInitialized = true;
+
+    return Promise.all([
+        ensureTypesDataLoaded(),
+        ensurePokemonCatalogLoaded()
+    ]).then(() => {
+        hydrateBoostPokemonOptions();
+        applyBoostFormState(getBoostDefaultFormState());
+        renderBoostCalculator();
+        return true;
+    }).catch(error => {
+        console.error('Boost calculator load failed', error);
+        setBoostFormMessage('Nao foi possivel carregar o catalogo da calculadora de boost.', 'warning');
+        return false;
+    });
+}
 function updateUrl(){
     const isHomeView = document.body.classList.contains('home-view');
     const params=new URLSearchParams(location.search);
@@ -6518,6 +7941,7 @@ function updateUrl(){
     } else if(currentSelection.length) params.set('types',currentSelection.join(','));
     else params.delete('types');
     const activeTab = isHomeView ? '' :
+                      (contentBoost && !contentBoost.hidden) ? 'boost' :
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
@@ -6622,7 +8046,7 @@ function getCatchOptionItems(lvl, variant, chosen){
 
     // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
     // If found, present only that option. Otherwise, if multiple alternatives exist,
-    // fall back to the second option (Opção 2) which is considered the correct one.
+    // fall back to the second option (OpÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o 2) which is considered the correct one.
     let selected = reqList;
     const explicit = reqList.find((opt) => typeof opt === 'object' && opt !== null && typeof opt[requirementBall] === 'number' && opt[requirementBall] > 0);
     if (explicit) {
@@ -6794,14 +8218,14 @@ if('serviceWorker' in navigator){
     if(enableSW){
         navigator.serviceWorker.register('sw.js').then(reg=>{
             if(reg.waiting){
-                alert('Nova versão disponível. Atualize a página.');
+                alert('Nova versÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.');
             }
             reg.addEventListener('updatefound',()=>{
                 const newSW = reg.installing;
                 if(!newSW) return;
                 newSW.addEventListener('statechange',()=>{
                     if(newSW.state==='installed' && navigator.serviceWorker.controller){
-                        alert('Nova versão disponível. Atualize a página.');
+                        alert('Nova versÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o disponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.');
                     }
                 });
             });
@@ -7489,7 +8913,7 @@ function buildMatrix(){
     };
     let html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
     rows.forEach((row,i)=>{
-        html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'–':v}</td>`).join('') + '</tr>';
+        html += '<tr><th>' + types[i] + '</th>' + row.map(v=>`<td>${v===1?'ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“':v}</td>`).join('') + '</tr>';
     });
     html = '<table class="types-matrix"><tr><th></th>' + types.map(t=>`<th>${getTypeDisplayName(t)}</th>`).join('') + '</tr>';
     rows.forEach((row,i)=>{
@@ -7512,11 +8936,11 @@ function createTypesLoadErrorMessage(){
 
     const title = document.createElement('strong');
     title.className = 'load-error-title';
-    title.textContent = 'Não foi possível carregar os tipos.';
+    title.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os tipos.';
 
     const description = document.createElement('p');
     description.className = 'load-error-description';
-    description.textContent = 'Atualize a página ou tente novamente em instantes.';
+    description.textContent = 'Atualize a pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina ou tente novamente em instantes.';
 
     const retryButton = document.createElement('button');
     retryButton.type = 'button';
@@ -7544,18 +8968,18 @@ function showTypesLoadError(error){
     const infoPanel = document.getElementById('info');
     if(infoPanel){
         infoPanel.classList.add('load-error-state');
-        infoPanel.textContent = 'Os dados de efetividade estão indisponíveis no momento.';
+        infoPanel.textContent = 'Os dados de efetividade estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o indisponÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­veis no momento.';
     }
 
     const instructions = document.getElementById('instructions');
     if(instructions){
-        instructions.textContent = 'Não foi possível carregar os dados de efetividade. Atualize a página ou tente novamente.';
+        instructions.textContent = 'NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os dados de efetividade. Atualize a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina ou tente novamente.';
     }
 
     if(matrixBtn){
         matrixBtn.disabled = true;
         matrixBtn.setAttribute('aria-disabled', 'true');
-        matrixBtn.title = 'Tabela indisponível';
+        matrixBtn.title = 'Tabela indisponÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel';
     }
 
     console.error('types.json load failed', error);
@@ -7596,7 +9020,7 @@ function populateTypesDatalist(){
 
 function applyTypesData(data){
     if(!data || typeof data !== 'object' || typeof data.effectiveness !== 'object' || typeof data.immunities !== 'object'){
-        throw new Error('Formato inválido em types.json');
+        throw new Error('Formato invÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡lido em types.json');
     }
 
     clearTypeDataStore();
@@ -7676,17 +9100,17 @@ function ensureBossesPageReady(){
     }
     if(bossesPageLoadPromise) return bossesPageLoadPromise;
 
-    renderBossesDeferredState('Carregando catálogo de bosses...');
+    renderBossesDeferredState('Carregando catÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡logo de bosses...');
     bossesPageLoadPromise = loadDeferredScript(
         DEFERRED_BOSSES_SCRIPT_SRC,
         () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
     ).then(() => {
         if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
-            throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
+            throw new Error('bosses.js carregou sem inicializar a pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina de bosses corretamente.');
         }
         return true;
     }).catch(error => {
-        renderBossesDeferredState('Não foi possível carregar os bosses. Tente atualizar a página.', { error: true });
+        renderBossesDeferredState('NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o foi possÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­vel carregar os bosses. Tente atualizar a pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina.', { error: true });
         throw error;
     }).finally(() => {
         bossesPageLoadPromise = null;
@@ -8552,7 +9976,7 @@ function renderPokemonCatalog(options = {}){
         footer.className = 'pokemon-entry-card__footer';
         footer.appendChild(createPokemonTeamBadge(entry.team));
 
-        // 'Detalhes' label removed per UI request — card click opens details modal
+        // 'Detalhes' label removed per UI request ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â card click opens details modal
 
         card.append(header, media, sections, footer);
         card.addEventListener('click', () => {
@@ -8641,7 +10065,7 @@ function renderPokemonDetailsModal(entry){
     }
     if(pokemonDetailsTitle) pokemonDetailsTitle.textContent = entry.name;
     if(pokemonDetailsSubtitle){
-        // Leave subtitle blank — level is displayed in the right-side field
+        // Leave subtitle blank ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â level is displayed in the right-side field
         pokemonDetailsSubtitle.textContent = '';
     }
     if(pokemonDetailsAveragesKicker){
@@ -8681,7 +10105,7 @@ function renderPokemonDetailsModal(entry){
         if(isMegaEntry){
             const unavailable = document.createElement('span');
             unavailable.className = 'pokemon-weakness-empty';
-            unavailable.textContent = 'Mega nao pode ser capturado e nao possui media de balls.';
+            unavailable.textContent = 'Mega não pode ser capturado e não possui média de balls.';
             averageFragment.appendChild(unavailable);
         } else {
             const normalCards = [
@@ -8725,7 +10149,7 @@ function renderPokemonDetailsModal(entry){
             }
 
             averageFragment.append(
-                createPokemonAverageGroup('Pokémon Normal', 'Preco do pokemon dividido pelo preco da Ultra Ball.', normalCards),
+                createPokemonAverageGroup('Pokémon Normal', 'Preço do Pokémon dividido pelo preço da Ultra Ball.', normalCards),
                 createPokemonAverageGroup('Pokémon Shiny', 'Use Ultra Ball, Story Ball e as Elemental Balls do(s) tipo(s).', shinyCards)
             );
         }
@@ -8872,7 +10296,7 @@ window.addEventListener('popstate', () => {
             }
         }
     } else {
-        // Path no longer points to a pokemon — close modal if open
+        // Path no longer points to a pokemon ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â close modal if open
         if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'){
             closePokemonDetailsModal({ viaPopstate: true });
         }
@@ -9025,7 +10449,7 @@ function syncHomeLandingFocusSummary(cards = []){
             exp.id = expId;
             exp.setAttribute('role','region');
             exp.setAttribute('aria-hidden','true');
-            exp.setAttribute('aria-label', (group && group.title) ? `${group.title} — opções` : 'Opções');
+            exp.setAttribute('aria-label', (group && group.title) ? `${group.title} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â opÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes` : 'OpÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes');
 
             const list = document.createElement('div');
             list.className = 'home-tool-card__expander-list';
@@ -9134,7 +10558,7 @@ function syncHomeLandingFocusSummary(cards = []){
         syncHomeLandingFocusSummary();
     }
 })();
-// Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
+// Inicializador do vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo de treinamento ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â abre modal de vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­deo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
     // Helper to open modal safely
     const openModal = (videoId) => {
@@ -9172,4 +10596,4 @@ function initTrainingVideo(){
     });
 }
 
-// Páscoa feature removed
+// PÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡scoa feature removed

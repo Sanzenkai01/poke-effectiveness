@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260503d">
+  <link rel="stylesheet" href="styles.css?v=20260503e">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -86,7 +86,7 @@
         <section class="home-landing__quick" aria-labelledby="home-quick-title">
           <div class="home-landing__quick-head">
             <div class="home-landing__quick-copy">
-              <span class="home-landing__quick-eyebrow">Acesso rapido</span>
+              <span class="home-landing__quick-eyebrow">Acesso rápido</span>
             </div>
             <a
               class="home-landing__quick-discord"
@@ -107,7 +107,7 @@
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
                 <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
               </span>
-              <span>Pokebolas</span>
+              <span>Pokébolas</span>
             </button>
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="respawns">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
@@ -236,7 +236,7 @@
               </span>
               <span class="sidebar-group__copy">
                 <strong>Sistemas</strong>
-                <span>Captura, fosseis e craft</span>
+                <span>Captura, fósseis e craft</span>
               </span>
               <span class="sidebar-group__chevron" aria-hidden="true"></span>
             </button>
@@ -247,7 +247,7 @@
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="fossils">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
-                <span>Fosseis</span>
+                <span>Fósseis</span>
               </button>
             </div>
           </section>
@@ -280,6 +280,10 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Treinamento</span>
               </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="boost">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Calculadora de Boost</span>
+              </button>
               <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Pokémons</span>
@@ -302,7 +306,7 @@
               </span>
               <span class="sidebar-group__copy">
                 <strong>Comunidade</strong>
-                <span>Videos e transmissoes</span>
+                <span>Vídeos e transmissões</span>
               </span>
               <span class="sidebar-group__chevron" aria-hidden="true"></span>
             </button>
@@ -329,7 +333,7 @@
         </nav>
 
         <div class="sidebar-footer">
-          <span class="sidebar-footer__eyebrow">Acesso rapido</span>
+          <span class="sidebar-footer__eyebrow">Acesso rápido</span>
           <div class="sidebar-quick-links" role="group" aria-label="Atalhos do sistema">
             <button class="sidebar-quick-link" type="button" data-nav-action="commands">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
@@ -339,7 +343,7 @@
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
                 <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
               </span>
-              <span>Pokebolas</span>
+              <span>Pokébolas</span>
             </button>
             <button class="sidebar-quick-link" type="button" data-nav-action="respawns">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
@@ -358,7 +362,7 @@
         class="app-shell__backdrop"
         type="button"
         hidden
-        aria-label="Fechar navegacao"
+        aria-label="Fechar navegação"
       ></button>
 
       <main class="app-main">
@@ -478,7 +482,7 @@
         <button class="modal-close" aria-label="Fechar">&#10006;</button>
         <h2 id="respawns-modal-title">Respawns</h2>
         <div class="image-modal__toolbar image-modal__toolbar--stacked">
-          <p class="image-modal__hint">Escolha a regiao desejada. Em Johto e na Wild Area, use os botoes extras para trocar entre os mapas.</p>
+          <p class="image-modal__hint">Escolha a região desejada. Em Johto e na Wild Area, use os botões extras para trocar entre os mapas.</p>
           <div class="respawns-modal__nav" role="group" aria-label="Mapas de respawns">
             <button type="button" class="respawns-modal__tab is-active" data-respawn-map="kanto" aria-pressed="true">Kanto</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="johto" aria-pressed="false">Johto</button>
@@ -530,7 +534,7 @@
         <button class="modal-close" aria-label="Fechar">&#10006;</button>
         <h2 id="fishing-modal-title">Pescaria</h2>
         <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom no mapa de pescaria.</p>
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom no mapa de pescaria.</p>
           <div class="fishing-modal__actions">
             <button id="fishing-bait-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local para comprar iscas" title="Local para comprar iscas">
               <span class="fossil-location-btn__thumb">
@@ -558,7 +562,7 @@
         <button class="modal-close" aria-label="Fechar">&#10006;</button>
         <h2 id="bait-location-modal-title">Local para comprar iscas</h2>
         <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
+          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -664,7 +668,7 @@
       <div class="card calc-card">
         <h2 class="visually-hidden">Consulta de fósseis</h2>
         <p id="fossil-instructions"></p>
-        <div class="fossil-flow" aria-label="Como usar a combinacao de fosseis">
+        <div class="fossil-flow" aria-label="Como usar a combinação de fósseis">
           <span class="fossil-flow__step"><strong>1.</strong> Escolha o primeiro f&oacute;ssil</span>
           <span class="fossil-flow__step"><strong>2.</strong> Escolha o segundo</span>
           <span class="fossil-flow__step"><strong>3.</strong> Veja o resultado</span>
@@ -770,6 +774,158 @@
       </div>
     </div>
 
+    <div id="content-boost" role="tabpanel" aria-label="Calculadora de Boost" hidden>
+      <div class="card calc-card boost-shell">
+        <div class="boost-hero">
+          <div class="boost-hero__copy">
+            <p class="boost-hero__eyebrow">Utilidades</p>
+            <h2 id="boost-heading">Calculadora de Boost</h2>
+            <p class="boost-hero__description">Selecione o Pokémon e veja os materiais.</p>
+          </div>
+          <aside id="boost-hero-summary" class="boost-hero__summary" aria-live="polite" hidden>
+            <span class="boost-hero__summary-kicker">Resumo do alvo</span>
+            <strong id="boost-summary-target">Bronze 0 • Silver 0</strong>
+            <span id="boost-summary-flags">Comum • 0 tipos</span>
+          </aside>
+        </div>
+
+        <div id="boost-layout" class="boost-layout">
+          <section class="boost-panel boost-panel--form" aria-labelledby="boost-config-title">
+            <div class="boost-panel__header">
+              <span class="boost-panel__eyebrow">Etapa 1</span>
+              <h3 id="boost-config-title">Selecione o Pokémon</h3>
+            </div>
+
+            <div class="boost-fieldset">
+              <span class="boost-fieldset__legend">Pokémon</span>
+              <div class="boost-search-panel speedster-search-panel speedster-search-panel--inline">
+                <label class="speedster-search-label" for="boost-pokemon-search">Buscar Pokémon</label>
+                <div class="boost-search-panel__field">
+                  <input id="boost-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catálogo..." aria-label="Buscar Pokémon" />
+                  <div id="boost-pokemon-results" class="speedster-search-results" hidden aria-live="polite"></div>
+                  <div id="boost-pokemon-no-results" class="speedster-search-no-results" hidden>Pokémon não encontrado.</div>
+                </div>
+                <p id="boost-selection-prompt" class="boost-selection-prompt">Selecione um Pokémon para liberar o cálculo.</p>
+                <div id="boost-pokemon-meta" class="boost-pokemon-meta" aria-live="polite"></div>
+              </div>
+            </div>
+
+            <div id="boost-config-controls" class="boost-config-controls" hidden>
+              <div class="boost-fieldset">
+                <span class="boost-fieldset__legend">Shiny</span>
+                <div class="boost-choice-grid boost-choice-grid--compact" role="radiogroup" aria-label="Pokémon shiny">
+                  <label class="boost-choice-card">
+                    <input type="radio" name="boost-shiny" value="no" checked />
+                    <span class="boost-choice-card__body">
+                      <strong>Normal</strong>
+                      <small>Sem Bronze Star</small>
+                    </span>
+                  </label>
+                  <label class="boost-choice-card">
+                    <input type="radio" name="boost-shiny" value="yes" />
+                    <span class="boost-choice-card__body">
+                      <strong>Shiny</strong>
+                      <small>Inclui Bronze Star</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="boost-form-grid boost-form-grid--levels">
+                <label class="boost-field" for="boost-bronze-level">
+                  <span>Boost Bronze</span>
+                  <select id="boost-bronze-level">
+                    <option value="0" selected>Bronze 0</option>
+                    <option value="1">Bronze 1</option>
+                    <option value="2">Bronze 2</option>
+                    <option value="3">Bronze 3</option>
+                    <option value="4">Bronze 4</option>
+                    <option value="5">Bronze 5</option>
+                  </select>
+                </label>
+
+                <label class="boost-field" for="boost-silver-level">
+                  <span>Boost Silver</span>
+                  <select id="boost-silver-level">
+                    <option value="0" selected>Silver 0</option>
+                    <option value="1">Silver 1</option>
+                    <option value="2">Silver 2</option>
+                    <option value="3">Silver 3</option>
+                    <option value="4">Silver 4</option>
+                    <option value="5">Silver 5</option>
+                  </select>
+                </label>
+              </div>
+
+              <p id="boost-silver-note" class="boost-inline-note" hidden></p>
+              <div id="boost-form-message" class="boost-message" hidden aria-live="polite"></div>
+
+              <div class="boost-actions">
+                <button id="boost-reset-btn" class="catch-action-button catch-action-button--ghost" type="button">Limpar</button>
+              </div>
+            </div>
+          </section>
+
+          <div id="boost-results-shell" class="boost-results" hidden>
+            <section class="boost-panel boost-panel--summary boost-panel--wide" aria-labelledby="boost-summary-title">
+              <div class="boost-panel__header">
+                <span class="boost-panel__eyebrow">Resumo</span>
+                <h3 id="boost-summary-title">Visao geral</h3>
+              </div>
+              <div id="boost-overview-cards" class="boost-overview-cards" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-bronze-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Bronze</span>
+                  <h3 id="boost-bronze-title">Boost Bronze</h3>
+                </div>
+              </div>
+              <div id="boost-bronze-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-silver-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Silver</span>
+                  <h3 id="boost-silver-title">Boost Silver</h3>
+                </div>
+              </div>
+              <div id="boost-silver-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel boost-panel--wide" aria-labelledby="boost-star-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Craft</span>
+                  <h3 id="boost-star-title">Craft das Stars</h3>
+                  <p class="boost-section-note">Apenas o craft do nivel escolhido.</p>
+                </div>
+              </div>
+              <div id="boost-star-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel boost-panel--total boost-panel--wide" aria-labelledby="boost-total-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Total</span>
+                  <h3 id="boost-total-title">Total de materiais</h3>
+                  <p class="boost-section-note">Soma de todos os boosts ate o nivel escolhido.</p>
+                </div>
+              </div>
+              <div id="boost-total-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+          </div>
+        </div>
+
+        <details id="boost-help-panel" class="calc-help boost-help" aria-expanded="false" hidden>
+          <summary>Como o calculo separa custos</summary>
+          <p>Boost Bronze e Silver mostram custo direto. O craft das Stars aparece separado.</p>
+        </details>
+      </div>
+    </div>
+
     <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden>
       <div class="card calc-card pokemon-hub">
         <div class="pokemon-hub__hero">
@@ -787,7 +943,7 @@
             <div class="pokemon-filter-panel__copy">
               <span class="pokemon-filter-panel__eyebrow">Busca avançada</span>
               <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
-              <p>Combine nome, role, clã, level, tipos e moveset para refinar os cards sem sair da página.</p>
+              <p>Combine nome, role, clã, nível, tipos e moveset para refinar os cards sem sair da página.</p>
             </div>
             <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
           </div>
@@ -813,7 +969,7 @@
             </label>
 
             <label class="pokemon-filter-field" for="pokemon-filter-level">
-              <span>Level</span>
+              <span>Nível</span>
               <select id="pokemon-filter-level">
                 <option value="">Todos</option>
               </select>
@@ -1020,7 +1176,7 @@
         <div class="community-layout">
           <section class="community-player-panel" aria-labelledby="community-featured-title">
             <div class="community-player-frame">
-              <iframe id="community-video-frame" title="Player de video da comunidade" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen hidden></iframe>
+              <iframe id="community-video-frame" title="Player de vídeo da comunidade" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen hidden></iframe>
               <button id="community-video-preview" class="community-video-preview" type="button" aria-label="Abrir vídeo em destaque">
                 <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Miniatura do vídeo selecionado" loading="lazy" decoding="async">
                 <span class="community-video-preview-overlay">
@@ -1170,6 +1326,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
-    <script src="script.js?v=20260503c" defer></script>
+    <script src="script.js?v=20260505b" defer></script>
 </body>
 </html>
