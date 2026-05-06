@@ -267,17 +267,10 @@ if(!window._fossilResetGlobalAttached){
     document.addEventListener('click', (ev)=>{
         const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
         if(!btn) return;
-        try{
-            showFossils();
-        }catch(e){
-            // fallback manual reset
-            try{ fossilClearSelection(); }catch(e2){}
-            try{ document.querySelectorAll('.fossil-img').forEach(i=> i.classList.remove('active','compatible','incompatible')); }catch(e3){}
-            const hintEl2 = document.getElementById('fossil-hint'); if(hintEl2) hintEl2.textContent = '';
-            try{ renderFossilEmptyState(); }catch(e4){}
-            lastFossilPair = null;
-            try{ buildPokemonGallery(); }catch(e5){}
-        }
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        ev.stopPropagation();
+        try{ fossilHardReset(); }catch(e){}
     }, true);
     window._fossilResetGlobalAttached = true;
 }
@@ -2144,12 +2137,12 @@ const strings = {
         tabSpeedsters: 'Chefes',
         tabStreamers: 'Transmissões',
         tabCommunity: 'Vídeos',
-        fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>.',
+        fossilCost: 'Reviver um Pokémon custa <strong>250K</strong>. Alguns fósseis também pedem <strong>50 DNA</strong>.',
         fossilHintCombines: 'Este fóssil combina com: ',
         fossilHintNone: 'Nenhuma combinação disponível para este fóssil.',
         galleryTitle: 'Pokémons disponíveis',
         result: 'Resultado:',
-        dnaRequired: 'DNA Sample',
+        dnaRequired: 'DNA necessário',
         huntSideLabel: 'Lado da hunt',
         left: 'esquerda',
         right: 'direita',
@@ -2160,8 +2153,25 @@ const strings = {
         dino: 'Dino',
         fish: 'Peixe',
         amber: 'Âmbar',
+        helix: 'Helix',
+        dome: 'Dome',
+        root: 'Root',
+        claw: 'Claw',
+        skull: 'Skull',
+        armor: 'Armor',
+        cover: 'Cover',
+        plume: 'Plume',
+        jaw: 'Jaw',
+        sail: 'Sail',
         fossilWord: 'fóssil',
-        fossilIntro: '1. Escolha o primeiro fóssil. 2. Escolha o segundo. 3. Confira o Pokémon e o DNA necessário logo abaixo.',
+        fossilIntro: '1. Escolha um fóssil. 2. Se ele combinar com outro, escolha o segundo. 3. Fósseis diretos mostram o resultado na hora.',
+        fossilResultText: 'Use esta combinação para ver o Pokémon resultante.',
+        fossilSingleResultText: 'Este fóssil revive o Pokémon diretamente.',
+        fossilSourceLabel: 'Fóssil',
+        fossilComboLabel: 'Combinação',
+        costLabel: 'Custo',
+        fossilEmptyTitle: 'Escolha um fóssil direto ou combine dois fósseis.',
+        fossilEmptyText: 'O resultado aparece na hora para fósseis únicos e após o segundo clique para combinações.',
         calculatorInstructions: 'Selecione uma faixa de nível e utilize os campos abaixo para calcular materiais necessários.',
         pokemonTypeLabel: 'Tipo de Pokémon',
         normal: 'Normal',
@@ -2461,23 +2471,8 @@ function updateTextContent(){
         resetBtn.title = t('resetLabel');
     }
     // fossils-specific reset button
-    const fossilReset = document.getElementById('fossil-reset-btn');
-    if(fossilReset){
-        fossilReset.addEventListener('click', ()=>{
-            // Reset the fossils view to its initial state (same as entering the tab)
-            try{
-                showFossils();
-            }catch(e){
-                // Fallback: if showFossils fails, perform a hard reset
-                fossilHardReset();
-            }
-            // ensure a robust hard-reset runs to clear any persistent highlights
-            fossilHardReset();
-        });
-    }
-
     // Delegated fallback: ensure Reset works even if the direct handler wasn't attached
-    if(!window._fossilResetDelegationAttached){
+    if(false && !window._fossilResetDelegationAttached){
         document.addEventListener('click', (ev)=>{
             const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
             if(!btn) return;
@@ -2790,22 +2785,10 @@ function showFossils(){
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('tabFossils');
     updateBrowserTitle();
-    lastFossilPair = null;
-    renderFossilEmptyState();
-    // ensure any persistent highlights are cleared when entering/resetting the fossils tab
-    try{ fossilClearSelection(); }catch(e){}
-    const clearGallerySelection = ()=>{
-        try{ document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected')); }catch(e){}
-    };
-    clearGallerySelection();
-    // run again on next frame and shortly after to catch any async re-creations
-    try{ requestAnimationFrame(clearGallerySelection); }catch(e){}
-    setTimeout(clearGallerySelection, 150);
+    fossilHardReset();
     if(useGsap){
         gsap.from(contentFossils, {opacity:0, y:-10, duration:0.4});
     }
-    const fh = document.getElementById('fossil-hint');
-    if(fh) fh.textContent = '';
     if(useGsap){
         gsap.from(contentFossils.querySelectorAll('.card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
     }
@@ -6213,6 +6196,19 @@ const fossilCombos = {
     'Amber,Amber': { pokemon: 'aerodactyl.png', dna: 'dna.gif' }
 };
 
+const directFossilRevivals = {
+    Helix: { pokemon: 'omanyte.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Dome: { pokemon: 'kabuto.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Root: { pokemon: 'lileep.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Claw: { pokemon: 'anorith.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Skull: { pokemon: 'cranidos.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Armor: { pokemon: 'shieldon.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Cover: { pokemon: 'tirtouga.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Plume: { pokemon: 'archen.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Jaw: { pokemon: 'tyrunt.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' },
+    Sail: { pokemon: 'amaura.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' }
+};
+
 // mapping from generated pokémon to which side of the hunt they appear on
 const huntSide = {
     dracozolt: 'left',
@@ -6229,6 +6225,48 @@ const dropHints = {
     Fish: ['arctovish.png','dracovish.png'],
     Amber: ['aerodactyl.png','aerodactyl.png']
 };
+
+function getFossilDisplayLabel(type){
+    return t(String(type || '').toLowerCase()) || String(type || '');
+}
+
+function getDirectFossilResult(type){
+    if(Object.prototype.hasOwnProperty.call(directFossilRevivals, type)){
+        return directFossilRevivals[type];
+    }
+    const selfPairKey = `${type},${type}`;
+    if(Object.prototype.hasOwnProperty.call(fossilCombos, selfPairKey)){
+        return fossilCombos[selfPairKey];
+    }
+    return null;
+}
+
+function getFossilSelectionConfigByPokemon(pokemon){
+    for(const [type, data] of Object.entries(directFossilRevivals)){
+        if(data.pokemon === pokemon){
+            return { selectionKey: type, fossilTypes: [type] };
+        }
+    }
+    for(const [pairKey, data] of Object.entries(fossilCombos)){
+        if(data.pokemon !== pokemon) continue;
+        const parts = pairKey.split(',');
+        if(parts[0] === parts[1]){
+            return { selectionKey: parts[0], fossilTypes: [parts[0]] };
+        }
+        return { selectionKey: pairKey, fossilTypes: parts };
+    }
+    return null;
+}
+
+function highlightFossilTypes(fossilTypes){
+    const uniqueTypes = [...new Set((Array.isArray(fossilTypes) ? fossilTypes : []).filter(Boolean))];
+    uniqueTypes.forEach(type => {
+        const img = document.querySelector(`.fossil-img[data-type="${type}"]`);
+        if(img){
+            img.classList.add('selected', 'active');
+        }
+    });
+}
 
 function showDropHints(type, elem){
     const hints = dropHints[type];
@@ -6316,6 +6354,16 @@ function getPartners(type){
     return result;
 }
 
+function restoreDropHintsContainer(){
+    const drop = document.getElementById('drop-hints');
+    const resultDiv = document.getElementById('result');
+    if(!drop || !resultDiv) return;
+    const parent = resultDiv.parentElement;
+    if(parent && drop.parentElement !== parent){
+        parent.insertBefore(drop, resultDiv);
+    }
+}
+
 function fossilClearSelection(){
     fossilSelections.length = 0;
     // remove any visual selection/transient classes from all fossil images
@@ -6325,6 +6373,7 @@ function fossilClearSelection(){
     });
     const drop = document.getElementById('drop-hints');
     if(drop) drop.innerHTML = '';
+    restoreDropHintsContainer();
 }
 
 // finalize selection after showing a result but keep the visual "selected" highlight
@@ -6338,36 +6387,97 @@ function fossilFinalizeSelection(){
     });
     const drop = document.getElementById('drop-hints');
     if(drop) drop.innerHTML = '';
+    restoreDropHintsContainer();
 }
 
-function fossilShowResult(pair){
-    lastFossilPair = pair;
-    const combo = fossilCombos[pair];
-    if(!combo) return;
-    const [a,b] = pair.split(',');
+function animateSelectedFossils(onComplete){
+    const finalize = typeof onComplete === 'function'
+        ? onComplete
+        : () => {
+            fossilFinalizeSelection();
+            hintEl.textContent = '';
+        };
+    if(useGsap){
+        const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+        gsap.to(selectedImgs, {
+            scale: 1.2,
+            duration: 0.18,
+            yoyo: true,
+            repeat: 1,
+            ease: 'power1.inOut',
+            onComplete: finalize
+        });
+    } else {
+        finalize();
+    }
+}
 
+function renderFossilResultCard({ pokemon, dna, dnaAmount, price, detailLabel, detailValue, helperText }){
     const resultDiv = document.getElementById('result');
-    if(!resultDiv) return;
+    if(!resultDiv || !pokemon) return;
 
-    const pokemonName = combo.pokemon.split('.')[0];
+    const pokemonName = pokemon.split('.')[0];
     const normalizedName = pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1);
 
-    // prepare DNA display: render as image when a dna resource is provided
     let dnaHtml = '';
-    if(combo.dna){
-        const dna = String(combo.dna || '');
-        dnaHtml = `<p style="margin-top:0.5rem;">DNA necessário: <img src="fosseis/${dna}" alt="DNA necessário" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px; margin-left:0.5rem;" /></p>`;
+    if(dna){
+        const dnaAmountHtml = Number.isFinite(Number(dnaAmount)) && Number(dnaAmount) > 0
+            ? `<span style="margin-right:0.4rem;">${Number(dnaAmount)}</span>`
+            : '';
+        dnaHtml = `<p style="margin-top:0.5rem;">${t('dnaRequired') || 'DNA necessário'}: ${dnaAmountHtml}<img src="fosseis/${dna}" alt="${t('dnaRequired') || 'DNA necessário'}" style="display:inline-block; vertical-align:middle; max-width:48px; max-height:48px;" /></p>`;
     }
+
+    const priceHtml = price
+        ? `<p>${t('costLabel') || 'Custo'}: ${price}</p>`
+        : '';
+    const detailHtml = detailLabel && detailValue
+        ? `<p style="margin-top:0.5rem;">${detailLabel}: ${detailValue}</p>`
+        : '';
 
     resultDiv.innerHTML = `
         <div class="fossil-result" style="text-align:center; color:#fff;">
             <h3>${normalizedName}</h3>
-            <img src="fosseis/${combo.pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
-            <p style="margin-top:0.5rem;">Combinação: ${a} + ${b}</p>
-            <p>${t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'}</p>
+            <img src="fosseis/${pokemon}" alt="${normalizedName}" style="max-width:160px; max-height:160px; border:1px solid rgba(255,255,255,0.25); border-radius:0.5rem;" />
+            ${detailHtml}
+            <p>${helperText}</p>
             ${dnaHtml}
+            ${priceHtml}
         </div>
     `;
+}
+
+function fossilShowResult(selectionKey){
+    lastFossilPair = selectionKey;
+    if(!selectionKey) return;
+
+    if(!String(selectionKey).includes(',')){
+        const directResult = getDirectFossilResult(selectionKey);
+        if(!directResult) return;
+        renderFossilResultCard({
+            pokemon: directResult.pokemon,
+            dna: directResult.dna,
+            dnaAmount: directResult.dnaAmount,
+            price: directResult.price,
+            detailLabel: t('fossilSourceLabel') || 'Fóssil',
+            detailValue: getFossilDisplayLabel(selectionKey),
+            helperText: t('fossilSingleResultText') || 'Este fóssil revive o Pokémon diretamente.'
+        });
+        return;
+    }
+
+    const combo = fossilCombos[selectionKey];
+    if(!combo) return;
+    const [a,b] = selectionKey.split(',');
+
+    renderFossilResultCard({
+        pokemon: combo.pokemon,
+        dna: combo.dna,
+        dnaAmount: combo.dnaAmount,
+        price: combo.price,
+        detailLabel: t('fossilComboLabel') || 'Combinação',
+        detailValue: `${getFossilDisplayLabel(a)} + ${getFossilDisplayLabel(b)}`,
+        helperText: t('fossilResultText') || 'Use esta combinação para ver o Pokémon resultante.'
+    });
 }
 
 function renderFossilEmptyState(){
@@ -6376,8 +6486,8 @@ function renderFossilEmptyState(){
 
     resultDiv.innerHTML = `
         <div class="fossil-empty-state">
-            <strong>Combine dois fosseis para revelar o Pokemon.</strong>
-            <span>Assim que o segundo fossil for escolhido, o resultado aparece aqui com o DNA necessario.</span>
+            <strong>${t('fossilEmptyTitle') || 'Escolha um fóssil direto ou combine dois fósseis.'}</strong>
+            <span>${t('fossilEmptyText') || 'O resultado aparece na hora para fósseis únicos e após o segundo clique para combinações.'}</span>
         </div>
     `;
 }
@@ -6400,6 +6510,8 @@ function fossilHardReset(){
 
         // clear drop hints and result area
         const drop = document.getElementById('drop-hints'); if(drop) drop.innerHTML = '';
+        restoreDropHintsContainer();
+        if(hintEl) hintEl.textContent = '';
         renderFossilEmptyState();
 
         // rebuild gallery only if missing to avoid flicker when already present
@@ -6415,22 +6527,7 @@ function fossilHardReset(){
 
 
 function showByPokemon(pokemon){
-    const pair = pokemonToPair[pokemon];
-    if(!pair) return;
-    fossilClearSelection();
-    highlightFossils(pair);
-    fossilShowResult(pair);
-    // keep the yellow highlight persistent; finalize internal state so user can pick again
-    if(useGsap){
-        const selectedImgs = document.querySelectorAll('.fossil-img.selected');
-        gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
-            fossilFinalizeSelection();
-            hintEl.textContent = '';
-        }});
-    } else {
-        fossilFinalizeSelection();
-        hintEl.textContent = '';
-    }
+    showComboForPokemon(pokemon);
 }
 
 const hintEl = document.getElementById('fossil-hint');
@@ -6441,10 +6538,31 @@ function buildPokemonGallery(){
     gallery.innerHTML = '';
     const seen = new Set();
     // use fixed order for gallery so new pokémon can be inserted precisely
-    const desiredOrder = ['dracozolt.png','dracovish.png','arctovish.png','arctozolt.png','aerodactyl.png'];
+    const desiredOrder = [
+        'dracozolt.png',
+        'dracovish.png',
+        'arctovish.png',
+        'arctozolt.png',
+        'aerodactyl.png',
+        'omanyte.png',
+        'kabuto.png',
+        'lileep.png',
+        'anorith.png',
+        'cranidos.png',
+        'shieldon.png',
+        'tirtouga.png',
+        'archen.png',
+        'tyrunt.png',
+        'amaura.png'
+    ];
     const entries = [];
     Object.keys(fossilCombos).forEach(k=>{
         const data = fossilCombos[k];
+        if(seen.has(data.pokemon)) return;
+        seen.add(data.pokemon);
+        entries.push(data.pokemon);
+    });
+    Object.values(directFossilRevivals).forEach(data=>{
         if(seen.has(data.pokemon)) return;
         seen.add(data.pokemon);
         entries.push(data.pokemon);
@@ -6496,39 +6614,92 @@ function showComboForPokemon(pokemon){
     // clear any drop hints when coming from gallery
     const drop = document.getElementById('drop-hints');
     if(drop) drop.innerHTML = '';
-    for(const k in fossilCombos){
-        if(fossilCombos[k].pokemon === pokemon){
-            const [a,b] = k.split(',');
-            // remove any previous transient states but keep persisted selections
-            fossilClearSelection();
-            document.querySelectorAll('.fossil-img').forEach(i=>{
-                i.classList.remove('active','compatible','incompatible');
-            });
-            // mark the corresponding fossils as selected (persistent)
-            [a,b].forEach(t=>{
-                const img = document.querySelector(`.fossil-img[data-type="${t}"]`);
-                if(img){
-                    img.classList.add('selected','active');
-                }
-            });
-            // highlight the clicked gallery card (use data attribute)
-            document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
-            const matched = document.querySelector(`.pokemon-card[data-pokemon="${pokemon}"]`);
-            if(matched) matched.classList.add('selected');
-            fossilShowResult(k);
-            // finalize internal state while keeping visual 'selected' highlight
-            if(useGsap){
-                const selectedImgs = document.querySelectorAll('.fossil-img.selected');
-                gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
-                    fossilFinalizeSelection();
-                    hintEl.textContent = '';
-                }});
-            } else {
-                fossilFinalizeSelection();
-                hintEl.textContent = '';
-            }
-            break;
+    const config = getFossilSelectionConfigByPokemon(pokemon);
+    if(!config) return;
+
+    fossilClearSelection();
+    document.querySelectorAll('.fossil-img').forEach(i=>{
+        i.classList.remove('active','compatible','incompatible');
+    });
+    highlightFossilTypes(config.fossilTypes);
+
+    // highlight the clicked gallery card (use data attribute)
+    document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
+    const matched = document.querySelector(`.pokemon-card[data-pokemon="${pokemon}"]`);
+    if(matched) matched.classList.add('selected');
+
+    fossilShowResult(config.selectionKey);
+    animateSelectedFossils();
+}
+
+function initializeDirectFossilSelection(type){
+    const dropEl = document.getElementById('drop-hints');
+    if(dropEl) dropEl.innerHTML = '';
+    fossilShowResult(type);
+    animateSelectedFossils();
+}
+
+function hasDirectFossilResult(type){
+    return !!getDirectFossilResult(type);
+}
+
+function isPairCombinableFossil(type){
+    return type === 'Drake' || type === 'Bird' || type === 'Dino' || type === 'Fish';
+}
+
+function isSelfPairFossil(type){
+    return Object.prototype.hasOwnProperty.call(fossilCombos, `${type},${type}`);
+}
+
+function canReuseSelectedFossil(type){
+    return isSelfPairFossil(type) || hasDirectFossilResult(type);
+}
+
+function buildFossilPairKey(selections){
+    if(!Array.isArray(selections) || selections.length === 0) return '';
+    if(selections.length === 1) return selections[0];
+    return `${selections[0]},${selections[1]}`;
+}
+
+function showFossilPairSelection(selections){
+    const key = buildFossilPairKey(selections);
+    if(!key) return;
+    fossilShowResult(key);
+    animateSelectedFossils();
+}
+
+function playFossilPairPop(){
+    if(!useGsap) return;
+    const selectedImgs = document.querySelectorAll('.fossil-img.selected');
+    gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
+}
+
+function updateFossilPairHint(type){
+    if(!isPairCombinableFossil(type)){
+        document.querySelectorAll('.fossil-img').forEach(i=>{
+            if(i.dataset.type === type) return;
+            i.classList.remove('compatible', 'incompatible');
+        });
+        hintEl.textContent = '';
+        return;
+    }
+    const partners = getPartners(type);
+    document.querySelectorAll('.fossil-img').forEach(i=>{
+        const targetType = i.dataset.type;
+        if(targetType === type) return;
+        if(partners.has(targetType)){
+            i.classList.add('compatible');
+            i.classList.remove('incompatible');
+        } else {
+            i.classList.add('incompatible');
+            i.classList.remove('compatible');
         }
+    });
+    if(partners.size > 0){
+        const names = [...partners].map(partnerType => getFossilDisplayLabel(partnerType));
+        hintEl.textContent = t('fossilHintCombines') + names.join(', ');
+    } else {
+        hintEl.textContent = t('fossilHintNone');
     }
 }
 
@@ -6548,56 +6719,32 @@ function initializeFossilsPage(){
     Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
         img.addEventListener('click', ()=>{
             const type = img.dataset.type;
-            if(fossilSelections.includes(type)) return;
+            if(hasDirectFossilResult(type)){
+                fossilClearSelection();
+                fossilSelections.push(type);
+                img.classList.add('selected');
+                img.classList.add('active');
+                initializeDirectFossilSelection(type);
+                return;
+            }
+
+            if(fossilSelections.includes(type) && !canReuseSelectedFossil(type)) return;
             fossilSelections.push(type);
             img.classList.add('selected');
             img.classList.add('active');
+
             if(fossilSelections.length===1){
                 // show drop hints for solo click, positioned under clicked item
                 showDropHints(type, img);
-
-                const partners = getPartners(type);
-                document.querySelectorAll('.fossil-img').forEach(i=>{
-                    const t=i.dataset.type;
-                    if(t===type) return;
-                    if(partners.has(t)){
-                        i.classList.add('compatible');
-                        i.classList.remove('incompatible');
-                    } else {
-                        i.classList.add('incompatible');
-                        i.classList.remove('compatible');
-                    }
-                });
-                if(partners.size>0){
-                    const names = [...partners].map(p=> t(p.toLowerCase()) || p);
-                    hintEl.textContent = t('fossilHintCombines') + names.join(', ');
-                } else {
-                    hintEl.textContent = t('fossilHintNone');
-                }
+                updateFossilPairHint(type);
             }
             if(fossilSelections.length === 2){
                 // clear drop hints when forming pair
                 const dropEl = document.getElementById('drop-hints');
                 if(dropEl) dropEl.innerHTML = '';
 
-                const key = `${fossilSelections[0]},${fossilSelections[1]}`;
-                if(useGsap){
-                    // brief pop effect on selected fossils before showing result
-                    const selectedImgs = document.querySelectorAll('.fossil-img.selected');
-                    gsap.to(selectedImgs, {scale:1.3, duration:0.2, yoyo:true, repeat:1, ease:'power1.inOut'});
-                }
-                fossilShowResult(key);
-                // finalize internal state but keep selected highlight on the two fossils
-                if(useGsap){
-                    const selectedImgs = document.querySelectorAll('.fossil-img.selected');
-                    gsap.to(selectedImgs, {scale:1.2, duration:0.18, yoyo:true, repeat:1, ease:'power1.inOut', onComplete: ()=>{
-                        fossilFinalizeSelection();
-                        hintEl.textContent = '';
-                    }});
-                } else {
-                    fossilFinalizeSelection();
-                    hintEl.textContent = '';
-                }
+                playFossilPairPop();
+                showFossilPairSelection(fossilSelections);
             }
         });
     });
