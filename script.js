@@ -140,6 +140,7 @@ let boostSelectedPokemonEntry = null;
 let boostPokemonSearchHideTimer = 0;
 let boostLastFormMessage = '';
 let catchPageInitialized = false;
+let catchLogState = null;
 let bossesPageLoadPromise = null;
 let pokemonCatalogLoaded = false;
 let pokemonCatalogLoadPromise = null;
@@ -159,7 +160,7 @@ let pokemonCatalogRenderFrame = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260503c';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260505d';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -2189,6 +2190,12 @@ const strings = {
         catchLogHint: 'Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.',
         logBallsLabel: 'Log de pokébolas usadas:',
         parseLogBtn: 'Processar log',
+        catchQuickAdjustLabel: 'Ajuste rapido',
+        catchQuickAdjustHint: 'Ajusta somente a pokebola selecionada.',
+        catchQuickAdjustEmpty: 'Sem ajuste nesta pokebola',
+        catchQuickAdjustSummary: '{sign}{count}x {ball}',
+        catchQuickAdjustDecrease: 'Remover 1 {ball} do ajuste manual',
+        catchQuickAdjustIncrease: 'Adicionar 1 {ball} ao ajuste manual',
         expensesMsg: 'Despesas',
         ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}, Safari: {safari}',
         catchResultTitle: 'Estimativa para sua seleção',
@@ -2509,9 +2516,9 @@ function updateTextContent(){
         localCalcCatch.click();
     }
     const logResEl = document.getElementById('log-result');
-    const localParse = document.getElementById('parse-log');
-    if(localParse && logResEl && logResEl.innerHTML.trim() !== ''){
-        localParse.click();
+    if(logResEl && logResEl.innerHTML.trim() !== ''){
+        const currentLogText = document.getElementById('log-input')?.value || '';
+        processLogText(currentLogText);
     }
 }
 
@@ -3000,7 +3007,7 @@ function computeRequired(lvl, variant){
 }
 function parseLog(text){
     let totalCost = 0;
-    const counts={ultra:0,story:0,elemental:0,safari:0};
+    const counts = createEmptyCatchBallCounts();
     const moneyMatch = text.match(/spent\s+([\d.,]+)\s+dollars/i);
     if(moneyMatch) totalCost = parseFloat(moneyMatch[1].replace(',','.'));
     // allow multiple entries for the same ball type and sum them
@@ -3026,6 +3033,18 @@ function parseLog(text){
         }
     });
     return {totalCost, counts};
+}
+
+function createEmptyCatchBallCounts(){
+    return { ultra: 0, story: 0, elemental: 0, safari: 0 };
+}
+
+function cloneCatchBallCounts(source = {}){
+    const counts = createEmptyCatchBallCounts();
+    catchBallOrder.forEach((ball) => {
+        counts[ball] = Number(source?.[ball] || 0);
+    });
+    return counts;
 }
 
 function getBallTranslationKey(ball){
@@ -3108,6 +3127,41 @@ function renderCatchPills(items, accent = false){
         .join('');
 }
 
+function createCatchLogState(text){
+    const normalizedText = String(text || '');
+    const { totalCost, counts } = parseLog(normalizedText);
+    return {
+        sourceText: normalizedText,
+        parsedTotalCost: Number(totalCost) || 0,
+        parsedCounts: cloneCatchBallCounts(counts),
+        manualCounts: createEmptyCatchBallCounts()
+    };
+}
+
+function getCatchLogCombinedCounts(state){
+    const counts = cloneCatchBallCounts(state?.parsedCounts);
+    catchBallOrder.forEach((ball) => {
+        counts[ball] = Math.max(0, counts[ball] + Number(state?.manualCounts?.[ball] || 0));
+    });
+    return counts;
+}
+
+function getCatchLogManualCostDelta(state){
+    return catchBallOrder.reduce((sum, ball) => {
+        return sum + (Number(state?.manualCounts?.[ball] || 0) * (ballPrices[ball] || 0));
+    }, 0);
+}
+
+function formatCatchQuickAdjustment(ball, manualCount){
+    if(!manualCount){
+        return t('catchQuickAdjustEmpty');
+    }
+    return t('catchQuickAdjustSummary')
+        .replace('{sign}', manualCount > 0 ? '+' : '-')
+        .replace('{count}', Math.abs(manualCount))
+        .replace('{ball}', getBallLabel(ball));
+}
+
 function updateBallPreview(){
     const selectedBall = document.getElementById('ball-select')?.value || 'elemental';
     const selectedBallLabel = getBallLabel(selectedBall);
@@ -3152,7 +3206,7 @@ function renderCatchEstimateResult(target, chosen, lvl, variant, optionItems){
     `;
 }
 
-function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, remainingItems, avgNeeded, over){
+function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, remainingItems, avgNeeded, over, manualState = {}){
     if(!target) return;
     const totalBalls = catchBallOrder.reduce((sum, ball) => sum + (counts[ball] || 0), 0);
     if(totalCost === 0 && totalBalls === 0){
@@ -3187,6 +3241,9 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
         ];
     const statusTitle = remainingItems.length ? t('catchRemainingTitle') : t('catchAchievedTitle');
     const statusMarkup = renderCatchPills(statusLines, remainingItems.length);
+    const manualCount = Number(manualState?.manualCount || 0);
+    const selectedBallCount = Number(counts?.[chosen] || 0);
+    const quickAdjustSummary = formatCatchQuickAdjustment(chosen, manualCount);
     target.innerHTML = `
         <div class="calc-result-highlight catch-result-shell">
             <div class="catch-result-shell__header">
@@ -3199,6 +3256,30 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
                 </div>
             </div>
             <div class="catch-result-shell__grid">${metrics}</div>
+            <div class="catch-log-adjuster">
+                <div class="catch-log-adjuster__meta">
+                    <span class="catch-log-adjuster__label">${t('catchQuickAdjustLabel')}</span>
+                    <span class="catch-log-adjuster__hint">${t('catchQuickAdjustHint')}</span>
+                </div>
+                <div class="catch-log-adjuster__controls">
+                    <button
+                        type="button"
+                        class="catch-log-adjuster__button catch-log-adjuster__button--ghost"
+                        data-catch-adjust-ball="${chosen}"
+                        data-catch-adjust-step="-1"
+                        aria-label="${t('catchQuickAdjustDecrease').replace('{ball}', selectedBallLabel)}"
+                        ${selectedBallCount <= 0 ? 'disabled' : ''}
+                    >-1</button>
+                    <span class="catch-log-adjuster__value">${quickAdjustSummary}</span>
+                    <button
+                        type="button"
+                        class="catch-log-adjuster__button"
+                        data-catch-adjust-ball="${chosen}"
+                        data-catch-adjust-step="1"
+                        aria-label="${t('catchQuickAdjustIncrease').replace('{ball}', selectedBallLabel)}"
+                    >+1</button>
+                </div>
+            </div>
             <div class="catch-result-shell__list">
                 <span class="catch-result-shell__list-title">${t('catchLogBallsLabel')}</span>
                 <div class="catch-result-shell__items">${breakdown}</div>
@@ -5059,12 +5140,57 @@ function fetchStreamerStatus(name, isNonDrop = false){
                 return '';
             });
 
+    const fetchDecapiUptime = () =>
+        fetch(`https://decapi.me/twitch/uptime/${encodeURIComponent(name)}`)
+            .then(r => r.ok ? r.text() : '')
+            .then(text => (text || '').toString().trim())
+            .catch(err => {
+                console.error('fetchDecapiUptime error', name, err);
+                return '';
+            });
+
+    const resolveDecapiLiveStatus = (uptimeText) => {
+        const normalized = (uptimeText || '').toString().trim();
+        if(!normalized) return 'unknown';
+
+        const lower = normalized.toLowerCase();
+        if(
+            /\bis offline\b/.test(lower)
+            || /\bnot live\b/.test(lower)
+            || /\b(?:user|channel|account)\s+not\s+found\b/.test(lower)
+        ){
+            return 'offline';
+        }
+
+        if(
+            /\b(?:error|bad gateway|service unavailable|temporarily unavailable|internal server error|timed out|rate limit)\b/.test(lower)
+        ){
+            return 'unknown';
+        }
+
+        if(/\b\d+\s*(?:second|minute|hour|day|week|month|year)s?\b/.test(lower)){
+            return 'online';
+        }
+
+        return 'unknown';
+    };
+
     const queryDecapi = () =>
-        fetchDecapiTitle().then(title => {
-            if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
-                return makeResult('offline', title);
+        fetchDecapiUptime().then(uptimeText => {
+            const liveStatus = resolveDecapiLiveStatus(uptimeText);
+            if(liveStatus === 'offline'){
+                return makeResult('offline', '');
             }
-            return makeResult('online', title);
+            if(liveStatus !== 'online'){
+                return makeResult('unknown', '');
+            }
+
+            return fetchDecapiTitle().then(title => {
+                if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
+                    return makeResult('online', '');
+                }
+                return makeResult('online', title);
+            });
         }).catch(err => {
             console.error('queryDecapi network error', name, err);
             return makeResult('unknown', '');
@@ -8033,7 +8159,7 @@ const parseLogBtn = document.getElementById('parse-log');
 const logResult = document.getElementById('log-result');
 const catchVariantInputs = document.querySelectorAll('input[name="catch-variant"]');
 
-function getCatchOptionItems(lvl, variant, chosen){
+function getSelectedCatchRequirementOptions(lvl, variant, chosen){
     const reqList = computeRequired(lvl, variant) || [];
     const requirementBall = getCatchRequirementBallKey(chosen);
 
@@ -8048,7 +8174,11 @@ function getCatchOptionItems(lvl, variant, chosen){
         selected = [reqList[1]];
     }
 
-    return selected
+    return selected;
+}
+
+function getCatchOptionItems(lvl, variant, chosen){
+    return getSelectedCatchRequirementOptions(lvl, variant, chosen)
         .map(opt=>{
             const needed = getCatchRequiredAmount(opt, chosen, variant);
             if(needed === 0) return null;
@@ -8069,14 +8199,14 @@ function renderCatchCalculation(){
     }
 }
 
-// reusable log parsing/display routine
-function processLogText(text){
-    let {totalCost,counts} = parseLog(text);
+function renderCatchLogFromState(){
     if(!logResult) return;
+    const state = catchLogState || createCatchLogState('');
     const chosen = ballSelect ? ballSelect.value : 'ultra';
     const lvl = levelSelect ? levelSelect.value : '5';
     const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
-    const reqList = computeRequired(lvl, variant);
+    const selectedOptions = getSelectedCatchRequirementOptions(lvl, variant, chosen);
+    const counts = getCatchLogCombinedCounts(state);
     const convertToChosen = (typeCountMap, target) => {
         let sum = 0;
         Object.entries(typeCountMap).forEach(([type,cnt])=>{
@@ -8086,11 +8216,12 @@ function processLogText(text){
         });
         return Math.floor(sum);
     };
+    let totalCost = Math.max(0, (Number(state.parsedTotalCost) || 0) + getCatchLogManualCostDelta(state));
     const converted = convertToChosen(counts, chosen);
     const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
     const effectiveUsed = Math.max(converted, costBased);
     const remMap = {};
-    reqList.forEach(opt=>{
+    selectedOptions.forEach(opt=>{
         const needed = Math.max(getCatchRequiredAmount(opt, chosen, variant) - effectiveUsed, 0);
         if(needed > 0){
             const key = `${needed}`;
@@ -8109,14 +8240,38 @@ function processLogText(text){
         });
     }
     let avgNeeded = 0;
-    const directOpt = reqList.find(opt=>getCatchRequiredAmount(opt, chosen, variant) > 0);
+    const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, chosen, variant) > 0);
     if(directOpt){
         avgNeeded = getCatchRequiredAmount(directOpt, chosen, variant);
-    } else if(reqList.length && ballPrices[chosen]){
-        avgNeeded = convertToChosen(reqList[0], chosen);
+    } else if(selectedOptions.length && ballPrices[chosen]){
+        avgNeeded = convertToChosen(selectedOptions[0], chosen);
     }
     const over = effectiveUsed - avgNeeded;
-    renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over);
+    renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over, {
+        manualCount: Number(state?.manualCounts?.[chosen] || 0)
+    });
+}
+
+// reusable log parsing/display routine
+function processLogText(text, options = {}){
+    const normalizedText = String(text || '');
+    const forceReparse = Boolean(options.forceReparse);
+    if(forceReparse || !catchLogState || catchLogState.sourceText !== normalizedText){
+        catchLogState = createCatchLogState(normalizedText);
+    }
+    renderCatchLogFromState();
+}
+
+function adjustCatchLogCount(ball, step){
+    if(!catchLogState || !catchBallOrder.includes(ball)) return;
+    const numericStep = Number(step);
+    if(!Number.isFinite(numericStep) || numericStep === 0) return;
+    const parsedCount = Number(catchLogState.parsedCounts?.[ball] || 0);
+    const currentManualCount = Number(catchLogState.manualCounts?.[ball] || 0);
+    const nextManualCount = currentManualCount + numericStep;
+    if(parsedCount + nextManualCount < 0) return;
+    catchLogState.manualCounts[ball] = nextManualCount;
+    renderCatchLogFromState();
 }
 
 function initializeCatchPage(){
@@ -8160,7 +8315,18 @@ function initializeCatchPage(){
     if(parseLogBtn){
         parseLogBtn.addEventListener('click',()=>{
             const text = document.getElementById('log-input').value;
-            processLogText(text);
+            processLogText(text, { forceReparse: true });
+        });
+    }
+
+    if(logResult){
+        logResult.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-catch-adjust-step]');
+            if(!button) return;
+            adjustCatchLogCount(
+                button.dataset.catchAdjustBall || '',
+                Number(button.dataset.catchAdjustStep || 0)
+            );
         });
     }
 

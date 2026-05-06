@@ -2816,6 +2816,12 @@ const bossConsumableCatalog = Object.freeze({
       image: 'rations/chople_ration.png',
       description: 'Aumenta a resistencia contra ataques Fighting em 30% por 60 minutos.'
     }),
+    charti: Object.freeze({
+      label: 'Charti Ration',
+      shortLabel: 'Charti',
+      image: 'rations/charti_ration.png',
+      description: 'Aumenta a resistência do Pokémon a ataques do tipo Rocha em 30%. Duração: 60 Minutos.'
+    }),
     passho: Object.freeze({
       label: 'Passho Ration',
       shortLabel: 'Passho',
@@ -2843,6 +2849,7 @@ const bossRationByAttackType = Object.freeze({
   fighting: bossConsumableCatalog.rations.chople,
   fire: bossConsumableCatalog.rations.occa,
   ice: bossConsumableCatalog.rations.yache,
+  rock: bossConsumableCatalog.rations.charti,
   water: bossConsumableCatalog.rations.passho,
   normal: bossConsumableCatalog.rations.pokemon,
   neutral: bossConsumableCatalog.rations.pokemon

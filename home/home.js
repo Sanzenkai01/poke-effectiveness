@@ -287,12 +287,58 @@ function fetchStreamerStatus(name){
             });
     };
 
+    const fetchDecapiUptime = () => {
+        return fetch(`https://decapi.me/twitch/uptime/${encodeURIComponent(name)}`)
+            .then((response) => response.ok ? response.text() : '')
+            .then((text) => (text || '').toString().trim())
+            .catch((error) => {
+                console.error('home fetchDecapiUptime error', name, error);
+                return '';
+            });
+    };
+
+    const resolveDecapiLiveStatus = (uptimeText) => {
+        const normalized = (uptimeText || '').toString().trim();
+        if(!normalized) return 'unknown';
+
+        const lower = normalized.toLowerCase();
+        if(
+            /\bis offline\b/.test(lower)
+            || /\bnot live\b/.test(lower)
+            || /\b(?:user|channel|account)\s+not\s+found\b/.test(lower)
+        ){
+            return 'offline';
+        }
+
+        if(
+            /\b(?:error|bad gateway|service unavailable|temporarily unavailable|internal server error|timed out|rate limit)\b/.test(lower)
+        ){
+            return 'unknown';
+        }
+
+        if(/\b\d+\s*(?:second|minute|hour|day|week|month|year)s?\b/.test(lower)){
+            return 'online';
+        }
+
+        return 'unknown';
+    };
+
     const queryDecapi = () => {
-        return fetchDecapiTitle().then((title) => {
-            if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
-                return makeResult('offline', title);
+        return fetchDecapiUptime().then((uptimeText) => {
+            const liveStatus = resolveDecapiLiveStatus(uptimeText);
+            if(liveStatus === 'offline'){
+                return makeResult('offline', '');
             }
-            return makeResult('online', title);
+            if(liveStatus !== 'online'){
+                return makeResult('unknown', '');
+            }
+
+            return fetchDecapiTitle().then((title) => {
+                if(!title || /user not found|offline|not live/i.test(title.toLowerCase())){
+                    return makeResult('online', '');
+                }
+                return makeResult('online', title);
+            });
         }).catch((error) => {
             console.error('home queryDecapi network error', name, error);
             return makeResult('unknown', '');
