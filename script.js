@@ -91,11 +91,12 @@ const contentFossils = document.getElementById('content-fossils');
 const contentCalc = document.getElementById('content-calculator');
 const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
+const contentTimes = document.getElementById('content-times');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentTimes, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -124,6 +125,30 @@ const pokemonFilterType1Select = document.getElementById('pokemon-filter-type1')
 const pokemonFilterType2Select = document.getElementById('pokemon-filter-type2');
 const pokemonFilterMovesetSelect = document.getElementById('pokemon-filter-moveset');
 const pokemonFilterClearBtn = document.getElementById('pokemon-filter-clear');
+const timesStatus = document.getElementById('times-status');
+const timesSearchInput = document.getElementById('times-search-input');
+const timesCardGrid = document.getElementById('times-card-grid');
+const timesEmptyState = document.getElementById('times-empty-state');
+const timesEmptyTitle = document.getElementById('times-empty-title');
+const timesEmptyText = document.getElementById('times-empty-text');
+const timesClanFilterButtons = document.querySelectorAll('[data-times-clan-filter]');
+const timesTagFilterRow = document.getElementById('times-tag-filter-row');
+const timesDetailsModal = document.getElementById('times-details-modal');
+const timesDetailsClan = document.getElementById('times-details-clan');
+const timesDetailsTitle = document.getElementById('times-details-title');
+const timesDetailsSubtitle = document.getElementById('times-details-subtitle');
+const timesDetailsTypes = document.getElementById('times-details-types');
+const timesDetailsCommentPanel = document.getElementById('times-details-comment-panel');
+const timesDetailsCommentText = document.getElementById('times-details-comment-text');
+const timesDetailsTipsPanel = document.getElementById('times-details-tips-panel');
+const timesDetailsTips = document.getElementById('times-details-tips');
+const timesDetailsRoster = document.getElementById('times-details-roster');
+const timesDetailsHunts = document.getElementById('times-details-hunts');
+const timesDetailsAlternativesPanel = document.getElementById('times-details-alternatives-panel');
+const timesDetailsAltPokemonsGroup = document.getElementById('times-details-alt-pokemons-group');
+const timesDetailsAltPokemons = document.getElementById('times-details-alt-pokemons');
+const timesDetailsAltHuntsGroup = document.getElementById('times-details-alt-hunts-group');
+const timesDetailsAltHunts = document.getElementById('times-details-alt-hunts');
 const mobileSidebarQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
     ? window.matchMedia('(max-width: 980px)')
     : null;
@@ -155,6 +180,14 @@ let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonCatalogFiltersInitialized = false;
 let pokemonCatalogRenderFrame = null;
+let timesPageInitialized = false;
+let teamsCatalogLoaded = false;
+let teamsCatalogLoadPromise = null;
+let teamsCatalog = [];
+let teamsCatalogRenderFrame = null;
+let activeTeamEntry = null;
+let timesDetailsLastFocus = null;
+let timesDetailsKeyHandler = null;
 // If the page was loaded directly with a deep-link to a pokemon (eg /pokemon/001)
 // this holds the requested dex number until the catalog is loaded.
 let initialDeepLinkedPokemonDex = null;
@@ -173,6 +206,7 @@ const APP_ROUTE_ALIASES = {
     'calculadora-boost': { path: '/boost', tab: 'boost' },
     pokemon: { path: '/pokemon', tab: 'pokemons' },
     pokemons: { path: '/pokemons', tab: 'pokemons' },
+    times: { path: '/times', tab: 'times' },
     catch: { path: '/catch', tab: 'catch' },
     streamers: { path: '/streamers', tab: 'streamers' },
     youtube: { path: '/youtube', tab: 'youtube' },
@@ -190,10 +224,38 @@ const APP_ROUTE_ALIASES = {
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
+const TIMES_CATALOG_URL = 'times/teams.json';
+const TEAM_POKEMON_IMAGE_VERSION = '20260507a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
+const DEFAULT_TEAM_FILTERS = Object.freeze({
+    clan: 'all',
+    tag: 'all',
+    search: ''
+});
+const TEAM_TYPE_SEARCH_ALIASES = Object.freeze({
+    bug: ['bug', 'insect', 'inseto'],
+    dark: ['dark', 'sombrio', 'trevas'],
+    dragon: ['dragon', 'dragao', 'drake'],
+    electric: ['electric', 'eletrico'],
+    fairy: ['fairy', 'fada'],
+    fighting: ['fighting', 'fighter', 'lutador', 'luta'],
+    fire: ['fire', 'fogo'],
+    flying: ['flying', 'voador'],
+    ghost: ['ghost', 'fantasma'],
+    grass: ['grass', 'planta'],
+    ground: ['ground', 'terra'],
+    ice: ['ice', 'gelo'],
+    normal: ['normal'],
+    poison: ['poison', 'veneno'],
+    psychic: ['psychic', 'psiquico'],
+    rock: ['rock', 'pedra'],
+    steel: ['steel', 'metal', 'aco'],
+    water: ['water', 'agua']
+});
+let teamFilters = { ...DEFAULT_TEAM_FILTERS };
 const ELEMENTAL_BALL_TYPE_MAP = Object.freeze({
     bug: { key: 'net', label: 'Net Ball' },
     insect: { key: 'net', label: 'Net Ball' },
@@ -1716,6 +1778,10 @@ function loadCommunityVideoFrame(video, options = {}){
 }
 
 function setVisiblePanel(activePanel){
+    if(activePanel !== contentTimes && timesDetailsModal?.getAttribute('aria-hidden') !== 'true'){
+        closeTeamDetailsModal();
+    }
+
     mainPanels.forEach(panel => {
         if(!panel) return;
         const isActive = panel === activePanel;
@@ -1769,6 +1835,7 @@ function getActiveSiteTarget(){
     if(document.body.classList.contains('home-view')) return 'home';
     if(contentBoost && !contentBoost.hidden) return 'boost';
     if(contentPokemons && !contentPokemons.hidden) return 'pokemons';
+    if(contentTimes && !contentTimes.hidden) return 'times';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
     if(tabCalcBtn?.classList.contains('active')) return 'calculator';
@@ -1873,6 +1940,7 @@ function activateSidebarTarget(button){
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
+        times: showTimes,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
@@ -2097,6 +2165,7 @@ const strings = {
     pt: {
         pageTitle: 'Tipos Pokémon',
         pokemonsTitle: 'Pokémons',
+        timesTitle: 'Times',
         boostTitle: 'Calculadora de Boost',
         siteName: 'Poke Utilities',
         homeLabel: 'Início',
@@ -2261,6 +2330,8 @@ function updateTextContent(){
         if(titleEl) titleEl.textContent = t('boostTitle');
     } else if(contentPokemons && !contentPokemons.hidden){
         if(titleEl) titleEl.textContent = t('pokemonsTitle');
+    } else if(contentTimes && !contentTimes.hidden){
+        if(titleEl) titleEl.textContent = t('timesTitle');
     } else if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('calculatorTitle');
     } else if(tabFossilsBtn && tabFossilsBtn.classList.contains('active')){
@@ -2752,6 +2823,7 @@ function openHomeDestination(target){
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
+        times: showTimes,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
@@ -3831,6 +3903,916 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT){
     updateUrl();
 }
 
+function showTimes(){
+    initializeTimesPage();
+    clearTabHighlights();
+    setActiveTabTheme('times');
+    setVisiblePanel(contentTimes);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = t('timesTitle');
+    updateBrowserTitle();
+
+    if(!teamsCatalogLoaded){
+        showTimesLoadingState();
+    } else {
+        renderTeamsCatalog();
+    }
+
+    ensureTeamsCatalogLoaded()
+        .then(() => {
+            renderTeamsCatalog({ animate: true });
+            if(useGsap && contentTimes){
+                gsap.from(contentTimes, { opacity: 0, y: -10, duration: 0.4 });
+            }
+        })
+        .catch((error) => {
+            console.error('Teams catalog load failed', error);
+            teamsCatalogLoaded = false;
+            teamsCatalog = [];
+            updateTimesStatus(0, 0, teamFilters, { failed: true });
+            setTimesEmptyState(
+                'Nao foi possivel carregar os times.',
+                'Tente novamente em instantes para consultar as composicoes.'
+            );
+        });
+
+    updateUrl();
+}
+
+function initializeTimesPage(){
+    if(timesPageInitialized) return;
+
+    timesClanFilterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setTeamClanFilter(button.dataset.timesClanFilter || 'all');
+        });
+    });
+
+    if(timesSearchInput){
+        timesSearchInput.value = teamFilters.search;
+        timesSearchInput.addEventListener('input', () => {
+            teamFilters = {
+                ...teamFilters,
+                search: timesSearchInput.value || ''
+            };
+            scheduleTeamsCatalogRender();
+        });
+    }
+
+    if(timesTagFilterRow){
+        timesTagFilterRow.addEventListener('click', (event) => {
+            const button = event.target instanceof Element
+                ? event.target.closest('[data-times-tag-filter]')
+                : null;
+            if(!(button instanceof HTMLButtonElement)) return;
+            setTeamTagFilter(button.dataset.timesTagFilter || 'all');
+        });
+    }
+
+    syncTeamClanFilterButtons(teamFilters.clan);
+    syncTeamTagFilterButtons(teamFilters.tag);
+    timesPageInitialized = true;
+}
+
+function normalizeTeamClanKey(value){
+    const normalized = String(value || '').trim().toLowerCase();
+    if(!normalized || normalized === 'todos') return 'all';
+    return normalized;
+}
+
+function setTeamClanFilter(clanKey){
+    teamFilters = {
+        ...teamFilters,
+        clan: normalizeTeamClanKey(clanKey)
+    };
+    syncTeamClanFilterButtons(teamFilters.clan);
+    scheduleTeamsCatalogRender();
+}
+
+function normalizeTeamTagKey(value){
+    const normalized = normalizePokemonSearchText(value).replace(/[\s/]+/g, '-');
+    return normalized || 'all';
+}
+
+function collectTeamTagOptions(entries = teamsCatalog){
+    const seen = new Set();
+    const options = [];
+
+    entries.forEach((entry) => {
+        entry.tags.forEach((tagLabel) => {
+            const key = normalizeTeamTagKey(tagLabel);
+            if(!key || key === 'all' || seen.has(key)) return;
+            seen.add(key);
+            options.push({
+                key,
+                label: tagLabel
+            });
+        });
+    });
+
+    return options;
+}
+
+function renderTeamTagFilterButtons(entries = teamsCatalog){
+    if(!(timesTagFilterRow instanceof HTMLElement)) return;
+
+    const options = collectTeamTagOptions(entries);
+    if(!options.length){
+        timesTagFilterRow.hidden = true;
+        timesTagFilterRow.replaceChildren();
+        teamFilters = {
+            ...teamFilters,
+            tag: 'all'
+        };
+        return;
+    }
+
+    const availableTagKeys = new Set(['all', ...options.map((option) => option.key)]);
+    const activeTagKey = normalizeTeamTagKey(teamFilters.tag);
+    if(!availableTagKeys.has(activeTagKey)){
+        teamFilters = {
+            ...teamFilters,
+            tag: 'all'
+        };
+    }
+
+    const fragment = document.createDocumentFragment();
+    const allButton = document.createElement('button');
+    allButton.type = 'button';
+    allButton.className = 'times-clan-filter-btn times-tag-filter-btn';
+    allButton.dataset.timesTagFilter = 'all';
+    allButton.textContent = 'Todas';
+    fragment.appendChild(allButton);
+
+    options.forEach((option) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'times-clan-filter-btn times-tag-filter-btn';
+        button.dataset.timesTagFilter = option.key;
+        button.textContent = option.label;
+        fragment.appendChild(button);
+    });
+
+    timesTagFilterRow.replaceChildren(fragment);
+    timesTagFilterRow.hidden = false;
+    syncTeamTagFilterButtons(teamFilters.tag);
+}
+
+function setTeamTagFilter(tagKey){
+    teamFilters = {
+        ...teamFilters,
+        tag: normalizeTeamTagKey(tagKey)
+    };
+    syncTeamTagFilterButtons(teamFilters.tag);
+    scheduleTeamsCatalogRender();
+}
+
+function syncTeamClanFilterButtons(activeClan){
+    const normalizedActiveClan = normalizeTeamClanKey(activeClan);
+    timesClanFilterButtons.forEach((button) => {
+        const buttonClan = normalizeTeamClanKey(button.dataset.timesClanFilter || 'all');
+        const isActive = buttonClan === normalizedActiveClan;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+}
+
+function syncTeamTagFilterButtons(activeTag){
+    if(!(timesTagFilterRow instanceof HTMLElement)) return;
+
+    const normalizedActiveTag = normalizeTeamTagKey(activeTag);
+    timesTagFilterRow.querySelectorAll('[data-times-tag-filter]').forEach((button) => {
+        if(!(button instanceof HTMLButtonElement)) return;
+        const buttonTag = normalizeTeamTagKey(button.dataset.timesTagFilter || 'all');
+        const isActive = buttonTag === normalizedActiveTag;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+}
+
+function showTimesLoadingState(){
+    if(timesStatus){
+        timesStatus.textContent = 'Carregando times...';
+    }
+    if(timesCardGrid){
+        timesCardGrid.replaceChildren();
+    }
+    hideTimesEmptyState();
+}
+
+function ensureTeamsCatalogLoaded(force = false){
+    if(teamsCatalogLoaded && !force){
+        return Promise.resolve(teamsCatalog);
+    }
+
+    if(teamsCatalogLoadPromise && !force){
+        return teamsCatalogLoadPromise;
+    }
+
+    if(force){
+        teamsCatalogLoaded = false;
+        teamsCatalog = [];
+        teamsCatalogLoadPromise = null;
+    }
+
+    showTimesLoadingState();
+    teamsCatalogLoadPromise = loadTeamsCatalog()
+        .then((entries) => {
+            teamsCatalog = entries;
+            renderTeamTagFilterButtons(teamsCatalog);
+            teamsCatalogLoaded = true;
+            return teamsCatalog;
+        })
+        .finally(() => {
+            teamsCatalogLoadPromise = null;
+        });
+
+    return teamsCatalogLoadPromise;
+}
+
+function loadTeamsCatalog(){
+    return fetch(TIMES_CATALOG_URL)
+        .then((response) => {
+            if(!response.ok){
+                throw new Error(`Falha ao carregar ${TIMES_CATALOG_URL}: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((entries) => {
+            if(!Array.isArray(entries)){
+                throw new Error('O catalogo de times precisa ser uma lista.');
+            }
+            return entries
+                .map((entry, index) => normalizeTeamEntry(entry, index))
+                .filter(Boolean);
+        });
+}
+
+function normalizeTeamEntry(entry, index){
+    if(!entry || typeof entry !== 'object') return null;
+
+    const clanKey = normalizeTeamClanKey(entry.clan);
+    const clanInfo = getPokemonTeamInfo(clanKey);
+    const rawElementLabel = String(entry.element || entry.className || entry.archetype || '').trim();
+    const elementKeys = resolveTeamElementKeys(entry.elements, rawElementLabel);
+    const elementLabel = rawElementLabel || elementKeys.map(formatPokemonTypeLabel).join('/') || 'Sem elemento';
+    const tags = normalizeTeamTextList(entry.tags || entry.tag || entry.labels);
+    const tagKeys = tags.map(normalizeTeamTagKey).filter(Boolean);
+    const comment = String(entry.comment || entry.note || entry.description || '').trim();
+    const tips = normalizeTeamTextList(entry.tips || entry.advice || entry.strategies);
+    const pokemons = Array.isArray(entry.pokemons)
+        ? entry.pokemons
+            .map((member, memberIndex) => normalizeTeamMember(member, memberIndex))
+            .filter(Boolean)
+            .slice(0, 6)
+        : [];
+    const hunts = normalizeTeamEntityList(entry.hunts);
+    const alternatives = entry.alternatives && typeof entry.alternatives === 'object'
+        ? entry.alternatives
+        : {};
+    const alternativePokemons = normalizeTeamEntityList(
+        alternatives.pokemons || alternatives.pokemon || entry.alternativePokemons || entry.alternativePokemon
+    );
+    const alternativeHunts = normalizeTeamEntityList(
+        alternatives.hunts || alternatives.hunt || entry.alternativeHunts || entry.alternativeHunt
+    );
+    const id = String(entry.id || `${clanKey || 'team'}-${index + 1}`).trim();
+    const searchTokens = [
+        id,
+        clanKey,
+        clanInfo.label,
+        elementLabel,
+        ...tags,
+        ...elementKeys,
+        ...elementKeys.flatMap((typeKey) => TEAM_TYPE_SEARCH_ALIASES[typeKey] || [typeKey]),
+        comment,
+        ...tips,
+        ...pokemons.flatMap((member) => [member.name, member.role, member.note]),
+        ...hunts.flatMap((entity) => [entity.name, entity.note]),
+        ...alternativePokemons.flatMap((entity) => [entity.name, entity.note]),
+        ...alternativeHunts.flatMap((entity) => [entity.name, entity.note])
+    ];
+
+    return {
+        id,
+        clanKey,
+        clanLabel: clanInfo.label,
+        elementLabel,
+        elementKeys,
+        tags,
+        tagKeys,
+        comment,
+        tips,
+        pokemons,
+        hunts,
+        alternativePokemons,
+        alternativeHunts,
+        searchText: normalizePokemonSearchText(searchTokens.join(' '))
+    };
+}
+
+function normalizeTeamTextList(values){
+    const rawItems = Array.isArray(values)
+        ? values
+        : values == null
+            ? []
+            : [values];
+
+    return rawItems
+        .map((value) => {
+            if(typeof value === 'string'){
+                return value.trim();
+            }
+            if(value && typeof value === 'object'){
+                return String(value.text || value.name || value.label || '').trim();
+            }
+            return '';
+        })
+        .filter(Boolean);
+}
+
+function normalizeTeamEntityList(values){
+    const rawItems = Array.isArray(values)
+        ? values
+        : values == null
+            ? []
+            : [values];
+
+    return rawItems
+        .map((value) => {
+            if(typeof value === 'string'){
+                const name = value.trim();
+                if(!name) return null;
+                return {
+                    name,
+                    note: '',
+                    image: buildTeamPokemonImageFileName(name)
+                };
+            }
+            if(value && typeof value === 'object'){
+                const name = String(value.name || value.label || value.text || value.pokemon || '').trim();
+                if(!name) return null;
+                return {
+                    name,
+                    note: String(value.note || value.comment || value.description || '').trim(),
+                    image: String(value.image || buildTeamPokemonImageFileName(name)).trim()
+                };
+            }
+            return null;
+        })
+        .filter(Boolean);
+}
+
+function normalizeTeamMember(member, index){
+    if(!member || typeof member !== 'object') return null;
+
+    const name = String(member.name || member.pokemon || '').trim();
+    if(!name) return null;
+
+    const role = String(member.role || member.function || `Slot ${index + 1}`).trim();
+    const note = String(member.note || '').trim();
+    const image = String(member.image || buildTeamPokemonImageFileName(name)).trim();
+
+    return {
+        name,
+        role,
+        note,
+        image
+    };
+}
+
+function resolveTeamElementKeys(elements, elementLabel){
+    const rawEntries = Array.isArray(elements) && elements.length
+        ? elements
+        : String(elementLabel || '')
+            .split(/[\/,]+/)
+            .map((part) => part.trim())
+            .filter(Boolean);
+
+    const seen = new Set();
+    return rawEntries
+        .map(normalizePokemonTypeKey)
+        .filter((value) => {
+            if(!value || seen.has(value)) return false;
+            seen.add(value);
+            return true;
+        });
+}
+
+function buildTeamPokemonImageFileName(name){
+    const slug = String(name || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[♀]/g, 'f')
+        .replace(/[♂]/g, 'm')
+        .replace(/[’`]/g, "'")
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/[.]/g, '')
+        .replace(/[^a-z0-9'-]+/g, '')
+        .replace(/-{2,}/g, '-')
+        .replace(/'+/g, "'")
+        .replace(/^[-']+|[-']+$/g, '');
+    return slug ? `${slug}.png` : '';
+}
+
+function getTeamPokemonImageSource(member){
+    const fileName = String(member?.image || '').trim();
+    if(!fileName) return POKEMON_IMAGE_PLACEHOLDER;
+    if(fileName === POKEMON_IMAGE_PLACEHOLDER){
+        return fileName;
+    }
+    if(/^[./]/.test(fileName) || fileName.includes('/')){
+        return appendTeamImageVersion(fileName);
+    }
+    return appendTeamImageVersion(`pokemons/${fileName}`);
+}
+
+function appendTeamImageVersion(source){
+    const rawSource = String(source || '').trim();
+    if(!rawSource || rawSource === POKEMON_IMAGE_PLACEHOLDER) return rawSource;
+    if(/[?&]v=/.test(rawSource)) return rawSource;
+    const separator = rawSource.includes('?') ? '&' : '?';
+    return `${rawSource}${separator}v=${TEAM_POKEMON_IMAGE_VERSION}`;
+}
+
+function getTeamSearchTerms(value){
+    return normalizePokemonSearchText(value)
+        .split(/[,\s]+/)
+        .filter(Boolean);
+}
+
+function hasActiveTeamFilters(filters = teamFilters){
+    return normalizeTeamClanKey(filters?.clan) !== 'all'
+        || normalizeTeamTagKey(filters?.tag) !== 'all'
+        || Boolean(String(filters?.search || '').trim());
+}
+
+function getFilteredTeamEntries(filters = teamFilters){
+    const normalizedClan = normalizeTeamClanKey(filters?.clan);
+    const normalizedTag = normalizeTeamTagKey(filters?.tag);
+    const searchTerms = getTeamSearchTerms(filters?.search || '');
+
+    return teamsCatalog.filter((entry) => {
+        if(normalizedClan !== 'all' && entry.clanKey !== normalizedClan) return false;
+        if(normalizedTag !== 'all' && !entry.tagKeys.includes(normalizedTag)) return false;
+        if(!searchTerms.length) return true;
+        return searchTerms.every((term) => entry.searchText.includes(term));
+    });
+}
+
+function scheduleTeamsCatalogRender(){
+    if(!teamsCatalogLoaded) return;
+
+    if(teamsCatalogRenderFrame){
+        cancelAnimationFrame(teamsCatalogRenderFrame);
+    }
+
+    teamsCatalogRenderFrame = requestAnimationFrame(() => {
+        teamsCatalogRenderFrame = null;
+        renderTeamsCatalog();
+    });
+}
+
+function updateTimesStatus(totalCount, visibleCount, filters = teamFilters, options = {}){
+    if(!timesStatus) return;
+
+    if(options.failed){
+        timesStatus.textContent = 'Nao foi possivel carregar os times.';
+        return;
+    }
+
+    if(!totalCount){
+        timesStatus.textContent = 'Nenhum time cadastrado ainda.';
+        return;
+    }
+
+    if(!hasActiveTeamFilters(filters)){
+        timesStatus.textContent = totalCount === 1
+            ? '1 time carregado.'
+            : `${totalCount} times carregados.`;
+        return;
+    }
+
+    if(!visibleCount){
+        timesStatus.textContent = 'Nenhum time encontrado com os filtros atuais.';
+        return;
+    }
+
+    timesStatus.textContent = `${visibleCount} de ${totalCount} times exibidos.`;
+}
+
+function setTimesEmptyState(title, text){
+    if(timesEmptyTitle) timesEmptyTitle.textContent = title;
+    if(timesEmptyText) timesEmptyText.textContent = text;
+    if(timesEmptyState) timesEmptyState.hidden = false;
+}
+
+function hideTimesEmptyState(){
+    if(timesEmptyState) timesEmptyState.hidden = true;
+}
+
+function renderTeamsCatalog(options = {}){
+    const { animate = false } = options;
+    if(!timesCardGrid) return;
+
+    const filteredEntries = getFilteredTeamEntries();
+    const totalCount = teamsCatalog.length;
+    updateTimesStatus(totalCount, filteredEntries.length);
+    timesCardGrid.replaceChildren();
+
+    if(!totalCount){
+        setTimesEmptyState(
+            'Nenhum time cadastrado ainda.',
+            'Adicione um novo time para preencher esta pagina.'
+        );
+        return;
+    }
+
+    if(!filteredEntries.length){
+        setTimesEmptyState(
+            'Nenhum time encontrado.',
+            'Tente ajustar o cla ativo ou os termos da busca.'
+        );
+        return;
+    }
+
+    hideTimesEmptyState();
+
+    const fragment = document.createDocumentFragment();
+    filteredEntries.forEach((entry) => {
+        fragment.appendChild(createTeamCard(entry));
+    });
+    timesCardGrid.appendChild(fragment);
+
+    if(useGsap && animate && contentTimes && !contentTimes.hidden){
+        gsap.from(timesCardGrid.querySelectorAll('.team-card'), {
+            opacity: 0,
+            y: 12,
+            duration: 0.32,
+            stagger: 0.04,
+            overwrite: true
+        });
+    }
+}
+
+function createTeamCard(entry){
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'team-card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('aria-label', `${entry.clanLabel}. ${entry.elementLabel}. Abrir detalhes do time.`);
+
+    const header = document.createElement('div');
+    header.className = 'team-card__header';
+
+    const clanBadge = createPokemonTeamBadge(entry.clanKey);
+    const huntsCount = document.createElement('span');
+    huntsCount.className = 'team-card__count';
+    huntsCount.textContent = `${entry.hunts.length} hunt${entry.hunts.length === 1 ? '' : 's'}`;
+    header.append(clanBadge, huntsCount);
+
+    const hero = document.createElement('div');
+    hero.className = 'team-card__hero';
+
+    const crest = createTeamTypeCrest(entry.elementKeys, entry.elementLabel, { compact: true });
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'team-card__title-wrap';
+
+    const eyebrow = document.createElement('span');
+    eyebrow.className = 'team-card__eyebrow';
+    eyebrow.textContent = entry.clanLabel;
+
+    const title = document.createElement('strong');
+    title.className = 'team-card__title';
+    title.textContent = entry.elementLabel;
+
+    titleWrap.append(eyebrow, title);
+    hero.append(crest, titleWrap);
+
+    const tagsRow = document.createElement('div');
+    tagsRow.className = 'team-card__tags';
+    entry.tags.forEach((tagLabel) => {
+        tagsRow.appendChild(createTeamTagChip(tagLabel));
+    });
+    if(!tagsRow.childElementCount){
+        tagsRow.classList.add('team-card__tags--empty');
+        tagsRow.setAttribute('aria-hidden', 'true');
+    }
+
+    const roster = document.createElement('div');
+    roster.className = 'team-card__roster';
+    entry.pokemons.forEach((member, index) => {
+        roster.appendChild(createTeamMemberRow(member, index));
+    });
+
+    const footer = document.createElement('div');
+    footer.className = 'team-card__footer';
+    footer.textContent = 'Abrir detalhes';
+
+    card.append(header, hero, tagsRow, roster, footer);
+    card.addEventListener('click', () => {
+        openTeamDetailsModal(entry);
+    });
+
+    return card;
+}
+
+function createTeamTagChip(tagLabel){
+    const chip = document.createElement('span');
+    chip.className = 'team-tag-chip';
+    const dot = document.createElement('span');
+    dot.className = 'team-tag-chip__dot';
+    dot.setAttribute('aria-hidden', 'true');
+
+    const label = document.createElement('span');
+    label.className = 'team-tag-chip__label';
+    label.textContent = tagLabel;
+
+    chip.append(dot, label);
+    return chip;
+}
+
+function createTeamTypeCrest(typeKeys = [], elementLabel = '', options = {}){
+    const { compact = false } = options;
+    const crest = document.createElement('div');
+    crest.className = compact ? 'team-type-crest team-type-crest--compact' : 'team-type-crest';
+
+    const normalizedKeys = Array.isArray(typeKeys) ? typeKeys.filter(Boolean) : [];
+    normalizedKeys.slice(0, 3).forEach((typeKey) => {
+        const token = document.createElement('span');
+        token.className = 'team-type-crest__token';
+
+        const icon = document.createElement('img');
+        icon.src = `icons-type/${typeKey}.png`;
+        icon.alt = formatPokemonTypeLabel(typeKey);
+        icon.loading = 'lazy';
+        icon.decoding = 'async';
+        setImageFallback(icon, POKEMON_IMAGE_PLACEHOLDER);
+
+        token.appendChild(icon);
+        crest.appendChild(token);
+    });
+
+    if(!crest.childElementCount){
+        const fallback = document.createElement('span');
+        fallback.className = 'team-type-crest__fallback';
+        fallback.textContent = String(elementLabel || 'TM').slice(0, 2).toUpperCase();
+        crest.appendChild(fallback);
+    }
+
+    return crest;
+}
+
+function createTeamTypeTokenRow(entry){
+    const fragment = document.createDocumentFragment();
+    if(!entry.elementKeys.length){
+        const empty = document.createElement('span');
+        empty.className = 'team-empty-copy';
+        empty.textContent = 'Sem elemento definido.';
+        fragment.appendChild(empty);
+        return fragment;
+    }
+
+    entry.elementKeys.forEach((typeKey) => {
+        fragment.appendChild(createPokemonTypeToken(typeKey));
+    });
+    return fragment;
+}
+
+function createTeamMemberRow(member, index, options = {}){
+    const { modal = false } = options;
+    const row = document.createElement('article');
+    row.className = modal ? 'team-roster-card' : 'team-member-row';
+
+    const media = document.createElement('span');
+    media.className = modal ? 'team-roster-card__media' : 'team-member-row__media';
+
+    const image = document.createElement('img');
+    image.src = getTeamPokemonImageSource(member);
+    image.alt = member.name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    media.appendChild(image);
+
+    const content = document.createElement('div');
+    content.className = modal ? 'team-roster-card__content' : 'team-member-row__content';
+
+    const name = document.createElement('strong');
+    name.className = modal ? 'team-roster-card__name' : 'team-member-row__name';
+    name.textContent = member.name;
+
+    const role = document.createElement('span');
+    role.className = modal ? 'team-roster-card__role' : 'team-member-row__role';
+    role.textContent = member.note ? `${member.role} • ${member.note}` : member.role;
+
+    content.append(name, role);
+    row.append(media, content);
+    return row;
+}
+
+function createTeamEntityCard(entity, options = {}){
+    const { showNote = false } = options;
+    const normalizedEntity = typeof entity === 'string'
+        ? { name: entity, note: '', image: buildTeamPokemonImageFileName(entity) }
+        : entity && typeof entity === 'object'
+            ? {
+                name: String(entity.name || entity.label || entity.text || entity.pokemon || '').trim(),
+                note: String(entity.note || entity.comment || entity.description || '').trim(),
+                image: String(entity.image || buildTeamPokemonImageFileName(entity.name || entity.label || entity.text || entity.pokemon || '')).trim()
+            }
+            : null;
+
+    if(!normalizedEntity || !normalizedEntity.name){
+        return document.createDocumentFragment();
+    }
+
+    const card = document.createElement('article');
+    card.className = 'team-hunt-card';
+    if(showNote){
+        card.classList.add('team-hunt-card--detailed');
+    }
+
+    const media = document.createElement('span');
+    media.className = 'team-hunt-card__media';
+
+    const image = document.createElement('img');
+    image.src = getTeamPokemonImageSource(normalizedEntity);
+    image.alt = normalizedEntity.name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    media.appendChild(image);
+
+    const label = document.createElement('span');
+    label.className = 'team-hunt-card__label';
+    label.textContent = normalizedEntity.name;
+
+    card.append(media, label);
+
+    if(showNote && normalizedEntity.note){
+        const note = document.createElement('span');
+        note.className = 'team-hunt-card__note';
+        note.textContent = normalizedEntity.note;
+        card.append(note);
+    }
+
+    return card;
+}
+
+function createTeamHuntCard(hunt){
+    return createTeamEntityCard(hunt);
+}
+
+function createTeamTipCard(tipText, index){
+    const card = document.createElement('article');
+    card.className = 'team-tip-card';
+
+    const label = document.createElement('span');
+    label.className = 'team-tip-card__label';
+    label.textContent = `Dica ${index + 1}`;
+
+    const text = document.createElement('p');
+    text.className = 'team-tip-card__text';
+    text.textContent = tipText;
+
+    card.append(label, text);
+    return card;
+}
+
+function renderTeamEntityCollection(container, values, options = {}){
+    if(!(container instanceof HTMLElement)) return;
+
+    const { emptyText = '', showNote = false } = options;
+    if(!Array.isArray(values) || !values.length){
+        if(emptyText){
+            const empty = document.createElement('span');
+            empty.className = 'team-empty-copy';
+            empty.textContent = emptyText;
+            container.replaceChildren(empty);
+        } else {
+            container.replaceChildren();
+        }
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    values.forEach((value) => {
+        fragment.appendChild(createTeamEntityCard(value, { showNote }));
+    });
+    container.replaceChildren(fragment);
+}
+
+function renderTeamDetailsModal(entry){
+    if(!entry) return;
+
+    activeTeamEntry = entry;
+    if(timesDetailsClan){
+        timesDetailsClan.replaceChildren(createPokemonTeamBadge(entry.clanKey));
+    }
+    if(timesDetailsTitle){
+        timesDetailsTitle.textContent = entry.elementLabel;
+    }
+    if(timesDetailsSubtitle){
+        timesDetailsSubtitle.textContent = `${entry.clanLabel} • ${entry.pokemons.length} Pokemons • ${entry.hunts.length} hunts`;
+    }
+    if(timesDetailsTypes){
+        timesDetailsTypes.replaceChildren(createTeamTypeTokenRow(entry));
+    }
+    if(timesDetailsCommentPanel && timesDetailsCommentText){
+        const hasComment = Boolean(String(entry.comment || '').trim());
+        timesDetailsCommentPanel.hidden = !hasComment;
+        timesDetailsCommentText.textContent = hasComment ? entry.comment : '';
+    }
+    if(timesDetailsTipsPanel && timesDetailsTips){
+        const hasTips = Array.isArray(entry.tips) && entry.tips.length > 0;
+        timesDetailsTipsPanel.hidden = !hasTips;
+        if(hasTips){
+            const tipsFragment = document.createDocumentFragment();
+            entry.tips.forEach((tipText, index) => {
+                tipsFragment.appendChild(createTeamTipCard(tipText, index));
+            });
+            timesDetailsTips.replaceChildren(tipsFragment);
+        } else {
+            timesDetailsTips.replaceChildren();
+        }
+    }
+    if(timesDetailsRoster){
+        const rosterFragment = document.createDocumentFragment();
+        entry.pokemons.forEach((member, index) => {
+            rosterFragment.appendChild(createTeamMemberRow(member, index, { modal: true }));
+        });
+        timesDetailsRoster.replaceChildren(rosterFragment);
+    }
+    if(timesDetailsHunts){
+        renderTeamEntityCollection(timesDetailsHunts, entry.hunts, {
+            emptyText: 'Nenhuma hunt cadastrada para este time.'
+        });
+    }
+    if(timesDetailsAlternativesPanel){
+        const hasAlternativePokemons = Array.isArray(entry.alternativePokemons) && entry.alternativePokemons.length > 0;
+        const hasAlternativeHunts = Array.isArray(entry.alternativeHunts) && entry.alternativeHunts.length > 0;
+        const hasAlternatives = hasAlternativePokemons || hasAlternativeHunts;
+        timesDetailsAlternativesPanel.hidden = !hasAlternatives;
+
+        if(timesDetailsAltPokemonsGroup && timesDetailsAltPokemons){
+            timesDetailsAltPokemonsGroup.hidden = !hasAlternativePokemons;
+            renderTeamEntityCollection(timesDetailsAltPokemons, hasAlternativePokemons ? entry.alternativePokemons : [], {
+                showNote: true
+            });
+        }
+        if(timesDetailsAltHuntsGroup && timesDetailsAltHunts){
+            timesDetailsAltHuntsGroup.hidden = !hasAlternativeHunts;
+            renderTeamEntityCollection(timesDetailsAltHunts, hasAlternativeHunts ? entry.alternativeHunts : []);
+        }
+    }
+}
+
+function openTeamDetailsModal(entry){
+    if(!timesDetailsModal || !entry) return;
+
+    renderTeamDetailsModal(entry);
+    timesDetailsLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    timesDetailsModal.setAttribute('aria-hidden', 'false');
+    syncBasicModalPageState();
+
+    const closeBtn = timesDetailsModal.querySelector('.modal-close');
+    if(closeBtn instanceof HTMLElement){
+        try { closeBtn.focus({ preventScroll: true }); } catch(error) {}
+    }
+
+    if(timesDetailsKeyHandler){
+        document.removeEventListener('keydown', timesDetailsKeyHandler);
+    }
+    timesDetailsKeyHandler = (event) => {
+        if(event.key === 'Escape') closeTeamDetailsModal();
+    };
+    document.addEventListener('keydown', timesDetailsKeyHandler);
+}
+
+function closeTeamDetailsModal(){
+    if(!timesDetailsModal) return;
+
+    timesDetailsModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+
+    if(timesDetailsKeyHandler){
+        document.removeEventListener('keydown', timesDetailsKeyHandler);
+        timesDetailsKeyHandler = null;
+    }
+
+    if(timesDetailsLastFocus instanceof HTMLElement && timesDetailsLastFocus.isConnected){
+        try { timesDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
+    }
+
+    timesDetailsLastFocus = null;
+    activeTeamEntry = null;
+}
+
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
@@ -3933,7 +4915,7 @@ function showSpeedsters(requestedBossMode=''){
 }
 
 const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames']);
+const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames']);
 const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames'];
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
@@ -6135,6 +7117,7 @@ function initTabFromUrl(){
     if(resolvedTab==='calculator') return showCalculator();
     if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
+    if(resolvedTab==='times') return showTimes();
     // If the URL targeted a specific pokemon number, open the pokemons tab and
     // open the requested modal once the catalog is loaded.
     if(initialDeepLinkedPokemonDex !== null){
@@ -6164,6 +7147,7 @@ function initTabFromUrl(){
     if(saved==='calculator') return showCalculator();
     if(saved==='boost') return showBoostCalculator();
     if(saved==='fossils') return showFossils();
+    if(saved==='times') return showTimes();
     if(saved==='pokemons') return showPokemons();
     if(saved==='catch') return showCatch();
     if(saved==='bosses' || saved==='speedsters') return showSpeedsters();
@@ -8209,6 +9193,7 @@ function updateUrl(){
     const activeTab = isHomeView ? '' :
                       (contentBoost && !contentBoost.hidden) ? 'boost' :
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
+                      (contentTimes && !contentTimes.hidden) ? 'times' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
@@ -8641,6 +9626,18 @@ if(pokemonDetailsModal){
     pokemonDetailsModal.addEventListener('click', (event) => {
         if(event.target === pokemonDetailsModal){
             closePokemonDetailsModal();
+        }
+    });
+}
+
+if(timesDetailsModal){
+    const timesDetailsCloseBtn = timesDetailsModal.querySelector('.modal-close');
+    if(timesDetailsCloseBtn){
+        timesDetailsCloseBtn.addEventListener('click', closeTeamDetailsModal);
+    }
+    timesDetailsModal.addEventListener('click', (event) => {
+        if(event.target === timesDetailsModal){
+            closeTeamDetailsModal();
         }
     });
 }

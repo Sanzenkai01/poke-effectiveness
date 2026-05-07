@@ -1,6 +1,5 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+﻿<!DOCTYPE html>
+<html lang="pt-BR"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Poke Utilities reúne consulta de tipos, fósseis, treinamento, captura, chefes, transmissões e vídeos da comunidade PStory em um só lugar.">
@@ -8,28 +7,28 @@
     <base href="/">
     <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260507j">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260507g">
     <link rel="manifest" href="manifest.json">
 </head>
-<body class="dark">
+<body class="dark" data-active-tab="times">
     <header class="header">
-      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">&#9776;</button>
+      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">☰</button>
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
       <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
-        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
+        <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async">
       </button>
-      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">&#x1F5FA;</button>
-      <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
+      <button id="respawns-btn" aria-label="Respawns" title="Respawns" style="font-size:1.15rem;line-height:1;">🗺</button>
+      <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">🎣</button>
       <!-- Páscoa button removed -->
-      <h1 id="page-title">Poke Utilities</h1>
+      <h1 id="page-title">Times</h1>
       <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
-      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
+      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;" disabled="" aria-disabled="true">📋</button>
     </header>
     <nav class="tabs" role="tablist" aria-label="Seções principais">
-      <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
+      <button id="tab-effectiveness" class="tab" role="tab" aria-selected="false" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
       <button id="tab-calculator" class="tab" role="tab" aria-selected="false" aria-controls="content-calculator">Calculadora de Treinamento</button>
       <button id="tab-catch" class="tab" role="tab" aria-selected="false" aria-controls="content-catch">Calculadora de Captura</button>
@@ -38,7 +37,7 @@
       <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">Vídeos</button>
     </nav>
 
-    <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden>
+    <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden="">
       <div class="home-landing__shell">
         <div class="home-landing__hero">
           <div class="home-landing__copy">
@@ -48,16 +47,8 @@
             <p id="home-supporting" class="home-landing__supporting">Entre por Tipos e navegue por fósseis, treinamento, pokémons, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.</p>
             <div class="home-landing__actions">
               <button id="home-explore-btn" class="home-landing__cta" type="button" data-home-target="bosses">Explorar</button>
-              <a
-                class="home-landing__icon-link"
-                href="https://discord.com/invite/Gn2x6F5vB6"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Entrar no Discord do PStory"
-                title="Entrar no Discord do PStory"
-                data-tooltip="Entrar no Discord do PStory"
-              >
-                <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              <a class="home-landing__icon-link" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Entrar no Discord do PStory" title="Entrar no Discord do PStory" data-tooltip="Entrar no Discord do PStory">
+                <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </a>
             </div>
           </div>
@@ -66,8 +57,8 @@
             <p class="home-landing__focus-label">Hub tático</p>
             <div class="home-landing__focus-orbit">
               <div class="home-landing__focus-core">
-                <span id="home-focus-number" class="home-landing__focus-number">08</span>
-                <span id="home-focus-caption" class="home-landing__focus-caption">ferramentas em um só painel</span>
+                <span id="home-focus-number" class="home-landing__focus-number">04</span>
+                <span id="home-focus-caption" class="home-landing__focus-caption">grupos principais</span>
               </div>
             </div>
             <div class="home-landing__focus-note">
@@ -88,88 +79,78 @@
             <div class="home-landing__quick-copy">
               <span class="home-landing__quick-eyebrow">Acesso rápido</span>
             </div>
-            <a
-              class="home-landing__quick-discord"
-              href="https://discord.com/invite/Gn2x6F5vB6"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <a class="home-landing__quick-discord" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">
+              <img src="icons-type/discord.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               Entrar no Discord
             </a>
           </div>
           <div class="home-landing__quick-grid" role="group" aria-label="Atalhos do sistema">
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="commands">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">💬</span>
               <span>Comandos</span>
             </button>
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="elemental-balls">
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
-                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
+                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async">
               </span>
               <span>Pokébolas</span>
             </button>
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="respawns">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🗺</span>
               <span>Respawns</span>
             </button>
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="fishing">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🎣</span>
               <span>Pescaria</span>
             </button>
           </div>
         </section>
 
-        <div class="home-landing__tools" aria-label="Ferramentas disponíveis">
-          <button class="home-tool-card" type="button" data-home-target="effectiveness">
-            <span class="home-tool-card__index">01</span>
-            <strong class="home-tool-card__title">Tipos</strong>
-            <span class="home-tool-card__desc">Fraquezas, resistências e combinações em leitura imediata.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="fossils">
-            <span class="home-tool-card__index">02</span>
-            <strong class="home-tool-card__title">Fósseis</strong>
-            <span class="home-tool-card__desc">Escolha pares certos sem precisar cruzar tabelas manualmente.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="calculator">
-            <span class="home-tool-card__index">03</span>
-            <strong class="home-tool-card__title">Treinamento</strong>
-            <span class="home-tool-card__desc">Planeje placas, ouro e recursos antes de investir no treino.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="pokemons">
-            <span class="home-tool-card__index">04</span>
-            <strong class="home-tool-card__title">Pokémons</strong>
-            <span class="home-tool-card__desc">Consulte cards com moveset, elementos naturais, médias e fraquezas.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="catch">
-            <span class="home-tool-card__index">05</span>
-            <strong class="home-tool-card__title">Captura</strong>
-            <span class="home-tool-card__desc">Consulte cálculos de captura com um fluxo mais direto e claro.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="bosses">
-            <span class="home-tool-card__index">06</span>
-            <strong class="home-tool-card__title">Chefes</strong>
-            <span class="home-tool-card__desc">Veja escolhas e funções ideais para cada chefe sem perder tempo.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="streamers">
-            <span class="home-tool-card__index">07</span>
-            <strong class="home-tool-card__title">Transmissões</strong>
-            <span class="home-tool-card__desc">Acompanhe canais e sinais úteis da comunidade em uma visão só.</span>
-          </button>
-          <button class="home-tool-card" type="button" data-home-target="youtube">
-            <span class="home-tool-card__index">08</span>
-            <strong class="home-tool-card__title">Vídeos</strong>
-            <span class="home-tool-card__desc">Assista a vídeos úteis da comunidade sem sair do Poke Utilities.</span>
-          </button>
-        </div>
+        <div class="home-landing__tools" aria-label="Ferramentas disponíveis"><button type="button" class="home-tool-card" data-home-group="bosses" data-home-index="0" aria-expanded="false">
+                <span class="home-tool-card__index">01</span>
+                <strong class="home-tool-card__title">Bosses</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Hoopa Portais</span><span class="home-tool-card__pill">Champion Path</span><span class="home-tool-card__pill">Mewtwo</span><span class="home-tool-card__pill">Planejador</span><span class="home-tool-card__pill">Horizons<span class="home-tool-card__pill-badge">Em Breve</span></span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Bosses</span>
+                    <span class="home-tool-card__meta">5 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="systems" data-home-index="1" aria-expanded="false">
+                <span class="home-tool-card__index">02</span>
+                <strong class="home-tool-card__title">Sistemas</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Catch</span><span class="home-tool-card__pill">Fósseis</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Sistemas</span>
+                    <span class="home-tool-card__meta">2 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="utilities" data-home-index="2" aria-expanded="false">
+                <span class="home-tool-card__index">03</span>
+                <strong class="home-tool-card__title">Utilidades</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">Tipos</span><span class="home-tool-card__pill">Treinamento</span><span class="home-tool-card__pill">Calculadora de Boost</span><span class="home-tool-card__pill">Pokémons<span class="home-tool-card__pill-badge">Em Produção</span></span><span class="home-tool-card__pill">Times</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Utilidades</span>
+                    <span class="home-tool-card__meta">5 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button><button type="button" class="home-tool-card" data-home-group="community" data-home-index="3" aria-expanded="false">
+                <span class="home-tool-card__index">04</span>
+                <strong class="home-tool-card__title">Comunidade</strong>
+                <div class="home-tool-card__summary"><span class="home-tool-card__pill">YouTube</span><span class="home-tool-card__pill">Streamers</span><span class="home-tool-card__pill">Entrar no Discord</span></div>
+                <div class="home-tool-card__footer">
+                    <span class="home-tool-card__action">Explorar Comunidade</span>
+                    <span class="home-tool-card__meta">3 modulos</span>
+                </div>
+                <span class="home-tool-card__chev" aria-hidden="true">▾</span>
+            </button></div>
       </div>
     </section>
 
     <div class="app-shell">
-      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site">
+      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site" aria-hidden="true">
         <button class="sidebar-home" type="button" data-nav-target="home">
           <span class="sidebar-home__brand-mark">
-            <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async">
           </span>
           <span class="sidebar-home__copy">
             <strong>Poke Utilities</strong>
@@ -178,13 +159,7 @@
 
         <nav class="sidebar-nav" aria-label="Navegacao principal">
           <section class="sidebar-group" data-sidebar-group="bosses" data-expanded="true">
-            <button
-              class="sidebar-group__toggle"
-              type="button"
-              data-sidebar-group-toggle
-              aria-expanded="true"
-              aria-controls="sidebar-group-bosses"
-            >
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-bosses">
               <span class="sidebar-group__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <path d="M12 3.5l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8L12 3.5z"></path>
@@ -222,13 +197,7 @@
           </section>
 
           <section class="sidebar-group" data-sidebar-group="systems" data-expanded="true">
-            <button
-              class="sidebar-group__toggle"
-              type="button"
-              data-sidebar-group-toggle
-              aria-expanded="true"
-              aria-controls="sidebar-group-systems"
-            >
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-systems">
               <span class="sidebar-group__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10v5H4V6.5zm10 0A2.5 2.5 0 0 1 16.5 4H20v8h-6V6.5zM4 14h6v6H6.5A2.5 2.5 0 0 1 4 17.5V14zm10 0h6v3.5a2.5 2.5 0 0 1-2.5 2.5H14v-6z"></path>
@@ -252,14 +221,8 @@
             </div>
           </section>
 
-          <section class="sidebar-group" data-sidebar-group="utilities" data-expanded="true">
-            <button
-              class="sidebar-group__toggle"
-              type="button"
-              data-sidebar-group-toggle
-              aria-expanded="true"
-              aria-controls="sidebar-group-utilities"
-            >
+          <section class="sidebar-group is-active" data-sidebar-group="utilities" data-expanded="true">
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-utilities">
               <span class="sidebar-group__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <path d="M11.1 3h1.8l.8 3.1a6.3 6.3 0 0 1 1.7.7l2.9-1.5 1.3 1.3-1.5 2.9c.3.5.6 1.1.7 1.7l3.2.8v1.8l-3.2.8a6.3 6.3 0 0 1-.7 1.7l1.5 2.9-1.3 1.3-2.9-1.5c-.5.3-1.1.6-1.7.7L12.9 21h-1.8l-.8-3.2a6.3 6.3 0 0 1-1.7-.7l-2.9 1.5-1.3-1.3 1.5-2.9a6.3 6.3 0 0 1-.7-1.7L2 12.9v-1.8l3.1-.8c.1-.6.4-1.2.7-1.7L4.3 5.7l1.3-1.3 2.9 1.5c.5-.3 1.1-.6 1.7-.7L11.1 3zm.9 5A4 4 0 1 0 12 16a4 4 0 0 0 0-8z"></path>
@@ -289,22 +252,15 @@
                 <span>Pokémons</span>
                 <span class="sidebar-sublink__badge" aria-hidden="true">Em Produção</span>
               </button>
-              <button class="sidebar-sublink" type="button" data-nav-target="times">
+              <button class="sidebar-sublink is-active" type="button" data-nav-target="times" aria-current="page">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Times</span>
-                <span class="sidebar-sublink__badge" aria-hidden="true">Em Produção</span>
               </button>
             </div>
           </section>
 
           <section class="sidebar-group" data-sidebar-group="community" data-expanded="true">
-            <button
-              class="sidebar-group__toggle"
-              type="button"
-              data-sidebar-group-toggle
-              aria-expanded="true"
-              aria-controls="sidebar-group-community"
-            >
+            <button class="sidebar-group__toggle" type="button" data-sidebar-group-toggle="" aria-expanded="true" aria-controls="sidebar-group-community">
               <span class="sidebar-group__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-4.7l-3.8 3v-3H6.5A2.5 2.5 0 0 1 4 13.5v-8zm6.2 2.7v5.6l4.8-2.8-4.8-2.8z"></path>
@@ -325,12 +281,7 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Streamers</span>
               </button>
-              <a
-                class="sidebar-sublink sidebar-sublink--discord"
-                href="https://discord.com/invite/Gn2x6F5vB6"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a class="sidebar-sublink sidebar-sublink--discord" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Entrar no Discord</span>
               </a>
@@ -342,39 +293,33 @@
           <span class="sidebar-footer__eyebrow">Acesso rápido</span>
           <div class="sidebar-quick-links" role="group" aria-label="Atalhos do sistema">
             <button class="sidebar-quick-link" type="button" data-nav-action="commands">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">💬</span>
               <span>Comandos</span>
             </button>
             <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls">
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
-                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
+                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async">
               </span>
               <span>Pokébolas</span>
             </button>
             <button class="sidebar-quick-link" type="button" data-nav-action="respawns">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🗺</span>
               <span>Respawns</span>
             </button>
             <button class="sidebar-quick-link" type="button" data-nav-action="fishing">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
+              <span class="sidebar-quick-link__icon" aria-hidden="true">🎣</span>
               <span>Pescaria</span>
             </button>
           </div>
         </div>
       </aside>
 
-      <button
-        id="app-shell-backdrop"
-        class="app-shell__backdrop"
-        type="button"
-        hidden
-        aria-label="Fechar navegação"
-      ></button>
+      <button id="app-shell-backdrop" class="app-shell__backdrop" type="button" hidden="" aria-label="Fechar navegação" aria-hidden="true"></button>
 
       <main class="app-main">
     <p id="instructions"></p>
 
-    <section id="legend" class="legend legend-panel" aria-labelledby="legend-title">
+    <section id="legend" class="legend legend-panel" aria-labelledby="legend-title" style="display: none;">
         <h2 id="legend-title" class="visually-hidden">Legenda da efetividade</h2>
         <ul class="legend-list">
           <li class="legend-item"><span class="legend-color selected" aria-hidden="true"></span><span class="legend-item__label">Selecionado</span></li>
@@ -444,7 +389,7 @@
           <div class="fishing-modal__actions elemental-balls-modal__actions">
             <button id="elemental-balls-kurt-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local do NPC Kurt" title="Local do NPC Kurt">
               <span class="fossil-location-btn__thumb">
-                <img src="mapas/kurt.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                <img src="mapas/kurt.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
               </span>
               <span class="fossil-location-btn__label">Local do Kurt</span>
             </button>
@@ -457,7 +402,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
           <div class="image-modal__canvas" id="elemental-balls-canvas">
-            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async" />
+            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -465,10 +410,10 @@
 
     <div class="modal image-modal" id="elemental-balls-kurt-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-kurt-modal-title">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <button class="modal-close" aria-label="Fechar">✖</button>
         <h2 id="elemental-balls-kurt-modal-title">Local do NPC Kurt</h2>
         <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -477,15 +422,15 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="elemental-balls-kurt-viewport">
           <div class="image-modal__canvas" id="elemental-balls-kurt-canvas">
-            <img id="elemental-balls-kurt-image" class="image-modal__image" src="mapas/kurt.png" alt="Imagem do local do NPC Kurt para fabricar as pokébolas elementais" loading="lazy" decoding="async" />
+            <img id="elemental-balls-kurt-image" class="image-modal__image" src="mapas/kurt.png" alt="Imagem do local do NPC Kurt para fabricar as pokebolas elementais" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
     </div>
 
-    <div class="modal image-modal respawns-modal" id="respawns-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="respawns-modal-title">
+    <div class="modal image-modal respawns-modal" id="respawns-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="respawns-modal-title" data-active-map="kanto">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <button class="modal-close" aria-label="Fechar">✖</button>
         <h2 id="respawns-modal-title">Respawns</h2>
         <div class="image-modal__toolbar image-modal__toolbar--stacked">
           <p class="image-modal__hint">Escolha a região desejada. Em Johto e na Wild Area, use os botões extras para trocar entre os mapas.</p>
@@ -495,7 +440,7 @@
             <button type="button" class="respawns-modal__tab" data-respawn-map="wild-area" aria-pressed="false">Wild Area</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="orre" aria-pressed="false">Orre</button>
           </div>
-          <div class="respawns-modal__subnav" id="respawns-johto-subnav" hidden>
+          <div class="respawns-modal__subnav" id="respawns-johto-subnav" hidden="" aria-hidden="true">
             <span class="respawns-modal__subnav-label">Mapas de Johto</span>
             <div class="respawns-modal__access" role="group" aria-label="Partes do mapa de Johto">
               <button type="button" class="respawns-modal__access-btn" data-johto-page="1" aria-pressed="false">Parte 1</button>
@@ -506,7 +451,7 @@
               <button type="button" class="respawns-modal__access-btn" data-johto-page="6" aria-pressed="false">Parte 6</button>
             </div>
           </div>
-          <div class="respawns-modal__subnav" hidden>
+          <div class="respawns-modal__subnav" hidden="" aria-hidden="true">
             <span class="respawns-modal__subnav-label">Entradas da Wild Area</span>
             <div class="respawns-modal__access" role="group" aria-label="Entradas da Wild Area">
               <button type="button" class="respawns-modal__access-btn" data-wild-access="south" aria-pressed="false">South</button>
@@ -521,15 +466,10 @@
           </div>
         </div>
         <p id="respawns-modal-caption" class="respawns-modal__caption" aria-live="polite">Mapa de Kanto em breve.</p>
-        <p id="respawns-modal-note" class="respawns-modal__note" hidden></p>
+        <p id="respawns-modal-note" class="respawns-modal__note" hidden=""></p>
         <div class="image-modal__frame image-modal__viewport" id="respawns-viewport">
           <div class="image-modal__canvas" id="respawns-canvas">
-            <img
-              id="respawns-image"
-              class="image-modal__image"
-              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-              alt="Mapa de respawns"
-            />
+            <img id="respawns-image" class="image-modal__image" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201600%20900%22%20role%3D%22img%22%20aria-label%3D%22Kanto%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23091423%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23132944%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3ClinearGradient%20id%3D%22card%22%20x1%3D%220%25%22%20y1%3D%220%25%22%20x2%3D%22100%25%22%20y2%3D%22100%25%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237ce7ff%22%20stop-opacity%3D%220.18%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ffd166%22%20stop-opacity%3D%220.12%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20width%3D%221600%22%20height%3D%22900%22%20fill%3D%22url(%23bg)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22260%22%20cy%3D%22180%22%20r%3D%22160%22%20fill%3D%22%237ce7ff%22%20fill-opacity%3D%220.14%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%221320%22%20cy%3D%22720%22%20r%3D%22220%22%20fill%3D%22%23ffd166%22%20fill-opacity%3D%220.12%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20x%3D%22120%22%20y%3D%22120%22%20width%3D%221360%22%20height%3D%22660%22%20rx%3D%2242%22%20fill%3D%22url(%23card)%22%20stroke%3D%22%23d7ecff%22%20stroke-opacity%3D%220.18%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22800%22%20y%3D%22390%22%20text-anchor%3D%22middle%22%20fill%3D%22%23f5fbff%22%20font-size%3D%2294%22%20font-family%3D%22Montserrat%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22700%22%3EKanto%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22800%22%20y%3D%22490%22%20text-anchor%3D%22middle%22%20fill%3D%22%23c4d6ea%22%20font-size%3D%2242%22%20font-family%3D%22Montserrat%2C%20Arial%2C%20sans-serif%22%3EImagem%20em%20breve%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3C%2Fsvg%3E" alt="Aviso de mapa de Kanto em breve">
           </div>
         </div>
       </div>
@@ -537,7 +477,7 @@
 
     <div class="modal image-modal" id="fishing-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fishing-modal-title">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <button class="modal-close" aria-label="Fechar">✖</button>
         <h2 id="fishing-modal-title">Pescaria</h2>
         <div class="image-modal__toolbar">
           <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom no mapa de pescaria.</p>
@@ -557,7 +497,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="fishing-viewport">
           <div class="image-modal__canvas" id="fishing-canvas">
-            <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" loading="lazy" decoding="async" />
+            <img id="fishing-image" class="image-modal__image" src="mapas/fishing.png" alt="Mapa de pescaria" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -565,7 +505,7 @@
 
     <div class="modal image-modal" id="bait-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bait-location-modal-title">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <button class="modal-close" aria-label="Fechar">✖</button>
         <h2 id="bait-location-modal-title">Local para comprar iscas</h2>
         <div class="image-modal__toolbar">
           <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
@@ -577,7 +517,7 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="bait-location-viewport">
           <div class="image-modal__canvas" id="bait-location-canvas">
-            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" loading="lazy" decoding="async" />
+            <img id="bait-location-image" class="image-modal__image" src="mapas/iscas.png" alt="Mapa do local para comprar iscas" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -585,10 +525,10 @@
 
     <div class="modal image-modal" id="fossil-location-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fossil-location-modal-title">
       <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
-        <h2 id="fossil-location-modal-title">Local da troca de fósseis</h2>
+        <button class="modal-close" aria-label="Fechar">✖</button>
+        <h2 id="fossil-location-modal-title">Local da troca de fosseis</h2>
         <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
+          <p class="image-modal__hint">Use os botoes ou a roda do mouse para dar zoom na imagem.</p>
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -597,20 +537,20 @@
         </div>
         <div class="image-modal__frame image-modal__viewport" id="fossil-location-viewport">
           <div class="image-modal__canvas" id="fossil-location-canvas">
-            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localização da troca de fósseis" loading="lazy" decoding="async" />
+            <img id="fossil-location-image" class="image-modal__image" src="fosseis/local.png" alt="Imagem com a localizacao da troca de fosseis" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
     </div>
 
-    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden>
+    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden="">
       <div class="card types-card">
         <div class="types-hero">
           <div class="types-header">
             <div class="types-search">
               <label class="visually-hidden" for="type-search">Buscar tipo</label>
               <div class="search-wrapper">
-                <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo" />
+                <input type="text" id="type-search" placeholder="Buscar tipo..." aria-label="Buscar tipo">
                 <button id="reset-btn" class="reset-button" aria-label="Resetar" title="Resetar">🔄</button>
               </div>
             </div>
@@ -670,17 +610,17 @@
       </div>
     </div>
 
-    <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden>
+    <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden="">
       <div class="card calc-card">
         <h2 class="visually-hidden">Consulta de fósseis</h2>
         <p id="fossil-instructions"></p>
         <div class="fossil-flow" aria-label="Como usar a combinação de fósseis">
-          <span class="fossil-flow__step"><strong>1.</strong> Escolha um f&oacute;ssil</span>
+          <span class="fossil-flow__step"><strong>1.</strong> Escolha um fóssil</span>
           <span class="fossil-flow__step"><strong>2.</strong> Se combinar, escolha o segundo</span>
           <span class="fossil-flow__step"><strong>3.</strong> Veja o resultado</span>
         </div>
         <div class="fossil-header">
-            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fósseis" title="Local da troca de fósseis">
+            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fosseis" title="Local da troca de fosseis">
               <span class="fossil-location-btn__thumb">
                 <img src="fosseis/local.png" alt="" aria-hidden="true">
               </span>
@@ -715,7 +655,7 @@
       </div>
     </div>
 
-    <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
+    <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden="">
       <div class="card calc-card calc-shell">
         <h2 class="visually-hidden">Calculadora de treinamento</h2>
         <div class="calc-grid calc-grid--split">
@@ -736,7 +676,7 @@
               <div class="calc-section variant-group">
                 <label id="pokemon-type-label">Tipo de Pokémon</label>
                 <div class="variant-options">
-                  <label class="variant-label"><input type="radio" name="poke-variant" value="normal" checked>Normal</label>
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="normal" checked="">Normal</label>
                   <label class="variant-label"><input type="radio" name="poke-variant" value="shiny">Shiny</label>
                 </div>
               </div>
@@ -746,11 +686,11 @@
               </div>
               <div class="calc-section">
                 <label for="common-plates">Plates comuns</label>
-                <input type="number" id="common-plates" min="0" value="0" />
+                <input type="number" id="common-plates" min="0" value="0">
               </div>
               <div class="calc-section">
                 <label for="shiny-plates">Shining plates</label>
-                <input type="number" id="shiny-plates" min="0" value="0" step="30" />
+                <input type="number" id="shiny-plates" min="0" value="0" step="30">
               </div>
             </div>
             
@@ -790,7 +730,7 @@
       </div>
     </div>
 
-    <div id="content-boost" role="tabpanel" aria-label="Calculadora de Boost" hidden>
+    <div id="content-boost" role="tabpanel" aria-label="Calculadora de Boost" hidden="">
       <div class="card calc-card boost-shell">
         <div class="boost-hero">
           <div class="boost-hero__copy">
@@ -798,7 +738,7 @@
             <h2 id="boost-heading">Calculadora de Boost</h2>
             <p class="boost-hero__description">Selecione o Pokémon e veja os materiais.</p>
           </div>
-          <aside id="boost-hero-summary" class="boost-hero__summary" aria-live="polite" hidden>
+          <aside id="boost-hero-summary" class="boost-hero__summary" aria-live="polite" hidden="">
             <span class="boost-hero__summary-kicker">Resumo do alvo</span>
             <strong id="boost-summary-target">Bronze 0 • Silver 0</strong>
             <span id="boost-summary-flags">Comum • 0 tipos</span>
@@ -817,28 +757,28 @@
               <div class="boost-search-panel speedster-search-panel speedster-search-panel--inline">
                 <label class="speedster-search-label" for="boost-pokemon-search">Buscar Pokémon</label>
                 <div class="boost-search-panel__field">
-                  <input id="boost-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catálogo..." aria-label="Buscar Pokémon" />
-                  <div id="boost-pokemon-results" class="speedster-search-results" hidden aria-live="polite"></div>
-                  <div id="boost-pokemon-no-results" class="speedster-search-no-results" hidden>Pokémon não encontrado.</div>
+                  <input id="boost-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catálogo..." aria-label="Buscar Pokémon">
+                  <div id="boost-pokemon-results" class="speedster-search-results" hidden="" aria-live="polite"></div>
+                  <div id="boost-pokemon-no-results" class="speedster-search-no-results" hidden="">Pokémon não encontrado.</div>
                 </div>
                 <p id="boost-selection-prompt" class="boost-selection-prompt">Selecione um Pokémon para liberar o cálculo.</p>
                 <div id="boost-pokemon-meta" class="boost-pokemon-meta" aria-live="polite"></div>
               </div>
             </div>
 
-            <div id="boost-config-controls" class="boost-config-controls" hidden>
+            <div id="boost-config-controls" class="boost-config-controls" hidden="">
               <div class="boost-fieldset">
                 <span class="boost-fieldset__legend">Shiny</span>
                 <div class="boost-choice-grid boost-choice-grid--compact" role="radiogroup" aria-label="Pokémon shiny">
                   <label class="boost-choice-card">
-                    <input type="radio" name="boost-shiny" value="no" checked />
+                    <input type="radio" name="boost-shiny" value="no" checked="">
                     <span class="boost-choice-card__body">
                       <strong>Normal</strong>
                       <small>Sem Bronze Star</small>
                     </span>
                   </label>
                   <label class="boost-choice-card">
-                    <input type="radio" name="boost-shiny" value="yes" />
+                    <input type="radio" name="boost-shiny" value="yes">
                     <span class="boost-choice-card__body">
                       <strong>Shiny</strong>
                       <small>Inclui Bronze Star</small>
@@ -851,7 +791,7 @@
                 <label class="boost-field" for="boost-bronze-level">
                   <span>Boost Bronze</span>
                   <select id="boost-bronze-level">
-                    <option value="0" selected>Bronze 0</option>
+                    <option value="0" selected="">Bronze 0</option>
                     <option value="1">Bronze 1</option>
                     <option value="2">Bronze 2</option>
                     <option value="3">Bronze 3</option>
@@ -863,7 +803,7 @@
                 <label class="boost-field" for="boost-silver-level">
                   <span>Boost Silver</span>
                   <select id="boost-silver-level">
-                    <option value="0" selected>Silver 0</option>
+                    <option value="0" selected="">Silver 0</option>
                     <option value="1">Silver 1</option>
                     <option value="2">Silver 2</option>
                     <option value="3">Silver 3</option>
@@ -873,8 +813,8 @@
                 </label>
               </div>
 
-              <p id="boost-silver-note" class="boost-inline-note" hidden></p>
-              <div id="boost-form-message" class="boost-message" hidden aria-live="polite"></div>
+              <p id="boost-silver-note" class="boost-inline-note" hidden=""></p>
+              <div id="boost-form-message" class="boost-message" hidden="" aria-live="polite"></div>
 
               <div class="boost-actions">
                 <button id="boost-reset-btn" class="catch-action-button catch-action-button--ghost" type="button">Limpar</button>
@@ -882,7 +822,7 @@
             </div>
           </section>
 
-          <div id="boost-results-shell" class="boost-results" hidden>
+          <div id="boost-results-shell" class="boost-results" hidden="">
             <section class="boost-panel boost-panel--summary boost-panel--wide" aria-labelledby="boost-summary-title">
               <div class="boost-panel__header">
                 <span class="boost-panel__eyebrow">Resumo</span>
@@ -935,14 +875,14 @@
           </div>
         </div>
 
-        <details id="boost-help-panel" class="calc-help boost-help" aria-expanded="false" hidden>
+        <details id="boost-help-panel" class="calc-help boost-help" aria-expanded="false" hidden="">
           <summary>Como o calculo separa custos</summary>
           <p>Boost Bronze e Silver mostram custo direto. O craft das Stars aparece separado.</p>
         </details>
       </div>
     </div>
 
-    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden>
+    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden="">
       <div class="card calc-card pokemon-hub">
         <div class="pokemon-hub__hero">
           <div class="pokemon-hub__copy">
@@ -967,7 +907,7 @@
           <div class="pokemon-filter-grid">
             <label class="pokemon-filter-field pokemon-filter-field--search" for="pokemon-filter-name">
               <span>Nome do Pokémon</span>
-              <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off" />
+              <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off">
             </label>
 
             <label class="pokemon-filter-field" for="pokemon-filter-role">
@@ -1017,7 +957,7 @@
         <div class="pokemon-hub__status-row">
           <p id="pokemon-catalog-status" class="pokemon-hub__status" aria-live="polite">Carregando catálogo...</p>
           <a id="pokemon-variant-mega-link" class="pokemon-hub__mega-link" href="/pokemons?variant=mega" title="Abrir Pokémons Mega" aria-label="Abrir Pokémons Mega">
-            <img src="/mega-stone.png" alt="Mega stone" class="pokemon-hub__mega-icon" width="20" height="20" />
+            <img src="/mega-stone.png" alt="Mega stone" class="pokemon-hub__mega-icon" width="20" height="20">
             <span class="pokemon-hub__mega-label">Mega</span>
           </a>
         </div>
@@ -1026,7 +966,7 @@
       </div>
     </div>
 
-    <div id="content-times" role="tabpanel" aria-label="Times" hidden>
+    <div id="content-times" role="tabpanel" aria-label="Times" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, -7.9656px, 0px); opacity: 0.2034;">
       <div class="card calc-card pokemon-hub times-hub">
         <div class="pokemon-hub__hero times-hub__hero">
           <div class="pokemon-hub__copy times-hub__copy">
@@ -1034,7 +974,7 @@
             <div class="pokemon-hub__title-row">
               <h2>Times</h2>
             </div>
-            <p class="pokemon-hub__lead">Consulte composi&ccedil;&otilde;es por cl&atilde;, elemento e Pok&eacute;mons.</p>
+            <p class="pokemon-hub__lead">Consulte composições por clã, elemento e Pokémons.</p>
           </div>
         </div>
 
@@ -1042,42 +982,42 @@
           <div class="pokemon-filter-panel__head">
             <div class="pokemon-filter-panel__copy">
               <span class="pokemon-filter-panel__eyebrow">Busca manual</span>
-              <h3 id="times-filters-title">Filtre os times por cl&atilde;, tag e busca combinada</h3>
-              <p>Pesquise por cl&atilde;, elemento, tag, Pok&eacute;mon ou hunt. Exemplos: <strong>frontal, mystic</strong> ou <strong>instinct, dragon</strong>.</p>
+              <h3 id="times-filters-title">Filtre os times por clã, tag e busca combinada</h3>
+              <p>Pesquise por clã, elemento, tag, Pokémon ou hunt. Exemplos: <strong>frontal, mystic</strong> ou <strong>instinct, dragon</strong>.</p>
             </div>
           </div>
 
-          <div class="times-clan-filter-row" role="group" aria-label="Filtrar times por cl&atilde;">
+          <div class="times-clan-filter-row" role="group" aria-label="Filtrar times por clã">
             <button type="button" class="times-clan-filter-btn is-active" data-times-clan-filter="all" aria-pressed="true">Todos</button>
             <button type="button" class="times-clan-filter-btn" data-times-clan-filter="instinct" aria-pressed="false">Instinct</button>
             <button type="button" class="times-clan-filter-btn" data-times-clan-filter="valor" aria-pressed="false">Valor</button>
             <button type="button" class="times-clan-filter-btn" data-times-clan-filter="mystic" aria-pressed="false">Mystic</button>
           </div>
 
-          <div id="times-tag-filter-row" class="times-tag-filter-row" role="group" aria-label="Filtrar times por tag" hidden></div>
+          <div id="times-tag-filter-row" class="times-tag-filter-row" role="group" aria-label="Filtrar times por tag"><button type="button" class="times-clan-filter-btn times-tag-filter-btn is-active" data-times-tag-filter="all" aria-pressed="true">Todas</button><button type="button" class="times-clan-filter-btn times-tag-filter-btn" data-times-tag-filter="frontal" aria-pressed="false">Frontal</button></div>
 
           <div class="pokemon-filter-grid times-filter-grid">
             <label class="pokemon-filter-field pokemon-filter-field--search times-search-field" for="times-search-input">
               <span>Buscar times</span>
-              <input id="times-search-input" type="search" placeholder="Ex.: mystic, fire ou gardevoir" autocomplete="off" />
+              <input id="times-search-input" type="search" placeholder="Ex.: mystic, fire ou gardevoir" autocomplete="off">
             </label>
           </div>
         </section>
 
         <div class="pokemon-hub__status-row times-hub__status-row">
-          <p id="times-status" class="pokemon-hub__status" aria-live="polite">Carregando times...</p>
+          <p id="times-status" class="pokemon-hub__status" aria-live="polite">11 times carregados.</p>
         </div>
 
-        <div id="times-card-grid" class="times-card-grid" role="list" aria-label="Lista de times cadastrados"></div>
+        <div id="times-card-grid" class="times-card-grid" role="list" aria-label="Lista de times cadastrados"><button type="button" class="team-card" role="listitem" aria-label="Instinct. Dragon/Fairy. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 12px, 0px); opacity: 0.2507;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="instinct"><img src="bosses/Instinct.png" alt="" loading="lazy" decoding="async"><span>Instinct</span></span><span class="team-card__count">7 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/dragon.png" alt="Dragon" loading="lazy" decoding="async"></span><span class="team-type-crest__token"><img src="icons-type/fairy.png" alt="Fairy" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Instinct</span><strong class="team-card__title">Dragon/Fairy</strong></div></div><div class="team-card__tags"><span class="team-tag-chip">Frontal</span></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/dragonite.png?v=20260507a" alt="Dragonite" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Dragonite</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/salamence.png?v=20260507a" alt="Salamence" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Salamence</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/hatterene.png?v=20260507a" alt="Hatterene" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Hatterene</strong><span class="team-member-row__role">AR • skill damage</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/gabite.png?v=20260507a" alt="Gabite" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Gabite</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/arctibax.png?v=20260507a" alt="Arctibax" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Arctibax</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/gardevoir.png?v=20260507a" alt="Gardevoir" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Gardevoir</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Instinct. Dragon/Fairy/Ice. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 12px, 0px); opacity: 0.0187;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="instinct"><img src="bosses/Instinct.png" alt="" loading="lazy" decoding="async"><span>Instinct</span></span><span class="team-card__count">7 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/dragon.png" alt="Dragon" loading="lazy" decoding="async"></span><span class="team-type-crest__token"><img src="icons-type/fairy.png" alt="Fairy" loading="lazy" decoding="async"></span><span class="team-type-crest__token"><img src="icons-type/ice.png" alt="Ice" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Instinct</span><strong class="team-card__title">Dragon/Fairy/Ice</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/dragonite.png?v=20260507a" alt="Dragonite" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Dragonite</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/snover.png?v=20260507a" alt="Snover" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Snover</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/altaria.png?v=20260507a" alt="Altaria" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Altaria</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/frost_rotom.png?v=20260507a" alt="Frost Rotom" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Frost Rotom</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/baxcalibur.png?v=20260507a" alt="Baxcalibur" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Baxcalibur</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/gardevoir.png?v=20260507a" alt="Gardevoir" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Gardevoir</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Instinct. Ground. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="instinct"><img src="bosses/Instinct.png" alt="" loading="lazy" decoding="async"><span>Instinct</span></span><span class="team-card__count">10 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/ground.png" alt="Ground" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Instinct</span><strong class="team-card__title">Ground</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/garchomp.png?v=20260507a" alt="Garchomp" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Garchomp</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/sandslash.png?v=20260507a" alt="Sandslash" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Sandslash</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/dugtrio.png?v=20260507a" alt="Dugtrio" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Dugtrio</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/flygon.png?v=20260507a" alt="Flygon" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Flygon</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/krookodile.png?v=20260507a" alt="Krookodile" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Krookodile</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/hippowdown-male.png?v=20260507a" alt="Hippowdown Male" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Hippowdown Male</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Instinct. Grass. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="instinct"><img src="bosses/Instinct.png" alt="" loading="lazy" decoding="async"><span>Instinct</span></span><span class="team-card__count">3 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/grass.png" alt="Grass" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Instinct</span><strong class="team-card__title">Grass</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/torterra.png?v=20260507a" alt="Torterra" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Torterra</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/tsareena.png?v=20260507a" alt="Tsareena" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Tsareena</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/venusaur.png?v=20260507a" alt="Mega Venosaur" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Mega Venosaur</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/meganium.png?v=20260507a" alt="Meganium" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Meganium</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/victreebel.png?v=20260507a" alt="Victreebel" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Victreebel</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/sceptile.png?v=20260507a" alt="Sceptile" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Sceptile</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Instinct. Electric. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="instinct"><img src="bosses/Instinct.png" alt="" loading="lazy" decoding="async"><span>Instinct</span></span><span class="team-card__count">3 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/electric.png" alt="Electric" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Instinct</span><strong class="team-card__title">Electric</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/ampharos.png?v=20260507a" alt="Ampharos" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Ampharos</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/toxtricity.png?v=20260507a" alt="Toxtricity" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Toxtricity</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/megas/mega-manectric.png?v=20260507a" alt="Mega Manectric" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Mega Manectric</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/luxray.png?v=20260507a" alt="Luxray" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Luxray</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/electivire.png?v=20260507a" alt="Electivire" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Electivire</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/eelektross.png?v=20260507a" alt="Eelektross" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Eelektross</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Valor. Fire. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="valor"><img src="bosses/Valor.png" alt="" loading="lazy" decoding="async"><span>Valor</span></span><span class="team-card__count">3 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/fire.png" alt="Fire" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Valor</span><strong class="team-card__title">Fire</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/arcanine.png?v=20260507a" alt="Arcanine" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Arcanine</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/volcarona.png?v=20260507a" alt="Volcarona" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Volcarona</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/charizard.png?v=20260507a" alt="Charizard" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Charizard</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/ninetales.png?v=20260507a" alt="Ninetales" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Ninetales</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/magmortar.png?v=20260507a" alt="Magmortar" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Magmortar</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/typhlosion.png?v=20260507a" alt="Typhlosion" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Typhlosion</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Mystic. Water. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="mystic"><img src="bosses/Mystic.png" alt="" loading="lazy" decoding="async"><span>Mystic</span></span><span class="team-card__count">5 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/water.png" alt="Water" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Mystic</span><strong class="team-card__title">Water</strong></div></div><div class="team-card__tags"><span class="team-tag-chip">Frontal</span></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/vaporeon.png?v=20260507a" alt="Vaporeon" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Vaporeon</strong><span class="team-member-row__role">AR • apenas shiny</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/palafin.png?v=20260507a" alt="Palafin" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Palafin</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/blastoise.png?v=20260507a" alt="Mega Blastoise" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Mega Blastoise</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/octillery.png?v=20260507a" alt="Octillery" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Octillery</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/milotic.png?v=20260507a" alt="Milotic" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Milotic</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/feraligatr.png?v=20260507a" alt="Feraligatr" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Feraligatr</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Mystic. Fighter. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="mystic"><img src="bosses/Mystic.png" alt="" loading="lazy" decoding="async"><span>Mystic</span></span><span class="team-card__count">9 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/fighting.png" alt="Fighting" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Mystic</span><strong class="team-card__title">Fighter</strong></div></div><div class="team-card__tags"><span class="team-tag-chip">Frontal</span></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/poliwrath.png?v=20260507a" alt="Poliwrath" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Poliwrath</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/hariyama.png?v=20260507a" alt="Hariyama" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Hariyama</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/hitmonlee.png?v=20260507a" alt="Hitmonlee" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Hitmonlee</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/pangoro.png?v=20260507a" alt="Pangoro" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Pangoro</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/mega-lucario.png?v=20260507a" alt="Mega Lucario" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Mega Lucario</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/machamp.png?v=20260507a" alt="Machamp" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Machamp</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Mystic. Fairy. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="mystic"><img src="bosses/Mystic.png" alt="" loading="lazy" decoding="async"><span>Mystic</span></span><span class="team-card__count">11 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/fairy.png" alt="Fairy" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Mystic</span><strong class="team-card__title">Fairy</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/clefable.png?v=20260507a" alt="Clefable" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Clefable</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/tinkaton.png?v=20260507a" alt="Tinkaton" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Tinkaton</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/togekiss.png?v=20260507a" alt="Togekiss" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Togekiss</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/togetic.png?v=20260507a" alt="Togetic" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Togetic</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/granbull.png?v=20260507a" alt="Granbull" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Granbull</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/azumarill.png?v=20260507a" alt="Azumarill" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Azumarill</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Mystic. Ground. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="mystic"><img src="bosses/Mystic.png" alt="" loading="lazy" decoding="async"><span>Mystic</span></span><span class="team-card__count">10 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/ground.png" alt="Ground" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Mystic</span><strong class="team-card__title">Ground</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/steelix.png?v=20260507a" alt="Steelix" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Steelix</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/drednaw.png?v=20260507a" alt="Drednaw" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Drednaw</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/quagsire.png?v=20260507a" alt="Quagsire" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Quagsire</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/piloswine.png?v=20260507a" alt="Piloswine" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Piloswine</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/gastrodon-west.png?v=20260507a" alt="Gastrodon West" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Gastrodon West</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/swampert.png?v=20260507a" alt="Swampert" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Swampert</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button><button type="button" class="team-card" role="listitem" aria-label="Mystic. Ice. Abrir detalhes do time." style="translate: none; rotate: none; scale: none; transform: translate(0px, 12px); opacity: 0;"><div class="team-card__header"><span class="pokemon-team-badge" data-team="mystic"><img src="bosses/Mystic.png" alt="" loading="lazy" decoding="async"><span>Mystic</span></span><span class="team-card__count">8 hunts</span></div><div class="team-card__hero"><div class="team-type-crest team-type-crest--compact"><span class="team-type-crest__token"><img src="icons-type/ice.png" alt="Ice" loading="lazy" decoding="async"></span></div><div class="team-card__title-wrap"><span class="team-card__eyebrow">Mystic</span><strong class="team-card__title">Ice</strong></div></div><div class="team-card__roster"><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/mamoswine.png?v=20260507a" alt="Mamoswine" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Mamoswine</strong><span class="team-member-row__role">AR</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/jynx.png?v=20260507a" alt="Jynx" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Jynx</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/lapras.png?v=20260507a" alt="Lapras" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Lapras</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/glalie.png?v=20260507a" alt="Glalie" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Glalie</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/froslass.png?v=20260507a" alt="Froslass" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Froslass</strong><span class="team-member-row__role">DPS/Stun</span></div></article><article class="team-member-row"><span class="team-member-row__media"><img src="pokemons/cloyster.png?v=20260507a" alt="Cloyster" loading="lazy" decoding="async"></span><div class="team-member-row__content"><strong class="team-member-row__name">Cloyster</strong><span class="team-member-row__role">Finisher</span></div></article></div><div class="team-card__footer">Abrir detalhes</div></button></div>
 
-        <div id="times-empty-state" class="times-empty-state" hidden aria-live="polite">
+        <div id="times-empty-state" class="times-empty-state" hidden="" aria-live="polite">
           <strong id="times-empty-title">Nenhum time encontrado.</strong>
-          <p id="times-empty-text">Tente ajustar o cl&atilde; ativo ou os termos da busca.</p>
+          <p id="times-empty-text">Tente ajustar o clã ativo ou os termos da busca.</p>
         </div>
       </div>
     </div>
 
-    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
+    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden="">
       <div class="card calc-card catch-card">
         <div class="catch-hero">
           <div class="catch-hero__copy">
@@ -1135,7 +1075,7 @@
               <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
               <div class="catch-variant-options">
                 <label class="catch-variant-card">
-                  <input type="radio" name="catch-variant" value="normal" checked>
+                  <input type="radio" name="catch-variant" value="normal" checked="">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Normal</strong>
                     <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrão de captura.</span>
@@ -1183,14 +1123,14 @@
       </div>
     </div>
 
-    <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
+    <div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden="">
       <div class="card calc-card bosses-shell">
         <div class="bosses-header">
           <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
             <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
-            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
-            <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
-            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokémon ainda não foi adicionado.</div>
+            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off">
+            <div id="speedster-search-results" class="speedster-search-results" hidden="" aria-live="polite"></div>
+            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden="">Este Pokémon ainda não foi adicionado.</div>
           </aside>
         </div>
         <div class="bosses-hero">
@@ -1204,7 +1144,7 @@
 
     </div> <!-- close content-bosses -->
 
-    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
+    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden="">
       <div class="card calc-card">
         <div class="streamer-section-header">
           <h2>Transmissões da comunidade</h2>
@@ -1214,7 +1154,7 @@
         <section id="streamer-filters" class="streamer-filters" aria-label="Filtros de transmissões">
             <fieldset class="streamer-filters__group">
               <legend class="streamer-filters__legend visually-hidden">Filtrar transmissões</legend>
-              <label><input id="filter-all" type="checkbox" checked>Mostrar todas</label>
+              <label><input id="filter-all" type="checkbox" checked="">Mostrar todas</label>
               <label><input id="filter-drops" type="checkbox">Com drops</label>
               <label><input id="filter-online" type="checkbox">Online</label>
               <label><input id="filter-pack" type="checkbox">Com pack</label>
@@ -1226,7 +1166,7 @@
       </div>
     </div>
 
-    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden>
+    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden="">
       <div class="card calc-card community-shell">
         <div class="community-hero">
           <div class="community-copy">
@@ -1243,7 +1183,7 @@
         <div class="community-layout">
           <section class="community-player-panel" aria-labelledby="community-featured-title">
             <div class="community-player-frame">
-              <iframe id="community-video-frame" title="Player de vídeo da comunidade" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen hidden></iframe>
+              <iframe id="community-video-frame" title="Player de vídeo da comunidade" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" hidden=""></iframe>
               <button id="community-video-preview" class="community-video-preview" type="button" aria-label="Abrir vídeo em destaque">
                 <img id="community-video-preview-image" class="community-video-preview-image" src="https://i.ytimg.com/vi/FBJKGfzZim4/hqdefault.jpg" alt="Miniatura do vídeo selecionado" loading="lazy" decoding="async">
                 <span class="community-video-preview-overlay">
@@ -1252,7 +1192,7 @@
                 </span>
               </button>
             </div>
-            <p id="community-player-frame-note" class="community-player-frame-note">Escolha um v&iacute;deo da lista ou clique na capa para carregar o player aqui sem sair da aba.</p>
+            <p id="community-player-frame-note" class="community-player-frame-note">Escolha um vídeo da lista ou clique na capa para carregar o player aqui sem sair da aba.</p>
             <div class="community-player-meta">
               <div class="community-player-context">
                 <span class="community-player-tag">Recentes</span>
@@ -1294,7 +1234,7 @@
         <div class="speedster-modal-content" role="document">
           <button class="speedster-modal-close" aria-label="Fechar">✖</button>
           <div class="speedster-modal-header">
-        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true">
         <div class="speedster-modal-title">
           <h2 id="modal-title">Detalhes do chefe</h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
@@ -1307,12 +1247,12 @@
             <span class="tier-dot tier-unknown" aria-hidden="true"></span>Sem informação
           </div>
         </div>
-        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true">
       </div>
           <div id="modal-body" class="speedster-modal-body"></div>
         </div>
       </div>
-    </div>
+    </main></div>
 
     <div class="modal pokemon-details-modal" id="pokemon-details-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pokemon-details-title">
       <div class="modal-content pokemon-details-modal__content" role="document">
@@ -1320,7 +1260,7 @@
 
         <div class="pokemon-details-modal__hero">
           <div class="pokemon-details-modal__art">
-            <img id="pokemon-details-image" class="pokemon-details-modal__image" src="pokemons/placeholder.svg" alt="" loading="lazy" decoding="async" />
+            <img id="pokemon-details-image" class="pokemon-details-modal__image" src="pokemons/placeholder.svg" alt="" loading="lazy" decoding="async">
           </div>
           <div class="pokemon-details-modal__copy">
             <p id="pokemon-details-role" class="pokemon-details-modal__role"></p>
@@ -1358,7 +1298,7 @@
 
     <div class="modal times-details-modal" id="times-details-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="times-details-title">
       <div class="modal-content times-details-modal__content" role="document">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
+        <button class="modal-close" aria-label="Fechar">✖</button>
 
         <div class="times-details-modal__hero">
           <div class="times-details-modal__copy">
@@ -1369,7 +1309,7 @@
           </div>
         </div>
 
-        <section id="times-details-comment-panel" class="times-details-panel times-details-panel--comment" hidden aria-labelledby="times-details-comment-title">
+        <section id="times-details-comment-panel" class="times-details-panel times-details-panel--comment" hidden="" aria-labelledby="times-details-comment-title">
           <div class="times-details-panel__head">
             <span class="times-details-panel__eyebrow">Comentario</span>
             <h3 id="times-details-comment-title">Observacao</h3>
@@ -1377,7 +1317,7 @@
           <p id="times-details-comment-text" class="times-details-comment-text"></p>
         </section>
 
-        <section id="times-details-tips-panel" class="times-details-panel times-details-panel--tips" hidden aria-labelledby="times-details-tips-title">
+        <section id="times-details-tips-panel" class="times-details-panel times-details-panel--tips" hidden="" aria-labelledby="times-details-tips-title">
           <div class="times-details-panel__head">
             <span class="times-details-panel__eyebrow">Dicas</span>
             <h3 id="times-details-tips-title">Dicas de uso</h3>
@@ -1403,17 +1343,17 @@
               <div id="times-details-hunts" class="times-details-entity-grid"></div>
             </section>
 
-            <section id="times-details-alternatives-panel" class="times-details-panel" hidden aria-labelledby="times-details-alternatives-title">
+            <section id="times-details-alternatives-panel" class="times-details-panel" hidden="" aria-labelledby="times-details-alternatives-title">
               <div class="times-details-panel__head">
                 <span class="times-details-panel__eyebrow">Alternativas</span>
                 <h3 id="times-details-alternatives-title">Pokemons e hunts alternativas</h3>
               </div>
               <div class="times-details-alt-grid">
-                <div id="times-details-alt-pokemons-group" class="times-details-alt-group" hidden>
+                <div id="times-details-alt-pokemons-group" class="times-details-alt-group" hidden="">
                   <strong class="times-details-alt-label">Pokemons alternativos</strong>
                   <div id="times-details-alt-pokemons" class="times-details-entity-grid"></div>
                 </div>
-                <div id="times-details-alt-hunts-group" class="times-details-alt-group" hidden>
+                <div id="times-details-alt-hunts-group" class="times-details-alt-group" hidden="">
                   <strong class="times-details-alt-label">Hunts alternativas</strong>
                   <div id="times-details-alt-hunts" class="times-details-entity-grid"></div>
                 </div>
@@ -1425,42 +1365,29 @@
     </div>
 
     <footer class="main-footer">
-      <a
-        class="footer-discord-link footer-discord-link-left"
-        href="https://discord.com/invite/Gn2x6F5vB6"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Discord do PStory"
-        title="Entrar no Discord do PStory"
-      >
+      <a class="footer-discord-link footer-discord-link-left" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Discord do PStory" title="Entrar no Discord do PStory">
         <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
         v11.0.0 - 2026
       </div>
-      <a
-        class="footer-discord-link footer-discord-link-right"
-        href="https://discord.com/invite/Gn2x6F5vB6"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Discord do PStory"
-        title="Entrar no Discord do PStory"
-      >
+      <a class="footer-discord-link footer-discord-link-right" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer" aria-label="Discord do PStory" title="Entrar no Discord do PStory">
         <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
     </footer>
-    </main>
-    </div>
-    <script src="js/main.js" defer></script>
+    
+    
+    <script src="js/main.js" defer=""></script>
 
     <!-- Local config (gitignored) — defines window.POKE_YT_API_KEY for local testing -->
-    <script src="js/config.local.js" defer></script>
+    <script src="js/config.local.js" defer=""></script>
 
     <!-- animation library for modern effects (no SRI because CDN may change hash in some environments) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
-    <script src="script.js?v=20260507o" defer></script>
-</body>
-</html>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer=""></script>
+    <script src="script.js?v=20260507m" defer=""></script>
+
+
+</body></html>
