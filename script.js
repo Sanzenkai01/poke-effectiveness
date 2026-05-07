@@ -160,7 +160,7 @@ let pokemonCatalogRenderFrame = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260505d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260506e';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -2069,7 +2069,7 @@ const BOOST_TYPE_STONE_META = Object.freeze({
     electric: { name: 'Thunder Stone', image: 'calculadora/thunder_stone.gif' },
     poison: { name: 'Venom Stone', image: 'calculadora/venom_stone.gif' },
     water: { name: 'Water Stone', image: 'calculadora/water_stone.gif' },
-    fairy: { name: 'Fairy Stone', image: '' }
+    fairy: { name: 'Fairy Stone', image: 'calculadora/fairy_stone.gif' }
 });
 const BOOST_SILVER_STAR_RECIPE = Object.freeze({
     'Shining Ancient Stone': 1,
@@ -2085,10 +2085,10 @@ const BOOST_STATIC_MATERIAL_META = Object.freeze({
     'Bronze Star': { image: 'calculadora/bronze_star.gif', craftable: true, category: 'bronze' },
     'Piece of Bronze Star': { image: 'calculadora/piece_bronze_star.png', craftable: false, category: 'bronze-piece' },
     'Shining Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient-shiny' },
-    'Silver Star': { image: '', craftable: true, category: 'silver-star' },
-    'Silver Flask': { image: '', craftable: false, category: 'silver-flask' },
+    'Silver Star': { image: 'calculadora/silver_star.gif', craftable: true, category: 'silver-star' },
+    'Silver Flask': { image: 'calculadora/silver_flask.gif', craftable: false, category: 'silver-flask' },
     'Silver Token': { image: 'calculadora/silver_token.gif', craftable: false, category: 'silver-token' },
-    'Piece of Silver Star': { image: '', craftable: false, category: 'silver-piece' }
+    'Piece of Silver Star': { image: 'calculadora/silver_piece.png', craftable: false, category: 'silver-piece' }
 });
 
 

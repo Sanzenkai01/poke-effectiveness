@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v79`;
+const CACHE_NAME = `${CACHE_PREFIX}v84`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -23,11 +23,11 @@ const APP_SHELL = [
   new URL('./bosses/mewtwo.html', self.registration.scope).toString(),
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./styles.css?v=20260503e', self.registration.scope).toString(),
-  new URL('./script.js?v=20260506b', self.registration.scope).toString(),
+  new URL('./script.js?v=20260507a', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260506a', self.registration.scope).toString(),
-  new URL('./route-loader.js', self.registration.scope).toString(),
+  new URL('./route-loader.js?v=20260507b', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260505d', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260506e', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()
 ];
@@ -112,6 +112,16 @@ self.addEventListener('fetch', event => {
   }
 
   if(url.pathname.endsWith('/types.json') || url.pathname.endsWith('types.json')){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(url.pathname.endsWith('/app.html') || url.pathname.endsWith('app.html')){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(url.pathname.endsWith('/route-loader.js') || url.pathname.endsWith('route-loader.js')){
     event.respondWith(networkFirst(request));
     return;
   }

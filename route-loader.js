@@ -1,7 +1,10 @@
 (function(){
+    var APP_SHELL_VERSION = '20260507b';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
+    var appUrl = new URL('../app.html', window.location.href);
+    appUrl.searchParams.set('_shell', APP_SHELL_VERSION);
 
-    fetch('../app.html', { cache: 'no-store' })
+    fetch(appUrl.toString(), { cache: 'no-store' })
         .then(function(response){
             if(!response.ok){
                 throw new Error('Falha ao carregar app.html');

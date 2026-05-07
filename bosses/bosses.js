@@ -193,7 +193,7 @@ const hoopaPortalsData = [
           { name: 'Pikachu', image: 'pikachu.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' },
           { name: 'Shiftry', image: 'shiftry.png', tier: 'green', types: ['grass','dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'yellow', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'red', types: ['grass'], description: 'Tipo move: Grass.' },
           { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
@@ -241,7 +241,7 @@ const hoopaPortalsData = [
           { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'green', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Grass.' },
           { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
@@ -452,7 +452,7 @@ const hoopaPortalsData = [
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: Marvel Scale: O Pokémon sofre menos dano de ataques super efetivos (0.5x).' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'green', types: ['grass'], description: 'Tipo move: Grass. Passiva: 2x em Dragon e toma 0.5x de Dragon.', matchupOverrides: { 'mega-feraligatr': { offense: 2, defenseByBossType: { dragon: 0.5 } } } }
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'red', types: ['grass'], description: 'Tipo move: Grass.' }
         ]
       },
       mystic: {
@@ -1425,7 +1425,8 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Dragonair', ['dragon'], 'dragon'),
           createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
+          createRolePick("Rosa's Serperior", ['grass'], 'grass')
         ],
         tank: [
           createRolePick('Tangrowth', ['grass'], 'grass'),
@@ -1715,7 +1716,8 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Dragonair', ['dragon'], 'dragon'),
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Mega Raichu Y', ['electric'], 'electric')
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick("Rosa's Serperior", ['grass'], 'grass')
         ],
         tank: [
           createRolePick('Goodra', ['dragon'], 'dragon'),
@@ -2525,6 +2527,21 @@ function getImplicitRecommendationProfile(poke) {
       },
       passiveName: 'Marvel Scale',
       passiveDescription: 'O Pokémon sofre menos dano de ataques super efetivos (0.5x).'
+    };
+  }
+
+  if (nameKey === 'rosasserperior') {
+    return {
+      passiveSuperEffectiveTypes: ['dragon'],
+      passiveName: 'Royal Garden',
+      passiveDescription: 'O Pokemon torna-se capaz de causar dano super efetivo a qualquer Pokemon do tipo Dragon.'
+    };
+  }
+
+  if (nameKey === 'chesnaught') {
+    return {
+      passiveName: 'Bulletproof',
+      passiveDescription: 'O Pokemon torna-se imune a alguns ataques de alvo unico.'
     };
   }
 
