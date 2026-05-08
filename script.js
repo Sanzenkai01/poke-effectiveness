@@ -11861,6 +11861,157 @@ function syncHomeLandingFocusSummary(cards = []){
         syncHomeLandingFocusSummary();
     }
 })();
+
+(function rebuildHomeLandingCardsForDirectNavigation(){
+    try {
+        const homeTools = document.querySelector('.home-landing__tools');
+        if(!homeTools) return;
+
+        const preferredOrder = ['bosses','systems','utilities','community'];
+        const isActionableItem = (item) => Boolean(item && (item.navTarget || item.navAction || item.href));
+        const assignHomeCardControlData = (control, item) => {
+            if(!(control instanceof HTMLElement) || !item) return;
+            if(item.navTarget) control.dataset.navTarget = item.navTarget;
+            if(item.navAction) control.dataset.navAction = item.navAction;
+            if(item.bossMode) control.dataset.bossMode = item.bossMode;
+        };
+        const createHomeCardControl = (item, className, label) => {
+            const control = document.createElement(item?.href ? 'a' : 'button');
+            control.className = className;
+            if(item?.href){
+                control.href = item.href;
+                if(item.target) control.target = item.target;
+                if(item.rel) control.rel = item.rel;
+            } else {
+                control.type = 'button';
+                assignHomeCardControlData(control, item);
+                control.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    activateSidebarTarget(control);
+                });
+            }
+            if(label) control.setAttribute('aria-label', label);
+            return control;
+        };
+
+        const sidebarGroups = Array.from(document.querySelectorAll('.sidebar-group'))
+            .map(group => {
+                const key = String(group.dataset.sidebarGroup || '').toLowerCase();
+                const titleEl = group.querySelector('.sidebar-group__copy strong');
+                const items = Array.from(group.querySelectorAll('.sidebar-sublink')).map(sidebarItem => {
+                    const spans = sidebarItem.querySelectorAll('span');
+                    let labelSpan = null;
+                    if(spans && spans.length){
+                        for(let i = spans.length - 1; i >= 0; i -= 1){
+                            const currentSpan = spans[i];
+                            if(!currentSpan.classList.contains('sidebar-sublink__badge') && !currentSpan.classList.contains('sidebar-sublink__bullet')){
+                                labelSpan = currentSpan;
+                                break;
+                            }
+                        }
+                        if(!labelSpan) labelSpan = spans[spans.length - 1];
+                    }
+                    const badgeEl = sidebarItem.querySelector('.sidebar-sublink__badge');
+                    return {
+                        label: labelSpan ? labelSpan.textContent.trim() : sidebarItem.textContent.trim(),
+                        badge: badgeEl ? badgeEl.textContent.trim() : '',
+                        navTarget: sidebarItem.dataset.navTarget || '',
+                        navAction: sidebarItem.dataset.navAction || '',
+                        bossMode: sidebarItem.dataset.bossMode || '',
+                        href: sidebarItem.getAttribute('href') || '',
+                        target: sidebarItem.getAttribute('target') || '',
+                        rel: sidebarItem.getAttribute('rel') || ''
+                    };
+                });
+
+                return {
+                    key,
+                    title: titleEl ? titleEl.textContent.trim() : (key || ''),
+                    items
+                };
+            });
+
+        const groupsByKey = Object.fromEntries(sidebarGroups.map(group => [group.key, group]));
+        const orderedGroups = preferredOrder.map(key => groupsByKey[key]).filter(Boolean);
+        const nextHomeCards = [];
+
+        homeTools.replaceChildren();
+
+        orderedGroups.forEach((group, index) => {
+            const card = document.createElement('article');
+            card.className = 'home-tool-card';
+            card.dataset.homeGroup = group.key;
+            card.dataset.homeIndex = String(index);
+
+            const previewItems = group.items || [];
+            const primaryItem = previewItems.find(isActionableItem) || null;
+            const actionLabel = previewItems.length === 1 && primaryItem
+                ? `Abrir ${primaryItem.label}`
+                : `Explorar ${group.title}`;
+
+            const indexEl = document.createElement('span');
+            indexEl.className = 'home-tool-card__index';
+            indexEl.textContent = String(index + 1).padStart(2, '0');
+
+            const titleEl = document.createElement('strong');
+            titleEl.className = 'home-tool-card__title';
+            titleEl.textContent = group.title;
+
+            const summaryEl = document.createElement('div');
+            summaryEl.className = 'home-tool-card__summary';
+            summaryEl.setAttribute('role', 'group');
+            summaryEl.setAttribute('aria-label', `${group.title} - categorias`);
+
+            previewItems.forEach((item) => {
+                const pill = createHomeCardControl(
+                    item,
+                    `home-tool-card__pill${isActionableItem(item) ? ' home-tool-card__pill--interactive' : ''}`,
+                    item.label
+                );
+                const labelEl = document.createElement('span');
+                labelEl.textContent = item.label;
+                pill.appendChild(labelEl);
+
+                if(item.badge){
+                    const badgeEl = document.createElement('span');
+                    badgeEl.className = 'home-tool-card__pill-badge';
+                    badgeEl.setAttribute('aria-hidden', 'true');
+                    badgeEl.textContent = item.badge;
+                    pill.appendChild(badgeEl);
+                }
+
+                summaryEl.appendChild(pill);
+            });
+
+            const footerEl = document.createElement('div');
+            footerEl.className = 'home-tool-card__footer';
+
+            if(primaryItem){
+                const actionEl = createHomeCardControl(primaryItem, 'home-tool-card__action', actionLabel);
+                actionEl.textContent = actionLabel;
+                footerEl.appendChild(actionEl);
+            } else {
+                const actionText = document.createElement('span');
+                actionText.className = 'home-tool-card__action';
+                actionText.textContent = actionLabel;
+                footerEl.appendChild(actionText);
+            }
+
+            const metaEl = document.createElement('span');
+            metaEl.className = 'home-tool-card__meta';
+            metaEl.textContent = `${previewItems.length} modulo${previewItems.length === 1 ? '' : 's'}`;
+            footerEl.appendChild(metaEl);
+
+            card.append(indexEl, titleEl, summaryEl, footerEl);
+            homeTools.appendChild(card);
+            nextHomeCards.push(card);
+        });
+
+        syncHomeLandingFocusSummary(nextHomeCards);
+    } catch(error) {
+        console.error('Home landing direct navigation rebuild failed', error);
+    }
+})();
 // Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
     // Helper to open modal safely

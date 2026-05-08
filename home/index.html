@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css?v=20260424d">
+    <link rel="stylesheet" href="../styles.css?v=20260507k">
 </head>
 <body class="dark home-view">
     <main>
@@ -20,7 +20,7 @@
                         <p class="home-landing__eyebrow">Hub da comunidade</p>
                         <h1 id="home-hero-title" class="home-landing__title">Bem-vindo ao <span>Poke Utilities</span></h1>
                         <p class="home-landing__lead">Uma entrada própria para chegar no PStory do jeito mais eficiente.</p>
-                        <p class="home-landing__supporting">Escolha o grupo certo e siga direto para tipos, fósseis, treinamento, pokémons, captura, bosses, streamers e vídeos da comunidade.</p>
+                        <p class="home-landing__supporting">Escolha o grupo certo e siga direto para tipos, fósseis, treinamento, boost, pokémons, times, captura, bosses, streamers, Discord e vídeos da comunidade.</p>
                         <div class="home-landing__actions">
                             <a class="home-landing__cta" href="../hoopa">Explorar</a>
                             <a
@@ -95,58 +95,61 @@
                 </section>
 
                 <div class="home-landing__tools" aria-label="Ferramentas disponíveis">
-                    <a class="home-tool-card" href="../hoopa">
+                    <article class="home-tool-card">
                         <span class="home-tool-card__index">01</span>
                         <strong class="home-tool-card__title">Bosses</strong>
                         <div class="home-tool-card__summary">
-                            <span class="home-tool-card__pill">Hoopa Portais</span>
-                            <span class="home-tool-card__pill">Champion Path</span>
-                            <span class="home-tool-card__pill">Mewtwo</span>
-                            <span class="home-tool-card__pill">Planejador</span>
-                            <span class="home-tool-card__pill">Horizons <span class="home-tool-card__pill-badge">Em Breve</span></span>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../hoopa">Hoopa Portais</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../champion">Champion Path</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../mewtwo">Mewtwo</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../planejador">Planejador</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../horizons">Horizons <span class="home-tool-card__pill-badge">Em Breve</span></a>
                         </div>
                         <div class="home-tool-card__footer">
-                            <span class="home-tool-card__action">Explorar Bosses</span>
-                            <span class="home-tool-card__meta">4 módulos</span>
+                            <a class="home-tool-card__action" href="../hoopa">Explorar Bosses</a>
+                            <span class="home-tool-card__meta">5 módulos</span>
                         </div>
-                    </a>
-                    <a class="home-tool-card" href="../catch">
+                    </article>
+                    <article class="home-tool-card">
                         <span class="home-tool-card__index">02</span>
                         <strong class="home-tool-card__title">Sistemas</strong>
                         <div class="home-tool-card__summary">
-                            <span class="home-tool-card__pill">Catch</span>
-                            <span class="home-tool-card__pill">Fósseis</span>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../catch">Catch</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../fossils">Fósseis</a>
                         </div>
                         <div class="home-tool-card__footer">
-                            <span class="home-tool-card__action">Explorar Sistemas</span>
+                            <a class="home-tool-card__action" href="../catch">Explorar Sistemas</a>
                             <span class="home-tool-card__meta">2 módulos</span>
                         </div>
-                    </a>
-                    <a class="home-tool-card" href="../tipos">
+                    </article>
+                    <article class="home-tool-card">
                         <span class="home-tool-card__index">03</span>
                         <strong class="home-tool-card__title">Utilidades</strong>
                         <div class="home-tool-card__summary">
-                            <span class="home-tool-card__pill">Tipos</span>
-                            <span class="home-tool-card__pill">Treinamento</span>
-                            <span class="home-tool-card__pill">Pokémons</span>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../tipos">Tipos</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../treinamento">Treinamento</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../boost">Calculadora de Boost</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../pokemons">Pokémons <span class="home-tool-card__pill-badge">Em Produção</span></a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../times">Times <span class="home-tool-card__pill-badge">Em Produção</span></a>
                         </div>
                         <div class="home-tool-card__footer">
-                            <span class="home-tool-card__action">Explorar Utilidades</span>
-                            <span class="home-tool-card__meta">3 módulos</span>
+                            <a class="home-tool-card__action" href="../tipos">Explorar Utilidades</a>
+                            <span class="home-tool-card__meta">5 módulos</span>
                         </div>
-                    </a>
-                    <a class="home-tool-card" href="../youtube">
+                    </article>
+                    <article class="home-tool-card">
                         <span class="home-tool-card__index">04</span>
                         <strong class="home-tool-card__title">Comunidade</strong>
                         <div class="home-tool-card__summary">
-                            <span class="home-tool-card__pill">YouTube</span>
-                            <span class="home-tool-card__pill">Streamers</span>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../youtube">YouTube</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="../streamers">Streamers</a>
+                            <a class="home-tool-card__pill home-tool-card__pill--interactive" href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">Entrar no Discord</a>
                         </div>
                         <div class="home-tool-card__footer">
-                            <span class="home-tool-card__action">Explorar Comunidade</span>
-                            <span class="home-tool-card__meta">2 módulos</span>
+                            <a class="home-tool-card__action" href="../youtube">Explorar Comunidade</a>
+                            <span class="home-tool-card__meta">3 módulos</span>
                         </div>
-                    </a>
+                    </article>
                 </div>
             </div>
         </section>
