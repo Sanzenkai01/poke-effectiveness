@@ -2149,10 +2149,10 @@ const BOOST_SILVER_PIECE_RECIPE = Object.freeze({
     'Silver Token': 1
 });
 const BOOST_STATIC_MATERIAL_META = Object.freeze({
-    'Ancient Stone': { image: 'calculadora/ancient_stone.gif', craftable: false, category: 'ancient' },
+    'Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient' },
     'Bronze Star': { image: 'calculadora/bronze_star.gif', craftable: true, category: 'bronze' },
     'Piece of Bronze Star': { image: 'calculadora/piece_bronze_star.png', craftable: false, category: 'bronze-piece' },
-    'Shining Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient-shiny' },
+    'Shining Ancient Stone': { image: 'calculadora/ancient_stone.gif', craftable: false, category: 'ancient-shiny' },
     'Silver Star': { image: 'calculadora/silver_star.gif', craftable: true, category: 'silver-star' },
     'Silver Flask': { image: 'calculadora/silver_flask.gif', craftable: false, category: 'silver-flask' },
     'Silver Token': { image: 'calculadora/silver_token.gif', craftable: false, category: 'silver-token' },

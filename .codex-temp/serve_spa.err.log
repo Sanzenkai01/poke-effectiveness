@@ -1,0 +1,273 @@
+127.0.0.1 - - [08/May/2026 15:37:13] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:37:13] "GET /streamers HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:37:26] "GET /boost HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:37:27] "GET /calculadora-boost HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:37:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:37:56] "GET /boost HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:08] "GET /boost HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:08] "GET /route-loader.js?v=20260507b HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /app.html?_shell=20260507b HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /styles.css?v=20260507k HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /icons-type/favicon.ico HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /js/config.local.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /script.js?v=20260508a HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /balls/pokebola.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /types.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /pokemons/pokemons.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /pokemons/mega-pokemons.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:09] "GET /fosseis/local.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:10] "GET /mega-stone.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:39:10] "GET /balls/elemental.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:40:11] "GET /icons-type/discord.png HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 55399)
+Traceback (most recent call last):
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 732, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Liniker12\OneDrive\Documentos\GitHub\poke-effectiveness\serve_spa.py", line 27, in do_GET
+    return super().do_GET()
+           ~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 739, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 942, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionAbortedError: [WinError 10053] Uma conexão estabelecida foi anulada pelo software no computador host
+----------------------------------------
+127.0.0.1 - - [08/May/2026 15:40:11] "GET /icons-type/bug.png HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 51553)
+Traceback (most recent call last):
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 732, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Liniker12\OneDrive\Documentos\GitHub\poke-effectiveness\serve_spa.py", line 27, in do_GET
+    return super().do_GET()
+           ~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 739, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 942, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionAbortedError: [WinError 10053] Uma conexão estabelecida foi anulada pelo software no computador host
+----------------------------------------
+127.0.0.1 - - [08/May/2026 15:40:11] "GET /icons-type/dark.png HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 52043)
+Traceback (most recent call last):
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 732, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Liniker12\OneDrive\Documentos\GitHub\poke-effectiveness\serve_spa.py", line 27, in do_GET
+    return super().do_GET()
+           ~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 739, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 942, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionAbortedError: [WinError 10053] Uma conexão estabelecida foi anulada pelo software no computador host
+----------------------------------------
+127.0.0.1 - - [08/May/2026 15:40:11] "GET /icons-type/dragon.png HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 64834)
+Traceback (most recent call last):
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 732, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Liniker12\OneDrive\Documentos\GitHub\poke-effectiveness\serve_spa.py", line 27, in do_GET
+    return super().do_GET()
+           ~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 739, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 942, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionAbortedError: [WinError 10053] Uma conexão estabelecida foi anulada pelo software no computador host
+----------------------------------------
+127.0.0.1 - - [08/May/2026 15:40:11] "GET /icons-type/electric.png HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 65064)
+Traceback (most recent call last):
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 732, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Liniker12\OneDrive\Documentos\GitHub\poke-effectiveness\serve_spa.py", line 27, in do_GET
+    return super().do_GET()
+           ~~~~~~~~~~~~~~^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 739, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\http\server.py", line 942, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Liniker12\AppData\Local\Programs\Python\Python314\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionAbortedError: [WinError 10053] Uma conexão estabelecida foi anulada pelo software no computador host
+----------------------------------------
+127.0.0.1 - - [08/May/2026 15:43:00] "GET /boost HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:00] "GET /app.html?_shell=20260507b HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:00] "GET /icons-type/favicon.ico HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /script.js?v=20260508a HTTP/1.1" 304 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/discord.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /pokemons/pokemons.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /pokemons/mega-pokemons.json HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/bug.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/dark.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/dragon.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/electric.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/fairy.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/fighting.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/fire.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/flying.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/ghost.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:01] "GET /icons-type/grass.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/ground.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/ice.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/normal.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/poison.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/psychic.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/rock.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/steel.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /icons-type/water.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/blastoise.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/bellsprout.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/abra.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/alakazam.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/arbok.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/arcanine.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/beedrill.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:02] "GET /pokemons/bellossom.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:03] "GET /calculadora/enigma_stone.gif HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/shining_ancient.gif HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/silver_star.gif HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/ancient_stone.gif HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/piece_bronze_star.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/silver_token.gif HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:05] "GET /calculadora/silver_piece.png HTTP/1.1" 200 -
+127.0.0.1 - - [08/May/2026 15:43:06] "GET /calculadora/silver_flask.gif HTTP/1.1" 200 -
