@@ -40,7 +40,8 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice. Passiva: Ice Scales: Garante resistencia contra Flying e Dragon.', matchupOverrides: { 'mega-staraptor': { defenseByBossType: { fighting: 1, flying: 0.5 } } } },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
@@ -81,7 +82,7 @@ const hoopaPortalsData = [
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
@@ -160,7 +161,7 @@ const hoopaPortalsData = [
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'otimo', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
@@ -377,7 +378,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'green', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
       },
