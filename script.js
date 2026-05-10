@@ -31,12 +31,6 @@ const connectionsSvg = document.getElementById('connections');
 const searchInput = document.getElementById('type-search');
 let colCount = 0;
 let currentSelection = [];
-let typeButtons = [];
-let typeButtonByType = new Map();
-let typeInfoDelegationInitialized = false;
-const isFirefoxBrowser = typeof CSS !== 'undefined'
-    && typeof CSS.supports === 'function'
-    && CSS.supports('-moz-appearance', 'none');
 
 const rangeSelect = document.getElementById('range-select');
 const rangeResults = document.getElementById('range-results');
@@ -2884,10 +2878,7 @@ function fuzzyMatch(type,filter){
 }
 
 function createButtons(filter=""){ 
-    if(!chart) return;
-    const fragment = document.createDocumentFragment();
-    typeButtons = [];
-    typeButtonByType = new Map();
+    chart.innerHTML='';
     const normalizedFilter = filter.toLowerCase();
     menuTypes.forEach(type=>{
         if(!fuzzyMatch(type,filter)) return;
@@ -2928,15 +2919,12 @@ function createButtons(filter=""){
         btn.appendChild(label);
         btn.addEventListener('click',()=>selectType(type));
         btn.addEventListener('keydown',handleKeyNav);
-        if(useGsap && !isFirefoxBrowser){
+        if(useGsap){
             btn.addEventListener('mouseenter',()=>gsap.to(btn,{scale:1.1,duration:0.2,ease:'power1.out'}));
             btn.addEventListener('mouseleave',()=>gsap.to(btn,{scale:1,duration:0.2,ease:'power1.out'}));
         }
-        typeButtons.push(btn);
-        typeButtonByType.set(type, btn);
-        fragment.appendChild(btn);
+        chart.appendChild(btn);
     });
-    chart.replaceChildren(fragment);
     updateColumns();
 }
 
@@ -3003,7 +2991,6 @@ function normalizeTypeMatchupMultiplier(raw, attackingType = '', defendingTypes 
 function renderTypeInfoEmptyState(message){
     const info = document.getElementById('info');
     if(!info) return;
-    initializeTypeInfoDelegation();
     info.innerHTML = `
         <div class="types-empty-state">
             <div class="types-empty-state__copy">
@@ -3023,21 +3010,6 @@ function renderTypeInfoEmptyState(message){
             </div>
         </div>
     `;
-}
-
-function getTypeButton(type){
-    return typeButtonByType.get(type) || null;
-}
-
-function initializeTypeInfoDelegation(){
-    const info = document.getElementById('info');
-    if(typeInfoDelegationInitialized || !info) return;
-    info.addEventListener('click', (event) => {
-        const trigger = event.target.closest('.info-type[data-type]');
-        if(!trigger || !info.contains(trigger)) return;
-        selectType(trigger.dataset.type);
-    });
-    typeInfoDelegationInitialized = true;
 }
 // catch calculator data
 const catchBallOrder = ['ultra', 'story', 'elemental', 'safari'];
@@ -3607,20 +3579,19 @@ function renderSelection(){
 
 function renderSelection(){
     connectionsSvg.innerHTML='';
-    typeButtons.forEach(btn=>{
+    document.querySelectorAll('.type-button').forEach(btn=>{
         btn.classList.remove('active','effective','effectiveness','weakness','immune','mixed','neutral','resist','strength-from-selection');
         btn.setAttribute('aria-pressed','false');
     });
 
     const info = document.getElementById('info');
-    initializeTypeInfoDelegation();
     if(!currentSelection.length){
         renderTypeInfoEmptyState();
         return;
     }
 
     currentSelection.forEach(type=>{
-        const btn = getTypeButton(type);
+        const btn=document.querySelector(`.type-button[data-type="${type}"]`);
         if(btn){
             btn.classList.add('active');
             btn.setAttribute('aria-pressed','true');
@@ -3670,32 +3641,32 @@ function renderSelection(){
         .sort((left, right) => left.type.localeCompare(right.type));
 
     superEffectiveTargets.forEach(entry=>{
-        const btn = getTypeButton(entry.type);
+        const btn=document.querySelector(`.type-button[data-type="${entry.type}"]`);
         if(btn && !btn.classList.contains('active')) btn.classList.add('effectiveness');
     });
     effectiveTargets.forEach(entry=>{
-        const btn = getTypeButton(entry.type);
+        const btn=document.querySelector(`.type-button[data-type="${entry.type}"]`);
         if(btn && !btn.classList.contains('active') && !btn.classList.contains('effectiveness')) btn.classList.add('effective');
     });
     // Defensive relationships are already computed earlier in this function.
 
     superWeakEntries.forEach(entry=>{
-        const btn = getTypeButton(entry.type);
+        const btn = document.querySelector(`.type-button[data-type="${entry.type}"]`);
         if(btn && !btn.classList.contains('active')) btn.classList.add('weakness');
     });
     weakEntries.forEach(entry=>{
-        const btn = getTypeButton(entry.type);
+        const btn = document.querySelector(`.type-button[data-type="${entry.type}"]`);
         if(btn && !btn.classList.contains('active') && !btn.classList.contains('weakness')) btn.classList.add('weakness');
     });
-    resistEntries.forEach(entry=>{ const b = getTypeButton(entry.type); if(b && !b.classList.contains('active')) b.classList.add('resist'); });
-    immuneEntries.forEach(entry=>{ const b = getTypeButton(entry.type); if(b && !b.classList.contains('active')) b.classList.add('immune'); });
+    resistEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('resist'); });
+    immuneEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('immune'); });
 
     // If a type is both effective (from selection) and also a threat/resist, mark as mixed
     const offenseTypes = [...new Set([...(superEffectiveTargets||[]).map(e=>e.type), ...(effectiveTargets||[]).map(e=>e.type)])];
     const defenseThreats = defensiveEntries.filter(e=>e.multiplier>1).map(e=>e.type);
     const overlapped = offenseTypes.filter(t=> defenseThreats.includes(t));
     overlapped.forEach(t2=>{
-        const b = getTypeButton(t2);
+        const b = document.querySelector(`.type-button[data-type="${t2}"]`);
         if(b){
             b.classList.add('mixed');
             b.classList.remove('effectiveness');
@@ -3706,7 +3677,7 @@ function renderSelection(){
         }
     });
 
-    typeButtons.forEach(btn=>{
+    document.querySelectorAll('.type-button').forEach(btn=>{
         if(
             !btn.classList.contains('active') &&
             !btn.classList.contains('effective') &&
@@ -3773,6 +3744,14 @@ function renderSelection(){
     }
     html += `</div></div>`;
     info.innerHTML = html;
+
+    info.querySelectorAll('.info-type').forEach(btn=>{
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', ()=> selectType(btn.dataset.type));
+        if(useGsap){
+            gsap.fromTo(btn, {scale:0.9, opacity:0}, {scale:1, opacity:1, duration:0.32, ease:'back.out(1.4)'});
+        }
+    });
 }
 
 function selectType(type){
