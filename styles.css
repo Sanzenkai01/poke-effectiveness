@@ -8207,6 +8207,49 @@ textarea:focus {
   transition: box-shadow 0.25s ease, opacity 0.25s ease;
 }
 
+.streamer-live-signal {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.55rem;
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #eef6ff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.streamer-live-signal[hidden] {
+  display: none;
+}
+
+.streamer-live-signal[data-state="drop"] {
+  border-color: rgba(95, 247, 166, 0.34);
+  background: rgba(95, 247, 166, 0.14);
+  color: #86f4c1;
+}
+
+.streamer-live-signal[data-state="nodrop"] {
+  border-color: rgba(255, 213, 79, 0.3);
+  background: rgba(255, 213, 79, 0.14);
+  color: #ffe38a;
+}
+
+.streamer-live-signal[data-state="pstory"] {
+  border-color: rgba(138, 215, 255, 0.3);
+  background: rgba(138, 215, 255, 0.14);
+  color: #b6ebff;
+}
+
+.streamer-live-signal[data-state="live"] {
+  border-color: rgba(255, 140, 140, 0.28);
+  background: rgba(255, 140, 140, 0.12);
+  color: #ffb0b0;
+}
+
 .streamer-card[data-stream-state="pstory-drop"] {
   border-color: rgba(110, 245, 214, 0.45);
   background:
@@ -14459,5 +14502,37 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
 
   #content-effectiveness .types-quick-hint {
     display: none;
+  }
+}
+
+@supports (-moz-appearance: none) {
+  body {
+    animation: none;
+    background-position: 50% 50%;
+    background-size: 240% 240%;
+  }
+
+  body::before,
+  .app-sidebar::before,
+  .catch-panel,
+  .community-player-panel,
+  .community-list-panel,
+  .bosses-copy,
+  .hoopa-portal-ticker__track,
+  .streamer-card[data-stream-state="pstory-nodrop"]::after {
+    animation: none !important;
+  }
+
+  body * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .app-sidebar::before {
+    opacity: 0.5;
+  }
+
+  .app-shell__backdrop {
+    background: rgba(4, 8, 16, 0.78);
   }
 }

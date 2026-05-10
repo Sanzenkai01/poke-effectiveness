@@ -1,20 +1,5 @@
-const HOME_STREAMERS = [
-    'adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_',
-    'xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol',
-    'corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme',
-    'lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos',
-    'kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd',
-    'lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer',
-    'especialbr','eaisantinho','prodigyz_gameplay', 'BruxoNoir','likearivergames','afdexter'
-];
-
-const HOME_NON_DROP_STREAMERS = new Set([
-    'FernandoAlcatraz','gordallink','mofexxx','reiisuperr',
-    'rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari',
-    'linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1',
-    'OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir',
-    'likearivergames','afdexter'
-]);
+const sharedStreamerCatalog = window.POKE_STREAMERS_SHARED || {};
+const HOME_STREAMERS = Array.isArray(sharedStreamerCatalog.STREAMERS) ? sharedStreamerCatalog.STREAMERS : [];
 
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
@@ -36,9 +21,12 @@ let twitchCredentialsInvalidUntil = 0;
 const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
 
-function normalizeStreamerChannelName(name){
-    return (name || '').toString().trim().replace(/^#/, '').toLowerCase();
-}
+const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
+    ? sharedStreamerCatalog.normalizeStreamerChannelName
+    : (name) => (name || '').toString().trim().replace(/^#/, '').toLowerCase();
+const detectPstoryTitleState = typeof sharedStreamerCatalog.detectPstoryTitleState === 'function'
+    ? sharedStreamerCatalog.detectPstoryTitleState
+    : () => false;
 
 function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
     const normalizedChannel = normalizeStreamerChannelName(channel);
@@ -232,42 +220,8 @@ function fetchStreamerStatus(name){
     const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
 
-    const detectPstory = (title) => {
-        if(!title || !title.toString) return false;
-        const normalized = title.toString().trim();
-        if(!normalized) return false;
-
-        if(/\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized)) return 'drop';
-
-        const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-        const isCommandMention = (index) => {
-            let cursor = index - 1;
-            while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                cursor -= 1;
-            }
-            const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-            return marker === '!' || marker === '\u2757';
-        };
-
-        for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-            const index = typeof match.index === 'number' ? match.index : -1;
-            if(index < 0) continue;
-
-            const value = match[0];
-            const before = index > 0 ? normalized.charAt(index - 1) : '';
-            const afterIndex = index + value.length;
-            const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-            if(isWordChar(before) || isWordChar(after)) continue;
-            if(isCommandMention(index)) continue;
-            return 'nodrop';
-        }
-
-        return false;
-    };
-
     const makeResult = (status, title = '', startedAt = '') => {
-        const pstoryStatus = status === 'online' ? detectPstory(title || '') : false;
+        const pstoryStatus = status === 'online' ? detectPstoryTitleState(title || '') : false;
         return {
             status,
             title: title ? title.toString().trim() : '',
@@ -392,6 +346,47 @@ function fetchStreamerStatus(name){
             return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
         })
     );
+}
+
+function pickPreferredCandidate(candidates, timerState){
+    const available = Array.from(candidates || []).filter(info => info?.isPstoryDrop);
+    if(available.length === 0) return null;
+
+    const candidatesWithTimer = available.filter(info =>
+        timerState.get(normalizeStreamerChannelName(info.name))
+    );
+    const pool = candidatesWithTimer.length > 0 ? candidatesWithTimer : available;
+
+    return pool.sort((left, right) =>
+        HOME_STREAMERS.indexOf(left.name) - HOME_STREAMERS.indexOf(right.name)
+    )[0] || null;
+}
+
+function formatRatCountdown(msUntilNext){
+    const totalSeconds = Math.max(0, Math.ceil(msUntilNext / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function startRatSummaryTimer(state){
+    if(ratSummaryIntervalId){
+        window.clearInterval(ratSummaryIntervalId);
+        ratSummaryIntervalId = 0;
+    }
+
+    const render = () => {
+        const msUntilNext = Math.max(0, Number(state?.expectedNextAt || 0) - Date.now());
+        if(msUntilNext <= 0){
+            renderStaticRatSummary('O proximo Rattata deve aparecer a qualquer momento.', '#ffd166');
+            return;
+        }
+
+        renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`, '#dff8ff');
+    };
+
+    render();
+    ratSummaryIntervalId = window.setInterval(render, 1000);
 }
 
 async function refreshHomeWidget(){

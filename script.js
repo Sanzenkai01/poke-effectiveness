@@ -4914,9 +4914,10 @@ function showSpeedsters(requestedBossMode=''){
     updateUrl();
 }
 
-const PACK_STREAMERS = new Set(['ogordonha','sharxera','indypereira','adivorcio','callmevitao_']);
-const NON_DROP_STREAMERS = new Set(['FernandoAlcatraz', 'gordallink','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara','corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames','afdexter']);
-const STREAMERS = ['adivorcio','engrafff','indypereira','sharxera','shadolas1','guixprox','callmevitao_','xxryuutox','serpion_sk','cabelo14','reccolin','teylera','hyoogplays','naathcarol','corujashady','anaodapxg','ogordonha','FernandoAlcatraz','gordallink','sousupermeme','lordjuregi','mofexxx','reiisuperr','rpsubzero','dravokh','catarktv','espantacorvos','kiwoe','karlin_nara', 'corbelari','linikerquadrado2','kaminarifoxy','s4l4m4nd3rxd','lkagural','naringobell','brunoxiis1','OKAMIulv','eddiegomes','terryzao','nazgulplayer','especialbr','manoblaze','eaisantinho','kingszt','prodigyz_gameplay', 'BruxoNoir','likearivergames','afdexter'];
+const sharedStreamerCatalog = window.POKE_STREAMERS_SHARED || {};
+const PACK_STREAMERS = sharedStreamerCatalog.PACK_STREAMERS || new Set();
+const NON_DROP_STREAMERS = sharedStreamerCatalog.NON_DROP_STREAMERS || new Set();
+const STREAMERS = Array.isArray(sharedStreamerCatalog.STREAMERS) ? sharedStreamerCatalog.STREAMERS : [];
 const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
 const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
 const streamerStatusCache = new Map();
@@ -4961,37 +4962,7 @@ const homeStreamerInfoState = {
     totalPstoryOnline: 0
 };
 let homeStreamerRatSummaryCleanup = () => {};
-const STREAMER_DISCORD_LINKS = {
-    adivorcio: 'https://discord.gg/CH5veEAA4k',
-    engrafff: 'https://discord.gg/938jWv2SvA',
-    indypereira: '',
-    sharxera: 'https://discord.gg/UhCmU4Jmkh',
-    shadolas1: 'https://discord.gg/kqPdNewK2S',
-    guixprox: '',
-    callmevitao_: 'https://discord.gg/HzY9sMpaSV',
-    xxryuutox: 'https://discord.gg/S47R5WDU7r',
-    serpion_sk: '',
-    cabelo14: 'https://discord.gg/mBNj4TZXRm',
-    reccolin: '',
-    teylera: 'https://discord.gg/h8EVuz5Z5S',
-    hyoogplays: 'https://discord.gg/Hwfwx6M',
-    naathcarol: 'https://discord.gg/WuU3JzVr5a',
-    corujashady: '',
-    anaodapxg: 'https://discord.gg/TvKNkjGp4Y',
-    ogordonha: 'https://discord.gg/rHaVQUaPDD',
-    FernandoAlcatraz: 'https://discord.gg/5hjyzM6',
-    gordallink: '',
-    sousupermeme: 'https://discord.gg/xFegFmpTaP',
-    lordjuregi: 'https://discord.gg/G8wJtVBYEa',
-    mofexxx: '',
-    reiisuperr: '',
-    rpsubzero: '',
-    dravokh: '',
-    catarktv: '',
-    espantacorvos: '',
-    kiwoe: 'https://discord.com/invite/nazX2vTjGB',
-    OKAMIulv: 'https://discord.gg/NJCJn7anYQ'
-};
+const STREAMER_DISCORD_LINKS = sharedStreamerCatalog.STREAMER_DISCORD_LINKS || {};
 
 let streamerFiltersInitialized = false;
 let streamerCardCleanupFns = [];
@@ -5013,9 +4984,12 @@ if(typeof window !== 'undefined'){
     });
 }
 
-function normalizeStreamerChannelName(name){
-    return (name || '').toString().trim().replace(/^#/, '').toLowerCase();
-}
+const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
+    ? sharedStreamerCatalog.normalizeStreamerChannelName
+    : (name) => (name || '').toString().trim().replace(/^#/, '').toLowerCase();
+const detectPstoryTitleState = typeof sharedStreamerCatalog.detectPstoryTitleState === 'function'
+    ? sharedStreamerCatalog.detectPstoryTitleState
+    : () => false;
 
 function clearHomeStreamerRatSummary(){
     homeStreamerRatSummaryCleanup();
@@ -5120,8 +5094,7 @@ function refreshHomeStreamerInfo(){
     const onlineRatCandidates = new Map();
 
     const requests = STREAMERS.map(name => {
-        const isNonDrop = NON_DROP_STREAMERS.has(name);
-        return fetchStreamerStatus(name, isNonDrop)
+        return fetchStreamerStatus(name)
             .then(info => {
                 if(requestToken !== homeStreamerInfoRequestToken) return;
                 resolvedCount += 1;
@@ -6045,47 +6018,13 @@ function createStreamerRatChatMonitor(){
     };
 }
 
-function fetchStreamerStatus(name, isNonDrop = false){
+function fetchStreamerStatus(name){
     const cacheKey = normalizeStreamerChannelName(name);
     const cached = getCachedStreamerValue(streamerStatusCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
 
-    const detectPstory = (title) => {
-        if(!title || !title.toString) return false;
-        const normalized = title.toString().trim();
-        if(!normalized) return false;
-
-        if(/\(DROP:ON\s*pstoryonline\.com\)/i.test(normalized)) return 'drop';
-
-        const isWordChar = (char) => /[a-zA-Z0-9_]/.test(char);
-        const isCommandMention = (index) => {
-            let cursor = index - 1;
-            while(cursor >= 0 && /\s/.test(normalized.charAt(cursor))){
-                cursor -= 1;
-            }
-            const marker = cursor >= 0 ? normalized.charAt(cursor) : '';
-            return marker === '!' || marker === '\u2757';
-        };
-
-        for(const match of normalized.matchAll(/pstoryonline\.com|pstory/ig)){
-            const index = typeof match.index === 'number' ? match.index : -1;
-            if(index < 0) continue;
-
-            const value = match[0];
-            const before = index > 0 ? normalized.charAt(index - 1) : '';
-            const afterIndex = index + value.length;
-            const after = afterIndex < normalized.length ? normalized.charAt(afterIndex) : '';
-
-            if(isWordChar(before) || isWordChar(after)) continue;
-            if(isCommandMention(index)) continue;
-            return 'nodrop';
-        }
-
-        return false;
-    };
-
     const makeResult = (status, title = '', startedAt = '') => {
-        const pstoryStatus = status === 'online' ? detectPstory(title || '') : false;
+        const pstoryStatus = status === 'online' ? detectPstoryTitleState(title || '') : false;
         return {
             status,
             title: title ? title.toString().trim() : '',
@@ -6278,8 +6217,7 @@ function refreshGlobalRatMonitor(){
     const onlineRatCandidates = new Map();
     globalRatMonitorRefreshPromise = Promise.allSettled(
         STREAMERS.map(name => {
-            const isNonDrop = NON_DROP_STREAMERS.has(name);
-            return fetchStreamerStatus(name, isNonDrop)
+            return fetchStreamerStatus(name)
                 .then(info => {
                     const candidate = createRatMonitorCandidate(name, info);
                     if(candidate){
@@ -6680,18 +6618,11 @@ function renderStreamers(){
         const nameContainer = document.createElement('div');
         nameContainer.style.display = 'flex';
         nameContainer.style.alignItems = 'center';
-
-        const creatorBadge = document.createElement('span');
-        creatorBadge.textContent = 'Drops';
-        creatorBadge.style.fontSize = '0.72rem';
-        creatorBadge.style.padding = '0.09rem 0.35rem';
-        creatorBadge.style.marginLeft = '0.5rem';
-        creatorBadge.style.marginTop = '0.25rem';
-        creatorBadge.style.background = 'rgba(255,255,255,0.15)';
-        creatorBadge.style.color = '#fff';
-        creatorBadge.style.borderRadius = '0.3rem';
-        creatorBadge.style.fontWeight = '600';
-        const isNonDrop = NON_DROP_STREAMERS.has(name);
+        const supportsDrops = !NON_DROP_STREAMERS.has(name);
+        const liveSignal = document.createElement('span');
+        liveSignal.className = 'streamer-live-signal';
+        liveSignal.hidden = true;
+        liveSignal.dataset.state = 'idle';
 
         const packBadge = document.createElement('span');
         let hasPackBadge = false;
@@ -6897,17 +6828,44 @@ function renderStreamers(){
             });
         };
 
+        const setLiveSignalFromInfo = (info = {}) => {
+            if(info.status !== 'online'){
+                liveSignal.hidden = true;
+                liveSignal.dataset.state = 'idle';
+                liveSignal.textContent = '';
+                return;
+            }
+
+            liveSignal.hidden = false;
+            if(info.isPstoryDrop){
+                liveSignal.dataset.state = 'drop';
+                liveSignal.textContent = 'Drops ON';
+                return;
+            }
+            if(info.isPstoryNoDrop){
+                liveSignal.dataset.state = 'nodrop';
+                liveSignal.textContent = 'Sem DROP:ON';
+                return;
+            }
+            if(info.isPstory){
+                liveSignal.dataset.state = 'pstory';
+                liveSignal.textContent = 'PStory';
+                return;
+            }
+
+            liveSignal.dataset.state = 'live';
+            liveSignal.textContent = 'Outro titulo';
+        };
+
         renderPreviewCard();
 
         card.style.position = 'relative';
-        card.dataset.drop = (!isNonDrop).toString();
+        card.dataset.drop = supportsDrops.toString();
         card.dataset.pack = PACK_STREAMERS.has(name) ? 'true' : 'false';
         card.dataset.online = 'false';
         card.dataset.streamState = 'loading';
         nameContainer.appendChild(label);
-        if(!isNonDrop){
-            nameContainer.appendChild(creatorBadge);
-        }
+        nameContainer.appendChild(liveSignal);
         headerWrapper.appendChild(nameContainer);
         card.appendChild(headerWrapper);
         if(hasPackBadge){
@@ -6920,7 +6878,7 @@ function renderStreamers(){
         card.appendChild(miniPreview);
         grid.appendChild(card);
 
-        fetchStreamerStatus(name, isNonDrop)
+        fetchStreamerStatus(name)
             .then(info=>{
                 if(renderToken !== streamerRenderToken) return;
                 resolvedCount += 1;
@@ -6937,14 +6895,14 @@ function renderStreamers(){
                     }
                     // show Pstory indicator
                     if(info.isPstoryDrop){
-                        pstoryInfo.textContent = 'Transmitindo PStory!';
+                        pstoryInfo.textContent = 'DROP:ON detectado no titulo da live.';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else if(info.isPstoryNoDrop){
-                        pstoryInfo.textContent = 'Transmitindo PStory (sem drops).';
+                        pstoryInfo.textContent = 'Titulo atual mostra PStory sem DROP:ON.';
                         pstoryInfo.style.color = '#ffd54f';
                     } else if(info.isPstory){
-                        pstoryInfo.textContent = 'Transmitindo PStory!';
-                        pstoryInfo.style.color = '#5ff7a6';
+                        pstoryInfo.textContent = 'Titulo atual indica PStory.';
+                        pstoryInfo.style.color = '#8ad7ff';
                     } else {
                         pstoryInfo.textContent = 'Não está transmitindo PStory.';
                         pstoryInfo.style.color = '#fa9005';
@@ -6965,6 +6923,7 @@ function renderStreamers(){
                     pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
                     pstoryInfo.style.color = '#faa';
                 }
+                setLiveSignalFromInfo(info);
                 setPreviewFromInfo(info);
                 fetchStreamerAvatar(name).then((avatarUrl) => {
                     if(renderToken !== streamerRenderToken) return;
@@ -6985,6 +6944,7 @@ function renderStreamers(){
                 resolvedCount += 1;
                 status.textContent = 'Erro ao obter';
                 status.classList.add('offline');
+                setLiveSignalFromInfo(fallbackInfo);
                 setPreviewFromInfo(fallbackInfo);
                 fetchStreamerAvatar(name).then((avatarUrl) => {
                     if(renderToken !== streamerRenderToken) return;
