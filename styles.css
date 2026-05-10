@@ -14535,4 +14535,41 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   .app-shell__backdrop {
     background: rgba(4, 8, 16, 0.78);
   }
+
+  #content-effectiveness .type-button,
+  #content-effectiveness .info,
+  #content-effectiveness .info-type,
+  #content-effectiveness .info-icon {
+    transition: none !important;
+  }
+
+  #content-effectiveness .type-button.effectiveness,
+  #content-effectiveness .type-button.effective,
+  #content-effectiveness .type-button.weakness,
+  #content-effectiveness .type-button.resist,
+  #content-effectiveness .type-button.immune,
+  #content-effectiveness .type-button.mixed,
+  #content-effectiveness .type-button.strength-from-selection,
+  #content-effectiveness .info-icon {
+    animation: none !important;
+  }
+
+  #content-effectiveness .type-button .type-icon,
+  #content-effectiveness .type-button.neutral,
+  #content-effectiveness .info-icon {
+    filter: none !important;
+  }
+
+  #content-effectiveness .type-button.neutral {
+    opacity: 0.56;
+  }
+
+  #content-effectiveness .info:hover {
+    transform: none;
+  }
+
+  #content-effectiveness .info-icon {
+    opacity: 1;
+    transform: none;
+  }
 }
