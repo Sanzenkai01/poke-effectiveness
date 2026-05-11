@@ -12917,30 +12917,8 @@ body.home-view .app-shell {
 }
 
 .planner-composition-list {
-#content-effectiveness .types-empty-state {
   display: grid;
-  gap: 0.9rem;
-}
-#content-effectiveness .types-info-shell {
-  display: grid;
-  gap: 0.9rem;
-  grid-template-columns: minmax(220px, 320px) repeat(auto-fit, minmax(220px, 1fr));
-  align-items: start;
-  grid-auto-rows: minmax(60px, auto);
-}
-
-#content-effectiveness .types-info-shell > .types-info__summary {
-  grid-column: 1;
-  grid-row: 1 / -1;
-}
-#content-effectiveness .types-info-shell > .info-section,
-#content-effectiveness .types-info-shell > .info-empty-msg {
-  grid-column: 2;
-}
-#content-effectiveness .types-info-shell .info-icons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.6rem;
+  gap: 1rem;
 }
 
 .planner-boss-picker {
@@ -12975,10 +12953,8 @@ body.home-view .app-shell {
 }
 
 .planner-boss-picker__content,
-.planner-composition-card__copy,
+.planner-composition-card__copy {
   display: grid;
-  gap: 0.25rem;
-  min-width: 0;
   gap: 0.25rem;
   min-width: 0;
 }
@@ -13079,6 +13055,21 @@ body.home-view .app-shell {
   align-items: center;
   gap: 0.36rem;
   color: var(--text-strong);
+}
+
+.planner-meta-chip--icons-only {
+  justify-content: center;
+  min-width: 0;
+  padding: 0.38rem 0.56rem;
+}
+
+.planner-meta-chip--icons-only .planner-meta-chip__label {
+  display: none;
+}
+
+.planner-meta-chip--icons-only .planner-meta-chip__value {
+  justify-content: center;
+  min-width: 0;
 }
 
 .planner-composition-card {
@@ -13259,10 +13250,88 @@ body.home-view .app-shell {
   min-width: 0;
 }
 
+.planner-recommendation-card__types {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .planner-recommendation-card__tier {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.84rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.38rem;
+  margin-top: 0.08rem;
+  padding: 0.3rem 0.58rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(5, 11, 18, 0.72);
+  color: #f6faff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
   white-space: nowrap;
+}
+
+.planner-recommendation-card__tier::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(158, 158, 158, 0.9);
+  flex-shrink: 0;
+}
+
+.planner-recommendation-card[data-tier="green"] .planner-recommendation-card__tier {
+  border-color: rgba(142, 68, 173, 0.32);
+}
+
+.planner-recommendation-card[data-tier="green"] .planner-recommendation-card__tier::before {
+  background: #8e44ad;
+}
+
+.planner-recommendation-card[data-tier="otimo"] .planner-recommendation-card__tier {
+  border-color: rgba(46, 204, 113, 0.32);
+}
+
+.planner-recommendation-card[data-tier="otimo"] .planner-recommendation-card__tier::before {
+  background: #2ecc71;
+}
+
+.planner-recommendation-card[data-tier="yellow"] .planner-recommendation-card__tier {
+  border-color: rgba(33, 150, 243, 0.32);
+}
+
+.planner-recommendation-card[data-tier="yellow"] .planner-recommendation-card__tier::before {
+  background: #2196f3;
+}
+
+.planner-recommendation-card[data-tier="red"] .planner-recommendation-card__tier {
+  border-color: rgba(255, 152, 0, 0.32);
+}
+
+.planner-recommendation-card[data-tier="red"] .planner-recommendation-card__tier::before {
+  background: #ff9800;
+}
+
+.planner-recommendation-card[data-tier="solo"] .planner-recommendation-card__tier {
+  border-color: rgba(244, 67, 54, 0.32);
+}
+
+.planner-recommendation-card[data-tier="solo"] .planner-recommendation-card__tier::before {
+  background: #f44336;
+}
+
+.planner-recommendation-card[data-tier="unknown"] .planner-recommendation-card__tier {
+  border-color: rgba(158, 158, 158, 0.26);
+}
+
+.planner-recommendation-card[data-tier="unknown"] .planner-recommendation-card__tier::before {
+  background: #9e9e9e;
 }
 
 .planner-composition-card__items {
@@ -13305,6 +13374,20 @@ body.home-view .app-shell {
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-strong);
   cursor: pointer;
+}
+
+.planner-member-card__edit {
+  padding: 0.42rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.26);
+  background: linear-gradient(135deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.18), rgba(var(--module-accent-alt-rgb, 180, 244, 255), 0.08));
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.planner-member-card__edit:hover,
+.planner-member-card__remove:hover {
+  transform: translateY(-1px);
 }
 
 /* Subtabs in planner hero */
@@ -13553,6 +13636,8 @@ body.home-view .app-shell {
 .planner-ready-member-card__actions {
   display: flex;
   justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .planner-item-field {
@@ -13579,6 +13664,166 @@ body.home-view .app-shell {
   align-items: center;
   gap: 0.55rem;
   flex-wrap: wrap;
+}
+
+.planner-edit-modal {
+  z-index: 3600;
+}
+
+.planner-edit-modal__content {
+  display: flex;
+  flex-direction: column;
+  width: min(1120px, calc(100vw - 2rem));
+  max-width: 1120px;
+  max-height: min(92vh, 920px);
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.18);
+  background:
+    linear-gradient(180deg, rgba(var(--module-accent-rgb, 104, 215, 255), 0.08), rgba(6, 12, 24, 0.72)),
+    rgba(7, 13, 24, 0.96);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 28px 60px rgba(0, 0, 0, 0.34);
+}
+
+.planner-edit-modal__header,
+.planner-edit-modal__footer {
+  padding: 1rem 1.15rem;
+}
+
+.planner-edit-modal__header {
+  display: grid;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  justify-items: center;
+  text-align: center;
+}
+
+.planner-edit-modal__eyebrow {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.planner-edit-modal__title {
+  margin: 0;
+  width: 100%;
+  padding-right: 0;
+  color: var(--text-strong);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.planner-edit-modal__subtitle,
+.planner-edit-modal__hint,
+.planner-edit-modal__boss-note {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.planner-edit-modal__body {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 1rem;
+  min-height: 0;
+  padding: 1rem 1.15rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.planner-edit-modal__boss {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  justify-items: center;
+  text-align: center;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.planner-edit-modal__boss-image {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 72%);
+}
+
+.planner-edit-modal__boss-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.planner-edit-modal__boss-copy {
+  justify-items: center;
+}
+
+.planner-edit-modal__boss-label {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.planner-edit-modal__boss-name {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 1.05rem;
+}
+
+.planner-edit-modal__boss-lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.planner-edit-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.planner-edit-modal__roles {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.planner-edit-modal__items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.planner-edit-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.planner-edit-modal__actions {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
 }
 
 .planner-consumable-token {
@@ -13643,6 +13888,8 @@ body.home-view .app-shell {
 .planner-boss-picker:focus-visible,
 .planner-recommendation-card:focus-visible,
 .planner-composition-card__remove:focus-visible,
+.planner-member-card__edit:focus-visible,
+.planner-member-card__remove:focus-visible,
 .planner-role-slot__clear:focus-visible,
 .planner-hero__share-input:focus-visible,
 .planner-item-field__select:focus-visible {
@@ -13890,6 +14137,14 @@ body.home-view .app-shell {
   gap: 0.32rem;
 }
 
+.planner-hero[data-copy-align="center"] .planner-hero__copy {
+  grid-column: 1 / -1;
+  width: 100%;
+  justify-self: center;
+  justify-items: center;
+  text-align: center;
+}
+
 .planner-hero__title,
 .planner-panel__title,
 .planner-composition-card__title,
@@ -13921,6 +14176,10 @@ body.home-view .app-shell {
   gap: 0.65rem;
   justify-items: end;
   align-content: start;
+}
+
+.planner-hero[data-copy-align="center"] .planner-hero__controls {
+  grid-column: 1 / -1;
 }
 
 .planner-shell,
@@ -14286,14 +14545,17 @@ body.home-view .app-shell {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 0.24rem;
 }
 
 .planner-recommendation-card__tier {
-  display: inline-flex;
+  margin-top: 0;
+}
+
+.planner-recommendation-card__chips {
+  justify-content: center;
   align-items: center;
-  padding: 0.18rem 0.42rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  margin-top: 0.34rem;
 }
 
 .planner-ready-list {
@@ -14342,7 +14604,7 @@ body.home-view .app-shell {
 
 .planner-ready-member-card {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.7rem;
   max-width: none;
@@ -14378,9 +14640,10 @@ body.home-view .app-shell {
   left: auto;
   top: auto;
   transform: none;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   justify-content: center;
+  align-items: flex-start;
   gap: 0.35rem;
   margin-left: 0;
 }
@@ -14388,7 +14651,7 @@ body.home-view .app-shell {
 .planner-ready-member-card__body {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.7rem;
   min-width: 0;
 }
@@ -14404,11 +14667,12 @@ body.home-view .app-shell {
 }
 
 .planner-ready-member-card__picks {
-  width: 100%;
+  width: auto;
+  flex: 1 1 auto;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .planner-ready-member-card__pick {
@@ -14421,12 +14685,247 @@ body.home-view .app-shell {
 
 .planner-ready-member-card__pick-label {
   gap: 0.08rem;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .planner-ready-member-card__actions {
+  justify-content: flex-end;
+}
+
+.planner-edit-modal__roles .planner-role-slot__list[data-variant="modal"] {
+  grid-template-columns: repeat(auto-fit, minmax(148px, 148px));
   justify-content: center;
+  gap: 0.45rem;
+  max-height: 228px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+}
+
+.planner-edit-modal__roles .planner-role-slot {
+  gap: 0.5rem;
+  padding: 0.64rem 0.72rem;
+}
+
+.planner-edit-modal__roles .planner-role-slot__header {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.planner-edit-modal__roles .planner-role-slot__copy {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.12rem;
+}
+
+.planner-edit-modal__roles .planner-role-slot__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--planner-role-accent, rgba(255, 255, 255, 0.14));
+  background: var(--planner-role-accent, rgba(255, 255, 255, 0.08));
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+}
+
+.planner-edit-modal__roles .planner-role-slot__current {
+  font-size: 0.92rem;
+}
+
+.planner-edit-modal__roles .planner-role-slot__meta {
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.planner-edit-modal__roles .planner-role-slot__note {
+  display: none;
+}
+
+.planner-edit-modal__roles .planner-role-slot__clans {
+  justify-content: center;
+  gap: 0.36rem;
+}
+
+.planner-edit-modal__roles .planner-clan-filter {
+  justify-content: center;
+  gap: 0.36rem;
+  padding: 0.42rem 0.58rem;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.planner-edit-modal__roles .planner-clan-filter__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card {
+  width: 100%;
+  min-height: 168px;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.58rem;
+  text-align: center;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__image {
+  width: 52px;
+  height: 52px;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__title-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__name-wrap {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__types {
+  justify-content: center;
+  min-height: 18px;
+  margin-top: 0.32rem;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__types .type-icon {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__tier {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.38rem;
+  margin-top: 0.06rem;
+  padding: 0.3rem 0.58rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(5, 11, 18, 0.72);
+  color: #f6faff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__tier::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(158, 158, 158, 0.9);
+  flex-shrink: 0;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="green"] .planner-recommendation-card__tier {
+  border-color: rgba(142, 68, 173, 0.32);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="green"] .planner-recommendation-card__tier::before {
+  background: #8e44ad;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="otimo"] .planner-recommendation-card__tier {
+  border-color: rgba(46, 204, 113, 0.32);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="otimo"] .planner-recommendation-card__tier::before {
+  background: #2ecc71;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="yellow"] .planner-recommendation-card__tier {
+  border-color: rgba(33, 150, 243, 0.32);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="yellow"] .planner-recommendation-card__tier::before {
+  background: #2196f3;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="red"] .planner-recommendation-card__tier {
+  border-color: rgba(255, 152, 0, 0.32);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="red"] .planner-recommendation-card__tier::before {
+  background: #ff9800;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="solo"] .planner-recommendation-card__tier {
+  border-color: rgba(244, 67, 54, 0.32);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="solo"] .planner-recommendation-card__tier::before {
+  background: #f44336;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="unknown"] .planner-recommendation-card__tier {
+  border-color: rgba(158, 158, 158, 0.26);
+}
+
+.planner-edit-modal__roles .planner-recommendation-card[data-tier="unknown"] .planner-recommendation-card__tier::before {
+  background: #9e9e9e;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__chips,
+.planner-edit-modal__roles .planner-item-field__preview,
+.planner-edit-modal__roles .planner-item-field__hint {
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__name {
+  font-size: 0.92rem;
+}
+
+.planner-edit-modal__roles .planner-recommendation-card__detail {
+  font-size: 0.78rem;
+  line-height: 1.32;
+  text-align: center;
+}
+
+.planner-edit-modal__roles .planner-role-slot__empty,
+.planner-edit-modal__items .planner-item-field {
+  text-align: center;
+}
+
+.planner-edit-modal__items .planner-item-field {
+  justify-items: center;
+}
+
+.planner-edit-modal__items .planner-item-field__label,
+.planner-edit-modal__items .planner-item-field__hint-label {
+  text-align: center;
+}
+
+.planner-edit-modal__items .planner-item-field__preview,
+.planner-edit-modal__items .planner-item-field__hint {
+  justify-content: center;
+}
+
+.planner-edit-modal__items .planner-item-field__select {
+  text-align: center;
+  text-align-last: center;
 }
 
 @media (max-width: 980px) {
@@ -14458,6 +14957,29 @@ body.home-view .app-shell {
   .planner-ready-member-card__body {
     flex-direction: column;
   }
+
+  .planner-edit-modal__boss {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .planner-edit-modal__boss-copy {
+    justify-items: center;
+  }
+
+  .planner-edit-modal__items {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-edit-modal__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .planner-edit-modal__actions {
+    justify-content: stretch;
+  }
 }
 
 @media (max-width: 760px) {
@@ -14472,7 +14994,19 @@ body.home-view .app-shell {
   }
 
   .planner-ready-member-card__consumables {
+    align-items: center;
     justify-content: center;
+  }
+
+  .planner-edit-modal__header,
+  .planner-edit-modal__body,
+  .planner-edit-modal__footer {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .planner-edit-modal__actions > .planner-hero__button {
+    width: 100%;
   }
 }
 
