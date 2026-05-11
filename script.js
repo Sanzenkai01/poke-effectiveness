@@ -121,7 +121,6 @@ const pokemonFilterNameInput = document.getElementById('pokemon-filter-name');
 const pokemonFilterRoleSelect = document.getElementById('pokemon-filter-role');
 const pokemonFilterClanSelect = document.getElementById('pokemon-filter-clan');
 const pokemonFilterLevelSelect = document.getElementById('pokemon-filter-level');
-const pokemonFilterSpecialTagSelect = document.getElementById('pokemon-filter-special-tag');
 const pokemonFilterType1Select = document.getElementById('pokemon-filter-type1');
 const pokemonFilterType2Select = document.getElementById('pokemon-filter-type2');
 const pokemonFilterMovesetSelect = document.getElementById('pokemon-filter-moveset');
@@ -306,17 +305,6 @@ const POKEMON_ROLE_META = Object.freeze({
     defender: { key: 'defender', label: 'defender' },
     speedster: { key: 'speedster', label: 'speedster' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['ace', 'boss']);
-const POKEMON_SPECIAL_TAG_ALIASES = Object.freeze({
-    ace: 'ace',
-    aces: 'ace',
-    boss: 'boss',
-    bosses: 'boss'
-});
-const POKEMON_SPECIAL_TAG_META = Object.freeze({
-    ace: { key: 'ace', label: 'Ace' },
-    boss: { key: 'boss', label: 'Boss' }
-});
 const POKEMON_LEVEL_FILTER_ORDER = Object.freeze(['5', '20', '30', '50', '65', '80', '95', 'pre', 'ace']);
 const POKEMON_LEVEL_FILTER_SORT_INDEX = Object.freeze(
     POKEMON_LEVEL_FILTER_ORDER.reduce((acc, value, index) => {
@@ -330,7 +318,6 @@ const DEFAULT_POKEMON_CATALOG_FILTERS = Object.freeze({
     role: '',
     clan: '',
     level: '',
-    specialTag: '',
     type1: '',
     type2: '',
     moveset: ''
@@ -10493,26 +10480,6 @@ function normalizePokemonRole(value){
     return getPokemonRoleInfo(value).label;
 }
 
-function normalizePokemonSpecialTagKey(value){
-    const normalized = String(value || '').trim().toLowerCase();
-    return POKEMON_SPECIAL_TAG_ALIASES[normalized] || '';
-}
-
-function getPokemonSpecialTagInfo(value){
-    const normalized = normalizePokemonSpecialTagKey(value);
-    if(POKEMON_SPECIAL_TAG_META[normalized]){
-        return POKEMON_SPECIAL_TAG_META[normalized];
-    }
-    return {
-        key: '',
-        label: ''
-    };
-}
-
-function formatPokemonSpecialTagLabel(value){
-    return getPokemonSpecialTagInfo(value).label || '';
-}
-
 function formatPokemonRoleLabel(value){
     const normalized = String(value || '').trim();
     if(!normalized) return 'Sem função';
@@ -10616,7 +10583,6 @@ function readPokemonCatalogFiltersFromDom(){
         role: normalizePokemonRoleKey(pokemonFilterRoleSelect?.value || ''),
         clan: String(pokemonFilterClanSelect?.value || '').trim().toLowerCase(),
         level: normalizePokemonLevelFilterValue(pokemonFilterLevelSelect?.value || ''),
-        specialTag: normalizePokemonSpecialTagKey(pokemonFilterSpecialTagSelect?.value || ''),
         type1: normalizePokemonTypeKey(pokemonFilterType1Select?.value || ''),
         type2: String(pokemonFilterType2Select?.value || '').trim() === POKEMON_FILTER_TYPE2_NONE_VALUE
             ? POKEMON_FILTER_TYPE2_NONE_VALUE
@@ -10633,7 +10599,6 @@ function writePokemonCatalogFiltersToDom(filters = DEFAULT_POKEMON_CATALOG_FILTE
         [pokemonFilterRoleSelect, filters?.role],
         [pokemonFilterClanSelect, filters?.clan],
         [pokemonFilterLevelSelect, filters?.level],
-        [pokemonFilterSpecialTagSelect, filters?.specialTag],
         [pokemonFilterType1Select, filters?.type1],
         [pokemonFilterType2Select, filters?.type2],
         [pokemonFilterMovesetSelect, filters?.moveset]
@@ -10666,7 +10631,6 @@ function getFilteredPokemonCatalogEntries(filters = pokemonCatalogFilters){
         if(filters?.role && entry.roleKey !== filters.role) return false;
         if(filters?.clan && entry.team !== filters.clan) return false;
         if(filters?.level && entry.levelKey !== filters.level) return false;
-        if(filters?.specialTag && entry.specialTag !== filters.specialTag) return false;
         if(filters?.type1 && entry.type1 !== filters.type1) return false;
         if(filters?.type2 === POKEMON_FILTER_TYPE2_NONE_VALUE && entry.type2) return false;
         if(filters?.type2 && filters.type2 !== POKEMON_FILTER_TYPE2_NONE_VALUE && entry.type2 !== filters.type2) return false;
@@ -10750,13 +10714,6 @@ function populatePokemonFilterControls(){
         currentFilters.level
     );
 
-    populatePokemonFilterSelect(
-        pokemonFilterSpecialTagSelect,
-        POKEMON_SPECIAL_TAG_ORDER.map(tagKey => ({ value: tagKey, label: formatPokemonSpecialTagLabel(tagKey) })),
-        'Todas',
-        currentFilters.specialTag
-    );
-
     const type1Options = Array.from(new Set(
         pokemonCatalog
             .map(entry => entry.type1)
@@ -10827,7 +10784,6 @@ function initializePokemonCatalogFilters(){
         pokemonFilterRoleSelect,
         pokemonFilterClanSelect,
         pokemonFilterLevelSelect,
-        pokemonFilterSpecialTagSelect,
         pokemonFilterType1Select,
         pokemonFilterType2Select,
         pokemonFilterMovesetSelect
@@ -10885,17 +10841,6 @@ function createPokemonTeamBadge(teamKey){
     const text = document.createElement('span');
     text.textContent = teamInfo.label;
     badge.appendChild(text);
-    return badge;
-}
-
-function createPokemonSpecialTagBadge(tagValue, options = {}){
-    const { modal = false } = options;
-    const tagInfo = getPokemonSpecialTagInfo(tagValue);
-    const badge = document.createElement('span');
-    badge.className = 'pokemon-special-tag-badge';
-    if(modal) badge.classList.add('pokemon-special-tag-badge--modal');
-    badge.dataset.tag = tagInfo.key || 'unknown';
-    badge.textContent = tagInfo.label || String(tagValue || '').trim();
     return badge;
 }
 
@@ -11110,7 +11055,6 @@ function normalizePokemonCatalogEntry(entry, index){
     ));
 
     const roleInfo = getPokemonRoleInfo(entry.role);
-    const specialTagInfo = getPokemonSpecialTagInfo(entry.specialTag || entry.tag || (entry.boss ? 'boss' : ''));
     const explicitDex = Object.prototype.hasOwnProperty.call(entry, 'dex')
         ? Number(entry.dex)
         : Number.NaN;
@@ -11131,7 +11075,6 @@ function normalizePokemonCatalogEntry(entry, index){
         levelKey: normalizePokemonLevelFilterValue(entry.level),
         type1: primaryType,
         type2: secondaryType,
-        specialTag: specialTagInfo.key,
         naturalElements,
         moveset,
         team: String(entry.team || '').trim().toLowerCase(),
@@ -11225,14 +11168,12 @@ function renderPokemonCatalog(options = {}){
     const fragment = document.createDocumentFragment();
     filteredEntries.forEach((entry) => {
         const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
-        const hasSpecialTag = Boolean(entry.specialTag);
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'pokemon-entry-card';
         card.setAttribute('role', 'listitem');
         const ariaLabelParts = [entry.name];
         if(hasRole) ariaLabelParts.push(entry.role);
-        if(hasSpecialTag) ariaLabelParts.push(formatPokemonSpecialTagLabel(entry.specialTag));
         ariaLabelParts.push(formatPokemonLevelLabel(entry.level));
         card.setAttribute('aria-label', `${ariaLabelParts.join(', ')}.`);
 
@@ -11250,14 +11191,7 @@ function renderPokemonCatalog(options = {}){
         level.className = 'pokemon-entry-card__level';
         level.textContent = formatPokemonLevelLabel(entry.level);
 
-        const metaRow = document.createElement('div');
-        metaRow.className = 'pokemon-entry-card__meta-row';
-        metaRow.appendChild(level);
-        if(hasSpecialTag){
-            metaRow.appendChild(createPokemonSpecialTagBadge(entry.specialTag));
-        }
-
-        titleWrap.append(title, metaRow);
+        titleWrap.append(title, level);
 
         header.appendChild(titleWrap);
         if(hasRole){
@@ -11379,7 +11313,6 @@ function renderPokemonDetailsModal(entry){
     if(!entry || !pokemonDetailsModal) return;
     const isMegaEntry = isMegaPokemonCatalogEntry(entry);
     const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
-    const hasSpecialTag = Boolean(entry.specialTag);
 
     activePokemonCatalogEntry = entry;
 
@@ -11407,9 +11340,6 @@ function renderPokemonDetailsModal(entry){
     if(pokemonDetailsMeta){
         const metaFragment = document.createDocumentFragment();
         metaFragment.appendChild(createPokemonTeamBadge(entry.team));
-        if(hasSpecialTag){
-            metaFragment.appendChild(createPokemonSpecialTagBadge(entry.specialTag, { modal: true }));
-        }
         if(entry.type1){
             metaFragment.appendChild(createPokemonTypeToken(entry.type1, { labelPrefix: 'Tipo 1 • ' }));
         }
