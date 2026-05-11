@@ -11092,6 +11092,15 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   padding-right: 0.08rem;
 }
 
+.pokemon-entry-card__meta-row {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 0.18rem;
+  min-width: 0;
+  width: fit-content;
+}
+
 .pokemon-entry-card__title {
   font-family: "Space Grotesk", "Montserrat", sans-serif;
   font-size: 0.96rem;
@@ -11316,7 +11325,8 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-type-token,
 .pokemon-team-badge,
-.pokemon-weakness-pill {
+.pokemon-weakness-pill,
+.pokemon-special-tag-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.34rem;
@@ -11347,6 +11357,38 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-team-badge[data-team="valor"] {
   background: rgba(255, 111, 111, 0.14);
+}
+
+.pokemon-special-tag-badge {
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.pokemon-entry-card__meta-row .pokemon-special-tag-badge {
+  flex: 0 0 auto;
+  align-self: baseline;
+  padding: 0.14rem 0.34rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.pokemon-special-tag-badge[data-tag="ace"] {
+  border-color: rgba(255, 214, 102, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 214, 102, 0.2), rgba(118, 214, 255, 0.16)),
+    rgba(255, 255, 255, 0.05);
+  color: #fff4ca;
+}
+
+.pokemon-special-tag-badge[data-tag="boss"] {
+  border-color: rgba(255, 138, 92, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 138, 92, 0.2), rgba(255, 86, 120, 0.16)),
+    rgba(255, 255, 255, 0.05);
+  color: #ffe6dd;
 }
 
 .pokemon-entry-card__hint {
@@ -12895,30 +12937,8 @@ body.home-view .app-shell {
 }
 
 .planner-composition-list {
-#content-effectiveness .types-empty-state {
   display: grid;
   gap: 0.9rem;
-}
-#content-effectiveness .types-info-shell {
-  display: grid;
-  gap: 0.9rem;
-  grid-template-columns: minmax(220px, 320px) repeat(auto-fit, minmax(220px, 1fr));
-  align-items: start;
-  grid-auto-rows: minmax(60px, auto);
-}
-
-#content-effectiveness .types-info-shell > .types-info__summary {
-  grid-column: 1;
-  grid-row: 1 / -1;
-}
-#content-effectiveness .types-info-shell > .info-section,
-#content-effectiveness .types-info-shell > .info-empty-msg {
-  grid-column: 2;
-}
-#content-effectiveness .types-info-shell .info-icons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.6rem;
 }
 
 .planner-boss-picker {
@@ -12954,9 +12974,8 @@ body.home-view .app-shell {
 
 .planner-boss-picker__content,
 .planner-composition-card__copy,
+.planner-recommendation-card__content {
   display: grid;
-  gap: 0.25rem;
-  min-width: 0;
   gap: 0.25rem;
   min-width: 0;
 }
