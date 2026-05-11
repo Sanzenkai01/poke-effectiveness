@@ -14147,9 +14147,19 @@ body.home-view .app-shell {
 
 .planner-hero[data-copy-align="column-center"] .planner-hero__copy {
   width: 100%;
-  justify-self: stretch;
+  justify-self: center;
   justify-items: center;
   text-align: center;
+}
+
+.planner-hero[data-copy-align="column-center"] .planner-hero__top {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.planner-hero[data-copy-align="column-center"] .planner-hero__controls {
+  width: 100%;
+  justify-items: center;
 }
 
 .planner-hero__title,
@@ -14204,8 +14214,9 @@ body.home-view .app-shell {
 }
 
 .planner-subtabs {
-  margin-top: 0;
-  justify-content: flex-end;
+  width: 100%;
+  margin-top: 0.45rem;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -14214,6 +14225,10 @@ body.home-view .app-shell {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+.planner-hero[data-copy-align="column-center"] .planner-hero__context {
+  justify-content: center;
 }
 
 .planner-hero__context-pill {
@@ -14944,7 +14959,10 @@ body.home-view .app-shell {
     justify-items: start;
   }
 
-  .planner-subtabs,
+  .planner-subtabs {
+    justify-content: center;
+  }
+
   .planner-hero__context {
     justify-content: flex-start;
   }

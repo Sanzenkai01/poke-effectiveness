@@ -6937,7 +6937,7 @@ function renderPlannerGrid() {
   grid.setAttribute('aria-label', 'Planejador de bosses');
   const visibleStage = getPlannerVisibleStage();
   const centerPlannerHeroCopy = visibleStage === 'source';
-  const centerPlannerHeroCopyWithinColumn = visibleStage === 'compose' || visibleStage === 'ready';
+  const centerPlannerHeroCopyWithinColumn = visibleStage === 'boss' || visibleStage === 'compose' || visibleStage === 'ready';
 
   const shell = document.createElement('div');
   shell.className = 'planner-shell';
@@ -6968,11 +6968,6 @@ function renderPlannerGrid() {
   text.className = 'planner-hero__text';
   text.textContent = getPlannerHeroText();
 
-  heroCopy.append(eyebrow, title, text);
-
-  const heroControls = document.createElement('div');
-  heroControls.className = 'planner-hero__controls';
-
   // Subtabs: Montar / Cards prontos
   const subtabs = document.createElement('div');
   subtabs.className = 'planner-subtabs';
@@ -6999,6 +6994,11 @@ function renderPlannerGrid() {
 
   subtabs.append(composeTab, readyTab);
 
+  heroCopy.append(eyebrow, title, text, subtabs);
+
+  const heroControls = document.createElement('div');
+  heroControls.className = 'planner-hero__controls';
+
   const context = document.createElement('div');
   context.className = 'planner-hero__context';
 
@@ -7015,8 +7015,12 @@ function renderPlannerGrid() {
     context.appendChild(createPlannerContextPill('Cards', String(countReadyPlannerMembers())));
   }
 
-  heroControls.append(subtabs, context);
-  heroTop.append(heroCopy, heroControls);
+  if (context.childElementCount) {
+    heroControls.append(context);
+    heroTop.append(heroCopy, heroControls);
+  } else {
+    heroTop.append(heroCopy);
+  }
 
   const metrics = document.createElement('div');
   metrics.className = 'planner-hero__metrics';
