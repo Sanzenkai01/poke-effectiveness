@@ -1953,11 +1953,9 @@ const bossCatalogs = {
     label: 'Planejador',
     variant: 'planner',
     searchEnabled: false,
-    summary: 'Monte uma composicao de bosses com picks, papeis e itens em um link compartilhavel.',
+    summary: 'Monte o card do boss e gere um link compartilhavel.',
     introLines: [
-      'Selecione um conteudo, adicione Tank, DPS e Suporte por chefe.',
-      'Use as recomendacoes ja existentes de Mewtwo, Champion Path e Hoopa Portais para acelerar o planejamento.',
-      'Ao final, gere um link unico para abrir exatamente a mesma composicao em qualquer dispositivo.'
+      'Escolha o conteudo, monte a composicao e compartilhe o resultado.'
     ],
     data: []
   }
@@ -2008,6 +2006,17 @@ let plannerShareFeedback = {
   message: '',
   tone: ''
 };
+const plannerStageDefinitions = Object.freeze([
+  { id: 'source', index: '1', label: 'Conteudo', text: 'Escolha a trilha' },
+  { id: 'boss', index: '2', label: 'Boss', text: 'Abra o alvo' },
+  { id: 'compose', index: '3', label: 'Composicao', text: 'Monte o card' },
+  { id: 'ready', index: '4', label: 'Cards prontos', text: 'Revise e compartilhe' }
+]);
+const plannerRoleQuickNotes = Object.freeze({
+  tank: 'Segura a frente e compra tempo para o grupo.',
+  dps: 'Concentra o dano principal da composicao.',
+  support: 'Estabiliza o ritmo e cobre a janela critica.'
+});
 
 function normalizeBossMode(mode) {
   const normalizedMode = String(mode || '').trim().toLowerCase();
@@ -4739,10 +4748,13 @@ function renderBossModeIntro() {
 
   if (introEl) {
     introEl.innerHTML = '';
+    const hidePlannerIntro = String(catalog?.id || '').toLowerCase() === 'planner';
 
-    const introLines = Array.isArray(catalog.introLines) && catalog.introLines.length
+    const introLines = !hidePlannerIntro && Array.isArray(catalog.introLines) && catalog.introLines.length
       ? catalog.introLines
-      : [catalog.summary];
+      : (!hidePlannerIntro && catalog.summary ? [catalog.summary] : []);
+
+    introEl.hidden = introLines.length === 0;
 
     introLines
       .filter(Boolean)
@@ -4753,7 +4765,7 @@ function renderBossModeIntro() {
         introEl.appendChild(summary);
       });
 
-    if (String(catalog?.id || '').toLowerCase() === 'hoopa') {
+    if (!introEl.hidden && String(catalog?.id || '').toLowerCase() === 'hoopa') {
       const ticker = createHoopaPortalTickerElement();
       if (ticker) {
         introEl.appendChild(ticker);
@@ -4790,6 +4802,7 @@ function renderBossModeIntro() {
   } catch (e) {}
 
   if (shell) {
+    shell.dataset.catalogId = catalog.id || '';
     shell.dataset.searchEnabled = catalog.searchEnabled ? 'true' : 'false';
   }
 
@@ -5339,6 +5352,122 @@ function countSelectedPlannerItems() {
   ), 0);
 }
 
+function countReadyPlannerMembers() {
+  return plannerState.entries.reduce((total, entry) => (
+    total + (Array.isArray(entry?.members) ? entry.members.length : 0)
+  ), 0);
+}
+
+function getPlannerVisibleStage() {
+  if (plannerSubpage === 'ready') return 'ready';
+  if (plannerShowBrowser) {
+    return plannerState.sourceFilter ? 'boss' : 'source';
+  }
+  return 'compose';
+}
+
+function getPlannerStageState(stageId) {
+  const currentStage = getPlannerVisibleStage();
+  if (currentStage === stageId) return 'active';
+
+  const hasSource = Boolean(plannerState.sourceFilter) || plannerState.entries.length > 0;
+  const hasBoss = plannerState.entries.length > 0;
+  const hasCompose = countFilledPlannerSelections() > 0 || countSelectedPlannerItems() > 0 || countReadyPlannerMembers() > 0;
+  const hasReady = countReadyPlannerMembers() > 0;
+
+  const completedMap = {
+    source: hasSource,
+    boss: hasBoss,
+    compose: hasCompose,
+    ready: hasReady
+  };
+
+  return completedMap[stageId] ? 'completed' : 'upcoming';
+}
+
+function getPlannerHeroTitle() {
+  const currentStage = getPlannerVisibleStage();
+  if (currentStage === 'ready') {
+    return 'Revise os cards finalizados e compartilhe o link.';
+  }
+  if (currentStage === 'compose') {
+    return 'Monte o card do boss ativo com foco no trio ideal.';
+  }
+  if (currentStage === 'boss') {
+    return 'Escolha o boss e abra a composicao em um clique.';
+  }
+  return 'Escolha a trilha e comece o planejamento.';
+}
+
+function getPlannerHeroText() {
+  const readyCount = countReadyPlannerMembers();
+  const currentStage = getPlannerVisibleStage();
+
+  if (currentStage === 'ready') {
+    return readyCount
+      ? `${readyCount} card${readyCount === 1 ? '' : 's'} pronto${readyCount === 1 ? '' : 's'} para revisar, remover ou compartilhar.`
+      : 'Nenhum card pronto ainda. Finalize um boss na aba Montar para gerar a saida final.';
+  }
+
+  if (currentStage === 'compose') {
+    return 'Preencha Tank, DPS, Suporte e itens do boss atual. Finalize quando o card estiver consistente.';
+  }
+
+  if (currentStage === 'boss') {
+    return `Conteudo ativo: ${getPlannerContentLabel(plannerState.sourceFilter)}. Escolha o boss que vai abrir a composicao.`;
+  }
+
+  return 'Comece pelo conteudo para liberar a lista de bosses disponiveis.';
+}
+
+function createPlannerContextPill(label, value) {
+  const pill = document.createElement('div');
+  pill.className = 'planner-hero__context-pill';
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'planner-hero__context-label';
+  labelEl.textContent = label;
+
+  const valueEl = document.createElement('strong');
+  valueEl.className = 'planner-hero__context-value';
+  valueEl.textContent = value;
+
+  pill.append(labelEl, valueEl);
+  return pill;
+}
+
+function createPlannerStageRail() {
+  const rail = document.createElement('div');
+  rail.className = 'planner-stage-rail';
+
+  plannerStageDefinitions.forEach((stage) => {
+    const chip = document.createElement('div');
+    chip.className = 'planner-stage-chip';
+    chip.dataset.state = getPlannerStageState(stage.id);
+
+    const index = document.createElement('span');
+    index.className = 'planner-stage-chip__index';
+    index.textContent = stage.index;
+
+    const copy = document.createElement('div');
+    copy.className = 'planner-stage-chip__copy';
+
+    const label = document.createElement('strong');
+    label.className = 'planner-stage-chip__label';
+    label.textContent = stage.label;
+
+    const text = document.createElement('span');
+    text.className = 'planner-stage-chip__text';
+    text.textContent = stage.text;
+
+    copy.append(label, text);
+    chip.append(index, copy);
+    rail.appendChild(chip);
+  });
+
+  return rail;
+}
+
 function createPlannerMetricCard(label, value, description = '') {
   const card = document.createElement('div');
   card.className = 'planner-metric-card';
@@ -5470,15 +5599,24 @@ function createPlannerBossPickerCard(bossEntry, isAdded) {
   const header = document.createElement('div');
   header.className = 'planner-boss-picker__header';
 
+  const heading = document.createElement('div');
+  heading.className = 'planner-boss-picker__heading';
+
   const title = document.createElement('strong');
   title.className = 'planner-boss-picker__title';
   title.textContent = bossEntry.name;
 
-  const badge = document.createElement('span');
-  badge.className = 'planner-boss-picker__badge';
-  badge.textContent = bossEntry.sourceLabel;
+  const source = document.createElement('span');
+  source.className = 'planner-boss-picker__source';
+  source.textContent = bossEntry.sourceLabel;
 
-  header.append(title, badge);
+  const state = document.createElement('span');
+  state.className = 'planner-boss-picker__state';
+  state.dataset.state = isAdded ? 'added' : 'available';
+  state.textContent = isAdded ? 'Finalizado' : 'Disponivel';
+
+  heading.append(title, source);
+  header.append(heading, state);
 
   const chips = document.createElement('div');
   chips.className = 'planner-boss-picker__chips';
@@ -5489,11 +5627,15 @@ function createPlannerBossPickerCard(bossEntry, isAdded) {
     chips.appendChild(createPlannerMetaChip('Moveset', moveTypes.map((type) => formatTypeLabel(type)).join(' / '), moveTypes));
   }
 
+  const footer = document.createElement('div');
+  footer.className = 'planner-boss-picker__footer';
+
   const action = document.createElement('span');
   action.className = 'planner-boss-picker__action';
-  action.textContent = isAdded ? 'Ja adicionado' : 'Adicionar boss';
+  action.textContent = isAdded ? 'Card salvo neste boss' : 'Abrir composicao';
 
-  content.append(header, chips, action);
+  footer.appendChild(action);
+  content.append(header, chips, footer);
   button.append(image, content);
 
   if (!isAdded) {
@@ -5626,7 +5768,10 @@ function createPlannerRoleSlot(plannerEntry, bossEntry, roleKey) {
   eyebrow.className = 'planner-role-slot__eyebrow';
   eyebrow.textContent = roleboardRoleLabels[roleKey] || roleKey;
 
+  const currentRecommendations = getPlannerRoleRecommendations(bossEntry, roleKey, slot.clan);
   const selectedPick = getPlannerSelectedPick(plannerEntry, roleKey, bossEntry);
+  card.dataset.state = selectedPick ? 'filled' : 'empty';
+
   const current = document.createElement('strong');
   current.className = 'planner-role-slot__current';
   current.textContent = selectedPick ? selectedPick.name : 'Nenhum pokemon selecionado';
@@ -5635,12 +5780,13 @@ function createPlannerRoleSlot(plannerEntry, bossEntry, roleKey) {
   meta.className = 'planner-role-slot__meta';
   meta.textContent = selectedPick
     ? `${bossEntry.bossRef.clans?.[slot.clan]?.label || slot.clan} - ${getTierUiLabel(selectedPick.tier || 'unknown')}`
-    : '';
+    : `${bossEntry.bossRef.clans?.[slot.clan]?.label || slot.clan} - ${currentRecommendations.length} opc${currentRecommendations.length === 1 ? 'ao' : 'oes'} disponiveis`;
 
-  // add line breaks: after role label (eyebrow) and after selected pokemon name (current)
-  const brAfterEyebrow = document.createElement('br');
-  const brAfterCurrent = document.createElement('br');
-  copy.append(eyebrow, brAfterEyebrow, current, brAfterCurrent, meta);
+  const note = document.createElement('p');
+  note.className = 'planner-role-slot__note';
+  note.textContent = plannerRoleQuickNotes[roleKey] || '';
+
+  copy.append(eyebrow, current, meta, note);
 
   const clearButton = document.createElement('button');
   clearButton.type = 'button';
@@ -5827,12 +5973,7 @@ function createPlannerCompositionCard(plannerEntry) {
   const title = document.createElement('h3');
   title.className = 'planner-composition-card__title';
   title.textContent = bossEntry.name;
-
-  const source = document.createElement('span');
-  source.className = 'planner-composition-card__source';
-  source.textContent = bossEntry.sourceLabel;
-
-  titleRow.append(title, source);
+  titleRow.append(title);
 
   const infoRow = document.createElement('div');
   infoRow.className = 'planner-composition-card__info';
@@ -5845,7 +5986,13 @@ function createPlannerCompositionCard(plannerEntry) {
     infoRow.appendChild(moveChip);
   }
 
-  copy.append(titleRow, infoRow);
+  const lead = document.createElement('p');
+  lead.className = 'planner-composition-card__lead';
+  lead.textContent = bossEntry.sourceKey === 'hoopa'
+    ? 'Este boss usa somente DPS nesta etapa. Finalize o card quando a recomendacao estiver definida.'
+    : 'Escolha Tank, DPS, Suporte e itens. Finalize quando o card estiver pronto para ir ao link.';
+
+  copy.append(titleRow, infoRow, lead);
   bossWrap.append(image, copy);
 
   const removeButton = document.createElement('button');
@@ -5892,7 +6039,7 @@ function createPlannerCompositionCard(plannerEntry) {
   const addMemberBtn = document.createElement('button');
   addMemberBtn.type = 'button';
   addMemberBtn.className = 'planner-hero__button planner-hero__button--ghost';
-  addMemberBtn.textContent = 'Finalizar';
+  addMemberBtn.textContent = 'Finalizar card';
 
   // Require at least one Pokémon pick to consider a member "ready".
   // Pokeblock / ration alone are not enough to finalize a member.
@@ -5978,22 +6125,29 @@ function createPlannerCompositionCard(plannerEntry) {
   const memberList = document.createElement('div');
   memberList.className = 'planner-member-list';
 
-  (plannerEntry.members || []).forEach((member) => {
-    memberList.appendChild(createPlannerMemberCard(member, bossEntry, plannerEntry));
+  if (Array.isArray(plannerEntry.members) && plannerEntry.members.length) {
+    const memberListLabel = document.createElement('div');
+    memberListLabel.className = 'planner-composition-card__saved-label';
+    memberListLabel.textContent = `Cards salvos neste boss: ${plannerEntry.members.length}`;
+    card.appendChild(memberListLabel);
+  }
+
+  (plannerEntry.members || []).forEach((member, memberIndex) => {
+    memberList.appendChild(createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex));
   });
 
-  card.appendChild(memberList);
+  if (memberList.childElementCount) {
+    card.appendChild(memberList);
+  }
   return card;
 }
 
-function createPlannerMemberCard(member, bossEntry, plannerEntry) {
-  // Render a richer boss-like card for finalized members (ready view)
+function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 0) {
   const wrap = document.createElement('article');
-  wrap.className = 'planner-ready-member-card card';
+  wrap.className = 'planner-ready-member-card';
 
   const header = document.createElement('div');
   header.className = 'planner-ready-member-card__header';
-  // Note: boss name is shown by the group title above the cards to avoid redundancy.
 
   // Replace the tutorial icon with consumable badges (pokeblock / ration)
   const consumablesWrap = document.createElement('div');
@@ -6053,9 +6207,8 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry) {
 
   if (consumablesWrap.childElementCount) {
     header.appendChild(consumablesWrap);
+    wrap.appendChild(header);
   }
-
-  wrap.appendChild(header);
 
   const body = document.createElement('div');
   body.className = 'planner-ready-member-card__body';
@@ -6163,6 +6316,9 @@ function renderPlannerGrid() {
   const hero = document.createElement('section');
   hero.className = 'planner-hero';
 
+  const heroTop = document.createElement('div');
+  heroTop.className = 'planner-hero__top';
+
   const heroCopy = document.createElement('div');
   heroCopy.className = 'planner-hero__copy';
 
@@ -6172,15 +6328,16 @@ function renderPlannerGrid() {
 
   const title = document.createElement('h3');
   title.className = 'planner-hero__title';
-  title.textContent = 'Planeje seus bosses com Tank, DPS e Suporte organizados.';
+  title.textContent = getPlannerHeroTitle();
 
   const text = document.createElement('p');
   text.className = 'planner-hero__text';
-  text.textContent = plannerState.sourceFilter
-    ? `Filtro atual: ${getPlannerContentLabel(plannerState.sourceFilter)}.`
-    : 'Escolha um conteudo para liberar a lista de bosses disponiveis.';
+  text.textContent = getPlannerHeroText();
 
   heroCopy.append(eyebrow, title, text);
+
+  const heroControls = document.createElement('div');
+  heroControls.className = 'planner-hero__controls';
 
   // Subtabs: Montar / Cards prontos
   const subtabs = document.createElement('div');
@@ -6208,12 +6365,31 @@ function renderPlannerGrid() {
 
   subtabs.append(composeTab, readyTab);
 
+  const context = document.createElement('div');
+  context.className = 'planner-hero__context';
+
+  if (plannerState.sourceFilter) {
+    context.appendChild(createPlannerContextPill('Conteudo', getPlannerContentLabel(plannerState.sourceFilter)));
+  }
+  if (plannerState.entries.length) {
+    context.appendChild(createPlannerContextPill('Bosses', String(plannerState.entries.length)));
+  }
+  if (countSelectedPlannerItems()) {
+    context.appendChild(createPlannerContextPill('Itens', String(countSelectedPlannerItems())));
+  }
+  if (countReadyPlannerMembers()) {
+    context.appendChild(createPlannerContextPill('Cards', String(countReadyPlannerMembers())));
+  }
+
+  heroControls.append(subtabs, context);
+  heroTop.append(heroCopy, heroControls);
+
   const metrics = document.createElement('div');
   metrics.className = 'planner-hero__metrics';
   metrics.append(
-    createPlannerMetricCard('Bosses montados', String(plannerState.entries.length), 'Sem limite de cards'),
-    createPlannerMetricCard('Papeis preenchidos', `${countFilledPlannerSelections()}/${plannerState.entries.length * roleboardRoleOrder.length || 0}`, 'Tank, DPS e Suporte'),
-    createPlannerMetricCard('Itens escolhidos', String(countSelectedPlannerItems()), 'Pokeblock e ration sao opcionais')
+    createPlannerMetricCard('Bosses', String(plannerState.entries.length), 'ativos no fluxo'),
+    createPlannerMetricCard('Papeis', `${countFilledPlannerSelections()}/${plannerState.entries.length * roleboardRoleOrder.length || 0}`, 'slots preenchidos'),
+    createPlannerMetricCard('Cards prontos', String(countReadyPlannerMembers()), 'finalizados')
   );
 
   const actions = document.createElement('div');
@@ -6289,7 +6465,7 @@ function renderPlannerGrid() {
     actions.appendChild(feedback);
   }
 
-  hero.append(heroCopy, subtabs, metrics, actions);
+  hero.append(heroTop, createPlannerStageRail(), metrics, actions);
   shell.appendChild(hero);
 
   const layout = document.createElement('div');
@@ -6303,11 +6479,13 @@ function renderPlannerGrid() {
 
   const browserTitle = document.createElement('h4');
   browserTitle.className = 'planner-panel__title';
-  browserTitle.textContent = 'Etapa 1: selecionar o boss';
+  browserTitle.textContent = plannerState.sourceFilter ? 'Etapa 2: escolher o boss' : 'Etapa 1: escolher o conteudo';
 
   const browserText = document.createElement('p');
   browserText.className = 'planner-panel__text';
-  browserText.textContent = 'Escolha um conteudo primeiro.';
+  browserText.textContent = plannerState.sourceFilter
+    ? 'Selecione o boss que vai abrir a composicao atual.'
+    : 'Comece por Mewtwo, Champion Path ou Hoopa Portais.';
 
   browserHeader.append(browserTitle, browserText);
   browser.appendChild(browserHeader);
@@ -6338,7 +6516,7 @@ function renderPlannerGrid() {
   if (!plannerState.sourceFilter) {
     const empty = document.createElement('div');
     empty.className = 'planner-empty-state';
-    empty.textContent = 'Selecione Mewtwo, Champion Path ou Hoopa Portais para exibir os bosses.';
+    empty.textContent = 'Escolha um conteudo acima para liberar a lista de bosses.';
     browserList.appendChild(empty);
   } else {
     const selectedSourceBosses = getPlannerBossEntries().filter((entry) => entry.sourceKey === plannerState.sourceFilter);
@@ -6363,11 +6541,11 @@ function renderPlannerGrid() {
 
   const compositionTitle = document.createElement('h4');
   compositionTitle.className = 'planner-panel__title';
-  compositionTitle.textContent = 'Etapas 2, 3 e 4: montar a composicao';
+  compositionTitle.textContent = 'Etapa 3: montar o card';
 
   const compositionText = document.createElement('p');
   compositionText.className = 'planner-panel__text';
-  compositionText.textContent = 'Cada boss aceita 1 Tank, 1 DPS, 1 Suporte, 1 Pokeblock e 1 Ration. Itens podem ficar como nenhum.';
+  compositionText.textContent = 'Preencha os papeis, ajuste os itens e finalize quando o card estiver consistente.';
 
   compositionHeader.append(compositionTitle, compositionText);
   composition.appendChild(compositionHeader);
@@ -6382,7 +6560,7 @@ function renderPlannerGrid() {
   if (!pendingEntries.length) {
     const empty = document.createElement('div');
     empty.className = 'planner-empty-state planner-empty-state--large';
-    empty.textContent = 'Adicione um boss para abrir os slots de Tank, DPS, Suporte e itens.';
+    empty.textContent = 'Escolha um boss para abrir os slots de Tank, DPS, Suporte e itens.';
     compositionList.appendChild(empty);
   } else {
     const activeEntry = pendingEntries[pendingEntries.length - 1];
@@ -6435,15 +6613,24 @@ function renderPlannerGrid() {
 
       const cardsRow = document.createElement('div');
       cardsRow.className = 'planner-ready-cards';
-      entry.members.forEach((member) => {
-        cardsRow.appendChild(createPlannerMemberCard(member, bossEntry, entry));
+      entry.members.forEach((member, memberIndex) => {
+        cardsRow.appendChild(createPlannerMemberCard(member, bossEntry, entry, memberIndex));
       });
       group.appendChild(cardsRow);
 
       readyList.appendChild(group);
     });
 
-    readyPanel.appendChild(readyList);
+    if (!readyList.childElementCount) {
+      const empty = document.createElement('div');
+      empty.className = 'planner-empty-state planner-empty-state--large';
+      empty.textContent = 'Nenhum card pronto ainda. Finalize um boss na aba Montar para gerar a saida final.';
+      readyPanel.appendChild(empty);
+    }
+
+    if (readyList.childElementCount) {
+      readyPanel.appendChild(readyList);
+    }
     layout.appendChild(readyPanel);
   }
   shell.appendChild(layout);
