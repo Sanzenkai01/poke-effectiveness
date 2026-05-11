@@ -1149,6 +1149,10 @@ function createRolePick(name, types, moveType, extra = {}) {
     pick.defenseByBossType = mergeLowercaseNumericMap(extra.defenseByBossType);
   }
 
+  if (extra.defenseDamageFactorByBossType && typeof extra.defenseDamageFactorByBossType === 'object') {
+    pick.defenseDamageFactorByBossType = mergeLowercaseNumericMap(extra.defenseDamageFactorByBossType);
+  }
+
   if (extra.matchupOverrides && typeof extra.matchupOverrides === 'object') {
     pick.matchupOverrides = extra.matchupOverrides;
   }
@@ -1787,6 +1791,10 @@ function cloneRolePickConfig(pick) {
     clonedPick.defenseByBossType = { ...pick.defenseByBossType };
   }
 
+  if (pick.defenseDamageFactorByBossType && typeof pick.defenseDamageFactorByBossType === 'object') {
+    clonedPick.defenseDamageFactorByBossType = { ...pick.defenseDamageFactorByBossType };
+  }
+
   if (pick.matchupOverrides && typeof pick.matchupOverrides === 'object') {
     clonedPick.matchupOverrides = JSON.parse(JSON.stringify(pick.matchupOverrides));
   }
@@ -1808,6 +1816,7 @@ function getRolePickSignature(pick) {
     Array.isArray(pick?.immunities) ? pick.immunities.join('/') : '',
     Array.isArray(pick?.passiveSuperEffectiveTypes) ? pick.passiveSuperEffectiveTypes.join('/') : '',
     pick?.defenseByBossType ? JSON.stringify(pick.defenseByBossType) : '',
+    pick?.defenseDamageFactorByBossType ? JSON.stringify(pick.defenseDamageFactorByBossType) : '',
     pick?.matchupOverrides ? JSON.stringify(pick.matchupOverrides) : ''
   ].join('|');
 }
@@ -1913,7 +1922,7 @@ const mew2Bosses = createManualRoleboardBosses([
 
   const exists = instinctDpsList.some((pick) => getRecommendationNameKey(pick) === 'dragonair');
   if (!exists) {
-    instinctDpsList.push(createRolePick('Dragonair', ['dragon'], 'dragon', { tier: 'green' }));
+    instinctDpsList.push(createRolePick('Dragonair', ['dragon'], 'dragon'));
   }
 });
 
@@ -2527,7 +2536,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'dragonair' || nameKey === 'shinydragonair') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         dragon: 0.5,
         fairy: 0.5,
         ice: 0.5
@@ -2577,7 +2586,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'scizor') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         fighting: 0.5
       },
       passiveName: 'Light Metal',
@@ -2587,7 +2596,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'shinyscizor') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         fighting: 0.5
       },
       passiveName: 'Light Metal + Swarm',
@@ -2604,7 +2613,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'miltank') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         ice: 0.5,
         fire: 0.5
       },
@@ -2615,7 +2624,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'shinymiltank') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         ice: 0.5,
         fire: 0.5
       },
@@ -2627,7 +2636,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'goodra') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         dragon: 0.5
       },
       passiveName: 'Gooey',
@@ -2637,7 +2646,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'claydol') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         psychic: 0.5,
         ghost: 0.5
       },
@@ -2649,7 +2658,7 @@ function getImplicitRecommendationProfile(poke) {
   if (nameKey === 'shinyclaydol') {
     return {
       immunities: ['ground'],
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         psychic: 0.5,
         ghost: 0.5
       },
@@ -2660,7 +2669,7 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'dusclops' || nameKey === 'shinydusclops') {
     return {
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         ghost: 0.5,
         psychic: 0.5
       },
@@ -2688,7 +2697,7 @@ function getImplicitRecommendationProfile(poke) {
   if (nameKey === 'shinybronzong') {
     return {
       immunities: ['ground'],
-      defenseByBossType: {
+      defenseDamageFactorByBossType: {
         fire: 0.5
       },
       passiveName: 'Levitate + Heatproof',
@@ -2963,7 +2972,7 @@ function bossHasDragonMoveset(boss) {
 
 function createGoodraDragonPick() {
   const pick = createRolePick('Goodra', ['dragon'], 'dragon', {
-    defenseByBossType: {
+    defenseDamageFactorByBossType: {
       dragon: 0.5
     },
     passiveName: 'Gooey',
@@ -3078,6 +3087,11 @@ function applyImplicitRecommendationEnhancements(poke) {
   poke.defenseByBossType = mergeLowercaseNumericMap(
     poke.defenseByBossType,
     profile.defenseByBossType
+  );
+
+  poke.defenseDamageFactorByBossType = mergeLowercaseNumericMap(
+    poke.defenseDamageFactorByBossType,
+    profile.defenseDamageFactorByBossType
   );
 
   if (typeof profile.passiveName === 'string' && profile.passiveName.trim() && !poke.passiveName) {
@@ -4285,7 +4299,6 @@ function classifyDefenseOnlyRecommendationTier(worstDefense) {
 function scoreRecommendationForBoss(bossOrTypes, poke) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
-  const bossMoveTypes = getBossMoveTypes(boss);
   // Para DEF, o boss passa a ser lido pelo moveset sempre que ele existir.
   // Os tipos do chefe so entram quando um override explicito pedir isso
   // ou quando o dataset nao informar um moveset dedicado.
@@ -4350,31 +4363,28 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
       const raw = customMultiplier;
       return { attackType, raw, normalized: normalizeDefenseValue(raw, true), explicit: true };
     }
+    const baseRaw = getTypeMultiplier(attackType, pokeTypes, poke.immunities);
+    const customDamageFactor = matchupOverride?.defenseDamageFactorByBossType?.[attackType];
+    if (typeof customDamageFactor === 'number') {
+      const raw = baseRaw * customDamageFactor;
+      return { attackType, raw, normalized: normalizeDefenseValue(raw, false), explicit: false };
+    }
+    const passiveDamageFactor = poke.defenseDamageFactorByBossType?.[attackType];
+    if (typeof passiveDamageFactor === 'number') {
+      const raw = baseRaw * passiveDamageFactor;
+      return { attackType, raw, normalized: normalizeDefenseValue(raw, false), explicit: false };
+    }
     const passiveMultiplier = poke.defenseByBossType?.[attackType];
     if (typeof passiveMultiplier === 'number') {
       const raw = passiveMultiplier;
       return { attackType, raw, normalized: normalizeDefenseValue(raw, true), explicit: true };
     }
-    const raw = getTypeMultiplier(attackType, pokeTypes, poke.immunities);
-    return { attackType, raw, normalized: normalizeDefenseValue(raw, false), explicit: false };
+    return { attackType, raw: baseRaw, normalized: normalizeDefenseValue(baseRaw, false), explicit: false };
   });
 
   const defenseMultipliers = defenseMeta.map((m) => m.normalized);
-  const rawMultipliers = defenseMeta.map((m) => m.raw);
-
   let worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
   const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1;
-
-  // If the boss has explicit move types, prioritize them: if any move type
-  // results in immunity or strong mitigation (normalized <= 0.5), treat the
-  // overall interaction as super-inafetivo (0.5). This ensures Levitate/ground
-  // cases (e.g., Bronzong vs Mega Tyranitar) are scored correctly.
-  if (Array.isArray(bossMoveTypes) && bossMoveTypes.length) {
-    const moveMeta = defenseMeta.filter((m) => bossMoveTypes.includes(m.attackType));
-    if (moveMeta.length && moveMeta.some((m) => typeof m.normalized === 'number' && m.normalized <= 0.5)) {
-      worstDefense = 0.5;
-    }
-  }
 
   // If every boss attack type produces a resistance (normalized <= 0.75),
   // consider the overall interaction as "super inafetivo" (0.5). This handles
@@ -6926,7 +6936,8 @@ function renderPlannerGrid() {
   grid.dataset.bossMode = 'planner';
   grid.setAttribute('aria-label', 'Planejador de bosses');
   const visibleStage = getPlannerVisibleStage();
-  const centerPlannerHeroCopy = visibleStage === 'source' || visibleStage === 'ready';
+  const centerPlannerHeroCopy = visibleStage === 'source';
+  const centerPlannerHeroCopyWithinColumn = visibleStage === 'compose' || visibleStage === 'ready';
 
   const shell = document.createElement('div');
   shell.className = 'planner-shell';
@@ -6935,6 +6946,8 @@ function renderPlannerGrid() {
   hero.className = 'planner-hero';
   if (centerPlannerHeroCopy) {
     hero.dataset.copyAlign = 'center';
+  } else if (centerPlannerHeroCopyWithinColumn) {
+    hero.dataset.copyAlign = 'column-center';
   }
 
   const heroTop = document.createElement('div');
