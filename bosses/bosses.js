@@ -2644,6 +2644,14 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'wobbuffet') {
+    return {
+      defenseDamageFactorByBossType: {
+        psychic: 0.5
+      }
+    };
+  }
+
   if (nameKey === 'claydol') {
     return {
       defenseDamageFactorByBossType: {
