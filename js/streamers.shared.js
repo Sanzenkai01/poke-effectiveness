@@ -48,7 +48,8 @@
         { name: 'BruxoNoir', supportsDrops: false },
         { name: 'likearivergames', supportsDrops: false },
         { name: 'afdexter', supportsDrops: false, discord:'https://discord.com/invite/KDqNdR8N54' },
-        { name: 'nickrune', supportsDrops: false }
+        { name: 'nickrune', supportsDrops: false },
+        { name: 'strackzera', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
