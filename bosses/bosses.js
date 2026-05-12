@@ -4683,6 +4683,61 @@ removeRuimPicksFromChampionPath();
 ensureMew2BossRolePicks('charizard', 'mystic', 'tank', [
   createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
 ]);
+// Completa apenas os picks pedidos para o modo Mewtwo quando o score interno
+// do proprio projeto os classifica como "Aceitavel" ou acima.
+const mew2RequestedInstinctDpsByBoss = Object.freeze({
+  clefable: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison')
+  ],
+  primeape: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison')
+  ],
+  dugtrio: [
+    createRolePick('Pikachu', ['electric'], 'electric'),
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Dedenne', ['electric', 'fairy'], 'fairy')
+  ],
+  jynx: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Lurantis', ['grass'], 'bug'),
+    createRolePick('Marowak', ['ground'], 'ground')
+  ],
+  blastoise: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Marowak', ['ground'], 'ground')
+  ],
+  pinsir: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Lurantis', ['grass'], 'bug')
+  ],
+  venusaur: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Marowak', ['ground'], 'ground')
+  ],
+  charizard: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison'),
+    createRolePick('Lurantis', ['grass'], 'bug')
+  ],
+  pikachu: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison')
+  ],
+  mewtwo: [
+    createRolePick('Alakazam', ['psychic'], 'psychic'),
+    createRolePick('Seviper', ['poison'], 'poison')
+  ]
+});
+Object.entries(mew2RequestedInstinctDpsByBoss).forEach(([bossId, picks]) => {
+  ensureMew2BossRolePicks(bossId, 'instinct', 'dps', picks);
+});
 refreshTierLegendLabels();
 
 function getActiveBossCatalog() {
