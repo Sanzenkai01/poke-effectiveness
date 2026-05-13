@@ -532,7 +532,17 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          {
+            name: 'Excadrill',
+            image: 'excadrill.png',
+            tier: 'otimo',
+            types: ['ground','steel'],
+            description: 'Tipo move: Steel. Passiva: Mold Breaker: O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
+            passiveName: 'Mold Breaker',
+            passiveDescription: 'O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
+            passiveSuperEffectiveTypes: ['steel']
+          }
         ]
       },
       mystic: {
@@ -573,7 +583,8 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' },
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Ground.' }
         ]
       },
       mystic: {
@@ -668,6 +679,7 @@ const hoopaPortalsData = [
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
             recommended: [
+              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'otimo', types: ['electric','fighting'], description: 'Tipo move: Fighting.' },
               { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
               { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
             ]
@@ -1607,6 +1619,11 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel', {
+            passiveName: 'Mold Breaker',
+            passiveDescription: 'O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
+            passiveSuperEffectiveTypes: ['steel']
+          }),
           createRolePick('Mega Raichu Y', ['electric'], 'electric'),
           createRolePick('Pikachu', ['electric'], 'electric'),
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting')
