@@ -44,6 +44,8 @@ const boostPokemonResults = document.getElementById('boost-pokemon-results');
 const boostPokemonNoResults = document.getElementById('boost-pokemon-no-results');
 const boostSelectionPrompt = document.getElementById('boost-selection-prompt');
 const boostPokemonMeta = document.getElementById('boost-pokemon-meta');
+const boostType1Select = document.getElementById('boost-type1-select');
+const boostType2Select = document.getElementById('boost-type2-select');
 const boostConfigControls = document.getElementById('boost-config-controls');
 const boostShinyInputs = document.querySelectorAll('input[name="boost-shiny"]');
 const boostBronzeLevelSelect = document.getElementById('boost-bronze-level');
@@ -164,6 +166,7 @@ let boostPokemonSearchIndex = new Map();
 let boostSelectedPokemonEntry = null;
 let boostPokemonSearchHideTimer = 0;
 let boostLastFormMessage = '';
+let boostSelectedTypes = [];
 let catchPageInitialized = false;
 let catchLogState = null;
 let bossesPageLoadPromise = null;
@@ -193,7 +196,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260513a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260513b';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -358,10 +361,20 @@ function normalizePokemonCatalogVariant(value){
 }
 
 function getPokemonCatalogVariantFromUrl(){
+    const pathname = String(location.pathname || '');
+    const isMegaCatalogPath = /\/pokemons(?:\/|$)/i.test(pathname);
     try{
-        return normalizePokemonCatalogVariant(new URLSearchParams(location.search).get('variant'));
+        const params = new URLSearchParams(location.search);
+        if(params.has('variant')){
+            return normalizePokemonCatalogVariant(params.get('variant'));
+        }
+        return isMegaCatalogPath
+            ? POKEMON_CATALOG_VARIANT_MEGA
+            : POKEMON_CATALOG_VARIANT_DEFAULT;
     }catch(error){
-        return POKEMON_CATALOG_VARIANT_DEFAULT;
+        return isMegaCatalogPath
+            ? POKEMON_CATALOG_VARIANT_MEGA
+            : POKEMON_CATALOG_VARIANT_DEFAULT;
     }
 }
 
@@ -2114,6 +2127,8 @@ const SHINING_PLATE_BLOCK_SIZE = 30;
 const BOOST_DEFAULT_STATE = Object.freeze({
     pokemonName: '',
     shiny: 'no',
+    type1: '',
+    type2: '',
     bronzeLevel: 0,
     silverLevel: 0
 });
@@ -2946,6 +2961,32 @@ const TYPE_SUPER_EFFECTIVE_OVERRIDES = Object.freeze({
 function getTypeDisplayName(type){
     if(!type) return '';
     return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+// Color map for types (used to tint UI elements)
+const TYPE_UI_COLORS = Object.freeze({
+    normal: '#A8A77A', fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
+    grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28', poison: '#A33EA1',
+    ground: '#E2BF65', flying: '#A98FF3', psychic: '#F95587', bug: '#A6B91A',
+    rock: '#B6A136', ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
+    steel: '#B7B7CE', fairy: '#D685AD'
+});
+
+function hexToRgb(hex){
+    if(!hex) return '255,255,255';
+    const h = String(hex).replace('#','');
+    const bigint = h.length === 3
+        ? parseInt(h.split('').map(c=>c+c).join(''),16)
+        : parseInt(h,16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
+}
+
+function getTypeColor(type){
+    if(!type) return '#ffffff';
+    return TYPE_UI_COLORS[String(type).toLowerCase()] || '#ffffff';
 }
 
 function formatTypeMultiplierValue(multiplier){
@@ -5157,9 +5198,10 @@ function formatStreamerDisplayName(name){
 function normalizeStreamerStatusCacheValue(value){
     if(!value || typeof value !== 'object') return null;
 
-    const status = value.status ? value.status.toString() : 'unknown';
+    const rawStatus = value.status ? value.status.toString() : 'partial';
+    const status = rawStatus === 'unknown' ? 'partial' : rawStatus;
     return {
-        status: ['online', 'offline', 'unknown', 'error'].includes(status) ? status : 'unknown',
+        status: ['online', 'offline', 'partial', 'error'].includes(status) ? status : 'partial',
         title: value.title ? value.title.toString().trim() : '',
         startedAt: value.startedAt ? value.startedAt.toString() : '',
         isPstory: !!value.isPstory,
@@ -6055,7 +6097,7 @@ function fetchStreamerStatus(name){
 
     const resolveDecapiLiveStatus = (uptimeText) => {
         const normalized = (uptimeText || '').toString().trim();
-        if(!normalized) return 'unknown';
+        if(!normalized) return 'partial';
 
         const lower = normalized.toLowerCase();
         if(
@@ -6069,14 +6111,14 @@ function fetchStreamerStatus(name){
         if(
             /\b(?:error|bad gateway|service unavailable|temporarily unavailable|internal server error|timed out|rate limit)\b/.test(lower)
         ){
-            return 'unknown';
+            return 'partial';
         }
 
         if(/\b\d+\s*(?:second|minute|hour|day|week|month|year)s?\b/.test(lower)){
             return 'online';
         }
 
-        return 'unknown';
+        return 'partial';
     };
 
     const queryDecapi = () =>
@@ -6086,7 +6128,7 @@ function fetchStreamerStatus(name){
                 return makeResult('offline', '');
             }
             if(liveStatus !== 'online'){
-                return makeResult('unknown', '');
+                return makeResult('partial', '');
             }
 
             return fetchDecapiTitle().then(title => {
@@ -6097,7 +6139,7 @@ function fetchStreamerStatus(name){
             });
         }).catch(err => {
             console.error('queryDecapi network error', name, err);
-            return makeResult('unknown', '');
+            return makeResult('error', '');
         });
 
     const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
@@ -6142,7 +6184,9 @@ function fetchStreamerStatus(name){
 
     return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
         queryHelix().then(result => {
-            const ttl = result.status === 'unknown' ? STREAMER_ERROR_CACHE_TTL_MS : STREAMER_CACHE_TTL_MS;
+            const ttl = result.status === 'partial' || result.status === 'error'
+                ? STREAMER_ERROR_CACHE_TTL_MS
+                : STREAMER_CACHE_TTL_MS;
             return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
         })
     );
@@ -6358,6 +6402,7 @@ function renderStreamers(){
     const grid = document.getElementById('streamer-grid');
     const statusInfo = document.getElementById('streamer-status-info');
     const ratSummary = document.getElementById('streamer-rat-summary');
+    let statusSummaryEl = null;
     if(!grid){
         console.warn('renderStreamers: streamer-grid não encontrado');
         return;
@@ -6381,19 +6426,17 @@ function renderStreamers(){
         ratSummary.replaceChildren();
     }
     if(statusInfo){
-        statusInfo.textContent = 'Carregando status dos canais...';
-        const nonDropList = Array.from(NON_DROP_STREAMERS);
-        if(nonDropList.length){
-            const nonDropEl = document.createElement('div');
-            nonDropEl.style.fontSize = '0.78rem';
-            nonDropEl.style.color = '#ffeb6d';
-            nonDropEl.style.marginTop = '0.3rem';
-            nonDropEl.textContent = `Canais sem drops (lista separada): ${nonDropList.join(', ')}`;
-            statusInfo.appendChild(nonDropEl);
-        }
+        statusInfo.replaceChildren();
+        statusSummaryEl = document.createElement('div');
+        statusSummaryEl.className = 'streamer-status-info__summary';
+        statusSummaryEl.textContent = 'Carregando status dos canais...';
+        statusInfo.appendChild(statusSummaryEl);
     }
 
     let totalOnline = 0;
+    let totalOffline = 0;
+    let totalPartial = 0;
+    let totalErrors = 0;
     let resolvedCount = 0;
     const onlineRatCandidates = new Map();
     let selectedRatMonitorChannel = globalRatMonitorCurrentChannel;
@@ -6445,16 +6488,23 @@ function renderStreamers(){
     };
 
     const updateStatusInfo = () => {
-        if(!statusInfo) return;
+        if(!statusSummaryEl) return;
         if(resolvedCount < STREAMERS.length) {
-            statusInfo.textContent = `Carregando ${resolvedCount}/${STREAMERS.length} status...`;
+            statusSummaryEl.textContent = `Carregando ${resolvedCount}/${STREAMERS.length} status...`;
             return;
         }
-        if(totalOnline === 0){
-            statusInfo.textContent = 'Nenhum canal está online agora. Mas a lista continua visível abaixo.';
-        } else {
-            statusInfo.textContent = `${totalOnline} online de ${STREAMERS.length} canais`;
+        const summaryParts = [];
+        if(totalOnline > 0) summaryParts.push(`${totalOnline} online`);
+        if(totalOffline > 0) summaryParts.push(`${totalOffline} offline`);
+        if(totalPartial > 0) summaryParts.push(`${totalPartial} com status parcial`);
+        if(totalErrors > 0) summaryParts.push(`${totalErrors} com erro temporario`);
+
+        if(summaryParts.length === 0){
+            statusSummaryEl.textContent = 'Nenhum canal configurado no momento.';
+            return;
         }
+
+        statusSummaryEl.textContent = `${summaryParts.join(', ')} de ${STREAMERS.length} canais`;
     };
 
     const applyStreamerVisualState = (card, info = {}) => {
@@ -6467,6 +6517,10 @@ function renderStreamers(){
             } else {
                 state = 'online-nopstory';
             }
+        } else if(info.status === 'partial'){
+            state = 'partial';
+        } else if(info.status === 'error'){
+            state = 'error';
         }
 
         card.dataset.streamState = state;
@@ -6474,42 +6528,41 @@ function renderStreamers(){
         card.dataset.pstoryNoDrop = (info.isPstoryNoDrop || (info.isPstory && !info.isPstoryDrop)) ? 'true' : 'false';
     };
 
+    const getStreamerSortPriority = (info = {}) => {
+        if(info.status === 'online'){
+            if(info.isPstoryDrop) return 0;
+            if(info.isPstory) return 1;
+            return 2;
+        }
+        if(info.status === 'partial') return 3;
+        if(info.status === 'error') return 4;
+        return 5;
+    };
+
+    const sortStreamerCards = () => {
+        const orderedCards = Array.from(grid.children).sort((cardA, cardB) => {
+            const priorityA = Number(cardA.dataset.streamPriority || 999);
+            const priorityB = Number(cardB.dataset.streamPriority || 999);
+            if(priorityA !== priorityB) return priorityA - priorityB;
+
+            const nameA = String(cardA.dataset.streamerName || '');
+            const nameB = String(cardB.dataset.streamerName || '');
+            return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+        });
+
+        orderedCards.forEach((orderedCard) => {
+            grid.appendChild(orderedCard);
+        });
+    };
+
     const placeStreamerCard = (card, info) => {
         card.dataset.pstory = info.isPstory ? 'true' : 'false';
         card.dataset.online = info.status === 'online' ? 'true' : 'false';
-        // Remove para reposicionar com ordenação correta
-        if (card.parentElement === grid) {
-            grid.removeChild(card);
-        }
-
-        if(info.isPstory){
-            grid.insertBefore(card, grid.firstChild);
-            return;
-        }
-
-        // Manter online acima de offline/unknown, mas abaixo de pstory
-        if(info.status === 'online'){
-            const lastPstory = Array.from(grid.children).filter(c => c.dataset.pstory === 'true').pop();
-            if(lastPstory){
-                grid.insertBefore(card, lastPstory.nextSibling);
-                return;
-            }
-            const firstOffline = Array.from(grid.children).find(c => c.dataset.online !== 'true');
-            if(firstOffline){
-                grid.insertBefore(card, firstOffline);
-                return;
-            }
-            grid.appendChild(card);
-            return;
-        }
-
-        // offline/unknown -> no final
-        const lastOnlineOrPstory = Array.from(grid.children).filter(c => c.dataset.pstory === 'true' || c.dataset.online === 'true').pop();
-        if(lastOnlineOrPstory){
-            grid.insertBefore(card, lastOnlineOrPstory.nextSibling);
-        } else {
+        card.dataset.streamPriority = String(getStreamerSortPriority(info));
+        if(card.parentElement !== grid){
             grid.appendChild(card);
         }
+        sortStreamerCards();
         applyStreamerFilters();
     };
 
@@ -6768,6 +6821,10 @@ function renderStreamers(){
                     ? 'PStory ao vivo'
                     : state === 'live'
                         ? 'Ao vivo'
+                        : state === 'partial'
+                            ? 'Status parcial'
+                            : state === 'error'
+                                ? 'Erro temporario'
                         : state === 'offline'
                             ? 'Offline'
                             : 'Verificando';
@@ -6811,19 +6868,31 @@ function renderStreamers(){
                     ? (info.isPstoryDrop ? 'drop' : info.isPstory ? 'pstory' : 'live')
                     : info.status === 'offline'
                         ? 'offline'
-                        : 'unknown',
+                        : info.status === 'partial'
+                            ? 'partial'
+                            : 'error',
                 avatarUrl,
-                eyebrow: info.status === 'online' ? 'Ao vivo agora' : info.status === 'offline' ? 'Canal offline' : 'Status parcial',
+                eyebrow: info.status === 'online'
+                    ? 'Ao vivo agora'
+                    : info.status === 'offline'
+                        ? 'Canal offline'
+                        : info.status === 'partial'
+                            ? 'Status parcial'
+                            : 'Erro temporario',
                 title: info.status === 'online'
                     ? (info.title || 'Transmissão ao vivo da comunidade.')
                     : info.status === 'offline'
                         ? 'Abra o canal para acompanhar a próxima live.'
-                        : 'Não foi possível montar uma prévia confiável do canal.',
+                        : info.status === 'partial'
+                            ? 'A Twitch respondeu sem dados suficientes para uma previa confiavel.'
+                            : 'Nao foi possivel consultar o canal agora.',
                 meta: info.status === 'online'
                     ? liveMeta
                     : info.status === 'offline'
                         ? 'O card continua clicável para abrir o canal ou a última transmissão.'
-                        : 'Você ainda pode abrir o canal pela Twitch enquanto o status é atualizado.',
+                        : info.status === 'partial'
+                            ? 'Voce ainda pode abrir o canal pela Twitch enquanto o status e confirmado.'
+                            : 'Abra o canal manualmente e tente novamente em instantes.',
                 action: info.status === 'online' ? 'Clique no card para abrir a transmissão' : 'Clique no card para abrir o canal'
             });
         };
@@ -6854,7 +6923,7 @@ function renderStreamers(){
             }
 
             liveSignal.dataset.state = 'live';
-            liveSignal.textContent = 'Outro titulo';
+            liveSignal.textContent = 'Outro Jogo';
         };
 
         renderPreviewCard();
@@ -6864,6 +6933,7 @@ function renderStreamers(){
         card.dataset.pack = PACK_STREAMERS.has(name) ? 'true' : 'false';
         card.dataset.online = 'false';
         card.dataset.streamState = 'loading';
+        card.dataset.streamerName = displayName;
         nameContainer.appendChild(label);
         nameContainer.appendChild(liveSignal);
         headerWrapper.appendChild(nameContainer);
@@ -6882,6 +6952,7 @@ function renderStreamers(){
             .then(info=>{
                 if(renderToken !== streamerRenderToken) return;
                 resolvedCount += 1;
+                status.classList.remove('online', 'offline', 'partial', 'error');
                 if(info.status === 'online'){
                     status.textContent = 'Online';
                     status.classList.add('online');
@@ -6895,10 +6966,10 @@ function renderStreamers(){
                     }
                     // show Pstory indicator
                     if(info.isPstoryDrop){
-                        pstoryInfo.textContent = 'DROP:ON detectado no titulo da live.';
+                        pstoryInfo.textContent = 'Esta transmitindo PStory com drops.';
                         pstoryInfo.style.color = '#5ff7a6';
                     } else if(info.isPstoryNoDrop){
-                        pstoryInfo.textContent = 'Titulo atual mostra PStory sem DROP:ON.';
+                        pstoryInfo.textContent = 'Esta transmitindo PStory sem drops.';
                         pstoryInfo.style.color = '#ffd54f';
                     } else if(info.isPstory){
                         pstoryInfo.textContent = 'Titulo atual indica PStory.';
@@ -6910,18 +6981,21 @@ function renderStreamers(){
                 } else if(info.status === 'offline'){
                     status.textContent = 'Offline';
                     status.classList.add('offline');
+                    totalOffline += 1;
                     pstoryInfo.textContent = 'Canal offline no momento.';
                     pstoryInfo.style.color = '#fa0505';
-                } else if(info.status === 'unknown'){
-                    status.textContent = 'Status desconhecido';
-                    status.classList.add('offline');
-                    pstoryInfo.textContent = 'Não foi possível verificar o título.';
-                    pstoryInfo.style.color = '#aaa';
+                } else if(info.status === 'partial'){
+                    status.textContent = 'Status parcial';
+                    status.classList.add('partial');
+                    totalPartial += 1;
+                    pstoryInfo.textContent = 'A verificacao retornou dados incompletos.';
+                    pstoryInfo.style.color = '#d9c27a';
                 } else {
-                    status.textContent = 'Erro ao obter';
-                    status.classList.add('offline');
-                    pstoryInfo.textContent = 'Erro ao identificar conteúdo de PStory.';
-                    pstoryInfo.style.color = '#faa';
+                    status.textContent = 'Erro temporario';
+                    status.classList.add('error');
+                    totalErrors += 1;
+                    pstoryInfo.textContent = 'Nao foi possivel consultar o status agora.';
+                    pstoryInfo.style.color = '#ffb8a8';
                 }
                 setLiveSignalFromInfo(info);
                 setPreviewFromInfo(info);
@@ -6938,12 +7012,16 @@ function renderStreamers(){
 
             .catch(() => {
                 if(renderToken !== streamerRenderToken) return;
-                const fallbackInfo = {status:'unknown', startedAt:'', isPstory:false, isPstoryDrop:false, isPstoryNoDrop:false};
+                const fallbackInfo = {status:'error', startedAt:'', isPstory:false, isPstoryDrop:false, isPstoryNoDrop:false};
                 applyStreamerVisualState(card, fallbackInfo);
                 placeStreamerCard(card, fallbackInfo);
                 resolvedCount += 1;
-                status.textContent = 'Erro ao obter';
-                status.classList.add('offline');
+                totalErrors += 1;
+                status.classList.remove('online', 'offline', 'partial', 'error');
+                status.textContent = 'Erro temporario';
+                status.classList.add('error');
+                pstoryInfo.textContent = 'Nao foi possivel consultar o status agora.';
+                pstoryInfo.style.color = '#ffb8a8';
                 setLiveSignalFromInfo(fallbackInfo);
                 setPreviewFromInfo(fallbackInfo);
                 fetchStreamerAvatar(name).then((avatarUrl) => {
@@ -6975,7 +7053,7 @@ function renderStreamers(){
 
     if(grid.children.length === 0) {
         grid.innerHTML = '<div style="color:#ccc;padding:0.75rem;">Nenhum canal configurado no momento.</div>';
-        if(statusInfo) statusInfo.textContent = 'Nenhum canal disponível.';
+        if(statusSummaryEl) statusSummaryEl.textContent = 'Nenhum canal disponivel.';
     }
 }
 
@@ -7980,10 +8058,15 @@ function getBoostDefaultFormState(){
 }
 
 function hasBoostSelectedPokemon(state){
-    return Boolean(state?.pokemonEntry && state?.type1);
+    return Boolean(state?.type1);
 }
 
 function getBoostSelectionPromptText(state){
+    // If the new type selects are present, prefer guiding the user to pick a type
+    if(boostType1Select){
+        if(!state?.type1) return 'Selecione um elemento para liberar o cálculo.';
+        return '';
+    }
     if(!boostPokemonEntries.length) return 'Catalogo indisponivel.';
     if(state?.pokemonEntry) return '';
     if(!state?.pokemonName) return 'Selecione um Pokemon para liberar o calculo.';
@@ -8134,6 +8217,13 @@ function applyBoostPokemonSearchSelection(entry){
     if(boostPokemonSearchInput){
         boostPokemonSearchInput.value = entry.name;
     }
+
+    if(boostType1Select){
+        // noop here; listeners registered during page init
+    }
+    if(boostType2Select){
+        // noop here; listeners registered during page init
+    }
     hideBoostPokemonSearchResults();
     renderBoostCalculator();
 }
@@ -8194,6 +8284,111 @@ function hydrateBoostPokemonOptions(){
     hideBoostPokemonSearchResults();
     boostSelectedPokemonEntry = resolveBoostPokemonEntry(boostPokemonSearchInput.value || '');
     boostPokemonOptionsHydrated = true;
+    // populate type selects if available
+    try{ hydrateBoostTypeSelects(); }catch(e){}
+}
+
+function hydrateBoostTypeSelects(){
+    if(!menuTypes || !menuTypes.length) return;
+    if(!boostType1Select && !boostType2Select) return;
+
+    const optionsHtml = menuTypes.map(t => `<option value="${t}">${getTypeDisplayName(t)}</option>`).join('');
+    if(boostType1Select){
+        const prev = boostType1Select.value || '';
+        boostType1Select.innerHTML = `<option value="">Selecione o elemento</option>` + optionsHtml;
+        if(prev) boostType1Select.value = prev;
+    }
+    if(boostType2Select){
+        const prev2 = boostType2Select.value || '';
+        boostType2Select.innerHTML = `<option value="">(Opcional) Segundo elemento</option>` + optionsHtml;
+        if(prev2) boostType2Select.value = prev2;
+    }
+    // render visual picker
+    try{ renderBoostTypePicker(); }catch(e){}
+    // restore selection state from selects
+    boostSelectedTypes = [];
+    const s1 = boostType1Select?.value || '';
+    const s2 = boostType2Select?.value || '';
+    if(s1) boostSelectedTypes.push(s1);
+    if(s2 && s2 !== s1) boostSelectedTypes.push(s2);
+    updateBoostTypePickerUI();
+}
+
+function renderBoostTypePicker(){
+    const picker = document.getElementById('boost-type-picker');
+    if(!picker || !menuTypes) return;
+    picker.replaceChildren();
+    const fragment = document.createDocumentFragment();
+    menuTypes.forEach(type => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'boost-type-button';
+        btn.dataset.type = type;
+        btn.setAttribute('role','option');
+        btn.setAttribute('aria-pressed','false');
+
+        const thumb = document.createElement('span');
+        thumb.className = 'boost-type-thumb';
+        const img = document.createElement('img');
+        img.src = `icons-type/${type}.png`;
+        img.alt = getTypeDisplayName(type);
+        img.loading = 'lazy'; img.decoding = 'async';
+        thumb.appendChild(img);
+
+        // apply type color as CSS variables for richer styling
+        try{
+            const color = getTypeColor(type);
+            btn.style.setProperty('--type-color', color);
+            btn.style.setProperty('--type-color-rgb', hexToRgb(color));
+        }catch(e){}
+
+        const label = document.createElement('span');
+        label.className = 'boost-type-label';
+        label.textContent = getTypeDisplayName(type);
+
+        btn.appendChild(thumb);
+        btn.appendChild(label);
+
+        btn.addEventListener('click', ()=> toggleBoostTypeSelection(type));
+        btn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); btn.click(); } });
+
+        fragment.appendChild(btn);
+    });
+    picker.appendChild(fragment);
+    updateBoostTypePickerUI();
+}
+
+function updateBoostTypePickerUI(){
+    const picker = document.getElementById('boost-type-picker');
+    if(!picker) return;
+    const buttons = picker.querySelectorAll('.boost-type-button');
+    buttons.forEach(btn => {
+        const type = btn.dataset.type;
+        const idx = boostSelectedTypes.indexOf(type);
+        if(idx !== -1){
+            btn.classList.add('boost-type-button--selected');
+            btn.setAttribute('aria-pressed','true');
+            btn.dataset.order = String(idx+1);
+        } else {
+            btn.classList.remove('boost-type-button--selected');
+            btn.setAttribute('aria-pressed','false');
+            delete btn.dataset.order;
+        }
+    });
+}
+
+function toggleBoostTypeSelection(type){
+    const idx = boostSelectedTypes.indexOf(type);
+    if(idx !== -1){
+        boostSelectedTypes.splice(idx,1);
+    } else {
+        if(boostSelectedTypes.length === 2) boostSelectedTypes.shift();
+        boostSelectedTypes.push(type);
+    }
+    if(boostType1Select) boostType1Select.value = boostSelectedTypes[0] || '';
+    if(boostType2Select) boostType2Select.value = boostSelectedTypes[1] || '';
+    updateBoostTypePickerUI();
+    renderBoostCalculator();
 }
 
 function applyBoostFormState(nextState = getBoostDefaultFormState()){
@@ -8206,6 +8401,8 @@ function applyBoostFormState(nextState = getBoostDefaultFormState()){
         boostPokemonSearchInput.value = String(state.pokemonName || '').trim();
     }
     boostSelectedPokemonEntry = resolveBoostPokemonEntry(state.pokemonName || '');
+    if(boostType1Select) boostType1Select.value = String(state.type1 || '');
+    if(boostType2Select) boostType2Select.value = String(state.type2 || '');
     boostShinyInputs.forEach(input => {
         input.checked = input.value === state.shiny;
     });
@@ -8230,8 +8427,15 @@ function getBoostFormState(){
     const pokemonName = String(boostPokemonSearchInput?.value || '').trim();
     const pokemonMatches = findBoostMatchingPokemonEntries(pokemonName);
     const pokemonEntry = getBoostSelectedPokemonEntry(pokemonName);
-    const type1 = pokemonEntry?.type1 || '';
-    const type2 = pokemonEntry?.type2 || '';
+    let type1 = '';
+    let type2 = '';
+    if(boostType1Select && boostType1Select.value){
+        type1 = String(boostType1Select.value || '').trim();
+        type2 = String(boostType2Select?.value || '').trim();
+    } else {
+        type1 = pokemonEntry?.type1 || '';
+        type2 = pokemonEntry?.type2 || '';
+    }
 
     return {
         pokemonName,
@@ -8247,6 +8451,14 @@ function getBoostFormState(){
 }
 
 function validateBoostFormState(state){
+    // If using the new type selects, validate based on selected type(s)
+    if(boostType1Select){
+        if(!state.type1){
+            return { valid: false, message: 'Selecione um elemento.' };
+        }
+        return { valid: true, message: '' };
+    }
+
     if(!boostPokemonEntries.length){
         return {
             valid: false,
@@ -8285,104 +8497,160 @@ function renderBoostPokemonMeta(state){
     boostPokemonMeta.replaceChildren();
 
     const entry = state?.pokemonEntry || null;
-    if(!hasBoostSelectedPokemon(state) || !entry){
+    const selectedTypes = [];
+    if(state?.type1) selectedTypes.push(state.type1);
+    if(state?.type2) selectedTypes.push(state.type2);
+
+    if(!hasBoostSelectedPokemon(state)){
         return;
     }
 
-    const typeKeys = [entry.type1, entry.type2].filter(Boolean);
-    const moveKeys = (Array.isArray(entry.moveset) ? entry.moveset : [])
-        .map(typeKey => normalizePokemonTypeKey(typeKey))
-        .filter(Boolean);
-    const preview = document.createElement('article');
-    preview.className = 'boost-selected-preview';
+    // If we have a full pokemon entry, render the richer preview
+    if(entry){
 
-    const media = document.createElement('div');
-    media.className = 'boost-selected-preview__media';
+        const typeKeys = [entry.type1, entry.type2].filter(Boolean);
+        const moveKeys = (Array.isArray(entry.moveset) ? entry.moveset : [])
+            .map(typeKey => normalizePokemonTypeKey(typeKey))
+            .filter(Boolean);
+        const preview = document.createElement('article');
+        preview.className = 'boost-selected-preview';
 
-    const mountPokemonFallback = () => {
-        if(media.querySelector('.boost-material-card__fallback')) return;
-        media.replaceChildren(createBoostMediaFallback(entry.name));
-    };
+        const media = document.createElement('div');
+        media.className = 'boost-selected-preview__media';
 
-    const sprite = document.createElement('img');
-    sprite.src = getPokemonImageSource(entry);
-    sprite.alt = entry.name;
-    sprite.loading = 'eager';
-    sprite.decoding = 'async';
-    sprite.addEventListener('error', mountPokemonFallback, { once: true });
-    media.appendChild(sprite);
+        const mountPokemonFallback = () => {
+            if(media.querySelector('.boost-material-card__fallback')) return;
+            media.replaceChildren(createBoostMediaFallback(entry.name));
+        };
 
-    const header = document.createElement('div');
-    header.className = 'boost-selected-preview__header';
+        const sprite = document.createElement('img');
+        sprite.src = getPokemonImageSource(entry);
+        sprite.alt = entry.name;
+        sprite.loading = 'eager';
+        sprite.decoding = 'async';
+        sprite.addEventListener('error', mountPokemonFallback, { once: true });
+        media.appendChild(sprite);
 
-    const identity = document.createElement('div');
-    identity.className = 'boost-selected-preview__identity';
+        const header = document.createElement('div');
+        header.className = 'boost-selected-preview__header';
 
-    const kicker = document.createElement('span');
-    kicker.className = 'boost-selected-preview__kicker';
-    kicker.textContent = entry.variant === POKEMON_CATALOG_VARIANT_MEGA
-        ? 'Selecionado - Mega'
-        : 'Selecionado';
+        const identity = document.createElement('div');
+        identity.className = 'boost-selected-preview__identity';
 
-    const title = document.createElement('strong');
-    title.className = 'boost-selected-preview__title';
-    title.textContent = entry.name;
+        const kicker = document.createElement('span');
+        kicker.className = 'boost-selected-preview__kicker';
+        kicker.textContent = entry.variant === POKEMON_CATALOG_VARIANT_MEGA
+            ? 'Selecionado - Mega'
+            : 'Selecionado';
 
-    identity.append(kicker, title);
-    header.append(media, identity);
+        const title = document.createElement('strong');
+        title.className = 'boost-selected-preview__title';
+        title.textContent = entry.name;
 
-    const groups = document.createElement('div');
-    groups.className = 'boost-selected-preview__groups';
+        identity.append(kicker, title);
+        header.append(media, identity);
 
-    const typeGroup = document.createElement('div');
-    typeGroup.className = 'boost-selected-preview__group';
+        const groups = document.createElement('div');
+        groups.className = 'boost-selected-preview__groups';
 
-    const typeLabel = document.createElement('span');
-    typeLabel.className = 'boost-selected-preview__group-label';
-    typeLabel.textContent = 'Tipo';
+        const typeGroup = document.createElement('div');
+        typeGroup.className = 'boost-selected-preview__group';
 
-    const typeChips = document.createElement('div');
-    typeChips.className = 'boost-selected-preview__chips';
-    typeKeys.forEach(typeKey => {
-        typeChips.appendChild(createBoostTypeChip(typeKey));
-    });
-    typeGroup.append(typeLabel, typeChips);
+        const typeLabel = document.createElement('span');
+        typeLabel.className = 'boost-selected-preview__group-label';
+        typeLabel.textContent = 'Tipo';
 
-    const stoneGroup = document.createElement('div');
-    stoneGroup.className = 'boost-selected-preview__group';
-
-    const stoneLabel = document.createElement('span');
-    stoneLabel.className = 'boost-selected-preview__group-label';
-    stoneLabel.textContent = typeKeys.length > 1 ? 'Stones' : 'Stone';
-
-    const stoneChips = document.createElement('div');
-    stoneChips.className = 'boost-selected-preview__chips';
-    typeKeys.forEach(typeKey => {
-        stoneChips.appendChild(createBoostStoneChip(typeKey));
-    });
-    stoneGroup.append(stoneLabel, stoneChips);
-
-    const movesetGroup = document.createElement('div');
-    movesetGroup.className = 'boost-selected-preview__group';
-
-    const movesetLabel = document.createElement('span');
-    movesetLabel.className = 'boost-selected-preview__group-label';
-    movesetLabel.textContent = 'Moveset';
-
-    const movesetChips = document.createElement('div');
-    movesetChips.className = 'boost-selected-preview__chips';
-    if(moveKeys.length){
-        moveKeys.forEach(typeKey => {
-            movesetChips.appendChild(createBoostMoveChip(typeKey));
+        const typeChips = document.createElement('div');
+        typeChips.className = 'boost-selected-preview__chips';
+        typeKeys.forEach(typeKey => {
+            typeChips.appendChild(createBoostTypeChip(typeKey));
         });
-    } else {
-        movesetChips.appendChild(createBoostTextChip('Nao informado'));
-    }
-    movesetGroup.append(movesetLabel, movesetChips);
+        typeGroup.append(typeLabel, typeChips);
 
-    groups.append(typeGroup, stoneGroup, movesetGroup);
-    preview.append(header, groups);
-    boostPokemonMeta.appendChild(preview);
+        const stoneGroup = document.createElement('div');
+        stoneGroup.className = 'boost-selected-preview__group';
+
+        const stoneLabel = document.createElement('span');
+        stoneLabel.className = 'boost-selected-preview__group-label';
+        stoneLabel.textContent = typeKeys.length > 1 ? 'Stones' : 'Stone';
+
+        const stoneChips = document.createElement('div');
+        stoneChips.className = 'boost-selected-preview__chips';
+        typeKeys.forEach(typeKey => {
+            stoneChips.appendChild(createBoostStoneChip(typeKey));
+        });
+        stoneGroup.append(stoneLabel, stoneChips);
+
+        const movesetGroup = document.createElement('div');
+        movesetGroup.className = 'boost-selected-preview__group';
+
+        const movesetLabel = document.createElement('span');
+        movesetLabel.className = 'boost-selected-preview__group-label';
+        movesetLabel.textContent = 'Moveset';
+
+        const movesetChips = document.createElement('div');
+        movesetChips.className = 'boost-selected-preview__chips';
+        if(moveKeys.length){
+            moveKeys.forEach(typeKey => {
+                movesetChips.appendChild(createBoostMoveChip(typeKey));
+            });
+        } else {
+            movesetChips.appendChild(createBoostTextChip('Nao informado'));
+        }
+        movesetGroup.append(movesetLabel, movesetChips);
+
+        groups.append(typeGroup, stoneGroup, movesetGroup);
+        preview.append(header, groups);
+        boostPokemonMeta.appendChild(preview);
+    } else {
+        // Render a simplified preview when user selected only types (no pokemon entry)
+        const preview = document.createElement('article');
+        preview.className = 'boost-selected-preview';
+
+        const header = document.createElement('div');
+        header.className = 'boost-selected-preview__header';
+
+        const identity = document.createElement('div');
+        identity.className = 'boost-selected-preview__identity';
+
+        const kicker = document.createElement('span');
+        kicker.className = 'boost-selected-preview__kicker';
+        kicker.textContent = 'Selecionado';
+
+        const title = document.createElement('strong');
+        title.className = 'boost-selected-preview__title';
+        title.textContent = selectedTypes.map(getTypeDisplayName).join(' + ');
+
+        identity.append(kicker, title);
+        header.append(identity);
+
+        const groups = document.createElement('div');
+        groups.className = 'boost-selected-preview__groups';
+
+        const typeGroup = document.createElement('div');
+        typeGroup.className = 'boost-selected-preview__group';
+        const typeLabel = document.createElement('span');
+        typeLabel.className = 'boost-selected-preview__group-label';
+        typeLabel.textContent = 'Tipo';
+        const typeChips = document.createElement('div');
+        typeChips.className = 'boost-selected-preview__chips';
+        selectedTypes.forEach(typeKey => typeChips.appendChild(createBoostTypeChip(typeKey)));
+        typeGroup.append(typeLabel, typeChips);
+
+        const stoneGroup = document.createElement('div');
+        stoneGroup.className = 'boost-selected-preview__group';
+        const stoneLabel = document.createElement('span');
+        stoneLabel.className = 'boost-selected-preview__group-label';
+        stoneLabel.textContent = selectedTypes.length > 1 ? 'Stones' : 'Stone';
+        const stoneChips = document.createElement('div');
+        stoneChips.className = 'boost-selected-preview__chips';
+        selectedTypes.forEach(typeKey => stoneChips.appendChild(createBoostStoneChip(typeKey)));
+        stoneGroup.append(stoneLabel, stoneChips);
+
+        groups.append(typeGroup, stoneGroup);
+        preview.append(header, groups);
+        boostPokemonMeta.appendChild(preview);
+    }
 }
 
 function getBoostStoneMetaByType(typeKey = ''){
@@ -8426,6 +8694,12 @@ function createBoostTypeChip(typeKey){
     const chip = document.createElement('span');
     chip.className = 'boost-pokemon-chip';
     chip.innerHTML = `<img src="icons-type/${normalizedType}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(normalizedType)}</span>`;
+    // apply color variables for chip
+    try{
+        const color = getTypeColor(normalizedType);
+        chip.style.setProperty('--type-color', color);
+        chip.style.setProperty('--type-color-rgb', hexToRgb(color));
+    }catch(e){}
     return chip;
 }
 
@@ -9051,6 +9325,7 @@ function initializeBoostCalculatorPage(){
             ensurePokemonCatalogLoaded()
         ]).then(() => {
             hydrateBoostPokemonOptions();
+            try{ hydrateBoostTypeSelects(); }catch(e){}
             renderBoostCalculator();
             return true;
         }).catch(error => {
@@ -9071,6 +9346,9 @@ function initializeBoostCalculatorPage(){
         .forEach(element => {
             element.addEventListener('change', handleBoostChange);
         });
+
+    if(boostType1Select) boostType1Select.addEventListener('change', handleBoostChange);
+    if(boostType2Select) boostType2Select.addEventListener('change', handleBoostChange);
 
     if(boostPokemonSearchInput){
         boostPokemonSearchInput.addEventListener('input', (event) => {
@@ -9128,7 +9406,9 @@ function initializeBoostCalculatorPage(){
         ensurePokemonCatalogLoaded()
     ]).then(() => {
         hydrateBoostPokemonOptions();
+        try{ hydrateBoostTypeSelects(); }catch(e){}
         applyBoostFormState(getBoostDefaultFormState());
+        try{ renderBoostTypePicker(); updateBoostTypePickerUI(); }catch(e){}
         renderBoostCalculator();
         return true;
     }).catch(error => {

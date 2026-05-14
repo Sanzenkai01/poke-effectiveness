@@ -1,0 +1,230 @@
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+
+const baseUrl = String(process.argv[2] || 'http://127.0.0.1:8001').replace(/\/+$/, '');
+
+const routes = [
+  {
+    path: '/',
+    label: 'root',
+    checks: [
+      { pattern: /id="home-hero-title"/i, description: 'home hero title' },
+      { pattern: /class="dark home-view"/i, description: 'standalone home body class' }
+    ]
+  },
+  {
+    path: '/home',
+    label: 'home',
+    checks: [
+      { pattern: /id="home-hero-title"/i, description: 'home hero title' },
+      { pattern: /class="dark home-view"/i, description: 'standalone home body class' }
+    ]
+  },
+  {
+    path: '/tipos',
+    label: 'tipos',
+    checks: [
+      { pattern: /data-active-tab="effectiveness"/i, description: 'tipos active tab' },
+      { pattern: /id="content-effectiveness"/i, description: 'tipos panel' }
+    ]
+  },
+  {
+    path: '/fossils',
+    label: 'fossils',
+    checks: [
+      { pattern: /data-active-tab="fossils"/i, description: 'fossils active tab' }
+    ]
+  },
+  {
+    path: '/treinamento',
+    label: 'treinamento',
+    checks: [
+      { pattern: /data-active-tab="calculator"/i, description: 'treinamento active tab' }
+    ]
+  },
+  {
+    path: '/boost',
+    label: 'boost',
+    checks: [
+      { pattern: /data-active-tab="boost"/i, description: 'boost active tab' },
+      { pattern: /id="boost-hero-summary"/i, description: 'boost hero summary' }
+    ]
+  },
+  {
+    path: '/pokemon',
+    label: 'pokemon',
+    checks: [
+      { pattern: /data-active-tab="pokemons"/i, description: 'pokemon active tab' },
+      { pattern: /aria-label="Lista de pokemons registrados"/i, description: 'normal pokemon grid' }
+    ]
+  },
+  {
+    path: '/pokemons',
+    label: 'pokemons',
+    checks: [
+      { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
+      { pattern: /aria-label="Lista de pokemons Mega"/i, description: 'mega pokemon grid' }
+    ]
+  },
+  {
+    path: '/times',
+    label: 'times',
+    checks: [
+      { pattern: /data-active-tab="times"/i, description: 'times active tab' },
+      { pattern: /id="times-card-grid"/i, description: 'times grid' }
+    ]
+  },
+  {
+    path: '/catch',
+    label: 'catch',
+    checks: [
+      { pattern: /data-active-tab="catch"/i, description: 'catch active tab' },
+      { pattern: /id="catch-description"/i, description: 'catch description' }
+    ]
+  },
+  {
+    path: '/streamers',
+    label: 'streamers',
+    checks: [
+      { pattern: /data-active-tab="streamers"/i, description: 'streamers active tab' },
+      { pattern: /id="streamer-grid"/i, description: 'streamer grid' }
+    ]
+  },
+  {
+    path: '/youtube',
+    label: 'youtube',
+    checks: [
+      { pattern: /data-active-tab="community"/i, description: 'youtube active tab' },
+      { pattern: /id="community-video-frame"/i, description: 'community player iframe' }
+    ]
+  },
+  {
+    path: '/hoopa',
+    label: 'hoopa',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="hoopa"/i, description: 'hoopa boss mode' }
+    ]
+  },
+  {
+    path: '/champion',
+    label: 'champion',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="champion"/i, description: 'champion boss mode' }
+    ]
+  },
+  {
+    path: '/mewtwo',
+    label: 'mewtwo',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="mew2"/i, description: 'mewtwo boss mode' }
+    ]
+  },
+  {
+    path: '/planejador',
+    label: 'planejador',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="planner"/i, description: 'planner boss mode' }
+    ]
+  },
+  {
+    path: '/horizons',
+    label: 'horizons',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="horizons"/i, description: 'horizons boss mode' }
+    ]
+  }
+];
+
+function collectPlaywrightBrowserCandidates() {
+  const localAppData = process.env.LOCALAPPDATA || '';
+  if (!localAppData) return [];
+
+  const playwrightRoot = path.join(localAppData, 'ms-playwright');
+  if (!fs.existsSync(playwrightRoot)) return [];
+
+  return fs.readdirSync(playwrightRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith('chromium-'))
+    .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }))
+    .flatMap((entry) => ([
+      path.join(playwrightRoot, entry.name, 'chrome-win64', 'chrome.exe'),
+      path.join(playwrightRoot, entry.name, 'chrome-win', 'chrome.exe')
+    ]));
+}
+
+function findBrowserBinary() {
+  const manual = String(process.env.SMOKE_BROWSER || '').trim();
+  const candidates = [
+    manual,
+    ...collectPlaywrightBrowserCandidates(),
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
+  ].filter(Boolean);
+
+  return candidates.find((candidate) => fs.existsSync(candidate)) || '';
+}
+
+function fetchWithHeadlessBrowser(browserPath, url) {
+  const sharedArgs = ['--disable-gpu', '--virtual-time-budget=15000', '--dump-dom', url];
+  const candidateArgSets = [
+    ['--headless=new', ...sharedArgs],
+    ['--headless', ...sharedArgs]
+  ];
+
+  for (const args of candidateArgSets) {
+    const result = spawnSync(browserPath, args, {
+      encoding: 'utf8',
+      timeout: 45000,
+      windowsHide: true,
+      maxBuffer: 8 * 1024 * 1024
+    });
+
+    if (result.status === 0 && result.stdout) {
+      return result.stdout;
+    }
+  }
+
+  throw new Error(`Nao foi possivel obter o DOM renderizado com ${browserPath}`);
+}
+
+async function assertHttpOk(url) {
+  const response = await fetch(url, { redirect: 'follow' });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} em ${url}`);
+  }
+}
+
+async function main() {
+  const browserPath = findBrowserBinary();
+  if (!browserPath) {
+    throw new Error('Nenhum navegador compativel encontrado para smoke test headless.');
+  }
+
+  console.log(`Usando navegador: ${browserPath}`);
+
+  for (const route of routes) {
+    const url = `${baseUrl}${route.path}`;
+    await assertHttpOk(url);
+    const dom = fetchWithHeadlessBrowser(browserPath, url);
+
+    route.checks.forEach((check) => {
+      if (!check.pattern.test(dom)) {
+        throw new Error(`${route.label}: marcador ausente (${check.description}) em ${url}`);
+      }
+    });
+
+    console.log(`OK ${route.label} -> ${url}`);
+  }
+}
+
+main().catch((error) => {
+  console.error(`Smoke routes failed: ${error.message}`);
+  process.exitCode = 1;
+});

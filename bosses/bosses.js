@@ -139,7 +139,7 @@ const hoopaPortalsData = [
     name: 'Mega Hawlucha',
     clan: 'mystic',
     clanLabel: 'Mystic',
-    image: 'megahawlucha.png',
+    image: 'mega-hawlucha.png',
     tutorialUrl: 'https://youtu.be/YHYnuSjlgzo?si=5dCSF9RxOkfweYon',
     locationImage: 'localizações/hawlucha.png',
     description: 'Movimentos de luta e voo para dominar o campo.',
@@ -3428,6 +3428,73 @@ const basePath = (() => {
   if (p.includes('/bosses')) return '';
   return 'bosses/';
 })();
+
+function toggleBossMegaFileNameStyle(fileName) {
+  const match = /^mega(-?)(.+)\.(png|jpe?g|webp|gif|svg)$/i.exec(String(fileName || '').trim());
+  if (!match) return '';
+
+  const [, hyphen, body, extension] = match;
+  return hyphen
+    ? `mega${body}.${extension}`
+    : `mega-${body}.${extension}`;
+}
+
+function getBossImageRetrySource(currentSource) {
+  const rawSource = String(currentSource || '').trim();
+  if (!rawSource) return '';
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(rawSource, location.href);
+  } catch (error) {
+    return '';
+  }
+
+  if (!/\/bosses\/[^/]+\.(png|jpe?g|webp|gif|svg)$/i.test(parsedUrl.pathname)) {
+    return '';
+  }
+
+  const segments = parsedUrl.pathname.split('/');
+  const fileName = segments[segments.length - 1] || '';
+  const alternateFileName = toggleBossMegaFileNameStyle(fileName);
+  if (!alternateFileName || alternateFileName.toLowerCase() === fileName.toLowerCase()) {
+    return '';
+  }
+
+  segments[segments.length - 1] = alternateFileName;
+  parsedUrl.pathname = segments.join('/');
+  return parsedUrl.toString();
+}
+
+function retryBossImageWithAlternateNaming(imageEl) {
+  if (!(imageEl instanceof HTMLImageElement)) return false;
+
+  const currentSource = String(imageEl.currentSrc || imageEl.src || '').trim();
+  if (!currentSource) return false;
+
+  let parsedCurrentUrl;
+  try {
+    parsedCurrentUrl = new URL(currentSource, location.href);
+  } catch (error) {
+    return false;
+  }
+
+  const retryKey = parsedCurrentUrl.pathname.toLowerCase();
+  if (imageEl.dataset.bossImageRetryFor === retryKey) return false;
+
+  const retrySource = getBossImageRetrySource(currentSource);
+  if (!retrySource) return false;
+
+  imageEl.dataset.bossImageRetryFor = retryKey;
+  imageEl.src = retrySource;
+  return true;
+}
+
+document.addEventListener('error', (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLImageElement)) return;
+  retryBossImageWithAlternateNaming(target);
+}, true);
 
 const iconBase = (() => {
   const p = location.pathname.toLowerCase();

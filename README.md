@@ -12,13 +12,13 @@ Aplicacao estatica para consultar efetividade de tipos Pokemon e utilitarios do 
 
 Como o projeto usa `fetch()` e pode registrar service worker, abra por HTTP local em vez de `file://`.
 
-Exemplo com Python:
+Exemplo com o servidor SPA deste repositorio:
 
 ```bash
-python -m http.server 8000
+python serve_spa.py 8001
 ```
 
-Depois acesse `http://localhost:8000`.
+Depois acesse `http://127.0.0.1:8001`.
 
 ## Estrutura principal
 
@@ -34,6 +34,13 @@ Depois acesse `http://localhost:8000`.
 - Os dados de tipos ficam em `types.json`. Se esse arquivo falhar ao carregar, a interface mostra uma mensagem de erro e permite tentar novamente.
 - O service worker esta desabilitado por padrao em `script.js`. Ative apenas quando quiser publicar com cache revisado.
 - Nao deixe credenciais de API no front-end. Consultas sensiveis devem passar por backend ou funcao serverless.
+- Validacoes uteis antes de publicar:
+
+```bash
+node scripts/validate_catalog_data.js
+node scripts/validate_boss_registry.js
+node scripts/smoke_routes.js http://127.0.0.1:8001
+```
 
 ## Limpeza do repositorio
 
