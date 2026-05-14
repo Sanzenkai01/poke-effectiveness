@@ -50,6 +50,7 @@
         { name: 'afdexter', supportsDrops: false, discord:'https://discord.com/invite/KDqNdR8N54' },
         { name: 'nickrune', supportsDrops: false },
         { name: 'strackzera', supportsDrops: false },
+        { name: 'dragonslayerpiva', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
