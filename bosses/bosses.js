@@ -1672,25 +1672,24 @@ const championPathBosses = createManualRoleboardBosses([
   {
     id: 'mega-aggron',
     name: 'Mega Aggron',
-    types: ['steel', 'rock'],
+    types: ['steel'],
     moveType: 'steel',
     comingSoon: true,
     filterSolo: true,
-    description: 'Chefe resistente que recompensa picks com supereficacia contra Steel/Rock.',
+    description: 'Chefe puro Metal que recompensa picks com supereficacia Ground, Fighting e Fire.',
     clans: {
       instinct: {
         dps: [
           createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
-          createRolePick('Marowak', ['ground'], 'ground')
+          createRolePick('Mega Raichu Y', ['electric'], 'electric')
         ],
         tank: [
-          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
-          createRolePick('Magnezone', ['electric', 'steel'], 'electric')
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric'),
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
         ],
         support: [
-          createRolePick('Pachirisu', ['electric'], 'electric'),
-          createRolePick('Bellossom', ['grass'], 'grass')
+          createRolePick('Pachirisu', ['electric'], 'electric')
         ]
       },
       mystic: {
@@ -1710,8 +1709,8 @@ const championPathBosses = createManualRoleboardBosses([
       },
       valor: {
         dps: [
-          createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
-          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
+          createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
