@@ -5010,8 +5010,14 @@ p {
     --site-cursor-default: url('Pikachu.cur') 0 0, default;
   }
   /* Force site cursor globally; keep text cursor for editable controls */
-  html, body, body * { cursor: var(--site-cursor) !important; }
-  input, textarea, select, option, [contenteditable="true"] { cursor: text !important; }
+  html:not([data-cursor-mode="system"]),
+  html:not([data-cursor-mode="system"]) body,
+  html:not([data-cursor-mode="system"]) body * { cursor: var(--site-cursor) !important; }
+  html:not([data-cursor-mode="system"]) input,
+  html:not([data-cursor-mode="system"]) textarea,
+  html:not([data-cursor-mode="system"]) select,
+  html:not([data-cursor-mode="system"]) option,
+  html:not([data-cursor-mode="system"]) [contenteditable="true"] { cursor: text !important; }
 }
 
 .catch-result-pill {
@@ -5943,7 +5949,7 @@ h2 {
   display: block;
   width: min(1180px, 100%);
   margin: 0 auto 1rem;
-  padding: 1rem 11rem 1rem 16rem;
+  padding: 1rem 14.75rem 1rem 16rem;
   border: 1px solid var(--surface-border);
   border-radius: 26px;
   background:
@@ -5966,6 +5972,7 @@ h2 {
 #elemental-balls-btn,
 #respawns-btn,
 #fishing-btn,
+#cursor-toggle-btn,
 #theme-toggle,
 #share-btn,
 #matrix-btn {
@@ -6016,8 +6023,12 @@ h2 {
   left: 8.75rem;
 }
 
+#cursor-toggle-btn {
+  right: 7.5rem;
+}
+
 #share-btn {
-  right: 5rem;
+  right: 4.375rem;
 }
 
 #matrix-btn {
@@ -6028,6 +6039,7 @@ h2 {
 #elemental-balls-btn:hover,
 #respawns-btn:hover,
 #fishing-btn:hover,
+#cursor-toggle-btn:hover,
 #theme-toggle:hover,
 #share-btn:hover,
 #matrix-btn:hover {
@@ -6035,6 +6047,14 @@ h2 {
   background: rgba(255, 255, 255, 0.12);
 }
 /* Páscoa hover/interactive rules removed */
+
+#cursor-toggle-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(255, 205, 90, 0.24), rgba(255, 168, 64, 0.16));
+  border-color: rgba(255, 212, 109, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 24px rgba(255, 172, 56, 0.18);
+}
 
 .header-tool-icon {
   width: 24px;
@@ -6261,7 +6281,7 @@ textarea:focus {
 @media (max-width: 720px) {
   .header {
     display: grid;
-    grid-template-columns: repeat(7, 46px);
+    grid-template-columns: repeat(8, 46px);
     justify-content: center;
     text-align: center;
     padding: 1rem 1.1rem;
@@ -6278,6 +6298,7 @@ textarea:focus {
   #elemental-balls-btn,
   #respawns-btn,
   #fishing-btn,
+  #cursor-toggle-btn,
   #home-btn,
   #share-btn,
   #matrix-btn {
@@ -8658,7 +8679,7 @@ textarea:focus {
 #home-btn {
   position: absolute;
   top: 50%;
-  right: 8.75rem;
+  right: 10.625rem;
   width: 46px;
   height: 46px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -10234,13 +10255,14 @@ body.home-view .main-footer {
 
 @media (max-width: 720px) {
   .header {
-    grid-template-columns: repeat(7, 46px);
+    grid-template-columns: repeat(8, 46px);
   }
 
   #commands-btn,
   #elemental-balls-btn,
   #respawns-btn,
   #fishing-btn,
+  #cursor-toggle-btn,
   #home-btn,
   #share-btn,
   #matrix-btn {
@@ -10252,6 +10274,7 @@ body.home-view .main-footer {
   #elemental-balls-btn:hover,
   #respawns-btn:hover,
   #fishing-btn:hover,
+  #cursor-toggle-btn:hover,
   #home-btn:hover,
   #share-btn:hover,
   #matrix-btn:hover {
@@ -10449,6 +10472,7 @@ body.home-view .main-footer {
   #elemental-balls-btn,
   #respawns-btn,
   #fishing-btn,
+  #cursor-toggle-btn,
   #home-btn,
   #content-home {
     display: none !important;
@@ -10465,12 +10489,12 @@ body.home-view .main-footer {
 
 .header {
   width: min(1360px, 100%);
-  padding: 1rem 11rem 1rem 1.5rem;
+  padding: 1rem 14.75rem 1rem 1.5rem;
 }
 
 #page-title {
   width: fit-content;
-  max-width: calc(100% - 12rem);
+  max-width: calc(100% - 15.75rem);
   margin: 0 auto;
 }
 
@@ -12808,6 +12832,7 @@ body.home-view .app-shell {
   #elemental-balls-btn,
   #respawns-btn,
   #fishing-btn,
+  #cursor-toggle-btn,
   #home-btn,
   #share-btn,
   #matrix-btn {
@@ -12820,6 +12845,7 @@ body.home-view .app-shell {
   #elemental-balls-btn:hover,
   #respawns-btn:hover,
   #fishing-btn:hover,
+  #cursor-toggle-btn:hover,
   #home-btn:hover,
   #share-btn:hover,
   #matrix-btn:hover {

@@ -79,6 +79,7 @@ const tabCatchBtn = document.getElementById('tab-catch');
 const tabSpeedstersBtn = document.getElementById('tab-bosses');
 const tabStreamersBtn = document.getElementById('tab-streamers');
 const tabCommunityBtn = document.getElementById('tab-community');
+const cursorToggleBtn = document.getElementById('cursor-toggle-btn');
 const homeBtn = document.getElementById('home-btn');
 const homeExploreBtn = document.getElementById('home-explore-btn');
 const homeFocusNumber = document.getElementById('home-focus-number');
@@ -2200,6 +2201,8 @@ const strings = {
         shareSuccess: 'Link copiado para a área de transferência!',
         shareFail: 'Falha ao copiar link.',
         shareLabel: 'Compartilhar',
+        cursorToggleSystem: 'Usar cursor padrao',
+        cursorTogglePikachu: 'Usar cursor Pikachu',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendEffective: 'Efetivo 1.5x',
@@ -2331,6 +2334,63 @@ const strings = {
 const lang = 'pt';
 function t(k){return strings[lang][k]||'';}
 const FIXED_BROWSER_TITLE = 'Poke Utilities';
+const SITE_CURSOR_MODE_STORAGE_KEY = 'siteCursorMode';
+const SITE_CURSOR_MODE_PIKACHU = 'pikachu';
+const SITE_CURSOR_MODE_SYSTEM = 'system';
+
+function normalizeSiteCursorMode(value){
+    return value === SITE_CURSOR_MODE_SYSTEM ? SITE_CURSOR_MODE_SYSTEM : SITE_CURSOR_MODE_PIKACHU;
+}
+
+function getStoredSiteCursorMode(){
+    try{
+        return normalizeSiteCursorMode(localStorage.getItem(SITE_CURSOR_MODE_STORAGE_KEY));
+    }catch(e){
+        return SITE_CURSOR_MODE_PIKACHU;
+    }
+}
+
+function getActiveSiteCursorMode(){
+    const currentMode = document.documentElement?.dataset?.cursorMode || '';
+    if(currentMode === SITE_CURSOR_MODE_SYSTEM || currentMode === SITE_CURSOR_MODE_PIKACHU){
+        return currentMode;
+    }
+    return getStoredSiteCursorMode();
+}
+
+function syncCursorToggleButton(mode = getActiveSiteCursorMode()){
+    if(!cursorToggleBtn) return;
+    const resolvedMode = normalizeSiteCursorMode(mode);
+    const pikachuActive = resolvedMode === SITE_CURSOR_MODE_PIKACHU;
+    cursorToggleBtn.setAttribute('aria-pressed', pikachuActive ? 'true' : 'false');
+    cursorToggleBtn.setAttribute('aria-label', t(pikachuActive ? 'cursorToggleSystem' : 'cursorTogglePikachu'));
+    cursorToggleBtn.title = t(pikachuActive ? 'cursorToggleSystem' : 'cursorTogglePikachu');
+}
+
+function applySiteCursorMode(mode, options = {}){
+    const { persist = true } = options;
+    const resolvedMode = normalizeSiteCursorMode(mode);
+    if(document.documentElement){
+        document.documentElement.dataset.cursorMode = resolvedMode;
+    }
+    if(persist){
+        try{
+            localStorage.setItem(SITE_CURSOR_MODE_STORAGE_KEY, resolvedMode);
+        }catch(e){}
+    }
+    syncCursorToggleButton(resolvedMode);
+    return resolvedMode;
+}
+
+function toggleSiteCursorMode(){
+    return applySiteCursorMode(
+        getActiveSiteCursorMode() === SITE_CURSOR_MODE_PIKACHU
+            ? SITE_CURSOR_MODE_SYSTEM
+            : SITE_CURSOR_MODE_PIKACHU
+    );
+}
+
+applySiteCursorMode(getActiveSiteCursorMode(), { persist: false });
 
 function updateBrowserTitle(){
     document.title = FIXED_BROWSER_TITLE;
@@ -2546,6 +2606,7 @@ function updateTextContent(){
         shareBtn.setAttribute('title', t('shareLabel'));
         shareBtn.setAttribute('aria-label', t('shareLabel'));
     }
+    syncCursorToggleButton();
     const themeBtn = document.getElementById('theme-toggle');
     if(themeBtn){
         themeBtn.setAttribute('aria-label', t('themeToggle'));
@@ -9492,6 +9553,11 @@ function initFromUrl(){
 }
 
 const shareBtn=document.getElementById('share-btn');
+if(cursorToggleBtn){
+    cursorToggleBtn.addEventListener('click',()=>{
+        toggleSiteCursorMode();
+    });
+}
 if(shareBtn){
     shareBtn.addEventListener('click',()=>{
         const url=location.href;
