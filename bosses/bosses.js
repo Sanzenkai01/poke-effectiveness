@@ -2462,7 +2462,9 @@ const mirroredRecommendationVariantNames = Object.freeze({
   bouffalant: 'Shiny Bouffalant',
   dragonair: 'Shiny Dragonair',
   megaferaligatr: 'Shiny Mega Feraligatr',
-  scyther: 'Shiny Scyther'
+  scyther: 'Shiny Scyther',
+  claydol: 'Shiny Claydol',
+  bronzong: 'Shiny Bronzong'
 });
 
 function getImplicitRecommendationProfile(poke) {
@@ -3432,43 +3434,41 @@ function getRecommendationVariantBaseKey(nameOrPokemon) {
   return getRecommendationNameKey(normalizedName);
 }
 
-function createShinyRecommendationPassiveInfo(passiveInfo) {
-  if (!passiveInfo?.text) return null;
-
-  const items = Array.isArray(passiveInfo.items) && passiveInfo.items.length
-    ? passiveInfo.items
-    : [passiveInfo.text];
-  const prefixedItems = items
-    .map((item) => `(shiny) ${String(item || '').trim()}`)
+function getRecommendationPassiveInfoItems(passiveInfo) {
+  if (!passiveInfo?.text) return [];
+  return (
+    Array.isArray(passiveInfo.items) && passiveInfo.items.length
+      ? passiveInfo.items
+      : [passiveInfo.text]
+  )
+    .map((item) => String(item || '').replace(/\s+/g, ' ').trim())
     .filter(Boolean);
+}
+
+function cloneRecommendationPassiveInfo(passiveInfo) {
+  const items = getRecommendationPassiveInfoItems(passiveInfo);
+  if (!items.length) return null;
 
   return {
     ...passiveInfo,
-    text: `(shiny) ${passiveInfo.text}`,
-    items: prefixedItems
+    text: String(passiveInfo.text || '').replace(/\s+/g, ' ').trim() || items.join(' '),
+    items
   };
 }
 
 function getRecommendationPassiveInfoSignature(passiveInfo) {
-  if (!passiveInfo?.text) return '';
-  return JSON.stringify(
-    (Array.isArray(passiveInfo.items) && passiveInfo.items.length
-      ? passiveInfo.items
-      : [passiveInfo.text]
-    ).map((item) => String(item || '').trim())
-  );
+  const items = getRecommendationPassiveInfoItems(passiveInfo);
+  return items.length ? JSON.stringify(items) : '';
 }
 
 function mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRef) {
   if (!basePick || !shinyPick || !bossRef) return;
 
-  const basePassiveInfo = getRecommendationPassiveInfo(basePick);
   const shinyPassiveInfo = getRecommendationPassiveInfo(shinyPick);
   const shinyPassiveSignature = getRecommendationPassiveInfoSignature(shinyPassiveInfo);
-  const basePassiveSignature = getRecommendationPassiveInfoSignature(basePassiveInfo);
 
-  if (shinyPassiveSignature && shinyPassiveSignature !== basePassiveSignature) {
-    basePick._shinyVariantPassiveInfo = createShinyRecommendationPassiveInfo(shinyPassiveInfo);
+  if (shinyPassiveSignature) {
+    basePick._shinyVariantPassiveInfo = cloneRecommendationPassiveInfo(shinyPassiveInfo);
   }
 
   const scoredBase = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(basePick));
@@ -3963,22 +3963,52 @@ function getRecommendationPassiveInfo(poke) {
   };
 }
 
+function formatRecommendationPassiveVariantItem(item, variantLabel = '') {
+  const normalizedItem = String(item || '').replace(/\s+/g, ' ').trim();
+  if (!normalizedItem) return '';
+  return variantLabel ? `${normalizedItem} (${variantLabel})` : normalizedItem;
+}
+
+function buildRecommendationDisplayPassiveItems(basePassiveInfo, shinyPassiveInfo) {
+  const baseItems = getRecommendationPassiveInfoItems(basePassiveInfo);
+  const shinyItems = getRecommendationPassiveInfoItems(shinyPassiveInfo);
+
+  if (!shinyItems.length) {
+    return baseItems;
+  }
+
+  if (!baseItems.length) {
+    return shinyItems
+      .map((item) => formatRecommendationPassiveVariantItem(item, 'shiny'))
+      .filter(Boolean);
+  }
+
+  const baseItemSet = new Set(baseItems);
+  const shinyItemSet = new Set(shinyItems);
+  const mergedItems = [];
+  const pushItem = (rawItem, variantLabel = '') => {
+    const decoratedItem = formatRecommendationPassiveVariantItem(rawItem, variantLabel);
+    if (!decoratedItem || mergedItems.includes(decoratedItem)) return;
+    mergedItems.push(decoratedItem);
+  };
+
+  baseItems.forEach((item) => {
+    pushItem(item, shinyItemSet.has(item) ? 'shiny e normal' : 'normal');
+  });
+
+  shinyItems.forEach((item) => {
+    if (baseItemSet.has(item)) return;
+    pushItem(item, 'shiny');
+  });
+
+  return mergedItems;
+}
+
 function getRecommendationDisplayPassiveInfo(poke) {
   const basePassiveInfo = getRecommendationPassiveInfo(poke);
   const shinyPassiveInfo = poke?._shinyVariantPassiveInfo;
   if (!shinyPassiveInfo?.text) return basePassiveInfo;
-
-  const mergedItems = [];
-  const pushUniqueItems = (items = []) => {
-    items.forEach((item) => {
-      const normalizedItem = String(item || '').trim();
-      if (!normalizedItem || mergedItems.includes(normalizedItem)) return;
-      mergedItems.push(normalizedItem);
-    });
-  };
-
-  pushUniqueItems(basePassiveInfo?.items || (basePassiveInfo?.text ? [basePassiveInfo.text] : []));
-  pushUniqueItems(shinyPassiveInfo.items || [shinyPassiveInfo.text]);
+  const mergedItems = buildRecommendationDisplayPassiveItems(basePassiveInfo, shinyPassiveInfo);
 
   return {
     name: basePassiveInfo?.name || shinyPassiveInfo.name || '',
