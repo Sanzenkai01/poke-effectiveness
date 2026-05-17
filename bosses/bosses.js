@@ -1105,6 +1105,7 @@ const rolePickImageOverrides = {
   bannet: 'banette.png',
   blastoisetwo: 'blastoisetwo.png',
   charizardtwo: 'charizard.png',
+  drifloom: 'drifloon.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
   megascizor: 'mega-scizor.png',
@@ -1567,8 +1568,12 @@ const championPathBosses = createManualRoleboardBosses([
       },
       mystic: {
         dps: [
-          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
-          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
+          createRolePick('Banette', ['ghost'], 'ghost'),
+          createRolePick('Drifloom', ['ghost', 'flying'], 'ghost'),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'fighting')
         ],
         tank: [
           createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
@@ -1741,7 +1746,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick("Rosa's Serperior", ['grass'], 'grass')
         ],
         tank: [
-          createRolePick('Goodra', ['dragon'], 'dragon'),
+          createRolePick('Goodra', ['dragon'], 'water'),
           createRolePick('Magnezone', ['electric', 'steel'], 'electric')
         ],
         support: [
@@ -2652,11 +2657,11 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'goodra') {
     return {
-      defenseDamageFactorByBossType: {
+      defenseByBossType: {
         dragon: 0.5
       },
       passiveName: 'Gooey',
-      passiveDescription: 'Sua gosma espessa torna o Pokemon resistente contra ataques do tipo Dragon.'
+      passiveDescription: 'Sua gosma espessa torna ataques do tipo Dragon super inefetivos contra este Pokemon (0.5x).'
     };
   }
 
@@ -2994,15 +2999,15 @@ function bossHasDragonMoveset(boss) {
   return getBossMoveTypes(boss).some((type) => type === 'dragon');
 }
 
-function createGoodraDragonPick() {
-  const pick = createRolePick('Goodra', ['dragon'], 'dragon', {
-    defenseDamageFactorByBossType: {
+function createGoodraRecommendationPick() {
+  const pick = createRolePick('Goodra', ['dragon'], 'water', {
+    defenseByBossType: {
       dragon: 0.5
     },
     passiveName: 'Gooey',
-    passiveDescription: 'Sua gosma espessa torna o Pokemon resistente contra ataques do tipo Dragon.'
+    passiveDescription: 'Sua gosma espessa torna ataques do tipo Dragon super inefetivos contra este Pokemon (0.5x).'
   });
-  pick.description = 'Tipo move: Dragon.';
+  pick.description = 'Tipo move: Water.';
   return pick;
 }
 
@@ -3016,7 +3021,7 @@ function syncGoodraRecommendation(list, shouldInclude) {
   }
 
   if (shouldInclude) {
-    list.push(createGoodraDragonPick());
+    list.push(createGoodraRecommendationPick());
   }
 }
 
@@ -3410,6 +3415,170 @@ function ensureMirroredRecommendationVariants() {
   });
 }
 
+function isShinyRecommendationVariant(nameOrPokemon) {
+  const rawName = typeof nameOrPokemon === 'string'
+    ? nameOrPokemon
+    : nameOrPokemon?.name;
+  return /^shiny\b/i.test(String(rawName || '').trim());
+}
+
+function getRecommendationVariantBaseKey(nameOrPokemon) {
+  const rawName = typeof nameOrPokemon === 'string'
+    ? nameOrPokemon
+    : nameOrPokemon?.name;
+  const normalizedName = String(rawName || '')
+    .replace(/^shiny\b[\s-]*/i, '')
+    .trim();
+  return getRecommendationNameKey(normalizedName);
+}
+
+function createShinyRecommendationPassiveInfo(passiveInfo) {
+  if (!passiveInfo?.text) return null;
+
+  const items = Array.isArray(passiveInfo.items) && passiveInfo.items.length
+    ? passiveInfo.items
+    : [passiveInfo.text];
+  const prefixedItems = items
+    .map((item) => `(shiny) ${String(item || '').trim()}`)
+    .filter(Boolean);
+
+  return {
+    ...passiveInfo,
+    text: `(shiny) ${passiveInfo.text}`,
+    items: prefixedItems
+  };
+}
+
+function getRecommendationPassiveInfoSignature(passiveInfo) {
+  if (!passiveInfo?.text) return '';
+  return JSON.stringify(
+    (Array.isArray(passiveInfo.items) && passiveInfo.items.length
+      ? passiveInfo.items
+      : [passiveInfo.text]
+    ).map((item) => String(item || '').trim())
+  );
+}
+
+function mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRef) {
+  if (!basePick || !shinyPick || !bossRef) return;
+
+  const basePassiveInfo = getRecommendationPassiveInfo(basePick);
+  const shinyPassiveInfo = getRecommendationPassiveInfo(shinyPick);
+  const shinyPassiveSignature = getRecommendationPassiveInfoSignature(shinyPassiveInfo);
+  const basePassiveSignature = getRecommendationPassiveInfoSignature(basePassiveInfo);
+
+  if (shinyPassiveSignature && shinyPassiveSignature !== basePassiveSignature) {
+    basePick._shinyVariantPassiveInfo = createShinyRecommendationPassiveInfo(shinyPassiveInfo);
+  }
+
+  const scoredBase = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(basePick));
+  const scoredShiny = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(shinyPick));
+  basePick._shinyVariantTier = scoredShiny.tier;
+  const shinyChangesScore = scoredBase._offense !== scoredShiny._offense
+    || scoredBase._defenseWorst !== scoredShiny._defenseWorst
+    || scoredBase.tier !== scoredShiny.tier;
+
+  if (shinyChangesScore) {
+    basePick._shinyVariantComparison = {
+      name: shinyPick.name,
+      offense: scoredShiny._offense,
+      defenseWorst: scoredShiny._defenseWorst,
+      tier: scoredShiny.tier
+    };
+  }
+}
+
+function createBaseRecommendationVariantFromShinyPick(shinyPick, seedConfigs = {}) {
+  if (!shinyPick) return null;
+
+  const registryEntry = getFixedRecommendationEntry(shinyPick);
+  if (registryEntry) {
+    return createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs);
+  }
+
+  const clonedPick = cloneRolePickConfig(shinyPick);
+  clonedPick.name = String(clonedPick.name || '').replace(/^shiny\b[\s-]*/i, '').trim() || clonedPick.name;
+  delete clonedPick.tier;
+  delete clonedPick.tierLocked;
+  return clonedPick;
+}
+
+function mergeShinyRecommendationVariantsInList(picks = [], bossRef, seedConfigs = {}) {
+  if (!Array.isArray(picks) || !picks.length || !bossRef) return;
+
+  const groupedEntries = [];
+  const groupByBaseKey = new Map();
+
+  picks.forEach((pick) => {
+    const baseKey = getRecommendationVariantBaseKey(pick);
+    if (!baseKey) {
+      groupedEntries.push({ baseKey: '', picks: [pick] });
+      return;
+    }
+
+    if (!groupByBaseKey.has(baseKey)) {
+      const entry = { baseKey, picks: [] };
+      groupByBaseKey.set(baseKey, entry);
+      groupedEntries.push(entry);
+    }
+
+    groupByBaseKey.get(baseKey).picks.push(pick);
+  });
+
+  const mergedPicks = [];
+
+  groupedEntries.forEach((entry) => {
+    const sourcePicks = Array.isArray(entry?.picks) ? entry.picks : [];
+    const explicitBasePick = sourcePicks.find((pick) => !isShinyRecommendationVariant(pick));
+    const shinyPicks = sourcePicks.filter((pick) => isShinyRecommendationVariant(pick));
+    const basePick = explicitBasePick || createBaseRecommendationVariantFromShinyPick(shinyPicks[0], seedConfigs);
+
+    if (!basePick) {
+      mergedPicks.push(...sourcePicks);
+      return;
+    }
+
+    shinyPicks.forEach((shinyPick) => {
+      mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRef);
+    });
+
+    mergedPicks.push(basePick);
+
+    sourcePicks.forEach((pick) => {
+      if (pick === basePick || shinyPicks.includes(pick)) return;
+      mergedPicks.push(pick);
+    });
+  });
+
+  picks.splice(0, picks.length, ...dedupeRecommendedPicksByName(mergedPicks));
+}
+
+function mergeShinyRecommendationVariantsAcrossBossCatalogs() {
+  const seedConfigs = buildFixedRecommendationSeedConfigs();
+
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      Object.values(boss.clans || {}).forEach((clanData) => {
+        if (Array.isArray(clanData.recommended)) {
+          mergeShinyRecommendationVariantsInList(clanData.recommended, boss, seedConfigs);
+        }
+
+        if (Array.isArray(clanData.recommendationGroups)) {
+          clanData.recommendationGroups.forEach((group) => {
+            mergeShinyRecommendationVariantsInList(group.recommended, getRecommendationGroupBossRef(boss, group), seedConfigs);
+          });
+        }
+
+        if (clanData.roles) {
+          roleboardRoleOrder.forEach((roleKey) => {
+            mergeShinyRecommendationVariantsInList(clanData.roles?.[roleKey], boss, seedConfigs);
+          });
+        }
+      });
+    });
+  });
+}
+
 function hydrateRecommendationCatalog() {
   visitAllRecommendationPicks((poke) => {
     applyImplicitRecommendationEnhancements(poke);
@@ -3792,6 +3961,117 @@ function getRecommendationPassiveInfo(poke) {
     text,
     items
   };
+}
+
+function getRecommendationDisplayPassiveInfo(poke) {
+  const basePassiveInfo = getRecommendationPassiveInfo(poke);
+  const shinyPassiveInfo = poke?._shinyVariantPassiveInfo;
+  if (!shinyPassiveInfo?.text) return basePassiveInfo;
+
+  const mergedItems = [];
+  const pushUniqueItems = (items = []) => {
+    items.forEach((item) => {
+      const normalizedItem = String(item || '').trim();
+      if (!normalizedItem || mergedItems.includes(normalizedItem)) return;
+      mergedItems.push(normalizedItem);
+    });
+  };
+
+  pushUniqueItems(basePassiveInfo?.items || (basePassiveInfo?.text ? [basePassiveInfo.text] : []));
+  pushUniqueItems(shinyPassiveInfo.items || [shinyPassiveInfo.text]);
+
+  return {
+    name: basePassiveInfo?.name || shinyPassiveInfo.name || '',
+    description: [basePassiveInfo?.description, shinyPassiveInfo.description].filter(Boolean).join(' '),
+    text: mergedItems.join(' '),
+    items: mergedItems
+  };
+}
+
+function getRecommendationShinyComparison(poke) {
+  if (!poke || typeof poke !== 'object') return null;
+
+  const shinyComparison = poke._shinyVariantComparison;
+  if (!shinyComparison) return null;
+
+  const currentOffense = typeof poke._offense === 'number' ? poke._offense : null;
+  const currentDefenseWorst = typeof poke._defenseWorst === 'number' ? poke._defenseWorst : null;
+  const shinyOffense = typeof shinyComparison.offense === 'number' ? shinyComparison.offense : null;
+  const shinyDefenseWorst = typeof shinyComparison.defenseWorst === 'number' ? shinyComparison.defenseWorst : null;
+
+  if (currentOffense === shinyOffense && currentDefenseWorst === shinyDefenseWorst) {
+    return null;
+  }
+
+  return shinyComparison;
+}
+
+function getRecommendationShinyTier(poke) {
+  if (!poke || typeof poke !== 'object') return '';
+  const shinyTier = typeof poke._shinyVariantTier === 'string' ? poke._shinyVariantTier.trim().toLowerCase() : '';
+  const baseTier = typeof poke.tier === 'string' ? poke.tier.trim().toLowerCase() : '';
+  if (!shinyTier || shinyTier === baseTier) return '';
+  return shinyTier;
+}
+
+function createRecommendationShinyHoverPanel(options = {}) {
+  const {
+    panelClassName = '',
+    headingClassName = '',
+    shinyTier = '',
+    shinyComparison = null,
+    createMetric = null,
+    tierModifierClass = '',
+    atkModifierClass = '',
+    defModifierClass = ''
+  } = options;
+
+  if (typeof createMetric !== 'function' || (!shinyTier && !shinyComparison)) {
+    return null;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = panelClassName;
+
+  const heading = document.createElement('span');
+  heading.className = headingClassName;
+  heading.textContent = 'Shiny';
+  panel.appendChild(heading);
+
+  if (shinyTier) {
+    panel.appendChild(
+      createMetric(
+        'Tier',
+        getTierUiLabel(shinyTier),
+        `${tierModifierClass} ${tierModifierClass}-${shinyTier}`.trim()
+      )
+    );
+  }
+
+  if (shinyComparison) {
+    panel.append(
+      createMetric(
+        'ATK',
+        typeof shinyComparison.offense === 'number' ? shinyComparison.offense.toFixed(2) : '-',
+        atkModifierClass
+      ),
+      createMetric(
+        'DEF',
+        typeof shinyComparison.defenseWorst === 'number' ? shinyComparison.defenseWorst.toFixed(2) : '-',
+        defModifierClass
+      )
+    );
+  }
+
+  return panel;
+}
+
+function createRecommendationShinyHoverIndicator(className = '') {
+  const indicator = document.createElement('span');
+  indicator.className = className;
+  indicator.textContent = '✨';
+  indicator.setAttribute('aria-hidden', 'true');
+  return indicator;
 }
 
 const passiveTooltipTriggerSelector = '.passive-tooltip-trigger, .boss-role-card__consumable-trigger[data-tooltip-items]';
@@ -4722,55 +5002,167 @@ applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('yellow');
-// Remover picks classificados como 'solo' ("Ruim") em chefes do Champion Path especificados
-function removeRuimPicksFromChampionPath() {
-  const targets = new Set(['mega-aerodactyl', 'mega-aggron', 'mega-salamence']);
-  (championPathBosses || []).forEach((boss) => {
-    if (!boss || !targets.has(boss.id)) return;
-    Object.values(boss.clans || {}).forEach((clanData) => {
-      if (!clanData || !clanData.roles) return;
-      roleboardRoleOrder.forEach((roleKey) => {
-        const list = Array.isArray(clanData.roles[roleKey]) ? clanData.roles[roleKey] : [];
-        const filtered = list.filter((poke) => {
-          try {
-            const scored = scoreRecommendationForBoss(boss, poke);
-            return String(scored?.tier || '').toLowerCase() !== 'solo';
-          } catch (e) {
-            return true;
-          }
-        });
-        clanData.roles[roleKey] = filtered;
-      });
+function getRecommendationTierPriority(tier) {
+  return tierPriority[String(tier || '').trim().toLowerCase()] ?? tierPriority.unknown;
+}
 
-      if (Array.isArray(clanData.recommended)) {
-        clanData.recommended = clanData.recommended.filter((poke) => {
-          try {
-            const scored = scoreRecommendationForBoss(boss, poke);
-            return String(scored?.tier || '').toLowerCase() !== 'solo';
-          } catch (e) {
-            return true;
-          }
-        });
+function buildFixedRecommendationSeedConfigs() {
+  const seeds = {};
+  const richnessByKey = {};
+  const getSeedRichness = (pick) => {
+    if (!pick || typeof pick !== 'object') return 0;
+
+    let score = 0;
+    const structuredKeys = [
+      'types',
+      'immunities',
+      'passiveSuperEffectiveTypes',
+      'defenseByBossType',
+      'defenseDamageFactorByBossType',
+      'matchupOverrides'
+    ];
+    const textKeys = ['note', 'passiveName', 'passiveDescription'];
+
+    structuredKeys.forEach((key) => {
+      const value = pick[key];
+      if (Array.isArray(value)) score += value.length;
+      else if (value && typeof value === 'object') score += Object.keys(value).length * 2;
+    });
+
+    textKeys.forEach((key) => {
+      if (typeof pick[key] === 'string' && pick[key].trim()) {
+        score += 1;
       }
+    });
 
-      if (Array.isArray(clanData.recommendationGroups)) {
-        clanData.recommendationGroups.forEach((group) => {
-          if (!Array.isArray(group.recommended)) return;
-          group.recommended = group.recommended.filter((poke) => {
-            try {
-              const scored = scoreRecommendationForBoss(getRecommendationGroupBossRef(boss, group), poke);
-              return String(scored?.tier || '').toLowerCase() !== 'solo';
-            } catch (e) {
-              return true;
+    return score;
+  };
+
+  visitAllRecommendationPicks((pick) => {
+    const registryEntry = getFixedRecommendationEntry(pick);
+    const nameKey = getRecommendationNameKey(pick);
+    if (!registryEntry || !nameKey) return;
+
+    const clonedPick = cloneRolePickConfig(pick);
+    delete clonedPick.tier;
+    delete clonedPick.tierLocked;
+
+    const richness = getSeedRichness(clonedPick);
+    if (!seeds[nameKey] || richness > (richnessByKey[nameKey] ?? -1)) {
+      seeds[nameKey] = clonedPick;
+      richnessByKey[nameKey] = richness;
+    }
+  });
+
+  return seeds;
+}
+
+function createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs = {}) {
+  if (!registryEntry) return null;
+
+  const nameKey = getRecommendationNameKey(registryEntry.name);
+  const seededPick = nameKey ? seedConfigs[nameKey] : null;
+  const nextPick = seededPick
+    ? cloneRolePickConfig(seededPick)
+    : createRolePick(registryEntry.name, [registryEntry.primaryType], registryEntry.primaryType);
+
+  delete nextPick.tier;
+  delete nextPick.tierLocked;
+  applyFixedRecommendationMetadata(nextPick, registryEntry);
+  return nextPick;
+}
+
+function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfigs = {}, excludedNameKeys = new Set()) {
+  const registryPool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
+  const soloThreshold = tierPriority.solo ?? tierPriority.unknown;
+
+  const rankedCandidates = registryPool
+    .map((registryEntry) => createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs))
+    .filter((pick) => pick && !excludedNameKeys.has(getRecommendationNameKey(pick)))
+    .map((pick) => {
+      const scored = scoreRecommendationForBoss(bossRef, pick);
+      return { pick, scored };
+    })
+    .filter(({ scored }) => getRecommendationTierPriority(scored?.tier) < soloThreshold)
+    .sort((left, right) => {
+      const leftPriority = getRecommendationTierPriority(left?.scored?.tier);
+      const rightPriority = getRecommendationTierPriority(right?.scored?.tier);
+      if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+      if ((right?.scored?._score ?? 0) !== (left?.scored?._score ?? 0)) {
+        return (right?.scored?._score ?? 0) - (left?.scored?._score ?? 0);
+      }
+      return String(left?.scored?.name || '').localeCompare(String(right?.scored?.name || ''));
+    });
+
+  return rankedCandidates[0]?.pick ? cloneRolePickConfig(rankedCandidates[0].pick) : null;
+}
+
+function filterRecommendationListByTier(list = [], bossRef) {
+  const soloThreshold = tierPriority.solo ?? tierPriority.unknown;
+  return dedupeRecommendedPicksByName((list || []).filter((pick) => {
+    try {
+      const scored = scoreRecommendationForBoss(bossRef, pick);
+      return getRecommendationTierPriority(scored?.tier) < soloThreshold;
+    } catch (e) {
+      return true;
+    }
+  }));
+}
+
+function removeRuimRecommendationsAndBackfillMissingBosses() {
+  const seedConfigs = buildFixedRecommendationSeedConfigs();
+  const targetCatalogs = ['hoopa', 'champion', 'mew2'];
+
+  targetCatalogs.forEach((catalogId) => {
+    const catalog = bossCatalogs[catalogId];
+    (catalog?.data || []).forEach((boss) => {
+      Object.entries(boss?.clans || {}).forEach(([clanKey, clanData]) => {
+        if (!clanData) return;
+
+        if (clanData.roles) {
+          roleboardRoleOrder.forEach((roleKey) => {
+            const filtered = filterRecommendationListByTier(clanData.roles?.[roleKey] || [], boss);
+            if (filtered.length) {
+              clanData.roles[roleKey] = filtered;
+              return;
             }
+
+            const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, roleKey, seedConfigs);
+            clanData.roles[roleKey] = fallbackPick ? [fallbackPick] : [];
           });
-        });
-      }
+          return;
+        }
+
+        if (Array.isArray(clanData.recommendationGroups)) {
+          clanData.recommendationGroups.forEach((group) => {
+            const bossRef = getRecommendationGroupBossRef(boss, group);
+            const filtered = filterRecommendationListByTier(group.recommended || [], bossRef);
+            if (filtered.length) {
+              group.recommended = filtered;
+              return;
+            }
+
+            const fallbackPick = pickFallbackRecommendationForBoss(bossRef, clanKey, 'dps', seedConfigs);
+            group.recommended = fallbackPick ? [fallbackPick] : [];
+          });
+          return;
+        }
+
+        if (Array.isArray(clanData.recommended)) {
+          const filtered = filterRecommendationListByTier(clanData.recommended, boss);
+          if (filtered.length) {
+            clanData.recommended = filtered;
+            return;
+          }
+
+          const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, 'dps', seedConfigs);
+          clanData.recommended = fallbackPick ? [fallbackPick] : [];
+        }
+      });
     });
   });
 }
 
-removeRuimPicksFromChampionPath();
 ensureMew2BossRolePicks('charizard', 'mystic', 'tank', [
   createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
 ]);
@@ -4829,6 +5221,9 @@ const mew2RequestedInstinctDpsByBoss = Object.freeze({
 Object.entries(mew2RequestedInstinctDpsByBoss).forEach(([bossId, picks]) => {
   ensureMew2BossRolePicks(bossId, 'instinct', 'dps', picks);
 });
+removeRuimRecommendationsAndBackfillMissingBosses();
+synchronizeRecommendationTiers();
+mergeShinyRecommendationVariantsAcrossBossCatalogs();
 refreshTierLegendLabels();
 
 function getActiveBossCatalog() {
@@ -8478,6 +8873,29 @@ function createRecommendationCard(poke, options = {}) {
       createScoreMetric('DEF', def, 'speedster-reco-score-row--def')
     );
 
+    const shinyComparison = getRecommendationShinyComparison(poke);
+    const shinyTier = getRecommendationShinyTier(poke);
+    const shinyHoverPanel = createRecommendationShinyHoverPanel({
+      panelClassName: 'speedster-reco-score-hover',
+      headingClassName: 'speedster-reco-score-hover__heading',
+      shinyTier,
+      shinyComparison,
+      createMetric: createScoreMetric,
+      tierModifierClass: 'speedster-reco-score-row--tier',
+      atkModifierClass: 'speedster-reco-score-row--atk',
+      defModifierClass: 'speedster-reco-score-row--def'
+    });
+    if (shinyHoverPanel) {
+      card.classList.add('speedster-reco-card--has-hover-details');
+      score.classList.add('speedster-reco-score--has-hover-details');
+      score.tabIndex = 0;
+      score.title = `${recommendationScoreTitle}${shinyTier ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
+      if (shinyTier) {
+        score.appendChild(createRecommendationShinyHoverIndicator('speedster-reco-score-indicator'));
+      }
+      score.appendChild(shinyHoverPanel);
+    }
+
     const img = document.createElement('img');
     img.className = 'speedster-reco-image';
     img.src = basePath + poke.image;
@@ -8499,7 +8917,7 @@ function createRecommendationCard(poke, options = {}) {
     nameEl.textContent = poke.name;
     nameWrapper.append(tierDot, nameEl);
 
-    const passiveInfo = getRecommendationPassiveInfo(poke);
+    const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
 
     const chips = document.createElement('div');
     chips.className = 'speedster-reco-chip-list';
@@ -9106,7 +9524,7 @@ function createRolePickCard(poke) {
   name.title = poke.note ? `${poke.name} - ${poke.note}` : poke.name;
 
   nameWrap.append(tierDot, name);
-  const passiveInfo = getRecommendationPassiveInfo(poke);
+  const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
 
   const score = document.createElement('div');
   score.className = 'boss-role-pick-score';
@@ -9133,6 +9551,41 @@ function createRolePickCard(poke) {
   defRow.append(defLabel, defValue);
 
   score.append(atkRow, defRow);
+  const shinyComparison = getRecommendationShinyComparison(poke);
+  const shinyTier = getRecommendationShinyTier(poke);
+  const shinyHoverPanel = createRecommendationShinyHoverPanel({
+    panelClassName: 'boss-role-pick-score-hover',
+    headingClassName: 'boss-role-pick-score-hover__heading',
+    shinyTier,
+    shinyComparison,
+    createMetric: (label, value, modifierClass) => {
+      const row = document.createElement('div');
+      row.className = `boss-role-pick-score-row ${modifierClass}`;
+
+      const metricLabel = document.createElement('span');
+      metricLabel.className = 'boss-role-pick-score-label';
+      metricLabel.textContent = label;
+
+      const metricValue = document.createElement('span');
+      metricValue.className = 'boss-role-pick-score-value';
+      metricValue.textContent = value;
+
+      row.append(metricLabel, metricValue);
+      return row;
+    },
+    tierModifierClass: 'boss-role-pick-score-row--tier',
+    atkModifierClass: 'boss-role-pick-score-row--atk',
+    defModifierClass: 'boss-role-pick-score-row--def'
+  });
+  if (shinyHoverPanel) {
+    score.classList.add('boss-role-pick-score--has-hover-details');
+    score.tabIndex = 0;
+    score.title = `${recommendationScoreTitle}${shinyTier ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
+    if (shinyTier) {
+      score.appendChild(createRecommendationShinyHoverIndicator('boss-role-pick-score-indicator'));
+    }
+    score.appendChild(shinyHoverPanel);
+  }
   head.append(nameWrap, score);
 
   copy.append(head);

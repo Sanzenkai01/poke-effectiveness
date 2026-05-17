@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v143`;
+const CACHE_NAME = `${CACHE_PREFIX}v153`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -24,14 +24,14 @@ const APP_SHELL = [
   new URL('./bosses/mewtwo.html', self.registration.scope).toString(),
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260515b', self.registration.scope).toString(),
-  new URL('./script.js?v=20260515a', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260517c', self.registration.scope).toString(),
+  new URL('./script.js?v=20260517c', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260509a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260509a', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260507b', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260515a', self.registration.scope).toString(),
-  new URL('./times/teams.json', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260517a', self.registration.scope).toString(),
+  new URL('./times/teams.json?v=20260517a', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()
 ];
@@ -140,6 +140,11 @@ self.addEventListener('fetch', event => {
     url.pathname.endsWith('/pokemons/pokemons.json')
     || url.pathname.endsWith('/pokemons/mega-pokemons.json')
   ){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(url.pathname.endsWith('/times/teams.json') || url.pathname.endsWith('times/teams.json')){
     event.respondWith(networkFirst(request));
     return;
   }

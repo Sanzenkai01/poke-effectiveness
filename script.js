@@ -197,7 +197,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260515a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260517a';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -228,7 +228,7 @@ const APP_ROUTE_ALIASES = {
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
-const TIMES_CATALOG_URL = 'times/teams.json';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260517a';
 const TEAM_POKEMON_IMAGE_VERSION = '20260507a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
@@ -3129,7 +3129,21 @@ const catchBallPreviewImages = {
     elemental: 'elemental',
     safari: 'pokebola'
 };
-const ballPrices = { ultra:130, story:250, elemental:325, safari:130 };
+const ballPrices = Object.freeze({ ultra:130, story:230, elemental:330, safari:130 });
+const CATCH_ELEMENTAL_BALL_OPTIONS = Object.freeze(
+    Object.entries(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, [rawType, ball]) => {
+        const type = normalizePokemonTypeKey(rawType);
+        if(!ball?.key || !ball?.label || !type || acc.some(entry => entry.key === ball.key)) return acc;
+        acc.push({ key: ball.key, label: ball.label, type });
+        return acc;
+    }, [])
+);
+const CATCH_TARGET_TYPE_OPTIONS = Object.freeze(
+    CATCH_ELEMENTAL_BALL_OPTIONS.map(({ type }) => ({
+        value: type,
+        label: formatPokemonTypeLabel(type)
+    }))
+);
 // counts per level differ between normal and shiny
 // for levels with multiple options we store an array of alternative requirements
 const captureData = {
@@ -3165,6 +3179,7 @@ function computeRequired(lvl, variant){
 function parseLog(text){
     let totalCost = 0;
     const counts = createEmptyCatchBallCounts();
+    const specificElementalCounts = createEmptyCatchSpecificElementalCounts();
     const moneyMatch = text.match(/spent\s+([\d.,]+)\s+dollars/i);
     if(moneyMatch) totalCost = parseFloat(moneyMatch[1].replace(',','.'));
     // allow multiple entries for the same ball type and sum them
@@ -3175,31 +3190,43 @@ function parseLog(text){
             counts[b] += parseInt(m[1],10);
         }
     });
-    // some logs list specific elemental-category balls by name; treat them as elemental
-    const elementalNames = Array.from(new Set(
-        Object.values(ELEMENTAL_BALL_TYPE_MAP)
-            .map(ball => String(ball?.label || '').replace(/\s*Ball$/i, '').trim())
-            .filter(Boolean)
-            .concat(['Nest'])
-    ));
-    elementalNames.forEach(name=>{
-        const re = new RegExp('(\\d+)\\s+'+name+'\\s+balls?', 'gi');
+    // Some logs list specific elemental balls by name. Keep them separated so we can
+    // decide later whether they stay elemental or fall back to story for the target.
+    CATCH_ELEMENTAL_BALL_OPTIONS.forEach(({ key, label })=>{
+        const ballName = String(label || '').replace(/\s*Ball$/i, '').trim();
+        if(!ballName) return;
+        const re = new RegExp('(\\d+)\\s+'+ballName+'\\s+balls?', 'gi');
         let m;
         while((m=re.exec(text)) !== null){
-            counts.elemental += parseInt(m[1],10);
+            specificElementalCounts[key] += parseInt(m[1],10);
         }
     });
-    return {totalCost, counts};
+    return {totalCost, counts, specificElementalCounts};
 }
 
 function createEmptyCatchBallCounts(){
     return { ultra: 0, story: 0, elemental: 0, safari: 0 };
 }
 
+function createEmptyCatchSpecificElementalCounts(){
+    return CATCH_ELEMENTAL_BALL_OPTIONS.reduce((acc, ball) => {
+        acc[ball.key] = 0;
+        return acc;
+    }, {});
+}
+
 function cloneCatchBallCounts(source = {}){
     const counts = createEmptyCatchBallCounts();
     catchBallOrder.forEach((ball) => {
         counts[ball] = Number(source?.[ball] || 0);
+    });
+    return counts;
+}
+
+function cloneCatchSpecificElementalCounts(source = {}){
+    const counts = createEmptyCatchSpecificElementalCounts();
+    Object.keys(counts).forEach((ballKey) => {
+        counts[ballKey] = Number(source?.[ballKey] || 0);
     });
     return counts;
 }
@@ -3231,7 +3258,7 @@ function getCatchRequiredAmount(option, chosen, variant){
 }
 
 function getBallPreviewImageSrc(ball){
-    const imageName = catchBallPreviewImages[ball] || 'pokebola';
+    const imageName = catchBallPreviewImages[ball] || ball || 'pokebola';
     return `balls/${imageName}.png`;
 }
 
@@ -3255,6 +3282,124 @@ function formatPokemonPriceLabel(value){
 
 function formatBallAmount(count, ball){
     return `${count}x ${getBallLabel(ball)}`;
+}
+
+function formatBallAmountWithLabel(count, label){
+    return `${count}x ${label}`;
+}
+
+function setCatchSelectOptions(select, items = [], config = {}){
+    if(!select) return;
+    const includeEmpty = Boolean(config.includeEmpty);
+    const emptyLabel = config.emptyLabel || '';
+    const preferredValue = config.selectedValue !== undefined ? config.selectedValue : select.value;
+    select.innerHTML = '';
+
+    if(includeEmpty){
+        const emptyOption = document.createElement('option');
+        emptyOption.value = '';
+        emptyOption.textContent = emptyLabel;
+        select.appendChild(emptyOption);
+    }
+
+    items.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = item.value;
+        option.textContent = item.label;
+        select.appendChild(option);
+    });
+
+    const hasPreferredValue = items.some(item => item.value === preferredValue);
+    if(hasPreferredValue){
+        select.value = preferredValue;
+    } else if(includeEmpty){
+        select.value = '';
+    } else if(items[0]){
+        select.value = items[0].value;
+    }
+}
+
+function getCatchSelectedTargetTypes(){
+    const seen = new Set();
+    return [
+        normalizePokemonTypeKey(catchTargetTypePrimarySelect?.value),
+        normalizePokemonTypeKey(catchTargetTypeSecondarySelect?.value)
+    ].filter((type) => {
+        if(!type || seen.has(type)) return false;
+        seen.add(type);
+        return true;
+    });
+}
+
+function getCatchTargetElementalBallOptions(targetTypes = getCatchSelectedTargetTypes()){
+    const seen = new Set();
+    return targetTypes
+        .map(type => ELEMENTAL_BALL_TYPE_MAP[normalizePokemonTypeKey(type)] || null)
+        .filter((ball) => {
+            if(!ball?.key || seen.has(ball.key)) return false;
+            seen.add(ball.key);
+            return true;
+        });
+}
+
+function getCatchElementalResolution(){
+    const targetTypes = getCatchSelectedTargetTypes();
+    const matchingBalls = getCatchTargetElementalBallOptions(targetTypes);
+    return {
+        targetTypes,
+        matchingBalls,
+        matchingBallKeys: new Set(matchingBalls.map(ball => ball.key)),
+        hasTarget: targetTypes.length > 0
+    };
+}
+
+function getCatchEffectiveRequirementBallKey(chosen){
+    return getCatchRequirementBallKey(chosen);
+}
+
+function getCatchBallDisplayLabel(ball){
+    return getBallLabel(ball);
+}
+
+function getCatchBallUnitPrice(ball){
+    return Number(ballPrices[ball] || 0);
+}
+
+function getCatchSpecificElementalBucket(ballKey, resolution = getCatchElementalResolution()){
+    if(!ballKey || !resolution?.hasTarget) return 'elemental';
+    return resolution.matchingBallKeys.has(ballKey) ? 'elemental' : 'story';
+}
+
+function initializeCatchElementalSelectors(){
+    setCatchSelectOptions(
+        catchTargetTypePrimarySelect,
+        CATCH_TARGET_TYPE_OPTIONS,
+        { includeEmpty: true, emptyLabel: 'Selecione o tipo principal', selectedValue: catchTargetTypePrimarySelect?.value || '' }
+    );
+    setCatchSelectOptions(
+        catchTargetTypeSecondarySelect,
+        CATCH_TARGET_TYPE_OPTIONS,
+        { includeEmpty: true, emptyLabel: 'Sem 2o tipo', selectedValue: catchTargetTypeSecondarySelect?.value || '' }
+    );
+}
+
+function updateCatchElementalRuleStatus(){
+    if(!catchElementalRuleStatus) return;
+    const { targetTypes, matchingBalls, hasTarget } = getCatchElementalResolution();
+    const targetLabel = targetTypes.map(formatPokemonTypeLabel).join(' / ');
+    const matchingBallLabel = matchingBalls.map(ball => ball.label).join(', ');
+
+    let tone = 'idle';
+    let message = '';
+
+    if(hasTarget){
+        tone = 'elemental';
+        message = `Para ${targetLabel}, contam como ${getBallLabel('elemental')}: ${matchingBallLabel}. As outras elementais do log entram como ${getBallLabel('story')}.`;
+    }
+
+    catchElementalRuleStatus.dataset.tone = tone;
+    catchElementalRuleStatus.textContent = message;
+    catchElementalRuleStatus.hidden = !message;
 }
 
 function renderCatchChips(items){
@@ -3286,17 +3431,24 @@ function renderCatchPills(items, accent = false){
 
 function createCatchLogState(text){
     const normalizedText = String(text || '');
-    const { totalCost, counts } = parseLog(normalizedText);
+    const { totalCost, counts, specificElementalCounts } = parseLog(normalizedText);
     return {
         sourceText: normalizedText,
         parsedTotalCost: Number(totalCost) || 0,
         parsedCounts: cloneCatchBallCounts(counts),
+        parsedSpecificElementalCounts: cloneCatchSpecificElementalCounts(specificElementalCounts),
         manualCounts: createEmptyCatchBallCounts()
     };
 }
 
 function getCatchLogCombinedCounts(state){
     const counts = cloneCatchBallCounts(state?.parsedCounts);
+    const specificElementalCounts = cloneCatchSpecificElementalCounts(state?.parsedSpecificElementalCounts);
+    const resolution = getCatchElementalResolution();
+    Object.entries(specificElementalCounts).forEach(([ballKey, count]) => {
+        const bucket = getCatchSpecificElementalBucket(ballKey, resolution);
+        counts[bucket] = Number(counts[bucket] || 0) + Number(count || 0);
+    });
     catchBallOrder.forEach((ball) => {
         counts[ball] = Math.max(0, counts[ball] + Number(state?.manualCounts?.[ball] || 0));
     });
@@ -3305,7 +3457,7 @@ function getCatchLogCombinedCounts(state){
 
 function getCatchLogManualCostDelta(state){
     return catchBallOrder.reduce((sum, ball) => {
-        return sum + (Number(state?.manualCounts?.[ball] || 0) * (ballPrices[ball] || 0));
+        return sum + (Number(state?.manualCounts?.[ball] || 0) * getCatchBallUnitPrice(ball));
     }, 0);
 }
 
@@ -3316,12 +3468,12 @@ function formatCatchQuickAdjustment(ball, manualCount){
     return t('catchQuickAdjustSummary')
         .replace('{sign}', manualCount > 0 ? '+' : '-')
         .replace('{count}', Math.abs(manualCount))
-        .replace('{ball}', getBallLabel(ball));
+        .replace('{ball}', getCatchBallDisplayLabel(ball));
 }
 
 function updateBallPreview(){
     const selectedBall = document.getElementById('ball-select')?.value || 'elemental';
-    const selectedBallLabel = getBallLabel(selectedBall);
+    const selectedBallLabel = getCatchBallDisplayLabel(selectedBall);
     const previewImage = document.getElementById('ball-img');
     if(previewImage){
         previewImage.src = getBallPreviewImageSrc(selectedBall);
@@ -3330,7 +3482,8 @@ function updateBallPreview(){
     const previewName = document.getElementById('ball-preview-name');
     if(previewName) previewName.textContent = selectedBallLabel;
     const previewPrice = document.getElementById('ball-preview-price');
-    if(previewPrice) previewPrice.textContent = `${formatCurrencyValue(ballPrices[selectedBall] || 0)} cada`;
+    if(previewPrice) previewPrice.textContent = `${formatCurrencyValue(getCatchBallUnitPrice(selectedBall))} cada`;
+    updateCatchElementalRuleStatus();
 }
 
 function renderCatchEstimateResult(target, chosen, lvl, variant, optionItems){
@@ -3339,15 +3492,16 @@ function renderCatchEstimateResult(target, chosen, lvl, variant, optionItems){
         target.innerHTML = `<div class="calc-result-highlight catch-result-empty">${t('noBallsParsed')}</div>`;
         return;
     }
-    const headline = formatBallAmount(optionItems[0].needed, chosen);
+    const selectedBallLabel = getCatchBallDisplayLabel(chosen);
+    const headline = formatBallAmountWithLabel(optionItems[0].needed, selectedBallLabel);
     const chips = renderCatchChips([
         `${t('catchResultLevelLabel')}: ${getCatchLevelLabel(lvl)}`,
         `${t('catchResultVariantLabel')}: ${getCatchVariantLabel(variant)}`,
-        `${t('catchResultBallLabel')}: ${getBallLabel(chosen)}`
+        `${t('catchResultBallLabel')}: ${selectedBallLabel}`
     ]);
     const metrics = renderCatchMetrics(optionItems.map((item, index)=>({
         label: optionItems.length > 1 ? `${t('catchOptionLabel')} ${index + 1}` : t('catchResultCountLabel'),
-        value: formatBallAmount(item.needed, chosen)
+        value: formatBallAmountWithLabel(item.needed, selectedBallLabel)
     })));
     target.innerHTML = `
         <div class="calc-result-highlight catch-result-shell">
@@ -3380,17 +3534,17 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
         `;
         return;
     }
-    const selectedBallLabel = getBallLabel(chosen);
+    const selectedBallLabel = getCatchBallDisplayLabel(chosen);
     const metrics = renderCatchMetrics([
         {label: t('catchLogSpentLabel'), value: formatCurrencyValue(totalCost)},
-        {label: t('catchLogEquivalentLabel').replace('{ball}', selectedBallLabel), value: formatBallAmount(effectiveUsed, chosen)},
+        {label: t('catchLogEquivalentLabel').replace('{ball}', selectedBallLabel), value: formatBallAmountWithLabel(effectiveUsed, selectedBallLabel)},
         {label: t('catchLogBallsLabel'), value: `${totalBalls}`}
     ]);
     const breakdown = renderCatchPills(
-        catchBallOrder.map((ball) => `${getBallLabel(ball)}: ${counts[ball] || 0}`)
+        catchBallOrder.map((ball) => `${getCatchBallDisplayLabel(ball)}: ${counts[ball] || 0}`)
     );
     const statusLines = remainingItems.length
-        ? remainingItems.map(item=>formatBallAmount(item.needed, chosen))
+        ? remainingItems.map(item=>formatBallAmountWithLabel(item.needed, selectedBallLabel))
         : [
             t('avgReached').replace('{avg}', avgNeeded).replace('{ball}', selectedBallLabel),
             over > 0 ? t('overAvg').replace('{over}', over).replace('{ball}', selectedBallLabel) : '',
@@ -3399,14 +3553,14 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
     const statusTitle = remainingItems.length ? t('catchRemainingTitle') : t('catchAchievedTitle');
     const statusMarkup = renderCatchPills(statusLines, remainingItems.length);
     const manualCount = Number(manualState?.manualCount || 0);
-    const selectedBallCount = Number(counts?.[chosen] || 0);
+    const adjustableBallCount = Number(manualState?.baseCount || 0);
     const quickAdjustSummary = formatCatchQuickAdjustment(chosen, manualCount);
     target.innerHTML = `
         <div class="calc-result-highlight catch-result-shell">
             <div class="catch-result-shell__header">
                 <div>
                     <span class="catch-result-shell__eyebrow">${t('catchLogResultTitle')}</span>
-                    <div class="catch-result-shell__title">${formatBallAmount(effectiveUsed, chosen)}</div>
+                    <div class="catch-result-shell__title">${formatBallAmountWithLabel(effectiveUsed, selectedBallLabel)}</div>
                 </div>
                 <div class="catch-result-shell__meta">
                     ${renderCatchChips([`${t('catchResultBallLabel')}: ${selectedBallLabel}`])}
@@ -3425,7 +3579,7 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
                         data-catch-adjust-ball="${chosen}"
                         data-catch-adjust-step="-1"
                         aria-label="${t('catchQuickAdjustDecrease').replace('{ball}', selectedBallLabel)}"
-                        ${selectedBallCount <= 0 ? 'disabled' : ''}
+                        ${adjustableBallCount <= 0 ? 'disabled' : ''}
                     >-1</button>
                     <span class="catch-log-adjuster__value">${quickAdjustSummary}</span>
                     <button
@@ -4236,7 +4390,7 @@ function ensureTeamsCatalogLoaded(force = false){
 }
 
 function loadTeamsCatalog(){
-    return fetch(TIMES_CATALOG_URL)
+    return fetch(TIMES_CATALOG_URL, { cache: 'no-store' })
         .then((response) => {
             if(!response.ok){
                 throw new Error(`Falha ao carregar ${TIMES_CATALOG_URL}: ${response.status}`);
@@ -9596,10 +9750,13 @@ const calcCatchBtn = document.getElementById('calc-catch-btn');
 const parseLogBtn = document.getElementById('parse-log');
 const logResult = document.getElementById('log-result');
 const catchVariantInputs = document.querySelectorAll('input[name="catch-variant"]');
+const catchTargetTypePrimarySelect = document.getElementById('catch-target-type-primary');
+const catchTargetTypeSecondarySelect = document.getElementById('catch-target-type-secondary');
+const catchElementalRuleStatus = document.getElementById('catch-elemental-rule-status');
 
 function getSelectedCatchRequirementOptions(lvl, variant, chosen){
     const reqList = computeRequired(lvl, variant) || [];
-    const requirementBall = getCatchRequirementBallKey(chosen);
+    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
 
     // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
     // If found, present only that option. Otherwise, if multiple alternatives exist,
@@ -9616,9 +9773,10 @@ function getSelectedCatchRequirementOptions(lvl, variant, chosen){
 }
 
 function getCatchOptionItems(lvl, variant, chosen){
+    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
     return getSelectedCatchRequirementOptions(lvl, variant, chosen)
         .map(opt=>{
-            const needed = getCatchRequiredAmount(opt, chosen, variant);
+            const needed = getCatchRequiredAmount(opt, requirementBall, variant);
             if(needed === 0) return null;
             return {needed};
         })
@@ -9644,23 +9802,27 @@ function renderCatchLogFromState(){
     const lvl = levelSelect ? levelSelect.value : '5';
     const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
     const selectedOptions = getSelectedCatchRequirementOptions(lvl, variant, chosen);
+    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
+    const chosenPrice = getCatchBallUnitPrice(chosen);
     const counts = getCatchLogCombinedCounts(state);
     const convertToChosen = (typeCountMap, target) => {
         let sum = 0;
+        const targetPrice = getCatchBallUnitPrice(target);
         Object.entries(typeCountMap).forEach(([type,cnt])=>{
-            if(cnt && ballPrices[target] && ballPrices[type]){
-                sum += cnt * ballPrices[type] / ballPrices[target];
+            const sourcePrice = getCatchBallUnitPrice(type);
+            if(cnt && targetPrice && sourcePrice){
+                sum += cnt * sourcePrice / targetPrice;
             }
         });
         return Math.floor(sum);
     };
     let totalCost = Math.max(0, (Number(state.parsedTotalCost) || 0) + getCatchLogManualCostDelta(state));
     const converted = convertToChosen(counts, chosen);
-    const costBased = ballPrices[chosen] ? Math.floor(totalCost / ballPrices[chosen]) : 0;
+    const costBased = chosenPrice ? Math.floor(totalCost / chosenPrice) : 0;
     const effectiveUsed = Math.max(converted, costBased);
     const remMap = {};
     selectedOptions.forEach(opt=>{
-        const needed = Math.max(getCatchRequiredAmount(opt, chosen, variant) - effectiveUsed, 0);
+        const needed = Math.max(getCatchRequiredAmount(opt, requirementBall, variant) - effectiveUsed, 0);
         if(needed > 0){
             const key = `${needed}`;
             if(!remMap[key]){
@@ -9672,21 +9834,23 @@ function renderCatchLogFromState(){
     if(totalCost === 0){
         totalCost = 0;
         Object.entries(counts).forEach(([type,cnt])=>{
-            if(cnt && ballPrices[type]){
-                totalCost += cnt * ballPrices[type];
+            const unitPrice = getCatchBallUnitPrice(type);
+            if(cnt && unitPrice){
+                totalCost += cnt * unitPrice;
             }
         });
     }
     let avgNeeded = 0;
-    const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, chosen, variant) > 0);
+    const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, requirementBall, variant) > 0);
     if(directOpt){
-        avgNeeded = getCatchRequiredAmount(directOpt, chosen, variant);
-    } else if(selectedOptions.length && ballPrices[chosen]){
+        avgNeeded = getCatchRequiredAmount(directOpt, requirementBall, variant);
+    } else if(selectedOptions.length && chosenPrice){
         avgNeeded = convertToChosen(selectedOptions[0], chosen);
     }
     const over = effectiveUsed - avgNeeded;
     renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over, {
-        manualCount: Number(state?.manualCounts?.[chosen] || 0)
+        manualCount: Number(state?.manualCounts?.[chosen] || 0),
+        baseCount: Number(state?.parsedCounts?.[chosen] || 0) + Number(state?.manualCounts?.[chosen] || 0)
     });
 }
 
@@ -9714,6 +9878,7 @@ function adjustCatchLogCount(ball, step){
 
 function initializeCatchPage(){
     if(catchPageInitialized) return;
+    initializeCatchElementalSelectors();
 
     if(ballSelect){
         ballSelect.addEventListener('change',()=>{
@@ -9725,6 +9890,18 @@ function initializeCatchPage(){
             }
         });
     }
+
+    [catchTargetTypePrimarySelect, catchTargetTypeSecondarySelect].forEach((field) => {
+        if(!field) return;
+        field.addEventListener('change', () => {
+            updateBallPreview();
+            if(catchResult && catchResult.innerHTML.trim() !== ''){
+                renderCatchCalculation();
+            } else if(logResult && logResult.innerHTML.trim() !== ''){
+                processLogText(document.getElementById('log-input')?.value || '');
+            }
+        });
+    });
 
     if(levelSelect){
         levelSelect.addEventListener('change',()=>{
