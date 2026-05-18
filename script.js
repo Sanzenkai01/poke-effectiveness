@@ -79,6 +79,7 @@ const tabCatchBtn = document.getElementById('tab-catch');
 const tabSpeedstersBtn = document.getElementById('tab-bosses');
 const tabStreamersBtn = document.getElementById('tab-streamers');
 const tabCommunityBtn = document.getElementById('tab-community');
+const visionToggleBtn = document.getElementById('vision-toggle-btn');
 const cursorToggleBtn = document.getElementById('cursor-toggle-btn');
 const homeBtn = document.getElementById('home-btn');
 const homeExploreBtn = document.getElementById('home-explore-btn');
@@ -131,6 +132,14 @@ const pokemonFilterClearBtn = document.getElementById('pokemon-filter-clear');
 const timesStatus = document.getElementById('times-status');
 const timesSearchInput = document.getElementById('times-search-input');
 const timesCardGrid = document.getElementById('times-card-grid');
+
+if(homeBtn && cursorToggleBtn){
+    const headerEl = cursorToggleBtn.parentElement;
+    if(headerEl){
+        if(visionToggleBtn) headerEl.insertBefore(visionToggleBtn, cursorToggleBtn);
+        headerEl.insertBefore(homeBtn, visionToggleBtn || cursorToggleBtn);
+    }
+}
 const timesEmptyState = document.getElementById('times-empty-state');
 const timesEmptyTitle = document.getElementById('times-empty-title');
 const timesEmptyText = document.getElementById('times-empty-text');
@@ -197,7 +206,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260517b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260518a';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -2203,6 +2212,8 @@ const strings = {
         shareLabel: 'Compartilhar',
         cursorToggleSystem: 'Usar cursor padrao',
         cursorTogglePikachu: 'Usar cursor Pikachu',
+        visionToggleColorblind: 'Ativar modo daltonico',
+        visionToggleStandard: 'Usar modo padrao',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendEffective: 'Efetivo 1.5x',
@@ -2337,6 +2348,9 @@ const FIXED_BROWSER_TITLE = 'Poke Utilities';
 const SITE_CURSOR_MODE_STORAGE_KEY = 'siteCursorMode';
 const SITE_CURSOR_MODE_PIKACHU = 'pikachu';
 const SITE_CURSOR_MODE_SYSTEM = 'system';
+const SITE_VISION_MODE_STORAGE_KEY = 'siteVisionMode';
+const SITE_VISION_MODE_STANDARD = 'standard';
+const SITE_VISION_MODE_COLORBLIND = 'colorblind';
 
 function normalizeSiteCursorMode(value){
     return value === SITE_CURSOR_MODE_SYSTEM ? SITE_CURSOR_MODE_SYSTEM : SITE_CURSOR_MODE_PIKACHU;
@@ -2391,6 +2405,60 @@ function toggleSiteCursorMode(){
 }
 
 applySiteCursorMode(getActiveSiteCursorMode(), { persist: false });
+
+function normalizeSiteVisionMode(value){
+    return value === SITE_VISION_MODE_COLORBLIND ? SITE_VISION_MODE_COLORBLIND : SITE_VISION_MODE_STANDARD;
+}
+
+function getStoredSiteVisionMode(){
+    try{
+        return normalizeSiteVisionMode(localStorage.getItem(SITE_VISION_MODE_STORAGE_KEY));
+    }catch(e){
+        return SITE_VISION_MODE_STANDARD;
+    }
+}
+
+function getActiveSiteVisionMode(){
+    const currentMode = document.documentElement?.dataset?.visionMode || '';
+    if(currentMode === SITE_VISION_MODE_STANDARD || currentMode === SITE_VISION_MODE_COLORBLIND){
+        return currentMode;
+    }
+    return getStoredSiteVisionMode();
+}
+
+function syncVisionToggleButton(mode = getActiveSiteVisionMode()){
+    if(!visionToggleBtn) return;
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    const colorblindActive = resolvedMode === SITE_VISION_MODE_COLORBLIND;
+    visionToggleBtn.setAttribute('aria-pressed', colorblindActive ? 'true' : 'false');
+    visionToggleBtn.setAttribute('aria-label', t(colorblindActive ? 'visionToggleStandard' : 'visionToggleColorblind'));
+    visionToggleBtn.title = t(colorblindActive ? 'visionToggleStandard' : 'visionToggleColorblind');
+}
+
+function applySiteVisionMode(mode, options = {}){
+    const { persist = true } = options;
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    if(document.documentElement){
+        document.documentElement.dataset.visionMode = resolvedMode;
+    }
+    if(persist){
+        try{
+            localStorage.setItem(SITE_VISION_MODE_STORAGE_KEY, resolvedMode);
+        }catch(e){}
+    }
+    syncVisionToggleButton(resolvedMode);
+    return resolvedMode;
+}
+
+function toggleSiteVisionMode(){
+    return applySiteVisionMode(
+        getActiveSiteVisionMode() === SITE_VISION_MODE_COLORBLIND
+            ? SITE_VISION_MODE_STANDARD
+            : SITE_VISION_MODE_COLORBLIND
+    );
+}
+
+applySiteVisionMode(getActiveSiteVisionMode(), { persist: false });
 
 function updateBrowserTitle(){
     document.title = FIXED_BROWSER_TITLE;
@@ -2607,6 +2675,7 @@ function updateTextContent(){
         shareBtn.setAttribute('aria-label', t('shareLabel'));
     }
     syncCursorToggleButton();
+    syncVisionToggleButton();
     const themeBtn = document.getElementById('theme-toggle');
     if(themeBtn){
         themeBtn.setAttribute('aria-label', t('themeToggle'));
@@ -9707,6 +9776,11 @@ function initFromUrl(){
 }
 
 const shareBtn=document.getElementById('share-btn');
+if(visionToggleBtn){
+    visionToggleBtn.addEventListener('click',()=>{
+        toggleSiteVisionMode();
+    });
+}
 if(cursorToggleBtn){
     cursorToggleBtn.addEventListener('click',()=>{
         toggleSiteCursorMode();

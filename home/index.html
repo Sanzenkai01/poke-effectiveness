@@ -9,7 +9,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css?v=20260517c">
+    <script>
+      (function(){
+        try {
+          var cursorMode = localStorage.getItem('siteCursorMode');
+          var visionMode = localStorage.getItem('siteVisionMode');
+          document.documentElement.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
+          document.documentElement.dataset.visionMode = visionMode === 'colorblind' ? 'colorblind' : 'standard';
+        } catch (error) {
+          document.documentElement.dataset.cursorMode = 'pikachu';
+          document.documentElement.dataset.visionMode = 'standard';
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="../styles.css?v=20260518c">
 </head>
 <body class="dark home-view">
     <main>

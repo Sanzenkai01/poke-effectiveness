@@ -8,7 +8,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20260419d">
+  <script>
+    (function(){
+      try {
+        var cursorMode = localStorage.getItem('siteCursorMode');
+        var visionMode = localStorage.getItem('siteVisionMode');
+        document.documentElement.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
+        document.documentElement.dataset.visionMode = visionMode === 'colorblind' ? 'colorblind' : 'standard';
+      } catch (error) {
+        document.documentElement.dataset.cursorMode = 'pikachu';
+        document.documentElement.dataset.visionMode = 'standard';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../styles.css?v=20260518c">
 </head>
 <body data-active-tab="bosses" data-initial-boss-mode="horizons">
   <header class="header">
@@ -63,6 +76,6 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="bosses.js?v=20260517b"></script>
+  <script src="bosses.js?v=20260518a"></script>
 </body>
 </html>

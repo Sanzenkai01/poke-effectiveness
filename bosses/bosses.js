@@ -3857,6 +3857,14 @@ const tierLabels = {
   solo: 'Ruim',
   unknown: 'Sem informacao'
 };
+const tierAssistLabels = {
+  green: 'Ideal',
+  otimo: 'M. bom',
+  yellow: 'Bom',
+  red: 'Aceit.',
+  solo: 'Ruim',
+  unknown: 'Sem info'
+};
 const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do moveset do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
 function refreshTierLegendLabels() {
@@ -3880,6 +3888,15 @@ function refreshTierLegendLabels() {
       }
     });
   });
+}
+
+function createTierAssistBadge(tier, extraClassName = '') {
+  const badge = document.createElement('span');
+  badge.className = `tier-assist-badge ${extraClassName}`.trim();
+  badge.dataset.tier = tier;
+  badge.textContent = tierAssistLabels[tier] || tierAssistLabels.unknown;
+  badge.setAttribute('aria-hidden', 'true');
+  return badge;
 }
 
 function extractRegisteredPassiveDescription(text) {
@@ -8945,7 +8962,7 @@ function createRecommendationCard(poke, options = {}) {
     const nameEl = document.createElement('div');
     nameEl.className = 'speedster-reco-name';
     nameEl.textContent = poke.name;
-    nameWrapper.append(tierDot, nameEl);
+    nameWrapper.append(tierDot, nameEl, createTierAssistBadge(tier, 'tier-assist-badge--reco'));
 
     const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
 
@@ -9553,7 +9570,7 @@ function createRolePickCard(poke) {
   name.textContent = poke.name;
   name.title = poke.note ? `${poke.name} - ${poke.note}` : poke.name;
 
-  nameWrap.append(tierDot, name);
+  nameWrap.append(tierDot, name, createTierAssistBadge(poke.tier || 'unknown', 'tier-assist-badge--role'));
   const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
 
   const score = document.createElement('div');
