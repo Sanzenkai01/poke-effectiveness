@@ -3555,6 +3555,344 @@ function setCatchSelectOptions(select, items = [], config = {}){
     }
 }
 
+const catchTypeSelectControllers = new Map();
+let catchTypeSelectHandlersBound = false;
+
+function setCatchTypeSelectTone(node, type){
+    if(!(node instanceof HTMLElement)) return;
+    const normalizedType = normalizePokemonTypeKey(type);
+    if(!normalizedType){
+        node.style.removeProperty('--type-color');
+        node.style.removeProperty('--type-color-rgb');
+        return;
+    }
+    const color = getTypeColor(normalizedType);
+    node.style.setProperty('--type-color', color);
+    node.style.setProperty('--type-color-rgb', hexToRgb(color));
+}
+
+function createCatchTypeSelectThumb(type, label, className = 'catch-type-select__thumb'){
+    const thumb = document.createElement('span');
+    thumb.className = className;
+
+    if(type){
+        const img = document.createElement('img');
+        img.src = `icons-type/${type}.png`;
+        img.alt = label || formatPokemonTypeLabel(type);
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        thumb.appendChild(img);
+    } else {
+        thumb.textContent = '+';
+    }
+
+    return thumb;
+}
+
+function createCatchTypeSelectText(label, hint){
+    const text = document.createElement('span');
+    text.className = 'catch-type-select__text';
+
+    const strong = document.createElement('strong');
+    strong.textContent = label;
+
+    const helper = document.createElement('span');
+    helper.textContent = hint;
+
+    text.append(strong, helper);
+    return text;
+}
+
+function getCatchTypeSelectController(selectOrId){
+    const id = typeof selectOrId === 'string'
+        ? selectOrId
+        : selectOrId instanceof HTMLSelectElement
+            ? selectOrId.id
+            : '';
+    return id ? catchTypeSelectControllers.get(id) || null : null;
+}
+
+function closeCatchTypeSelectMenus(exceptId = ''){
+    catchTypeSelectControllers.forEach((controller, selectId) => {
+        if(exceptId && selectId === exceptId) return;
+        controller.wrapper.classList.remove('catch-type-select--open');
+        controller.trigger.setAttribute('aria-expanded', 'false');
+        controller.menu.hidden = true;
+    });
+}
+
+function focusCatchTypeSelectOption(controller, direction = 1){
+    if(!controller?.optionButtons?.length) return;
+    const buttons = controller.optionButtons;
+    const activeIndex = buttons.findIndex((button) => button === document.activeElement);
+    const selectedIndex = Math.max(0, buttons.findIndex((button) => button.dataset.value === controller.select.value));
+    const startIndex = activeIndex >= 0 ? activeIndex : selectedIndex;
+    const nextIndex = (startIndex + direction + buttons.length) % buttons.length;
+    buttons[nextIndex]?.focus();
+}
+
+function setCatchTypeSelectMenuOpen(controller, shouldOpen, focusSelected = false){
+    if(!controller) return;
+
+    if(shouldOpen){
+        closeCatchTypeSelectMenus(controller.select.id);
+        controller.wrapper.classList.add('catch-type-select--open');
+        controller.trigger.setAttribute('aria-expanded', 'true');
+        controller.menu.hidden = false;
+        if(focusSelected){
+            requestAnimationFrame(() => {
+                const selectedButton = controller.optionButtons.find((button) => button.dataset.value === String(controller.select.value || ''));
+                (selectedButton || controller.optionButtons[0])?.focus();
+            });
+        }
+        return;
+    }
+
+    controller.wrapper.classList.remove('catch-type-select--open');
+    controller.trigger.setAttribute('aria-expanded', 'false');
+    controller.menu.hidden = true;
+}
+
+function syncCatchTypeSelectUi(select){
+    const controller = getCatchTypeSelectController(select);
+    if(!controller) return;
+
+    const value = String(select?.value || '');
+    const normalizedType = normalizePokemonTypeKey(value);
+    const selectedOption = Array.from(select.options).find((option) => option.value === value) || select.options[0] || null;
+    const selectedLabel = String(selectedOption?.textContent || controller.placeholder || '').trim();
+
+    controller.triggerCopy.replaceChildren();
+    if(normalizedType){
+        controller.triggerCopy.append(
+            createCatchTypeSelectThumb(normalizedType, selectedLabel),
+            createCatchTypeSelectText(selectedLabel, controller.selectedHint)
+        );
+    } else {
+        controller.triggerCopy.classList.add('catch-type-select__trigger-copy--placeholder');
+        controller.triggerCopy.append(
+            createCatchTypeSelectThumb('', '', 'catch-type-select__placeholder-mark'),
+            createCatchTypeSelectText(selectedLabel || controller.placeholder, controller.emptyHint)
+        );
+    }
+    if(normalizedType){
+        controller.triggerCopy.classList.remove('catch-type-select__trigger-copy--placeholder');
+    }
+
+    controller.trigger.setAttribute('aria-label', `${controller.label}: ${selectedLabel || controller.placeholder}`);
+    setCatchTypeSelectTone(controller.wrapper, normalizedType);
+    setCatchTypeSelectTone(controller.trigger, normalizedType);
+
+    controller.optionButtons.forEach((button) => {
+        const isSelected = button.dataset.value === value;
+        button.classList.toggle('catch-type-select__option--selected', isSelected);
+        button.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+    });
+}
+
+function ensureCatchTypeSelectHandlers(){
+    if(catchTypeSelectHandlersBound) return;
+
+    document.addEventListener('pointerdown', (event) => {
+        const target = event.target;
+        if(!(target instanceof Node)) return;
+        const clickedInside = Array.from(catchTypeSelectControllers.values())
+            .some((controller) => controller.wrapper.contains(target));
+        if(!clickedInside){
+            closeCatchTypeSelectMenus();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if(event.key !== 'Escape') return;
+        const openController = Array.from(catchTypeSelectControllers.values())
+            .find((controller) => controller.wrapper.classList.contains('catch-type-select--open'));
+        if(!openController) return;
+        event.preventDefault();
+        setCatchTypeSelectMenuOpen(openController, false);
+        openController.trigger.focus();
+    });
+
+    catchTypeSelectHandlersBound = true;
+}
+
+function renderCatchTypeSelect(select){
+    if(!(select instanceof HTMLSelectElement)) return;
+
+    const wrapper = select.closest('.catch-type-select');
+    const uiRoot = wrapper?.querySelector('.catch-type-select__ui');
+    if(!(wrapper instanceof HTMLElement) || !(uiRoot instanceof HTMLElement)) return;
+
+    const labelEl = wrapper.closest('.catch-elemental-config__field')?.querySelector(`label[for="${select.id}"]`);
+    const isSecondary = select.id === 'catch-target-type-secondary';
+    const placeholder = String(select.options[0]?.textContent || '').trim();
+
+    uiRoot.replaceChildren();
+    wrapper.classList.add('catch-type-select--enhanced');
+    uiRoot.setAttribute('aria-hidden', 'false');
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.id = `${select.id}-trigger`;
+    trigger.className = 'catch-type-select__trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-controls', `${select.id}-menu`);
+
+    const triggerCopy = document.createElement('span');
+    triggerCopy.className = 'catch-type-select__trigger-copy';
+
+    const chevron = document.createElement('span');
+    chevron.className = 'catch-type-select__chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.textContent = 'v';
+
+    trigger.append(triggerCopy, chevron);
+
+    const menu = document.createElement('div');
+    menu.id = `${select.id}-menu`;
+    menu.className = 'catch-type-select__menu';
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-labelledby', trigger.id);
+    menu.hidden = true;
+
+    const optionButtons = Array.from(select.options).map((option) => {
+        const value = String(option.value || '');
+        const normalizedType = normalizePokemonTypeKey(value);
+        const label = String(option.textContent || '').trim();
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `catch-type-select__option${normalizedType ? '' : ' catch-type-select__option--empty'}`;
+        button.dataset.value = value;
+        button.setAttribute('role', 'option');
+        button.setAttribute('aria-selected', 'false');
+        setCatchTypeSelectTone(button, normalizedType);
+
+        if(normalizedType){
+            button.append(
+                createCatchTypeSelectThumb(normalizedType, label),
+                createCatchTypeSelectText(label, isSecondary ? 'Elemento opcional' : 'Elemento principal')
+            );
+        } else {
+            button.append(
+                createCatchTypeSelectThumb('', '', 'catch-type-select__placeholder-mark'),
+                createCatchTypeSelectText(label, isSecondary ? 'Sem segundo tipo' : 'Escolha um elemento')
+            );
+        }
+
+        button.addEventListener('click', () => {
+            const previousValue = String(select.value || '');
+            select.value = value;
+            syncCatchTypeSelectUi(select);
+            setCatchTypeSelectMenuOpen(getCatchTypeSelectController(select), false);
+            trigger.focus();
+            if(previousValue !== value){
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        button.addEventListener('keydown', (event) => {
+            if(event.key === 'ArrowDown'){
+                event.preventDefault();
+                focusCatchTypeSelectOption(getCatchTypeSelectController(select), 1);
+                return;
+            }
+            if(event.key === 'ArrowUp'){
+                event.preventDefault();
+                focusCatchTypeSelectOption(getCatchTypeSelectController(select), -1);
+                return;
+            }
+            if(event.key === 'Home'){
+                event.preventDefault();
+                getCatchTypeSelectController(select)?.optionButtons[0]?.focus();
+                return;
+            }
+            if(event.key === 'End'){
+                event.preventDefault();
+                const buttons = getCatchTypeSelectController(select)?.optionButtons || [];
+                buttons[buttons.length - 1]?.focus();
+                return;
+            }
+            if(event.key === 'Escape'){
+                event.preventDefault();
+                setCatchTypeSelectMenuOpen(getCatchTypeSelectController(select), false);
+                trigger.focus();
+            }
+        });
+
+        menu.appendChild(button);
+        return button;
+    });
+
+    uiRoot.append(trigger, menu);
+
+    const controller = {
+        select,
+        wrapper,
+        uiRoot,
+        trigger,
+        triggerCopy,
+        menu,
+        optionButtons,
+        label: isSecondary ? 'Segundo tipo do alvo' : 'Tipo principal do alvo',
+        placeholder,
+        emptyHint: isSecondary ? 'Opcional' : 'Escolha na lista',
+        selectedHint: isSecondary ? 'Segundo tipo do alvo' : 'Tipo principal do alvo'
+    };
+
+    catchTypeSelectControllers.set(select.id, controller);
+
+    trigger.addEventListener('click', () => {
+        const shouldOpen = menu.hidden;
+        setCatchTypeSelectMenuOpen(controller, shouldOpen, shouldOpen);
+    });
+
+    trigger.addEventListener('keydown', (event) => {
+        if(event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' '){
+            event.preventDefault();
+            setCatchTypeSelectMenuOpen(controller, true, true);
+            return;
+        }
+        if(event.key === 'ArrowUp'){
+            event.preventDefault();
+            setCatchTypeSelectMenuOpen(controller, true, true);
+            requestAnimationFrame(() => {
+                const buttons = controller.optionButtons;
+                buttons[buttons.length - 1]?.focus();
+            });
+        }
+    });
+
+    wrapper.addEventListener('focusout', () => {
+        requestAnimationFrame(() => {
+            if(!wrapper.contains(document.activeElement)){
+                setCatchTypeSelectMenuOpen(controller, false);
+            }
+        });
+    });
+
+    if(labelEl instanceof HTMLElement && !labelEl.dataset.catchTypeTriggerBound){
+        labelEl.dataset.catchTypeTriggerBound = 'true';
+        labelEl.addEventListener('click', (event) => {
+            const currentController = getCatchTypeSelectController(select);
+            if(!currentController?.wrapper.classList.contains('catch-type-select--enhanced')) return;
+            event.preventDefault();
+            currentController.trigger.focus();
+        });
+    }
+
+    if(!select.dataset.catchTypeUiBound){
+        select.dataset.catchTypeUiBound = 'true';
+        select.addEventListener('change', () => {
+            syncCatchTypeSelectUi(select);
+        });
+    }
+
+    syncCatchTypeSelectUi(select);
+    ensureCatchTypeSelectHandlers();
+}
+
 function getCatchSelectedTargetTypes(){
     const seen = new Set();
     return [
@@ -3617,6 +3955,8 @@ function initializeCatchElementalSelectors(){
         CATCH_TARGET_TYPE_OPTIONS,
         { includeEmpty: true, emptyLabel: 'Sem 2o tipo', selectedValue: catchTargetTypeSecondarySelect?.value || '' }
     );
+    renderCatchTypeSelect(catchTargetTypePrimarySelect);
+    renderCatchTypeSelect(catchTargetTypeSecondarySelect);
 }
 
 function updateCatchElementalRuleStatus(){
