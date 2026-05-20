@@ -6,25 +6,66 @@
     const API_NAMESPACE = 'poke-utilities-traffic-20260520c';
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
-    const STORAGE_MARKER_KEY = 'poke-effectiveness-visit-counter-v3';
-    const STORAGE_CACHE_KEY = 'poke-effectiveness-visit-counter-cache-v3';
+    const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v4';
+    const STORAGE_CACHE_KEY = 'poke-effectiveness-visit-counter-cache-v4';
     const COUNTER_TIME_ZONE = 'America/Sao_Paulo';
+    const COUNTER_RESET_HOUR = 10;
+    const COUNTER_RESET_MINUTE = 30;
+    const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
+    const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
 
-    function getDateStamp(now = new Date()){
+    let totalAccessRegistered = false;
+    let activeSyncPromise = null;
+    let lastCompletedSyncAt = 0;
+
+    function padDatePart(value){
+        return String(value).padStart(2, '0');
+    }
+
+    function formatDateStamp(year, month, day){
+        return `${year}-${padDatePart(month)}-${padDatePart(day)}`;
+    }
+
+    function getCounterDateParts(now = new Date()){
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: COUNTER_TIME_ZONE,
             year: 'numeric',
             month: '2-digit',
-            day: '2-digit'
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
         });
         const parts = formatter.formatToParts(now);
         const lookup = {};
         parts.forEach((part) => {
             if(part.type !== 'literal'){
-                lookup[part.type] = part.value;
+                lookup[part.type] = Number(part.value);
             }
         });
-        return `${lookup.year}-${lookup.month}-${lookup.day}`;
+        return lookup;
+    }
+
+    function getPreviousDateStamp(year, month, day){
+        const utcDate = new Date(Date.UTC(year, month - 1, day));
+        utcDate.setUTCDate(utcDate.getUTCDate() - 1);
+        return formatDateStamp(
+            utcDate.getUTCFullYear(),
+            utcDate.getUTCMonth() + 1,
+            utcDate.getUTCDate()
+        );
+    }
+
+    function getDateStamp(now = new Date()){
+        const parts = getCounterDateParts(now);
+        const hasReachedResetTime = parts.hour > COUNTER_RESET_HOUR
+            || (parts.hour === COUNTER_RESET_HOUR && parts.minute >= COUNTER_RESET_MINUTE);
+
+        if(hasReachedResetTime){
+            return formatDateStamp(parts.year, parts.month, parts.day);
+        }
+
+        return getPreviousDateStamp(parts.year, parts.month, parts.day);
     }
 
     function buildCounterUrl(counterKey, action = 'get'){
@@ -116,7 +157,10 @@
 
             const normalized = normalizeCounts(parsed?.daily, parsed?.total);
             if(!Number.isFinite(normalized.total) || !Number.isFinite(normalized.daily)) return null;
-            return normalized;
+            return {
+                ...normalized,
+                updatedAt: Number(parsed?.updatedAt) || 0
+            };
         }catch(error){
             console.error('visit counter cache load error', error);
             return null;
@@ -139,7 +183,7 @@
 
     function readMarkedDate(){
         try{
-            return window.localStorage.getItem(STORAGE_MARKER_KEY) || '';
+            return window.localStorage.getItem(STORAGE_DAILY_MARKER_KEY) || '';
         }catch(error){
             console.error('visit counter marker read error', error);
             return '';
@@ -148,53 +192,110 @@
 
     function writeMarkedDate(dateStamp){
         try{
-            window.localStorage.setItem(STORAGE_MARKER_KEY, dateStamp);
+            window.localStorage.setItem(STORAGE_DAILY_MARKER_KEY, dateStamp);
         }catch(error){
             console.error('visit counter marker write error', error);
         }
     }
 
-    async function syncCounters(){
-        const todayStamp = getDateStamp();
-        const cached = loadCachedSnapshot(todayStamp);
-        if(cached){
-            renderCounter('ready', (surface) => formatValues(cached.daily, cached.total, surface));
-        } else {
-            renderCounter('loading', getLoadingCopy());
-        }
-
-        const shouldIncrement = readMarkedDate() !== todayStamp;
+    async function fetchNormalizedCounts(todayStamp){
+        const shouldIncrementDaily = readMarkedDate() !== todayStamp;
+        const shouldIncrementTotal = !totalAccessRegistered;
         const dailyCounterKey = `${DAILY_COUNTER_KEY_PREFIX}-${todayStamp}`;
 
-        try{
-            let normalized;
-            if(shouldIncrement){
-                const totalCount = await requestCounter(TOTAL_COUNTER_KEY, 'up');
-                const dailyCount = await requestCounter(dailyCounterKey, 'up');
-                normalized = normalizeCounts(dailyCount, totalCount);
-            } else {
-                const [dailyCount, totalCount] = await Promise.all([
-                    requestCounter(dailyCounterKey, 'get'),
-                    requestCounter(TOTAL_COUNTER_KEY, 'get')
-                ]);
-                normalized = normalizeCounts(dailyCount, totalCount);
-            }
+        const [dailyResult, totalResult] = await Promise.allSettled([
+            requestCounter(dailyCounterKey, shouldIncrementDaily ? 'up' : 'get'),
+            requestCounter(TOTAL_COUNTER_KEY, shouldIncrementTotal ? 'up' : 'get')
+        ]);
 
-            if(shouldIncrement){
-                writeMarkedDate(todayStamp);
-            }
-
-            persistSnapshot(todayStamp, normalized.total, normalized.daily);
-            renderCounter('ready', (surface) => formatValues(normalized.daily, normalized.total, surface));
-        }catch(error){
-            console.error('visit counter sync error', error);
-            if(cached){
-                renderCounter('ready', (surface) => formatValues(cached.daily, cached.total, surface));
-                return;
-            }
-            renderCounter('error', getErrorCopy());
+        if(dailyResult.status === 'fulfilled' && shouldIncrementDaily){
+            writeMarkedDate(todayStamp);
         }
+
+        if(totalResult.status === 'fulfilled' && shouldIncrementTotal){
+            totalAccessRegistered = true;
+        }
+
+        if(dailyResult.status !== 'fulfilled' || totalResult.status !== 'fulfilled'){
+            const syncError = new Error('counter sync failed');
+            syncError.dailyResult = dailyResult;
+            syncError.totalResult = totalResult;
+            throw syncError;
+        }
+
+        return normalizeCounts(dailyResult.value, totalResult.value);
     }
 
-    syncCounters();
+    async function syncCounters({ showLoading = true } = {}){
+        if(activeSyncPromise){
+            return activeSyncPromise;
+        }
+
+        const todayStamp = getDateStamp();
+        const cached = loadCachedSnapshot(todayStamp);
+        if(showLoading){
+            if(cached){
+                renderCounter('ready', (surface) => formatValues(cached.daily, cached.total, surface));
+            } else {
+                renderCounter('loading', getLoadingCopy());
+            }
+        }
+
+        activeSyncPromise = (async () => {
+            lastCompletedSyncAt = Date.now();
+
+            try{
+                const normalized = await fetchNormalizedCounts(todayStamp);
+                persistSnapshot(todayStamp, normalized.total, normalized.daily);
+                renderCounter('ready', (surface) => formatValues(normalized.daily, normalized.total, surface));
+                return normalized;
+            }catch(error){
+                console.error('visit counter sync error', error);
+                if(cached){
+                    renderCounter('ready', (surface) => formatValues(cached.daily, cached.total, surface));
+                    return cached;
+                }
+
+                renderCounter('error', getErrorCopy());
+                return null;
+            }finally{
+                lastCompletedSyncAt = Date.now();
+                activeSyncPromise = null;
+            }
+        })();
+
+        return activeSyncPromise;
+    }
+
+    function requestRefresh(force = false){
+        if(document.visibilityState === 'hidden') return;
+        if(activeSyncPromise) return;
+        if(!force && (Date.now() - lastCompletedSyncAt) < EVENT_REFRESH_COOLDOWN_MS) return;
+        syncCounters({ showLoading: false });
+    }
+
+    function setupAutoRefresh(){
+        window.setInterval(() => {
+            requestRefresh(true);
+        }, REFRESH_INTERVAL_MS);
+
+        document.addEventListener('visibilitychange', () => {
+            if(document.visibilityState === 'visible'){
+                requestRefresh();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            requestRefresh();
+        });
+
+        window.addEventListener('online', () => {
+            requestRefresh(true);
+        });
+    }
+
+    setupAutoRefresh();
+    syncCounters({
+        showLoading: true
+    });
 })();
