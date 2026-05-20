@@ -8,14 +8,15 @@
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
     const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v4';
+    const STORAGE_TOTAL_MARKER_KEY = 'poke-effectiveness-visit-counter-total-v5';
     const STORAGE_CACHE_KEY = 'poke-effectiveness-visit-counter-cache-v4';
     const COUNTER_TIME_ZONE = 'America/Sao_Paulo';
     const COUNTER_RESET_HOUR = 10;
     const COUNTER_RESET_MINUTE = 30;
+    const TOTAL_ACCESS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
 
-    let totalAccessRegistered = false;
     let activeSyncPromise = null;
     let lastCompletedSyncAt = 0;
     let preferProxyRequests = false;
@@ -233,9 +234,35 @@
         }
     }
 
+    function readTotalAccessMarker(){
+        try{
+            const rawValue = window.localStorage.getItem(STORAGE_TOTAL_MARKER_KEY) || '';
+            const numericValue = Number(rawValue);
+            return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : 0;
+        }catch(error){
+            console.error('visit counter total marker read error', error);
+            return 0;
+        }
+    }
+
+    function writeTotalAccessMarker(timestamp){
+        try{
+            window.localStorage.setItem(STORAGE_TOTAL_MARKER_KEY, String(timestamp));
+        }catch(error){
+            console.error('visit counter total marker write error', error);
+        }
+    }
+
+    function shouldIncrementTotalAccess(now = Date.now()){
+        const lastMarkedAt = readTotalAccessMarker();
+        if(!lastMarkedAt) return true;
+        return (now - lastMarkedAt) >= TOTAL_ACCESS_COOLDOWN_MS;
+    }
+
     async function fetchNormalizedCounts(todayStamp){
+        const now = Date.now();
         const shouldIncrementDaily = readMarkedDate() !== todayStamp;
-        const shouldIncrementTotal = !totalAccessRegistered;
+        const shouldIncrementTotal = shouldIncrementTotalAccess(now);
         const dailyCounterKey = `${DAILY_COUNTER_KEY_PREFIX}-${todayStamp}`;
 
         const [dailyResult, totalResult] = await Promise.allSettled([
@@ -248,7 +275,7 @@
         }
 
         if(totalResult.status === 'fulfilled' && shouldIncrementTotal){
-            totalAccessRegistered = true;
+            writeTotalAccessMarker(now);
         }
 
         if(dailyResult.status !== 'fulfilled' || totalResult.status !== 'fulfilled'){
