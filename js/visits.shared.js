@@ -3,6 +3,7 @@
     if(!mounts.length) return;
 
     const API_BASE_URL = 'https://api.counterapi.dev/v1';
+    const API_PROXY_BASE_URL = 'https://api.codetabs.com/v1/proxy?quest=';
     const API_NAMESPACE = 'poke-utilities-traffic-20260520c';
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
@@ -17,6 +18,7 @@
     let totalAccessRegistered = false;
     let activeSyncPromise = null;
     let lastCompletedSyncAt = 0;
+    let preferProxyRequests = false;
 
     function padDatePart(value){
         return String(value).padStart(2, '0');
@@ -71,16 +73,49 @@
     function buildCounterUrl(counterKey, action = 'get'){
         const encodedNamespace = encodeURIComponent(API_NAMESPACE);
         const encodedKey = encodeURIComponent(counterKey);
-        return `${API_BASE_URL}/${encodedNamespace}/${encodedKey}${action === 'up' ? '/up' : ''}`;
+        const suffix = action === 'up' ? '/up/' : '/';
+        return `${API_BASE_URL}/${encodedNamespace}/${encodedKey}${suffix}`;
     }
 
-    async function requestCounter(counterKey, action = 'get'){
-        const response = await fetch(buildCounterUrl(counterKey, action), { cache: 'no-store' });
+    function buildCounterProxyUrl(counterKey, action = 'get'){
+        const upstreamUrl = buildCounterUrl(counterKey, action);
+        return `${API_PROXY_BASE_URL}${encodeURIComponent(upstreamUrl)}&cb=${Date.now()}`;
+    }
+
+    async function requestCounterFromUrl(url){
+        const response = await fetch(url, {
+            cache: 'no-store',
+            credentials: 'omit',
+            mode: 'cors',
+            redirect: 'follow'
+        });
         if(!response.ok){
             throw new Error(`counter request failed (${response.status})`);
         }
         const payload = await response.json();
         return Number(payload?.count || 0);
+    }
+
+    async function requestCounter(counterKey, action = 'get'){
+        const transports = preferProxyRequests
+            ? ['proxy', 'direct']
+            : ['direct', 'proxy'];
+        let lastError = null;
+
+        for(const transport of transports){
+            const requestUrl = transport === 'proxy'
+                ? buildCounterProxyUrl(counterKey, action)
+                : buildCounterUrl(counterKey, action);
+            try{
+                const count = await requestCounterFromUrl(requestUrl);
+                preferProxyRequests = transport === 'proxy';
+                return count;
+            }catch(error){
+                lastError = error;
+            }
+        }
+
+        throw lastError || new Error('counter request failed');
     }
 
     function normalizeCounts(dailyCount, totalCount){
