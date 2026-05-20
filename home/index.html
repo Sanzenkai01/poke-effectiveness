@@ -22,7 +22,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="../styles.css?v=20260518c">
+    <link rel="stylesheet" href="../styles.css?v=20260520f">
 </head>
 <body class="dark home-view">
     <main>
@@ -60,6 +60,10 @@
                         <div class="home-landing__focus-note">
                             <strong>Consulta rapida, sem excesso.</strong>
                             <p>Abra o modulo certo em um clique e continue o que precisa fazer no jogo.</p>
+                        </div>
+                        <div class="home-landing__visit-counter site-visit-counter" data-visit-counter data-visit-counter-surface="home" aria-live="polite">
+                            <span class="site-visit-counter__label" hidden></span>
+                            <span class="site-visit-counter__values">Carregando visitas...</span>
                         </div>
                         <div id="home-streamer-info" class="home-landing__focus-streamers" data-state="loading" aria-live="polite">
                             <span class="home-landing__focus-streamers-label">PStory ao vivo</span>
@@ -168,6 +172,7 @@
         </section>
     </main>
     <script src="../js/streamers.shared.js?v=20260509a" defer></script>
+    <script src="../js/visits.shared.js?v=20260520e" defer></script>
     <script src="../home/home.js?v=20260509a" defer></script>
 </body>
 </html>
