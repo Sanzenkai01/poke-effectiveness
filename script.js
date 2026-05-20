@@ -2212,8 +2212,15 @@ const strings = {
         shareLabel: 'Compartilhar',
         cursorToggleSystem: 'Usar cursor padrao',
         cursorTogglePikachu: 'Usar cursor Pikachu',
-        visionToggleColorblind: 'Ativar modo daltonico',
-        visionToggleStandard: 'Usar modo padrao',
+        visionToggleLabel: 'Filtros para daltonismo',
+        visionToggleStandard: 'Padrao',
+        visionToggleProtan: 'Protan',
+        visionToggleDeutan: 'Deutan',
+        visionToggleTritan: 'Tritan',
+        visionToggleStandardHint: 'Cores originais do site.',
+        visionToggleProtanHint: 'Foco em diferenciar tons afetados pelo vermelho.',
+        visionToggleDeutanHint: 'Foco em separar tons afetados pelo verde.',
+        visionToggleTritanHint: 'Foco em destacar tons afetados pelo azul.',
         resetLabel: 'Resetar',
         legendSelected: 'Selecionado',
         legendEffective: 'Efetivo 1.5x',
@@ -2350,7 +2357,21 @@ const SITE_CURSOR_MODE_PIKACHU = 'pikachu';
 const SITE_CURSOR_MODE_SYSTEM = 'system';
 const SITE_VISION_MODE_STORAGE_KEY = 'siteVisionMode';
 const SITE_VISION_MODE_STANDARD = 'standard';
-const SITE_VISION_MODE_COLORBLIND = 'colorblind';
+const SITE_VISION_MODE_LEGACY_COLORBLIND = 'colorblind';
+const SITE_VISION_MODE_PROTAN = 'protan';
+const SITE_VISION_MODE_DEUTAN = 'deutan';
+const SITE_VISION_MODE_TRITAN = 'tritan';
+const SITE_VISION_MODE_VALUES = Object.freeze([
+    SITE_VISION_MODE_STANDARD,
+    SITE_VISION_MODE_PROTAN,
+    SITE_VISION_MODE_DEUTAN,
+    SITE_VISION_MODE_TRITAN
+]);
+
+let visionModeMenu = null;
+let visionModeMenuTitle = null;
+let visionModeMenuOpen = false;
+let visionModeMenuOptions = [];
 
 function normalizeSiteCursorMode(value){
     return value === SITE_CURSOR_MODE_SYSTEM ? SITE_CURSOR_MODE_SYSTEM : SITE_CURSOR_MODE_PIKACHU;
@@ -2407,7 +2428,37 @@ function toggleSiteCursorMode(){
 applySiteCursorMode(getActiveSiteCursorMode(), { persist: false });
 
 function normalizeSiteVisionMode(value){
-    return value === SITE_VISION_MODE_COLORBLIND ? SITE_VISION_MODE_COLORBLIND : SITE_VISION_MODE_STANDARD;
+    const normalizedValue = String(value || '').trim().toLowerCase();
+    if(normalizedValue === SITE_VISION_MODE_LEGACY_COLORBLIND){
+        return SITE_VISION_MODE_DEUTAN;
+    }
+    return SITE_VISION_MODE_VALUES.includes(normalizedValue)
+        ? normalizedValue
+        : SITE_VISION_MODE_STANDARD;
+}
+
+function getSiteVisionModeLabel(mode){
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    if(resolvedMode === SITE_VISION_MODE_PROTAN) return t('visionToggleProtan');
+    if(resolvedMode === SITE_VISION_MODE_DEUTAN) return t('visionToggleDeutan');
+    if(resolvedMode === SITE_VISION_MODE_TRITAN) return t('visionToggleTritan');
+    return t('visionToggleStandard');
+}
+
+function getSiteVisionModeHint(mode){
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    if(resolvedMode === SITE_VISION_MODE_PROTAN) return t('visionToggleProtanHint');
+    if(resolvedMode === SITE_VISION_MODE_DEUTAN) return t('visionToggleDeutanHint');
+    if(resolvedMode === SITE_VISION_MODE_TRITAN) return t('visionToggleTritanHint');
+    return t('visionToggleStandardHint');
+}
+
+function getVisionToggleText(mode = getActiveSiteVisionMode()){
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    const label = getSiteVisionModeLabel(resolvedMode);
+    return resolvedMode === SITE_VISION_MODE_STANDARD
+        ? t('visionToggleLabel')
+        : `${t('visionToggleLabel')}: ${label}`;
 }
 
 function getStoredSiteVisionMode(){
@@ -2419,9 +2470,9 @@ function getStoredSiteVisionMode(){
 }
 
 function getActiveSiteVisionMode(){
-    const currentMode = document.documentElement?.dataset?.visionMode || '';
-    if(currentMode === SITE_VISION_MODE_STANDARD || currentMode === SITE_VISION_MODE_COLORBLIND){
-        return currentMode;
+    const currentMode = String(document.documentElement?.dataset?.visionMode || '').trim();
+    if(currentMode){
+        return normalizeSiteVisionMode(currentMode);
     }
     return getStoredSiteVisionMode();
 }
@@ -2429,10 +2480,133 @@ function getActiveSiteVisionMode(){
 function syncVisionToggleButton(mode = getActiveSiteVisionMode()){
     if(!visionToggleBtn) return;
     const resolvedMode = normalizeSiteVisionMode(mode);
-    const colorblindActive = resolvedMode === SITE_VISION_MODE_COLORBLIND;
-    visionToggleBtn.setAttribute('aria-pressed', colorblindActive ? 'true' : 'false');
-    visionToggleBtn.setAttribute('aria-label', t(colorblindActive ? 'visionToggleStandard' : 'visionToggleColorblind'));
-    visionToggleBtn.title = t(colorblindActive ? 'visionToggleStandard' : 'visionToggleColorblind');
+    const hasFilter = resolvedMode !== SITE_VISION_MODE_STANDARD;
+    const toggleText = getVisionToggleText(resolvedMode);
+    const hintText = getSiteVisionModeHint(resolvedMode);
+    visionToggleBtn.dataset.activeVision = hasFilter ? 'true' : 'false';
+    visionToggleBtn.dataset.visionState = resolvedMode;
+    visionToggleBtn.setAttribute('aria-haspopup', 'dialog');
+    visionToggleBtn.setAttribute('aria-expanded', visionModeMenuOpen ? 'true' : 'false');
+    visionToggleBtn.setAttribute('aria-label', toggleText);
+    visionToggleBtn.title = hintText ? `${toggleText} ${hintText}` : toggleText;
+}
+
+function syncVisionModeMenu(mode = getActiveSiteVisionMode()){
+    if(!visionModeMenu) return;
+    const resolvedMode = normalizeSiteVisionMode(mode);
+    if(visionModeMenuTitle){
+        visionModeMenuTitle.textContent = t('visionToggleLabel');
+    }
+    visionModeMenuOptions.forEach((option)=>{
+        const optionMode = normalizeSiteVisionMode(option.dataset.visionOption || '');
+        const isActive = optionMode === resolvedMode;
+        option.dataset.active = isActive ? 'true' : 'false';
+        option.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        const labelEl = option.querySelector('.vision-mode-menu__option-label');
+        if(labelEl) labelEl.textContent = getSiteVisionModeLabel(optionMode);
+        const noteEl = option.querySelector('.vision-mode-menu__option-note');
+        if(noteEl) noteEl.textContent = getSiteVisionModeHint(optionMode);
+    });
+}
+
+function positionVisionModeMenu(){
+    if(!visionModeMenu || visionModeMenu.hidden || !visionToggleBtn) return;
+    const buttonRect = visionToggleBtn.getBoundingClientRect();
+    const menuRect = visionModeMenu.getBoundingClientRect();
+    const viewportPadding = 12;
+    const offset = 12;
+    let left = buttonRect.right - menuRect.width;
+    if(left < viewportPadding){
+        left = viewportPadding;
+    }
+    if(left + menuRect.width > window.innerWidth - viewportPadding){
+        left = Math.max(viewportPadding, window.innerWidth - menuRect.width - viewportPadding);
+    }
+    let top = buttonRect.bottom + offset;
+    if(top + menuRect.height > window.innerHeight - viewportPadding){
+        top = Math.max(viewportPadding, buttonRect.top - menuRect.height - offset);
+    }
+    visionModeMenu.style.left = `${Math.round(left)}px`;
+    visionModeMenu.style.top = `${Math.round(top)}px`;
+}
+
+function closeVisionModeMenu(options = {}){
+    const { focusButton = false } = options;
+    if(!visionModeMenu) return;
+    visionModeMenu.hidden = true;
+    visionModeMenuOpen = false;
+    syncVisionToggleButton();
+    if(focusButton && visionToggleBtn){
+        visionToggleBtn.focus();
+    }
+}
+
+function ensureVisionModeMenu(){
+    if(visionModeMenu || !visionToggleBtn || !document.body) return visionModeMenu;
+    const menu = document.createElement('div');
+    menu.id = 'vision-mode-menu';
+    menu.className = 'vision-mode-menu';
+    menu.hidden = true;
+    menu.setAttribute('role', 'dialog');
+    menu.setAttribute('aria-label', t('visionToggleLabel'));
+
+    const title = document.createElement('p');
+    title.className = 'vision-mode-menu__title';
+    title.textContent = t('visionToggleLabel');
+    menu.appendChild(title);
+
+    visionModeMenuOptions = SITE_VISION_MODE_VALUES.map((mode)=>{
+        const option = document.createElement('button');
+        const label = document.createElement('span');
+        const note = document.createElement('span');
+        option.type = 'button';
+        option.className = 'vision-mode-menu__option';
+        option.dataset.visionOption = mode;
+        label.className = 'vision-mode-menu__option-label';
+        note.className = 'vision-mode-menu__option-note';
+        option.append(label, note);
+        option.addEventListener('click', ()=>{
+            applySiteVisionMode(mode);
+            closeVisionModeMenu({ focusButton: true });
+        });
+        menu.appendChild(option);
+        return option;
+    });
+
+    menu.addEventListener('click', (event)=>{
+        event.stopPropagation();
+    });
+
+    document.body.appendChild(menu);
+    visionModeMenu = menu;
+    visionModeMenuTitle = title;
+    visionToggleBtn.setAttribute('aria-controls', menu.id);
+    syncVisionModeMenu();
+    return visionModeMenu;
+}
+
+function openVisionModeMenu(){
+    const menu = ensureVisionModeMenu();
+    if(!menu) return;
+    menu.hidden = false;
+    visionModeMenuOpen = true;
+    syncVisionModeMenu();
+    syncVisionToggleButton();
+    requestAnimationFrame(()=>{
+        positionVisionModeMenu();
+        const activeOption = visionModeMenuOptions.find((option)=>option.dataset.active === 'true') || visionModeMenuOptions[0];
+        if(activeOption){
+            activeOption.focus();
+        }
+    });
+}
+
+function toggleVisionModeMenu(){
+    if(visionModeMenuOpen){
+        closeVisionModeMenu({ focusButton: true });
+        return;
+    }
+    openVisionModeMenu();
 }
 
 function applySiteVisionMode(mode, options = {}){
@@ -2447,15 +2621,8 @@ function applySiteVisionMode(mode, options = {}){
         }catch(e){}
     }
     syncVisionToggleButton(resolvedMode);
+    syncVisionModeMenu(resolvedMode);
     return resolvedMode;
-}
-
-function toggleSiteVisionMode(){
-    return applySiteVisionMode(
-        getActiveSiteVisionMode() === SITE_VISION_MODE_COLORBLIND
-            ? SITE_VISION_MODE_STANDARD
-            : SITE_VISION_MODE_COLORBLIND
-    );
 }
 
 applySiteVisionMode(getActiveSiteVisionMode(), { persist: false });
@@ -9778,7 +9945,7 @@ function initFromUrl(){
 const shareBtn=document.getElementById('share-btn');
 if(visionToggleBtn){
     visionToggleBtn.addEventListener('click',()=>{
-        toggleSiteVisionMode();
+        toggleVisionModeMenu();
     });
 }
 if(cursorToggleBtn){
@@ -9786,6 +9953,28 @@ if(cursorToggleBtn){
         toggleSiteCursorMode();
     });
 }
+document.addEventListener('click', (event)=>{
+    if(!visionModeMenuOpen) return;
+    if(visionToggleBtn && visionToggleBtn.contains(event.target)) return;
+    if(visionModeMenu && visionModeMenu.contains(event.target)) return;
+    closeVisionModeMenu();
+});
+document.addEventListener('keydown', (event)=>{
+    if(event.key === 'Escape' && visionModeMenuOpen){
+        event.preventDefault();
+        closeVisionModeMenu({ focusButton: true });
+    }
+});
+window.addEventListener('resize', ()=>{
+    if(visionModeMenuOpen){
+        positionVisionModeMenu();
+    }
+});
+window.addEventListener('scroll', ()=>{
+    if(visionModeMenuOpen){
+        positionVisionModeMenu();
+    }
+}, true);
 if(shareBtn){
     shareBtn.addEventListener('click',()=>{
         const url=location.href;

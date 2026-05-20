@@ -13,15 +13,17 @@
       try {
         var cursorMode = localStorage.getItem('siteCursorMode');
         var visionMode = localStorage.getItem('siteVisionMode');
+        var allowedVisionModes = { standard: true, protan: true, deutan: true, tritan: true };
+        if (visionMode === 'colorblind') visionMode = 'deutan';
         document.documentElement.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
-        document.documentElement.dataset.visionMode = visionMode === 'colorblind' ? 'colorblind' : 'standard';
+        document.documentElement.dataset.visionMode = allowedVisionModes[visionMode] ? visionMode : 'standard';
       } catch (error) {
         document.documentElement.dataset.cursorMode = 'pikachu';
         document.documentElement.dataset.visionMode = 'standard';
       }
     })();
   </script>
-  <link rel="stylesheet" href="../styles.css?v=20260518c">
+  <link rel="stylesheet" href="../styles.css?v=20260520g">
 </head>
 <body data-active-tab="bosses" data-initial-boss-mode="mew2">
   <header class="header">

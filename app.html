@@ -16,15 +16,17 @@
           var root = document.documentElement;
           var cursorMode = localStorage.getItem('siteCursorMode');
           var visionMode = localStorage.getItem('siteVisionMode');
+          var allowedVisionModes = { standard: true, protan: true, deutan: true, tritan: true };
+          if (visionMode === 'colorblind') visionMode = 'deutan';
           root.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
-          root.dataset.visionMode = visionMode === 'colorblind' ? 'colorblind' : 'standard';
+          root.dataset.visionMode = allowedVisionModes[visionMode] ? visionMode : 'standard';
         } catch (error) {
           document.documentElement.dataset.cursorMode = 'pikachu';
           document.documentElement.dataset.visionMode = 'standard';
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260520f">
+  <link rel="stylesheet" href="styles.css?v=20260520g">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -47,7 +49,7 @@
         </div>
         <h1 id="page-title">Poke Utilities</h1>
       </div>
-      <button id="vision-toggle-btn" aria-label="Ativar modo daltonico" title="Ativar modo daltonico">
+      <button id="vision-toggle-btn" aria-label="Filtros para daltonismo" title="Filtros para daltonismo" aria-haspopup="dialog" aria-expanded="false">
         <svg class="header-tool-icon header-tool-icon--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <circle cx="7.25" cy="12" r="3.25"></circle>
           <circle cx="16.75" cy="12" r="3.25"></circle>
@@ -326,12 +328,11 @@
               <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Pokémons</span>
-                <span class="sidebar-sublink__badge" aria-hidden="true">Em Produção</span>
+                <span class="sidebar-sublink__badge" aria-hidden="true">Pausado</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="times">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Times</span>
-                <span class="sidebar-sublink__badge" aria-hidden="true">Em Produção</span>
               </button>
             </div>
           </section>
@@ -1530,6 +1531,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260509a" defer></script>
     <script src="js/visits.shared.js?v=20260520e" defer></script>
-    <script src="script.js?v=20260518a" defer></script>
+    <script src="script.js?v=20260520b" defer></script>
 </body>
 </html>
