@@ -28,29 +28,29 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice. Passiva: Ice Scales: Garante resistencia contra Flying e Dragon.', matchupOverrides: { 'mega-staraptor': { defenseByBossType: { fighting: 1, flying: 0.5 } } } },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice. Passiva: Ice Scales: Garante resistencia contra Flying e Dragon.', matchupOverrides: { 'mega-staraptor': { defenseByBossType: { fighting: 1, flying: 0.5 } } } },
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'bom', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' }
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -70,29 +70,29 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: "Alakazam", image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Psíquico forte e rápido.' }
+          { name: "Alakazam", image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Psíquico forte e rápido.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
-          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'excelente', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Orthworm', image: 'orthworm.png', tier: 'excelente', types: ['steel'], description: 'Tipo move: Ground.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'bom', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -112,24 +112,24 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' }
+          { name: 'Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -149,28 +149,28 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'otimo', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'muitobom', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -190,33 +190,33 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Bug.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Shiftry', image: 'shiftry.png', tier: 'green', types: ['grass','dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'yellow', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'red', types: ['grass'], description: 'Tipo move: Grass.' },
-          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'yellow', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'bom', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Shiftry', image: 'shiftry.png', tier: 'excelente', types: ['grass','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'bom', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'aceitavel', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'bom', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'yellow', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
-          { name: 'Banette', image: 'banette.png', tier: 'yellow', types: ['ghost'], description: 'Tipo move: Ghost.' },
-          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Dark.' },
-          { name: 'Lombre', image: 'lombre.png', tier: 'yellow', types: ['water','grass'], description: 'Tipo move: Grass.' }
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'bom', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
+          { name: 'Banette', image: 'banette.png', tier: 'bom', types: ['ghost'], description: 'Tipo move: Ghost.' },
+          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Lombre', image: 'lombre.png', tier: 'bom', types: ['water','grass'], description: 'Tipo move: Grass.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Tauros', image: 'tauros.png', tier: 'yellow', types: ['normal'], description: 'Tipo move: Electric.' },
-          { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
-          { name: 'Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'yellow', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' },
-          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'yellow', types: ['fire','normal'], description: 'Tipo move: Grass.' }
+          { name: 'Tauros', image: 'tauros.png', tier: 'bom', types: ['normal'], description: 'Tipo move: Electric.' },
+          { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
+          { name: 'Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' },
+          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'bom', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
       }
     }
@@ -236,33 +236,33 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'VenusaurTwo', image: 'venusaur.png', tier: 'green', types: ['grass','poison'], description: 'Tipo move: Grass.' },
-          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'green', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'yellow', types: ['grass'], description: 'Tipo move: Grass.' },
-          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'VenusaurTwo', image: 'venusaur.png', tier: 'excelente', types: ['grass','poison'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'excelente', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Grass.' },
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Lombre', image: 'lombre.png', tier: 'green', types: ['water','grass'], description: 'Tipo move: Grass.' },
-          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
-          { name: 'Mega Hawlucha', image: 'mega-hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Lombre', image: 'lombre.png', tier: 'excelente', types: ['water','grass'], description: 'Tipo move: Grass.' },
+          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
+          { name: 'Mega Hawlucha', image: 'mega-hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'excelente', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-          { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' },
-          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'green', types: ['fire','normal'], description: 'Tipo move: Grass.' }
+          { name: 'Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Tauros', image: 'tauros.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Electric.' },
+          { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'excelente', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
       }
     }
@@ -282,33 +282,33 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' }
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'excelente', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'excelente', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'green', types: ['dark','ice'], description: 'Tipo move: Ice.' },
-          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' }
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
+          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -328,28 +328,28 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'excelente', types: ['ground'], description: 'Tipo move: Ground.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Banette', image: 'banette.png', tier: 'green', types: ['ghost'], description: 'Tipo move: Ghost.' },
-          { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'green', types: ['water'], description: 'Tipo move: Water.' },
-          { name: 'Greninja', image: 'greninja.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Water.' },
-          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'green', types: ['water','dark'], description: 'Tipo move: Dark.' },
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
+          { name: 'Banette', image: 'banette.png', tier: 'excelente', types: ['ghost'], description: 'Tipo move: Ghost.' },
+          { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'excelente', types: ['water'], description: 'Tipo move: Water.' },
+          { name: 'Greninja', image: 'greninja.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Water.' },
+          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Seaking', image: 'seaking.png', tier: 'excelente', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' },
-          { name: 'Absol', image: 'absol.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
-          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'green', types: ['dark','fire'], description: 'Tipo move: Dark.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Ground.' },
+          { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
     }
@@ -369,27 +369,27 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Alakazam', image: 'alakazam.png', tier: 'green', types: ['psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
           { name: 'Marowak', image: 'marowak.png', types: ['ground'], description: 'Tipo move: Ground.', matchupOverrides: { 'mega-scolipede': { defenseByBossType: { poison: 0.5 } } } }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'yellow', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'bom', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' }
         ]
       }
     }
@@ -409,28 +409,28 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' }
+          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Mantine', image: 'mantine.png', tier: 'green', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'green', types: ['steel','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'excelente', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' },
-          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'green', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
-          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Flying.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Ground.' },
+          { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
+          { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -450,25 +450,25 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Dragonair', image: 'dragonair.png', tier: 'green', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: Marvel Scale: O Pokémon sofre menos dano de ataques super efetivos (0.5x).' },
-          { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'red', types: ['grass'], description: 'Tipo move: Grass.' }
+          { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+          { name: 'Dragonair', image: 'dragonair.png', tier: 'excelente', types: ['dragon'], description: 'Tipo move: Dragon. Passiva: Marvel Scale: O Pokémon sofre menos dano de ataques super efetivos (0.5x).' },
+          { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+          { name: "Rosa's Serperior", image: 'serperior.png', tier: 'aceitavel', types: ['grass'], description: 'Tipo move: Grass.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Mega Feraligatr', image: 'mega-feraligatr.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
-          { name: 'Kingdra', image: 'kingdra.png', tier: 'green', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
-          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Mega Feraligatr', image: 'mega-feraligatr.png', tier: 'excelente', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Kingdra', image: 'kingdra.png', tier: 'excelente', types: ['water','dragon'], description: 'Tipo move: Dragon.' },
+          { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
-          { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
+          { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
         ]
       }
     }
@@ -488,30 +488,30 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
-          { name: 'Seviper', image: 'seviper.png', tier: 'green', types: ['poison'], description: 'Tipo move: Poison.' },
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' }
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
+          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'green', types: ['water','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Dewgong', image: 'dewgong.png', tier: 'green', types: ['water','ice'], description: 'Tipo move: Ice.' },
-          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'green', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
+          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'excelente', types: ['fighting','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Qwilfish', image: 'qwilfish.png', tier: 'excelente', types: ['water','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Dewgong', image: 'dewgong.png', tier: 'excelente', types: ['water','ice'], description: 'Tipo move: Ice.' },
+          { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'excelente', types: ['steel','dragon'], description: 'Tipo move: Electric.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Scolipede', image: 'scolipede.png', tier: 'green', types: ['bug','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'green', types: ['bug','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' },
-          { name: 'Kabutops', image: 'kabutops.png', tier: 'green', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Tauros', image: 'tauros.png', tier: 'green', types: ['normal'], description: 'Tipo move: Electric.' }
+          { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
+          { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'excelente', types: ['bug','steel'], description: 'Tipo move: Steel.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
+          { name: 'Tauros', image: 'tauros.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
       }
     }
@@ -531,12 +531,12 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Pikachu', image: 'pikachu.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'green', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Raichu Y', image: 'mega-raichu-y.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
           {
             name: 'Excadrill',
             image: 'excadrill.png',
-            tier: 'otimo',
+            tier: 'muitobom',
             types: ['ground','steel'],
             description: 'Tipo move: Steel. Passiva: Mold Breaker: O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
             passiveName: 'Mold Breaker',
@@ -548,17 +548,17 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Duraludon', image: 'duraludon.png', tier: 'green', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
-          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'green', types: ['fighting','steel'], description: 'Tipo move: Steel.' }
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Duraludon', image: 'duraludon.png', tier: 'excelente', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
+          { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'excelente', types: ['fighting','steel'], description: 'Tipo move: Steel.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'green', types: ['flying','water'], description: 'Tipo move: Flying.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -583,21 +583,21 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' },
-          { name: 'Excadrill', image: 'excadrill.png', tier: 'green', types: ['ground','steel'], description: 'Tipo move: Ground.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'excelente', types: ['ground'], description: 'Tipo move: Ground.' },
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Ground.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Orthworm', image: 'orthworm.png', tier: 'green', types: ['steel'], description: 'Tipo move: Ground.' },
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
+          { name: 'Orthworm', image: 'orthworm.png', tier: 'excelente', types: ['steel'], description: 'Tipo move: Ground.' },
+          { name: 'Seaking', image: 'seaking.png', tier: 'excelente', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'green', types: ['normal'], description: 'Tipo move: Ground.' }
+          { name: 'Bouffalant', image: 'bouffalant.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Ground.' }
         ]
       }
     }
@@ -622,23 +622,23 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Marowak', image: 'marowak.png', tier: 'green', types: ['ground'], description: 'Tipo move: Ground.' },
-          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+          { name: 'Marowak', image: 'marowak.png', tier: 'excelente', types: ['ground'], description: 'Tipo move: Ground.' },
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
         ]
       },
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Seaking', image: 'seaking.png', tier: 'green', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'green', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
+          { name: 'Seaking', image: 'seaking.png', tier: 'excelente', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' },
+          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
       },
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Delphox', image: 'delphox.png', tier: 'green', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'green', types: ['fire','flying'], description: 'Tipo move: Fire.' }
+          { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -668,10 +668,10 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Lurantis', image: 'lurantis.png', tier: 'green', types: ['grass'], description: 'Tipo move: Bug.' },
-              { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'green', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+              { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], description: 'Tipo move: Bug.' },
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
             ]
           },
           {
@@ -679,9 +679,9 @@ const hoopaPortalsData = [
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'otimo', types: ['electric','fighting'], description: 'Tipo move: Fighting.' },
-              { name: 'Dedenne', image: 'dedenne.png', tier: 'green', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'green', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'muitobom', types: ['electric','fighting'], description: 'Tipo move: Fighting.' },
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -694,8 +694,8 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Hawlucha', image: 'hawlucha.png', tier: 'green', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
+              { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
             ]
           },
           {
@@ -703,7 +703,7 @@ const hoopaPortalsData = [
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'green', types: ['fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -716,10 +716,10 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-              { name: 'Shiny Scyther', image: 'scyther.png', tier: 'green', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
-              { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+              { name: 'Shiny Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
             ]
           },
           {
@@ -727,8 +727,8 @@ const hoopaPortalsData = [
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'green', types: ['dark'], description: 'Tipo move: Fairy.' },
-              { name: 'Ribombee', image: 'Ribombee.png', tier: 'green', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -1246,7 +1246,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
           createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
-          createRolePick("Rosa's Serperior", ['grass'], 'grass', { tier: 'otimo', matchupOverrides: { 'mega-tyranitar': { offense: 2, defenseByBossType: { ground: 0.5 } } } })
+          createRolePick("Rosa's Serperior", ['grass'], 'grass', { tier: 'muitobom', matchupOverrides: { 'mega-tyranitar': { offense: 2, defenseByBossType: { ground: 0.5 } } } })
         ],
         tank: [
           createRolePick('Tangrowth', ['grass'], 'grass'),
@@ -2269,6 +2269,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Armarouge", 'fire', 'tank', 'valor'),
       createFixedRecommendationDefinition("Bastiodon", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Magcargo", 'fire', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Miltank", 'normal', 'tank', 'valor'),
       createFixedRecommendationDefinition("Nosepass", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Onix", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Orbeetle", 'bug', 'tank', 'valor'),
@@ -2464,7 +2465,8 @@ const mirroredRecommendationVariantNames = Object.freeze({
   megaferaligatr: 'Shiny Mega Feraligatr',
   scyther: 'Shiny Scyther',
   claydol: 'Shiny Claydol',
-  bronzong: 'Shiny Bronzong'
+  bronzong: 'Shiny Bronzong',
+  miltank: 'Shiny Miltank'
 });
 
 function getImplicitRecommendationProfile(poke) {
@@ -2808,6 +2810,18 @@ const bossConsumableCatalog = Object.freeze({
     })
   }),
   rations: Object.freeze({
+    babiri: Object.freeze({
+      label: 'Babiri Ration',
+      shortLabel: 'Babiri',
+      image: 'rations/babiri_ration.png',
+      description: 'Aumenta a resistencia contra ataques Steel em 30% por 60 minutos.'
+    }),
+    chilan: Object.freeze({
+      label: 'Chilan Ration',
+      shortLabel: 'Chilan',
+      image: 'rations/chilan_ration.png',
+      description: 'Aumenta a resistencia contra ataques Normal em 30% por 60 minutos.'
+    }),
     kasib: Object.freeze({
       label: 'Kasib Ration',
       shortLabel: 'Kasib',
@@ -2826,7 +2840,19 @@ const bossConsumableCatalog = Object.freeze({
       image: 'rations/tanga_ration.png',
       description: 'Aumenta a resistencia contra ataques Bug em 30% por 60 minutos.'
     }),
-    Payapa: Object.freeze({
+    colbur: Object.freeze({
+      label: 'Colbur Ration',
+      shortLabel: 'Colbur',
+      image: 'rations/colbur_ration.png',
+      description: 'Aumenta a resistencia contra ataques Dark em 30% por 60 minutos.'
+    }),
+    kebia: Object.freeze({
+      label: 'Kebia Ration',
+      shortLabel: 'Kebia',
+      image: 'rations/kebia_ration.png',
+      description: 'Aumenta a resistencia contra ataques Poison em 30% por 60 minutos.'
+    }),
+    payapa: Object.freeze({
       label: 'Payapa Ration',
       shortLabel: 'Payapa',
       image: 'rations/payapa_ration.png',
@@ -2889,8 +2915,14 @@ const bossConsumableCatalog = Object.freeze({
     passho: Object.freeze({
       label: 'Passho Ration',
       shortLabel: 'Passho',
-      image: '',
+      image: 'rations/passho_ration.png',
       description: 'Aumenta a resistencia contra ataques Water em 30% por 60 minutos.'
+    }),
+    roseli: Object.freeze({
+      label: 'Roseli Ration',
+      shortLabel: 'Roseli',
+      image: 'rations/roseli_ration.png',
+      description: 'Aumenta a resistencia contra ataques Fairy em 30% por 60 minutos.'
     }),
     sitrus: Object.freeze({
       label: 'Sitrus Ration',
@@ -2902,11 +2934,15 @@ const bossConsumableCatalog = Object.freeze({
 });
 
 const bossRationByAttackType = Object.freeze({
+  steel: bossConsumableCatalog.rations.babiri,
+  normal: bossConsumableCatalog.rations.chilan,
   ghost: bossConsumableCatalog.rations.kasib,
   electric: bossConsumableCatalog.rations.wacan,
   bug: bossConsumableCatalog.rations.tanga,
+  dark: bossConsumableCatalog.rations.colbur,
+  poison: bossConsumableCatalog.rations.kebia,
   grass: bossConsumableCatalog.rations.rindo,
-  psychic: bossConsumableCatalog.rations.Payapa,
+  psychic: bossConsumableCatalog.rations.payapa,
   dragon: bossConsumableCatalog.rations.haban,
   ground: bossConsumableCatalog.rations.shuca,
   flying: bossConsumableCatalog.rations.coba,
@@ -2915,7 +2951,7 @@ const bossRationByAttackType = Object.freeze({
   ice: bossConsumableCatalog.rations.yache,
   rock: bossConsumableCatalog.rations.charti,
   water: bossConsumableCatalog.rations.passho,
-  normal: bossConsumableCatalog.rations.pokemon,
+  fairy: bossConsumableCatalog.rations.roseli,
   neutral: bossConsumableCatalog.rations.pokemon
 });
 
@@ -3270,6 +3306,7 @@ function normalizeBossRecommendationAssignments(boss) {
       }
 
       applyFixedRecommendationMetadata(pick, registryEntry);
+      normalizeRecommendationTier(pick);
       nextBuckets[registryEntry.clan]?.[registryEntry.role]?.push(pick);
     });
 
@@ -3308,6 +3345,7 @@ function normalizeBossRecommendationAssignments(boss) {
           }
 
           applyFixedRecommendationMetadata(pick, registryEntry);
+          normalizeRecommendationTier(pick);
           if (registryEntry.role !== 'dps') return;
 
           if (!nextBuckets[registryEntry.clan].has(groupKey)) {
@@ -3343,6 +3381,7 @@ function normalizeBossRecommendationAssignments(boss) {
       }
 
       applyFixedRecommendationMetadata(pick, registryEntry);
+      normalizeRecommendationTier(pick);
       if (registryEntry.role !== 'dps') return;
 
       nextBuckets[registryEntry.clan]?.push(pick);
@@ -3848,33 +3887,59 @@ function getMatchupOverride(poke, boss) {
   return poke.matchupOverrides?.[bossId] || null;
 }
 
-const tierPriority = { green: 0, otimo: 1, yellow: 2, red: 3, solo: 4, unknown: 5 };
+const legacyTierAliases = Object.freeze({
+  green: 'excelente',
+  ideal: 'excelente',
+  otimo: 'muitobom',
+  yellow: 'bom',
+  red: 'aceitavel',
+  solo: 'ruim',
+  unknown: 'seminformacao',
+  seminfo: 'seminformacao'
+});
+const tierPriority = { excelente: 0, muitobom: 1, bom: 2, aceitavel: 3, ruim: 4, seminformacao: 5 };
 const tierLabels = {
-  green: 'Ideal',
-  otimo: 'Muito bom',
-  yellow: 'Bom',
-  red: 'Aceitavel',
-  solo: 'Ruim',
-  unknown: 'Sem informacao'
-};
-const tierAssistLabels = {
-  green: 'Ideal',
-  otimo: 'M. bom',
-  yellow: 'Bom',
-  red: 'Aceit.',
-  solo: 'Ruim',
-  unknown: 'Sem info'
+  excelente: 'Excelente',
+  muitobom: 'Muito bom',
+  bom: 'Bom',
+  aceitavel: 'Aceitavel',
+  ruim: 'Ruim',
+  seminformacao: 'Sem informacao'
 };
 const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do moveset do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
+function normalizeTierKey(tier = 'seminformacao') {
+  const normalized = String(tier || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+
+  if (!normalized) return 'seminformacao';
+
+  if (Object.prototype.hasOwnProperty.call(legacyTierAliases, normalized)) {
+    return legacyTierAliases[normalized];
+  }
+
+  return Object.prototype.hasOwnProperty.call(tierLabels, normalized)
+    ? normalized
+    : 'seminformacao';
+}
+
+function normalizeRecommendationTier(pick) {
+  if (!pick || typeof pick !== 'object') return pick;
+  pick.tier = normalizeTierKey(pick.tier);
+  return pick;
+}
+
 function refreshTierLegendLabels() {
   const legendEntries = [
-    ['tier-green', tierLabels.green],
-    ['tier-otimo', tierLabels.otimo],
-    ['tier-yellow', tierLabels.yellow],
-    ['tier-red', tierLabels.red],
-    ['tier-solo', tierLabels.solo],
-    ['tier-unknown', tierLabels.unknown]
+    ['tier-excelente', tierLabels.excelente],
+    ['tier-muitobom', tierLabels.muitobom],
+    ['tier-bom', tierLabels.bom],
+    ['tier-aceitavel', tierLabels.aceitavel],
+    ['tier-ruim', tierLabels.ruim],
+    ['tier-seminformacao', tierLabels.seminformacao]
   ];
 
   document.querySelectorAll('.tier-legend').forEach((legend) => {
@@ -3891,10 +3956,11 @@ function refreshTierLegendLabels() {
 }
 
 function createTierAssistBadge(tier, extraClassName = '') {
+  const normalizedTier = normalizeTierKey(tier);
   const badge = document.createElement('span');
   badge.className = `tier-assist-badge ${extraClassName}`.trim();
-  badge.dataset.tier = tier;
-  badge.textContent = tierAssistLabels[tier] || tierAssistLabels.unknown;
+  badge.dataset.tier = normalizedTier;
+  badge.textContent = getTierUiLabel(normalizedTier);
   badge.setAttribute('aria-hidden', 'true');
   return badge;
 }
@@ -4594,19 +4660,23 @@ function getAllRecommendedForClan(boss, clanData) {
     picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
 
-  // Se o boss definir filterSolo, ranqueamos e removemos picks com tier 'solo'
+  // Se o boss definir filterSolo, ranqueamos e removemos picks com tier 'ruim'
   if (boss?.filterSolo) {
     const ranked = rankRecommendedForBoss(boss, picks || []);
-    return dedupeRecommendedPicksByName((ranked || []).filter((p) => (String(p?.tier || '').toLowerCase() !== 'solo')));
+    return dedupeRecommendedPicksByName((ranked || []).filter((p) => normalizeTierKey(p?.tier) !== 'ruim'));
   }
 
   return dedupeRecommendedPicksByName(picks || []);
 }
 
 function pickBetterTier(currentTier, nextTier) {
-  if (!currentTier) return nextTier || 'unknown';
-  if (!nextTier) return currentTier;
-  return (tierPriority[nextTier] ?? tierPriority.unknown) < (tierPriority[currentTier] ?? tierPriority.unknown) ? nextTier : currentTier;
+  const normalizedCurrentTier = normalizeTierKey(currentTier);
+  const normalizedNextTier = normalizeTierKey(nextTier);
+  if (!currentTier) return normalizedNextTier;
+  if (!nextTier) return normalizedCurrentTier;
+  return (tierPriority[normalizedNextTier] ?? tierPriority.seminformacao) < (tierPriority[normalizedCurrentTier] ?? tierPriority.seminformacao)
+    ? normalizedNextTier
+    : normalizedCurrentTier;
 }
 
 function getBossEffectivenessConfig(boss) {
@@ -4673,45 +4743,45 @@ function getBossRecommendationRankMode(boss) {
 function classifyRecommendationTier(offense, worstDefense) {
   if (offense >= 2) {
     // Super efetivo: mapeamento específico solicitado
-    // - DEF <= 0.5 => Ideal (green)
-    // - DEF <= 0.75 => Muito bom (otimo)
-    // - DEF <= 1 => Bom (yellow)
-    // - DEF <= 2 => Aceitavel (red)
-    if (worstDefense <= 0.5) return 'green';
-    if (worstDefense <= 0.75) return 'otimo';
-    if (worstDefense <= 1) return 'yellow';
-    if (worstDefense <= 2) return 'red';
-    return 'solo';
+    // - DEF <= 0.5 => Excelente
+    // - DEF <= 0.75 => Muito bom
+    // - DEF <= 1 => Bom
+    // - DEF <= 2 => Aceitavel
+    if (worstDefense <= 0.5) return 'excelente';
+    if (worstDefense <= 0.75) return 'muitobom';
+    if (worstDefense <= 1) return 'bom';
+    if (worstDefense <= 2) return 'aceitavel';
+    return 'ruim';
   }
 
   if (offense >= 1.5) {
     // Efetivo
-    if (worstDefense <= 0.5) return 'otimo';
-    if (worstDefense <= 0.75) return 'yellow';
-    if (worstDefense <= 1) return 'red';
-    return 'solo';
+    if (worstDefense <= 0.5) return 'muitobom';
+    if (worstDefense <= 0.75) return 'bom';
+    if (worstDefense <= 1) return 'aceitavel';
+    return 'ruim';
   }
 
   if (offense >= 1) {
     // Neutro
-    if (worstDefense <= 0.75) return 'yellow';
-    if (worstDefense <= 1) return 'red';
-    return 'solo';
+    if (worstDefense <= 0.75) return 'bom';
+    if (worstDefense <= 1) return 'aceitavel';
+    return 'ruim';
   }
 
   if (offense > 0 && worstDefense <= 0.75) {
-    return 'red';
+    return 'aceitavel';
   }
 
-  return 'solo';
+  return 'ruim';
 }
 
 function classifyDefenseOnlyRecommendationTier(worstDefense) {
-  if (worstDefense <= 0.5) return 'green';
-  if (worstDefense <= 0.75) return 'otimo';
-  if (worstDefense <= 1) return 'yellow';
-  if (worstDefense <= 2) return 'red';
-  return 'solo';
+  if (worstDefense <= 0.5) return 'excelente';
+  if (worstDefense <= 0.75) return 'muitobom';
+  if (worstDefense <= 1) return 'bom';
+  if (worstDefense <= 2) return 'aceitavel';
+  return 'ruim';
 }
 
 function scoreRecommendationForBoss(bossOrTypes, poke) {
@@ -4834,7 +4904,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
     ? ((worstDefense <= 0.5 ? 100 : 1 / worstDefense) + (bestDefense <= 0.5 ? 1 : 1 / (bestDefense * 10)))
     : ((offenseScore * 0.6) + (defenseScore * 0.4));
   const explicitTier = poke?.tierLocked && typeof poke?.tier === 'string'
-    ? poke.tier.trim().toLowerCase()
+    ? normalizeTierKey(poke.tier)
     : '';
   const tier = explicitTier && Object.prototype.hasOwnProperty.call(tierPriority, explicitTier)
     ? explicitTier
@@ -4858,8 +4928,8 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList) {
   return recommendedList
     .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke))
     .sort((a, b) => {
-      const leftPriority = tierPriority[a.tier] ?? tierPriority.unknown;
-      const rightPriority = tierPriority[b.tier] ?? tierPriority.unknown;
+      const leftPriority = getRecommendationTierPriority(a.tier);
+      const rightPriority = getRecommendationTierPriority(b.tier);
       if (leftPriority !== rightPriority) return leftPriority - rightPriority;
       if (b._score !== a._score) return b._score - a._score;
       return a.name.localeCompare(b.name);
@@ -4909,8 +4979,8 @@ function dedupeRecommendedPicksByName(picks = []) {
   });
 }
 
-function limitMew2RecommendationsToTierFloor(minimumTier = 'yellow') {
-  const maximumPriority = tierPriority[minimumTier] ?? tierPriority.yellow;
+function limitMew2RecommendationsToTierFloor(minimumTier = 'bom') {
+  const maximumPriority = getRecommendationTierPriority(minimumTier);
 
   mew2Bosses.forEach((boss) => {
     Object.values(boss.clans || {}).forEach((clanData) => {
@@ -4929,8 +4999,8 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'yellow') {
         tank: []
       };
       const roleSeedOrder = [...roleboardRoleOrder].sort((left, right) => {
-        const leftPreferred = rankedByRole[left].filter((poke) => (tierPriority[poke?.tier] ?? tierPriority.unknown) <= maximumPriority).length;
-        const rightPreferred = rankedByRole[right].filter((poke) => (tierPriority[poke?.tier] ?? tierPriority.unknown) <= maximumPriority).length;
+        const leftPreferred = rankedByRole[left].filter((poke) => getRecommendationTierPriority(poke?.tier) <= maximumPriority).length;
+        const rightPreferred = rankedByRole[right].filter((poke) => getRecommendationTierPriority(poke?.tier) <= maximumPriority).length;
         if (leftPreferred !== rightPreferred) return leftPreferred - rightPreferred;
         return roleboardRoleOrder.indexOf(left) - roleboardRoleOrder.indexOf(right);
       });
@@ -4939,7 +5009,7 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'yellow') {
         const candidate = rankedByRole[roleKey].find((poke) => {
           const nameKey = getRecommendationNameKey(poke);
           if (!nameKey || usedNames.has(nameKey)) return false;
-          const priority = tierPriority[poke?.tier] ?? tierPriority.unknown;
+          const priority = getRecommendationTierPriority(poke?.tier);
           return allowAnyTier || priority <= maximumPriority;
         });
 
@@ -4965,7 +5035,7 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'yellow') {
 
       roleboardRoleOrder.forEach((roleKey) => {
         rankedByRole[roleKey].forEach((poke) => {
-          const priority = tierPriority[poke?.tier] ?? tierPriority.unknown;
+          const priority = getRecommendationTierPriority(poke?.tier);
           if (priority > maximumPriority) return;
 
           const nameKey = getRecommendationNameKey(poke);
@@ -5007,16 +5077,35 @@ function createHeracrossPick() {
   return createRolePick('Heracross', ['bug', 'fighting'], 'fighting');
 }
 
+function createMiltankPick() {
+  return createRolePick('Miltank', ['normal'], 'ground');
+}
+
+function createShinyMiltankPick() {
+  return createRolePick('Shiny Miltank', ['normal'], 'ground');
+}
+
 function addHeracrossIfCompatible(bossRef, picks = []) {
   if (!Array.isArray(picks)) return;
 
   const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick());
-  const priority = tierPriority[scored?.tier] ?? tierPriority.unknown;
-  if (priority > tierPriority.yellow) return;
+  const priority = getRecommendationTierPriority(scored?.tier);
+  if (priority > tierPriority.bom) return;
   if ((scored?._offense ?? 0) < 2) return;
   if ((scored?._defenseWorst ?? Infinity) > 2) return;
 
   ensureRolePickNames(picks, [scored]);
+}
+
+function addMiltankIfCompatible(bossRef, picks = []) {
+  if (!Array.isArray(picks)) return;
+
+  const scored = scoreRecommendationForBoss(bossRef, createMiltankPick());
+  const shinyScored = scoreRecommendationForBoss(bossRef, createShinyMiltankPick());
+  const priority = getRecommendationTierPriority(scored?.tier);
+  if (priority > tierPriority.bom) return;
+
+  ensureRolePickNames(picks, [scored, shinyScored]);
 }
 
 function injectHeracrossRecommendations() {
@@ -5042,15 +5131,26 @@ function injectHeracrossRecommendations() {
   });
 }
 
+function injectMiltankRecommendations() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      const valorTankList = boss?.clans?.valor?.roles?.tank;
+      if (!Array.isArray(valorTankList)) return;
+      addMiltankIfCompatible(boss, valorTankList);
+    });
+  });
+}
+
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
+injectMiltankRecommendations();
 normalizeAllBossRecommendationAssignments();
 applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
-limitMew2RecommendationsToTierFloor('yellow');
+limitMew2RecommendationsToTierFloor('bom');
 function getRecommendationTierPriority(tier) {
-  return tierPriority[String(tier || '').trim().toLowerCase()] ?? tierPriority.unknown;
+  return tierPriority[normalizeTierKey(tier)] ?? tierPriority.seminformacao;
 }
 
 function buildFixedRecommendationSeedConfigs() {
@@ -5121,7 +5221,7 @@ function createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfi
 
 function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfigs = {}, excludedNameKeys = new Set()) {
   const registryPool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
-  const soloThreshold = tierPriority.solo ?? tierPriority.unknown;
+  const soloThreshold = tierPriority.ruim ?? tierPriority.seminformacao;
 
   const rankedCandidates = registryPool
     .map((registryEntry) => createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs))
@@ -5145,7 +5245,7 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
 }
 
 function filterRecommendationListByTier(list = [], bossRef) {
-  const soloThreshold = tierPriority.solo ?? tierPriority.unknown;
+  const soloThreshold = tierPriority.ruim ?? tierPriority.seminformacao;
   return dedupeRecommendedPicksByName((list || []).filter((pick) => {
     try {
       const scored = scoreRecommendationForBoss(bossRef, pick);
@@ -6316,7 +6416,7 @@ function createPlannerRecommendationCard(plannerEntry, bossEntry, roleKey, pick)
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'planner-recommendation-card';
-  button.dataset.tier = pick.tier || 'unknown';
+  button.dataset.tier = normalizeTierKey(pick.tier);
   if (plannerEntry.roles?.[roleKey]?.pokemonKey === pick.plannerKey) {
     button.classList.add('is-selected');
   }
@@ -6339,7 +6439,7 @@ function createPlannerRecommendationCard(plannerEntry, bossEntry, roleKey, pick)
 
   const tierText = document.createElement('span');
   tierText.className = 'planner-recommendation-card__tier';
-  tierText.textContent = getTierUiLabel(pick.tier || 'unknown');
+  tierText.textContent = getTierUiLabel(pick.tier);
 
   titleRow.append(name, tierText);
 
@@ -6410,7 +6510,7 @@ function createPlannerRoleSlot(plannerEntry, bossEntry, roleKey) {
   const meta = document.createElement('span');
   meta.className = 'planner-role-slot__meta';
   meta.textContent = selectedPick
-    ? `${bossEntry.bossRef.clans?.[selectedOwnerClan || slot.clan]?.label || selectedOwnerClan || slot.clan} - ${getTierUiLabel(selectedPick.tier || 'unknown')}`
+    ? `${bossEntry.bossRef.clans?.[selectedOwnerClan || slot.clan]?.label || selectedOwnerClan || slot.clan} - ${getTierUiLabel(selectedPick.tier)}`
     : `${bossEntry.bossRef.clans?.[slot.clan]?.label || slot.clan} - ${currentRecommendations.length} opc${currentRecommendations.length === 1 ? 'ao' : 'oes'} disponiveis`;
 
   copy.append(eyebrow, current, meta);
@@ -6727,7 +6827,7 @@ function createPlannerCompositionCard(plannerEntry) {
       createPlannerSummaryPill(
         roleboardRoleLabels[roleKey] || roleKey,
         selectedPick.name,
-        selectedPick.tier || 'unknown'
+        normalizeTierKey(selectedPick.tier)
       )
     );
   });
@@ -6876,12 +6976,8 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
     nameStrong.textContent = pick.name;
     // Add tier badge (human-friendly label) next to the pick name
     const tierSpan = document.createElement('span');
-    tierSpan.className = 'planner-ready-member-card__pick-tier ' + (pick.tier ? `tier-${pick.tier}` : 'tier-unknown');
-    try {
-      tierSpan.textContent = (typeof tierLabels === 'object' && tierLabels[pick.tier]) ? tierLabels[pick.tier] : (pick.tier || '');
-    } catch (e) {
-      tierSpan.textContent = pick.tier || '';
-    }
+    tierSpan.className = 'planner-ready-member-card__pick-tier ' + `tier-${normalizeTierKey(pick.tier)}`;
+    tierSpan.textContent = getTierUiLabel(pick.tier);
 
     pickLabel.append(roleSpan, nameStrong, tierSpan);
     pickWrap.append(pickImg, pickLabel);
@@ -7156,7 +7252,7 @@ function createPlannerMemberEditRecommendationCard(bossEntry, roleKey, activeCla
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'planner-recommendation-card';
-  button.dataset.tier = pick.tier || 'unknown';
+  button.dataset.tier = normalizeTierKey(pick.tier);
   if (selectedKey === pick.plannerKey) {
     button.classList.add('is-selected');
   }
@@ -7182,7 +7278,7 @@ function createPlannerMemberEditRecommendationCard(bossEntry, roleKey, activeCla
 
   const tierText = document.createElement('span');
   tierText.className = 'planner-recommendation-card__tier';
-  tierText.textContent = getTierUiLabel(pick.tier || 'unknown');
+  tierText.textContent = getTierUiLabel(pick.tier);
 
   nameWrap.append(name, tierText);
   titleRow.appendChild(nameWrap);
@@ -7250,7 +7346,7 @@ function createPlannerMemberEditRoleSlot(bossEntry, roleKey, draft) {
   const meta = document.createElement('span');
   meta.className = 'planner-role-slot__meta';
   meta.textContent = selectedPick
-    ? `${bossEntry.bossRef.clans?.[selectedClan || activeClan]?.label || selectedClan || activeClan} - ${getTierUiLabel(selectedPick.tier || 'unknown')}`
+    ? `${bossEntry.bossRef.clans?.[selectedClan || activeClan]?.label || selectedClan || activeClan} - ${getTierUiLabel(selectedPick.tier)}`
     : `${bossEntry.bossRef.clans?.[activeClan]?.label || activeClan} - ${recommendations.length} opc${recommendations.length === 1 ? 'ao' : 'oes'} disponiveis`;
 
   copy.append(eyebrow, current, meta);
@@ -8382,7 +8478,7 @@ function getRecommendedSpeedsters() {
           bossName: boss.name,
           bossData: boss,
           sourceClan: clanData.label || '',
-          sourceBossTier: poke.tier || 'unknown'
+          sourceBossTier: normalizeTierKey(poke.tier)
         });
       });
     });
@@ -8482,7 +8578,7 @@ function getSpeedsterTierForBoss(boss, speedsterName) {
   for (const clanData of Object.values(boss.clans || {})) {
     getAllRecommendedForClan(boss, clanData).forEach((poke) => {
       if (String(poke.name || '').toLowerCase() === lower) {
-        bestTier = pickBetterTier(bestTier, (poke.tier || 'unknown').trim());
+        bestTier = pickBetterTier(bestTier, poke.tier);
       }
     });
   }
@@ -8491,7 +8587,7 @@ function getSpeedsterTierForBoss(boss, speedsterName) {
 
 function getComputedSpeedsterTierInBoss(boss, speedsterName) {
   const lower = String(speedsterName || '').toLowerCase();
-  if (!boss || !speedsterName) return 'unknown';
+  if (!boss || !speedsterName) return 'seminformacao';
 
   const clansOrder = ['instinct', 'mystic', 'valor'];
   let bestTier = '';
@@ -8506,7 +8602,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
       if (found) {
         // Regra especial: speedsters que causam Efetivo (1.5) viram Super Efetivo (2.0).
         // Aplicar apenas na computação de tiers para speedsters.
-        let effectiveTier = found.tier || 'unknown';
+        let effectiveTier = normalizeTierKey(found.tier);
         try {
           const isSpeedsterMatch = String(found.name || '').toLowerCase() === lower;
           const offenseVal = typeof found._offense === 'number' ? found._offense : null;
@@ -8526,20 +8622,12 @@ function getComputedSpeedsterTierInBoss(boss, speedsterName) {
 
   // Fallback to static dataset if not found in computed ranking.
   const staticTier = getSpeedsterTierForBoss(boss, speedsterName);
-  return staticTier || 'unknown';
+  return normalizeTierKey(staticTier);
 }
 
-function getTierUiLabel(tier = 'unknown') {
-  const tierLabels = {
-    green: 'Ideal',
-    otimo: 'Muito bom',
-    yellow: 'Bom',
-    red: 'Aceitavel',
-    solo: 'Ruim',
-    unknown: 'Sem informacao'
-  };
-
-  return tierLabels[tier] || tierLabels.unknown;
+function getTierUiLabel(tier = 'seminformacao') {
+  const normalizedTier = normalizeTierKey(tier);
+  return tierLabels[normalizedTier] || tierLabels.seminformacao;
 }
 
 function getBossResultEncounterLabel(boss) {
@@ -8582,7 +8670,7 @@ function createSpeedsterSearchMetric(label, value, tone = '') {
   const card = document.createElement('div');
   card.className = 'speedster-search-results-metric';
   if (tone) {
-    card.dataset.tone = tone;
+    card.dataset.tone = tone === 'count' ? tone : normalizeTierKey(tone);
   }
 
   const metricLabel = document.createElement('span');
@@ -8620,7 +8708,7 @@ function createSpeedsterBossResultMetaChip(label, values = []) {
 }
 
 function createSpeedsterBossResultCard(boss, speedsterName) {
-  const tier = getComputedSpeedsterTierInBoss(boss, speedsterName) || 'unknown';
+  const tier = normalizeTierKey(getComputedSpeedsterTierInBoss(boss, speedsterName));
   const moveTypes = getBossMoveTypes(boss);
   const bossTypes = Array.isArray(boss?.types) ? boss.types : [];
   const catalogLabel = getActiveBossCatalog().label || 'Bosses';
@@ -8710,7 +8798,7 @@ function openSpeedsterBossesModal(speedster) {
   const catalog = getActiveBossCatalog();
   const moveTypes = getBossMoveTypes(speedster);
   const bestTier = bosses.reduce((best, boss) => pickBetterTier(best, getComputedSpeedsterTierInBoss(boss, speedster.name)), '');
-  const idealCount = bosses.filter((boss) => getComputedSpeedsterTierInBoss(boss, speedster.name) === 'green').length;
+  const excelenteCount = bosses.filter((boss) => getComputedSpeedsterTierInBoss(boss, speedster.name) === 'excelente').length;
 
   modalTitle.textContent = `${speedster.name} (Pokemon)`;
   setModalChrome({
@@ -8788,8 +8876,8 @@ function openSpeedsterBossesModal(speedster) {
   summaryMetrics.className = 'speedster-search-results-metrics';
   summaryMetrics.append(
     createSpeedsterSearchMetric('Chefes', String(bosses.length), 'count'),
-    createSpeedsterSearchMetric('Melhor tier', getTierUiLabel(bestTier || 'unknown'), bestTier || 'unknown'),
-    createSpeedsterSearchMetric('Tier ideal', idealCount > 0 ? `${idealCount}x` : '0x', idealCount > 0 ? 'green' : 'unknown')
+    createSpeedsterSearchMetric('Melhor tier', getTierUiLabel(bestTier || 'seminformacao'), bestTier || 'seminformacao'),
+    createSpeedsterSearchMetric('Tier excelente', excelenteCount > 0 ? `${excelenteCount}x` : '0x', excelenteCount > 0 ? 'excelente' : 'seminformacao')
   );
 
   summary.append(summaryCopy, summaryMetrics);
@@ -8847,18 +8935,9 @@ function createRecommendationCard(poke, options = {}) {
     const moveTypes = moveTypeMatch && moveTypeMatch[1]
       ? moveTypeMatch[1].split('/').map((entry) => entry.trim().toLowerCase()).filter(Boolean)
       : (poke?._moveType ? [poke._moveType] : []);
-    const tier = poke.tier || 'unknown';
+    const tier = normalizeTierKey(poke.tier);
     const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
     const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
-
-    const tierLabels = {
-      green: 'Ideal',
-      otimo: 'Muito bom',
-      yellow: 'Bom',
-      red: 'Aceitavel',
-      solo: 'Ruim',
-      unknown: 'Sem informacao'
-    };
 
     const createChip = (type, options = {}) => {
       if (!type) return null;
@@ -8957,7 +9036,7 @@ function createRecommendationCard(poke, options = {}) {
 
     const tierDot = document.createElement('span');
     tierDot.className = `tier-dot tier-${tier}`;
-    tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informação');
+    tierDot.setAttribute('aria-label', getTierUiLabel(tier));
 
     const nameEl = document.createElement('div');
     nameEl.className = 'speedster-reco-name';
@@ -9033,19 +9112,11 @@ function createRecommendationCard(poke, options = {}) {
   const nameWrapper = document.createElement('div');
   nameWrapper.className = 'speedster-reco-name-wrapper';
 
-  const tier = poke.tier || 'unknown';
+  const tier = normalizeTierKey(poke.tier);
   const tierDot = document.createElement('span');
   tierDot.className = `tier-dot tier-${tier}`;
 
-  const tierLabels = {
-    green: 'Ideal',
-    otimo: 'Muito bom',
-    yellow: 'Bom',
-    red: 'Aceitável',
-    solo: 'Última opção',
-    unknown: 'Sem informação'
-  };
-  tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informação');
+  tierDot.setAttribute('aria-label', getTierUiLabel(tier));
 
   const nameEl = document.createElement('div');
   nameEl.className = 'speedster-reco-name';
@@ -9521,7 +9592,7 @@ function openModalWithAnimation() {
 function createRolePickCard(poke) {
   const card = document.createElement('div');
   card.className = 'boss-role-pick';
-  card.dataset.tier = poke.tier || 'unknown';
+  card.dataset.tier = normalizeTierKey(poke.tier);
   if (poke.note) {
     card.title = poke.note;
   }
@@ -9562,15 +9633,15 @@ function createRolePickCard(poke) {
   nameWrap.className = 'boss-role-pick-name-wrap';
 
   const tierDot = document.createElement('span');
-  tierDot.className = `tier-dot tier-${poke.tier || 'unknown'}`;
-  tierDot.setAttribute('aria-label', tierLabels[poke.tier || 'unknown'] || tierLabels.unknown);
+  tierDot.className = `tier-dot tier-${normalizeTierKey(poke.tier)}`;
+  tierDot.setAttribute('aria-label', getTierUiLabel(poke.tier));
 
   const name = document.createElement('div');
   name.className = 'boss-role-pick-name';
   name.textContent = poke.name;
   name.title = poke.note ? `${poke.name} - ${poke.note}` : poke.name;
 
-  nameWrap.append(tierDot, name, createTierAssistBadge(poke.tier || 'unknown', 'tier-assist-badge--role'));
+  nameWrap.append(tierDot, name, createTierAssistBadge(poke.tier, 'tier-assist-badge--role'));
   const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
 
   const score = document.createElement('div');
@@ -9899,19 +9970,11 @@ const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(s
         const nameWrapper = document.createElement('div');
         nameWrapper.className = 'speedster-reco-name-wrapper';
 
-        const tier = poke.tier || 'unknown';
+        const tier = normalizeTierKey(poke.tier);
         const tierDot = document.createElement('span');
         tierDot.className = `tier-dot tier-${tier}`;
 
-        const tierLabels = {
-          green: 'Ideal',
-          otimo: 'Muito bom',
-          yellow: 'Bom',
-          red: 'Aceitável',
-          solo: 'Última opção',
-          unknown: 'Sem informação'
-        };
-        tierDot.setAttribute('aria-label', tierLabels[tier] || 'Sem informação');
+        tierDot.setAttribute('aria-label', getTierUiLabel(tier));
 
         const nameEl = document.createElement('div');
         nameEl.className = 'speedster-reco-name';
@@ -10298,10 +10361,10 @@ function openBossModalV2(speedster) {
         list.appendChild(empty);
       } else {
         let ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended || []);
-        // Para bosses marcados com filterSolo, remover picks de tiers pior ou igual a 'red' (ruim)
+        // Para bosses marcados com filterSolo, remover picks de tiers pior ou igual a 'aceitavel'
         if (speedster?.filterSolo) {
-          const threshold = tierPriority['red'] ?? tierPriority.red ?? 3;
-          ranked = (ranked || []).filter((p) => (tierPriority[p?.tier] ?? tierPriority.unknown) < threshold);
+          const threshold = tierPriority.aceitavel ?? 3;
+          ranked = (ranked || []).filter((p) => getRecommendationTierPriority(p?.tier) < threshold);
         }
         ranked.forEach((poke) => {
           list.appendChild(createRecommendationCard(poke, { showDescription: false }));
@@ -10556,3 +10619,6 @@ try {
 }
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
+
+
+

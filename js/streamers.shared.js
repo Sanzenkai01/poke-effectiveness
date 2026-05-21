@@ -51,6 +51,7 @@
         { name: 'nickrune', supportsDrops: false },
         { name: 'strackzera', supportsDrops: false },
         { name: 'dragonslayerpiva', supportsDrops: false },
+        { name: 'princeofmajorr', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
