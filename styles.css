@@ -4893,7 +4893,7 @@ p {
   display: block;
 }
 
-.catch-type-select__trigger {
+.catch-section .catch-type-select__trigger {
   width: 100%;
   display: flex;
   align-items: center;
@@ -4921,9 +4921,9 @@ p {
     background 160ms ease;
 }
 
-.catch-type-select__trigger:hover,
-.catch-type-select__trigger:focus-visible,
-.catch-type-select--open .catch-type-select__trigger {
+.catch-section .catch-type-select__trigger:hover,
+.catch-section .catch-type-select__trigger:focus-visible,
+.catch-section .catch-type-select--open .catch-type-select__trigger {
   border-color: rgba(var(--type-color-rgb, 255, 209, 102), 0.44);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
@@ -4936,7 +4936,7 @@ p {
   transform: translateY(-1px);
 }
 
-.catch-type-select__trigger:focus-visible {
+.catch-section .catch-type-select__trigger:focus-visible {
   outline: none;
 }
 
@@ -5040,7 +5040,7 @@ p {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.catch-type-select__option {
+.catch-section .catch-type-select__option {
   width: 100%;
   display: flex;
   align-items: center;
@@ -5062,8 +5062,8 @@ p {
     box-shadow 150ms ease;
 }
 
-.catch-type-select__option:hover,
-.catch-type-select__option:focus-visible {
+.catch-section .catch-type-select__option:hover,
+.catch-section .catch-type-select__option:focus-visible {
   border-color: rgba(var(--type-color-rgb, 255, 209, 102), 0.36);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
@@ -5076,7 +5076,7 @@ p {
   outline: none;
 }
 
-.catch-type-select__option--selected {
+.catch-section .catch-type-select__option--selected {
   border-color: rgba(var(--type-color-rgb, 255, 209, 102), 0.5);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
