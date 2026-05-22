@@ -2289,7 +2289,7 @@ const strings = {
         /* catch calculator */
         catchTitle: 'Calculadora de Captura',
         catchEyebrow: 'Captura otimizada',
-        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.',
+        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.\n (Layout provisório até a adição de todos os pokémons)',
         selectedBallLabel: 'Pokébola selecionada',
         catchCalcTitle: 'Calcule a média de pokébolas',
         catchCalcHint: 'Escolha primeiro entre Normal e Shiny para liberar os campos corretos da estimativa.',
