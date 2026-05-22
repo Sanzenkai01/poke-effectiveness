@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260521e">
+  <link rel="stylesheet" href="styles.css?v=20260522e">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -1153,17 +1153,43 @@
               <p id="catch-calc-hint" class="catch-panel__hint">Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.</p>
             </div>
 
-            <div class="catch-form-grid">
+            <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
+              <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
+              <div class="catch-variant-options">
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant-legacy" value="normal">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Normal</strong>
+                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Estimativa padr&atilde;o de captura.</span>
+                  </span>
+                </label>
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant-legacy" value="shiny">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Shiny</strong>
+                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Mostra a m&eacute;dia para capturas shiny.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div id="catch-selection-prompt" class="catch-selection-prompt" aria-live="polite">
+              <strong id="catch-selection-prompt-title">Escolha Normal ou Shiny para come&ccedil;ar</strong>
+              <span id="catch-selection-prompt-hint">No Normal voc&ecirc; escolhe o pre&ccedil;o registrado do pok&eacute;mon. No Shiny, o c&aacute;lculo continua por n&iacute;vel.</span>
+            </div>
+
+            <div id="catch-config-shell" class="catch-config-shell" hidden>
+              <div class="catch-form-grid">
               <div class="catch-section catch-field">
                 <label for="ball-select">Escolha a pokébola:</label>
                 <select id="ball-select">
-                  <option value="elemental">Pokébola Elemental</option>
-                  <option value="story">Pokébola Story</option>
                   <option value="ultra">Pokébola Ultra</option>
                   <option value="safari">Pokébola Safari</option>
+                  <option value="story">Pokébola Story</option>
+                  <option value="elemental">Pokébola Elemental</option>
                 </select>
               </div>
-              <div class="catch-section catch-field">
+              <div id="catch-level-field" class="catch-section catch-field" hidden>
                 <label for="level-select">Nível do pokémon:</label>
                 <select id="level-select">
                   <option value="5">Lvl 5</option>
@@ -1176,6 +1202,15 @@
                   <option value="pre">Pré Ace</option>
                   <option value="ace">Ace</option>
                 </select>
+              </div>
+              <div id="catch-price-field" class="catch-section catch-field catch-field--full" hidden>
+                <label for="catch-price-select">Pre&ccedil;o do pok&eacute;mon:</label>
+                <div id="catch-price-picker" class="catch-price-picker">
+                  <select id="catch-price-select" class="catch-price-picker__native">
+                    <option value="">Selecione o pre&ccedil;o</option>
+                  </select>
+                  <div id="catch-price-picker-ui" class="catch-price-picker__ui" aria-hidden="true"></div>
+                </div>
               </div>
             </div>
 
@@ -1205,11 +1240,11 @@
               <div id="catch-elemental-rule-status" class="catch-elemental-rule-status" aria-live="polite"></div>
             </div>
 
-            <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
-              <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
+            <div id="catch-legacy-variant-group" class="catch-section catch-variant-group" hidden aria-hidden="true">
+              <span id="catch-variant-label-hidden" class="catch-variant-group__label">Tipo de captura</span>
               <div class="catch-variant-options">
                 <label class="catch-variant-card">
-                  <input type="radio" name="catch-variant" value="normal" checked>
+                  <input type="radio" name="catch-variant" value="normal">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Normal</strong>
                     <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrão de captura.</span>
@@ -1231,6 +1266,7 @@
             </div>
 
             <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
+            </div>
           </section>
 
           <div class="catch-secondary-grid">
@@ -1538,7 +1574,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260509a" defer></script>
     <script src="js/visits.shared.js?v=20260520i" defer></script>
-    <script src="script.js?v=20260521e" defer></script>
+    <script src="script.js?v=20260522e" defer></script>
 </body>
 </html>
 

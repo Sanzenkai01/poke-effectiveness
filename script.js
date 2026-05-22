@@ -2292,12 +2292,20 @@ const strings = {
         catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.',
         selectedBallLabel: 'Pokébola selecionada',
         catchCalcTitle: 'Calcule a média de pokébolas',
-        catchCalcHint: 'Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.',
+        catchCalcHint: 'Escolha primeiro entre Normal e Shiny para liberar os campos corretos da estimativa.',
         ballChoiceLabel: 'Escolha a pokébola:',
         pokemonLevelLabel: 'Nível do pokémon:',
+        catchPriceLabel: 'Preço do pokémon:',
+        catchPricePlaceholder: 'Selecione o preço',
+        catchPriceLoading: 'Carregando preços...',
+        catchPriceUnavailable: 'Preços indisponíveis no momento',
         catchVariantLabel: 'Tipo de captura',
-        catchVariantNormalHint: 'Estimativa padrão de captura.',
-        catchVariantShinyHint: 'Mostra a média para capturas shiny.',
+        catchVariantNormalHint: 'Usa o preço registrado do pokémon como base.',
+        catchVariantShinyHint: 'Mantém a captura por nível, como no fluxo atual.',
+        catchSelectionPromptTitle: 'Escolha Normal ou Shiny para começar',
+        catchSelectionPromptHint: 'No Normal você seleciona o preço registrado. No Shiny, o cálculo é feito por nível.',
+        catchSelectVariantFirst: 'Selecione Normal ou Shiny para liberar a estimativa.',
+        catchSelectPriceFirst: 'Selecione um preço para calcular a captura normal.',
         optionsLabel: 'Opções',
         catchOptionLabel: 'Opção',
         calcCatchBtn: 'Calcular estimativa',
@@ -2316,6 +2324,7 @@ const strings = {
         catchResultTitle: 'Estimativa para sua seleção',
         catchResultCountLabel: 'Média',
         catchResultLevelLabel: 'Nível',
+        catchResultPriceLabel: 'Preço',
         catchResultVariantLabel: 'Variante',
         catchResultBallLabel: 'Pokébola',
         catchLogResultTitle: 'Leitura do log',
@@ -2776,6 +2785,8 @@ function updateTextContent(){
     if(ballLabel) ballLabel.textContent = t('ballChoiceLabel');
     const lvlLabel = document.querySelector('label[for="level-select"]');
     if(lvlLabel) lvlLabel.textContent = t('pokemonLevelLabel');
+    const priceLabel = document.querySelector('label[for="catch-price-select"]');
+    if(priceLabel) priceLabel.textContent = t('catchPriceLabel');
     const catchBtn = document.getElementById('calc-catch-btn');
     if(catchBtn) catchBtn.textContent = t('calcCatchBtn');
     const logLabel = document.querySelector('label[for="log-input"]');
@@ -2796,14 +2807,29 @@ function updateTextContent(){
     if(catchCalcHintEl) catchCalcHintEl.textContent = t('catchCalcHint');
     const catchVariantLabelEl = document.getElementById('catch-variant-label');
     if(catchVariantLabelEl) catchVariantLabelEl.textContent = t('catchVariantLabel');
-    const catchVariantNormalHintEl = document.getElementById('catch-variant-normal-hint');
-    if(catchVariantNormalHintEl) catchVariantNormalHintEl.textContent = t('catchVariantNormalHint');
-    const catchVariantShinyHintEl = document.getElementById('catch-variant-shiny-hint');
-    if(catchVariantShinyHintEl) catchVariantShinyHintEl.textContent = t('catchVariantShinyHint');
+    document.querySelectorAll('input[name="catch-variant-legacy"]').forEach((input) => {
+        const card = input.closest('.catch-variant-card');
+        const title = card?.querySelector('.catch-variant-card__title');
+        const hint = card?.querySelector('.catch-variant-card__hint');
+        if(input.value === 'normal'){
+            if(title) title.textContent = t('normal');
+            if(hint) hint.textContent = t('catchVariantNormalHint');
+        } else if(input.value === 'shiny'){
+            if(title) title.textContent = t('shiny');
+            if(hint) hint.textContent = t('catchVariantShinyHint');
+        }
+    });
+    const catchSelectionPromptTitleEl = document.getElementById('catch-selection-prompt-title');
+    if(catchSelectionPromptTitleEl) catchSelectionPromptTitleEl.textContent = t('catchSelectionPromptTitle');
+    const catchSelectionPromptHintEl = document.getElementById('catch-selection-prompt-hint');
+    if(catchSelectionPromptHintEl) catchSelectionPromptHintEl.textContent = t('catchSelectionPromptHint');
     const catchLogTitleEl = document.getElementById('catch-log-title');
     if(catchLogTitleEl) catchLogTitleEl.textContent = t('catchLogTitle');
     const catchLogHintEl = document.getElementById('catch-log-hint');
     if(catchLogHintEl) catchLogHintEl.textContent = t('catchLogHint');
+    if(catchPriceSelect && !catchPriceSelect.querySelector('option[value]:not([value=""])')){
+        catchPriceSelect.innerHTML = `<option value="">${t('catchPricePlaceholder')}</option>`;
+    }
     if(typeof updateBallPreview === 'function'){
         updateBallPreview();
     }
@@ -3380,6 +3406,14 @@ const CATCH_TARGET_TYPE_OPTIONS = Object.freeze(
         label: formatPokemonTypeLabel(type)
     }))
 );
+const CATCH_NORMAL_PRICE_VALUES = Object.freeze([
+    5, 60, 80, 125, 200, 250, 300, 500,
+    1000, 2000, 3000, 3800, 4000, 6000, 6500, 7000, 8000, 9000,
+    10000, 13000, 15000, 15800, 22000, 25000, 26000, 28000,
+    39000, 40000, 45000, 85500, 97500, 115500
+]);
+let catchNormalPriceOptions = [];
+let catchPriceActiveGroupKey = '';
 // counts per level differ between normal and shiny
 // for levels with multiple options we store an array of alternative requirements
 const captureData = {
@@ -3514,6 +3548,348 @@ function formatCurrencyValue(value){
 
 function formatPokemonPriceLabel(value){
     return `$${Math.round(Number(value) || 0)}`;
+}
+
+function formatCatchPriceOptionLabel(value){
+    const numericValue = Math.max(0, Number(value) || 0);
+    if(!numericValue) return '$0';
+    if(numericValue < 1000) return `$${numericValue}`;
+    const thousands = numericValue / 1000;
+    const compactThousands = Number.isInteger(thousands)
+        ? String(thousands)
+        : thousands.toFixed(1).replace(/\.0$/, '');
+    return `$${compactThousands}k`;
+}
+
+function formatCatchPriceOptionDetail(value){
+    const numericValue = Math.max(0, Number(value) || 0);
+    if(!numericValue) return '$0';
+    return `$${numericValue.toLocaleString('pt-BR')}`;
+}
+
+function formatCatchPriceRangeBoundary(value){
+    const numericValue = Math.max(0, Number(value) || 0);
+    if(!numericValue) return '$0';
+    return `$${numericValue.toLocaleString('pt-BR')}`;
+}
+
+function getCatchPriceGroupDefinitions(){
+    return [
+        {
+            key: 'starter',
+            title: 'Baixo custo',
+            accent: 'Bronze',
+            note: 'Valores rápidos para capturas iniciais.',
+            rangeStart: 5,
+            rangeEnd: 999,
+            matches: (value) => value < 1000
+        },
+        {
+            key: 'mid',
+            title: 'Milhar',
+            accent: 'Prata',
+            note: 'Faixa comum de evolução e hunts intermediárias.',
+            rangeStart: 1000,
+            rangeEnd: 9999,
+            matches: (value) => value >= 1000 && value < 10000
+        },
+        {
+            key: 'high',
+            title: 'Alto valor',
+            accent: 'Ouro',
+            note: 'Pokémon de progressão mais cara.',
+            rangeStart: 10000,
+            rangeEnd: 49999,
+            matches: (value) => value >= 10000 && value < 50000
+        },
+        {
+            key: 'rare',
+            title: 'Raros',
+            accent: 'Elite',
+            note: 'Entradas premium e registros especiais.',
+            rangeStart: 50000,
+            matches: (value) => value >= 50000
+        }
+    ];
+}
+
+function getCatchPriceGroups(options = []){
+    const definitions = getCatchPriceGroupDefinitions();
+    const groups = definitions.map((group) => ({
+        ...group,
+        items: []
+    }));
+
+    options.forEach((option) => {
+        const numericValue = Math.max(0, Number(option?.value) || 0);
+        const targetGroup = groups.find((group) => group.matches(numericValue)) || groups[groups.length - 1];
+        if(targetGroup){
+            targetGroup.items.push({
+                ...option,
+                numericValue
+            });
+        }
+    });
+
+    return groups
+        .filter((group) => group.items.length)
+        .map((group) => {
+            const numericValues = group.items
+                .map((item) => item.numericValue)
+                .filter((value) => Number.isFinite(value))
+                .sort((left, right) => left - right);
+            const rangeStart = Number.isFinite(group.rangeStart) ? group.rangeStart : numericValues[0];
+            const rangeEnd = Number.isFinite(group.rangeEnd) ? group.rangeEnd : numericValues[numericValues.length - 1];
+            return {
+                ...group,
+                rangeStart,
+                rangeEnd,
+                rangeLabel: `${formatCatchPriceRangeBoundary(rangeStart)} até ${formatCatchPriceRangeBoundary(rangeEnd)}`
+            };
+        });
+}
+
+function getActiveCatchPriceGroup(groups, selectedValue = ''){
+    if(!Array.isArray(groups) || !groups.length){
+        catchPriceActiveGroupKey = '';
+        return null;
+    }
+
+    const currentGroup = groups.find((group) => group.key === catchPriceActiveGroupKey);
+    if(currentGroup){
+        return currentGroup;
+    }
+
+    const selectedGroup = selectedValue
+        ? groups.find((group) => group.items.some((item) => item.value === selectedValue))
+        : null;
+
+    if(selectedGroup){
+        catchPriceActiveGroupKey = selectedGroup.key;
+        return selectedGroup;
+    }
+
+    catchPriceActiveGroupKey = groups[0].key;
+    return groups[0];
+}
+
+function renderCatchPricePicker(){
+    const wrapper = document.getElementById('catch-price-picker');
+    const uiRoot = document.getElementById('catch-price-picker-ui');
+    if(!(wrapper instanceof HTMLElement) || !(uiRoot instanceof HTMLElement) || !(catchPriceSelect instanceof HTMLSelectElement)) return;
+
+    const optionEntries = Array.from(catchPriceSelect.options)
+        .filter((option) => option.value)
+        .map((option) => ({
+            value: String(option.value || ''),
+            label: String(option.textContent || '').trim()
+        }));
+
+    wrapper.classList.add('catch-price-picker--enhanced');
+    uiRoot.setAttribute('aria-hidden', 'false');
+    uiRoot.replaceChildren();
+
+    const summary = document.createElement('div');
+    summary.className = 'catch-price-picker__summary';
+
+    const summaryLabel = document.createElement('span');
+    summaryLabel.className = 'catch-price-picker__summary-label';
+    summaryLabel.textContent = 'Preço selecionado';
+
+    const selectedValue = String(catchPriceSelect.value || '').trim();
+    const summaryValue = document.createElement('strong');
+    summaryValue.className = 'catch-price-picker__summary-value';
+    summaryValue.textContent = selectedValue
+        ? formatCatchPriceOptionLabel(selectedValue)
+        : 'Escolha um valor';
+
+    const summaryHint = document.createElement('span');
+    summaryHint.className = 'catch-price-picker__summary-hint';
+    summaryHint.textContent = selectedValue
+        ? `${formatCatchPriceOptionDetail(selectedValue)} registrado para a captura normal.`
+        : 'Escolha uma faixa de preço e depois selecione o valor desejado.';
+
+    summary.append(summaryLabel, summaryValue, summaryHint);
+    uiRoot.appendChild(summary);
+
+    const groups = getCatchPriceGroups(optionEntries);
+    const activeGroup = getActiveCatchPriceGroup(groups, selectedValue);
+    if(!activeGroup) return;
+
+    const rangeTabs = document.createElement('div');
+    rangeTabs.className = 'catch-price-picker__range-tabs';
+
+    groups.forEach((group) => {
+        const tabButton = document.createElement('button');
+        tabButton.type = 'button';
+        tabButton.className = 'catch-price-picker__range-tab';
+        tabButton.dataset.group = group.key;
+        tabButton.textContent = group.rangeLabel;
+        tabButton.setAttribute('aria-pressed', String(group.key === activeGroup.key));
+        tabButton.setAttribute('aria-label', `Faixa ${group.rangeLabel}`);
+        if(group.key === activeGroup.key){
+            tabButton.classList.add('catch-price-picker__range-tab--active');
+        }
+        tabButton.addEventListener('click', () => {
+            catchPriceActiveGroupKey = group.key;
+            renderCatchPricePicker();
+        });
+        rangeTabs.appendChild(tabButton);
+    });
+
+    uiRoot.appendChild(rangeTabs);
+
+    const panel = document.createElement('section');
+    panel.className = 'catch-price-picker__panel';
+    panel.dataset.group = activeGroup.key;
+
+    const panelHeader = document.createElement('div');
+    panelHeader.className = 'catch-price-picker__panel-header';
+
+    const panelTitle = document.createElement('strong');
+    panelTitle.className = 'catch-price-picker__panel-title';
+    panelTitle.textContent = activeGroup.title;
+
+    const panelNote = document.createElement('span');
+    panelNote.className = 'catch-price-picker__panel-note';
+    panelNote.textContent = activeGroup.note;
+
+    const panelBadges = document.createElement('div');
+    panelBadges.className = 'catch-price-picker__panel-badges';
+
+    const accentBadge = document.createElement('span');
+    accentBadge.className = 'catch-price-picker__panel-badge catch-price-picker__panel-badge--accent';
+    accentBadge.textContent = activeGroup.accent;
+
+    const countBadge = document.createElement('span');
+    countBadge.className = 'catch-price-picker__panel-badge';
+    countBadge.textContent = `${activeGroup.items.length} preço${activeGroup.items.length > 1 ? 's' : ''}`;
+
+    panelBadges.append(accentBadge, countBadge);
+    panelHeader.append(panelTitle, panelNote, panelBadges);
+
+    const grid = document.createElement('div');
+    grid.className = 'catch-price-picker__options';
+
+    activeGroup.items.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'catch-price-picker__option';
+        button.dataset.value = item.value;
+        button.title = `Selecionar preço ${formatCatchPriceOptionDetail(item.value)}`;
+        button.setAttribute('aria-label', `Selecionar preço ${formatCatchPriceOptionDetail(item.value)}`);
+        button.setAttribute('aria-pressed', item.value === selectedValue ? 'true' : 'false');
+        if(item.value === selectedValue){
+            button.classList.add('catch-price-picker__option--selected');
+        }
+
+        const chip = document.createElement('span');
+        chip.className = 'catch-price-picker__option-chip';
+        chip.textContent = formatCatchPriceOptionLabel(item.value);
+
+        button.appendChild(chip);
+        button.addEventListener('click', () => {
+            const previousValue = String(catchPriceSelect.value || '');
+            catchPriceSelect.value = item.value;
+            catchPriceActiveGroupKey = activeGroup.key;
+            renderCatchPricePicker();
+            if(previousValue !== item.value){
+                catchPriceSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        grid.appendChild(button);
+    });
+
+    panel.append(panelHeader, grid);
+    uiRoot.appendChild(panel);
+}
+
+function getSelectedCatchVariant(){
+    return Array.from(catchVariantInputs || []).find((input) => input.checked)?.value || '';
+}
+
+function getCatchSelectionValue(variant = getSelectedCatchVariant()){
+    if(variant === 'shiny'){
+        return levelSelect ? String(levelSelect.value || '5') : '5';
+    }
+    if(variant === 'normal'){
+        return catchPriceSelect ? String(catchPriceSelect.value || '').trim() : '';
+    }
+    return '';
+}
+
+function isCatchSelectionReady(variant = getSelectedCatchVariant()){
+    if(!variant) return false;
+    return Boolean(getCatchSelectionValue(variant));
+}
+
+function buildCatchNormalPriceOptions(){
+    return Array.from(new Set(CATCH_NORMAL_PRICE_VALUES))
+        .filter((value) => Number.isFinite(value) && value > 0)
+        .sort((left, right) => left - right)
+        .map((value) => ({
+            value: String(value),
+            label: formatCatchPriceOptionLabel(value)
+        }));
+}
+
+function getCatchAvailablePriceOptions(){
+    if(Array.isArray(catchNormalPriceOptions) && catchNormalPriceOptions.length){
+        return catchNormalPriceOptions;
+    }
+    return buildCatchNormalPriceOptions();
+}
+
+function setCatchPriceSelectPlaceholder(label, disabled = true){
+    if(!catchPriceSelect) return;
+    setCatchSelectOptions(catchPriceSelect, [], {
+        includeEmpty: true,
+        emptyLabel: label,
+        selectedValue: ''
+    });
+    catchPriceSelect.disabled = disabled;
+    renderCatchPricePicker();
+}
+
+function syncCatchNormalPriceSelect(selectedValue = catchPriceSelect?.value || ''){
+    if(!catchPriceSelect) return false;
+    const options = getCatchAvailablePriceOptions();
+    if(!options.length) return false;
+    catchNormalPriceOptions = options;
+    setCatchSelectOptions(catchPriceSelect, options, {
+        includeEmpty: true,
+        emptyLabel: t('catchPricePlaceholder'),
+        selectedValue
+    });
+    catchPriceSelect.disabled = false;
+    renderCatchPricePicker();
+    return true;
+}
+
+function ensureCatchNormalPriceOptionsLoaded(){
+    if(syncCatchNormalPriceSelect()){
+        return Promise.resolve(catchNormalPriceOptions);
+    }
+    catchNormalPriceOptions = buildCatchNormalPriceOptions();
+    if(!syncCatchNormalPriceSelect()){
+        setCatchPriceSelectPlaceholder(t('catchPriceUnavailable'));
+    }
+    updateCatchActionState();
+    return Promise.resolve(catchNormalPriceOptions);
+}
+
+function getCatchSelectionSummary(selectionValue, variant){
+    if(variant === 'normal'){
+        return {
+            label: t('catchResultPriceLabel'),
+            value: formatCatchPriceOptionLabel(selectionValue)
+        };
+    }
+    return {
+        label: t('catchResultLevelLabel'),
+        value: getCatchLevelLabel(selectionValue)
+    };
 }
 
 function formatBallAmount(count, ball){
@@ -4062,16 +4438,22 @@ function updateBallPreview(){
     updateCatchElementalRuleStatus();
 }
 
-function renderCatchEstimateResult(target, chosen, lvl, variant, optionItems){
+function renderCatchPendingState(target, message){
+    if(!target) return;
+    target.innerHTML = `<div class="calc-result-highlight catch-result-empty">${message}</div>`;
+}
+
+function renderCatchEstimateResult(target, chosen, selectionValue, variant, optionItems){
     if(!target) return;
     if(!optionItems.length){
         target.innerHTML = `<div class="calc-result-highlight catch-result-empty">${t('noBallsParsed')}</div>`;
         return;
     }
     const selectedBallLabel = getCatchBallDisplayLabel(chosen);
+    const selectionSummary = getCatchSelectionSummary(selectionValue, variant);
     const headline = formatBallAmountWithLabel(optionItems[0].needed, selectedBallLabel);
     const chips = renderCatchChips([
-        `${t('catchResultLevelLabel')}: ${getCatchLevelLabel(lvl)}`,
+        `${selectionSummary.label}: ${selectionSummary.value}`,
         `${t('catchResultVariantLabel')}: ${getCatchVariantLabel(variant)}`,
         `${t('catchResultBallLabel')}: ${selectedBallLabel}`
     ]);
@@ -10348,17 +10730,35 @@ if(searchInput){searchInput.addEventListener('input',()=>{createButtons(searchIn
 const ballSelect = document.getElementById('ball-select');
 const ballImg = document.getElementById('ball-img');
 const levelSelect = document.getElementById('level-select');
+const catchPriceSelect = document.getElementById('catch-price-select');
 const catchResult = document.getElementById('catch-result');
 const calcCatchBtn = document.getElementById('calc-catch-btn');
 const parseLogBtn = document.getElementById('parse-log');
 const logResult = document.getElementById('log-result');
-const catchVariantInputs = document.querySelectorAll('input[name="catch-variant"]');
+const catchVariantInputs = document.querySelectorAll('input[name="catch-variant-legacy"]');
+const catchConfigShell = document.getElementById('catch-config-shell');
+const catchSelectionPrompt = document.getElementById('catch-selection-prompt');
+const catchLevelField = document.getElementById('catch-level-field');
+const catchPriceField = document.getElementById('catch-price-field');
+const catchLegacyVariantGroup = document.getElementById('catch-legacy-variant-group');
 const catchTargetTypePrimarySelect = document.getElementById('catch-target-type-primary');
 const catchTargetTypeSecondarySelect = document.getElementById('catch-target-type-secondary');
 const catchElementalRuleStatus = document.getElementById('catch-elemental-rule-status');
 
-function getSelectedCatchRequirementOptions(lvl, variant, chosen){
-    const reqList = computeRequired(lvl, variant) || [];
+function getCatchNormalPriceRequirementOptions(priceValue, chosen){
+    const selectedPrice = Math.max(0, Number(priceValue) || 0);
+    const chosenBallPrice = Math.max(0, getCatchBallUnitPrice(chosen));
+    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
+    if(!selectedPrice || !chosenBallPrice || !requirementBall) return [];
+    const needed = Math.ceil(selectedPrice / chosenBallPrice);
+    return needed > 0 ? [{ [requirementBall]: needed }] : [];
+}
+
+function getSelectedCatchRequirementOptions(selectionValue, variant, chosen){
+    if(variant === 'normal'){
+        return getCatchNormalPriceRequirementOptions(selectionValue, chosen);
+    }
+    const reqList = computeRequired(selectionValue, variant) || [];
     const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
 
     // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
@@ -10387,11 +10787,19 @@ function getCatchOptionItems(lvl, variant, chosen){
 }
 
 function renderCatchCalculation(){
-    const lvl = levelSelect ? levelSelect.value : '5';
-    const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
+    const variant = getSelectedCatchVariant();
+    if(!variant){
+        renderCatchPendingState(catchResult, t('catchSelectVariantFirst'));
+        return;
+    }
+    const selectionValue = getCatchSelectionValue(variant);
+    if(!selectionValue){
+        renderCatchPendingState(catchResult, t('catchSelectPriceFirst'));
+        return;
+    }
     const chosen = ballSelect ? ballSelect.value : 'ultra';
-    const optionItems = getCatchOptionItems(lvl, variant, chosen);
-    renderCatchEstimateResult(catchResult, chosen, lvl, variant, optionItems);
+    const optionItems = getCatchOptionItems(selectionValue, variant, chosen);
+    renderCatchEstimateResult(catchResult, chosen, selectionValue, variant, optionItems);
     const logText = document.getElementById('log-input')?.value || '';
     if(logText.trim()){
         processLogText(logText);
@@ -10400,11 +10808,15 @@ function renderCatchCalculation(){
 
 function renderCatchLogFromState(){
     if(!logResult) return;
+    const variant = getSelectedCatchVariant();
+    if(!isCatchSelectionReady(variant)){
+        logResult.innerHTML = '';
+        return;
+    }
     const state = catchLogState || createCatchLogState('');
     const chosen = ballSelect ? ballSelect.value : 'ultra';
-    const lvl = levelSelect ? levelSelect.value : '5';
-    const variant = document.querySelector('input[name="catch-variant"]:checked')?.value || 'normal';
-    const selectedOptions = getSelectedCatchRequirementOptions(lvl, variant, chosen);
+    const selectionValue = getCatchSelectionValue(variant);
+    const selectedOptions = getSelectedCatchRequirementOptions(selectionValue, variant, chosen);
     const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
     const chosenPrice = getCatchBallUnitPrice(chosen);
     const counts = getCatchLogCombinedCounts(state);
@@ -10419,7 +10831,11 @@ function renderCatchLogFromState(){
         });
         return Math.floor(sum);
     };
-    let totalCost = Math.max(0, (Number(state.parsedTotalCost) || 0) + getCatchLogManualCostDelta(state));
+    const parsedTotalCost = Math.max(0, Number(state.parsedTotalCost) || 0);
+    const manualCostDelta = getCatchLogManualCostDelta(state);
+    let totalCost = parsedTotalCost > 0
+        ? Math.max(0, parsedTotalCost + manualCostDelta)
+        : 0;
     const converted = convertToChosen(counts, chosen);
     const costBased = chosenPrice ? Math.floor(totalCost / chosenPrice) : 0;
     const effectiveUsed = Math.max(converted, costBased);
@@ -10479,9 +10895,48 @@ function adjustCatchLogCount(ball, step){
     renderCatchLogFromState();
 }
 
+function clearCatchOutputs(){
+    if(catchResult) catchResult.innerHTML = '';
+    if(logResult) logResult.innerHTML = '';
+}
+
+function updateCatchActionState(){
+    const ready = isCatchSelectionReady();
+    if(calcCatchBtn) calcCatchBtn.disabled = !ready;
+    if(parseLogBtn) parseLogBtn.disabled = !ready;
+}
+
+function syncCatchSelectionUi(){
+    const variant = getSelectedCatchVariant();
+    const hasVariant = Boolean(variant);
+    if(catchSelectionPrompt) catchSelectionPrompt.hidden = hasVariant;
+    if(catchConfigShell) catchConfigShell.hidden = !hasVariant;
+    if(catchLevelField) catchLevelField.hidden = variant !== 'shiny';
+    if(catchPriceField) catchPriceField.hidden = variant !== 'normal';
+
+    if(variant === 'normal' && !syncCatchNormalPriceSelect()){
+        ensureCatchNormalPriceOptionsLoaded();
+    }
+
+    if(!isCatchSelectionReady(variant)){
+        clearCatchOutputs();
+    }
+
+    updateCatchActionState();
+}
+
 function initializeCatchPage(){
-    if(catchPageInitialized) return;
+    if(catchPageInitialized){
+        syncCatchSelectionUi();
+        updateBallPreview();
+        return;
+    }
+    if(catchLegacyVariantGroup instanceof HTMLElement){
+        catchLegacyVariantGroup.remove();
+    }
     initializeCatchElementalSelectors();
+    setCatchPriceSelectPlaceholder(t('catchPricePlaceholder'));
+    syncCatchSelectionUi();
 
     if(ballSelect){
         ballSelect.addEventListener('change',()=>{
@@ -10516,8 +10971,23 @@ function initializeCatchPage(){
         });
     }
 
+    if(catchPriceSelect){
+        catchPriceSelect.addEventListener('change',()=>{
+            updateCatchActionState();
+            if(catchResult && catchResult.innerHTML.trim() !== ''){
+                renderCatchCalculation();
+            } else if(logResult && logResult.innerHTML.trim() !== ''){
+                processLogText(document.getElementById('log-input')?.value || '');
+            }
+        });
+    }
+
     catchVariantInputs.forEach(input=>{
         input.addEventListener('change',()=>{
+            syncCatchSelectionUi();
+            if(!isCatchSelectionReady()){
+                return;
+            }
             if(catchResult && catchResult.innerHTML.trim() !== ''){
                 renderCatchCalculation();
             } else if(logResult && logResult.innerHTML.trim() !== ''){
