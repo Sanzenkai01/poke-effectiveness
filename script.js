@@ -237,7 +237,7 @@ const APP_ROUTE_ALIASES = {
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260517a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260522a';
 const TEAM_POKEMON_IMAGE_VERSION = '20260507a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
@@ -3995,6 +3995,7 @@ function closeCatchTypeSelectMenus(exceptId = ''){
         controller.trigger.setAttribute('aria-expanded', 'false');
         controller.menu.hidden = true;
     });
+    syncCatchTypeSelectPanelStates();
 }
 
 function focusCatchTypeSelectOption(controller, direction = 1){
@@ -4007,6 +4008,42 @@ function focusCatchTypeSelectOption(controller, direction = 1){
     buttons[nextIndex]?.focus();
 }
 
+function syncCatchTypeSelectPanelStates(){
+    const panels = new Set();
+    catchTypeSelectControllers.forEach((controller) => {
+        const panel = controller?.wrapper?.closest('.catch-panel');
+        if(panel instanceof HTMLElement){
+            panels.add(panel);
+        }
+    });
+    panels.forEach((panel) => {
+        panel.classList.toggle(
+            'catch-panel--type-select-active',
+            Boolean(panel.querySelector('.catch-type-select--open'))
+        );
+    });
+}
+
+function resetCatchTypeSelectMenuPlacement(controller){
+    if(!controller?.wrapper || !controller?.menu) return;
+    controller.wrapper.classList.remove('catch-type-select--open-upward');
+    controller.menu.style.maxHeight = '';
+}
+
+function updateCatchTypeSelectMenuPlacement(controller){
+    if(!controller?.wrapper || !controller?.trigger || !controller?.menu) return;
+
+    const viewportMargin = 14;
+    const menuGap = 8;
+    const minMenuHeight = 140;
+    const triggerRect = controller.trigger.getBoundingClientRect();
+    const availableBelow = Math.max(0, Math.floor(window.innerHeight - viewportMargin - triggerRect.bottom - menuGap));
+    const nextMaxHeight = Math.max(minMenuHeight, availableBelow);
+
+    controller.wrapper.classList.remove('catch-type-select--open-upward');
+    controller.menu.style.maxHeight = `${nextMaxHeight}px`;
+}
+
 function setCatchTypeSelectMenuOpen(controller, shouldOpen, focusSelected = false){
     if(!controller) return;
 
@@ -4015,6 +4052,8 @@ function setCatchTypeSelectMenuOpen(controller, shouldOpen, focusSelected = fals
         controller.wrapper.classList.add('catch-type-select--open');
         controller.trigger.setAttribute('aria-expanded', 'true');
         controller.menu.hidden = false;
+        updateCatchTypeSelectMenuPlacement(controller);
+        syncCatchTypeSelectPanelStates();
         if(focusSelected){
             requestAnimationFrame(() => {
                 const selectedButton = controller.optionButtons.find((button) => button.dataset.value === String(controller.select.value || ''));
@@ -4027,6 +4066,8 @@ function setCatchTypeSelectMenuOpen(controller, shouldOpen, focusSelected = fals
     controller.wrapper.classList.remove('catch-type-select--open');
     controller.trigger.setAttribute('aria-expanded', 'false');
     controller.menu.hidden = true;
+    resetCatchTypeSelectMenuPlacement(controller);
+    syncCatchTypeSelectPanelStates();
 }
 
 function syncCatchTypeSelectUi(select){
@@ -4266,6 +4307,8 @@ function renderCatchTypeSelect(select){
     }
 
     syncCatchTypeSelectUi(select);
+    resetCatchTypeSelectMenuPlacement(controller);
+    syncCatchTypeSelectPanelStates();
     ensureCatchTypeSelectHandlers();
 }
 
