@@ -14,6 +14,7 @@
         { name: 'teylera', discord: 'https://discord.gg/h8EVuz5Z5S' },
         { name: 'hyoogplays', discord: 'https://discord.gg/Hwfwx6M' },
         { name: 'naathcarol', discord: 'https://discord.gg/WuU3JzVr5a' },
+        { name: 'cafeina54' },
         { name: 'corujashady' },
         { name: 'anaodapxg', discord: 'https://discord.gg/TvKNkjGp4Y' },
         { name: 'ogordonha', hasPack: true, discord: 'https://discord.gg/rHaVQUaPDD' },
