@@ -53,6 +53,7 @@
         { name: 'strackzera', supportsDrops: false },
         { name: 'dragonslayerpiva', supportsDrops: false },
         { name: 'princeofmajorr', supportsDrops: false },
+        {name: 'zenithstory_gaming', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
