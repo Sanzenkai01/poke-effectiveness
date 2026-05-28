@@ -39,7 +39,7 @@
         { name: 'brunoxiis1', supportsDrops: false },
         { name: 'OKAMIulv', supportsDrops: false, discord: 'https://discord.gg/NJCJn7anYQ' },
         { name: 'eddiegomes', supportsDrops: false },
-        { name: 'terryzao', supportsDrops: false },
+        { name: 'renansztv', supportsDrops: false },
         { name: 'nazgulplayer', supportsDrops: false },
         { name: 'especialbr', supportsDrops: false },
         { name: 'manoblaze', supportsDrops: false },
