@@ -12585,6 +12585,18 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   overflow-wrap: break-word;
 }
 
+.pokemon-entry-card__meta-row,
+.pokemon-level-meta-row {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.24rem;
+}
+
+.pokemon-level-meta-row {
+  justify-content: flex-start;
+}
+
 .pokemon-entry-card__level,
 .pokemon-entry-card__label,
 .pokemon-entry-card__hint,
@@ -12594,6 +12606,44 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 .pokemon-details-modal__subtitle {
   color: rgba(216, 229, 244, 0.7);
   font-size: 0.74rem;
+}
+
+.pokemon-special-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.14rem 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fbff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pokemon-special-tag-badge[data-tag="boss"] {
+  background: rgba(255, 122, 122, 0.16);
+  border-color: rgba(255, 122, 122, 0.24);
+}
+
+.pokemon-special-tag-badge[data-tag="ace"] {
+  background: rgba(255, 206, 104, 0.18);
+  border-color: rgba(255, 206, 104, 0.26);
+  color: #fff3c4;
+}
+
+.pokemon-special-tag-badge[data-tag="legendary"] {
+  background: rgba(157, 122, 255, 0.16);
+  border-color: rgba(157, 122, 255, 0.24);
+}
+
+.pokemon-special-tag-badge[data-tag="fossil"] {
+  background: rgba(118, 214, 255, 0.14);
+  border-color: rgba(118, 214, 255, 0.24);
 }
 
 .pokemon-entry-card__header .pokemon-role-badge {

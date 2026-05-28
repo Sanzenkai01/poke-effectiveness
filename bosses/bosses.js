@@ -1386,7 +1386,8 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Magnezone', ['electric', 'steel'], 'steel')
         ],
         support: [
-          createRolePick('Kadabra', ['psychic'], 'psychic')
+          createRolePick('Kadabra', ['psychic'], 'psychic'),
+          createRolePick('Pachirisu', ['electric'], 'electric')
         ]
       },
       mystic: {
@@ -6965,7 +6966,6 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
     pickImg.src = basePath + (pick.image || '');
     pickImg.alt = pick.name;
     pickImg.loading = 'lazy';
-
     const pickLabel = document.createElement('div');
     pickLabel.className = 'planner-ready-member-card__pick-label';
     const roleSpan = document.createElement('span');
@@ -7262,7 +7262,6 @@ function createPlannerMemberEditRecommendationCard(bossEntry, roleKey, activeCla
   image.src = basePath + pick.image;
   image.alt = pick.name;
   image.loading = 'lazy';
-
   const content = document.createElement('div');
   content.className = 'planner-recommendation-card__content';
 
@@ -7507,7 +7506,6 @@ function renderPlannerMemberEditModalBody() {
   bossImage.src = basePath + bossEntry.image;
   bossImage.alt = bossEntry.name;
   bossImage.loading = 'lazy';
-
   const bossCopy = document.createElement('div');
   bossCopy.className = 'planner-edit-modal__boss-copy';
 
@@ -8012,6 +8010,10 @@ function makeHoopaBossCard(speedster) {
   const imageWrapper = document.createElement('div');
   imageWrapper.className = 'speedster-image-wrapper';
   bosses.forEach((b) => {
+    const bossRef = { ...speedster, ...(b || {}) };
+    const bossTypes = Array.isArray(bossRef.types) && bossRef.types.length
+      ? bossRef.types
+      : (Array.isArray(speedster.types) ? speedster.types : []);
     const bossImg = document.createElement('img');
     bossImg.className = 'speedster-image';
     bossImg.src = basePath + b.image;
@@ -8190,7 +8192,6 @@ function createRoleBossAvatar(boss) {
   image.src = basePath + (boss.image || `${boss.id}.png`);
   image.alt = boss.name;
   image.loading = 'lazy';
-
   const fallback = document.createElement('span');
   fallback.className = 'boss-role-card__avatar-fallback';
   fallback.textContent = boss.emblem || bossInitials(boss.name);
@@ -8424,7 +8425,6 @@ function formatSearchLabel(speedster) {
   sprite.style.width = '24px';
   sprite.style.height = '24px';
   sprite.style.borderRadius = '50%';
-
   const typeIcons = (speedster.types || []).slice(0, 2).map((type) => {
     const img = document.createElement('img');
     img.className = 'speedster-search-item-icon';
@@ -9027,7 +9027,6 @@ function createRecommendationCard(poke, options = {}) {
     img.src = basePath + poke.image;
     img.alt = poke.name;
     img.loading = 'lazy';
-
     const body = document.createElement('div');
     body.className = 'speedster-reco-body';
 
@@ -9605,6 +9604,7 @@ function createRolePickCard(poke) {
   img.src = basePath + poke.image;
   img.alt = poke.name;
   img.loading = 'lazy';
+  const moveType = poke.moveType || poke._moveType || (Array.isArray(poke.types) ? poke.types[0] : null);
 
   const fallback = document.createElement('span');
   fallback.className = 'boss-role-pick-image-fallback';
@@ -9744,7 +9744,6 @@ function createRolePickCard(poke) {
     });
   }
 
-  const moveType = poke.moveType || poke._moveType || (Array.isArray(poke.types) ? poke.types[0] : null);
   if (moveType) {
     const moveChip = document.createElement('span');
     moveChip.className = 'boss-role-pick-chip boss-role-pick-chip--move';
@@ -10139,7 +10138,6 @@ function openBossModal(speedster) {
           groupImage.src = basePath + (group.bossImage || speedster.image);
           groupImage.alt = group.title;
           groupImage.loading = 'lazy';
-
           const groupTitle = document.createElement('div');
           groupTitle.className = 'speedster-reco-group-title';
           groupTitle.textContent = group.title;
@@ -10280,7 +10278,6 @@ function openBossModalV2(speedster) {
       image.src = basePath + (choice.bossImage || speedster.image);
       image.alt = choice.title;
       image.loading = 'lazy';
-
       const text = document.createElement('span');
       text.className = 'speedster-variant-btn-text';
       text.textContent = choice.title;
@@ -10343,7 +10340,6 @@ function openBossModalV2(speedster) {
         targetImage.src = basePath + (activeGroup.bossImage || speedster.image);
         targetImage.alt = activeGroup.title;
         targetImage.loading = 'lazy';
-
         const targetText = document.createElement('span');
         targetText.textContent = `Picks para ${activeGroup.title}`;
 
