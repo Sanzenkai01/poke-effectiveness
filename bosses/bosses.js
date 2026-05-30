@@ -775,6 +775,7 @@ const speedsterSearchNoResults = document.getElementById('speedster-search-no-re
 
 let currentBoss = null;
 let activeBossMode = 'hoopa';
+let bossModalHistoryPushed = false;
 const HOOPA_BOSS_PROGRESS_STORAGE_KEY = 'hoopaBossProgressStateV1';
 const HOOPA_BOSS_RESET_TIMEZONE = 'America/Sao_Paulo';
 const HOOPA_BOSS_RESET_HOUR = 10;
@@ -2006,6 +2007,7 @@ const bossModeAliases = Object.freeze({
   hoopa: 'hoopa',
   'hoopa-portais': 'hoopa',
   champion: 'champion',
+  champions: 'champion',
   'champion-path': 'champion',
   mew2: 'mew2',
   mewtwo: 'mew2',
@@ -2051,6 +2053,41 @@ function normalizeBossMode(mode) {
   return bossModeAliases[normalizedMode] || '';
 }
 
+function isBossRouteableMode(mode) {
+  return ['hoopa', 'champion', 'mew2'].includes(normalizeBossMode(mode));
+}
+
+function normalizeBossRouteSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getBossRouteBasePath(mode = activeBossMode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  if (normalizedMode === 'champion') return '/champion';
+  if (normalizedMode === 'mew2') return '/mewtwo';
+  return '/hoopa';
+}
+
+function getBossRouteSlug(boss) {
+  if (!boss || typeof boss !== 'object') return '';
+  return normalizeBossRouteSlug(boss.id || boss.name || '');
+}
+
+function findBossByRouteSlug(mode = activeBossMode, slug = '') {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const normalizedSlug = normalizeBossRouteSlug(slug);
+  if (!normalizedSlug || !isBossRouteableMode(normalizedMode)) return null;
+  const catalog = bossCatalogs[normalizedMode];
+  const entries = Array.isArray(catalog?.data) ? catalog.data : [];
+  return entries.find((boss) => getBossRouteSlug(boss) === normalizedSlug) || null;
+}
+
 function isStandaloneBossesPage() {
   if (typeof location === 'undefined') return false;
   return location.pathname.toLowerCase().includes('/bosses/');
@@ -2080,13 +2117,19 @@ function getStandaloneBossModePath(mode) {
 }
 
 function getBossModeFromPathname(pathname) {
-  const filename = String(pathname || '')
+  const segments = String(pathname || '')
     .split('/')
     .filter(Boolean)
-    .pop()
-    ?.replace(/\.html?$/i, '');
+    .map((segment) => segment.replace(/\.html?$/i, ''));
 
-  return normalizeBossMode(filename);
+  if (!segments.length) return '';
+
+  const last = segments[segments.length - 1] || '';
+  const first = segments[0] || '';
+
+  return normalizeBossMode(last)
+    || normalizeBossMode(first)
+    || '';
 }
 
 function getInitialBossModeFromLocation() {
@@ -5382,6 +5425,72 @@ function getActiveBossesData() {
   return getActiveBossCatalog().data || [];
 }
 
+function isBossModalOpen() {
+  return Boolean(
+    modal
+    && modal.getAttribute('aria-hidden') !== 'true'
+    && currentBoss
+    && isBossRouteableMode(activeBossMode)
+  );
+}
+
+function getActiveBossRouteState() {
+  const bossSlug = getBossRouteSlug(currentBoss);
+  const routeBoss = findBossByRouteSlug(activeBossMode, bossSlug);
+  return {
+    bossMode: activeBossMode,
+    bossSlug: routeBoss ? bossSlug : '',
+    modalOpen: Boolean(routeBoss && isBossModalOpen())
+  };
+}
+
+function syncBossModalRouteOnOpen(pushState = true) {
+  if (!isBossModalOpen()) {
+    bossModalHistoryPushed = false;
+    return false;
+  }
+
+  const previousPath = String(location?.pathname || '');
+  const expectedPath = `${getBossRouteBasePath(activeBossMode)}/${getBossRouteSlug(currentBoss)}`;
+  try {
+    if (typeof updateUrl === 'function') {
+      updateUrl({ historyMode: pushState ? 'push' : 'replace' });
+    }
+  } catch (error) {
+    console.error('Nao foi possivel sincronizar a URL do boss.', error);
+  }
+
+  bossModalHistoryPushed = Boolean(
+    pushState
+    && String(location?.pathname || '') === expectedPath
+    && previousPath !== expectedPath
+  );
+  return String(location?.pathname || '') === expectedPath;
+}
+
+function hideBossModalUi() {
+  currentBoss = null;
+  setBossModalLayout(false);
+  activeSpeedsterContextName = null;
+
+  const content = modal?.querySelector('.speedster-modal-content');
+  if (modal) {
+    modal.setAttribute('data-open', 'false');
+    modal.setAttribute('aria-hidden', 'true');
+    try { modal.removeAttribute('data-mode'); } catch (e) {}
+  }
+  if (document.body) {
+    document.body.style.overflow = '';
+  }
+  try { modalBody.innerHTML = ''; } catch (e) {}
+  try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
+  try { modalBody.classList.remove('speedster-modal-body--roleboard'); } catch (e) {}
+  try { modalBody.classList.remove('speedster-modal-body--split'); } catch (e) {}
+  try { content?.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
+  try { content?.classList.remove('speedster-modal-content--roleboard'); } catch (e) {}
+  closeLocationOverlay();
+}
+
 function formatTypeLabel(type) {
   return type ? type.charAt(0).toUpperCase() + type.slice(1) : '';
 }
@@ -5563,6 +5672,8 @@ function setBossMode(mode, options = {}) {
 }
 
 window.setBossMode = setBossMode;
+window.getActiveBossRouteState = getActiveBossRouteState;
+window.isBossModalOpen = isBossModalOpen;
 
 function createEmptyPlannerState() {
   return {
@@ -9773,7 +9884,8 @@ function createRolePickCard(poke) {
   return card;
 }
 
-function openRoleBossModal(boss) {
+function openRoleBossModal(boss, options = {}) {
+  const { pushState = true } = options || {};
   setBossModalLayout(true);
   currentBoss = boss;
   modalTitle.textContent = boss.name;
@@ -9876,6 +9988,7 @@ function openRoleBossModal(boss) {
 
   modalBody.appendChild(clanGrid);
   openModalWithAnimation();
+  syncBossModalRouteOnOpen(pushState);
 }
 
 function openModal(speedster) {
@@ -10177,9 +10290,10 @@ function openBossModal(speedster) {
   }
 }
 
-function openBossModalV2(speedster) {
+function openBossModalV2(speedster, options = {}) {
+  const { pushState = true } = options || {};
   if (getActiveBossCatalog().variant === 'roleboard') {
-    openRoleBossModal(speedster);
+    openRoleBossModal(speedster, options);
     return;
   }
 
@@ -10385,14 +10499,55 @@ function openBossModalV2(speedster) {
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
     );
   }
+  syncBossModalRouteOnOpen(pushState);
 }
 
-function closeModal() {
-  currentBoss = null;
-  setBossModalLayout(false);
-  // limpar contexto de speedster ativo ao fechar modal
-  activeSpeedsterContextName = null;
+function openBossModalByRouteSlug(mode, slug, options = {}) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const boss = findBossByRouteSlug(normalizedMode, slug);
+  if (!boss) return false;
+
+  if (activeBossMode !== normalizedMode) {
+    setBossMode(normalizedMode, { syncUrl: false });
+  }
+
+  openBossModalV2(boss, options);
+  return true;
+}
+
+window.openBossModalByRouteSlug = openBossModalByRouteSlug;
+
+function closeModal(options = {}) {
+  const { skipHistory = false } = options || {};
+  if (skipHistory) {
+    bossModalHistoryPushed = false;
+    hideBossModalUi();
+    return;
+  }
+
+  if (!skipHistory && bossModalHistoryPushed) {
+    const currentPath = String(location?.pathname || '');
+    try {
+      history.back();
+      window.setTimeout(() => {
+        if (String(location?.pathname || '') !== currentPath || !isBossModalOpen()) return;
+        bossModalHistoryPushed = false;
+        hideBossModalUi();
+        if (typeof updateUrl === 'function') {
+          try { updateUrl(); } catch (error) {}
+        }
+      }, 350);
+      return;
+    } catch (error) {}
+  }
+
+  bossModalHistoryPushed = false;
   const content = modal.querySelector('.speedster-modal-content');
+  const syncBaseRoute = () => {
+    if (!skipHistory && typeof updateUrl === 'function') {
+      try { updateUrl(); } catch (error) {}
+    }
+  };
   if (typeof gsap !== 'undefined') {
     gsap.to(content, {
       opacity: 0,
@@ -10401,26 +10556,17 @@ function closeModal() {
       duration: 0.25,
       ease: 'power2.in',
       onComplete: () => {
-        modal.setAttribute('data-open', 'false');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        try { modalBody.innerHTML = ''; } catch (e) {}
-        try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
-        try { content.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
-        try { modal.removeAttribute('data-mode'); } catch (e) {}
+        hideBossModalUi();
+        syncBaseRoute();
       }
     });
   } else {
-    modal.setAttribute('data-open', 'false');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    try { modalBody.innerHTML = ''; } catch (e) {}
-    try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
-    try { content.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
-    try { modal.removeAttribute('data-mode'); } catch (e) {}
+    hideBossModalUi();
+    syncBaseRoute();
   }
-  closeLocationOverlay();
 }
+
+window.closeBossModal = closeModal;
 
 function showLocationOverlay(src) {
   closeLocationOverlay();

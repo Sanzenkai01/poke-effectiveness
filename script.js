@@ -109,6 +109,14 @@ const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggl
 const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
 const pokemonCatalogStatus = document.getElementById('pokemon-catalog-status');
 const pokemonCardGrid = document.getElementById('pokemon-card-grid');
+const pokemonCatalogPagination = document.getElementById('pokemon-catalog-pagination');
+const pokemonCatalogPrevPageBtn = document.getElementById('pokemon-catalog-prev-page');
+const pokemonCatalogNextPageBtn = document.getElementById('pokemon-catalog-next-page');
+const pokemonCatalogPageIndicator = document.getElementById('pokemon-catalog-page-indicator');
+const pokemonCatalogPaginationBottom = document.getElementById('pokemon-catalog-pagination-bottom');
+const pokemonCatalogPrevPageBottomBtn = document.getElementById('pokemon-catalog-prev-page-bottom');
+const pokemonCatalogNextPageBottomBtn = document.getElementById('pokemon-catalog-next-page-bottom');
+const pokemonCatalogPageIndicatorBottom = document.getElementById('pokemon-catalog-page-indicator-bottom');
 const pokemonVariantMegaLink = document.getElementById('pokemon-variant-mega-link');
 const pokemonVariantMegaLabel = pokemonVariantMegaLink?.querySelector('.pokemon-hub__mega-label') || null;
 const pokemonDetailsModal = document.getElementById('pokemon-details-modal');
@@ -194,7 +202,9 @@ let activePokemonCatalogEntry = null;
 let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonCatalogFiltersInitialized = false;
+let pokemonCatalogPaginationInitialized = false;
 let pokemonCatalogRenderFrame = null;
+let pokemonCatalogCurrentPage = 1;
 let timesPageInitialized = false;
 let teamsCatalogLoaded = false;
 let teamsCatalogLoadPromise = null;
@@ -208,7 +218,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260528b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260530a';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -230,6 +240,7 @@ const APP_ROUTE_ALIASES = {
     bosses: { path: '/hoopa', tab: 'bosses', bossMode: 'hoopa' },
     hoopa: { path: '/hoopa', tab: 'bosses', bossMode: 'hoopa' },
     champion: { path: '/champion', tab: 'bosses', bossMode: 'champion' },
+    champions: { path: '/champion', tab: 'bosses', bossMode: 'champion' },
     'champion-path': { path: '/champion', tab: 'bosses', bossMode: 'champion' },
     mewtwo: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
     mew2: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
@@ -240,7 +251,8 @@ const APP_ROUTE_ALIASES = {
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260528a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260522a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260530c';
+const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260507a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
@@ -378,9 +390,25 @@ function getRouteInfoFromPathname(pathname = location.pathname){
         .toLowerCase()
         .replace(/\/index\.html?$/, '')
         .replace(/\/+$/, '');
-    const slug = normalizedPath.split('/').filter(Boolean).pop() || '';
-    if(!slug || slug === 'app.html' || slug === 'index.html') return null;
-    return getRouteInfo(slug);
+    const segments = normalizedPath
+        .split('/')
+        .filter(Boolean)
+        .map((segment) => segment.replace(/\.html?$/i, ''));
+    if(!segments.length) return null;
+
+    const candidates = [];
+    const last = segments[segments.length - 1] || '';
+    const first = segments[0] || '';
+    if(last) candidates.push(last);
+    if(first && first !== last) candidates.push(first);
+
+    for(const slug of candidates){
+        if(!slug || slug === 'app' || slug === 'index') continue;
+        const routeInfo = getRouteInfo(slug);
+        if(routeInfo) return routeInfo;
+    }
+
+    return null;
 }
 
 function normalizePokemonCatalogVariant(value){
@@ -445,8 +473,56 @@ function getPokemonCatalogSubjectLabel(variant = getCurrentPokemonCatalogVariant
         : 'pokemons registrados';
 }
 
+function isPokemonCatalogPathname(pathname = location.pathname){
+    return /\/pokemon(?:s)?(?:\/|$)/i.test(String(pathname || ''));
+}
+
 function getPokemonDetailRouteMatch(pathname = location.pathname){
-    return String(pathname || '').match(/\/pokemon(?:s)?\/(\d{1,})\/?$/i);
+    return String(pathname || '').match(/\/pokemon(?:s)?\/(\d{3,})\/?$/i);
+}
+
+function getPokemonCatalogPageRouteMatch(pathname = location.pathname){
+    const normalizedPathname = String(pathname || '');
+    if(getPokemonDetailRouteMatch(normalizedPathname)) return null;
+    return normalizedPathname.match(/\/pokemon(?:s)?\/([1-9]\d*)\/?$/i);
+}
+
+function normalizePokemonCatalogPageNumber(value, fallback = 1){
+    const parsed = Number.parseInt(value, 10);
+    return parsed >= 1 ? parsed : fallback;
+}
+
+function getRequestedPokemonCatalogPageFromPath(pathname = location.pathname){
+    const match = getPokemonCatalogPageRouteMatch(pathname);
+    if(!match) return null;
+    return normalizePokemonCatalogPageNumber(match[1], 1);
+}
+
+function getPokemonCatalogRoutePath(page = pokemonCatalogCurrentPage, variant = getCurrentPokemonCatalogVariant()){
+    const basePath = getPokemonRoutePathForVariant(variant);
+    const normalizedPage = normalizePokemonCatalogPageNumber(page, 1);
+    return normalizedPage > 1 ? `${basePath}/${normalizedPage}` : basePath;
+}
+
+function getBossRouteMatch(pathname = location.pathname){
+    const segments = String(pathname || '')
+        .replace(/\/index\.html?$/i, '')
+        .replace(/\/+$/, '')
+        .split('/')
+        .filter(Boolean);
+    if(!segments.length) return null;
+
+    const bossMode = normalizeBossModeParam(segments[0]);
+    if(!bossMode || !['hoopa', 'champion', 'mew2'].includes(bossMode)) return null;
+
+    return {
+        bossMode,
+        bossSlug: segments[1] ? decodeURIComponent(segments[1]) : ''
+    };
+}
+
+function getRequestedBossSlugFromPath(pathname = location.pathname){
+    return String(getBossRouteMatch(pathname)?.bossSlug || '').trim().toLowerCase();
 }
 
 function getRoutePathForTab(activeTab = '', bossMode = ''){
@@ -1893,6 +1969,7 @@ function normalizeBossModeParam(value){
     if(!normalized) return '';
     if(normalized === 'hoopa-portais') return 'hoopa';
     if(normalized === 'champion-path') return 'champion';
+    if(normalized === 'champions') return 'champion';
     if(normalized === 'mewtwo') return 'mew2';
     if(normalized === 'planejador') return 'planner';
     return ['hoopa', 'champion', 'mew2', 'planner', 'horizons'].includes(normalized) ? normalized : '';
@@ -1908,8 +1985,10 @@ function getBossModeQueryValue(value){
 function getRequestedBossModeFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
+    const bossRouteMatch = getBossRouteMatch();
     return normalizeBossModeParam(params.get('tab'))
         || normalizeBossModeParam(params.get('bossmode') || params.get('boss') || params.get('mode'))
+        || normalizeBossModeParam(bossRouteMatch?.bossMode || '')
         || normalizeBossModeParam(pathRouteInfo?.bossMode || '');
 }
 
@@ -2054,7 +2133,9 @@ function initializeSidebarNavigation(){
 
     window.addEventListener('bossmodechange', () => {
         syncSidebarNavigationState();
-        updateUrl();
+        if(!getRequestedBossSlugFromPath()){
+            updateUrl();
+        }
     });
 
     document.addEventListener('keydown', (event) => {
@@ -5145,8 +5226,13 @@ function showBoostCalculator(){
     updateUrl();
 }
 
-function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT){
+function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT, options = {}){
+    const { requestedPage = null } = options || {};
+    const normalizedRequestedPage = requestedPage == null
+        ? null
+        : normalizePokemonCatalogPageNumber(requestedPage, 1);
     initializePokemonCatalogFilters();
+    initializePokemonCatalogPagination();
     clearTabHighlights();
     setActiveTabTheme('pokemons');
     setVisiblePanel(contentPokemons);
@@ -5158,8 +5244,14 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT){
     updateBrowserTitle();
     const normalizedVariant = setCurrentPokemonCatalogVariant(requestedVariant);
     const shouldResetFilters = activePokemonCatalogVariant !== normalizedVariant;
+    if(normalizedRequestedPage !== null){
+        pokemonCatalogCurrentPage = normalizedRequestedPage;
+    }
     if(pokemonCatalogLoaded){
         applyPokemonCatalogVariant(normalizedVariant, { resetFilters: shouldResetFilters });
+        if(normalizedRequestedPage !== null){
+            pokemonCatalogCurrentPage = normalizedRequestedPage;
+        }
     }
     if(!pokemonCatalogLoaded){
         showPokemonCatalogLoadingState(normalizedVariant);
@@ -5169,6 +5261,9 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT){
         ensurePokemonCatalogLoaded()
     ]).then(() => {
         applyPokemonCatalogVariant(normalizedVariant, { resetFilters: shouldResetFilters });
+        if(normalizedRequestedPage !== null){
+            pokemonCatalogCurrentPage = normalizedRequestedPage;
+        }
         renderPokemonCatalog({ animate: true });
         if(useGsap && contentPokemons){
             gsap.from(contentPokemons, { opacity: 0, y: -10, duration: 0.4 });
@@ -6143,10 +6238,15 @@ function showSpeedsters(requestedBossMode=''){
     if(titleEl) titleEl.textContent = t('tabSpeedsters');
     updateBrowserTitle();
 
+    const requestedBossRoute = getBossRouteMatch();
     const targetBossMode = normalizeBossModeParam(requestedBossMode)
+        || normalizeBossModeParam(requestedBossRoute?.bossMode || '')
         || getRequestedBossModeFromUrl()
         || getCurrentBossMode()
         || 'hoopa';
+    const requestedBossSlug = requestedBossRoute && normalizeBossModeParam(requestedBossRoute.bossMode) === targetBossMode
+        ? String(requestedBossRoute.bossSlug || '').trim().toLowerCase()
+        : '';
 
     if(document.body){
         document.body.dataset.bossMode = targetBossMode;
@@ -6154,7 +6254,9 @@ function showSpeedsters(requestedBossMode=''){
 
     if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
         renderBossesDeferredState('Carregando catálogo de bosses...');
-        updateUrl();
+        if(!requestedBossSlug){
+            updateUrl();
+        }
         ensureBossesPageReady().then(() => {
             if(!contentSpeedsters?.hidden){
                 showSpeedsters(targetBossMode);
@@ -6182,6 +6284,15 @@ function showSpeedsters(requestedBossMode=''){
             speedsterGrid.appendChild(warning);
             console.warn('Bosses grid está vazio após renderização. Possível problema no bosses.js.');
         }
+    }
+
+    if(requestedBossSlug && typeof window.openBossModalByRouteSlug === 'function'){
+        const openedFromRoute = window.openBossModalByRouteSlug(targetBossMode, requestedBossSlug, { pushState: false });
+        if(!openedFromRoute && typeof window.closeBossModal === 'function'){
+            window.closeBossModal({ skipHistory: true });
+        }
+    } else if(typeof window.isBossModalOpen === 'function' && window.isBossModalOpen() && typeof window.closeBossModal === 'function'){
+        window.closeBossModal({ skipHistory: true });
     }
 
     if(useGsap && contentSpeedsters){
@@ -8375,7 +8486,10 @@ function initTabFromUrl(){
 
     // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/NNN
     const pathname = String(location.pathname || '');
+    const requestedBossRoute = getBossRouteMatch(pathname);
+    const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
     const pokemonMatch = getPokemonDetailRouteMatch(pathname);
+    initialDeepLinkedPokemonDex = null;
     if(pokemonMatch){
         initialDeepLinkedPokemonDex = parseInt(pokemonMatch[1], 10);
     }
@@ -8384,7 +8498,12 @@ function initTabFromUrl(){
     const requestedRouteInfo = getRouteInfo(tabparam);
     let resolvedTab = requestedRouteInfo?.tab || tabparam;
     const hasQuery = params.toString().length > 0;
-    if(!hasQuery && !pathRouteInfo && initialDeepLinkedPokemonDex == null) return showHome();
+    if(requestedPokemonCatalogPage !== null){
+        resolvedTab = 'pokemons';
+    } else if(requestedBossRoute){
+        resolvedTab = 'bosses';
+    }
+    if(!hasQuery && !pathRouteInfo && !requestedBossRoute && initialDeepLinkedPokemonDex == null && requestedPokemonCatalogPage == null && !isPokemonCatalogPathname(pathname)) return showHome();
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(resolvedTab==='calculator') return showCalculator();
@@ -8407,6 +8526,10 @@ function initTabFromUrl(){
             }
         }).catch(console.error);
         return;
+    }
+
+    if(requestedPokemonCatalogPage !== null){
+        return showPokemons(getPokemonCatalogVariantFromUrl(), { requestedPage: requestedPokemonCatalogPage });
     }
 
     if(resolvedTab==='pokemons') return showPokemons(getPokemonCatalogVariantFromUrl());
@@ -10655,10 +10778,14 @@ function initializeBoostCalculatorPage(){
         return false;
     });
 }
-function updateUrl(){
+function updateUrl(options = {}){
+    const { historyMode = 'replace' } = options || {};
     const isHomeView = document.body.classList.contains('home-view');
     const params=new URLSearchParams(location.search);
     const pokemonVariant = getCurrentPokemonCatalogVariant();
+    const activeBossRouteState = typeof window.getActiveBossRouteState === 'function'
+        ? window.getActiveBossRouteState()
+        : null;
     if(isHomeView){
         params.delete('types');
         params.delete('tab');
@@ -10691,21 +10818,31 @@ function updateUrl(){
     } else {
         params.delete('topic');
     }
-    if(activeTab === 'pokemons' && pokemonVariant === POKEMON_CATALOG_VARIANT_MEGA){
-        params.set('variant', POKEMON_CATALOG_VARIANT_MEGA);
-    } else {
-        params.delete('variant');
-    }
+    params.delete('variant');
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
     let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
     try{
-        if(!isHomeView && (activeTab === 'pokemons') && pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true' && activePokemonCatalogEntry && Number.isFinite(activePokemonCatalogEntry.dex)){
-            routePath = getPokemonRoutePathForVariant(pokemonVariant) + '/' + String(activePokemonCatalogEntry.dex).padStart(3, '0');
+        if(!isHomeView && activeTab === 'pokemons'){
+            if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true' && activePokemonCatalogEntry && Number.isFinite(activePokemonCatalogEntry.dex)){
+                routePath = getPokemonRoutePathForVariant(pokemonVariant) + '/' + String(activePokemonCatalogEntry.dex).padStart(3, '0');
+            } else {
+                routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
+            }
+        } else if(!isHomeView && activeTab === 'bosses'){
+            const activeBossMode = normalizeBossModeParam(activeBossRouteState?.bossMode || getCurrentBossMode()) || 'hoopa';
+            routePath = getRoutePathForTab(activeTab, activeBossMode);
+            if(activeBossRouteState?.modalOpen && activeBossRouteState?.bossSlug){
+                routePath = `${routePath}/${activeBossRouteState.bossSlug}`;
+            }
         }
     }catch(e){}
     const newUrl = routePath + (query ? `?${query}` : '');
-    history.replaceState(null, '', newUrl);
+    if(historyMode === 'push'){
+        history.pushState(null, '', newUrl);
+    } else {
+        history.replaceState(null, '', newUrl);
+    }
     syncSidebarNavigationState();
 
     if(currentSelection.length) localStorage.setItem('selectedTypes', currentSelection.join(','));
@@ -12050,6 +12187,7 @@ function showPokemonCatalogLoadingState(variant = getCurrentPokemonCatalogVarian
             ? 'Carregando catalogo Mega...'
             : 'Carregando catalogo...';
     }
+    updatePokemonCatalogPaginationControls(null);
     if(pokemonCardGrid && !pokemonCatalog.length){
         pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-load-pending-message', `Carregando ${variantLabel}...`));
     }
@@ -12059,6 +12197,7 @@ function showPokemonCatalogErrorState(message, variant = getCurrentPokemonCatalo
     if(pokemonCatalogStatus){
         pokemonCatalogStatus.textContent = 'Nao foi possivel carregar o catalogo agora.';
     }
+    updatePokemonCatalogPaginationControls(null);
     if(pokemonCardGrid){
         pokemonCardGrid.replaceChildren(
             createInlineStatusMessage(
@@ -12386,6 +12525,7 @@ function resetPokemonCatalogFilters(){
         pokemonCatalogRenderFrame = null;
     }
     pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    resetPokemonCatalogPage();
     writePokemonCatalogFiltersToDom(pokemonCatalogFilters);
 }
 
@@ -12422,6 +12562,100 @@ function getFilteredPokemonCatalogEntries(filters = pokemonCatalogFilters){
         if(filters?.moveset && !entry.moveset.includes(filters.moveset)) return false;
         return true;
     });
+}
+
+function resetPokemonCatalogPage(){
+    pokemonCatalogCurrentPage = 1;
+}
+
+function getPokemonCatalogPaginationState(entries = []){
+    const safeEntries = Array.isArray(entries) ? entries : [];
+    const totalEntries = safeEntries.length;
+    const totalPages = Math.max(1, Math.ceil(totalEntries / POKEMON_CATALOG_PAGE_SIZE));
+
+    if(pokemonCatalogCurrentPage < 1){
+        pokemonCatalogCurrentPage = 1;
+    } else if(pokemonCatalogCurrentPage > totalPages){
+        pokemonCatalogCurrentPage = totalPages;
+    }
+
+    const currentPage = pokemonCatalogCurrentPage;
+    const startIndex = totalEntries ? (currentPage - 1) * POKEMON_CATALOG_PAGE_SIZE : 0;
+    const endIndex = Math.min(startIndex + POKEMON_CATALOG_PAGE_SIZE, totalEntries);
+
+    return {
+        entries: safeEntries.slice(startIndex, endIndex),
+        totalEntries,
+        totalPages,
+        currentPage,
+        startIndex,
+        endIndex,
+        shouldPaginate: totalEntries > POKEMON_CATALOG_PAGE_SIZE
+    };
+}
+
+function updatePokemonCatalogPaginationControls(paginationState){
+    const paginationBlocks = [
+        pokemonCatalogPagination,
+        pokemonCatalogPaginationBottom
+    ].filter(Boolean);
+    const prevButtons = [
+        pokemonCatalogPrevPageBtn,
+        pokemonCatalogPrevPageBottomBtn
+    ].filter(Boolean);
+    const nextButtons = [
+        pokemonCatalogNextPageBtn,
+        pokemonCatalogNextPageBottomBtn
+    ].filter(Boolean);
+    const pageIndicators = [
+        pokemonCatalogPageIndicator,
+        pokemonCatalogPageIndicatorBottom
+    ].filter(Boolean);
+
+    if(!paginationBlocks.length) return;
+
+    const hasPagination = Boolean(
+        paginationState
+        && paginationState.totalEntries
+        && paginationState.totalPages > 1
+        && paginationState.shouldPaginate
+    );
+
+    paginationBlocks.forEach((block) => {
+        block.hidden = !hasPagination;
+    });
+
+    if(!hasPagination){
+        pageIndicators.forEach((indicator) => {
+            indicator.textContent = 'Pagina 1 de 1';
+        });
+        prevButtons.forEach((button) => {
+            button.disabled = true;
+        });
+        nextButtons.forEach((button) => {
+            button.disabled = true;
+        });
+        return;
+    }
+
+    pageIndicators.forEach((indicator) => {
+        indicator.textContent = `Pagina ${paginationState.currentPage} de ${paginationState.totalPages} • ${paginationState.startIndex + 1}-${paginationState.endIndex} de ${paginationState.totalEntries}`;
+    });
+    prevButtons.forEach((button) => {
+        button.disabled = paginationState.currentPage <= 1;
+    });
+    nextButtons.forEach((button) => {
+        button.disabled = paginationState.currentPage >= paginationState.totalPages;
+    });
+}
+
+function goToPokemonCatalogPage(page){
+    const filteredEntries = getFilteredPokemonCatalogEntries();
+    const totalPages = Math.max(1, Math.ceil(filteredEntries.length / POKEMON_CATALOG_PAGE_SIZE));
+    const normalizedPage = Math.min(Math.max(Number.parseInt(page, 10) || 1, 1), totalPages);
+    if(normalizedPage === pokemonCatalogCurrentPage) return;
+    pokemonCatalogCurrentPage = normalizedPage;
+    renderPokemonCatalog({ historyMode: 'push' });
 }
 
 function updatePokemonCatalogStatus(totalCount, visibleCount, filters = pokemonCatalogFilters){
@@ -12580,6 +12814,7 @@ function populatePokemonFilterControls(){
 
 function syncPokemonCatalogFiltersFromInputs(){
     pokemonCatalogFilters = readPokemonCatalogFiltersFromDom();
+    resetPokemonCatalogPage();
     schedulePokemonCatalogRender();
 }
 
@@ -12588,6 +12823,30 @@ function clearPokemonCatalogFilters(){
     if(pokemonCatalogLoaded){
         renderPokemonCatalog();
     }
+}
+
+function initializePokemonCatalogPagination(){
+    if(pokemonCatalogPaginationInitialized) return;
+
+    [
+        pokemonCatalogPrevPageBtn,
+        pokemonCatalogPrevPageBottomBtn
+    ].filter(Boolean).forEach((button) => {
+        button.addEventListener('click', () => {
+            goToPokemonCatalogPage(pokemonCatalogCurrentPage - 1);
+        });
+    });
+
+    [
+        pokemonCatalogNextPageBtn,
+        pokemonCatalogNextPageBottomBtn
+    ].filter(Boolean).forEach((button) => {
+        button.addEventListener('click', () => {
+            goToPokemonCatalogPage(pokemonCatalogCurrentPage + 1);
+        });
+    });
+
+    pokemonCatalogPaginationInitialized = true;
 }
 
 function initializePokemonCatalogFilters(){
@@ -13045,6 +13304,8 @@ function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, o
 
     if(resetFilters || variantChanged){
         resetPokemonCatalogFilters();
+    } else {
+        updatePokemonCatalogPaginationControls(null);
     }
 
     populatePokemonFilterControls();
@@ -13052,13 +13313,14 @@ function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, o
 }
 
 function renderPokemonCatalog(options = {}){
-    const { animate = false } = options;
+    const { animate = false, historyMode = 'replace' } = options;
     if(!pokemonCardGrid) return;
     const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
     const visibleEntries = getVisiblePokemonCatalogEntries();
 
     if(!visibleEntries.length){
         updatePokemonCatalogStatus(0, 0);
+        updatePokemonCatalogPaginationControls(null);
         pokemonCardGrid.replaceChildren(
             createInlineStatusMessage(
                 'pokemon-empty-message',
@@ -13067,6 +13329,9 @@ function renderPokemonCatalog(options = {}){
                     : 'Adicione itens em pokemons/pokemons.json para preencher esta pagina.'
             )
         );
+        if(contentPokemons && !contentPokemons.hidden){
+            updateUrl({ historyMode });
+        }
         return;
     }
 
@@ -13074,12 +13339,19 @@ function renderPokemonCatalog(options = {}){
     updatePokemonCatalogStatus(visibleEntries.length, filteredEntries.length);
 
     if(!filteredEntries.length){
+        updatePokemonCatalogPaginationControls(null);
         pokemonCardGrid.replaceChildren(createInlineStatusMessage('pokemon-no-results-message', 'Nenhum resultado encontrado. Ajuste ou limpe os filtros para continuar.'));
+        if(contentPokemons && !contentPokemons.hidden){
+            updateUrl({ historyMode });
+        }
         return;
     }
 
+    const paginationState = getPokemonCatalogPaginationState(filteredEntries);
+    updatePokemonCatalogPaginationControls(paginationState);
+
     const fragment = document.createDocumentFragment();
-    filteredEntries.forEach((entry) => {
+    paginationState.entries.forEach((entry) => {
         const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
         const specialTags = getPokemonEntrySpecialTags(entry);
         const card = document.createElement('button');
@@ -13179,6 +13451,9 @@ function renderPokemonCatalog(options = {}){
     });
 
     pokemonCardGrid.replaceChildren(fragment);
+    if(contentPokemons && !contentPokemons.hidden){
+        updateUrl({ historyMode });
+    }
 
     if(useGsap && animate && contentPokemons && !contentPokemons.hidden){
         const cards = pokemonCardGrid.querySelectorAll('.pokemon-entry-card');
@@ -13447,9 +13722,12 @@ initializeSidebarNavigation();
 // Sync modal open/close with browser history (back/forward)
 window.addEventListener('popstate', () => {
     const pathname = String(location.pathname || '');
-    const match = getPokemonDetailRouteMatch(pathname);
-    if(match){
-        const dex = parseInt(match[1], 10);
+    const detailMatch = getPokemonDetailRouteMatch(pathname);
+    const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
+    const isPokemonCatalogRoute = isPokemonCatalogPathname(pathname);
+    const requestedBossRoute = getBossRouteMatch(pathname);
+    if(detailMatch){
+        const dex = parseInt(detailMatch[1], 10);
         const idx = dex - 1;
         if(!pokemonCatalogLoaded){
             ensurePokemonCatalogLoaded().then(() => {
@@ -13471,7 +13749,45 @@ window.addEventListener('popstate', () => {
         if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'){
             closePokemonDetailsModal({ viaPopstate: true });
         }
+        if(isPokemonCatalogRoute){
+            const requestedVariant = getPokemonCatalogVariantFromUrl();
+            const requestedPage = requestedPokemonCatalogPage == null
+                ? 1
+                : requestedPokemonCatalogPage;
+            if(contentPokemons && !contentPokemons.hidden && pokemonCatalogLoaded){
+                applyPokemonCatalogVariant(requestedVariant, {
+                    resetFilters: activePokemonCatalogVariant !== normalizePokemonCatalogVariant(requestedVariant)
+                });
+                pokemonCatalogCurrentPage = requestedPage;
+                renderPokemonCatalog();
+            } else {
+                showPokemons(requestedVariant, { requestedPage });
+            }
+        }
     }
+
+    if(requestedBossRoute){
+        const requestedBossMode = normalizeBossModeParam(requestedBossRoute.bossMode) || 'hoopa';
+        const requestedBossSlug = String(requestedBossRoute.bossSlug || '').trim().toLowerCase();
+        if(contentSpeedsters && !contentSpeedsters.hidden && typeof window.setBossMode === 'function' && typeof renderGrid === 'function'){
+            window.setBossMode(requestedBossMode);
+            if(requestedBossSlug && typeof window.openBossModalByRouteSlug === 'function'){
+                const opened = window.openBossModalByRouteSlug(requestedBossMode, requestedBossSlug, { pushState: false });
+                if(!opened && typeof window.closeBossModal === 'function'){
+                    window.closeBossModal({ skipHistory: true });
+                    updateUrl();
+                }
+            } else if(typeof window.isBossModalOpen === 'function' && window.isBossModalOpen() && typeof window.closeBossModal === 'function'){
+                window.closeBossModal({ skipHistory: true });
+                updateUrl();
+            }
+        } else {
+            showSpeedsters(requestedBossMode);
+        }
+    } else if(typeof window.isBossModalOpen === 'function' && window.isBossModalOpen() && typeof window.closeBossModal === 'function'){
+        window.closeBossModal({ skipHistory: true });
+    }
+
     syncSidebarNavigationState();
 });
 
