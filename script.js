@@ -139,6 +139,7 @@ const pokemonFilterType1Select = document.getElementById('pokemon-filter-type1')
 const pokemonFilterType2Select = document.getElementById('pokemon-filter-type2');
 const pokemonFilterMovesetSelect = document.getElementById('pokemon-filter-moveset');
 const pokemonFilterClearBtn = document.getElementById('pokemon-filter-clear');
+const pokemonFilterShareLinks = document.getElementById('pokemon-filter-share-links');
 const timesStatus = document.getElementById('times-status');
 const timesSearchInput = document.getElementById('times-search-input');
 const timesCardGrid = document.getElementById('times-card-grid');
@@ -250,12 +251,18 @@ const APP_ROUTE_ALIASES = {
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260528a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260530c';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260531a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260531a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
-const TEAM_POKEMON_IMAGE_VERSION = '20260507a';
+const TEAM_POKEMON_IMAGE_VERSION = '20260531a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
+const POKEMON_IMAGE_FILE_ALIASES = Object.freeze({
+    'leafeon.png': 'leafon.png',
+    'noctowl.png': 'noctawl.png',
+    'porygon-z.png': 'porygonz.png',
+    'wigglytuff.png': 'wigglypuff.png'
+});
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
 const DEFAULT_TEAM_FILTERS = Object.freeze({
@@ -365,8 +372,42 @@ const DEFAULT_POKEMON_CATALOG_FILTERS = Object.freeze({
     type2: '',
     moveset: ''
 });
+const POKEMON_CATALOG_FILTER_QUERY_KEYS = Object.freeze({
+    name: 'pname',
+    role: 'prole',
+    clan: 'pclan',
+    level: 'plevel',
+    generation: 'pgeneration',
+    specialTag: 'ptag',
+    type1: 'ptype1',
+    type2: 'ptype2',
+    moveset: 'pmoveset'
+});
+const POKEMON_FILTER_SHARE_LABELS = Object.freeze({
+    name: 'Nome',
+    role: 'Role',
+    clan: 'Cla',
+    level: 'Nivel',
+    generation: 'Geracao',
+    specialTag: 'Tag',
+    type1: 'Tipo 1',
+    type2: 'Tipo 2',
+    moveset: 'Moveset'
+});
+const POKEMON_DECORATED_FILTER_SELECTS = Object.freeze({
+    'pokemon-filter-role': { kind: 'role', placeholder: 'Todas' },
+    'pokemon-filter-clan': { kind: 'team', placeholder: 'Todos' },
+    'pokemon-filter-type1': { kind: 'type', placeholder: 'Todos' },
+    'pokemon-filter-type2': { kind: 'type', placeholder: 'Todos' },
+    'pokemon-filter-moveset': { kind: 'type', placeholder: 'Todos' }
+});
 let pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
 let pokemonCatalogGenerationMap = {};
+let pokemonGenerationMapLoadPromise = null;
+let pendingPokemonCatalogRouteFilters = null;
+let activePokemonFilterDropdownController = null;
+let pokemonFilterUiListenersBound = false;
+const pokemonDecoratedFilterControllers = new Map();
 
 // Global delegated handler to guarantee the fossils Reset button always works
 if(!window._fossilResetGlobalAttached){
@@ -5227,10 +5268,14 @@ function showBoostCalculator(){
 }
 
 function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT, options = {}){
-    const { requestedPage = null } = options || {};
+    const { requestedPage = null, requestedFilters = null } = options || {};
     const normalizedRequestedPage = requestedPage == null
         ? null
         : normalizePokemonCatalogPageNumber(requestedPage, 1);
+    const hasRequestedFilters = requestedFilters !== null;
+    const normalizedRequestedFilters = hasRequestedFilters
+        ? normalizePokemonCatalogFiltersInput(requestedFilters)
+        : null;
     initializePokemonCatalogFilters();
     initializePokemonCatalogPagination();
     clearTabHighlights();
@@ -5243,7 +5288,14 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT, option
     if(titleEl) titleEl.textContent = t('pokemonsTitle');
     updateBrowserTitle();
     const normalizedVariant = setCurrentPokemonCatalogVariant(requestedVariant);
-    const shouldResetFilters = activePokemonCatalogVariant !== normalizedVariant;
+    const shouldResetFilters = activePokemonCatalogVariant !== normalizedVariant && !hasRequestedFilters;
+    if(hasRequestedFilters){
+        pendingPokemonCatalogRouteFilters = normalizedRequestedFilters;
+        pokemonCatalogFilters = normalizedRequestedFilters;
+    } else if(shouldResetFilters){
+        pendingPokemonCatalogRouteFilters = null;
+        pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    }
     if(normalizedRequestedPage !== null){
         pokemonCatalogCurrentPage = normalizedRequestedPage;
     }
@@ -5505,17 +5557,21 @@ function ensureTeamsCatalogLoaded(force = false){
 }
 
 function loadTeamsCatalog(){
-    return fetch(TIMES_CATALOG_URL, { cache: 'no-store' })
-        .then((response) => {
-            if(!response.ok){
-                throw new Error(`Falha ao carregar ${TIMES_CATALOG_URL}: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((entries) => {
+    return Promise.all([
+        fetch(TIMES_CATALOG_URL, { cache: 'no-store' })
+            .then((response) => {
+                if(!response.ok){
+                    throw new Error(`Falha ao carregar ${TIMES_CATALOG_URL}: ${response.status}`);
+                }
+                return response.json();
+            }),
+        loadSharedPokemonGenerationMap()
+    ])
+        .then(([entries, generationMap]) => {
             if(!Array.isArray(entries)){
                 throw new Error('O catalogo de times precisa ser uma lista.');
             }
+            pokemonCatalogGenerationMap = generationMap;
             return entries
                 .map((entry, index) => normalizeTeamEntry(entry, index))
                 .filter(Boolean);
@@ -5687,19 +5743,13 @@ function buildTeamPokemonImageFileName(name){
         .replace(/-{2,}/g, '-')
         .replace(/'+/g, "'")
         .replace(/^[-']+|[-']+$/g, '');
-    return slug ? `${slug}.png` : '';
+    return slug ? resolvePokemonImageAssetPath(`${slug}.png`) : '';
 }
 
 function getTeamPokemonImageSource(member){
     const fileName = String(member?.image || '').trim();
     if(!fileName) return POKEMON_IMAGE_PLACEHOLDER;
-    if(fileName === POKEMON_IMAGE_PLACEHOLDER){
-        return fileName;
-    }
-    if(/^[./]/.test(fileName) || fileName.includes('/')){
-        return appendTeamImageVersion(fileName);
-    }
-    return appendTeamImageVersion(`pokemons/${fileName}`);
+    return appendTeamImageVersion(resolvePokemonImageAssetPath(fileName) || POKEMON_IMAGE_PLACEHOLDER);
 }
 
 function appendTeamImageVersion(source){
@@ -8483,6 +8533,7 @@ async function showCommunity(){
 function initTabFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
+    const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
 
     // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/NNN
     const pathname = String(location.pathname || '');
@@ -8513,14 +8564,23 @@ function initTabFromUrl(){
     // If the URL targeted a specific pokemon number, open the pokemons tab and
     // open the requested modal once the catalog is loaded.
     if(initialDeepLinkedPokemonDex !== null){
-        showPokemons(getPokemonCatalogVariantFromUrl());
+        showPokemons(getPokemonCatalogVariantFromUrl(), { requestedFilters: requestedPokemonFilters });
         ensurePokemonCatalogLoaded().then(() => {
             const idx = initialDeepLinkedPokemonDex - 1;
             if(idx >= 0 && idx < pokemonCatalog.length){
                 const entry = pokemonCatalog[idx];
                 if(canOpenPokemonCatalogEntry(entry)){
                     // Ensure the base route is canonical before opening the modal
-                    try{ history.replaceState(null, '', getRoutePathForTab('pokemons')); }catch(e){}
+                    try{
+                        history.replaceState(
+                            null,
+                            '',
+                            buildPokemonCatalogFilterUrl(requestedPokemonFilters, {
+                                variant: getPokemonCatalogVariantFromUrl(),
+                                page: 1
+                            })
+                        );
+                    }catch(e){}
                     openPokemonDetailsModal(entry, { pushState: true });
                 }
             }
@@ -8529,10 +8589,13 @@ function initTabFromUrl(){
     }
 
     if(requestedPokemonCatalogPage !== null){
-        return showPokemons(getPokemonCatalogVariantFromUrl(), { requestedPage: requestedPokemonCatalogPage });
+        return showPokemons(getPokemonCatalogVariantFromUrl(), {
+            requestedPage: requestedPokemonCatalogPage,
+            requestedFilters: requestedPokemonFilters
+        });
     }
 
-    if(resolvedTab==='pokemons') return showPokemons(getPokemonCatalogVariantFromUrl());
+    if(resolvedTab==='pokemons') return showPokemons(getPokemonCatalogVariantFromUrl(), { requestedFilters: requestedPokemonFilters });
     if(resolvedTab==='catch') return showCatch();
     if(requestedBossTab) return showSpeedsters(requestedBossTab);
     if(resolvedTab==='bosses' || resolvedTab==='speedsters') return showSpeedsters(requestedBossMode);
@@ -10818,6 +10881,11 @@ function updateUrl(options = {}){
     } else {
         params.delete('topic');
     }
+    if(activeTab === 'pokemons'){
+        syncPokemonCatalogFilterParams(params, pokemonCatalogFilters);
+    } else {
+        syncPokemonCatalogFilterParams(params, DEFAULT_POKEMON_CATALOG_FILTERS);
+    }
     params.delete('variant');
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
@@ -12232,6 +12300,36 @@ function getPokemonCatalogGenerationMap(data){
     }, {});
 }
 
+function normalizePokemonImageFileName(fileName){
+    const rawFileName = String(fileName || '').trim();
+    if(!rawFileName) return '';
+    const normalizedKey = rawFileName.toLowerCase();
+    return POKEMON_IMAGE_FILE_ALIASES[normalizedKey] || rawFileName;
+}
+
+function resolvePokemonImageAssetPath(fileName, generationHint = null){
+    const rawFileName = String(fileName || '').trim();
+    if(!rawFileName) return '';
+    if(rawFileName === POKEMON_IMAGE_PLACEHOLDER || /^[./]/.test(rawFileName) || rawFileName.includes('/')){
+        return rawFileName;
+    }
+
+    const normalizedFileName = normalizePokemonImageFileName(rawFileName);
+    const explicitGeneration = Number.parseInt(generationHint, 10);
+    const generation = Number.isFinite(explicitGeneration) && explicitGeneration > 0
+        ? explicitGeneration
+        : Number.parseInt(
+            pokemonCatalogGenerationMap?.[
+                getPokemonCatalogRegistryKey(normalizedFileName.replace(/\.[^.]+$/u, ''))
+            ],
+            10
+        );
+
+    return Number.isFinite(generation) && generation > 0
+        ? `pokemons/${generation}gen/${normalizedFileName}`
+        : `pokemons/${normalizedFileName}`;
+}
+
 function getPokemonCatalogGenerationLookupKey(entry){
     const rawKey = getPokemonCatalogRegistryKey(typeof entry === 'string' ? entry : entry?.name);
     if(
@@ -12258,6 +12356,21 @@ function fetchPokemonCatalogJson(url){
             }
             return response.json();
         });
+}
+
+function loadSharedPokemonGenerationMap(){
+    if(pokemonGenerationMapLoadPromise){
+        return pokemonGenerationMapLoadPromise;
+    }
+
+    pokemonGenerationMapLoadPromise = fetchPokemonCatalogJson(POKEMON_GENERATION_MAP_URL)
+        .then(data => getPokemonCatalogGenerationMap(data))
+        .catch(error => {
+            console.warn('Nao foi possivel carregar pokemons/generations.json.', error);
+            return {};
+        });
+
+    return pokemonGenerationMapLoadPromise;
 }
 
 function normalizePokemonTypeKey(value){
@@ -12422,10 +12535,7 @@ function getPokemonTeamInfo(teamKey){
 function getPokemonImageSource(entry){
     const fileName = String(entry?.image || '').trim();
     if(!fileName) return POKEMON_IMAGE_PLACEHOLDER;
-    if(fileName === POKEMON_IMAGE_PLACEHOLDER || /^[./]/.test(fileName) || fileName.includes('/')){
-        return fileName;
-    }
-    return `pokemons/${fileName}`;
+    return resolvePokemonImageAssetPath(fileName, entry?.generation) || POKEMON_IMAGE_PLACEHOLDER;
 }
 
 function setImageFallback(imageEl, fallbackSrc = POKEMON_IMAGE_PLACEHOLDER){
@@ -12482,41 +12592,465 @@ function populatePokemonFilterSelect(selectEl, options = [], placeholder = 'Todo
     selectEl.value = hasSelectedValue ? nextValue : '';
 }
 
-function readPokemonCatalogFiltersFromDom(){
+function normalizePokemonCatalogFiltersInput(filters = DEFAULT_POKEMON_CATALOG_FILTERS){
     return {
-        name: String(pokemonFilterNameInput?.value || '').trim(),
-        role: normalizePokemonRoleKey(pokemonFilterRoleSelect?.value || ''),
-        clan: String(pokemonFilterClanSelect?.value || '').trim().toLowerCase(),
-        level: normalizePokemonLevelFilterValue(pokemonFilterLevelSelect?.value || ''),
-        generation: normalizePokemonGenerationFilterValue(pokemonFilterGenerationSelect?.value || ''),
-        specialTag: normalizePokemonSpecialTagKey(pokemonFilterTagSelect?.value || ''),
-        type1: normalizePokemonTypeKey(pokemonFilterType1Select?.value || ''),
-        type2: String(pokemonFilterType2Select?.value || '').trim() === POKEMON_FILTER_TYPE2_NONE_VALUE
+        name: String(filters?.name || '').trim(),
+        role: normalizePokemonRoleKey(filters?.role || ''),
+        clan: String(filters?.clan || '').trim().toLowerCase(),
+        level: normalizePokemonLevelFilterValue(filters?.level || ''),
+        generation: normalizePokemonGenerationFilterValue(filters?.generation || ''),
+        specialTag: normalizePokemonSpecialTagKey(filters?.specialTag || ''),
+        type1: normalizePokemonTypeKey(filters?.type1 || ''),
+        type2: String(filters?.type2 || '').trim() === POKEMON_FILTER_TYPE2_NONE_VALUE
             ? POKEMON_FILTER_TYPE2_NONE_VALUE
-            : normalizePokemonTypeKey(pokemonFilterType2Select?.value || ''),
-        moveset: normalizePokemonTypeKey(pokemonFilterMovesetSelect?.value || '')
+            : normalizePokemonTypeKey(filters?.type2 || ''),
+        moveset: normalizePokemonTypeKey(filters?.moveset || '')
     };
 }
 
+function getPokemonCatalogFiltersFromUrl(search = location.search){
+    try{
+        const params = new URLSearchParams(search);
+        return normalizePokemonCatalogFiltersInput({
+            name: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.name) || '',
+            role: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.role) || '',
+            clan: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.clan) || '',
+            level: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.level) || '',
+            generation: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.generation) || '',
+            specialTag: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.specialTag) || '',
+            type1: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.type1) || '',
+            type2: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.type2) || '',
+            moveset: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.moveset) || ''
+        });
+    }catch(error){
+        return { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    }
+}
+
+function syncPokemonCatalogFilterParams(params, filters = pokemonCatalogFilters){
+    if(!(params instanceof URLSearchParams)) return params;
+
+    const normalizedFilters = normalizePokemonCatalogFiltersInput(filters);
+    Object.entries(POKEMON_CATALOG_FILTER_QUERY_KEYS).forEach(([filterKey, paramKey]) => {
+        const value = String(normalizedFilters?.[filterKey] || '').trim();
+        if(value){
+            params.set(paramKey, value);
+        } else {
+            params.delete(paramKey);
+        }
+    });
+    return params;
+}
+
+function buildPokemonCatalogFilterUrl(filters = pokemonCatalogFilters, options = {}){
+    const {
+        variant = getCurrentPokemonCatalogVariant(),
+        page = 1,
+        absolute = false
+    } = options;
+    const params = syncPokemonCatalogFilterParams(new URLSearchParams(), filters);
+    const routePath = getPokemonCatalogRoutePath(page, variant);
+    const relativeUrl = routePath + (params.toString() ? `?${params}` : '');
+    return absolute ? new URL(relativeUrl, document.baseURI).href : relativeUrl;
+}
+
+function getPokemonCatalogFilterDisplayLabel(filterKey, value){
+    const normalizedValue = String(value || '').trim();
+    switch(filterKey){
+        case 'role':
+            return formatPokemonRoleLabel(normalizePokemonRoleKey(normalizedValue));
+        case 'clan':
+            return getPokemonTeamInfo(normalizedValue).label;
+        case 'level':
+            return formatPokemonLevelLabel(normalizedValue);
+        case 'generation':
+            return formatPokemonGenerationLabel(normalizedValue);
+        case 'specialTag':
+            return formatPokemonSpecialTagLabel(normalizedValue);
+        case 'type1':
+        case 'moveset':
+            return formatPokemonTypeLabel(normalizedValue);
+        case 'type2':
+            return normalizedValue === POKEMON_FILTER_TYPE2_NONE_VALUE
+                ? 'Sem tipo 2'
+                : formatPokemonTypeLabel(normalizedValue);
+        case 'name':
+        default:
+            return normalizedValue;
+    }
+}
+
+function getPokemonCatalogFilterVisualKind(filterKey, value){
+    if(filterKey === 'role') return 'role';
+    if(filterKey === 'clan') return 'team';
+    if(filterKey === 'type1' || filterKey === 'moveset') return 'type';
+    if(filterKey === 'type2'){
+        return String(value || '').trim() === POKEMON_FILTER_TYPE2_NONE_VALUE ? 'empty' : 'type';
+    }
+    return 'text';
+}
+
+function createPokemonFilterVisual(kind, value, label, options = {}){
+    const {
+        compact = false,
+        muted = false
+    } = options;
+    const visual = document.createElement('span');
+    visual.className = 'pokemon-filter-visual';
+    if(compact) visual.classList.add('pokemon-filter-visual--compact');
+    if(muted) visual.classList.add('pokemon-filter-visual--muted');
+    visual.dataset.kind = String(kind || 'text').trim().toLowerCase() || 'text';
+
+    let iconSrc = '';
+    if(kind === 'role'){
+        iconSrc = getPokemonRoleAssetSource(value);
+    } else if(kind === 'team'){
+        iconSrc = getPokemonTeamInfo(value).image;
+    } else if(kind === 'type'){
+        const normalizedType = normalizePokemonTypeKey(value);
+        if(normalizedType){
+            iconSrc = `icons-type/${normalizedType}.png`;
+        }
+    }
+
+    if(iconSrc){
+        const icon = document.createElement('img');
+        icon.className = 'pokemon-filter-visual__icon';
+        icon.src = iconSrc;
+        icon.alt = '';
+        icon.loading = 'lazy';
+        icon.decoding = 'async';
+        setImageFallback(icon, POKEMON_IMAGE_PLACEHOLDER);
+        visual.appendChild(icon);
+    } else if(kind === 'empty'){
+        const emptyIcon = document.createElement('span');
+        emptyIcon.className = 'pokemon-filter-visual__icon pokemon-filter-visual__icon--empty';
+        emptyIcon.setAttribute('aria-hidden', 'true');
+        emptyIcon.textContent = 'Ø';
+        visual.appendChild(emptyIcon);
+    }
+
+    const text = document.createElement('span');
+    text.className = 'pokemon-filter-visual__label';
+    text.textContent = String(label || '').trim();
+    visual.appendChild(text);
+
+    return visual;
+}
+
+function closePokemonFilterDropdown(controller = activePokemonFilterDropdownController, options = {}){
+    const { restoreFocus = false } = options;
+    if(!controller || !(controller.menu instanceof HTMLElement) || !(controller.trigger instanceof HTMLButtonElement)) return;
+    controller.menu.hidden = true;
+    controller.wrapper.classList.remove('is-open');
+    controller.trigger.setAttribute('aria-expanded', 'false');
+    if(restoreFocus){
+        try{ controller.trigger.focus({ preventScroll: true }); }catch(error){}
+    }
+    if(activePokemonFilterDropdownController === controller){
+        activePokemonFilterDropdownController = null;
+    }
+}
+
+function openPokemonFilterDropdown(controller){
+    if(!controller || !(controller.menu instanceof HTMLElement) || !(controller.trigger instanceof HTMLButtonElement)) return;
+    if(activePokemonFilterDropdownController && activePokemonFilterDropdownController !== controller){
+        closePokemonFilterDropdown(activePokemonFilterDropdownController);
+    }
+    controller.menu.hidden = false;
+    controller.wrapper.classList.add('is-open');
+    controller.trigger.setAttribute('aria-expanded', 'true');
+    activePokemonFilterDropdownController = controller;
+}
+
+function togglePokemonFilterDropdown(controller){
+    if(!controller) return;
+    if(activePokemonFilterDropdownController === controller && !controller.menu.hidden){
+        closePokemonFilterDropdown(controller, { restoreFocus: true });
+        return;
+    }
+    openPokemonFilterDropdown(controller);
+}
+
+function ensurePokemonFilterUiListeners(){
+    if(pokemonFilterUiListenersBound) return;
+
+    document.addEventListener('click', (event) => {
+        if(!activePokemonFilterDropdownController) return;
+        if(activePokemonFilterDropdownController.wrapper.contains(event.target)) return;
+        closePokemonFilterDropdown(activePokemonFilterDropdownController);
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape' && activePokemonFilterDropdownController){
+            event.preventDefault();
+            closePokemonFilterDropdown(activePokemonFilterDropdownController, { restoreFocus: true });
+        }
+    });
+
+    pokemonFilterUiListenersBound = true;
+}
+
+function createPokemonDecoratedFilterController(selectEl, config = {}){
+    if(!(selectEl instanceof HTMLSelectElement)) return null;
+    if(pokemonDecoratedFilterControllers.has(selectEl.id)){
+        return pokemonDecoratedFilterControllers.get(selectEl.id);
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pokemon-filter-select';
+    wrapper.dataset.kind = config.kind || 'text';
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'pokemon-filter-select__trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-controls', `${selectEl.id}-menu`);
+
+    const triggerCopy = document.createElement('span');
+    triggerCopy.className = 'pokemon-filter-select__trigger-copy';
+    trigger.appendChild(triggerCopy);
+
+    const caret = document.createElement('span');
+    caret.className = 'pokemon-filter-select__caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.textContent = '⌄';
+    trigger.appendChild(caret);
+
+    const menu = document.createElement('div');
+    menu.className = 'pokemon-filter-select__menu';
+    menu.id = `${selectEl.id}-menu`;
+    menu.setAttribute('role', 'listbox');
+    menu.hidden = true;
+
+    wrapper.append(trigger, menu);
+    selectEl.insertAdjacentElement('afterend', wrapper);
+    selectEl.classList.add('pokemon-filter-native-select');
+    selectEl.tabIndex = -1;
+    selectEl.setAttribute('aria-hidden', 'true');
+
+    const field = selectEl.closest('.pokemon-filter-field');
+    if(field){
+        field.classList.add('pokemon-filter-field--decorated');
+    }
+
+    const controller = { selectEl, wrapper, trigger, triggerCopy, menu, config };
+    pokemonDecoratedFilterControllers.set(selectEl.id, controller);
+
+    trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        togglePokemonFilterDropdown(controller);
+    });
+
+    trigger.addEventListener('keydown', (event) => {
+        if(event.key !== 'ArrowDown' && event.key !== 'Enter' && event.key !== ' '){
+            return;
+        }
+        event.preventDefault();
+        openPokemonFilterDropdown(controller);
+        const selectedOption = menu.querySelector('.pokemon-filter-select__option.is-selected') || menu.querySelector('.pokemon-filter-select__option');
+        if(selectedOption instanceof HTMLButtonElement){
+            selectedOption.focus({ preventScroll: true });
+        }
+    });
+
+    selectEl.addEventListener('change', () => {
+        syncPokemonDecoratedFilterController(selectEl);
+    });
+
+    return controller;
+}
+
+function syncPokemonDecoratedFilterController(selectEl){
+    if(!(selectEl instanceof HTMLSelectElement)) return;
+    const config = POKEMON_DECORATED_FILTER_SELECTS[selectEl.id];
+    if(!config) return;
+
+    const controller = createPokemonDecoratedFilterController(selectEl, config);
+    if(!controller) return;
+
+    const selectedOption = selectEl.options[selectEl.selectedIndex] || selectEl.options[0] || null;
+    const selectedValue = String(selectEl.value || '');
+    const selectedLabel = selectedOption ? selectedOption.textContent : config.placeholder || 'Todos';
+    const selectedKind = selectedValue ? getPokemonCatalogFilterVisualKind(
+        selectEl.id === 'pokemon-filter-moveset'
+            ? 'moveset'
+            : selectEl.id === 'pokemon-filter-type1'
+                ? 'type1'
+                : selectEl.id === 'pokemon-filter-type2'
+                    ? 'type2'
+                    : selectEl.id === 'pokemon-filter-clan'
+                        ? 'clan'
+                        : 'role',
+        selectedValue
+    ) : 'text';
+
+    controller.triggerCopy.replaceChildren(
+        createPokemonFilterVisual(
+            selectedKind,
+            selectedValue,
+            selectedLabel || config.placeholder || 'Todos',
+            { muted: !selectedValue }
+        )
+    );
+
+    const fragment = document.createDocumentFragment();
+    Array.from(selectEl.options).forEach((option) => {
+        const optionButton = document.createElement('button');
+        optionButton.type = 'button';
+        optionButton.className = 'pokemon-filter-select__option';
+        optionButton.setAttribute('role', 'option');
+        optionButton.dataset.value = option.value;
+        optionButton.setAttribute('aria-selected', option.value === selectedValue ? 'true' : 'false');
+        if(option.value === selectedValue){
+            optionButton.classList.add('is-selected');
+        }
+
+        const filterKey = selectEl.id === 'pokemon-filter-moveset'
+            ? 'moveset'
+            : selectEl.id === 'pokemon-filter-type1'
+                ? 'type1'
+                : selectEl.id === 'pokemon-filter-type2'
+                    ? 'type2'
+                    : selectEl.id === 'pokemon-filter-clan'
+                        ? 'clan'
+                        : 'role';
+        const visualKind = option.value ? getPokemonCatalogFilterVisualKind(filterKey, option.value) : 'text';
+        optionButton.appendChild(
+            createPokemonFilterVisual(
+                visualKind,
+                option.value,
+                option.textContent || config.placeholder || 'Todos',
+                { muted: !option.value }
+            )
+        );
+
+        optionButton.addEventListener('click', () => {
+            selectEl.value = option.value;
+            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+            closePokemonFilterDropdown(controller, { restoreFocus: true });
+        });
+
+        optionButton.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape'){
+                event.preventDefault();
+                closePokemonFilterDropdown(controller, { restoreFocus: true });
+            }
+        });
+
+        fragment.appendChild(optionButton);
+    });
+
+    controller.menu.replaceChildren(fragment);
+    controller.trigger.disabled = Boolean(selectEl.disabled);
+}
+
+function initializePokemonDecoratedFilterControls(){
+    ensurePokemonFilterUiListeners();
+    Object.entries(POKEMON_DECORATED_FILTER_SELECTS).forEach(([selectId, config]) => {
+        const selectEl = document.getElementById(selectId);
+        if(!(selectEl instanceof HTMLSelectElement)) return;
+        createPokemonDecoratedFilterController(selectEl, config);
+        syncPokemonDecoratedFilterController(selectEl);
+    });
+}
+
+function getPokemonCatalogActiveFilterEntries(filters = pokemonCatalogFilters){
+    const normalizedFilters = normalizePokemonCatalogFiltersInput(filters);
+    return Object.entries(normalizedFilters)
+        .filter(([, value]) => Boolean(value))
+        .map(([key, value]) => ({
+            key,
+            value,
+            title: POKEMON_FILTER_SHARE_LABELS[key] || key,
+            label: getPokemonCatalogFilterDisplayLabel(key, value),
+            kind: getPokemonCatalogFilterVisualKind(key, value)
+        }));
+}
+
+function renderPokemonFilterShareLinks(filters = pokemonCatalogFilters){
+    if(!(pokemonFilterShareLinks instanceof HTMLElement)) return;
+
+    const activeFilters = getPokemonCatalogActiveFilterEntries(filters);
+    if(!activeFilters.length){
+        pokemonFilterShareLinks.hidden = true;
+        pokemonFilterShareLinks.replaceChildren();
+        return;
+    }
+
+    const currentVariant = getCurrentPokemonCatalogVariant();
+    const list = document.createElement('div');
+    list.className = 'pokemon-filter-share-links__list';
+
+    activeFilters.forEach((entry) => {
+        const link = document.createElement('a');
+        link.className = 'pokemon-filter-share-link pokemon-filter-share-link-card';
+        link.href = buildPokemonCatalogFilterUrl(
+            { [entry.key]: entry.value },
+            { variant: currentVariant, page: 1 }
+        );
+        link.title = `Abrir filtro ${entry.title}: ${entry.label}`;
+
+        const visual = createPokemonFilterVisual(entry.kind, entry.value, entry.label, { compact: true });
+        link.appendChild(visual);
+
+        const meta = document.createElement('span');
+        meta.className = 'pokemon-filter-share-link__meta';
+        meta.textContent = entry.title;
+        link.appendChild(meta);
+
+        list.appendChild(link);
+    });
+
+    pokemonFilterShareLinks.hidden = false;
+    pokemonFilterShareLinks.replaceChildren(list);
+}
+
+function readPokemonCatalogFiltersFromDom(){
+    return normalizePokemonCatalogFiltersInput({
+        name: String(pokemonFilterNameInput?.value || '').trim(),
+        role: pokemonFilterRoleSelect?.value || '',
+        clan: pokemonFilterClanSelect?.value || '',
+        level: pokemonFilterLevelSelect?.value || '',
+        generation: pokemonFilterGenerationSelect?.value || '',
+        specialTag: pokemonFilterTagSelect?.value || '',
+        type1: pokemonFilterType1Select?.value || '',
+        type2: pokemonFilterType2Select?.value || '',
+        moveset: pokemonFilterMovesetSelect?.value || ''
+    });
+}
+
 function writePokemonCatalogFiltersToDom(filters = DEFAULT_POKEMON_CATALOG_FILTERS){
+    const normalizedFilters = normalizePokemonCatalogFiltersInput(filters);
     if(pokemonFilterNameInput){
-        pokemonFilterNameInput.value = String(filters?.name || '');
+        pokemonFilterNameInput.value = normalizedFilters.name;
     }
     const selectEntries = [
-        [pokemonFilterRoleSelect, filters?.role],
-        [pokemonFilterClanSelect, filters?.clan],
-        [pokemonFilterLevelSelect, filters?.level],
-        [pokemonFilterGenerationSelect, filters?.generation],
-        [pokemonFilterTagSelect, filters?.specialTag],
-        [pokemonFilterType1Select, filters?.type1],
-        [pokemonFilterType2Select, filters?.type2],
-        [pokemonFilterMovesetSelect, filters?.moveset]
+        [pokemonFilterRoleSelect, normalizedFilters.role],
+        [pokemonFilterClanSelect, normalizedFilters.clan],
+        [pokemonFilterLevelSelect, normalizedFilters.level],
+        [pokemonFilterGenerationSelect, normalizedFilters.generation],
+        [pokemonFilterTagSelect, normalizedFilters.specialTag],
+        [pokemonFilterType1Select, normalizedFilters.type1],
+        [pokemonFilterType2Select, normalizedFilters.type2],
+        [pokemonFilterMovesetSelect, normalizedFilters.moveset]
     ];
     selectEntries.forEach(([selectEl, value]) => {
         if(selectEl instanceof HTMLSelectElement){
             selectEl.value = String(value || '');
         }
     });
+    [
+        pokemonFilterRoleSelect,
+        pokemonFilterClanSelect,
+        pokemonFilterType1Select,
+        pokemonFilterType2Select,
+        pokemonFilterMovesetSelect
+    ].forEach((selectEl) => {
+        syncPokemonDecoratedFilterController(selectEl);
+    });
+    renderPokemonFilterShareLinks(normalizedFilters);
 }
 
 function resetPokemonCatalogFilters(){
@@ -12525,6 +13059,7 @@ function resetPokemonCatalogFilters(){
         pokemonCatalogRenderFrame = null;
     }
     pokemonCatalogFilters = { ...DEFAULT_POKEMON_CATALOG_FILTERS };
+    pendingPokemonCatalogRouteFilters = null;
     resetPokemonCatalogPage();
     writePokemonCatalogFiltersToDom(pokemonCatalogFilters);
 }
@@ -12698,7 +13233,9 @@ function schedulePokemonCatalogRender(){
 }
 
 function populatePokemonFilterControls(){
-    const currentFilters = readPokemonCatalogFiltersFromDom();
+    const currentFilters = pendingPokemonCatalogRouteFilters
+        ? normalizePokemonCatalogFiltersInput(pendingPokemonCatalogRouteFilters)
+        : readPokemonCatalogFiltersFromDom();
     const visibleEntries = getVisiblePokemonCatalogEntries();
 
     if(pokemonFilterNameInput){
@@ -12809,12 +13346,16 @@ function populatePokemonFilterControls(){
         currentFilters.moveset
     );
 
+    pendingPokemonCatalogRouteFilters = null;
+    writePokemonCatalogFiltersToDom(currentFilters);
     pokemonCatalogFilters = readPokemonCatalogFiltersFromDom();
+    renderPokemonFilterShareLinks(pokemonCatalogFilters);
 }
 
 function syncPokemonCatalogFiltersFromInputs(){
     pokemonCatalogFilters = readPokemonCatalogFiltersFromDom();
     resetPokemonCatalogPage();
+    renderPokemonFilterShareLinks(pokemonCatalogFilters);
     schedulePokemonCatalogRender();
 }
 
@@ -12852,6 +13393,8 @@ function initializePokemonCatalogPagination(){
 function initializePokemonCatalogFilters(){
     if(pokemonCatalogFiltersInitialized) return;
 
+    initializePokemonDecoratedFilterControls();
+
     const filterControls = [
         pokemonFilterNameInput,
         pokemonFilterRoleSelect,
@@ -12874,6 +13417,7 @@ function initializePokemonCatalogFilters(){
     }
 
     pokemonCatalogFilters = readPokemonCatalogFiltersFromDom();
+    renderPokemonFilterShareLinks(pokemonCatalogFilters);
     pokemonCatalogFiltersInitialized = true;
 }
 
@@ -13464,17 +14008,10 @@ function renderPokemonCatalog(options = {}){
 }
 
 function loadPokemonCatalog(){
-    const generationMapPromise = fetchPokemonCatalogJson(POKEMON_GENERATION_MAP_URL)
-        .then(data => getPokemonCatalogGenerationMap(data))
-        .catch(error => {
-            console.warn('Nao foi possivel carregar pokemons/generations.json.', error);
-            return {};
-        });
-
     return Promise.all([
         fetchPokemonCatalogJson(POKEMON_CATALOG_URL),
         fetchPokemonCatalogJson(POKEMON_MEGA_CATALOG_URL),
-        generationMapPromise
+        loadSharedPokemonGenerationMap()
     ])
         .then(([registeredData, megaData, generationMap]) => {
             pokemonCatalogGenerationMap = generationMap;
@@ -13724,6 +14261,7 @@ window.addEventListener('popstate', () => {
     const pathname = String(location.pathname || '');
     const detailMatch = getPokemonDetailRouteMatch(pathname);
     const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
+    const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
     const isPokemonCatalogRoute = isPokemonCatalogPathname(pathname);
     const requestedBossRoute = getBossRouteMatch(pathname);
     if(detailMatch){
@@ -13755,13 +14293,18 @@ window.addEventListener('popstate', () => {
                 ? 1
                 : requestedPokemonCatalogPage;
             if(contentPokemons && !contentPokemons.hidden && pokemonCatalogLoaded){
+                pendingPokemonCatalogRouteFilters = requestedPokemonFilters;
+                pokemonCatalogFilters = normalizePokemonCatalogFiltersInput(requestedPokemonFilters);
                 applyPokemonCatalogVariant(requestedVariant, {
-                    resetFilters: activePokemonCatalogVariant !== normalizePokemonCatalogVariant(requestedVariant)
+                    resetFilters: false
                 });
                 pokemonCatalogCurrentPage = requestedPage;
                 renderPokemonCatalog();
             } else {
-                showPokemons(requestedVariant, { requestedPage });
+                showPokemons(requestedVariant, {
+                    requestedPage,
+                    requestedFilters: requestedPokemonFilters
+                });
             }
         }
     }
