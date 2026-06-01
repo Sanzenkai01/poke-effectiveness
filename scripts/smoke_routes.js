@@ -210,17 +210,19 @@ async function main() {
   console.log(`Usando navegador: ${browserPath}`);
 
   for (const route of routes) {
-    const url = `${baseUrl}${route.path}`;
-    await assertHttpOk(url);
-    const dom = fetchWithHeadlessBrowser(browserPath, url);
+    const url = new URL(`${baseUrl}${route.path}`);
+    url.searchParams.set('skipCounter', '1');
+    const routeUrl = url.toString();
+    await assertHttpOk(routeUrl);
+    const dom = fetchWithHeadlessBrowser(browserPath, routeUrl);
 
     route.checks.forEach((check) => {
       if (!check.pattern.test(dom)) {
-        throw new Error(`${route.label}: marcador ausente (${check.description}) em ${url}`);
+        throw new Error(`${route.label}: marcador ausente (${check.description}) em ${routeUrl}`);
       }
     });
 
-    console.log(`OK ${route.label} -> ${url}`);
+    console.log(`OK ${route.label} -> ${routeUrl}`);
   }
 }
 

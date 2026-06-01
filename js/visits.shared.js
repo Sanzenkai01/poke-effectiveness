@@ -26,6 +26,26 @@
     let portaledTooltipSurface = null;
     let portaledTooltipMount = null;
     let portaledTooltipHideTimer = 0;
+    const COUNTER_BYPASS_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
+    const counterUrlParams = new URLSearchParams(window.location.search);
+    const shouldBypassCounterIncrement = (() => {
+        const skipCounterParam = String(counterUrlParams.get('skipCounter') || '').trim().toLowerCase();
+        if(skipCounterParam === '1' || skipCounterParam === 'true' || skipCounterParam === 'yes'){
+            return true;
+        }
+
+        const hostname = String(window.location.hostname || '').trim().toLowerCase();
+        if(COUNTER_BYPASS_HOSTS.has(hostname)){
+            return true;
+        }
+
+        if(window.navigator?.webdriver){
+            return true;
+        }
+
+        const userAgent = String(window.navigator?.userAgent || '');
+        return /HeadlessChrome/i.test(userAgent);
+    })();
 
     mounts.forEach((mount) => {
         mount.classList.add('site-visit-counter--interactive');
@@ -456,8 +476,8 @@
 
     async function fetchNormalizedCounts(todayStamp){
         const now = Date.now();
-        const shouldIncrementDaily = readMarkedDate() !== todayStamp;
-        const shouldIncrementTotal = shouldIncrementTotalAccess(now);
+        const shouldIncrementDaily = !shouldBypassCounterIncrement && readMarkedDate() !== todayStamp;
+        const shouldIncrementTotal = !shouldBypassCounterIncrement && shouldIncrementTotalAccess(now);
         const dailyCounterKey = `${DAILY_COUNTER_KEY_PREFIX}-${todayStamp}`;
 
         const [dailyResult, totalResult] = await Promise.allSettled([
