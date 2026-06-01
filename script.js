@@ -120,6 +120,7 @@ const pokemonCatalogPageIndicatorBottom = document.getElementById('pokemon-catal
 const pokemonVariantMegaLink = document.getElementById('pokemon-variant-mega-link');
 const pokemonVariantMegaLabel = pokemonVariantMegaLink?.querySelector('.pokemon-hub__mega-label') || null;
 const pokemonDetailsModal = document.getElementById('pokemon-details-modal');
+const pokemonDetailsContent = pokemonDetailsModal?.querySelector('.pokemon-details-modal__content') || null;
 const pokemonDetailsImage = document.getElementById('pokemon-details-image');
 const pokemonDetailsRole = document.getElementById('pokemon-details-role');
 const pokemonDetailsTitle = document.getElementById('pokemon-details-title');
@@ -2525,14 +2526,14 @@ let visionModeMenuOpen = false;
 let visionModeMenuOptions = [];
 
 function normalizeSiteCursorMode(value){
-    return value === SITE_CURSOR_MODE_SYSTEM ? SITE_CURSOR_MODE_SYSTEM : SITE_CURSOR_MODE_PIKACHU;
+    return value === SITE_CURSOR_MODE_PIKACHU ? SITE_CURSOR_MODE_PIKACHU : SITE_CURSOR_MODE_SYSTEM;
 }
 
 function getStoredSiteCursorMode(){
     try{
         return normalizeSiteCursorMode(localStorage.getItem(SITE_CURSOR_MODE_STORAGE_KEY));
     }catch(e){
-        return SITE_CURSOR_MODE_PIKACHU;
+        return SITE_CURSOR_MODE_SYSTEM;
     }
 }
 
@@ -3454,6 +3455,19 @@ function getTypeColor(type){
     return TYPE_UI_COLORS[String(type).toLowerCase()] || '#ffffff';
 }
 
+function setTypeToneVariables(node, type){
+    if(!(node instanceof HTMLElement)) return;
+    const normalizedType = normalizePokemonTypeKey(type);
+    if(!normalizedType){
+        node.style.removeProperty('--type-color');
+        node.style.removeProperty('--type-color-rgb');
+        return;
+    }
+    const color = getTypeColor(normalizedType);
+    node.style.setProperty('--type-color', color);
+    node.style.setProperty('--type-color-rgb', hexToRgb(color));
+}
+
 function formatTypeMultiplierValue(multiplier){
     if(!Number.isFinite(multiplier)) return '-';
     if(Number.isInteger(multiplier)) return `${multiplier}x`;
@@ -4077,16 +4091,7 @@ const catchTypeSelectControllers = new Map();
 let catchTypeSelectHandlersBound = false;
 
 function setCatchTypeSelectTone(node, type){
-    if(!(node instanceof HTMLElement)) return;
-    const normalizedType = normalizePokemonTypeKey(type);
-    if(!normalizedType){
-        node.style.removeProperty('--type-color');
-        node.style.removeProperty('--type-color-rgb');
-        return;
-    }
-    const color = getTypeColor(normalizedType);
-    node.style.setProperty('--type-color', color);
-    node.style.setProperty('--type-color-rgb', hexToRgb(color));
+    setTypeToneVariables(node, type);
 }
 
 function createCatchTypeSelectThumb(type, label, className = 'catch-type-select__thumb'){
@@ -9760,12 +9765,7 @@ function renderBoostTypePicker(){
         img.loading = 'lazy'; img.decoding = 'async';
         thumb.appendChild(img);
 
-        // apply type color as CSS variables for richer styling
-        try{
-            const color = getTypeColor(type);
-            btn.style.setProperty('--type-color', color);
-            btn.style.setProperty('--type-color-rgb', hexToRgb(color));
-        }catch(e){}
+        setTypeToneVariables(btn, type);
 
         const label = document.createElement('span');
         label.className = 'boost-type-label';
@@ -10119,12 +10119,7 @@ function createBoostTypeChip(typeKey){
     const chip = document.createElement('span');
     chip.className = 'boost-pokemon-chip';
     chip.innerHTML = `<img src="icons-type/${normalizedType}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(normalizedType)}</span>`;
-    // apply color variables for chip
-    try{
-        const color = getTypeColor(normalizedType);
-        chip.style.setProperty('--type-color', color);
-        chip.style.setProperty('--type-color-rgb', hexToRgb(color));
-    }catch(e){}
+    setTypeToneVariables(chip, normalizedType);
     return chip;
 }
 
@@ -13429,6 +13424,7 @@ function createPokemonTypeToken(typeKey, options = {}){
     const token = document.createElement('span');
     token.className = 'pokemon-type-token' + (compact ? ' pokemon-type-token--compact' : '');
     token.dataset.type = normalizedType;
+    setTypeToneVariables(token, normalizedType);
 
     const icon = document.createElement('img');
     icon.src = `icons-type/${normalizedType}.png`;
@@ -13537,6 +13533,26 @@ function createPokemonRoleBadge(roleValue, options = {}){
 
     badge.append(icon, label);
     return badge;
+}
+
+function setPokemonDetailsModalTheme(entry){
+    if(!(pokemonDetailsContent instanceof HTMLElement)){
+        return;
+    }
+
+    const naturalTypes = Array.isArray(entry?.naturalElements) ? entry.naturalElements : [];
+    const primaryType = normalizePokemonTypeKey(entry?.type1 || naturalTypes[0] || '');
+    const secondaryFallback = naturalTypes.find((type) => normalizePokemonTypeKey(type) && normalizePokemonTypeKey(type) !== primaryType) || '';
+    const secondaryType = normalizePokemonTypeKey(entry?.type2 || secondaryFallback || primaryType || '');
+    const primaryColor = primaryType ? getTypeColor(primaryType) : '#68d7ff';
+    const secondaryColor = secondaryType ? getTypeColor(secondaryType) : primaryColor;
+
+    pokemonDetailsContent.dataset.primaryType = primaryType || 'unknown';
+    pokemonDetailsContent.dataset.secondaryType = secondaryType || primaryType || 'unknown';
+    pokemonDetailsContent.style.setProperty('--pokemon-detail-primary', primaryColor);
+    pokemonDetailsContent.style.setProperty('--pokemon-detail-primary-rgb', hexToRgb(primaryColor));
+    pokemonDetailsContent.style.setProperty('--pokemon-detail-secondary', secondaryColor);
+    pokemonDetailsContent.style.setProperty('--pokemon-detail-secondary-rgb', hexToRgb(secondaryColor));
 }
 
 function createPokemonBallCard(ballConfig, averageValue, caption){
@@ -14096,6 +14112,7 @@ function renderPokemonDetailsModal(entry){
     const specialTags = getPokemonEntrySpecialTags(entry);
 
     activePokemonCatalogEntry = entry;
+    setPokemonDetailsModalTheme(entry);
 
     if(pokemonDetailsImage){
         pokemonDetailsImage.dataset.fallbackApplied = 'false';
@@ -14191,6 +14208,7 @@ function renderPokemonDetailsModal(entry){
             weaknessEntries.forEach((weakness) => {
                 const pill = document.createElement('span');
                 pill.className = 'pokemon-weakness-pill';
+                setTypeToneVariables(pill, weakness.type);
                 pill.classList.add(
                     weakness.multiplier >= TYPE_SUPER_EFFECTIVE_MULTIPLIER
                         ? 'pokemon-weakness-pill--super'

@@ -15,10 +15,10 @@
         var visionMode = localStorage.getItem('siteVisionMode');
         var allowedVisionModes = { standard: true, protan: true, deutan: true, tritan: true };
         if (visionMode === 'colorblind') visionMode = 'deutan';
-        document.documentElement.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
+        document.documentElement.dataset.cursorMode = cursorMode === 'pikachu' ? 'pikachu' : 'system';
         document.documentElement.dataset.visionMode = allowedVisionModes[visionMode] ? visionMode : 'standard';
       } catch (error) {
-        document.documentElement.dataset.cursorMode = 'pikachu';
+        document.documentElement.dataset.cursorMode = 'system';
         document.documentElement.dataset.visionMode = 'standard';
       }
     })();

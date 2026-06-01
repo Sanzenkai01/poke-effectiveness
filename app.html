@@ -18,15 +18,15 @@
           var visionMode = localStorage.getItem('siteVisionMode');
           var allowedVisionModes = { standard: true, protan: true, deutan: true, tritan: true };
           if (visionMode === 'colorblind') visionMode = 'deutan';
-          root.dataset.cursorMode = cursorMode === 'system' ? 'system' : 'pikachu';
+          root.dataset.cursorMode = cursorMode === 'pikachu' ? 'pikachu' : 'system';
           root.dataset.visionMode = allowedVisionModes[visionMode] ? visionMode : 'standard';
         } catch (error) {
-          document.documentElement.dataset.cursorMode = 'pikachu';
+          document.documentElement.dataset.cursorMode = 'system';
           document.documentElement.dataset.visionMode = 'standard';
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260601j">
+  <link rel="stylesheet" href="styles.css?v=20260601m">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -58,7 +58,7 @@
           <path d="m20 11.1 1.6-1.2"></path>
         </svg>
       </button>
-      <button id="cursor-toggle-btn" aria-label="Alternar cursor" title="Usar cursor padrao">
+      <button id="cursor-toggle-btn" aria-label="Usar cursor Pikachu" title="Usar cursor Pikachu">
         <img class="header-tool-icon" src="mouse.png" alt="" aria-hidden="true" decoding="async" />
       </button>
       <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
@@ -1627,7 +1627,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260524a" defer></script>
     <script src="js/visits.shared.js?v=20260601a" defer></script>
-    <script src="script.js?v=20260601c" defer></script>
+    <script src="script.js?v=20260601e" defer></script>
 </body>
 </html>
 
