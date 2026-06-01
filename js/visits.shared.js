@@ -13,13 +13,31 @@
     const COUNTER_TIME_ZONE = 'America/Sao_Paulo';
     const COUNTER_RESET_HOUR = 10;
     const COUNTER_RESET_MINUTE = 30;
+    const COUNTER_STARTED_AT = Object.freeze({ day: 20, month: 5, year: 2026 });
     const TOTAL_ACCESS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
+    const PORTALED_TOOLTIP_SURFACE = 'header';
+    const PORTALED_TOOLTIP_HIDE_DELAY_MS = 140;
 
     let activeSyncPromise = null;
     let lastCompletedSyncAt = 0;
     let preferProxyRequests = false;
+    let portaledTooltipSurface = null;
+    let portaledTooltipMount = null;
+    let portaledTooltipHideTimer = 0;
+
+    mounts.forEach((mount) => {
+        mount.classList.add('site-visit-counter--interactive');
+        if(!mount.hasAttribute('tabindex')){
+            mount.tabIndex = 0;
+        }
+        const surface = String(mount.dataset.visitCounterSurface || '').toLowerCase();
+        mount.dataset.visitCounterTooltipMode = getCounterTooltipMode(surface);
+        if(getCounterTooltipMode(surface) === 'portal'){
+            bindPortaledTooltipEvents(mount);
+        }
+    });
 
     function padDatePart(value){
         return String(value).padStart(2, '0');
@@ -27,6 +45,175 @@
 
     function formatDateStamp(year, month, day){
         return `${year}-${padDatePart(month)}-${padDatePart(day)}`;
+    }
+
+    function formatDisplayDate(day, month, year){
+        return `${padDatePart(day)}/${padDatePart(month)}/${year}`;
+    }
+
+    function getCounterStartedLabel(){
+        return formatDisplayDate(
+            COUNTER_STARTED_AT.day,
+            COUNTER_STARTED_AT.month,
+            COUNTER_STARTED_AT.year
+        );
+    }
+
+    function getCounterHoverText(){
+        return 'Cada navegador soma no maximo 1 acesso unico por 24h. Os acessos totais acumulam a soma de todos esses acessos unicos.';
+    }
+
+    function getCounterTooltipText(){
+        return `Contando desde o dia ${getCounterStartedLabel()}. ${getCounterHoverText()}`;
+    }
+
+    function buildCounterHoverContentHtml(){
+        const startedLabel = getCounterStartedLabel();
+        return `<strong class="site-visit-counter__hover-title">Como a contagem funciona</strong><span class="site-visit-counter__hover-text">${getCounterHoverText()}</span><span class="site-visit-counter__hover-started">Contando desde o dia ${startedLabel}</span>`;
+    }
+
+    function buildCounterHoverHtml(){
+        return `<span class="site-visit-counter__hover" role="tooltip">${buildCounterHoverContentHtml()}</span>`;
+    }
+
+    function getCounterTooltipMode(surface = ''){
+        return String(surface).toLowerCase() === PORTALED_TOOLTIP_SURFACE ? 'portal' : 'inline';
+    }
+
+    function ensurePortaledTooltipSurface(){
+        if(portaledTooltipSurface?.isConnected){
+            return portaledTooltipSurface;
+        }
+
+        const tooltip = document.createElement('span');
+        tooltip.className = 'site-visit-counter__hover site-visit-counter__hover--portal';
+        tooltip.hidden = true;
+        tooltip.dataset.open = 'false';
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(tooltip);
+        portaledTooltipSurface = tooltip;
+        return tooltip;
+    }
+
+    function clearPortaledTooltipHideTimer(){
+        if(!portaledTooltipHideTimer) return;
+        window.clearTimeout(portaledTooltipHideTimer);
+        portaledTooltipHideTimer = 0;
+    }
+
+    function positionPortaledTooltip(mount){
+        const tooltip = ensurePortaledTooltipSurface();
+        if(!tooltip || !mount?.isConnected) return;
+
+        tooltip.hidden = false;
+        tooltip.style.visibility = 'hidden';
+        tooltip.style.left = '0px';
+        tooltip.style.top = '0px';
+
+        const mountRect = mount.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const viewportMargin = 12;
+        const gap = 14;
+        const maxLeft = Math.max(viewportMargin, window.innerWidth - tooltipRect.width - viewportMargin);
+        const left = Math.min(
+            Math.max(mountRect.left + (mountRect.width / 2) - (tooltipRect.width / 2), viewportMargin),
+            maxLeft
+        );
+        const maxTop = Math.max(viewportMargin, window.innerHeight - tooltipRect.height - viewportMargin);
+        const top = Math.min(
+            Math.max(mountRect.bottom + gap, viewportMargin),
+            maxTop
+        );
+        const anchorX = mountRect.left + (mountRect.width / 2);
+        const maxArrowLeft = Math.max(tooltipRect.width - 18, 18);
+        const arrowLeft = Math.min(Math.max(anchorX - left, 18), maxArrowLeft);
+
+        tooltip.style.left = `${Math.round(left)}px`;
+        tooltip.style.top = `${Math.round(top)}px`;
+        tooltip.style.setProperty('--site-visit-tooltip-arrow-left', `${Math.round(arrowLeft)}px`);
+        tooltip.style.visibility = '';
+    }
+
+    function syncPortaledTooltipPosition(){
+        if(!portaledTooltipMount || !portaledTooltipSurface || portaledTooltipSurface.hidden){
+            return;
+        }
+        positionPortaledTooltip(portaledTooltipMount);
+    }
+
+    function showPortaledTooltip(mount){
+        if(!mount?.isConnected) return;
+
+        clearPortaledTooltipHideTimer();
+        portaledTooltipMount = mount;
+
+        const tooltip = ensurePortaledTooltipSurface();
+        tooltip.innerHTML = buildCounterHoverContentHtml();
+        tooltip.hidden = false;
+        tooltip.dataset.open = 'false';
+        tooltip.setAttribute('aria-hidden', 'false');
+        mount.dataset.visitCounterTooltipOpen = 'true';
+        positionPortaledTooltip(mount);
+
+        window.requestAnimationFrame(() => {
+            if(portaledTooltipMount !== mount) return;
+            tooltip.dataset.open = 'true';
+        });
+    }
+
+    function hidePortaledTooltip(mount = null){
+        if(mount && portaledTooltipMount && mount !== portaledTooltipMount){
+            return;
+        }
+
+        clearPortaledTooltipHideTimer();
+
+        const activeMount = portaledTooltipMount;
+        if(activeMount){
+            delete activeMount.dataset.visitCounterTooltipOpen;
+        }
+        portaledTooltipMount = null;
+
+        if(!portaledTooltipSurface) return;
+
+        portaledTooltipSurface.dataset.open = 'false';
+        portaledTooltipSurface.setAttribute('aria-hidden', 'true');
+        portaledTooltipHideTimer = window.setTimeout(() => {
+            if(!portaledTooltipSurface || portaledTooltipSurface.dataset.open === 'true'){
+                return;
+            }
+            portaledTooltipSurface.hidden = true;
+            portaledTooltipSurface.style.visibility = '';
+        }, PORTALED_TOOLTIP_HIDE_DELAY_MS);
+    }
+
+    function bindPortaledTooltipEvents(mount){
+        if(mount.dataset.visitCounterTooltipBound === 'true') return;
+        mount.dataset.visitCounterTooltipBound = 'true';
+
+        mount.addEventListener('mouseenter', () => {
+            showPortaledTooltip(mount);
+        });
+
+        mount.addEventListener('mouseleave', () => {
+            hidePortaledTooltip(mount);
+        });
+
+        mount.addEventListener('focus', () => {
+            showPortaledTooltip(mount);
+        });
+
+        mount.addEventListener('blur', () => {
+            hidePortaledTooltip(mount);
+        });
+
+        mount.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape'){
+                hidePortaledTooltip(mount);
+                mount.blur();
+            }
+        });
     }
 
     function getCounterDateParts(now = new Date()){
@@ -128,27 +315,22 @@
         };
     }
 
-    function formatCountPhrase(count, singular, plural){
-        const normalizedCount = Number.isFinite(Number(count)) ? Math.max(0, Number(count)) : 0;
-        return `${normalizedCount.toLocaleString('pt-BR')} ${normalizedCount === 1 ? singular : plural}`;
-    }
-
     function formatValues(dailyCount, totalCount, surface = ''){
         const normalized = normalizeCounts(dailyCount, totalCount);
         const safeDaily = normalized.daily;
         const safeTotal = normalized.total;
-
-        const dailyDescription = safeDaily === 1 ? 'visita hoje' : 'visitas hoje';
-        const totalDescription = safeTotal === 1 ? 'acesso no total' : 'acessos no total';
-
-        if(surface === 'footer'){
-            return {
-                html: `<span class="site-visit-counter__line">${formatCountPhrase(safeDaily, 'visita hoje', 'visitas hoje')}</span><span class="site-visit-counter__line site-visit-counter__line--secondary">${formatCountPhrase(safeTotal, 'acesso no total', 'acessos no total')}</span>`
-            };
-        }
+        const startedLabel = getCounterStartedLabel();
+        const dailyDescription = safeDaily === 1 ? 'acesso unico hoje' : 'acessos unicos hoje';
+        const totalDescription = safeTotal === 1 ? 'acesso total' : 'acessos totais';
+        const counterHtml = `<span class="site-visit-counter__line"><span class="site-visit-counter__number">${safeDaily.toLocaleString('pt-BR')}</span> ${dailyDescription}</span><span class="site-visit-counter__line site-visit-counter__line--secondary"><span class="site-visit-counter__number">${safeTotal.toLocaleString('pt-BR')}</span> ${totalDescription}</span>`;
+        const hoverHtml = getCounterTooltipMode(surface) === 'inline'
+            ? buildCounterHoverHtml()
+            : '';
 
         return {
-            html: `<span class="site-visit-counter__line"><span class="site-visit-counter__number">${safeDaily.toLocaleString('pt-BR')}</span> ${dailyDescription}</span><span class="site-visit-counter__line site-visit-counter__line--secondary"><span class="site-visit-counter__number">${safeTotal.toLocaleString('pt-BR')}</span> ${totalDescription}</span>`
+            html: `${counterHtml}${hoverHtml}`,
+            tooltipText: getCounterTooltipText(),
+            ariaLabel: `${safeDaily.toLocaleString('pt-BR')} ${dailyDescription}. ${safeTotal.toLocaleString('pt-BR')} ${totalDescription}. Contando desde o dia ${startedLabel}.`
         };
     }
 
@@ -168,6 +350,7 @@
         mounts.forEach((mount) => {
             mount.dataset.state = state;
             const surface = String(mount.dataset.visitCounterSurface || '').toLowerCase();
+            const tooltipMode = getCounterTooltipMode(surface);
             const labelEl = mount.querySelector('.site-visit-counter__label');
             const valueEl = mount.querySelector('.site-visit-counter__values');
             const formatted = typeof formatter === 'function'
@@ -176,6 +359,18 @@
 
             if(labelEl){
                 labelEl.textContent = formatted?.label || '';
+            }
+            mount.dataset.visitCounterTooltipMode = tooltipMode;
+
+            if(formatted?.tooltipText && tooltipMode !== 'portal'){
+                mount.setAttribute('title', formatted.tooltipText);
+            } else {
+                mount.removeAttribute('title');
+            }
+            if(formatted?.ariaLabel){
+                mount.setAttribute('aria-label', formatted.ariaLabel);
+            } else {
+                mount.removeAttribute('aria-label');
             }
             if(valueEl){
                 valueEl.innerHTML = formatted?.html || '';
@@ -353,6 +548,22 @@
 
         window.addEventListener('online', () => {
             requestRefresh(true);
+        });
+
+        window.addEventListener('resize', () => {
+            syncPortaledTooltipPosition();
+        });
+
+        window.addEventListener('scroll', () => {
+            syncPortaledTooltipPosition();
+        }, true);
+
+        document.addEventListener('visibilitychange', () => {
+            if(document.visibilityState === 'hidden'){
+                hidePortaledTooltip();
+            } else {
+                syncPortaledTooltipPosition();
+            }
         });
     }
 

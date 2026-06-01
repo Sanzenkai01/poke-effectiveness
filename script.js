@@ -219,7 +219,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonDex = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260530a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260601d';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -249,7 +249,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260601a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260531a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260531a';
@@ -348,12 +348,13 @@ const POKEMON_LEVEL_FILTER_SORT_INDEX = Object.freeze(
     }, {})
 );
 const POKEMON_SPECIAL_TAG_META = Object.freeze({
+    pack: { key: 'pack', label: 'Pack' },
     fossil: { key: 'fossil', label: 'F\u00f3ssil' },
     boss: { key: 'boss', label: 'Boss' },
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
     ace: { key: 'ace', label: 'Ace' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['fossil', 'boss', 'legendary', 'ace']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'fossil', 'boss', 'legendary', 'ace']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
         acc[value] = index;
@@ -12405,6 +12406,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'fossil' || normalized === 'fossil-pokemon') return 'fossil';
     if(normalized === 'boss') return 'boss';
     if(normalized === 'ace') return 'ace';
+    if(normalized === 'pack' || normalized === 'pacote' || normalized === 'especial' || normalized === 'special') return 'pack';
     return '';
 }
 
@@ -13422,10 +13424,10 @@ function initializePokemonCatalogFilters(){
 }
 
 function createPokemonTypeToken(typeKey, options = {}){
-    const { labelPrefix = '' } = options;
+    const { labelPrefix = '', compact = false } = options;
     const normalizedType = normalizePokemonTypeKey(typeKey);
     const token = document.createElement('span');
-    token.className = 'pokemon-type-token';
+    token.className = 'pokemon-type-token' + (compact ? ' pokemon-type-token--compact' : '');
     token.dataset.type = normalizedType;
 
     const icon = document.createElement('img');
@@ -13435,10 +13437,16 @@ function createPokemonTypeToken(typeKey, options = {}){
     icon.decoding = 'async';
     setImageFallback(icon, POKEMON_IMAGE_PLACEHOLDER);
 
-    const text = document.createElement('span');
-    text.textContent = labelPrefix ? `${labelPrefix}${formatPokemonTypeLabel(normalizedType)}` : formatPokemonTypeLabel(normalizedType);
+    token.appendChild(icon);
 
-    token.append(icon, text);
+    if(!compact){
+        const text = document.createElement('span');
+        text.textContent = labelPrefix ? `${labelPrefix}${formatPokemonTypeLabel(normalizedType)}` : formatPokemonTypeLabel(normalizedType);
+        token.appendChild(text);
+    } else {
+        token.setAttribute('aria-label', labelPrefix ? `${labelPrefix}${formatPokemonTypeLabel(normalizedType)}` : formatPokemonTypeLabel(normalizedType));
+    }
+
     return token;
 }
 
@@ -13470,6 +13478,15 @@ function createPokemonSpecialTagBadge(tagKey){
     badge.className = 'pokemon-special-tag-badge';
     badge.dataset.tag = normalized || 'custom';
     badge.textContent = formatPokemonSpecialTagLabel(normalized);
+    return badge;
+}
+
+function createPokemonNaturalShinyBadge(){
+    const badge = document.createElement('span');
+    badge.className = 'pokemon-natural-shiny-badge';
+    badge.textContent = '✨ Shiny';
+    badge.title = 'Shiny por natureza';
+    badge.setAttribute('aria-label', 'Shiny por natureza');
     return badge;
 }
 
@@ -13791,6 +13808,7 @@ function normalizePokemonCatalogEntry(entry, index){
         registered: entry.registered !== false,
         shinyCaptureAvailable: entry.shinyCaptureAvailable !== false,
         shinyCaptureNote: String(entry.shinyCaptureNote || '').trim(),
+        naturalShiny: entry.naturalShiny === true,
         specialTags,
         variant: normalizePokemonCatalogVariant(entry.variant)
     };
@@ -13902,9 +13920,12 @@ function renderPokemonCatalog(options = {}){
         card.type = 'button';
         card.className = 'pokemon-entry-card';
         card.setAttribute('role', 'listitem');
+        // expose the entry id on the DOM for targeted styling
+        card.dataset.pokemonId = entry.id;
         const ariaLabelParts = [entry.name];
         if(hasRole) ariaLabelParts.push(entry.role);
         ariaLabelParts.push(getPokemonEntryLevelLabel(entry));
+        if(entry.naturalShiny && entry.id !== 'chloes-eevee') ariaLabelParts.push('Shiny por natureza');
         specialTags.forEach((tagKey) => ariaLabelParts.push(formatPokemonSpecialTagLabel(tagKey)));
         card.setAttribute('aria-label', `${ariaLabelParts.join(', ')}.`);
 
@@ -13925,6 +13946,10 @@ function renderPokemonCatalog(options = {}){
         level.className = 'pokemon-entry-card__level';
         level.textContent = getPokemonEntryLevelLabel(entry);
         metaRow.appendChild(level);
+        // Hide natural shiny badge on card for specific entries (e.g. Chloe's Eevee)
+        if(entry.naturalShiny && entry.id !== 'chloes-eevee'){
+            metaRow.appendChild(createPokemonNaturalShinyBadge());
+        }
         specialTags.forEach((tagKey) => {
             metaRow.appendChild(createPokemonSpecialTagBadge(tagKey));
         });
@@ -13958,7 +13983,13 @@ function renderPokemonCatalog(options = {}){
         const movesetRow = document.createElement('div');
         movesetRow.className = 'pokemon-token-row';
         if(entry.moveset.length){
-            entry.moveset.forEach(type => movesetRow.appendChild(createPokemonTypeToken(type)));
+            // If there are multiple moveset types, show only icons horizontally (compact)
+            if(entry.moveset.length > 1){
+                entry.moveset.forEach(type => movesetRow.appendChild(createPokemonTypeToken(type, { compact: true })));
+                movesetRow.classList.add('pokemon-token-row--icons');
+            } else {
+                entry.moveset.forEach(type => movesetRow.appendChild(createPokemonTypeToken(type)));
+            }
         } else {
             const movesetHint = document.createElement('span');
             movesetHint.className = 'pokemon-entry-card__hint';
@@ -14109,10 +14140,19 @@ function renderPokemonDetailsModal(entry){
         levelMeta.className = 'pokemon-level-meta-row';
         const levelText = document.createElement('span');
         levelText.textContent = getPokemonEntryLevelLabel(entry);
-        levelMeta.appendChild(levelText);
+
+        // badges under the level text (shiny / special tags)
+        const badgesWrap = document.createElement('span');
+        badgesWrap.className = 'pokemon-level-meta-row__badges';
+        if(entry.naturalShiny){
+            badgesWrap.appendChild(createPokemonNaturalShinyBadge());
+        }
         specialTags.forEach((tagKey) => {
-            levelMeta.appendChild(createPokemonSpecialTagBadge(tagKey));
+            badgesWrap.appendChild(createPokemonSpecialTagBadge(tagKey));
         });
+
+        levelMeta.append(levelText, badgesWrap);
+
         infoFragment.append(
             createPokemonFieldCard('Tipo 1', entry.type1 ? createPokemonTypeToken(entry.type1) : 'Não informado'),
             createPokemonFieldCard('Tipo 2', entry.type2 ? createPokemonTypeToken(entry.type2) : 'Não possui'),

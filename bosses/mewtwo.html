@@ -23,7 +23,7 @@
       }
     })();
   </script>
-  <link rel="stylesheet" href="../styles.css?v=20260521e">
+  <link rel="stylesheet" href="../styles.css?v=20260601j">
 </head>
 <body data-active-tab="bosses" data-initial-boss-mode="mew2">
   <header class="header">
@@ -62,13 +62,31 @@
         <div class="speedster-modal-title">
           <h2 id="modal-title"></h2>
           <p id="modal-subtitle" class="speedster-subtitle"></p>
-          <div class="tier-legend" aria-label="Legenda de cores de recomendacao">
-            <span class="tier-dot tier-excelente" aria-hidden="true"></span>Excelente
-            <span class="tier-dot tier-muitobom" aria-hidden="true"></span>Muito bom
-            <span class="tier-dot tier-bom" aria-hidden="true"></span>Bom
-            <span class="tier-dot tier-aceitavel" aria-hidden="true"></span>Aceitavel
-            <span class="tier-dot tier-ruim" aria-hidden="true"></span>Ruim
-            <span class="tier-dot tier-seminformacao" aria-hidden="true"></span>Sem informacao
+          <div class="tier-legend" aria-label="Legenda de cores de recomendacao" role="list">
+            <span class="tier-legend__item" data-tier="excelente" role="listitem">
+              <span class="tier-dot tier-excelente" aria-hidden="true"></span>
+              <span class="tier-legend__label">Excelente</span>
+            </span>
+            <span class="tier-legend__item" data-tier="muitobom" role="listitem">
+              <span class="tier-dot tier-muitobom" aria-hidden="true"></span>
+              <span class="tier-legend__label">Muito bom</span>
+            </span>
+            <span class="tier-legend__item" data-tier="bom" role="listitem">
+              <span class="tier-dot tier-bom" aria-hidden="true"></span>
+              <span class="tier-legend__label">Bom</span>
+            </span>
+            <span class="tier-legend__item" data-tier="aceitavel" role="listitem">
+              <span class="tier-dot tier-aceitavel" aria-hidden="true"></span>
+              <span class="tier-legend__label">Aceitavel</span>
+            </span>
+            <span class="tier-legend__item" data-tier="ruim" role="listitem">
+              <span class="tier-dot tier-ruim" aria-hidden="true"></span>
+              <span class="tier-legend__label">Ruim</span>
+            </span>
+            <span class="tier-legend__item" data-tier="seminformacao" role="listitem">
+              <span class="tier-dot tier-seminformacao" aria-hidden="true"></span>
+              <span class="tier-legend__label">Sem informacao</span>
+            </span>
           </div>
         </div>
         <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
@@ -79,7 +97,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="../js/utf8-guard.js?v=20260521a" defer></script>
-  <script src="bosses.js?v=20260521f"></script>
+  <script src="bosses.js?v=20260601d"></script>
 </body>
 </html>
 

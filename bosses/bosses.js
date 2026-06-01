@@ -753,6 +753,13 @@ const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
 let activeSpeedsterContextName = null;
 let knownSpeedsterNames = null;
 
+function setModalSubtitleText(text = '') {
+  if (!modalSubtitle) return;
+  const normalizedText = typeof text === 'string' ? text.trim() : '';
+  modalSubtitle.textContent = normalizedText;
+  modalSubtitle.hidden = !normalizedText;
+}
+
 function refreshKnownSpeedsterNames() {
   try {
     const list = typeof getRecommendedSpeedsters === 'function' ? getRecommendedSpeedsters() : [];
@@ -1193,13 +1200,26 @@ function createRolePick(name, types, moveType, extra = {}) {
 
 function createManualRoleboardClan(catalogId, clanKey, roles = {}) {
   const label = clanKey.charAt(0).toUpperCase() + clanKey.slice(1);
+  const support = assignRecommendationRoleToList(
+    Array.isArray(roles.support) ? roles.support : [],
+    'support'
+  );
+  const dps = assignRecommendationRoleToList(
+    Array.isArray(roles.dps) ? roles.dps : [],
+    'dps'
+  );
+  const tank = assignRecommendationRoleToList(
+    Array.isArray(roles.tank) ? roles.tank : [],
+    'tank'
+  );
+
   return {
     label,
     summary: roleboardClanSummaries[clanKey]?.[catalogId] || '',
     roles: {
-      support: Array.isArray(roles.support) ? roles.support : [],
-      dps: Array.isArray(roles.dps) ? roles.dps : [],
-      tank: Array.isArray(roles.tank) ? roles.tank : []
+      support,
+      dps,
+      tank
     }
   };
 }
@@ -1823,6 +1843,31 @@ function cloneRolePickConfig(pick) {
   }
 
   return clonedPick;
+}
+
+function normalizeRecommendationRoleKey(roleKey = '') {
+  const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+  return roleboardRoleOrder.includes(normalizedRoleKey) ? normalizedRoleKey : '';
+}
+
+function assignRecommendationRoleToPick(pick, roleKey = '') {
+  if (!pick || typeof pick !== 'object') return pick;
+
+  const normalizedRoleKey = normalizeRecommendationRoleKey(roleKey);
+  if (normalizedRoleKey) {
+    pick.recommendedRole = normalizedRoleKey;
+  } else {
+    delete pick.recommendedRole;
+  }
+
+  return pick;
+}
+
+function assignRecommendationRoleToList(list = [], roleKey = '') {
+  const normalizedRoleKey = normalizeRecommendationRoleKey(roleKey);
+  if (!Array.isArray(list) || !normalizedRoleKey) return list;
+  list.forEach((pick) => assignRecommendationRoleToPick(pick, normalizedRoleKey));
+  return list;
 }
 
 function getRolePickSignature(pick) {
@@ -3809,6 +3854,43 @@ const typeSuperEffectivenessOverrides = {
   fairy: ['dragon']
 };
 
+const BOSS_TYPE_UI_COLORS = Object.freeze({
+  normal: '#A8A878',
+  fire: '#F08030',
+  water: '#6493EB',
+  electric: '#F8D030',
+  grass: '#78C850',
+  ice: '#98D8D8',
+  fighting: '#C03028',
+  poison: '#A040A0',
+  ground: '#E0C068',
+  flying: '#A890F0',
+  psychic: '#F85888',
+  bug: '#A8B820',
+  rock: '#B6A136',
+  ghost: '#735797',
+  dragon: '#6F35FC',
+  dark: '#705746',
+  steel: '#B7B7CE',
+  fairy: '#D685AD'
+});
+
+function bossHexToRgb(hex) {
+  if (!hex) return '255,255,255';
+  const normalized = String(hex).replace('#', '');
+  const bigint = normalized.length === 3
+    ? parseInt(normalized.split('').map((char) => char + char).join(''), 16)
+    : parseInt(normalized, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `${r},${g},${b}`;
+}
+
+function getBossTypeUiColor(type) {
+  return BOSS_TYPE_UI_COLORS[String(type || '').toLowerCase()] || '#FFFFFF';
+}
+
 function hasForcedSuperEffectiveness(attackingType, defendingTypes = []) {
   const overrides = typeSuperEffectivenessOverrides[String(attackingType || '').toLowerCase()];
   if (!Array.isArray(overrides) || !overrides.length) return false;
@@ -3952,6 +4034,13 @@ const tierLabels = {
 };
 const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do moveset do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
+function formatRecommendationScoreLabel(label) {
+  const normalized = String(label || '').trim().toUpperCase();
+  if (normalized === 'ATK') return '⚔️ ATK';
+  if (normalized === 'DEF') return '🛡️ DEF';
+  return label;
+}
+
 function normalizeTierKey(tier = 'seminformacao') {
   const normalized = String(tier || '')
     .normalize('NFD')
@@ -3991,6 +4080,14 @@ function refreshTierLegendLabels() {
       const dot = legend.querySelector(`.${className}`);
       if (!dot) return;
       dot.setAttribute('aria-label', label);
+      const legendItem = dot.closest('.tier-legend__item');
+      const labelEl = legendItem?.querySelector('.tier-legend__label');
+      if (labelEl) {
+        labelEl.textContent = label;
+        legendItem.setAttribute('aria-label', label);
+        legendItem.dataset.tier = normalizeTierKey(className.replace('tier-', ''));
+        return;
+      }
       const textNode = dot.nextSibling;
       if (textNode && textNode.nodeType === Node.TEXT_NODE) {
         textNode.textContent = label;
@@ -4437,17 +4534,19 @@ function syncPassiveTooltipHoverState(target) {
 function createPassiveTooltipTrigger(passiveInfo, variant = '') {
   if (!passiveInfo?.text) return null;
 
+  const isCompactVariant = variant === 'role' || variant === 'reco';
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.className = `passive-tooltip-trigger${variant ? ` passive-tooltip-trigger--${variant}` : ''}`;
   trigger.dataset.passiveTooltipItems = JSON.stringify(passiveInfo.items || [passiveInfo.text]);
   trigger.setAttribute('aria-label', passiveInfo.items?.length > 1 ? 'Ver passivas' : 'Ver passiva');
   trigger.setAttribute('aria-expanded', 'false');
+  trigger.title = passiveInfo.items?.length > 1 ? 'Ver passivas' : 'Ver passiva';
 
   const icon = document.createElement('span');
   icon.className = 'passive-tooltip-trigger-icon';
   icon.setAttribute('aria-hidden', 'true');
-  icon.textContent = 'i';
+  icon.textContent = isCompactVariant ? '!' : 'i';
 
   const label = document.createElement('span');
   label.className = 'passive-tooltip-trigger-label';
@@ -4784,6 +4883,17 @@ function getBossRecommendationRankMode(boss) {
     : 'standard';
 }
 
+function getEffectiveRecommendationRankMode(boss, poke, options = {}) {
+  const baseRankMode = getBossRecommendationRankMode(boss);
+  const normalizedRoleKey = normalizeRecommendationRoleKey(options?.roleKey || poke?.recommendedRole);
+
+  if (baseRankMode === 'defense-only' && normalizedRoleKey === 'dps') {
+    return 'standard';
+  }
+
+  return baseRankMode;
+}
+
 function classifyRecommendationTier(offense, worstDefense) {
   if (offense >= 2) {
     // Super efetivo: mapeamento específico solicitado
@@ -4828,7 +4938,7 @@ function classifyDefenseOnlyRecommendationTier(worstDefense) {
   return 'ruim';
 }
 
-function scoreRecommendationForBoss(bossOrTypes, poke) {
+function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
   // Para DEF, o boss passa a ser lido pelo moveset sempre que ele existir.
@@ -4836,7 +4946,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
   // ou quando o dataset nao informar um moveset dedicado.
   const bossAttackTypes = getBossAttackTypes(boss);
   const offenseTargetTypes = getBossOffenseTargetTypes(boss);
-  const rankMode = getBossRecommendationRankMode(boss);
+  const rankMode = getEffectiveRecommendationRankMode(boss, poke, options);
   const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
   const matchupOverride = getMatchupOverride(poke, boss);
   const offenseRaw = typeof matchupOverride?.offense === 'number'
@@ -4968,9 +5078,9 @@ function scoreRecommendationForBoss(bossOrTypes, poke) {
   };
 }
 
-function rankRecommendedForBoss(bossOrTypes, recommendedList) {
+function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
   return recommendedList
-    .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke))
+    .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke, options))
     .sort((a, b) => {
       const leftPriority = getRecommendationTierPriority(a.tier);
       const rightPriority = getRecommendationTierPriority(b.tier);
@@ -5095,15 +5205,20 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'bom') {
   });
 }
 
-function ensureRolePickNames(list = [], requiredPicks = []) {
+function ensureRolePickNames(list = [], requiredPicks = [], roleKey = '') {
   const targetList = Array.isArray(list) ? list : [];
+  const normalizedRoleKey = normalizeRecommendationRoleKey(roleKey || targetList[0]?.recommendedRole);
   const existingNames = new Set(targetList.map((poke) => getRecommendationNameKey(poke)));
+
+  targetList.forEach((pick) => {
+    assignRecommendationRoleToPick(pick, normalizedRoleKey);
+  });
 
   requiredPicks.forEach((pick) => {
     const nameKey = getRecommendationNameKey(pick);
     if (!nameKey || existingNames.has(nameKey)) return;
     existingNames.add(nameKey);
-    targetList.push(cloneRolePickConfig(pick));
+    targetList.push(assignRecommendationRoleToPick(cloneRolePickConfig(pick), normalizedRoleKey));
   });
 
   return targetList;
@@ -5114,7 +5229,7 @@ function ensureMew2BossRolePicks(bossId, clanKey, roleKey, picks = []) {
   const roleList = boss?.clans?.[clanKey]?.roles?.[roleKey];
   if (!boss || !Array.isArray(roleList)) return;
 
-  ensureRolePickNames(roleList, picks);
+  ensureRolePickNames(roleList, picks, roleKey);
 }
 
 function createHeracrossPick() {
@@ -5129,27 +5244,27 @@ function createShinyMiltankPick() {
   return createRolePick('Shiny Miltank', ['normal'], 'ground');
 }
 
-function addHeracrossIfCompatible(bossRef, picks = []) {
+function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
-  const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick());
+  const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick(), { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) return;
   if ((scored?._offense ?? 0) < 2) return;
   if ((scored?._defenseWorst ?? Infinity) > 2) return;
 
-  ensureRolePickNames(picks, [scored]);
+  ensureRolePickNames(picks, [scored], roleKey);
 }
 
-function addMiltankIfCompatible(bossRef, picks = []) {
+function addMiltankIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
-  const scored = scoreRecommendationForBoss(bossRef, createMiltankPick());
-  const shinyScored = scoreRecommendationForBoss(bossRef, createShinyMiltankPick());
+  const scored = scoreRecommendationForBoss(bossRef, createMiltankPick(), { roleKey });
+  const shinyScored = scoreRecommendationForBoss(bossRef, createShinyMiltankPick(), { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) return;
 
-  ensureRolePickNames(picks, [scored, shinyScored]);
+  ensureRolePickNames(picks, [scored, shinyScored], roleKey);
 }
 
 function injectHeracrossRecommendations() {
@@ -5169,7 +5284,7 @@ function injectHeracrossRecommendations() {
       }
 
       if (Array.isArray(valorClan.roles?.dps)) {
-        addHeracrossIfCompatible(boss, valorClan.roles.dps);
+        addHeracrossIfCompatible(boss, valorClan.roles.dps, 'dps');
       }
     });
   });
@@ -5180,7 +5295,7 @@ function injectMiltankRecommendations() {
     (catalog.data || []).forEach((boss) => {
       const valorTankList = boss?.clans?.valor?.roles?.tank;
       if (!Array.isArray(valorTankList)) return;
-      addMiltankIfCompatible(boss, valorTankList);
+      addMiltankIfCompatible(boss, valorTankList, 'tank');
     });
   });
 }
@@ -5260,7 +5375,7 @@ function createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfi
   delete nextPick.tier;
   delete nextPick.tierLocked;
   applyFixedRecommendationMetadata(nextPick, registryEntry);
-  return nextPick;
+  return assignRecommendationRoleToPick(nextPick, registryEntry.role);
 }
 
 function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfigs = {}, excludedNameKeys = new Set()) {
@@ -8919,7 +9034,7 @@ function openSpeedsterBossesModal(speedster) {
     showImages: true
   });
   setModalBossWeaknesses(null, { show: false });
-  modalSubtitle.textContent = bosses.length > 0 ? `Usado por ${bosses.length} chefe(s)` : 'Não encontrado em nenhum chefe';
+  setModalSubtitleText(bosses.length > 0 ? `Usado por ${bosses.length} chefe(s)` : 'Não encontrado em nenhum chefe');
 
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
   const pokemonImgRight = document.getElementById('modal-pokemon-img');
@@ -9055,7 +9170,8 @@ function createRecommendationCard(poke, options = {}) {
 
       const chip = document.createElement('div');
       chip.className = `speedster-reco-chip${options.move ? ' speedster-reco-chip--move' : ''}`;
-      chip.title = options.label ? `${options.label}: ${formatTypeLabel(type)}` : formatTypeLabel(type);
+      const titleLabel = options.titleLabel || options.label;
+      chip.title = titleLabel ? `${titleLabel}: ${formatTypeLabel(type)}` : formatTypeLabel(type);
 
       const icon = document.createElement('img');
       icon.className = 'speedster-reco-chip-icon';
@@ -9088,7 +9204,7 @@ function createRecommendationCard(poke, options = {}) {
 
       const metricLabel = document.createElement('span');
       metricLabel.className = 'speedster-reco-score-label';
-      metricLabel.textContent = label;
+      metricLabel.textContent = formatRecommendationScoreLabel(label);
 
       const metricValue = document.createElement('span');
       metricValue.className = 'speedster-reco-score-value';
@@ -9158,27 +9274,43 @@ function createRecommendationCard(poke, options = {}) {
     const chips = document.createElement('div');
     chips.className = 'speedster-reco-chip-list';
 
+    if (moveTypes.length) {
+      const moveGroup = document.createElement('div');
+      moveGroup.className = 'speedster-reco-meta speedster-reco-meta--move';
+      const moveLabel = document.createElement('div');
+      moveLabel.className = 'speedster-reco-meta-label';
+      moveLabel.textContent = 'Moveset';
+
+      const moveRow = document.createElement('div');
+      moveRow.className = 'speedster-reco-chip-row speedster-reco-chip-row--moves';
+      moveTypes.slice(0, 2).forEach((type) => {
+        const chip = createChip(type, { titleLabel: 'Moveset', move: true });
+        if (chip) moveRow.appendChild(chip);
+      });
+
+      if (moveRow.childElementCount > 0) {
+        moveGroup.append(moveLabel, moveRow);
+        chips.appendChild(moveGroup);
+      }
+    }
+
     if (Array.isArray(poke.types) && poke.types.length) {
+      const typeGroup = document.createElement('div');
+      typeGroup.className = 'speedster-reco-meta';
+      const typeLabel = document.createElement('div');
+      typeLabel.className = 'speedster-reco-meta-label';
+      typeLabel.textContent = 'Tipos';
+
       const typeRow = document.createElement('div');
       typeRow.className = 'speedster-reco-chip-row speedster-reco-chip-row--types';
       poke.types.slice(0, 2).forEach((type) => {
         const chip = createChip(type);
         if (chip) typeRow.appendChild(chip);
       });
-      if (typeRow.childElementCount > 0) {
-        chips.appendChild(typeRow);
-      }
-    }
 
-    if (moveTypes.length) {
-      const moveRow = document.createElement('div');
-      moveRow.className = 'speedster-reco-chip-row speedster-reco-chip-row--moves';
-      moveTypes.slice(0, 2).forEach((type) => {
-        const chip = createChip(type, { label: 'Moveset', move: true });
-        if (chip) moveRow.appendChild(chip);
-      });
-      if (moveRow.childElementCount > 0) {
-        chips.appendChild(moveRow);
+      if (typeRow.childElementCount > 0) {
+        typeGroup.append(typeLabel, typeRow);
+        chips.appendChild(typeGroup);
       }
     }
 
@@ -9305,7 +9437,7 @@ function openTochasInModal() {
   const tochasPath = (String(location.pathname || '').toLowerCase().includes('/bosses')) ? '../tochas.html' : 'tochas.html';
 
   modalTitle.textContent = 'Tochas — Acenda todas';
-  modalSubtitle.textContent = '';
+  setModalSubtitleText('');
 
   // mark modal as displaying tochas so we can apply specific chrome rules
   try { modal.dataset.mode = 'tochas'; } catch (e) {}
@@ -9661,6 +9793,9 @@ function setModalBossWeaknesses(source, options = {}) {
         const chip = document.createElement('span');
         chip.className = 'boss-weakness-chip';
         chip.title = `${formatTypeLabel(item.type)} ${formatTypeMultiplier(item.multiplier)}`;
+        const typeColor = getBossTypeUiColor(item.type);
+        chip.style.setProperty('--type-color', typeColor);
+        chip.style.setProperty('--type-color-rgb', bossHexToRgb(typeColor));
 
         const icon = document.createElement('img');
         icon.className = 'boss-weakness-chip-icon';
@@ -9763,7 +9898,7 @@ function createRolePickCard(poke) {
   atkRow.className = 'boss-role-pick-score-row boss-role-pick-score-row--atk';
   const atkLabel = document.createElement('span');
   atkLabel.className = 'boss-role-pick-score-label';
-  atkLabel.textContent = 'ATK';
+  atkLabel.textContent = formatRecommendationScoreLabel('ATK');
   const atkValue = document.createElement('span');
   atkValue.className = 'boss-role-pick-score-value';
   atkValue.textContent = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
@@ -9773,7 +9908,7 @@ function createRolePickCard(poke) {
   defRow.className = 'boss-role-pick-score-row boss-role-pick-score-row--def';
   const defLabel = document.createElement('span');
   defLabel.className = 'boss-role-pick-score-label';
-  defLabel.textContent = 'DEF';
+  defLabel.textContent = formatRecommendationScoreLabel('DEF');
   const defValue = document.createElement('span');
   defValue.className = 'boss-role-pick-score-value';
   defValue.textContent = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
@@ -9793,7 +9928,7 @@ function createRolePickCard(poke) {
 
       const metricLabel = document.createElement('span');
       metricLabel.className = 'boss-role-pick-score-label';
-      metricLabel.textContent = label;
+      metricLabel.textContent = formatRecommendationScoreLabel(label);
 
       const metricValue = document.createElement('span');
       metricValue.className = 'boss-role-pick-score-value';
@@ -9868,7 +10003,7 @@ function createRolePickCard(poke) {
   }
 
   if (moveRow.childElementCount > 0) {
-    card.appendChild(moveGroup);
+    chips.appendChild(moveGroup);
   }
 
   if (typeRow.childElementCount > 0) {
@@ -9889,7 +10024,7 @@ function openRoleBossModal(boss, options = {}) {
   setBossModalLayout(true);
   currentBoss = boss;
   modalTitle.textContent = boss.name;
-  modalSubtitle.textContent = '';
+  setModalSubtitleText('');
   setModalChrome({
     bosses: [{ name: boss.name, image: boss.image }],
     showLocation: false,
@@ -9996,7 +10131,7 @@ function openModal(speedster) {
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
   const bossNames = bosses.map(b => b.name).join(' + ');
   modalTitle.textContent = bossNames;
-  modalSubtitle.textContent = speedster.description || '';
+  setModalSubtitleText('');
 
   // Add/refresh location button inside the modal header
   const modalHeader = modal.querySelector('.speedster-modal-header');
@@ -10152,7 +10287,7 @@ function openBossModal(speedster) {
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
   const bossNames = bosses.map((boss) => boss.name).join(' + ');
   modalTitle.textContent = bossNames;
-  modalSubtitle.textContent = speedster.description || '';
+  setModalSubtitleText('');
   setModalChrome({
     bosses,
     locationImage: basePath + (speedster.locationImage || speedster.image),
@@ -10307,7 +10442,7 @@ function openBossModalV2(speedster, options = {}) {
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
   const bossNames = bosses.map((boss) => boss.name).join(' + ');
   modalTitle.textContent = bossNames;
-  modalSubtitle.textContent = speedster.description || '';
+  setModalSubtitleText('');
 
   const modalHeader = modal.querySelector('.speedster-modal-header');
   if (modalHeader) {
