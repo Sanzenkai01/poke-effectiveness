@@ -2685,7 +2685,7 @@ function getImplicitRecommendationProfile(poke) {
   if (nameKey === 'seaking' || nameKey === 'shinyseaking') {
     return {
       immunities: ['electric'],
-      passiveName: 'Water Veil',
+      passiveName: 'Lightning Rod',
       passiveDescription: 'O Pokemon se torna imune a danos do tipo Electric.'
     };
   }
