@@ -534,7 +534,8 @@ function normalizePokemonDetailRouteToken(value){
 }
 
 function getPokemonDetailRouteMatch(pathname = location.pathname){
-    const match = String(pathname || '').match(/\/pokemon(?:s)?\/((?:\d{3,})|(?:[a-z0-9]+(?:-[a-z0-9]+)*))\/?$/i);
+    // Keep short numeric paths reserved for catalog pagination, e.g. /pokemon/2.
+    const match = String(pathname || '').match(/\/pokemon(?:s)?\/((?:\d{3,})|(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*))\/?$/i);
     if(!match) return null;
     const routeToken = normalizePokemonDetailRouteToken(match[1]);
     if(!routeToken) return null;
