@@ -753,6 +753,13 @@ const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
 let activeSpeedsterContextName = null;
 let knownSpeedsterNames = null;
 
+function syncSharedModalOpenState() {
+  if (!document.body) return;
+  const hasOpenBasicModal = Boolean(document.querySelector('.modal[aria-hidden="false"]'));
+  const isBossModalOpen = modal?.getAttribute('data-open') === 'true';
+  document.body.classList.toggle('modal-open', hasOpenBasicModal || isBossModalOpen);
+}
+
 function setModalSubtitleText(text = '') {
   if (!modalSubtitle) return;
   const normalizedText = typeof text === 'string' ? text.trim() : '';
@@ -5597,6 +5604,7 @@ function hideBossModalUi() {
   if (document.body) {
     document.body.style.overflow = '';
   }
+  syncSharedModalOpenState();
   try { modalBody.innerHTML = ''; } catch (e) {}
   try { modalBody.classList.remove('speedster-modal-body--search-results'); } catch (e) {}
   try { modalBody.classList.remove('speedster-modal-body--roleboard'); } catch (e) {}
@@ -9128,6 +9136,7 @@ function openSpeedsterBossesModal(speedster) {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
   const modalContentEl = modal.querySelector('.speedster-modal-content');
   if (modalContentEl) {
     modalContentEl.classList.add('speedster-modal-content--roleboard', 'speedster-modal-content--search-results');
@@ -9464,6 +9473,7 @@ function openTochasInModal() {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
 
   // ensure modal content has roleboard width to give more space for the embedded page
   const modalContentEl = modal.querySelector('.speedster-modal-content');
@@ -9728,6 +9738,47 @@ function getWeaknessesForBossEntry(entry) {
     });
 }
 
+function getBossWeaknessSignature(weaknesses = []) {
+  return (Array.isArray(weaknesses) ? weaknesses : [])
+    .map((item) => {
+      const multiplier = Number.isFinite(item?.multiplier)
+        ? Number(item.multiplier).toFixed(4)
+        : 'na';
+      return `${String(item?.type || '').trim().toLowerCase()}:${multiplier}`;
+    })
+    .join('|');
+}
+
+function dedupeBossWeaknessEntries(entries = []) {
+  const deduped = new Map();
+
+  (Array.isArray(entries) ? entries : []).forEach((entry, index) => {
+    const weaknesses = Array.isArray(entry?.weaknesses) ? entry.weaknesses : [];
+    const signature = getBossWeaknessSignature(weaknesses);
+    if (!signature) return;
+
+    if (!deduped.has(signature)) {
+      deduped.set(signature, {
+        ...entry,
+        names: entry?.name ? [entry.name] : [],
+        order: index
+      });
+      return;
+    }
+
+    const current = deduped.get(signature);
+    const nextName = String(entry?.name || '').trim();
+    if (nextName && !current.names.includes(nextName)) {
+      current.names.push(nextName);
+      current.name = current.names.join(' + ');
+    }
+  });
+
+  return Array.from(deduped.values())
+    .sort((left, right) => left.order - right.order)
+    .map(({ order, ...entry }) => entry);
+}
+
 function setModalBossWeaknesses(source, options = {}) {
   const { show = true } = options;
   const surface = ensureBossWeaknessPanel();
@@ -9746,12 +9797,14 @@ function setModalBossWeaknesses(source, options = {}) {
     neutralBadge.hidden = !anyNeutralEntry;
     neutralBadge.setAttribute('aria-hidden', neutralBadge.hidden ? 'true' : 'false');
   }
-  const renderedEntries = entries
-    .map((entry) => ({
-      ...entry,
-      weaknesses: getWeaknessesForBossEntry(entry)
-    }))
-    .filter((entry) => entry.weaknesses.length);
+  const renderedEntries = dedupeBossWeaknessEntries(
+    entries
+      .map((entry) => ({
+        ...entry,
+        weaknesses: getWeaknessesForBossEntry(entry)
+      }))
+      .filter((entry) => entry.weaknesses.length)
+  );
 
   if (!renderedEntries.length) {
     // show neutral badge even when there are no explicit weaknesses
@@ -9824,6 +9877,7 @@ function openModalWithAnimation() {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -10270,6 +10324,7 @@ const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(s
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -10415,6 +10470,7 @@ function openBossModal(speedster) {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -10626,6 +10682,7 @@ function openBossModalV2(speedster, options = {}) {
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  syncSharedModalOpenState();
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(

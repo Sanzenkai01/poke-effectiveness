@@ -221,7 +221,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260601d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260602b';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
