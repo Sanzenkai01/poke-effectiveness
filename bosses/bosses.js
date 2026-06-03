@@ -790,6 +790,12 @@ const speedsterSearchNoResults = document.getElementById('speedster-search-no-re
 let currentBoss = null;
 let activeBossMode = 'hoopa';
 let bossModalHistoryPushed = false;
+let activeLocationBoss = null;
+let locationOverlayHistoryPushed = false;
+let locationOverlayPreviousUrl = '';
+let activeBossTutorialBoss = null;
+let bossTutorialHistoryPushed = false;
+let bossTutorialPreviousUrl = '';
 const HOOPA_BOSS_PROGRESS_STORAGE_KEY = 'hoopaBossProgressStateV1';
 const HOOPA_BOSS_RESET_TIMEZONE = 'America/Sao_Paulo';
 const HOOPA_BOSS_RESET_HOUR = 10;
@@ -2138,6 +2144,100 @@ function findBossByRouteSlug(mode = activeBossMode, slug = '') {
   const catalog = bossCatalogs[normalizedMode];
   const entries = Array.isArray(catalog?.data) ? catalog.data : [];
   return entries.find((boss) => getBossRouteSlug(boss) === normalizedSlug) || null;
+}
+
+function getBossLocationImageSource(boss) {
+  if (!boss || typeof boss !== 'object') return '';
+  const locationImage = String(boss.locationImage || boss.image || '').trim();
+  return locationImage ? basePath + locationImage : '';
+}
+
+function isLocationOverlayOpen() {
+  return Boolean(document.querySelector('.location-overlay'));
+}
+
+function getBossLocationRoutePath(boss = activeLocationBoss, mode = activeBossMode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const routeBoss = isBossRouteableMode(normalizedMode)
+    ? findBossByRouteSlug(normalizedMode, getBossRouteSlug(boss))
+    : null;
+  if (!routeBoss) return '';
+  return `${getBossRouteBasePath(normalizedMode)}/${getBossRouteSlug(routeBoss)}/mapa`;
+}
+
+function getBossTutorialRoutePath(boss = activeBossTutorialBoss, mode = activeBossMode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const routeBoss = isBossRouteableMode(normalizedMode)
+    ? findBossByRouteSlug(normalizedMode, getBossRouteSlug(boss))
+    : null;
+  if (!routeBoss) return '';
+  return `${getBossRouteBasePath(normalizedMode)}/${getBossRouteSlug(routeBoss)}/video`;
+}
+
+function getBossCurrentRelativeUrl() {
+  return `${location.pathname}${location.search}${location.hash || ''}`;
+}
+
+function getBossRouteUrlWithCurrentQuery(path = '') {
+  return path ? `${path}${location.search}${location.hash || ''}` : '';
+}
+
+function getBossDetailRouteUrl(boss = currentBoss, mode = activeBossMode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const routeBoss = isBossRouteableMode(normalizedMode)
+    ? findBossByRouteSlug(normalizedMode, getBossRouteSlug(boss))
+    : null;
+  if (!routeBoss) return '';
+  return getBossRouteUrlWithCurrentQuery(
+    `${getBossRouteBasePath(normalizedMode)}/${getBossRouteSlug(routeBoss)}`
+  );
+}
+
+function getBossBaseRouteUrl(mode = activeBossMode) {
+  return getBossRouteUrlWithCurrentQuery(getBossRouteBasePath(mode));
+}
+
+function getBossPreferredRestoreUrl(boss = null, mode = activeBossMode) {
+  const detailUrl = isBossModalOpen()
+    ? getBossDetailRouteUrl(currentBoss || boss, mode)
+    : '';
+  return detailUrl || getBossBaseRouteUrl(mode);
+}
+
+function replaceBossRelativeUrl(nextUrl = '') {
+  if (!nextUrl || typeof history === 'undefined') return false;
+  try {
+    history.replaceState(null, '', nextUrl);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function restoreBossRouteUrl(restoreUrl = '') {
+  if (replaceBossRelativeUrl(restoreUrl)) {
+    if (typeof syncSidebarNavigationState === 'function') {
+      try { syncSidebarNavigationState(); } catch (error) {}
+    }
+    return true;
+  }
+
+  if (typeof updateUrl === 'function') {
+    try {
+      updateUrl({ historyMode: 'replace' });
+      return true;
+    } catch (error) {}
+  }
+
+  return false;
+}
+
+function isBossTutorialModalOpen() {
+  return Boolean(
+    activeBossTutorialBoss
+    && typeof window.isSiteYouTubeModalOpen === 'function'
+    && window.isSiteYouTubeModalOpen()
+  );
 }
 
 function isStandaloneBossesPage() {
@@ -5557,12 +5657,17 @@ function isBossModalOpen() {
 }
 
 function getActiveBossRouteState() {
-  const bossSlug = getBossRouteSlug(currentBoss);
+  const routeOwnerBoss = isLocationOverlayOpen()
+    ? activeLocationBoss
+    : (isBossTutorialModalOpen() ? activeBossTutorialBoss : currentBoss);
+  const bossSlug = getBossRouteSlug(routeOwnerBoss);
   const routeBoss = findBossByRouteSlug(activeBossMode, bossSlug);
   return {
     bossMode: activeBossMode,
     bossSlug: routeBoss ? bossSlug : '',
-    modalOpen: Boolean(routeBoss && isBossModalOpen())
+    modalOpen: Boolean(routeBoss && isBossModalOpen()),
+    mapOpen: Boolean(routeBoss && isLocationOverlayOpen()),
+    videoOpen: Boolean(routeBoss && isBossTutorialModalOpen())
   };
 }
 
@@ -5583,6 +5688,64 @@ function syncBossModalRouteOnOpen(pushState = true) {
   }
 
   bossModalHistoryPushed = Boolean(
+    pushState
+    && String(location?.pathname || '') === expectedPath
+    && previousPath !== expectedPath
+  );
+  return String(location?.pathname || '') === expectedPath;
+}
+
+function syncBossLocationRouteOnOpen(pushState = true) {
+  if (!isLocationOverlayOpen() || !activeLocationBoss) {
+    locationOverlayHistoryPushed = false;
+    return false;
+  }
+
+  const expectedPath = getBossLocationRoutePath(activeLocationBoss, activeBossMode);
+  if (!expectedPath) {
+    locationOverlayHistoryPushed = false;
+    return false;
+  }
+
+  const previousPath = String(location?.pathname || '');
+  try {
+    if (typeof updateUrl === 'function') {
+      updateUrl({ historyMode: pushState ? 'push' : 'replace' });
+    }
+  } catch (error) {
+    console.error('Nao foi possivel sincronizar a URL do mapa do boss.', error);
+  }
+
+  locationOverlayHistoryPushed = Boolean(
+    pushState
+    && String(location?.pathname || '') === expectedPath
+    && previousPath !== expectedPath
+  );
+  return String(location?.pathname || '') === expectedPath;
+}
+
+function syncBossTutorialRouteOnOpen(pushState = true) {
+  if (!isBossTutorialModalOpen() || !activeBossTutorialBoss) {
+    bossTutorialHistoryPushed = false;
+    return false;
+  }
+
+  const expectedPath = getBossTutorialRoutePath(activeBossTutorialBoss, activeBossMode);
+  if (!expectedPath) {
+    bossTutorialHistoryPushed = false;
+    return false;
+  }
+
+  const previousPath = String(location?.pathname || '');
+  try {
+    if (typeof updateUrl === 'function') {
+      updateUrl({ historyMode: pushState ? 'push' : 'replace' });
+    }
+  } catch (error) {
+    console.error('Nao foi possivel sincronizar a URL do tutorial do boss.', error);
+  }
+
+  bossTutorialHistoryPushed = Boolean(
     pushState
     && String(location?.pathname || '') === expectedPath
     && previousPath !== expectedPath
@@ -5611,7 +5774,7 @@ function hideBossModalUi() {
   try { modalBody.classList.remove('speedster-modal-body--split'); } catch (e) {}
   try { content?.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
   try { content?.classList.remove('speedster-modal-content--roleboard'); } catch (e) {}
-  closeLocationOverlay();
+  closeLocationOverlay({ skipHistory: true });
 }
 
 function formatTypeLabel(type) {
@@ -8197,19 +8360,51 @@ function getBossTutorialUrl(boss) {
     : (bossTutorialLinks[boss?.id] || '');
 }
 
-function openBossTutorial(boss) {
+function handleBossTutorialModalClosed(options = {}) {
+  const { skipRouteRestore = false } = options || {};
+  const restoreUrl = isBossModalOpen()
+    ? getBossDetailRouteUrl(currentBoss || activeBossTutorialBoss, activeBossMode)
+    : (bossTutorialPreviousUrl || getBossBaseRouteUrl(activeBossMode));
+  activeBossTutorialBoss = null;
+  bossTutorialHistoryPushed = false;
+  bossTutorialPreviousUrl = '';
+
+  if (!skipRouteRestore) {
+    restoreBossRouteUrl(restoreUrl);
+  }
+}
+
+function openBossTutorial(boss, options = {}) {
+  const { pushState = true, restoreUrl = '' } = options || {};
   const tutorialUrl = getBossTutorialUrl(boss);
-  if (!tutorialUrl) return;
+  if (!tutorialUrl) return false;
+
+  const previousUrl = restoreUrl || (isBossTutorialModalOpen() && bossTutorialPreviousUrl
+    ? bossTutorialPreviousUrl
+    : getBossPreferredRestoreUrl(boss, activeBossMode));
+  const routeBoss = isBossRouteableMode(activeBossMode)
+    ? findBossByRouteSlug(activeBossMode, getBossRouteSlug(boss))
+    : null;
 
   if (typeof window.openSiteYouTubeModal === 'function') {
     const openedInModal = window.openSiteYouTubeModal({
       url: tutorialUrl,
-      title: `Tutorial de ${boss.name}`
+      title: `Tutorial de ${boss.name}`,
+      onAfterClose: handleBossTutorialModalClosed
     });
-    if (openedInModal) return;
+    if (openedInModal) {
+      activeBossTutorialBoss = routeBoss;
+      bossTutorialPreviousUrl = previousUrl;
+      bossTutorialHistoryPushed = false;
+      if (routeBoss) {
+        syncBossTutorialRouteOnOpen(pushState);
+      }
+      return true;
+    }
   }
 
   window.open(tutorialUrl, '_blank', 'noopener,noreferrer');
+  return true;
 }
 
 function safeElement(el) {
@@ -8324,7 +8519,7 @@ function makeHoopaBossCard(speedster) {
 
   locationBtn.addEventListener('click', (event) => {
     event.stopPropagation();
-    showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+    showLocationOverlay(getBossLocationImageSource(speedster), { boss: speedster });
   });
 
   const types = Array.isArray(speedster.types) ? speedster.types : [];
@@ -9510,7 +9705,9 @@ function setModalChrome({ bosses = [], locationImage = '', showLocation = false,
       modalLocationBtn.remove();
     } else {
       modalLocationBtn.hidden = false;
-      modalLocationBtn.onclick = locationImage ? () => showLocationOverlay(locationImage) : null;
+      modalLocationBtn.onclick = locationImage
+        ? () => showLocationOverlay(locationImage, { boss: currentBoss || bosses[0] || null })
+        : null;
     }
   }
 
@@ -10200,7 +10397,7 @@ function openModal(speedster) {
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
     }
-    modalLocationBtn.onclick = () => showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+    modalLocationBtn.onclick = () => showLocationOverlay(getBossLocationImageSource(speedster), { boss: speedster });
   }
 
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
@@ -10364,7 +10561,7 @@ function openBossModal(speedster) {
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
     }
-    modalLocationBtn.onclick = () => showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+    modalLocationBtn.onclick = () => showLocationOverlay(getBossLocationImageSource(speedster), { boss: speedster });
   }
 
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
@@ -10512,7 +10709,7 @@ function openBossModalV2(speedster, options = {}) {
       modalLocationBtn.textContent = '🗺️';
       modalHeader.appendChild(modalLocationBtn);
     }
-    modalLocationBtn.onclick = () => showLocationOverlay(basePath + (speedster.locationImage || speedster.image));
+    modalLocationBtn.onclick = () => showLocationOverlay(getBossLocationImageSource(speedster), { boss: speedster });
   }
 
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
@@ -10709,6 +10906,80 @@ function openBossModalByRouteSlug(mode, slug, options = {}) {
 
 window.openBossModalByRouteSlug = openBossModalByRouteSlug;
 
+function openBossLocationByRouteSlug(mode, slug, options = {}) {
+  const { pushState = true } = options || {};
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const boss = findBossByRouteSlug(normalizedMode, slug);
+  if (!boss) return false;
+
+  if (activeBossMode !== normalizedMode) {
+    setBossMode(normalizedMode, { syncUrl: false });
+  }
+
+  const locationImage = getBossLocationImageSource(boss);
+  if (!locationImage) return false;
+  showLocationOverlay(locationImage, { boss, pushState });
+  return true;
+}
+
+window.openBossLocationByRouteSlug = openBossLocationByRouteSlug;
+
+function openBossTutorialByRouteSlug(mode, slug, options = {}) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  const boss = findBossByRouteSlug(normalizedMode, slug);
+  if (!boss) return false;
+
+  if (activeBossMode !== normalizedMode) {
+    setBossMode(normalizedMode, { syncUrl: false });
+  }
+
+  return openBossTutorial(boss, {
+    ...options,
+    restoreUrl: options.restoreUrl || getBossDetailRouteUrl(boss, normalizedMode)
+  });
+}
+
+window.openBossTutorialByRouteSlug = openBossTutorialByRouteSlug;
+
+function closeBossTutorialModal(options = {}) {
+  const { skipRouteRestore = false, skipFocusRestore = false } = options || {};
+  if (!isBossTutorialModalOpen()) {
+    activeBossTutorialBoss = null;
+    bossTutorialHistoryPushed = false;
+    bossTutorialPreviousUrl = '';
+    return false;
+  }
+
+  if (bossTutorialHistoryPushed) {
+    const expectedUrl = bossTutorialPreviousUrl;
+    const currentUrl = getBossCurrentRelativeUrl();
+    try {
+      history.back();
+      window.setTimeout(() => {
+        const modalStillOpen = isBossTutorialModalOpen();
+        if (!modalStillOpen) {
+          if (expectedUrl && getBossCurrentRelativeUrl() !== expectedUrl) {
+            restoreBossRouteUrl(expectedUrl);
+          }
+          return;
+        }
+        if (getBossCurrentRelativeUrl() === expectedUrl) {
+          window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore: true });
+          return;
+        }
+        window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore: true });
+        restoreBossRouteUrl(expectedUrl || currentUrl);
+      }, 350);
+      return true;
+    } catch (error) {}
+  }
+
+  window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore });
+  return true;
+}
+
+window.closeBossTutorialModal = closeBossTutorialModal;
+
 function closeModal(options = {}) {
   const { skipHistory = false } = options || {};
   if (skipHistory) {
@@ -10760,14 +11031,26 @@ function closeModal(options = {}) {
 
 window.closeBossModal = closeModal;
 
-function showLocationOverlay(src) {
-  closeLocationOverlay();
+function showLocationOverlay(src, options = {}) {
+  const { boss = null, pushState = true } = options || {};
+  const imageSource = String(src || '').trim();
+  if (!imageSource) return false;
+
+  const previousUrl = isLocationOverlayOpen() && locationOverlayPreviousUrl
+    ? locationOverlayPreviousUrl
+    : getBossPreferredRestoreUrl(boss, activeBossMode);
+  closeLocationOverlay({ skipHistory: true, skipRouteRestore: true });
+  activeLocationBoss = isBossRouteableMode(activeBossMode)
+    ? findBossByRouteSlug(activeBossMode, getBossRouteSlug(boss))
+    : null;
+  locationOverlayHistoryPushed = false;
+  locationOverlayPreviousUrl = previousUrl;
   const overlay = document.createElement('div');
   overlay.className = 'location-overlay';
   overlay.tabIndex = -1;
 
   const img = document.createElement('img');
-  img.src = src;
+  img.src = imageSource;
   img.alt = 'Localização do chefe';
 
   overlay.appendChild(img);
@@ -10780,18 +11063,66 @@ function showLocationOverlay(src) {
 
   overlay.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
       closeLocationOverlay();
     }
   });
 
   document.body.appendChild(overlay);
   overlay.focus({ preventScroll: true });
+  if (activeLocationBoss) {
+    syncBossLocationRouteOnOpen(pushState);
+  }
+  return true;
 }
 
-function closeLocationOverlay() {
+function closeLocationOverlay(options = {}) {
+  const { skipHistory = false, skipRouteRestore = false } = options || {};
   const existing = document.querySelector('.location-overlay');
-  if (existing) existing.remove();
+  if (!existing) {
+    activeLocationBoss = null;
+    locationOverlayHistoryPushed = false;
+    locationOverlayPreviousUrl = '';
+    return false;
+  }
+
+  const restoreUrl = locationOverlayPreviousUrl;
+  if (!skipHistory && locationOverlayHistoryPushed) {
+    const currentUrl = getBossCurrentRelativeUrl();
+    try {
+      history.back();
+      window.setTimeout(() => {
+        const overlayStillOpen = document.querySelector('.location-overlay');
+        if (!overlayStillOpen) {
+          if (restoreUrl && getBossCurrentRelativeUrl() !== restoreUrl) {
+            restoreBossRouteUrl(restoreUrl);
+          }
+          return;
+        }
+        locationOverlayHistoryPushed = false;
+        activeLocationBoss = null;
+        locationOverlayPreviousUrl = '';
+        overlayStillOpen.remove();
+        if (!skipRouteRestore) {
+          restoreBossRouteUrl(restoreUrl || currentUrl);
+        }
+      }, 350);
+      return true;
+    } catch (error) {}
+  }
+
+  locationOverlayHistoryPushed = false;
+  activeLocationBoss = null;
+  locationOverlayPreviousUrl = '';
+  existing.remove();
+  if (!skipRouteRestore) {
+    restoreBossRouteUrl(restoreUrl);
+  }
+  return true;
 }
+
+window.closeBossLocationOverlay = closeLocationOverlay;
 
 if (modal) {
   modal.addEventListener('click', (event) => {
