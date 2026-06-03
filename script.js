@@ -254,9 +254,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260601a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260603f';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260531a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260603b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260531a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260531a';
@@ -13955,6 +13955,10 @@ function createPokemonNaturalShinyBadge(){
     return badge;
 }
 
+function shouldShowPokemonNaturalShinyBadgeOnCard(entry){
+    return Boolean(entry?.naturalShiny && !getPokemonEntrySpecialTags(entry).includes('pack'));
+}
+
 function createPokemonFieldCard(label, value){
     const card = document.createElement('article');
     card.className = 'pokemon-detail-card';
@@ -14411,7 +14415,7 @@ function renderPokemonCatalog(options = {}){
         const ariaLabelParts = [entry.name];
         if(hasRole) ariaLabelParts.push(entry.role);
         ariaLabelParts.push(getPokemonEntryLevelLabel(entry));
-        if(entry.naturalShiny && entry.id !== 'chloes-eevee') ariaLabelParts.push('Shiny por natureza');
+        if(shouldShowPokemonNaturalShinyBadgeOnCard(entry)) ariaLabelParts.push('Shiny por natureza');
         specialTags.forEach((tagKey) => ariaLabelParts.push(formatPokemonSpecialTagLabel(tagKey)));
         card.setAttribute('aria-label', `${ariaLabelParts.join(', ')}.`);
 
@@ -14432,8 +14436,7 @@ function renderPokemonCatalog(options = {}){
         level.className = 'pokemon-entry-card__level';
         level.textContent = getPokemonEntryLevelLabel(entry);
         metaRow.appendChild(level);
-        // Hide natural shiny badge on card for specific entries (e.g. Chloe's Eevee)
-        if(entry.naturalShiny && entry.id !== 'chloes-eevee'){
+        if(shouldShowPokemonNaturalShinyBadgeOnCard(entry)){
             metaRow.appendChild(createPokemonNaturalShinyBadge());
         }
         specialTags.forEach((tagKey) => {
