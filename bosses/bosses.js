@@ -50,7 +50,7 @@ const hoopaPortalsData = [
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' }
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -167,7 +167,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
@@ -348,7 +348,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
@@ -509,7 +509,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
           { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'excelente', types: ['bug','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' },
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
@@ -558,7 +558,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Flying.' }
+          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -1321,7 +1321,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
           createRolePick('Scyther', ['bug', 'flying'], 'bug'),
           createRolePick('Shiny Scyther', ['bug', 'flying'], 'bug'),
-          createRolePick('Cramorant', ['flying', 'water'], 'flying'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
@@ -1379,7 +1379,7 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Weavile', ['dark', 'ice'], 'ice'),
-          createRolePick('Cramorant', ['flying', 'water'], 'flying')
+          createRolePick('Cramorant', ['flying', 'water'], 'water')
         ],
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
@@ -1509,7 +1509,7 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Weavile', ['dark', 'ice'], 'ice'),
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
-          createRolePick('Cramorant', ['flying', 'water'], 'flying')
+          createRolePick('Cramorant', ['flying', 'water'], 'water')
         ],
         tank: [
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
@@ -1563,7 +1563,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Bouffalant', ['normal'], 'ground'),
           createRolePick('Absol', ['dark'], 'dark'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
-          createRolePick('Cramorant', ['flying', 'water'], 'flying'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Mega Absol Z', ['dark'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
@@ -2338,9 +2338,10 @@ const fixedRecommendationClanByPrimaryType = Object.freeze(
   }, {})
 );
 
-function createFixedRecommendationDefinition(name, primaryType, role, expectedClan = '') {
+function createFixedRecommendationDefinition(name, primaryType, role, expectedClan = '', options = {}) {
   const normalizedPrimaryType = String(primaryType || '').trim().toLowerCase();
   const normalizedRole = String(role || '').trim().toLowerCase();
+  const normalizedMoveType = String(options?.moveType || '').trim().toLowerCase();
   const derivedClan = fixedRecommendationClanByPrimaryType[normalizedPrimaryType] || '';
 
   if (!derivedClan && typeof console !== 'undefined' && typeof console.error === 'function') {
@@ -2354,6 +2355,7 @@ function createFixedRecommendationDefinition(name, primaryType, role, expectedCl
   return Object.freeze({
     name,
     primaryType: normalizedPrimaryType,
+    moveType: normalizedMoveType,
     clan: derivedClan || String(expectedClan || '').trim().toLowerCase(),
     role: normalizedRole
   });
@@ -2444,7 +2446,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Absol", 'dark', 'dps', 'valor'),
       createFixedRecommendationDefinition("Bouffalant", 'normal', 'dps', 'valor'),
       createFixedRecommendationDefinition("CharizardTwo", 'fire', 'dps', 'valor'),
-      createFixedRecommendationDefinition("Cramorant", 'flying', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Cramorant", 'flying', 'dps', 'valor', { moveType: 'water' }),
       createFixedRecommendationDefinition("Delphox", 'fire', 'dps', 'valor'),
       createFixedRecommendationDefinition("Farfetch'd", 'normal', 'dps', 'valor'),
       createFixedRecommendationDefinition("Heracross", 'bug', 'dps', 'valor'),
@@ -2557,6 +2559,9 @@ function applyFixedRecommendationMetadata(pick, registryEntry) {
   if (!pick || !registryEntry) return pick;
 
   pick.types = normalizeRecommendationTypesByRegistry(pick.types, registryEntry.primaryType);
+  if (registryEntry.moveType) {
+    pick.moveType = registryEntry.moveType;
+  }
   pick._fixedClan = registryEntry.clan;
   pick._fixedRole = registryEntry.role;
   pick._fixedPrimaryType = registryEntry.primaryType;
@@ -5477,7 +5482,7 @@ function createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfi
   const seededPick = nameKey ? seedConfigs[nameKey] : null;
   const nextPick = seededPick
     ? cloneRolePickConfig(seededPick)
-    : createRolePick(registryEntry.name, [registryEntry.primaryType], registryEntry.primaryType);
+    : createRolePick(registryEntry.name, [registryEntry.primaryType], registryEntry.moveType || registryEntry.primaryType);
 
   delete nextPick.tier;
   delete nextPick.tierLocked;

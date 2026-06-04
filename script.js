@@ -224,7 +224,7 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260602d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260604a';
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
@@ -425,6 +425,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Wingull', 'Pelipper'],
     ['Ralts', 'Kirlia'],
     ['Kirlia', 'Gardevoir'],
+    ['Kirlia', 'Gallade'],
     ['Surskit', 'Masquerain'],
     ['Shroomish', 'Breloom'],
     ['Slakoth', 'Vigoroth'],
@@ -461,10 +462,18 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Shelgon', 'Salamence'],
     ['Beldum', 'Metang'],
     ['Metang', 'Metagross'],
-    ['Skitty', 'Delcatty']
+    ['Skitty', 'Delcatty'],
+    ['Shuppet', 'Banette'],
+    ['Duskull', 'Dusclops'],
+    ['Dusclops', 'Dusknoir'],
+    ['Snorunt', 'Glalie'],
+    ['Snorunt', 'Froslass'],
+    ['Roselia', 'Roserade'],
+    ['Nosepass', 'Probopass']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
+const FULL_MAP_VIDEO_URL = 'https://youtube.com/shorts/MAdY8jkWMAU?si=8vSmYOcg5FVIYMST';
 const DEFAULT_TEAM_FILTERS = Object.freeze({
     clan: 'all',
     tag: 'all',
@@ -1861,11 +1870,15 @@ function ensureSiteYouTubeModal(){
     title.className = 'site-youtube-modal__title';
     title.textContent = 'Vídeo';
 
+    const note = document.createElement('p');
+    note.className = 'site-youtube-modal__note';
+    note.hidden = true;
+
     const player = document.createElement('div');
     player.className = 'site-youtube-modal__player';
 
     header.appendChild(title);
-    content.append(closeBtn, header, player);
+    content.append(closeBtn, header, note, player);
     modal.append(backdrop, content);
 
     modal.addEventListener('click', (event) => {
@@ -1882,6 +1895,7 @@ function ensureSiteYouTubeModal(){
         content,
         closeBtn,
         title,
+        note,
         player,
         playerInstance: null,
         closeContext: null
@@ -1893,7 +1907,7 @@ function openSiteYouTubeModal(options = {}){
     const videoId = extractYouTubeVideoId(options.videoId || options.url || options.href);
     if(!videoId) return false;
 
-    const { modal, content, closeBtn, title, player } = ensureSiteYouTubeModal();
+    const { modal, content, closeBtn, title, note, player } = ensureSiteYouTubeModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
 
     // Destroy any previous player instance if present
@@ -1969,6 +1983,12 @@ function openSiteYouTubeModal(options = {}){
     });
 
     title.textContent = options.title || 'Vídeo do YouTube';
+
+    const noteText = String(options.note || options.description || '').trim();
+    if(note){
+        note.textContent = noteText;
+        note.hidden = !noteText;
+    }
 
     siteYouTubeModalState.closeContext = options.onAfterClose && typeof options.onAfterClose === 'function'
         ? { onAfterClose: options.onAfterClose }
@@ -2374,6 +2394,19 @@ function syncSidebarNavigationState(){
     });
 }
 
+function openFullMapVideo(){
+    const opened = typeof openSiteYouTubeModal === 'function'
+        ? openSiteYouTubeModal({
+            url: FULL_MAP_VIDEO_URL,
+            title: 'Mapa Completo',
+            note: 'Clique em "YouTube" para abrir o video e checar os comentarios.'
+        })
+        : false;
+    if(!opened){
+        openExternalWindow(FULL_MAP_VIDEO_URL);
+    }
+}
+
 function activateSidebarTarget(button){
     if(!(button instanceof HTMLElement)) return;
 
@@ -2382,6 +2415,7 @@ function activateSidebarTarget(button){
         commands: commandsBtn,
         'elemental-balls': elementalBallsBtn,
         respawns: respawnsBtn,
+        'full-map': { click: openFullMapVideo },
         fishing: fishingBtn
     };
     if(action && actionButtons[action]){
@@ -2391,6 +2425,7 @@ function activateSidebarTarget(button){
     }
 
     const target = String(button.dataset.navTarget || '').toLowerCase();
+    const requestedBossMode = normalizeBossModeParam(button.dataset.bossMode || '');
     const openers = {
         home: showHome,
         effectiveness: showEffectiveness,
@@ -2400,7 +2435,7 @@ function activateSidebarTarget(button){
         pokemons: showPokemons,
         times: showTimes,
         catch: showCatch,
-        bosses: () => showSpeedsters('hoopa'),
+        bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
         streamers: showStreamers,
         youtube: showCommunity
     };
@@ -2408,8 +2443,8 @@ function activateSidebarTarget(button){
     const openTarget = openers[target] || showEffectiveness;
     openTarget();
 
-    if(target === 'bosses' && typeof window.setBossMode === 'function'){
-        window.setBossMode(String(button.dataset.bossMode || 'hoopa').toLowerCase());
+    if(target === 'bosses' && requestedBossMode && typeof window.setBossMode === 'function'){
+        window.setBossMode(requestedBossMode);
     }
 
     // Ensure the URL reflects the newly opened target when navigation happens via the sidebar
@@ -12319,6 +12354,7 @@ function openQuickActionFromUrl(){
         commands: commandsBtn,
         'elemental-balls': elementalBallsBtn,
         respawns: respawnsBtn,
+        'full-map': { click: openFullMapVideo },
         fishing: fishingBtn
     };
     const trigger = triggerMap[action];
