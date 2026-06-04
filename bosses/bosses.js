@@ -50,7 +50,7 @@ const hoopaPortalsData = [
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
+          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -167,7 +167,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
@@ -348,7 +348,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
@@ -509,7 +509,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
           { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'excelente', types: ['bug','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
@@ -558,7 +558,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Cramorant', image: 'cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
+          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
