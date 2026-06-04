@@ -403,6 +403,65 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Remoraid', 'Octillery'],
     ['Houndour', 'Houndoom'],
     ['Phanpy', 'Donphan']
+    ,
+    // Generation 3 evolutions
+    ['Treecko', 'Grovyle'],
+    ['Grovyle', 'Sceptile'],
+    ['Torchic', 'Combusken'],
+    ['Combusken', 'Blaziken'],
+    ['Mudkip', 'Marshtomp'],
+    ['Marshtomp', 'Swampert'],
+    ['Poochyena', 'Mightyena'],
+    ['Zigzagoon', 'Linoone'],
+    ['Wurmple', 'Silcoon'],
+    ['Silcoon', 'Beautifly'],
+    ['Wurmple', 'Cascoon'],
+    ['Cascoon', 'Dustox'],
+    ['Lotad', 'Lombre'],
+    ['Lombre', 'Ludicolo'],
+    ['Seedot', 'Nuzleaf'],
+    ['Nuzleaf', 'Shiftry'],
+    ['Taillow', 'Swellow'],
+    ['Wingull', 'Pelipper'],
+    ['Ralts', 'Kirlia'],
+    ['Kirlia', 'Gardevoir'],
+    ['Surskit', 'Masquerain'],
+    ['Shroomish', 'Breloom'],
+    ['Slakoth', 'Vigoroth'],
+    ['Vigoroth', 'Slaking'],
+    ['Nincada', 'Ninjask'],
+    ['Nincada', 'Shedinja'],
+    ['Whismur', 'Loudred'],
+    ['Loudred', 'Exploud'],
+    ['Makuhita', 'Hariyama'],
+    ['Aron', 'Lairon'],
+    ['Lairon', 'Aggron'],
+    ['Meditite', 'Medicham'],
+    ['Electrike', 'Manectric'],
+    ['Gulpin', 'Swalot'],
+    ['Carvanha', 'Sharpedo'],
+    ['Wailmer', 'Wailord'],
+    ['Numel', 'Camerupt'],
+    ['Spoink', 'Grumpig'],
+    ['Trapinch', 'Vibrava'],
+    ['Vibrava', 'Flygon'],
+    ['Cacnea', 'Cacturne'],
+    ['Swablu', 'Altaria'],
+    ['Barboach', 'Whiscash'],
+    ['Corphish', 'Crawdaunt'],
+    ['Baltoy', 'Claydol'],
+    ['Lileep', 'Cradily'],
+    ['Anorith', 'Armaldo'],
+    ['Feebas', 'Milotic'],
+    ['Spheal', 'Sealeo'],
+    ['Sealeo', 'Walrein'],
+    ['Clamperl', 'Huntail'],
+    ['Clamperl', 'Gorebyss'],
+    ['Bagon', 'Shelgon'],
+    ['Shelgon', 'Salamence'],
+    ['Beldum', 'Metang'],
+    ['Metang', 'Metagross'],
+    ['Skitty', 'Delcatty']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
@@ -490,12 +549,13 @@ const POKEMON_LEVEL_FILTER_SORT_INDEX = Object.freeze(
 );
 const POKEMON_SPECIAL_TAG_META = Object.freeze({
     pack: { key: 'pack', label: 'Pack' },
+    shiny: { key: 'shiny', label: 'Shiny' },
     fossil: { key: 'fossil', label: 'F\u00f3ssil' },
     boss: { key: 'boss', label: 'Boss' },
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
     ace: { key: 'ace', label: 'Ace' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'fossil', 'boss', 'legendary', 'ace']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'shiny', 'fossil', 'boss', 'legendary', 'ace']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
         acc[value] = index;
@@ -12655,6 +12715,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'fossil' || normalized === 'fossil-pokemon') return 'fossil';
     if(normalized === 'boss') return 'boss';
     if(normalized === 'ace') return 'ace';
+    if(normalized === 'shiny' || normalized === 'brilhante') return 'shiny';
     if(normalized === 'pack' || normalized === 'pacote' || normalized === 'especial' || normalized === 'special') return 'pack';
     return '';
 }
@@ -14110,9 +14171,14 @@ function getPokemonCaptureAverageForBall(level, variant, ballKey){
 
 function getPokemonAverageValueForVariant(entry, variant, ballKey){
     if(!isPokemonCaptureVariantAvailable(entry, variant)) return 0;
-    return variant === 'normal'
-        ? getPokemonNormalCaptureAverageForBall(entry, ballKey)
-        : getPokemonCaptureAverageForBall(entry?.level, variant, ballKey);
+    if(variant === 'normal') return getPokemonNormalCaptureAverageForBall(entry, ballKey);
+
+    // Some entries are marked as "ace" via specialTags but have numeric level (100).
+    // For capture requirement lookup we must treat those as the 'ace' bucket so
+    // the computeRequired() function can find the appropriate shiny requirements.
+    const isAce = Array.isArray(entry?.specialTags) && entry.specialTags.includes('ace');
+    const levelForRequirements = isAce ? 'ace' : entry?.level;
+    return getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey);
 }
 
 function buildPokemonAverageCards(entry, variant){
