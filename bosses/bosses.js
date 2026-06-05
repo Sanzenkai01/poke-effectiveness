@@ -215,6 +215,7 @@ const hoopaPortalsData = [
           { name: 'Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Shiny Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' },
+          { name: 'Raticate', image: 'raticate.png', tier: 'bom', types: ['normal'], description: 'Tipo move: Dark.' },
           { name: 'Pyroar Female', image: 'pyroar-female.png', tier: 'bom', types: ['fire','normal'], description: 'Tipo move: Grass.' }
         ]
       }
@@ -347,6 +348,7 @@ const hoopaPortalsData = [
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Raticate', image: 'raticate.png', tier: 'bom', types: ['normal'], description: 'Tipo move: Dark.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
       }
@@ -1128,8 +1130,10 @@ const rolePickImageOverrides = {
   drifloom: 'drifloon.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
+  shinybanette: 'banette.png',
   megascizor: 'mega-scizor.png',
   shinybronzong: 'bronzong.png',
+  shinysableye: 'sableye.png',
   shinyscyther: 'scyther.png',
   ribombee: 'Ribombee.png',
   venusaurtwo: 'venusaur.png'
@@ -1413,12 +1417,12 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Shiftry', ['grass', 'dark'], 'dark')
         ],
         tank: [
-          createRolePick('Wynaut', ['psychic'], 'psychic'),
           createRolePick('Wobbuffet', ['psychic'], 'psychic'),
           createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
           createRolePick('Magnezone', ['electric', 'steel'], 'steel')
         ],
         support: [
+          createRolePick('Wynaut', ['psychic'], 'psychic'),
           createRolePick('Kadabra', ['psychic'], 'psychic'),
           createRolePick('Pachirisu', ['electric'], 'electric')
         ]
@@ -1446,13 +1450,13 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Delphox', ['fire', 'psychic'], 'fire'),
           createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire'),
+          createRolePick('Raticate', ['normal'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
         ],
         tank: [
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
-          createRolePick('Sableye', ['dark', 'ghost'], 'dark', { note: 'Dark ou Ghost.' }),
-          createRolePick('Armarouge', ['fire', 'psychic'], 'fire')
+          createRolePick('Sableye', ['dark', 'ghost'], 'dark', { note: 'Dark ou Ghost.' })
         ],
         support: [
           createRolePick('Zorua', ['dark'], 'dark'),
@@ -1563,6 +1567,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Absol', ['dark'], 'dark'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Raticate', ['normal'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
         ],
@@ -1752,7 +1757,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
-          createRolePick('Armarouge', ['fire', 'psychic'], 'fire'),
           createRolePick('Torkoal', ['fire'], 'fire')
         ],
         support: [
@@ -2052,6 +2056,7 @@ const specialBossesData = [
     id: 'hydrapple',
     name: 'Hydrapple',
     image: 'hydrapple.png',
+    tutorialUrl: 'https://youtu.be/NSYv7_G2AGM',
     description: 'Boss Grass / Dragon com moveset Dragon. Lista limitada a speedsters tier Bom ou maior.',
     types: ['grass', 'dragon'],
     moveType: 'dragon',
@@ -2143,6 +2148,7 @@ const specialBossesData = [
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire', { tier: 'muitobom' }),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark', { tier: 'muitobom' }),
           createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' }),
+          createRolePick('Raticate', ['normal'], 'dark', { tier: 'bom' }),
           createRolePick('Bouffalant', ['normal'], 'ground', { tier: 'bom' }),
           createRolePick('Cramorant', ['flying', 'water'], 'water', { tier: 'bom' })
         ]
@@ -2555,14 +2561,14 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Magnezone", 'electric', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Tangrowth", 'grass', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Toxapex", 'poison', 'tank', 'instinct'),
-      createFixedRecommendationDefinition("Wobbuffet", 'psychic', 'tank', 'instinct'),
-      createFixedRecommendationDefinition("Wynaut", 'psychic', 'tank', 'instinct')
+      createFixedRecommendationDefinition("Wobbuffet", 'psychic', 'tank', 'instinct')
     ]),
     support: Object.freeze([
       createFixedRecommendationDefinition("Bellossom", 'grass', 'support', 'instinct'),
       createFixedRecommendationDefinition("Kadabra", 'psychic', 'support', 'instinct'),
       createFixedRecommendationDefinition("Kirlia", 'psychic', 'support', 'instinct'),
-      createFixedRecommendationDefinition("Pachirisu", 'electric', 'support', 'instinct')
+      createFixedRecommendationDefinition("Pachirisu", 'electric', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Wynaut", 'psychic', 'support', 'instinct')
     ])
   }),
   mystic: Object.freeze({
@@ -2621,6 +2627,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Mega Houndoom", 'dark', 'dps', 'valor'),
       createFixedRecommendationDefinition("Mega Scizor", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Pyroar Female", 'fire', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Raticate", 'normal', 'dps', 'valor', { moveType: 'dark' }),
       createFixedRecommendationDefinition("Ribombee", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Scolipede", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Scyther", 'bug', 'dps', 'valor'),
@@ -2628,7 +2635,6 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Weavile", 'dark', 'dps', 'valor')
     ]),
     tank: Object.freeze([
-      createFixedRecommendationDefinition("Armarouge", 'fire', 'tank', 'valor'),
       createFixedRecommendationDefinition("Bastiodon", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Magcargo", 'fire', 'tank', 'valor'),
       createFixedRecommendationDefinition("Miltank", 'normal', 'tank', 'valor'),
@@ -2901,6 +2907,37 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'banette' || nameKey === 'shinybanette' || nameKey === 'megabanette') {
+    return {
+      defenseByBossType: {
+        psychic: 0.75,
+        ghost: 0.75
+      },
+      passiveName: 'Red Eyes',
+      passiveDescription: 'O Pokemon recebe dano inafetivo de ataques dos tipos Psychic e Ghost.'
+    };
+  }
+
+  if (nameKey === 'sableye' || nameKey === 'shinysableye') {
+    return {
+      defenseByBossType: {
+        ghost: 0.75
+      },
+      passiveName: 'Stall',
+      passiveDescription: 'Sableye tem chance de ficar invisivel por segundos ao atacar, isso aumenta o dano da sua proxima habilidade em 10%. Em contraparte, isso torna seu ataque fisico mais lento. Alem disso, o Pokemon recebe dano inafetivo de ataques do tipo Ghost.'
+    };
+  }
+
+  if (nameKey === 'kadabra') {
+    return {
+      defenseByBossType: {
+        ghost: 0.75
+      },
+      passiveName: 'Synchronize',
+      passiveDescription: 'Torna o Pokemon imune aos efeitos negativos: Paralyze, Poison e Burn. Tambem recebe dano inafetivo de ataques do tipo Ghost.'
+    };
+  }
+
   if (nameKey === 'pachirisu') {
     return {
       immunities: ['electric'],
@@ -3083,11 +3120,13 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
-  if (nameKey === 'misdreavus') {
+  if (nameKey === 'misdreavus' || nameKey === 'misdreavous') {
     return {
-      immunities: ['ground'],
-      passiveName: 'Levitate',
-      passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
+      defenseByBossType: {
+        ghost: 0.75
+      },
+      passiveName: 'Omnious Eyes',
+      passiveDescription: 'O Pokemon recebe dano inafetivo de ataques do tipo Ghost.'
     };
   }
 
@@ -4120,6 +4159,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'probopass.png': 'pokemons/4gen/probopass.png',
   'pyroar-female.png': 'pokemons/6gen/pyroar-female.png',
   'qwilfish.png': 'pokemons/2gen/qwilfish.png',
+  'raticate.png': 'pokemons/1gen/raticate.png',
   'ribombee.png': 'pokemons/7gen/ribombee.png',
   'sableye.png': 'pokemons/3gen/sableye.png',
   'scizor.png': 'pokemons/2gen/scizor.png',

@@ -221,13 +221,14 @@ let teamsCatalogRenderFrame = null;
 let activeTeamEntry = null;
 let timesDetailsLastFocus = null;
 let timesDetailsKeyHandler = null;
+let teamModalHistoryPushed = false;
 // If the page was loaded directly with a deep-link to a pokemon
 // (eg /pokemon/001 or /pokemons/mega-charizard) this holds the
 // requested route token until the catalog is loaded.
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -280,10 +281,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605b';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260605b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605c';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260605c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260605b';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260604a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260605c';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -545,6 +546,11 @@ const DEFAULT_TEAM_FILTERS = Object.freeze({
     clan: 'all',
     tag: 'all',
     search: ''
+});
+const TEAM_FILTER_QUERY_KEYS = Object.freeze({
+    clan: 'clan',
+    tag: 'tag',
+    search: 'q'
 });
 let pendingQuickActionRouteRestore = null;
 
@@ -2381,7 +2387,7 @@ function loadCommunityVideoFrame(video, options = {}){
 
 function setVisiblePanel(activePanel){
     if(activePanel !== contentTimes && timesDetailsModal?.getAttribute('aria-hidden') !== 'true'){
-        closeTeamDetailsModal();
+        closeTeamDetailsModal({ viaPopstate: true });
     }
 
     mainPanels.forEach(panel => {
@@ -2458,6 +2464,41 @@ function normalizeBossModeParam(value){
     if(normalized === 'bosses-especiais' || normalized === 'especiais' || normalized === 'ranger-bosses' || normalized === 'ranger') return 'special';
     if(normalized === 'planejador') return 'planner';
     return ['hoopa', 'champion', 'mew2', 'special', 'planner', 'horizons'].includes(normalized) ? normalized : '';
+}
+
+function isTeamCatalogPathname(pathname = location.pathname){
+    return /\/times(?:\/|$)/i.test(String(pathname || ''));
+}
+
+function normalizeTeamRouteSlug(value){
+    try{
+        return decodeURIComponent(String(value || ''));
+    }catch(error){
+        return String(value || '');
+    }
+}
+
+function createTeamRouteSlug(value, fallback = ''){
+    const slug = normalizeTeamRouteSlug(value || fallback)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return slug || 'time';
+}
+
+function getTeamRouteMatch(pathname = location.pathname){
+    const match = String(pathname || '').match(/\/times\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/i);
+    if(!match) return null;
+    const teamSlug = createTeamRouteSlug(match[1]);
+    return teamSlug ? { teamSlug } : null;
+}
+
+function getTeamDetailRoutePath(entry){
+    const routeSlug = String(entry?.routeSlug || '').trim().toLowerCase();
+    return routeSlug ? `/times/${encodeURIComponent(routeSlug)}` : '';
 }
 
 function getBossModeQueryValue(value){
@@ -5801,7 +5842,14 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT, option
     updateUrl();
 }
 
-function showTimes(){
+function showTimes(options = {}){
+    const requestedTeamSlug = String(options?.requestedTeamSlug || getTeamRouteMatch()?.teamSlug || '').trim().toLowerCase();
+    const requestedTeamFilters = options?.requestedFilters
+        ? normalizeTeamFiltersInput(options.requestedFilters)
+        : (isTeamCatalogPathname() ? getTeamFiltersFromUrl() : null);
+    if(requestedTeamFilters){
+        applyTeamFiltersInput(requestedTeamFilters);
+    }
     initializeTimesPage();
     clearTabHighlights();
     setActiveTabTheme('times');
@@ -5822,6 +5870,12 @@ function showTimes(){
     ensureTeamsCatalogLoaded()
         .then(() => {
             renderTeamsCatalog({ animate: true });
+            if(requestedTeamSlug){
+                const opened = openTeamDetailsByRouteSlug(requestedTeamSlug, { pushState: false });
+                if(!opened){
+                    updateUrl({ historyMode: 'replace' });
+                }
+            }
             if(useGsap && contentTimes){
                 gsap.from(contentTimes, { opacity: 0, y: -10, duration: 0.4 });
             }
@@ -5837,7 +5891,9 @@ function showTimes(){
             );
         });
 
-    updateUrl();
+    if(!requestedTeamSlug){
+        updateUrl();
+    }
 }
 
 function initializeTimesPage(){
@@ -5852,11 +5908,14 @@ function initializeTimesPage(){
     if(timesSearchInput){
         timesSearchInput.value = teamFilters.search;
         timesSearchInput.addEventListener('input', () => {
-            teamFilters = {
+            applyTeamFiltersInput({
                 ...teamFilters,
                 search: timesSearchInput.value || ''
-            };
+            });
             scheduleTeamsCatalogRender();
+            if(contentTimes && !contentTimes.hidden){
+                updateUrl();
+            }
         });
     }
 
@@ -5882,17 +5941,84 @@ function normalizeTeamClanKey(value){
 }
 
 function setTeamClanFilter(clanKey){
-    teamFilters = {
+    applyTeamFiltersInput({
         ...teamFilters,
         clan: normalizeTeamClanKey(clanKey)
-    };
-    syncTeamClanFilterButtons(teamFilters.clan);
+    });
     scheduleTeamsCatalogRender();
+    if(contentTimes && !contentTimes.hidden){
+        updateUrl();
+    }
 }
 
 function normalizeTeamTagKey(value){
     const normalized = normalizePokemonSearchText(value).replace(/[\s/]+/g, '-');
     return normalized || 'all';
+}
+
+function normalizeTeamSearchFilter(value){
+    return String(value || '').trim();
+}
+
+function normalizeTeamFiltersInput(filters = DEFAULT_TEAM_FILTERS){
+    return {
+        clan: normalizeTeamClanKey(filters?.clan),
+        tag: normalizeTeamTagKey(filters?.tag),
+        search: normalizeTeamSearchFilter(filters?.search)
+    };
+}
+
+function getTeamFiltersFromUrl(search = location.search){
+    try{
+        const params = new URLSearchParams(search);
+        return normalizeTeamFiltersInput({
+            clan: params.get(TEAM_FILTER_QUERY_KEYS.clan) || '',
+            tag: params.get(TEAM_FILTER_QUERY_KEYS.tag) || '',
+            search: params.get(TEAM_FILTER_QUERY_KEYS.search)
+                || params.get('search')
+                || params.get('busca')
+                || ''
+        });
+    }catch(error){
+        return { ...DEFAULT_TEAM_FILTERS };
+    }
+}
+
+function syncTeamFilterParams(params, filters = teamFilters){
+    if(!(params instanceof URLSearchParams)) return params;
+
+    const normalizedFilters = normalizeTeamFiltersInput(filters);
+    if(normalizedFilters.clan && normalizedFilters.clan !== 'all'){
+        params.set(TEAM_FILTER_QUERY_KEYS.clan, normalizedFilters.clan);
+    } else {
+        params.delete(TEAM_FILTER_QUERY_KEYS.clan);
+    }
+
+    if(normalizedFilters.tag && normalizedFilters.tag !== 'all'){
+        params.set(TEAM_FILTER_QUERY_KEYS.tag, normalizedFilters.tag);
+    } else {
+        params.delete(TEAM_FILTER_QUERY_KEYS.tag);
+    }
+
+    if(normalizedFilters.search){
+        params.set(TEAM_FILTER_QUERY_KEYS.search, normalizedFilters.search);
+    } else {
+        params.delete(TEAM_FILTER_QUERY_KEYS.search);
+    }
+    params.delete('search');
+    params.delete('busca');
+
+    return params;
+}
+
+function applyTeamFiltersInput(filters = DEFAULT_TEAM_FILTERS){
+    teamFilters = normalizeTeamFiltersInput(filters);
+    if(timesSearchInput && timesSearchInput.value !== teamFilters.search){
+        timesSearchInput.value = teamFilters.search;
+    }
+    syncTeamClanFilterButtons(teamFilters.clan);
+    syncTeamTagFilterButtons(teamFilters.tag);
+    return teamFilters;
 }
 
 function collectTeamTagOptions(entries = teamsCatalog){
@@ -5918,19 +6044,25 @@ function renderTeamTagFilterButtons(entries = teamsCatalog){
     if(!(timesTagFilterRow instanceof HTMLElement)) return;
 
     const options = collectTeamTagOptions(entries);
+    let shouldNormalizeUrl = false;
     if(!options.length){
+        shouldNormalizeUrl = normalizeTeamTagKey(teamFilters.tag) !== 'all';
         timesTagFilterRow.hidden = true;
         timesTagFilterRow.replaceChildren();
         teamFilters = {
             ...teamFilters,
             tag: 'all'
         };
+        if(shouldNormalizeUrl && contentTimes && !contentTimes.hidden){
+            updateUrl({ historyMode: 'replace' });
+        }
         return;
     }
 
     const availableTagKeys = new Set(['all', ...options.map((option) => option.key)]);
     const activeTagKey = normalizeTeamTagKey(teamFilters.tag);
     if(!availableTagKeys.has(activeTagKey)){
+        shouldNormalizeUrl = true;
         teamFilters = {
             ...teamFilters,
             tag: 'all'
@@ -5957,15 +6089,20 @@ function renderTeamTagFilterButtons(entries = teamsCatalog){
     timesTagFilterRow.replaceChildren(fragment);
     timesTagFilterRow.hidden = false;
     syncTeamTagFilterButtons(teamFilters.tag);
+    if(shouldNormalizeUrl && contentTimes && !contentTimes.hidden){
+        updateUrl({ historyMode: 'replace' });
+    }
 }
 
 function setTeamTagFilter(tagKey){
-    teamFilters = {
+    applyTeamFiltersInput({
         ...teamFilters,
         tag: normalizeTeamTagKey(tagKey)
-    };
-    syncTeamTagFilterButtons(teamFilters.tag);
+    });
     scheduleTeamsCatalogRender();
+    if(contentTimes && !contentTimes.hidden){
+        updateUrl();
+    }
 }
 
 function syncTeamClanFilterButtons(activeClan){
@@ -6047,10 +6184,31 @@ function loadTeamsCatalog(){
                 throw new Error('O catalogo de times precisa ser uma lista.');
             }
             pokemonCatalogGenerationMap = generationMap;
-            return entries
+            const normalizedEntries = entries
                 .map((entry, index) => normalizeTeamEntry(entry, index))
                 .filter(Boolean);
+            return ensureUniqueTeamRouteSlugs(normalizedEntries);
         });
+}
+
+function ensureUniqueTeamRouteSlugs(entries = []){
+    const usedSlugs = new Set();
+    return entries.map((entry, index) => {
+        const baseSlug = createTeamRouteSlug(entry?.routeSlug || entry?.id, `time-${index + 1}`);
+        let routeSlug = baseSlug;
+        let suffix = 2;
+        while(usedSlugs.has(routeSlug)){
+            routeSlug = `${baseSlug}-${suffix}`;
+            suffix += 1;
+        }
+        usedSlugs.add(routeSlug);
+        if(entry.routeSlug === routeSlug) return entry;
+        return {
+            ...entry,
+            routeSlug,
+            searchText: normalizePokemonSearchText(`${entry.searchText || ''} ${routeSlug}`)
+        };
+    });
 }
 
 function normalizeTeamEntry(entry, index){
@@ -6082,8 +6240,10 @@ function normalizeTeamEntry(entry, index){
         alternatives.hunts || alternatives.hunt || entry.alternativeHunts || entry.alternativeHunt
     );
     const id = String(entry.id || `${clanKey || 'team'}-${index + 1}`).trim();
+    const routeSlug = createTeamRouteSlug(id, `${clanKey || 'team'}-${index + 1}`);
     const searchTokens = [
         id,
+        routeSlug,
         clanKey,
         clanInfo.label,
         elementLabel,
@@ -6100,6 +6260,7 @@ function normalizeTeamEntry(entry, index){
 
     return {
         id,
+        routeSlug,
         clanKey,
         clanLabel: clanInfo.label,
         elementLabel,
@@ -6260,6 +6421,21 @@ function getFilteredTeamEntries(filters = teamFilters){
     });
 }
 
+function findTeamEntryByRouteSlug(routeSlug){
+    const normalizedSlug = createTeamRouteSlug(routeSlug);
+    if(!normalizedSlug) return null;
+    return teamsCatalog.find((entry) => {
+        return String(entry?.routeSlug || '').trim().toLowerCase() === normalizedSlug;
+    }) || null;
+}
+
+function openTeamDetailsByRouteSlug(routeSlug, options = {}){
+    const entry = findTeamEntryByRouteSlug(routeSlug);
+    if(!entry) return false;
+    openTeamDetailsModal(entry, options);
+    return true;
+}
+
 function scheduleTeamsCatalogRender(){
     if(!teamsCatalogLoaded) return;
 
@@ -6359,6 +6535,9 @@ function createTeamCard(entry){
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'team-card';
+    if(entry.routeSlug){
+        card.dataset.teamRoute = entry.routeSlug;
+    }
     card.setAttribute('role', 'listitem');
     card.setAttribute('aria-label', `${entry.clanLabel}. ${entry.elementLabel}. Abrir detalhes do time.`);
 
@@ -6411,7 +6590,7 @@ function createTeamCard(entry){
 
     card.append(header, hero, tagsRow, roster, footer);
     card.addEventListener('click', () => {
-        openTeamDetailsModal(entry);
+        openTeamDetailsModal(entry, { pushState: true });
     });
 
     return card;
@@ -6668,7 +6847,8 @@ function renderTeamDetailsModal(entry){
     }
 }
 
-function openTeamDetailsModal(entry){
+function openTeamDetailsModal(entry, options = {}){
+    const { pushState = true } = options || {};
     if(!timesDetailsModal || !entry) return;
 
     renderTeamDetailsModal(entry);
@@ -6688,10 +6868,49 @@ function openTeamDetailsModal(entry){
         if(event.key === 'Escape') closeTeamDetailsModal();
     };
     document.addEventListener('keydown', timesDetailsKeyHandler);
+
+    const detailRoutePath = getTeamDetailRoutePath(entry);
+    if(pushState && detailRoutePath){
+        try{
+            const params = syncTeamFilterParams(new URLSearchParams(location.search), teamFilters);
+            const query = params.toString();
+            const detailUrl = detailRoutePath + (query ? `?${query}` : '');
+            history.pushState({ tab: 'times', teamRouteSlug: entry.routeSlug }, '', detailUrl);
+            teamModalHistoryPushed = true;
+        }catch(error){
+            teamModalHistoryPushed = false;
+        }
+    } else {
+        teamModalHistoryPushed = false;
+    }
 }
 
-function closeTeamDetailsModal(){
+function closeTeamDetailsModal(options = {}){
+    const { viaPopstate = false } = options || {};
     if(!timesDetailsModal) return;
+
+    if(viaPopstate){
+        timesDetailsModal.setAttribute('aria-hidden', 'true');
+        syncBasicModalPageState();
+
+        if(timesDetailsKeyHandler){
+            document.removeEventListener('keydown', timesDetailsKeyHandler);
+            timesDetailsKeyHandler = null;
+        }
+
+        if(timesDetailsLastFocus instanceof HTMLElement && timesDetailsLastFocus.isConnected){
+            try { timesDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
+        }
+
+        timesDetailsLastFocus = null;
+        activeTeamEntry = null;
+        teamModalHistoryPushed = false;
+        return;
+    }
+
+    if(teamModalHistoryPushed){
+        try{ history.back(); return; }catch(error){}
+    }
 
     timesDetailsModal.setAttribute('aria-hidden', 'true');
     syncBasicModalPageState();
@@ -6707,6 +6926,10 @@ function closeTeamDetailsModal(){
 
     timesDetailsLastFocus = null;
     activeTeamEntry = null;
+    teamModalHistoryPushed = false;
+    if(getTeamRouteMatch()){
+        updateUrl({ historyMode: 'replace' });
+    }
 }
 
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
@@ -9027,11 +9250,13 @@ function initTabFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
     const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
+    const requestedTeamFilters = getTeamFiltersFromUrl();
 
     // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/mega-charizard
     const pathname = String(location.pathname || '');
     const requestedBossRoute = getBossRouteMatch(pathname);
     const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
+    const requestedTeamRoute = getTeamRouteMatch(pathname);
     const pokemonMatch = getPokemonDetailRouteMatch(pathname);
     initialDeepLinkedPokemonRouteToken = null;
     if(pokemonMatch){
@@ -9044,16 +9269,21 @@ function initTabFromUrl(){
     const hasQuery = params.toString().length > 0;
     if(requestedPokemonCatalogPage !== null){
         resolvedTab = 'pokemons';
+    } else if(requestedTeamRoute){
+        resolvedTab = 'times';
     } else if(requestedBossRoute){
         resolvedTab = 'bosses';
     }
-    if(!hasQuery && !pathRouteInfo && !requestedBossRoute && initialDeepLinkedPokemonRouteToken == null && requestedPokemonCatalogPage == null && !isPokemonCatalogPathname(pathname)) return showHome();
+    if(!hasQuery && !pathRouteInfo && !requestedBossRoute && !requestedTeamRoute && initialDeepLinkedPokemonRouteToken == null && requestedPokemonCatalogPage == null && !isPokemonCatalogPathname(pathname)) return showHome();
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(resolvedTab==='calculator') return showCalculator();
     if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
-    if(resolvedTab==='times') return showTimes();
+    if(resolvedTab==='times') return showTimes({
+        requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
+        requestedFilters: requestedTeamFilters
+    });
     // If the URL targeted a specific pokemon route, open the pokemons tab and
     // open the requested modal once the catalog is loaded.
     if(initialDeepLinkedPokemonRouteToken !== null){
@@ -11368,6 +11598,11 @@ function updateUrl(options = {}){
     } else {
         syncPokemonCatalogFilterParams(params, DEFAULT_POKEMON_CATALOG_FILTERS);
     }
+    if(activeTab === 'times'){
+        syncTeamFilterParams(params, teamFilters);
+    } else {
+        syncTeamFilterParams(params, DEFAULT_TEAM_FILTERS);
+    }
     params.delete('variant');
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
@@ -11381,6 +11616,12 @@ function updateUrl(options = {}){
                 routePath = getPokemonDetailRoutePath(activePokemonCatalogEntry, pokemonVariant);
             } else {
                 routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
+            }
+        } else if(!isHomeView && activeTab === 'times'){
+            if(timesDetailsModal && timesDetailsModal.getAttribute('aria-hidden') !== 'true' && activeTeamEntry){
+                routePath = getTeamDetailRoutePath(activeTeamEntry) || getRoutePathForTab(activeTab);
+            } else {
+                routePath = getRoutePathForTab(activeTab);
             }
         } else if(!isHomeView && activeTab === 'bosses'){
             const activeBossMode = normalizeBossModeParam(activeBossRouteState?.bossMode || getCurrentBossMode()) || 'hoopa';
@@ -15322,7 +15563,10 @@ window.addEventListener('popstate', () => {
     const detailMatch = getPokemonDetailRouteMatch(pathname);
     const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
     const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
+    const requestedTeamFilters = getTeamFiltersFromUrl();
     const isPokemonCatalogRoute = isPokemonCatalogPathname(pathname);
+    const requestedTeamRoute = getTeamRouteMatch(pathname);
+    const isTeamCatalogRoute = isTeamCatalogPathname(pathname);
     const requestedBossRoute = getBossRouteMatch(pathname);
     if(detailMatch){
         const requestedVariant = getPokemonCatalogVariantFromUrl();
@@ -15363,6 +15607,40 @@ window.addEventListener('popstate', () => {
                     requestedFilters: requestedPokemonFilters
                 });
             }
+        }
+    }
+
+    if(requestedTeamRoute){
+        const requestedTeamSlug = requestedTeamRoute.teamSlug;
+        const openRequestedTeam = () => {
+            applyTeamFiltersInput(requestedTeamFilters);
+            if(teamsCatalogLoaded){
+                renderTeamsCatalog();
+            }
+            const opened = openTeamDetailsByRouteSlug(requestedTeamSlug, { pushState: false });
+            if(!opened){
+                updateUrl({ historyMode: 'replace' });
+            }
+        };
+        if(contentTimes && !contentTimes.hidden && teamsCatalogLoaded){
+            openRequestedTeam();
+        } else {
+            showTimes({
+                requestedTeamSlug,
+                requestedFilters: requestedTeamFilters
+            });
+        }
+    } else {
+        if(timesDetailsModal && timesDetailsModal.getAttribute('aria-hidden') !== 'true'){
+            closeTeamDetailsModal({ viaPopstate: true });
+        }
+        if(isTeamCatalogRoute && contentTimes && !contentTimes.hidden){
+            applyTeamFiltersInput(requestedTeamFilters);
+            if(teamsCatalogLoaded){
+                renderTeamsCatalog();
+            }
+        } else if(isTeamCatalogRoute){
+            showTimes({ requestedFilters: requestedTeamFilters });
         }
     }
 
