@@ -1865,15 +1865,22 @@ p {
   display: flex;
 }
 
+.speedster-modal[data-overlay-parent="pokemon"] {
+  z-index: 9000;
+  pointer-events: auto;
+}
+
 .speedster-modal-backdrop {
   position: absolute;
   inset: 0;
+  z-index: 0;
   background: rgba(0,0,0,0.75);
   backdrop-filter: blur(6px);
 }
 
 .speedster-modal-content {
   position: relative;
+  z-index: 1;
   max-width: 980px;
   width: 100%;
   max-height: min(90vh, 960px);
@@ -13830,7 +13837,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-details-modal__section--averages {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
 }
 
 .pokemon-details-modal__section--weaknesses {
@@ -13841,6 +13848,13 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-details-modal__section--evolution {
   padding: 0.58rem 0.68rem;
+}
+
+.pokemon-details-modal__section--boss-usage {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
+  padding: 0.46rem 0.54rem;
 }
 
 .pokemon-details-modal__section-head {
@@ -13877,6 +13891,9 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-evolution-nav__stage-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
   color: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.86);
   font-size: 0.66rem;
   font-weight: 800;
@@ -13892,6 +13909,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-evolution-card {
+  position: relative;
   display: grid;
   grid-template-columns: 54px minmax(0, 1fr);
   align-items: center;
@@ -13938,6 +13956,24 @@ button.pokemon-evolution-card:focus-visible {
     rgba(5, 12, 22, 0.68);
 }
 
+.pokemon-evolution-card[data-variant="mega"] {
+  border-color: rgba(198, 150, 255, 0.36);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.024)),
+    linear-gradient(135deg, rgba(174, 98, 255, 0.2), rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.08)),
+    rgba(5, 12, 24, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 24px rgba(147, 91, 255, 0.1);
+}
+
+.pokemon-evolution-card[data-variant="mega"] .pokemon-evolution-card__media {
+  border-color: rgba(198, 150, 255, 0.34);
+  background:
+    radial-gradient(circle, rgba(174, 98, 255, 0.26), transparent 68%),
+    rgba(255, 255, 255, 0.06);
+}
+
 .pokemon-evolution-card__media {
   display: inline-flex;
   align-items: center;
@@ -13974,6 +14010,252 @@ button.pokemon-evolution-card:focus-visible {
   font-size: 0.86rem;
   line-height: 1.14;
   overflow-wrap: anywhere;
+}
+
+.pokemon-evolution-mega-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(220, 190, 255, 0.32);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.32), transparent 36%),
+    linear-gradient(135deg, rgba(166, 94, 255, 0.72), rgba(80, 180, 255, 0.46));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 14px rgba(119, 75, 255, 0.24);
+  pointer-events: none;
+}
+
+.pokemon-evolution-mega-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.26));
+}
+
+.pokemon-evolution-mega-mark--card {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.38rem;
+  width: 21px;
+  height: 21px;
+  padding: 0.18rem;
+}
+
+.pokemon-evolution-mega-mark--stage {
+  width: 17px;
+  height: 17px;
+  padding: 0.14rem;
+  transform: translateY(-1px);
+}
+
+.pokemon-boss-usage {
+  display: grid;
+  gap: 0.32rem;
+  margin-top: 0.34rem;
+}
+
+.pokemon-boss-usage__summary {
+  margin: 0;
+  color: rgba(216, 229, 244, 0.74);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.pokemon-boss-usage-groups {
+  display: grid;
+  gap: 0.42rem;
+  max-height: 13rem;
+  overflow-y: auto;
+  padding-right: 0.16rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.44) rgba(3, 9, 18, 0.55);
+}
+
+.pokemon-boss-usage-groups::-webkit-scrollbar {
+  width: 7px;
+}
+
+.pokemon-boss-usage-groups::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(3, 9, 18, 0.55);
+}
+
+.pokemon-boss-usage-groups::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(3, 9, 18, 0.72);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.62),
+    rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.42)
+  );
+}
+
+.pokemon-boss-usage-group {
+  display: grid;
+  gap: 0.24rem;
+  padding-top: 0.34rem;
+  border-top: 1px solid rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.12);
+}
+
+.pokemon-boss-usage-group:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.pokemon-boss-usage-group__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  min-width: 0;
+  min-height: 1rem;
+}
+
+.pokemon-boss-usage-group__title {
+  overflow: hidden;
+  max-width: calc(100% - 4.5rem);
+  color: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.88);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pokemon-boss-usage-group__count {
+  position: absolute;
+  right: 0;
+  flex: 0 0 auto;
+  padding: 0.08rem 0.28rem;
+  border: 1px solid rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(216, 229, 244, 0.68);
+  font-size: 0.56rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.pokemon-boss-usage-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
+  gap: 0.3rem;
+}
+
+.pokemon-boss-usage-card {
+  --boss-usage-tier-rgb: var(--pokemon-detail-primary-rgb, 104, 215, 255);
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.38rem;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.34rem 0.42rem;
+  border: 1px solid rgba(var(--boss-usage-tier-rgb), 0.28);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    linear-gradient(135deg, rgba(var(--boss-usage-tier-rgb), 0.13), rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.04)),
+    rgba(3, 9, 18, 0.48);
+  color: #f6fbff;
+  text-decoration: none;
+  box-shadow:
+    inset 3px 0 0 rgba(var(--boss-usage-tier-rgb), 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pokemon-boss-usage-card[data-tier="excelente"] {
+  --boss-usage-tier-rgb: 142, 68, 173;
+}
+
+.pokemon-boss-usage-card[data-tier="muitobom"] {
+  --boss-usage-tier-rgb: 46, 204, 113;
+}
+
+.pokemon-boss-usage-card[data-tier="bom"] {
+  --boss-usage-tier-rgb: 33, 150, 243;
+}
+
+.pokemon-boss-usage-card[data-tier="aceitavel"] {
+  --boss-usage-tier-rgb: 255, 152, 0;
+}
+
+.pokemon-boss-usage-card[data-tier="ruim"] {
+  --boss-usage-tier-rgb: 244, 67, 54;
+}
+
+.pokemon-boss-usage-card[data-tier="seminformacao"] {
+  --boss-usage-tier-rgb: 148, 163, 184;
+}
+
+.pokemon-boss-usage-card:hover,
+.pokemon-boss-usage-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(var(--boss-usage-tier-rgb), 0.48);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026)),
+    linear-gradient(135deg, rgba(var(--boss-usage-tier-rgb), 0.2), rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.08)),
+    rgba(5, 12, 22, 0.68);
+  box-shadow:
+    inset 3px 0 0 rgba(var(--boss-usage-tier-rgb), 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 24px rgba(var(--boss-usage-tier-rgb), 0.12);
+  outline: none;
+}
+
+.pokemon-boss-usage-card__media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(var(--boss-usage-tier-rgb), 0.2);
+  background:
+    radial-gradient(circle, rgba(var(--boss-usage-tier-rgb), 0.22), transparent 68%),
+    rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.pokemon-boss-usage-card__media img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 9px rgba(0, 0, 0, 0.28));
+}
+
+.pokemon-boss-usage-card__body {
+  display: grid;
+  gap: 0.04rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.pokemon-boss-usage-card__title {
+  overflow: hidden;
+  color: #f8fbff;
+  font-size: 0.72rem;
+  line-height: 1.12;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pokemon-boss-usage-card__meta {
+  overflow: hidden;
+  color: rgba(216, 229, 244, 0.78);
+  font-size: 0.62rem;
+  line-height: 1.18;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pokemon-details-grid {
@@ -14163,6 +14445,7 @@ button.pokemon-evolution-card:focus-visible {
 
   .pokemon-details-modal__section--info,
   .pokemon-details-modal__section--averages,
+  .pokemon-details-modal__section--boss-usage,
   .pokemon-details-modal__section--weaknesses {
     grid-column: auto;
     grid-row: auto;

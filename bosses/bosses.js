@@ -212,7 +212,6 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Tauros', image: 'tauros.png', tier: 'bom', types: ['normal'], description: 'Tipo move: Electric.' },
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
           { name: 'Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Shiny Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' },
@@ -307,8 +306,7 @@ const hoopaPortalsData = [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
-          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' }
+          { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' }
         ]
       }
     }
@@ -346,7 +344,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Bouffalant', image: 'bouffalant.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Ground.' },
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark/Fairy.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
@@ -1126,6 +1124,7 @@ const rolePickImageOverrides = {
   bannet: 'banette.png',
   blastoisetwo: 'blastoisetwo.png',
   charizardtwo: 'charizard.png',
+  cramorant: 'flying-cramorant.png',
   drifloom: 'drifloon.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
@@ -1564,7 +1563,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Absol', ['dark'], 'dark'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Cramorant', ['flying', 'water'], 'water'),
-          createRolePick('Mega Absol Z', ['dark'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
         ],
@@ -2007,6 +2005,152 @@ const mew2Bosses = createManualRoleboardBosses([
   }
 });
 
+const specialBossesData = [
+  {
+    id: 'zoroark',
+    name: 'Zoroark',
+    image: 'zoroark.png',
+    description: 'Boss Dark com moveset Dark. Lista limitada a speedsters tier Bom ou maior.',
+    types: ['dark'],
+    moveType: 'dark',
+    filterSolo: true,
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy', { tier: 'muitobom' }),
+          createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting', { tier: 'muitobom' }),
+          createRolePick('Lurantis', ['grass'], 'bug', { tier: 'bom' }),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy', { tier: 'bom' })
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          createRolePick('Dachsbun', ['fairy'], 'fairy', { tier: 'muitobom' }),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting', { tier: 'muitobom' }),
+          createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting', { tier: 'muitobom' }),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting', { tier: 'muitobom' }),
+          createRolePick('Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel', { tier: 'bom' })
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          createRolePick('Heracross', ['bug', 'fighting'], 'fighting', { tier: 'muitobom' }),
+          createRolePick('Mega Absol Z', ['dark'], 'fairy', { tier: 'muitobom' }),
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy', { tier: 'muitobom' }),
+          createRolePick('Scyther', ['bug', 'flying'], 'bug', { tier: 'bom' }),
+          createRolePick('Weavile', ['dark', 'ice'], 'ice', { tier: 'bom' })
+        ]
+      }
+    }
+  },
+  {
+    id: 'hydrapple',
+    name: 'Hydrapple',
+    image: 'hydrapple.png',
+    description: 'Boss Grass / Dragon com moveset Dragon. Lista limitada a speedsters tier Bom ou maior.',
+    types: ['grass', 'dragon'],
+    moveType: 'dragon',
+    filterSolo: true,
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy', { tier: 'bom' }),
+          createRolePick('Dragonair', ['dragon'], 'dragon', { tier: 'bom' }),
+          createRolePick('Lurantis', ['grass'], 'bug', { tier: 'bom' }),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy', { tier: 'bom' }),
+          createRolePick("Rosa's Serperior", ['grass'], 'grass', { tier: 'bom' }),
+          createRolePick('Seviper', ['poison'], 'poison', { tier: 'bom' }),
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel', { tier: 'bom' })
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          createRolePick('Mega Skarmory', ['steel', 'flying'], 'flying', { tier: 'muitobom' }),
+          createRolePick('Dachsbun', ['fairy'], 'fairy', { tier: 'bom' }),
+          createRolePick('Dewgong', ['water', 'ice'], 'ice', { tier: 'bom' }),
+          createRolePick('Mantine', ['water', 'flying'], 'flying', { tier: 'bom' }),
+          createRolePick("Melony's Frosmoth", ['ice', 'bug'], 'ice', { tier: 'bom' }),
+          createRolePick('Qwilfish', ['water', 'poison'], 'poison', { tier: 'bom' }),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting', { tier: 'bom' }),
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel', { tier: 'bom' })
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          createRolePick("Farfetch'd", ['normal', 'flying'], 'flying', { tier: 'bom' }),
+          createRolePick("May's Beautifly", ['bug', 'flying'], 'flying', { tier: 'bom' }),
+          createRolePick('Mega Absol Z', ['dark'], 'fairy', { tier: 'bom' }),
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy', { tier: 'bom' }),
+          createRolePick('Scolipede', ['bug', 'poison'], 'poison', { tier: 'bom' }),
+          createRolePick('Scyther', ['bug', 'flying'], 'bug', { tier: 'bom' }),
+          createRolePick('Weavile', ['dark', 'ice'], 'ice', { tier: 'bom' }),
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel', { tier: 'bom' })
+        ]
+      }
+    }
+  },
+  {
+    id: 'aegislash',
+    name: 'Aegislash',
+    image: 'aegislash.png',
+    description: 'Boss Steel / Ghost com moveset Steel. Lista limitada a speedsters tier Bom ou maior.',
+    types: ['steel', 'ghost'],
+    moveType: 'steel',
+    filterSolo: true,
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel', {
+            tier: 'muitobom',
+            passiveName: 'Mold Breaker',
+            passiveDescription: 'O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
+            passiveSuperEffectiveTypes: ['steel']
+          }),
+          createRolePick('Marowak', ['ground'], 'ground', { tier: 'bom' }),
+          createRolePick('Shiftry', ['grass', 'dark'], 'dark', { tier: 'bom' }),
+          createRolePick('Mega Raichu Y', ['electric'], 'electric', { tier: 'bom' }),
+          createRolePick('Pikachu', ['electric'], 'electric', { tier: 'bom' })
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark', { tier: 'muitobom' }),
+          createRolePick('Orthworm', ['steel'], 'ground', { tier: 'muitobom' }),
+          createRolePick('Seaking', ['water'], 'ground', { tier: 'muitobom' }),
+          createRolePick('Banette', ['ghost'], 'ghost', { tier: 'bom' }),
+          createRolePick('Drifloom', ['ghost', 'flying'], 'fire', { tier: 'bom' }),
+          createRolePick('BlastoiseTwo', ['water'], 'water', { tier: 'bom' }),
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric', { tier: 'bom' }),
+          createRolePick('Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water', { tier: 'bom' })
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire', { tier: 'muitobom' }),
+          createRolePick('Delphox', ['fire', 'psychic'], 'fire', { tier: 'muitobom' }),
+          createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire', { tier: 'muitobom' }),
+          createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark', { tier: 'muitobom' }),
+          createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' }),
+          createRolePick('Bouffalant', ['normal'], 'ground', { tier: 'bom' }),
+          createRolePick('Cramorant', ['flying', 'water'], 'water', { tier: 'bom' })
+        ]
+      }
+    }
+  }
+];
+
 const bossCatalogs = {
   hoopa: {
     id: 'hoopa',
@@ -2037,6 +2181,17 @@ const bossCatalogs = {
     summary: 'Abra um chefe do Mewtwo para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.',
     pills: ['Tanque / DPS / Suporte', 'Busca por Pokémon', 'Exemplos temporários'],
     data: mew2Bosses
+  },
+  special: {
+    id: 'special',
+    label: 'Ranger Bosses',
+    variant: 'hoopa',
+    searchEnabled: true,
+    introLines: [
+      'Clique em um chefe para ver apenas speedsters tier Bom ou maior por cla.',
+      'A lista considera ATK do moveset do speedster contra a tipagem do boss e DEF contra o moveset do boss.'
+    ],
+    data: specialBossesData
   },
   planner: {
     id: 'planner',
@@ -2069,6 +2224,11 @@ const bossModeAliases = Object.freeze({
   'champion-path': 'champion',
   mew2: 'mew2',
   mewtwo: 'mew2',
+  special: 'special',
+  especiais: 'special',
+  'bosses-especiais': 'special',
+  'ranger-bosses': 'special',
+  ranger: 'special',
   planner: 'planner',
   planejador: 'planner'
   ,horizons: 'horizons'
@@ -2078,6 +2238,7 @@ const standaloneBossModePages = Object.freeze({
   hoopa: 'hoopa-portais.html',
   champion: 'champion-path.html',
   mew2: 'mewtwo.html',
+  special: 'ranger-bosses.html',
   planner: 'planejador.html'
   ,horizons: 'horizons.html'
 });
@@ -2112,7 +2273,7 @@ function normalizeBossMode(mode) {
 }
 
 function isBossRouteableMode(mode) {
-  return ['hoopa', 'champion', 'mew2'].includes(normalizeBossMode(mode));
+  return ['hoopa', 'champion', 'mew2', 'special'].includes(normalizeBossMode(mode));
 }
 
 function normalizeBossRouteSlug(value) {
@@ -2129,6 +2290,7 @@ function getBossRouteBasePath(mode = activeBossMode) {
   const normalizedMode = normalizeBossMode(mode) || 'hoopa';
   if (normalizedMode === 'champion') return '/champion';
   if (normalizedMode === 'mew2') return '/mewtwo';
+  if (normalizedMode === 'special') return '/ranger-bosses';
   return '/hoopa';
 }
 
@@ -2149,7 +2311,7 @@ function findBossByRouteSlug(mode = activeBossMode, slug = '') {
 function getBossLocationImageSource(boss) {
   if (!boss || typeof boss !== 'object') return '';
   const locationImage = String(boss.locationImage || boss.image || '').trim();
-  return locationImage ? basePath + locationImage : '';
+  return locationImage ? resolveBossAssetSrc(locationImage) : '';
 }
 
 function isLocationOverlayOpen() {
@@ -2258,6 +2420,8 @@ function getStandaloneBossModePath(mode) {
     currentFile === 'hoopa-portais.html' ||
     currentFile === 'champion-path.html' ||
     currentFile === 'mewtwo.html' ||
+    currentFile === 'bosses-especiais.html' ||
+    currentFile === 'ranger-bosses.html' ||
     currentFile === 'planejador.html'
   ) {
     segments[segments.length - 1] = targetFile;
@@ -2670,6 +2834,8 @@ const mirroredRecommendationVariantNames = Object.freeze({
   miltank: 'Shiny Miltank'
 });
 
+const megaAbsolZMovesetNote = 'Possui moveset Dark e um ataque que muda seu moveset para Fairy.';
+
 function getImplicitRecommendationProfile(poke) {
   const nameKey = getRecommendationNameKey(poke);
 
@@ -2716,13 +2882,18 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'megaabsolz' || nameKey === 'shinymegaabsolz') {
+    return {
+      passiveName: 'Super Luck',
+      passiveDescription: `Ao atacar fisicamente tem chance de conceder um bonus de 20% de forca para a proxima habilidade. So pode ocorrer uma vez a cada 20 segundos. ${megaAbsolZMovesetNote}`
+    };
+  }
+
   if (
     nameKey === 'absol' ||
     nameKey === 'shinyabsol' ||
     nameKey === 'megaabsol' ||
-    nameKey === 'shinymegaabsol' ||
-    nameKey === 'megaabsolz' ||
-    nameKey === 'shinymegaabsolz'
+    nameKey === 'shinymegaabsol'
   ) {
     return {
       passiveName: 'Super Luck',
@@ -3831,11 +4002,170 @@ const bossTutorialLinks = Object.freeze({
   // 'mega-staraptor': 'https://www.youtube.com/watch?v=...'
 });
 
-const basePath = (() => {
+function isBossesStandaloneAssetContext() {
   const p = location.pathname.toLowerCase();
-  if (p.includes('/bosses')) return '';
-  return 'bosses/';
+  return /(?:^|\/)bosses(?:\/|$)/.test(p.replace(/\/index\.html?$/i, '/'));
+}
+
+const basePath = (() => {
+  return isBossesStandaloneAssetContext() ? '' : 'bosses/';
 })();
+
+const bossPokemonAssetAliases = Object.freeze({
+  'absol.png': 'pokemons/3gen/absol.png',
+  'aegislash.png': 'pokemons/6gen/aegislash.png',
+  'alakazam.png': 'pokemons/1gen/alakazam.png',
+  'appletun.png': 'pokemons/8gen/appletun.png',
+  'armarouge.png': 'pokemons/9gen/armarouge.png',
+  'banette.png': 'pokemons/3gen/banette.png',
+  'bastiodon.png': 'pokemons/4gen/bastiodon.png',
+  'bellossom.png': 'pokemons/2gen/bellossom.png',
+  'blastoise.png': 'pokemons/1gen/blastoise.png',
+  'blastoisetwo.png': 'pokemons/1gen/blastoisetwo.png',
+  'blissey.png': 'pokemons/2gen/blissey.png',
+  'bouffalant.png': 'pokemons/5gen/bouffalant.png',
+  'bronzong.png': 'pokemons/4gen/bronzong.png',
+  'carracosta.png': 'pokemons/5gen/carracosta.png',
+  'charizard.png': 'pokemons/1gen/charizard.png',
+  'chesnaught.png': 'pokemons/6gen/chesnaught.png',
+  'claydol.png': 'pokemons/3gen/claydol.png',
+  'clefable.png': 'pokemons/1gen/clefable.png',
+  'comfey.png': 'pokemons/7gen/comfey.png',
+  'conkeldurr.png': 'pokemons/5gen/conkeldurr.png',
+  'dachsbun.png': 'pokemons/9gen/dachsbun.png',
+  'dedenne.png': 'pokemons/6gen/dedenne.png',
+  'delphox.png': 'pokemons/6gen/delphox.png',
+  'dewgong.png': 'pokemons/1gen/dewgong.png',
+  'dragonair.png': 'pokemons/1gen/dragonair.png',
+  'drifblim.png': 'pokemons/4gen/drifblim.png',
+  'drifloon.png': 'pokemons/4gen/drifloon.png',
+  'dugtrio.png': 'pokemons/1gen/dugtrio.png',
+  'duraludon.png': 'pokemons/8gen/duraludon.png',
+  'dusclops.png': 'pokemons/3gen/dusclops.png',
+  'electrode.png': 'pokemons/1gen/electrode.png',
+  'excadrill.png': 'pokemons/5gen/excadrill.png',
+  'farfetchd.png': 'pokemons/1gen/farfetchd.png',
+  'fidough.png': 'pokemons/9gen/fidough.png',
+  'flying-cramorant.png': 'pokemons/8gen/flying-cramorant.png',
+  'frosmoth.png': 'pokemons/8gen/frosmoth.png',
+  'garbodor.png': 'pokemons/5gen/garbodor.png',
+  'goodra.png': 'pokemons/6gen/goodra.png',
+  'greninja.png': 'pokemons/6gen/greninja.png',
+  'hawlucha.png': 'pokemons/6gen/hawlucha.png',
+  'heracross.png': 'pokemons/2gen/heracross.png',
+  'hydrapple.png': 'pokemons/9gen/hydrapple.png',
+  'hitmonchan.png': 'pokemons/1gen/hitmonchan.png',
+  'jynx.png': 'pokemons/1gen/jynx.png',
+  'kabutops.png': 'pokemons/1gen/kabutops.png',
+  'kadabra.png': 'pokemons/1gen/kadabra.png',
+  'kingdra.png': 'pokemons/2gen/kingdra.png',
+  'kirlia.png': 'pokemons/3gen/kirlia.png',
+  'lombre.png': 'pokemons/3gen/lombre.png',
+  'lopunny.png': 'pokemons/4gen/lopunny.png',
+  'lurantis.png': 'pokemons/7gen/lurantis.png',
+  'machamp.png': 'pokemons/1gen/machamp.png',
+  'magcargo.png': 'pokemons/2gen/magcargo.png',
+  'magnezone.png': 'pokemons/4gen/magnezone.png',
+  'mantine.png': 'pokemons/2gen/mantine.png',
+  'marowak.png': 'pokemons/1gen/marowak.png',
+  'may-beautifly.png': 'pokemons/3gen/may-beautifly.png',
+  'mega-absol.png': 'pokemons/megas/mega-absol.png',
+  'mega-absol-z.png': 'pokemons/megas/mega-absol-z.png',
+  'mega-aerodactyl.png': 'pokemons/megas/mega-aerodactyl.png',
+  'mega-aggron.png': 'pokemons/megas/mega-aggron.png',
+  'mega-banette.png': 'pokemons/megas/mega-banette.png',
+  'mega-chandelure.png': 'pokemons/megas/mega-chandelure.png',
+  'mega-clefable.png': 'pokemons/megas/mega-clefable.png',
+  'mega-dragonite.png': 'pokemons/megas/mega-dragonite.png',
+  'mega-feraligatr.png': 'pokemons/megas/mega-feraligatr.png',
+  'mega-garchomp.png': 'pokemons/megas/mega-garchomp.png',
+  'mega-gardevoir.png': 'pokemons/megas/mega-gardevoir.png',
+  'mega-golisopod.png': 'pokemons/megas/mega-golisopod.png',
+  'mega-gyarados.png': 'pokemons/megas/mega-gyarados.png',
+  'mega-hawlucha.png': 'pokemons/megas/mega-hawlucha.png',
+  'mega-houndoom.png': 'pokemons/megas/mega-houndoom.png',
+  'mega-lucario.png': 'pokemons/megas/mega-lucario.png',
+  'mega-lucario-z.png': 'pokemons/megas/mega-lucario-z.png',
+  'mega-meganium.png': 'pokemons/megas/mega-meganium.png',
+  'mega-metagross.png': 'pokemons/megas/mega-metagross.png',
+  'mega-raichu-x.png': 'pokemons/megas/mega-raichu-x.png',
+  'mega-raichu-y.png': 'pokemons/megas/mega-raichu-y.png',
+  'mega-salamence.png': 'pokemons/megas/mega-salamence.png',
+  'mega-sceptile.png': 'pokemons/megas/mega-sceptile.png',
+  'mega-scizor.png': 'pokemons/megas/mega-scizor.png',
+  'mega-scolipede.png': 'pokemons/megas/mega-scolipede.png',
+  'mega-skarmory.png': 'pokemons/megas/mega-skarmory.png',
+  'mega-starmie.png': 'pokemons/megas/mega-starmie.png',
+  'mega-tyranitar.png': 'pokemons/megas/mega-tyranitar.png',
+  'megachesnaught.png': 'pokemons/megas/megachesnaught.png',
+  'megadelphox.png': 'pokemons/megas/megadelphox.png',
+  'megagreninja.png': 'pokemons/megas/megagreninja.png',
+  'megamalamar.png': 'pokemons/megas/megamalamar.png',
+  'megastaraptor.png': 'pokemons/megas/megastaraptor.png',
+  'megavictreebel.png': 'pokemons/megas/megavictreebel.png',
+  'mewtwo.png': 'pokemons/1gen/mewtwo.png',
+  'miltank.png': 'pokemons/2gen/miltank.png',
+  'misdreavus.png': 'pokemons/2gen/misdreavus.png',
+  'nosepass.png': 'pokemons/3gen/nosepass.png',
+  'onix.png': 'pokemons/1gen/onix.png',
+  'orbeetle.png': 'pokemons/8gen/orbeetle.png',
+  'orthworm.png': 'pokemons/9gen/orthworm.png',
+  'pachirisu.png': 'pokemons/4gen/pachirisu.png',
+  'pikachu.png': 'pokemons/1gen/pikachu.png',
+  'pinsir.png': 'pokemons/1gen/pinsir.png',
+  'politoed.png': 'pokemons/2gen/politoed.png',
+  'ponyta.png': 'pokemons/1gen/ponyta.png',
+  'porygon2.png': 'pokemons/2gen/porygon2.png',
+  'primeape.png': 'pokemons/1gen/primeape.png',
+  'probopass.png': 'pokemons/4gen/probopass.png',
+  'pyroar-female.png': 'pokemons/6gen/pyroar-female.png',
+  'qwilfish.png': 'pokemons/2gen/qwilfish.png',
+  'ribombee.png': 'pokemons/7gen/ribombee.png',
+  'sableye.png': 'pokemons/3gen/sableye.png',
+  'scizor.png': 'pokemons/2gen/scizor.png',
+  'scolipede.png': 'pokemons/5gen/scolipede.png',
+  'scyther.png': 'pokemons/1gen/scyther.png',
+  'seaking.png': 'pokemons/1gen/seaking.png',
+  'serperior.png': 'pokemons/5gen/serperior.png',
+  'seviper.png': 'pokemons/3gen/seviper.png',
+  'shieldon.png': 'pokemons/4gen/shieldon.png',
+  'shiftry.png': 'pokemons/3gen/shiftry.png',
+  'shiny-bronzong.png': 'pokemons/4gen/shiny-bronzong.png',
+  'shuckle.png': 'pokemons/2gen/shuckle.png',
+  'smoochum.png': 'pokemons/2gen/smoochum.png',
+  'tangrowth.png': 'pokemons/4gen/tangrowth.png',
+  'tauros.png': 'pokemons/1gen/tauros.png',
+  'toxapex.png': 'pokemons/7gen/toxapex.png',
+  'torkoal.png': 'pokemons/3gen/torkoal.png',
+  'venusaur.png': 'pokemons/1gen/venusaur.png',
+  'water-cramorant.png': 'pokemons/8gen/water-cramorant.png',
+  'weavile.png': 'pokemons/4gen/weavile.png',
+  'weezing.png': 'pokemons/1gen/weezing.png',
+  'wobbuffet.png': 'pokemons/2gen/wobbuffet.png',
+  'wynaut.png': 'pokemons/3gen/wynaut.png',
+  'zoroark.png': 'pokemons/5gen/zoroark.png',
+  'zorua.png': 'pokemons/5gen/zorua.png'
+});
+
+function normalizeBossAssetPath(assetPath) {
+  const rawPath = String(assetPath || '').trim().replace(/\\/g, '/');
+  if (!rawPath) return '';
+  if (/^(?:https?:)?\/\//i.test(rawPath) || /^(?:data|blob):/i.test(rawPath)) return rawPath;
+
+  const fileName = rawPath.split('/').pop().toLowerCase();
+  return bossPokemonAssetAliases[fileName] || rawPath;
+}
+
+function resolveBossAssetSrc(assetPath) {
+  const normalizedPath = normalizeBossAssetPath(assetPath);
+  if (!normalizedPath) return '';
+  if (/^(?:https?:)?\/\//i.test(normalizedPath) || /^(?:data|blob):/i.test(normalizedPath)) return normalizedPath;
+  if (/^(?:\/|\.\/|\.\.\/)/.test(normalizedPath)) return normalizedPath;
+  if (/^(?:pokemons|pokemon)\//i.test(normalizedPath)) {
+    return basePath ? normalizedPath : `../${normalizedPath}`;
+  }
+  return basePath + normalizedPath;
+}
 
 function toggleBossMegaFileNameStyle(fileName) {
   const match = /^mega(-?)(.+)\.(png|jpe?g|webp|gif|svg)$/i.exec(String(fileName || '').trim());
@@ -3905,8 +4235,7 @@ document.addEventListener('error', (event) => {
 }, true);
 
 const iconBase = (() => {
-  const p = location.pathname.toLowerCase();
-  return (p.includes('/bosses') ? '../' : '') + 'icons-type/';
+  return (isBossesStandaloneAssetContext() ? '../' : '') + 'icons-type/';
 })();
 
 // Type effectiveness tables (from types.json)
@@ -4924,6 +5253,173 @@ function getAllRecommendedForClan(boss, clanData) {
   return dedupeRecommendedPicksByName(picks || []);
 }
 
+const pokemonBossUsageCatalogIds = Object.freeze(['hoopa', 'champion', 'mew2']);
+const pokemonBossUsageClanOrder = Object.freeze(['instinct', 'mystic', 'valor']);
+const pokemonBossUsageShortLabels = Object.freeze({
+  hoopa: 'Hoopa',
+  champion: 'Champion',
+  mew2: 'Mewtwo'
+});
+
+function getPokemonBossUsageMatchKeys(pokemonName) {
+  const rawName = String(pokemonName || '').trim();
+  const keys = new Set();
+  const addKey = (value) => {
+    const key = getRecommendationNameKey(value);
+    if (key) keys.add(key);
+  };
+
+  addKey(rawName);
+  addKey(rawName.replace(/^shiny\s+/i, ''));
+  return keys;
+}
+
+function isRecommendationPickUsedByPokemon(pick, matchKeys) {
+  if (!pick || !matchKeys?.size) return false;
+  const rawName = String(pick.name || '').trim();
+  const pickKey = getRecommendationNameKey(rawName);
+  if (pickKey && matchKeys.has(pickKey)) return true;
+
+  if (/^shiny\s+/i.test(rawName)) {
+    const baseKey = getRecommendationNameKey(rawName.replace(/^shiny\s+/i, ''));
+    if (baseKey && matchKeys.has(baseKey)) return true;
+  }
+
+  return false;
+}
+
+function getPokemonBossUsageCatalogOrder(mode) {
+  const index = pokemonBossUsageCatalogIds.indexOf(String(mode || '').trim().toLowerCase());
+  return index === -1 ? pokemonBossUsageCatalogIds.length : index;
+}
+
+function getPokemonBossUsageClanOrder(clanKey) {
+  const index = pokemonBossUsageClanOrder.indexOf(String(clanKey || '').trim().toLowerCase());
+  return index === -1 ? pokemonBossUsageClanOrder.length : index;
+}
+
+function getPokemonBossUsageRoleOrder(roleKey) {
+  const index = roleboardRoleOrder.indexOf(String(roleKey || '').trim().toLowerCase());
+  return index === -1 ? roleboardRoleOrder.length : index;
+}
+
+function createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, options = {}) {
+  const mode = String(catalog?.id || '').trim().toLowerCase();
+  const bossSlug = getBossRouteSlug(boss);
+  if (!mode || !bossSlug) return null;
+
+  const roleKey = String(options.roleKey || '').trim().toLowerCase();
+  const tier = normalizeTierKey(pick?.tier);
+  const groupTitle = String(options.groupTitle || '').trim();
+  const bossImage = String(options.bossImage || boss?.image || '').trim();
+
+  return {
+    mode,
+    contentLabel: catalog?.label || 'Bosses',
+    shortContentLabel: pokemonBossUsageShortLabels[mode] || catalog?.label || 'Boss',
+    bossName: boss?.name || bossSlug,
+    bossSlug,
+    image: bossImage ? resolveBossAssetSrc(bossImage) : '',
+    url: `${getBossRouteBasePath(mode)}/${bossSlug}`,
+    clanKey,
+    clanLabel: clanData?.label || (clanKey ? clanKey.charAt(0).toUpperCase() + clanKey.slice(1) : 'Cla'),
+    roleKey,
+    roleLabel: roleKey ? (roleboardRoleLabels[roleKey] || roleKey) : '',
+    groupTitle: groupTitle && getRecommendationNameKey(groupTitle) !== getRecommendationNameKey(boss?.name)
+      ? groupTitle
+      : '',
+    tier,
+    tierLabel: tierLabels[tier] || tierLabels.seminformacao,
+    pickName: pick?.name || ''
+  };
+}
+
+function addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, pick, options = {}) {
+  const record = createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, options);
+  if (!record) return;
+
+  const recordKey = [
+    record.mode,
+    record.bossSlug,
+    record.clanKey,
+    record.roleKey,
+    getRecommendationNameKey(record.groupTitle),
+    getRecommendationNameKey(record.pickName)
+  ].join('|');
+  if (seen.has(recordKey)) return;
+
+  seen.add(recordKey);
+  usages.push(record);
+}
+
+function collectPokemonBossUsagesFromRoleboard(usages, seen, catalog, boss, clanKey, clanData, matchKeys) {
+  roleboardRoleOrder.forEach((roleKey) => {
+    const ranked = rankRecommendedForBoss(
+      boss,
+      getFixedRecommendationRolePicks(boss, clanKey, roleKey)
+    );
+
+    ranked.forEach((pick) => {
+      if (!isRecommendationPickUsedByPokemon(pick, matchKeys)) return;
+      addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, pick, { roleKey });
+    });
+  });
+}
+
+function collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey, clanData, matchKeys) {
+  const groups = getRecommendationGroupsForClan(boss, clanData);
+  const hasMultipleGroups = groups.length > 1;
+
+  groups.forEach((group) => {
+    const ranked = rankRecommendedForBoss(group.boss, group.recommended || []);
+    ranked.forEach((pick) => {
+      if (!isRecommendationPickUsedByPokemon(pick, matchKeys)) return;
+      addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, pick, {
+        bossImage: group.bossImage || boss.image,
+        groupTitle: hasMultipleGroups ? group.title : ''
+      });
+    });
+  });
+}
+
+function getPokemonBossUsages(pokemonName) {
+  const matchKeys = getPokemonBossUsageMatchKeys(pokemonName);
+  if (!matchKeys.size) return [];
+
+  const usages = [];
+  const seen = new Set();
+
+  pokemonBossUsageCatalogIds.forEach((catalogId) => {
+    const catalog = bossCatalogs[catalogId];
+    (catalog?.data || []).forEach((boss) => {
+      pokemonBossUsageClanOrder.forEach((clanKey) => {
+        const clanData = boss?.clans?.[clanKey];
+        if (!clanData) return;
+
+        if (clanData.roles) {
+          collectPokemonBossUsagesFromRoleboard(usages, seen, catalog, boss, clanKey, clanData, matchKeys);
+          return;
+        }
+
+        collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey, clanData, matchKeys);
+      });
+    });
+  });
+
+  return usages.sort((left, right) => (
+    getPokemonBossUsageCatalogOrder(left.mode) - getPokemonBossUsageCatalogOrder(right.mode)
+    || String(left.bossName || '').localeCompare(String(right.bossName || ''))
+    || getPokemonBossUsageClanOrder(left.clanKey) - getPokemonBossUsageClanOrder(right.clanKey)
+    || getPokemonBossUsageRoleOrder(left.roleKey) - getPokemonBossUsageRoleOrder(right.roleKey)
+    || String(left.groupTitle || '').localeCompare(String(right.groupTitle || ''))
+    || String(left.pickName || '').localeCompare(String(right.pickName || ''))
+  ));
+}
+
+if (typeof window !== 'undefined') {
+  window.getPokemonBossUsages = getPokemonBossUsages;
+}
+
 function pickBetterTier(currentTier, nextTier) {
   const normalizedCurrentTier = normalizeTierKey(currentTier);
   const normalizedNextTier = normalizeTierKey(nextTier);
@@ -5356,6 +5852,55 @@ function createShinyMiltankPick() {
   return createRolePick('Shiny Miltank', ['normal'], 'ground');
 }
 
+function getMegaAbsolZMoveTypeForBoss(bossRef) {
+  const targetTypes = getBossOffenseTargetTypes(bossRef);
+  if (!targetTypes.length) return 'dark';
+
+  const darkDamage = getTypeMultiplier('dark', targetTypes);
+  const fairyDamage = getTypeMultiplier('fairy', targetTypes);
+  return fairyDamage > darkDamage ? 'fairy' : 'dark';
+}
+
+function createMegaAbsolZPickForBoss(bossRef) {
+  const moveType = getMegaAbsolZMoveTypeForBoss(bossRef);
+  const pick = createRolePick('Mega Absol Z', ['dark'], moveType, {
+    note: megaAbsolZMovesetNote
+  });
+  pick.description = `Tipo move: ${moveType === 'fairy' ? 'Fairy' : 'Dark'}.`;
+  return pick;
+}
+
+function upsertRolePickByName(list = [], pick, roleKey = '') {
+  if (!Array.isArray(list) || !pick) return;
+
+  const nameKey = getRecommendationNameKey(pick);
+  if (!nameKey) return;
+
+  const normalizedRoleKey = normalizeRecommendationRoleKey(roleKey || list[0]?.recommendedRole);
+  const nextPick = assignRecommendationRoleToPick(cloneRolePickConfig(pick), normalizedRoleKey);
+  const existingIndex = list.findIndex((entry) => getRecommendationNameKey(entry) === nameKey);
+
+  if (existingIndex >= 0) {
+    list[existingIndex] = nextPick;
+    return;
+  }
+
+  list.push(nextPick);
+}
+
+function removeRolePickByName(list = [], name) {
+  if (!Array.isArray(list)) return;
+
+  const nameKey = getRecommendationNameKey(name);
+  if (!nameKey) return;
+
+  for (let index = list.length - 1; index >= 0; index -= 1) {
+    if (getRecommendationNameKey(list[index]) === nameKey) {
+      list.splice(index, 1);
+    }
+  }
+}
+
 function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
@@ -5377,6 +5922,19 @@ function addMiltankIfCompatible(bossRef, picks = [], roleKey = '') {
   if (priority > tierPriority.bom) return;
 
   ensureRolePickNames(picks, [scored, shinyScored], roleKey);
+}
+
+function addMegaAbsolZIfCompatible(bossRef, picks = [], roleKey = '') {
+  if (!Array.isArray(picks)) return;
+
+  const scored = scoreRecommendationForBoss(bossRef, createMegaAbsolZPickForBoss(bossRef), { roleKey });
+  const priority = getRecommendationTierPriority(scored?.tier);
+  if (priority > tierPriority.bom) {
+    removeRolePickByName(picks, 'Mega Absol Z');
+    return;
+  }
+
+  upsertRolePickByName(picks, scored, roleKey);
 }
 
 function injectHeracrossRecommendations() {
@@ -5402,6 +5960,29 @@ function injectHeracrossRecommendations() {
   });
 }
 
+function injectMegaAbsolZRecommendations() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog.data || []).forEach((boss) => {
+      const valorClan = boss?.clans?.valor;
+      if (!valorClan) return;
+
+      if (Array.isArray(valorClan.recommended)) {
+        addMegaAbsolZIfCompatible(boss, valorClan.recommended);
+      }
+
+      if (Array.isArray(valorClan.recommendationGroups)) {
+        valorClan.recommendationGroups.forEach((group) => {
+          addMegaAbsolZIfCompatible(getRecommendationGroupBossRef(boss, group), group.recommended);
+        });
+      }
+
+      if (Array.isArray(valorClan.roles?.dps)) {
+        addMegaAbsolZIfCompatible(boss, valorClan.roles.dps, 'dps');
+      }
+    });
+  });
+}
+
 function injectMiltankRecommendations() {
   Object.values(bossCatalogs).forEach((catalog) => {
     (catalog.data || []).forEach((boss) => {
@@ -5415,6 +5996,7 @@ function injectMiltankRecommendations() {
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
 injectMiltankRecommendations();
+injectMegaAbsolZRecommendations();
 normalizeAllBossRecommendationAssignments();
 applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
@@ -5768,6 +6350,7 @@ function hideBossModalUi() {
     modal.setAttribute('data-open', 'false');
     modal.setAttribute('aria-hidden', 'true');
     try { modal.removeAttribute('data-mode'); } catch (e) {}
+    try { modal.removeAttribute('data-overlay-parent'); } catch (e) {}
   }
   if (document.body) {
     document.body.style.overflow = '';
@@ -5780,6 +6363,19 @@ function hideBossModalUi() {
   try { content?.classList.remove('speedster-modal-content--search-results'); } catch (e) {}
   try { content?.classList.remove('speedster-modal-content--roleboard'); } catch (e) {}
   closeLocationOverlay({ skipHistory: true });
+}
+
+function setBossModalOverlayParent(parent) {
+  if (!modal) return;
+  const normalizedParent = String(parent || '').trim().toLowerCase();
+  if (normalizedParent === 'pokemon') {
+    if (document.body && modal !== document.body.lastElementChild) {
+      document.body.appendChild(modal);
+    }
+    modal.setAttribute('data-overlay-parent', 'pokemon');
+    return;
+  }
+  modal.removeAttribute('data-overlay-parent');
 }
 
 function formatTypeLabel(type) {
@@ -6703,9 +7299,7 @@ function createPlannerConsumableToken(kind, entry, tone = 'selected') {
   if (normalizedEntry.image) {
     const image = document.createElement('img');
     image.className = 'planner-consumable-token__image';
-    image.src = /^(?:https?:)?\/\//i.test(normalizedEntry.image)
-      ? normalizedEntry.image
-      : basePath + normalizedEntry.image;
+    image.src = resolveBossAssetSrc(normalizedEntry.image);
     image.alt = '';
     image.setAttribute('aria-hidden', 'true');
     image.loading = 'lazy';
@@ -6737,7 +7331,7 @@ function createPlannerBossPickerCard(bossEntry, isAdded) {
 
   const image = document.createElement('img');
   image.className = 'planner-boss-picker__image';
-  image.src = basePath + bossEntry.image;
+  image.src = resolveBossAssetSrc(bossEntry.image);
   image.alt = bossEntry.name;
   image.loading = 'lazy';
 
@@ -6826,7 +7420,7 @@ function createPlannerRecommendationCard(plannerEntry, bossEntry, roleKey, pick)
 
   const image = document.createElement('img');
   image.className = 'planner-recommendation-card__image';
-  image.src = basePath + (pick.image || '');
+  image.src = resolveBossAssetSrc(pick.image || '');
   image.alt = pick.name;
   image.loading = 'lazy';
 
@@ -6956,7 +7550,7 @@ function createPlannerRoleSlot(plannerEntry, bossEntry, roleKey) {
 
     const icon = document.createElement('img');
     icon.className = 'planner-clan-filter__icon';
-    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
     icon.alt = '';
     icon.setAttribute('aria-hidden', 'true');
     icon.loading = 'lazy';
@@ -7088,7 +7682,7 @@ function createPlannerCompositionCard(plannerEntry) {
 
   const image = document.createElement('img');
   image.className = 'planner-composition-card__image';
-  image.src = basePath + bossEntry.image;
+  image.src = resolveBossAssetSrc(bossEntry.image);
   image.alt = bossEntry.name;
   image.loading = 'lazy';
 
@@ -7291,7 +7885,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
       }
       if (option.image) {
         const img = document.createElement('img');
-        img.src = basePath + option.image;
+        img.src = resolveBossAssetSrc(option.image);
         img.alt = option.label || '';
         img.loading = 'lazy';
         img.className = 'planner-ready-member-card__consumable-image';
@@ -7317,7 +7911,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
       }
       if (option.image) {
         const img = document.createElement('img');
-        img.src = basePath + option.image;
+        img.src = resolveBossAssetSrc(option.image);
         img.alt = option.label || '';
         img.loading = 'lazy';
         img.className = 'planner-ready-member-card__consumable-image';
@@ -7338,7 +7932,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
   const avatarWrap = document.createElement('div');
   avatarWrap.className = 'planner-ready-member-card__avatar';
   const avatarImg = document.createElement('img');
-  avatarImg.src = basePath + bossEntry.image;
+  avatarImg.src = resolveBossAssetSrc(bossEntry.image);
   avatarImg.alt = bossEntry.name;
   avatarImg.loading = 'lazy';
   avatarWrap.appendChild(avatarImg);
@@ -7365,7 +7959,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
 
     const pickImg = document.createElement('img');
     pickImg.className = 'planner-ready-member-card__pick-image';
-    pickImg.src = basePath + (pick.image || '');
+    pickImg.src = resolveBossAssetSrc(pick.image || '');
     pickImg.alt = pick.name;
     pickImg.loading = 'lazy';
     const pickLabel = document.createElement('div');
@@ -7661,7 +8255,7 @@ function createPlannerMemberEditRecommendationCard(bossEntry, roleKey, activeCla
 
   const image = document.createElement('img');
   image.className = 'planner-recommendation-card__image';
-  image.src = basePath + pick.image;
+  image.src = resolveBossAssetSrc(pick.image);
   image.alt = pick.name;
   image.loading = 'lazy';
   const content = document.createElement('div');
@@ -7788,7 +8382,7 @@ function createPlannerMemberEditRoleSlot(bossEntry, roleKey, draft) {
 
     const icon = document.createElement('img');
     icon.className = 'planner-clan-filter__icon';
-    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
     icon.alt = '';
     icon.setAttribute('aria-hidden', 'true');
     icon.loading = 'lazy';
@@ -7905,7 +8499,7 @@ function renderPlannerMemberEditModalBody() {
 
   const bossImage = document.createElement('img');
   bossImage.className = 'planner-edit-modal__boss-image';
-  bossImage.src = basePath + bossEntry.image;
+  bossImage.src = resolveBossAssetSrc(bossEntry.image);
   bossImage.alt = bossEntry.name;
   bossImage.loading = 'lazy';
   const bossCopy = document.createElement('div');
@@ -8430,7 +9024,7 @@ function makeHoopaBossCard(speedster) {
 
   const img = document.createElement('img');
   img.className = 'speedster-image';
-  img.src = basePath + speedster.image;
+  img.src = resolveBossAssetSrc(speedster.image);
   img.alt = speedster.name;
   img.loading = 'lazy';
 
@@ -8450,7 +9044,7 @@ function makeHoopaBossCard(speedster) {
       : (Array.isArray(speedster.types) ? speedster.types : []);
     const bossImg = document.createElement('img');
     bossImg.className = 'speedster-image';
-    bossImg.src = basePath + b.image;
+    bossImg.src = resolveBossAssetSrc(b.image);
     bossImg.alt = b.name;
     bossImg.loading = 'lazy';
     imageWrapper.appendChild(bossImg);
@@ -8485,7 +9079,7 @@ function makeHoopaBossCard(speedster) {
 
   const tutorialIcon = document.createElement('img');
   tutorialIcon.className = 'speedster-tutorial-icon';
-  tutorialIcon.src = basePath + 'youtube.png';
+  tutorialIcon.src = resolveBossAssetSrc('youtube.png');
   tutorialIcon.alt = '';
   tutorialIcon.setAttribute('aria-hidden', 'true');
 
@@ -8623,7 +9217,7 @@ function createRoleBossAvatar(boss) {
 
   const image = document.createElement('img');
   image.className = 'boss-role-card__avatar-image';
-  image.src = basePath + (boss.image || `${boss.id}.png`);
+  image.src = resolveBossAssetSrc(boss.image || `${boss.id}.png`);
   image.alt = boss.name;
   image.loading = 'lazy';
   const fallback = document.createElement('span');
@@ -8691,9 +9285,7 @@ function createBossConsumableBadge(kind, entry) {
   if (normalizedEntry.image) {
     const image = document.createElement('img');
     image.className = 'boss-role-card__consumable-icon';
-    image.src = /^(?:https?:)?\/\//i.test(normalizedEntry.image)
-      ? normalizedEntry.image
-      : basePath + normalizedEntry.image;
+    image.src = resolveBossAssetSrc(normalizedEntry.image);
     image.alt = '';
     image.setAttribute('aria-hidden', 'true');
     image.loading = 'lazy';
@@ -8741,7 +9333,7 @@ function makeRoleBossCard(boss) {
 
     const tutorialIcon = document.createElement('img');
     tutorialIcon.className = 'speedster-tutorial-icon';
-    tutorialIcon.src = basePath + 'youtube.png';
+    tutorialIcon.src = resolveBossAssetSrc('youtube.png');
     tutorialIcon.alt = '';
     tutorialIcon.setAttribute('aria-hidden', 'true');
 
@@ -8852,7 +9444,7 @@ function renderGrid() {
 function formatSearchLabel(speedster) {
   const sprite = document.createElement('img');
   sprite.className = 'speedster-search-item-icon';
-  sprite.src = basePath + (speedster.image || '');
+  sprite.src = resolveBossAssetSrc(speedster.image || '');
   sprite.alt = speedster.name;
   sprite.title = speedster.name;
   sprite.loading = 'lazy';
@@ -9158,7 +9750,7 @@ function createSpeedsterBossResultCard(boss, speedsterName) {
 
   const avatarImage = document.createElement('img');
   avatarImage.className = 'speedster-boss-result-card__avatar-image';
-  avatarImage.src = basePath + (boss.image || `${boss.id}.png`);
+  avatarImage.src = resolveBossAssetSrc(boss.image || `${boss.id}.png`);
   avatarImage.alt = boss.name;
   avatarImage.loading = 'lazy';
   avatar.appendChild(avatarImage);
@@ -9247,11 +9839,11 @@ function openSpeedsterBossesModal(speedster) {
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
   const pokemonImgRight = document.getElementById('modal-pokemon-img');
   if (pokemonImgLeft) {
-    pokemonImgLeft.src = basePath + (speedster.image || '');
+    pokemonImgLeft.src = resolveBossAssetSrc(speedster.image || '');
     pokemonImgLeft.alt = speedster.name;
   }
   if (pokemonImgRight) {
-    pokemonImgRight.src = basePath + (speedster.image || '');
+    pokemonImgRight.src = resolveBossAssetSrc(speedster.image || '');
     pokemonImgRight.alt = speedster.name;
   }
 
@@ -9460,7 +10052,7 @@ function createRecommendationCard(poke, options = {}) {
 
     const img = document.createElement('img');
     img.className = 'speedster-reco-image';
-    img.src = basePath + poke.image;
+    img.src = resolveBossAssetSrc(poke.image);
     img.alt = poke.name;
     img.loading = 'lazy';
     const body = document.createElement('div');
@@ -9556,7 +10148,7 @@ function createRecommendationCard(poke, options = {}) {
 
   const img = document.createElement('img');
   img.className = 'speedster-reco-image';
-  img.src = basePath + poke.image;
+  img.src = resolveBossAssetSrc(poke.image);
   img.alt = poke.name;
   img.loading = 'lazy';
 
@@ -9735,7 +10327,7 @@ function setModalChrome({ bosses = [], locationImage = '', showLocation = false,
   if (pokemonImgLeft) {
     const leftImage = leftEntry.image || '';
     pokemonImgLeft.hidden = !leftImage;
-    pokemonImgLeft.src = leftImage ? basePath + leftImage : '';
+    pokemonImgLeft.src = leftImage ? resolveBossAssetSrc(leftImage) : '';
     pokemonImgLeft.alt = leftEntry.name || '';
     pokemonImgLeft.onerror = () => {
       pokemonImgLeft.hidden = true;
@@ -9747,7 +10339,7 @@ function setModalChrome({ bosses = [], locationImage = '', showLocation = false,
   if (pokemonImgRight) {
     const rightImage = rightEntry?.image || '';
     pokemonImgRight.hidden = !rightImage;
-    pokemonImgRight.src = rightImage ? basePath + rightImage : '';
+    pokemonImgRight.src = rightImage ? resolveBossAssetSrc(rightImage) : '';
     pokemonImgRight.alt = rightEntry?.name || '';
     pokemonImgRight.onerror = () => {
       pokemonImgRight.hidden = true;
@@ -10075,7 +10667,8 @@ function setModalBossWeaknesses(source, options = {}) {
   surface.panel.hidden = false;
 }
 
-function openModalWithAnimation() {
+function openModalWithAnimation(options = {}) {
+  setBossModalOverlayParent(options?.overlayParent);
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -10103,7 +10696,7 @@ function createRolePickCard(poke) {
 
   const img = document.createElement('img');
   img.className = 'boss-role-pick-image';
-  img.src = basePath + poke.image;
+  img.src = resolveBossAssetSrc(poke.image);
   img.alt = poke.name;
   img.loading = 'lazy';
   const moveType = poke.moveType || poke._moveType || (Array.isArray(poke.types) ? poke.types[0] : null);
@@ -10276,7 +10869,7 @@ function createRolePickCard(poke) {
 }
 
 function openRoleBossModal(boss, options = {}) {
-  const { pushState = true } = options || {};
+  const { pushState = true, skipRouteSync = false } = options || {};
   setBossModalLayout(true);
   currentBoss = boss;
   modalTitle.textContent = boss.name;
@@ -10322,7 +10915,7 @@ function openRoleBossModal(boss, options = {}) {
 
     const icon = document.createElement('img');
     icon.className = 'boss-role-clan-icon';
-    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
     icon.alt = `${clanData.label || clanKey} icon`;
     icon.loading = 'lazy';
 
@@ -10378,8 +10971,12 @@ function openRoleBossModal(boss, options = {}) {
   });
 
   modalBody.appendChild(clanGrid);
-  openModalWithAnimation();
-  syncBossModalRouteOnOpen(pushState);
+  openModalWithAnimation(options);
+  if (skipRouteSync) {
+    bossModalHistoryPushed = false;
+  } else {
+    syncBossModalRouteOnOpen(pushState);
+  }
 }
 
 function openModal(speedster) {
@@ -10415,11 +11012,11 @@ function openModal(speedster) {
   const rightAlt = bosses[1]?.name || speedster.name;
 
   if (pokemonImgLeft) {
-    pokemonImgLeft.src = basePath + leftImage;
+    pokemonImgLeft.src = resolveBossAssetSrc(leftImage);
     pokemonImgLeft.alt = leftAlt;
   }
   if (pokemonImgRight) {
-    pokemonImgRight.src = basePath + rightImage;
+    pokemonImgRight.src = resolveBossAssetSrc(rightImage);
     pokemonImgRight.alt = rightAlt;
   }
 
@@ -10436,7 +11033,7 @@ function openModal(speedster) {
 
     const icon = document.createElement('img');
     icon.className = 'speedster-clan-icon-small';
-    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
     icon.alt = `${clanData?.label || clanKey} icon`;
     icon.loading = 'lazy';
 
@@ -10466,7 +11063,7 @@ const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(s
 
         const img = document.createElement('img');
         img.className = 'speedster-reco-image';
-        img.src = basePath + poke.image;
+        img.src = resolveBossAssetSrc(poke.image);
         img.alt = poke.name;
         img.loading = 'lazy';
 
@@ -10547,7 +11144,7 @@ function openBossModal(speedster) {
   setModalSubtitleText('');
   setModalChrome({
     bosses,
-    locationImage: basePath + (speedster.locationImage || speedster.image),
+    locationImage: resolveBossAssetSrc(speedster.locationImage || speedster.image),
     showLocation: true,
     showLegend: true,
     showImages: true
@@ -10577,11 +11174,11 @@ function openBossModal(speedster) {
   const rightAlt = bosses[1]?.name || speedster.name;
 
   if (pokemonImgLeft) {
-    pokemonImgLeft.src = basePath + leftImage;
+    pokemonImgLeft.src = resolveBossAssetSrc(leftImage);
     pokemonImgLeft.alt = leftAlt;
   }
   if (pokemonImgRight) {
-    pokemonImgRight.src = basePath + rightImage;
+    pokemonImgRight.src = resolveBossAssetSrc(rightImage);
     pokemonImgRight.alt = rightAlt;
   }
 
@@ -10603,7 +11200,7 @@ function openBossModal(speedster) {
 
     const icon = document.createElement('img');
     icon.className = 'speedster-clan-icon-small';
-    icon.src = basePath + (clanIcons[clanKey] || '');
+    icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
     icon.alt = `${clanData?.label || clanKey} icon`;
     icon.loading = 'lazy';
 
@@ -10640,7 +11237,7 @@ function openBossModal(speedster) {
 
           const groupImage = document.createElement('img');
           groupImage.className = 'speedster-reco-group-boss';
-          groupImage.src = basePath + (group.bossImage || speedster.image);
+          groupImage.src = resolveBossAssetSrc(group.bossImage || speedster.image);
           groupImage.alt = group.title;
           groupImage.loading = 'lazy';
           const groupTitle = document.createElement('div');
@@ -10684,7 +11281,7 @@ function openBossModal(speedster) {
 }
 
 function openBossModalV2(speedster, options = {}) {
-  const { pushState = true } = options || {};
+  const { pushState = true, skipRouteSync = false } = options || {};
   if (getActiveBossCatalog().variant === 'roleboard') {
     openRoleBossModal(speedster, options);
     return;
@@ -10725,11 +11322,11 @@ function openBossModalV2(speedster, options = {}) {
   const rightAlt = bosses[1]?.name || speedster.name;
 
   if (pokemonImgLeft) {
-    pokemonImgLeft.src = basePath + leftImage;
+    pokemonImgLeft.src = resolveBossAssetSrc(leftImage);
     pokemonImgLeft.alt = leftAlt;
   }
   if (pokemonImgRight) {
-    pokemonImgRight.src = basePath + rightImage;
+    pokemonImgRight.src = resolveBossAssetSrc(rightImage);
     pokemonImgRight.alt = rightAlt;
   }
 
@@ -10782,7 +11379,7 @@ function openBossModalV2(speedster, options = {}) {
 
       const image = document.createElement('img');
       image.className = 'speedster-variant-btn-image';
-      image.src = basePath + (choice.bossImage || speedster.image);
+      image.src = resolveBossAssetSrc(choice.bossImage || speedster.image);
       image.alt = choice.title;
       image.loading = 'lazy';
       const text = document.createElement('span');
@@ -10824,7 +11421,7 @@ function openBossModalV2(speedster, options = {}) {
 
       const icon = document.createElement('img');
       icon.className = 'speedster-clan-icon-small';
-      icon.src = basePath + (clanIcons[clanKey] || '');
+      icon.src = resolveBossAssetSrc(clanIcons[clanKey] || '');
       icon.alt = `${clanData?.label || clanKey} icon`;
       icon.loading = 'lazy';
 
@@ -10844,7 +11441,7 @@ function openBossModalV2(speedster, options = {}) {
 
         const targetImage = document.createElement('img');
         targetImage.className = 'speedster-clan-current-target-image';
-        targetImage.src = basePath + (activeGroup.bossImage || speedster.image);
+        targetImage.src = resolveBossAssetSrc(activeGroup.bossImage || speedster.image);
         targetImage.alt = activeGroup.title;
         targetImage.loading = 'lazy';
         const targetText = document.createElement('span');
@@ -10881,6 +11478,7 @@ function openBossModalV2(speedster, options = {}) {
 
   renderClanSections();
 
+  setBossModalOverlayParent(options?.overlayParent);
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -10893,7 +11491,11 @@ function openBossModalV2(speedster, options = {}) {
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
     );
   }
-  syncBossModalRouteOnOpen(pushState);
+  if (skipRouteSync) {
+    bossModalHistoryPushed = false;
+  } else {
+    syncBossModalRouteOnOpen(pushState);
+  }
 }
 
 function openBossModalByRouteSlug(mode, slug, options = {}) {
@@ -10902,7 +11504,10 @@ function openBossModalByRouteSlug(mode, slug, options = {}) {
   if (!boss) return false;
 
   if (activeBossMode !== normalizedMode) {
-    setBossMode(normalizedMode, { syncUrl: false });
+    setBossMode(normalizedMode, {
+      syncUrl: false,
+      render: options?.renderBossGrid !== false
+    });
   }
 
   openBossModalV2(boss, options);

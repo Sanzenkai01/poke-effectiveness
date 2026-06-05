@@ -124,6 +124,15 @@ const routes = [
     ]
   },
   {
+    path: '/ranger-bosses',
+    label: 'ranger-bosses',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="special"/i, description: 'special boss mode' },
+      { pattern: /Ranger Bosses/i, description: 'ranger bosses label' }
+    ]
+  },
+  {
     path: '/planejador',
     label: 'planejador',
     checks: [

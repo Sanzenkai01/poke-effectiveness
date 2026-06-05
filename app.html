@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260604a">
+  <link rel="stylesheet" href="styles.css?v=20260604h">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -140,25 +140,25 @@
             </a>
           </div>
           <div class="home-landing__quick-grid" role="group" aria-label="Atalhos do sistema">
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="commands">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="commands" data-nav-url="/comandos">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
               <span>Comandos</span>
             </button>
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="elemental-balls">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="elemental-balls" data-nav-url="/pokebolas">
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
                 <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
               </span>
               <span>Pokébolas</span>
             </button>
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="respawns">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="respawns" data-nav-url="/mapas">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
               <span>Mapas</span>
             </button>
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="full-map">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="full-map" data-nav-url="/mapa-completo">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;&#65039;</span>
               <span>Mapa Completo</span>
             </button>
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="fishing">
+            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="fishing" data-nav-url="/pescaria">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
               <span>Pescaria</span>
             </button>
@@ -253,6 +253,10 @@
               <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="mew2">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Mewtwo</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="special">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Ranger Bosses</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="planner">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
@@ -385,25 +389,25 @@
         <div class="sidebar-footer">
           <span class="sidebar-footer__eyebrow">Acesso rápido</span>
           <div class="sidebar-quick-links" role="group" aria-label="Atalhos do sistema">
-            <button class="sidebar-quick-link" type="button" data-nav-action="commands">
+            <button class="sidebar-quick-link" type="button" data-nav-action="commands" data-nav-url="/comandos">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
               <span>Comandos</span>
             </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls">
+            <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls" data-nav-url="/pokebolas">
               <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
                 <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
               </span>
               <span>Pokébolas</span>
             </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="respawns">
+            <button class="sidebar-quick-link" type="button" data-nav-action="respawns" data-nav-url="/mapas">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
               <span>Mapas</span>
             </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="full-map">
+            <button class="sidebar-quick-link" type="button" data-nav-action="full-map" data-nav-url="/mapa-completo">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;&#65039;</span>
               <span>Mapa Completo</span>
             </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="fishing">
+            <button class="sidebar-quick-link" type="button" data-nav-action="fishing" data-nav-url="/pescaria">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
               <span>Pescaria</span>
             </button>
@@ -1523,6 +1527,14 @@
             <div id="pokemon-details-weaknesses" class="pokemon-weakness-list"></div>
           </section>
 
+          <section id="pokemon-details-boss-usage-section" class="pokemon-details-modal__section pokemon-details-modal__section--boss-usage" aria-labelledby="pokemon-details-boss-usage-title" hidden>
+            <div class="pokemon-details-modal__section-head">
+              <span class="pokemon-details-modal__section-kicker">Bosses</span>
+              <p id="pokemon-details-boss-usage-title" class="pokemon-details-modal__subtitle">Onde usar</p>
+            </div>
+            <div id="pokemon-details-boss-usage" class="pokemon-boss-usage"></div>
+          </section>
+
           <section class="pokemon-details-modal__section pokemon-details-modal__section--averages" aria-labelledby="pokemon-details-averages-title">
             <div class="pokemon-details-modal__section-head">
               <span class="pokemon-details-modal__section-kicker">Médias</span>
@@ -1643,7 +1655,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260524a" defer></script>
     <script src="js/visits.shared.js?v=20260601b" defer></script>
-    <script src="script.js?v=20260604b" defer></script>
+    <script src="script.js?v=20260605b" defer></script>
 </body>
 </html>
 

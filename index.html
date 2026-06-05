@@ -32,9 +32,28 @@
             var params = new URLSearchParams(window.location.search);
             var tab = String(params.get('tab') || params.get('bossmode') || params.get('boss') || params.get('mode') || '').toLowerCase();
             var pokemonVariant = String(params.get('variant') || '').toLowerCase();
+            var quick = String(params.get('quick') || '').toLowerCase();
+            var quickRouteMap = {
+                commands: './comandos',
+                'elemental-balls': './pokebolas',
+                respawns: './mapas',
+                'full-map': './mapa-completo',
+                fishing: './pescaria'
+            };
             var routeMap = {
                 effectiveness: './tipos',
                 tipos: './tipos',
+                comandos: './comandos',
+                commands: './comandos',
+                pokebolas: './pokebolas',
+                'poke-bolas': './pokebolas',
+                'elemental-balls': './pokebolas',
+                mapas: './mapas',
+                respawns: './mapas',
+                'mapa-completo': './mapa-completo',
+                'full-map': './mapa-completo',
+                pescaria: './pescaria',
+                fishing: './pescaria',
                 fossils: './fossils',
                 fosseis: './fossils',
                 calculator: './treinamento',
@@ -53,16 +72,25 @@
                 'champion-path': './champion',
                 mewtwo: './mewtwo',
                 mew2: './mewtwo',
+                special: './ranger-bosses',
+                ranger: './ranger-bosses',
+                'ranger-bosses': './ranger-bosses',
+                especiais: './ranger-bosses',
+                'bosses-especiais': './ranger-bosses',
                 planejador: './planejador',
                 planner: './planejador',
                 horizons: './horizons'
             };
             var hasAppParams = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'plan', 'quick'].some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
-            var targetPath = routeMap[tab] || (params.has('types') || params.has('quick') ? './tipos' : './home/');
+            var quickPath = quickRouteMap[quick] || '';
+            var targetPath = routeMap[tab] || quickPath || (params.has('types') ? './tipos' : './home/');
             params.delete('tab');
             params.delete('bossmode');
             params.delete('boss');
             params.delete('mode');
+            if(quickPath){
+                params.delete('quick');
+            }
             var cleanQuery = params.toString();
             var target = targetPath + (cleanQuery ? ('?' + cleanQuery) : '') + window.location.hash;
             if(!hasAppParams){

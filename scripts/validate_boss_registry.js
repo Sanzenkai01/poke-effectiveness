@@ -52,7 +52,7 @@ function extractRegistry() {
   const conflicts = [];
 
   lines.forEach((line, index) => {
-    const match = line.match(/createFixedRecommendationDefinition\((["'])(.*?)\1,\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'([^']+)'\)/);
+    const match = line.match(/createFixedRecommendationDefinition\((["'])(.*?)\1,\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'([^']+)'(?:\s*,\s*\{.*\})?\)/);
     if (!match) return;
 
     const [, , name, primaryType, role, clan] = match;

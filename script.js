@@ -128,6 +128,8 @@ const pokemonDetailsSubtitle = document.getElementById('pokemon-details-subtitle
 const pokemonDetailsMeta = document.getElementById('pokemon-details-meta');
 const pokemonDetailsEvolutionSection = document.getElementById('pokemon-details-evolution-section');
 const pokemonDetailsEvolution = document.getElementById('pokemon-details-evolution');
+const pokemonDetailsBossUsageSection = document.getElementById('pokemon-details-boss-usage-section');
+const pokemonDetailsBossUsage = document.getElementById('pokemon-details-boss-usage');
 const pokemonDetailsInfo = document.getElementById('pokemon-details-info');
 const pokemonDetailsAverages = document.getElementById('pokemon-details-averages');
 const pokemonDetailsAveragesKicker = document.querySelector('.pokemon-details-modal__section--averages .pokemon-details-modal__section-kicker');
@@ -206,6 +208,7 @@ let activePokemonCatalogEntry = null;
 let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonEvolutionGraph = null;
+let pokemonBossUsageRenderToken = 0;
 let pokemonCatalogFiltersInitialized = false;
 let pokemonCatalogPaginationInitialized = false;
 let pokemonCatalogRenderFrame = null;
@@ -224,11 +227,29 @@ let timesDetailsKeyHandler = null;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260604a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605a';
+const QUICK_ACTION_ROUTES = Object.freeze({
+    commands: { path: '/comandos' },
+    'elemental-balls': { path: '/pokebolas' },
+    respawns: { path: '/mapas' },
+    'full-map': { path: '/mapa-completo' },
+    fishing: { path: '/pescaria' }
+});
 const APP_ROUTE_ALIASES = {
     home: { path: '/home', tab: 'home' },
     effectiveness: { path: '/tipos', tab: 'effectiveness' },
     tipos: { path: '/tipos', tab: 'effectiveness' },
+    comandos: { path: '/comandos', tab: 'effectiveness', quickAction: 'commands' },
+    commands: { path: '/comandos', tab: 'effectiveness', quickAction: 'commands' },
+    pokebolas: { path: '/pokebolas', tab: 'effectiveness', quickAction: 'elemental-balls' },
+    'poke-bolas': { path: '/pokebolas', tab: 'effectiveness', quickAction: 'elemental-balls' },
+    'elemental-balls': { path: '/pokebolas', tab: 'effectiveness', quickAction: 'elemental-balls' },
+    mapas: { path: '/mapas', tab: 'effectiveness', quickAction: 'respawns' },
+    respawns: { path: '/mapas', tab: 'effectiveness', quickAction: 'respawns' },
+    'mapa-completo': { path: '/mapa-completo', tab: 'effectiveness', quickAction: 'full-map' },
+    'full-map': { path: '/mapa-completo', tab: 'effectiveness', quickAction: 'full-map' },
+    pescaria: { path: '/pescaria', tab: 'effectiveness', quickAction: 'fishing' },
+    fishing: { path: '/pescaria', tab: 'effectiveness', quickAction: 'fishing' },
     fossils: { path: '/fossils', tab: 'fossils' },
     fosseis: { path: '/fossils', tab: 'fossils' },
     calculator: { path: '/treinamento', tab: 'calculator' },
@@ -250,17 +271,23 @@ const APP_ROUTE_ALIASES = {
     'champion-path': { path: '/champion', tab: 'bosses', bossMode: 'champion' },
     mewtwo: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
     mew2: { path: '/mewtwo', tab: 'bosses', bossMode: 'mew2' },
+    special: { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
+    ranger: { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
+    'ranger-bosses': { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
+    especiais: { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
+    'bosses-especiais': { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
     planejador: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260603f';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260603b';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260531a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605b';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260605b';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260605b';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260604a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
-const TEAM_POKEMON_IMAGE_VERSION = '20260531a';
+const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
+const POKEMON_MEGA_SYMBOL_IMAGE = 'mega-stone.png';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
 const POKEMON_IMAGE_FILE_ALIASES = Object.freeze({
     'leafeon.png': 'leafon.png',
@@ -470,6 +497,46 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Snorunt', 'Froslass'],
     ['Roselia', 'Roserade'],
     ['Nosepass', 'Probopass']
+    ,
+    // Generation 4 evolutions
+    ['Turtwig', 'Grotle'],
+    ['Grotle', 'Torterra'],
+    ['Chimchar', 'Monferno'],
+    ['Monferno', 'Infernape'],
+    ['Piplup', 'Prinplup'],
+    ['Prinplup', 'Empoleon'],
+    ['Starly', 'Staravia'],
+    ['Staravia', 'Staraptor'],
+    ['Bidoof', 'Bibarel'],
+    ['Shinx', 'Luxio'],
+    ['Luxio', 'Luxray'],
+    ['Cranidos', 'Rampardos'],
+    ['Shieldon', 'Bastiodon'],
+    ['Burmy Plant', 'Wormadam Plant'],
+    ['Burmy Sandy', 'Wormadam Sandy'],
+    ['Burmy Trash', 'Wormadam Trash'],
+    ['Burmy Plant', 'Mothim'],
+    ['Burmy Sandy', 'Mothim'],
+    ['Burmy Trash', 'Mothim'],
+    ['Shellos West', 'Gastrodon West'],
+    ['Drifloon', 'Drifblim'],
+    ['Buneary', 'Lopunny'],
+    ['Glameow', 'Purugly'],
+    ['Chingling', 'Chimecho'],
+    ['Stunky', 'Skuntank'],
+    ['Bronzor', 'Bronzong'],
+    ['Gible', 'Gabite'],
+    ['Gabite', 'Garchomp'],
+    ['Munchlax', 'Snorlax'],
+    ['Riolu', 'Lucario'],
+    ['Hippopotas Male', 'Hippowdon Male'],
+    ['Hippopotas Female', 'Hippowdon Female'],
+    ['Skorupi', 'Drapion'],
+    ['Croagunk', 'Toxicroak'],
+    ['Mantyke', 'Mantine'],
+    ['Snover', 'Abomasnow'],
+    ['Eevee', 'Leafeon'],
+    ['Eevee', 'Glaceon']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
@@ -479,6 +546,46 @@ const DEFAULT_TEAM_FILTERS = Object.freeze({
     tag: 'all',
     search: ''
 });
+let pendingQuickActionRouteRestore = null;
+
+function getCurrentHistoryUrl(){
+    return `${location.pathname}${location.search}${location.hash}`;
+}
+
+function beginQuickActionRoute(action, routeOverride = ''){
+    const routePath = String(routeOverride || '').trim() || getQuickActionRoutePath(action);
+    if(!routePath) return null;
+
+    const state = {
+        action: normalizeQuickAction(action),
+        previousUrl: getCurrentHistoryUrl(),
+        routeUrl: routePath
+    };
+    try{
+        history.pushState(null, '', routePath);
+        pendingQuickActionRouteRestore = state;
+        return state;
+    }catch(e){
+        return null;
+    }
+}
+
+function consumePendingQuickActionRouteRestore(){
+    const state = pendingQuickActionRouteRestore;
+    pendingQuickActionRouteRestore = null;
+    return state;
+}
+
+function restoreQuickActionRouteUrl(state){
+    if(!state || !state.previousUrl) return;
+    try{
+        const currentUrl = getCurrentHistoryUrl();
+        if(currentUrl !== state.previousUrl){
+            history.replaceState(null, '', state.previousUrl);
+        }
+    }catch(e){}
+}
+
 const TEAM_TYPE_SEARCH_ALIASES = Object.freeze({
     bug: ['bug', 'insect', 'inseto'],
     dark: ['dark', 'sombrio', 'trevas'],
@@ -635,6 +742,26 @@ if(!window._fossilResetGlobalAttached){
 
 function getRouteInfo(routeKey){
     return APP_ROUTE_ALIASES[String(routeKey || '').trim().toLowerCase()] || null;
+}
+
+function normalizeQuickAction(value){
+    const normalized = String(value || '').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(QUICK_ACTION_ROUTES, normalized) ? normalized : '';
+}
+
+function getQuickActionRoutePath(action){
+    return QUICK_ACTION_ROUTES[normalizeQuickAction(action)]?.path || '';
+}
+
+function getRequestedQuickActionFromUrl(){
+    const params = new URLSearchParams(location.search);
+    const queryAction = normalizeQuickAction(params.get('quick'));
+    if(queryAction) return queryAction;
+
+    const tabAction = normalizeQuickAction(getRouteInfo(params.get('tab'))?.quickAction || '');
+    if(tabAction) return tabAction;
+
+    return normalizeQuickAction(getRouteInfoFromPathname()?.quickAction || '');
 }
 
 function getRouteInfoFromPathname(pathname = location.pathname){
@@ -827,7 +954,7 @@ function getBossRouteMatch(pathname = location.pathname){
     if(!segments.length) return null;
 
     const bossMode = normalizeBossModeParam(segments[0]);
-    if(!bossMode || !['hoopa', 'champion', 'mew2'].includes(bossMode)) return null;
+    if(!bossMode || !['hoopa', 'champion', 'mew2', 'special'].includes(bossMode)) return null;
     const detailSuffix = String(segments[2] || '').trim().toLowerCase();
     if((detailSuffix && !['mapa', 'video'].includes(detailSuffix)) || segments.length > 3) return null;
 
@@ -2328,13 +2455,15 @@ function normalizeBossModeParam(value){
     if(normalized === 'champion-path') return 'champion';
     if(normalized === 'champions') return 'champion';
     if(normalized === 'mewtwo') return 'mew2';
+    if(normalized === 'bosses-especiais' || normalized === 'especiais' || normalized === 'ranger-bosses' || normalized === 'ranger') return 'special';
     if(normalized === 'planejador') return 'planner';
-    return ['hoopa', 'champion', 'mew2', 'planner', 'horizons'].includes(normalized) ? normalized : '';
+    return ['hoopa', 'champion', 'mew2', 'special', 'planner', 'horizons'].includes(normalized) ? normalized : '';
 }
 
 function getBossModeQueryValue(value){
     const normalized = normalizeBossModeParam(value);
     if(normalized === 'mew2') return 'mewtwo';
+    if(normalized === 'special') return 'ranger-bosses';
     if(normalized === 'planner') return 'planejador';
     return normalized;
 }
@@ -2395,14 +2524,20 @@ function syncSidebarNavigationState(){
 }
 
 function openFullMapVideo(){
+    const routeRestoreState = consumePendingQuickActionRouteRestore();
+    const modalOptions = {
+        url: FULL_MAP_VIDEO_URL,
+        title: 'Mapa Completo',
+        note: 'Clique em "YouTube" para abrir o video e checar os comentarios.'
+    };
+    if(routeRestoreState){
+        modalOptions.onAfterClose = () => restoreQuickActionRouteUrl(routeRestoreState);
+    }
     const opened = typeof openSiteYouTubeModal === 'function'
-        ? openSiteYouTubeModal({
-            url: FULL_MAP_VIDEO_URL,
-            title: 'Mapa Completo',
-            note: 'Clique em "YouTube" para abrir o video e checar os comentarios.'
-        })
+        ? openSiteYouTubeModal(modalOptions)
         : false;
     if(!opened){
+        restoreQuickActionRouteUrl(routeRestoreState);
         openExternalWindow(FULL_MAP_VIDEO_URL);
     }
 }
@@ -2419,7 +2554,12 @@ function activateSidebarTarget(button){
         fishing: fishingBtn
     };
     if(action && actionButtons[action]){
+        const routeRestoreState = beginQuickActionRoute(action, button.dataset.navUrl);
         actionButtons[action]?.click();
+        if(routeRestoreState && pendingQuickActionRouteRestore === routeRestoreState){
+            pendingQuickActionRouteRestore = null;
+            restoreQuickActionRouteUrl(routeRestoreState);
+        }
         setSidebarOpen(false);
         return;
     }
@@ -11190,6 +11330,7 @@ function updateUrl(options = {}){
     const activeBossRouteState = typeof window.getActiveBossRouteState === 'function'
         ? window.getActiveBossRouteState()
         : null;
+    const requestedQuickAction = getRequestedQuickActionFromUrl();
     if(isHomeView){
         params.delete('types');
         params.delete('tab');
@@ -11231,6 +11372,9 @@ function updateUrl(options = {}){
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
     let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
+    if(!isHomeView && activeTab === 'effectiveness' && requestedQuickAction){
+        routePath = getQuickActionRoutePath(requestedQuickAction) || routePath;
+    }
     try{
         if(!isHomeView && activeTab === 'pokemons'){
             if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true' && activePokemonCatalogEntry){
@@ -11819,6 +11963,10 @@ function wireBasicModal(triggerEl, modalEl, onOpen){
     const closeBtn = modalEl.querySelector('.modal-close');
     const onClose = modalEl._onClose;
     const openModal = () => {
+        const routeRestoreState = consumePendingQuickActionRouteRestore();
+        if(routeRestoreState){
+            modalEl._quickActionRouteRestore = routeRestoreState;
+        }
         modalEl.setAttribute('aria-hidden','false');
         syncBasicModalPageState();
         if(typeof onOpen === 'function'){
@@ -11826,11 +11974,15 @@ function wireBasicModal(triggerEl, modalEl, onOpen){
         }
     };
     const closeModal = () => {
+        if(modalEl.getAttribute('aria-hidden') === 'true') return;
+        const routeRestoreState = modalEl._quickActionRouteRestore || null;
+        modalEl._quickActionRouteRestore = null;
         modalEl.setAttribute('aria-hidden','true');
         if(typeof onClose === 'function'){
             onClose();
         }
         syncBasicModalPageState();
+        restoreQuickActionRouteUrl(routeRestoreState);
     };
 
     triggerEl.addEventListener('click', openModal);
@@ -12347,8 +12499,7 @@ if(fossilLocationBtn && fossilLocationModal){
 }
 
 function openQuickActionFromUrl(){
-    const params = new URLSearchParams(location.search);
-    const action = String(params.get('quick') || '').trim().toLowerCase();
+    const action = getRequestedQuickActionFromUrl();
     if(!action) return;
     const triggerMap = {
         commands: commandsBtn,
@@ -12966,34 +13117,112 @@ function getPokemonEvolutionNeighborEntries(keys = []){
     return entries.sort(comparePokemonEvolutionEntries);
 }
 
+function getPokemonMegaBaseRegistryKey(entryOrName){
+    const name = String(typeof entryOrName === 'string' ? entryOrName : entryOrName?.name || '').trim();
+    if(!/^mega\s+/i.test(name)) return '';
+    const baseName = name
+        .replace(/^mega\s+/i, '')
+        .replace(/\s+[xyz]$/i, '')
+        .trim();
+    return getPokemonCatalogRegistryKey(baseName);
+}
+
+function getPokemonMegaEvolutionEntriesByBaseKey(key){
+    const normalizedKey = getPokemonCatalogRegistryKey(key);
+    if(!normalizedKey) return [];
+
+    const seen = new Set();
+    return getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+        .filter((candidate) => (
+            candidate
+            && isMegaPokemonCatalogEntry(candidate)
+            && canOpenPokemonCatalogEntry(candidate)
+            && getPokemonMegaBaseRegistryKey(candidate) === normalizedKey
+        ))
+        .filter((candidate) => {
+            const candidateKey = candidate?.id || candidate?.routeSlug || candidate?.name;
+            if(!candidateKey || seen.has(candidateKey)) return false;
+            seen.add(candidateKey);
+            return true;
+        })
+        .sort(comparePokemonEvolutionEntries);
+}
+
+function getPokemonMegaEvolutionEntriesForKeys(keys = []){
+    const seen = new Set();
+    const entries = [];
+
+    keys.forEach((key) => {
+        getPokemonMegaEvolutionEntriesByBaseKey(key).forEach((entry) => {
+            const entryKey = entry?.id || entry?.routeSlug || entry?.name;
+            if(!entryKey || seen.has(entryKey)) return;
+            seen.add(entryKey);
+            entries.push(entry);
+        });
+    });
+
+    return entries.sort(comparePokemonEvolutionEntries);
+}
+
 function getPokemonEvolutionRelations(entry){
-    if(!entry || isMegaPokemonCatalogEntry(entry)){
-        return { parents: [], children: [] };
+    if(!entry){
+        return { parents: [], children: [], megas: [] };
+    }
+
+    if(isMegaPokemonCatalogEntry(entry)){
+        const baseKey = getPokemonMegaBaseRegistryKey(entry);
+        return {
+            parents: getPokemonEvolutionNeighborEntries(baseKey ? [baseKey] : []),
+            children: [],
+            megas: []
+        };
     }
 
     const key = getPokemonCatalogRegistryKey(entry.name);
     const node = ensurePokemonEvolutionGraph().get(key);
-    if(!node){
-        return { parents: [], children: [] };
-    }
+    const parentKeys = node ? Array.from(node.parents) : [];
+    const childKeys = node ? Array.from(node.children) : [];
+    const megaKeys = [key, ...childKeys];
 
     return {
-        parents: getPokemonEvolutionNeighborEntries(Array.from(node.parents)),
-        children: getPokemonEvolutionNeighborEntries(Array.from(node.children))
+        parents: getPokemonEvolutionNeighborEntries(parentKeys),
+        children: getPokemonEvolutionNeighborEntries(childKeys),
+        megas: getPokemonMegaEvolutionEntriesForKeys(megaKeys)
     };
 }
 
 function formatPokemonEvolutionStageLabel(stage, count = 1){
     if(stage === 'previous') return count > 1 ? 'Pre-evolucoes' : 'Pre-evolucao';
     if(stage === 'next') return count > 1 ? 'Evolucoes' : 'Evolucao';
+    if(stage === 'mega') return count > 1 ? 'Mega evolucoes' : 'Mega evolucao';
     return 'Atual';
+}
+
+function createPokemonMegaEvolutionMark(modifier = 'card'){
+    const mark = document.createElement('span');
+    mark.className = `pokemon-evolution-mega-mark pokemon-evolution-mega-mark--${modifier}`;
+    mark.setAttribute('aria-hidden', 'true');
+
+    const icon = document.createElement('img');
+    icon.src = POKEMON_MEGA_SYMBOL_IMAGE;
+    icon.alt = '';
+    icon.loading = 'lazy';
+    icon.decoding = 'async';
+    icon.onerror = () => {
+        mark.hidden = true;
+    };
+
+    mark.appendChild(icon);
+    return mark;
 }
 
 function createPokemonEvolutionCard(entry, stage, options = {}){
     const { current = false } = options;
+    const isMegaEntry = isMegaPokemonCatalogEntry(entry);
     const card = document.createElement(current ? 'article' : 'button');
     card.className = 'pokemon-evolution-card';
     card.dataset.stage = stage;
+    card.dataset.variant = normalizePokemonCatalogVariant(entry?.variant);
 
     if(current){
         card.setAttribute('aria-current', 'step');
@@ -13029,6 +13258,9 @@ function createPokemonEvolutionCard(entry, stage, options = {}){
 
     copy.append(label, name);
     card.append(media, copy);
+    if(isMegaEntry){
+        card.appendChild(createPokemonMegaEvolutionMark('card'));
+    }
     return card;
 }
 
@@ -13040,7 +13272,11 @@ function createPokemonEvolutionStage(stage, entries = [], options = {}){
 
     const label = document.createElement('span');
     label.className = 'pokemon-evolution-nav__stage-label';
-    label.textContent = formatPokemonEvolutionStageLabel(stage, entries.length);
+    if(stage === 'mega'){
+        label.append(createPokemonMegaEvolutionMark('stage'), document.createTextNode(formatPokemonEvolutionStageLabel(stage, entries.length)));
+    } else {
+        label.textContent = formatPokemonEvolutionStageLabel(stage, entries.length);
+    }
 
     const list = document.createElement('div');
     list.className = 'pokemon-evolution-nav__stage-list';
@@ -13086,8 +13322,8 @@ function renderPokemonEvolutionNavigation(entry){
         return;
     }
 
-    const { parents, children } = getPokemonEvolutionRelations(entry);
-    if(!parents.length && !children.length){
+    const { parents, children, megas } = getPokemonEvolutionRelations(entry);
+    if(!parents.length && !children.length && !megas.length){
         pokemonDetailsEvolutionSection.hidden = true;
         pokemonDetailsEvolution.replaceChildren();
         return;
@@ -13104,6 +13340,10 @@ function renderPokemonEvolutionNavigation(entry){
 
     if(children.length){
         track.appendChild(createPokemonEvolutionStage('next', children));
+    }
+
+    if(megas.length){
+        track.appendChild(createPokemonEvolutionStage('mega', megas));
     }
 
     pokemonDetailsEvolutionSection.hidden = false;
@@ -14681,6 +14921,191 @@ function ensurePokemonCatalogLoaded(options = {}){
     return pokemonCatalogLoadPromise;
 }
 
+function resetPokemonBossUsageSection(){
+    if(pokemonDetailsBossUsage){
+        pokemonDetailsBossUsage.replaceChildren();
+    }
+    if(pokemonDetailsBossUsageSection){
+        pokemonDetailsBossUsageSection.hidden = true;
+    }
+}
+
+function ensurePokemonBossUsageDataReady(){
+    if(typeof window.getPokemonBossUsages === 'function') return Promise.resolve(true);
+    return ensureBossesPageReady().then(() => {
+        if(typeof window.getPokemonBossUsages !== 'function'){
+            throw new Error('bosses.js carregou sem expor os usos por Pokemon.');
+        }
+        return true;
+    });
+}
+
+function openPokemonBossUsageLink(usage){
+    if(!usage || !usage.mode || !usage.bossSlug){
+        return;
+    }
+
+    ensureBossesPageReady()
+        .then(() => {
+            if(typeof window.setBossMode === 'function'){
+                window.setBossMode(usage.mode, { syncUrl: false, render: false });
+            }
+
+            const opened = typeof window.openBossModalByRouteSlug === 'function'
+                ? window.openBossModalByRouteSlug(usage.mode, usage.bossSlug, {
+                    pushState: false,
+                    skipRouteSync: true,
+                    renderBossGrid: false,
+                    overlayParent: 'pokemon'
+                })
+                : false;
+
+            if(!opened){
+                console.warn('Nao foi possivel abrir o boss indicado no modal do Pokemon.', usage);
+            }
+        })
+        .catch((error) => {
+            console.error('Nao foi possivel carregar o modal de boss indicado pelo Pokemon.', error);
+        });
+}
+
+function createPokemonBossUsageCard(usage){
+    const card = document.createElement('a');
+    card.className = 'pokemon-boss-usage-card';
+    card.href = usage?.url || '#';
+    card.dataset.bossMode = usage?.mode || '';
+    card.dataset.bossSlug = usage?.bossSlug || '';
+    card.dataset.tier = usage?.tier || 'seminformacao';
+    card.setAttribute('aria-label', `Abrir ${usage?.bossName || 'boss'} em ${usage?.contentLabel || 'Bosses'}`);
+
+    const media = document.createElement('span');
+    media.className = 'pokemon-boss-usage-card__media';
+
+    const image = document.createElement('img');
+    image.src = usage?.image || POKEMON_IMAGE_PLACEHOLDER;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    media.appendChild(image);
+
+    const body = document.createElement('span');
+    body.className = 'pokemon-boss-usage-card__body';
+
+    const title = document.createElement('strong');
+    title.className = 'pokemon-boss-usage-card__title';
+    title.textContent = usage?.bossName || 'Boss';
+
+    const meta = document.createElement('span');
+    meta.className = 'pokemon-boss-usage-card__meta';
+    const metaParts = [
+        usage?.clanLabel,
+        usage?.roleLabel,
+        usage?.groupTitle,
+        usage?.tierLabel
+    ].filter(Boolean);
+    meta.textContent = metaParts.join(' - ');
+
+    body.append(title, meta);
+    card.append(media, body);
+    card.addEventListener('click', (event) => {
+        event.preventDefault();
+        openPokemonBossUsageLink(usage);
+    });
+    return card;
+}
+
+function groupPokemonBossUsagesByContent(usages = []){
+    const groups = [];
+    const groupMap = new Map();
+
+    usages.forEach((usage) => {
+        const key = usage?.mode || usage?.contentLabel || 'bosses';
+        if(!groupMap.has(key)){
+            const group = {
+                key,
+                label: usage?.contentLabel || usage?.shortContentLabel || 'Bosses',
+                items: []
+            };
+            groupMap.set(key, group);
+            groups.push(group);
+        }
+        groupMap.get(key).items.push(usage);
+    });
+
+    return groups;
+}
+
+function createPokemonBossUsageGroup(group){
+    const section = document.createElement('section');
+    section.className = 'pokemon-boss-usage-group';
+    section.dataset.bossContent = group?.key || '';
+
+    const header = document.createElement('div');
+    header.className = 'pokemon-boss-usage-group__head';
+
+    const title = document.createElement('strong');
+    title.className = 'pokemon-boss-usage-group__title';
+    title.textContent = group?.label || 'Bosses';
+
+    const count = document.createElement('span');
+    count.className = 'pokemon-boss-usage-group__count';
+    const amount = Array.isArray(group?.items) ? group.items.length : 0;
+    count.textContent = amount === 1 ? '1 uso' : `${amount} usos`;
+
+    header.append(title, count);
+
+    const list = document.createElement('div');
+    list.className = 'pokemon-boss-usage-list';
+    (group?.items || []).forEach((usage) => {
+        list.appendChild(createPokemonBossUsageCard(usage));
+    });
+
+    section.append(header, list);
+    return section;
+}
+
+function renderPokemonBossUsageSection(entry){
+    const renderToken = ++pokemonBossUsageRenderToken;
+    resetPokemonBossUsageSection();
+
+    if(!entry || !pokemonDetailsBossUsageSection || !pokemonDetailsBossUsage) return;
+
+    ensurePokemonBossUsageDataReady()
+        .then(() => {
+            if(renderToken !== pokemonBossUsageRenderToken || activePokemonCatalogEntry !== entry) return;
+
+            const usages = typeof window.getPokemonBossUsages === 'function'
+                ? window.getPokemonBossUsages(entry.name)
+                : [];
+            if(!Array.isArray(usages) || !usages.length){
+                resetPokemonBossUsageSection();
+                return;
+            }
+
+            const summary = document.createElement('p');
+            summary.className = 'pokemon-boss-usage__summary';
+            summary.textContent = usages.length === 1
+                ? '1 uso em boss.'
+                : `${usages.length} usos em bosses.`;
+
+            const groups = document.createElement('div');
+            groups.className = 'pokemon-boss-usage-groups';
+            groupPokemonBossUsagesByContent(usages).forEach((group) => {
+                groups.appendChild(createPokemonBossUsageGroup(group));
+            });
+
+            pokemonDetailsBossUsage.replaceChildren(summary, groups);
+            pokemonDetailsBossUsageSection.hidden = false;
+        })
+        .catch((error) => {
+            if(renderToken === pokemonBossUsageRenderToken){
+                resetPokemonBossUsageSection();
+            }
+            console.error('Nao foi possivel carregar usos do Pokemon em bosses.', error);
+        });
+}
+
 function renderPokemonDetailsModal(entry){
     if(!entry || !pokemonDetailsModal) return;
     const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
@@ -14727,6 +15152,7 @@ function renderPokemonDetailsModal(entry){
     }
 
     renderPokemonEvolutionNavigation(entry);
+    renderPokemonBossUsageSection(entry);
 
     if(pokemonDetailsInfo){
         const infoFragment = document.createDocumentFragment();
