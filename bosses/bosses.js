@@ -2649,6 +2649,8 @@ const fixedRecommendationPokemonPools = Object.freeze({
     ]),
     support: Object.freeze([
       createFixedRecommendationDefinition("Blissey", 'normal', 'support', 'valor'),
+      createFixedRecommendationDefinition("Chansey", 'normal', 'support', 'valor', { moveType: 'psychic' }),
+      createFixedRecommendationDefinition("Houndour", 'dark', 'support', 'valor'),
       createFixedRecommendationDefinition("Lopunny", 'normal', 'support', 'valor'),
       createFixedRecommendationDefinition("Ponyta", 'fire', 'support', 'valor'),
       createFixedRecommendationDefinition("Porygon2", 'normal', 'support', 'valor'),
@@ -4511,7 +4513,7 @@ const tierLabels = {
   bom: 'Bom',
   aceitavel: 'Aceitavel',
   ruim: 'Ruim',
-  seminformacao: 'Sem informacao'
+  seminformacao: 'Única Opção'
 };
 const recommendationScoreTitle = 'ATK: mostra o moveset do pokemon contra a tipagem que o chefe recebe. DEF: considera o pior dano do moveset do boss contra o pokemon do jogador. Em chefes configurados para defesa, o ranking prioriza somente o DEF. So passivas dos pokemons recomendados entram na conta.';
 
@@ -5284,10 +5286,12 @@ function getAllRecommendedForClan(boss, clanData) {
     picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
 
-  // Se o boss definir filterSolo, ranqueamos e removemos picks com tier 'ruim'
+  // Se o boss definir filterSolo, ranqueamos e removemos picks abaixo de 'bom'
   if (boss?.filterSolo) {
     const ranked = rankRecommendedForBoss(boss, picks || []);
-    return dedupeRecommendedPicksByName((ranked || []).filter((p) => normalizeTierKey(p?.tier) !== 'ruim'));
+    return dedupeRecommendedPicksByName((ranked || []).filter((p) => (
+      getRecommendationTierPriority(p?.tier) <= tierPriority.bom
+    )));
   }
 
   return dedupeRecommendedPicksByName(picks || []);
@@ -5892,6 +5896,24 @@ function createShinyMiltankPick() {
   return createRolePick('Shiny Miltank', ['normal'], 'ground');
 }
 
+function createHoundourPick() {
+  return createRolePick('Houndour', ['dark', 'fire'], 'dark');
+}
+
+function createChanseyPick() {
+  return createRolePick('Chansey', ['normal'], 'psychic');
+}
+
+function createWynautPick() {
+  return createRolePick('Wynaut', ['psychic'], 'psychic');
+}
+
+const requestedSupportRecommendationFactories = Object.freeze([
+  createHoundourPick,
+  createChanseyPick,
+  createWynautPick
+]);
+
 function getMegaAbsolZMoveTypeForBoss(bossRef) {
   const targetTypes = getBossOffenseTargetTypes(bossRef);
   if (!targetTypes.length) return 'dark';
@@ -5939,6 +5961,20 @@ function removeRolePickByName(list = [], name) {
       list.splice(index, 1);
     }
   }
+}
+
+function addSupportPickIfTierBomOrAbove(bossRef, picks = [], createPick) {
+  if (!Array.isArray(picks) || typeof createPick !== 'function') return;
+
+  const basePick = createPick();
+  const scored = scoreRecommendationForBoss(bossRef, basePick, { roleKey: 'support' });
+  const priority = getRecommendationTierPriority(scored?.tier);
+  if (priority > tierPriority.bom) {
+    removeRolePickByName(picks, basePick?.name);
+    return;
+  }
+
+  ensureRolePickNames(picks, [scored], 'support');
 }
 
 function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
@@ -6033,10 +6069,30 @@ function injectMiltankRecommendations() {
   });
 }
 
+function injectRequestedSupportRecommendations() {
+  const roleboardCatalogIds = new Set(['champion', 'mew2']);
+
+  Object.values(bossCatalogs).forEach((catalog) => {
+    if (!roleboardCatalogIds.has(catalog?.id)) return;
+
+    (catalog.data || []).forEach((boss) => {
+      Object.values(boss?.clans || {}).forEach((clanData) => {
+        const supportList = clanData?.roles?.support;
+        if (!Array.isArray(supportList)) return;
+
+        requestedSupportRecommendationFactories.forEach((createPick) => {
+          addSupportPickIfTierBomOrAbove(boss, supportList, createPick);
+        });
+      });
+    });
+  });
+}
+
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
 injectMiltankRecommendations();
 injectMegaAbsolZRecommendations();
+injectRequestedSupportRecommendations();
 normalizeAllBossRecommendationAssignments();
 applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
@@ -6112,9 +6168,28 @@ function createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfi
   return assignRecommendationRoleToPick(nextPick, registryEntry.role);
 }
 
-function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfigs = {}, excludedNameKeys = new Set()) {
+function getRecommendationMaximumPriority(minimumTier = 'bom') {
+  const normalizedMinimumTier = normalizeTierKey(minimumTier);
+  return tierPriority[normalizedMinimumTier] ?? tierPriority.bom;
+}
+
+function createOnlyOptionPick(pick, roleKey = '') {
+  if (!pick || typeof pick !== 'object') return null;
+
+  const onlyOptionPick = assignRecommendationRoleToPick(cloneRolePickConfig(pick), roleKey);
+  onlyOptionPick.tier = 'seminformacao';
+  onlyOptionPick.tierLocked = true;
+  return onlyOptionPick;
+}
+
+function getSingleOnlyOptionPick(list = [], roleKey = '') {
+  const deduped = dedupeRecommendedPicksByName(list || []);
+  return deduped.length === 1 ? createOnlyOptionPick(deduped[0], roleKey) : null;
+}
+
+function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfigs = {}, excludedNameKeys = new Set(), minimumTier = 'bom') {
   const registryPool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
-  const soloThreshold = tierPriority.ruim ?? tierPriority.seminformacao;
+  const maximumPriority = getRecommendationMaximumPriority(minimumTier);
 
   const rankedCandidates = registryPool
     .map((registryEntry) => createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs))
@@ -6123,7 +6198,7 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
       const scored = scoreRecommendationForBoss(bossRef, pick);
       return { pick, scored };
     })
-    .filter(({ scored }) => getRecommendationTierPriority(scored?.tier) < soloThreshold)
+    .filter(({ scored }) => getRecommendationTierPriority(scored?.tier) <= maximumPriority)
     .sort((left, right) => {
       const leftPriority = getRecommendationTierPriority(left?.scored?.tier);
       const rightPriority = getRecommendationTierPriority(right?.scored?.tier);
@@ -6137,12 +6212,12 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
   return rankedCandidates[0]?.pick ? cloneRolePickConfig(rankedCandidates[0].pick) : null;
 }
 
-function filterRecommendationListByTier(list = [], bossRef) {
-  const soloThreshold = tierPriority.ruim ?? tierPriority.seminformacao;
+function filterRecommendationListByTier(list = [], bossRef, minimumTier = 'bom') {
+  const maximumPriority = getRecommendationMaximumPriority(minimumTier);
   return dedupeRecommendedPicksByName((list || []).filter((pick) => {
     try {
       const scored = scoreRecommendationForBoss(bossRef, pick);
-      return getRecommendationTierPriority(scored?.tier) < soloThreshold;
+      return getRecommendationTierPriority(scored?.tier) <= maximumPriority;
     } catch (e) {
       return true;
     }
@@ -6161,13 +6236,26 @@ function removeRuimRecommendationsAndBackfillMissingBosses() {
 
         if (clanData.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
-            const filtered = filterRecommendationListByTier(clanData.roles?.[roleKey] || [], boss);
+            const sourceList = clanData.roles?.[roleKey] || [];
+            const filtered = filterRecommendationListByTier(sourceList, boss, 'bom');
             if (filtered.length) {
               clanData.roles[roleKey] = filtered;
               return;
             }
 
-            const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, roleKey, seedConfigs);
+            const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel');
+            if (acceptableFiltered.length) {
+              clanData.roles[roleKey] = acceptableFiltered;
+              return;
+            }
+
+            const onlyOptionPick = getSingleOnlyOptionPick(sourceList, roleKey);
+            if (onlyOptionPick) {
+              clanData.roles[roleKey] = [onlyOptionPick];
+              return;
+            }
+
+            const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, roleKey, seedConfigs, new Set(), 'aceitavel');
             clanData.roles[roleKey] = fallbackPick ? [fallbackPick] : [];
           });
           return;
@@ -6176,26 +6264,52 @@ function removeRuimRecommendationsAndBackfillMissingBosses() {
         if (Array.isArray(clanData.recommendationGroups)) {
           clanData.recommendationGroups.forEach((group) => {
             const bossRef = getRecommendationGroupBossRef(boss, group);
-            const filtered = filterRecommendationListByTier(group.recommended || [], bossRef);
+            const sourceList = group.recommended || [];
+            const filtered = filterRecommendationListByTier(sourceList, bossRef, 'bom');
             if (filtered.length) {
               group.recommended = filtered;
               return;
             }
 
-            const fallbackPick = pickFallbackRecommendationForBoss(bossRef, clanKey, 'dps', seedConfigs);
+            const acceptableFiltered = filterRecommendationListByTier(sourceList, bossRef, 'aceitavel');
+            if (acceptableFiltered.length) {
+              group.recommended = acceptableFiltered;
+              return;
+            }
+
+            const onlyOptionPick = getSingleOnlyOptionPick(sourceList, 'dps');
+            if (onlyOptionPick) {
+              group.recommended = [onlyOptionPick];
+              return;
+            }
+
+            const fallbackPick = pickFallbackRecommendationForBoss(bossRef, clanKey, 'dps', seedConfigs, new Set(), 'aceitavel');
             group.recommended = fallbackPick ? [fallbackPick] : [];
           });
           return;
         }
 
         if (Array.isArray(clanData.recommended)) {
-          const filtered = filterRecommendationListByTier(clanData.recommended, boss);
+          const sourceList = clanData.recommended;
+          const filtered = filterRecommendationListByTier(sourceList, boss, 'bom');
           if (filtered.length) {
             clanData.recommended = filtered;
             return;
           }
 
-          const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, 'dps', seedConfigs);
+          const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel');
+          if (acceptableFiltered.length) {
+            clanData.recommended = acceptableFiltered;
+            return;
+          }
+
+          const onlyOptionPick = getSingleOnlyOptionPick(sourceList, 'dps');
+          if (onlyOptionPick) {
+            clanData.recommended = [onlyOptionPick];
+            return;
+          }
+
+          const fallbackPick = pickFallbackRecommendationForBoss(boss, clanKey, 'dps', seedConfigs, new Set(), 'aceitavel');
           clanData.recommended = fallbackPick ? [fallbackPick] : [];
         }
       });
@@ -6264,6 +6378,8 @@ Object.entries(mew2RequestedInstinctDpsByBoss).forEach(([bossId, picks]) => {
 removeRuimRecommendationsAndBackfillMissingBosses();
 synchronizeRecommendationTiers();
 mergeShinyRecommendationVariantsAcrossBossCatalogs();
+removeRuimRecommendationsAndBackfillMissingBosses();
+synchronizeRecommendationTiers();
 refreshTierLegendLabels();
 
 function getActiveBossCatalog() {

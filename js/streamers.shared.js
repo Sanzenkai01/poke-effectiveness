@@ -55,6 +55,8 @@
         { name: 'princeofmajorr', supportsDrops: false },
         {name: 'zenithstory_gaming', supportsDrops: false },
         {name: 'kaueotp', supportsDrops: false },
+        {name: 'suximy', supportsDrops: false },
+        {name: 'teffox4', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

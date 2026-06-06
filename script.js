@@ -228,7 +228,7 @@ let teamModalHistoryPushed = false;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605g';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -281,7 +281,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605c';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605d';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260605c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260605b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260605c';
