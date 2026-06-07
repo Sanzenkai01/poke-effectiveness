@@ -18586,30 +18586,55 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   gap: 0.9rem;
 }
 
-/* New layout: summary spans the top, sections flow in a responsive grid below */
 #content-effectiveness .types-info-shell {
   display: grid;
-  gap: 0.9rem;
+  gap: 0.95rem;
   grid-template-columns: 1fr;
 }
 
 #content-effectiveness .types-info__summary {
-  padding: 0.9rem 1rem;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.04);
+  display: grid;
+  justify-items: center;
+  gap: 0.48rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(8, 14, 25, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 #content-effectiveness .types-info__sections {
   display: grid;
-  gap: 0.85rem;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(168px, 1fr);
+  grid-template-columns: none;
+  gap: 0.8rem;
   align-items: start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.05rem 0 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.42) rgba(8, 14, 25, 0.42);
+  scroll-snap-type: x proximity;
+}
+
+#content-effectiveness .types-info__sections::-webkit-scrollbar {
+  height: 8px;
+}
+
+#content-effectiveness .types-info__sections::-webkit-scrollbar-track {
+  background: rgba(8, 14, 25, 0.42);
+  border-radius: 999px;
+}
+
+#content-effectiveness .types-info__sections::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.42);
+  border-radius: 999px;
 }
 
 #content-effectiveness .info-icons {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(86px, auto);
   gap: 0.6rem;
 }
 
@@ -18623,9 +18648,6 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   #content-effectiveness .types-info-shell {
     grid-template-columns: 1fr;
   }
-  #content-effectiveness .types-info__sections {
-    grid-template-columns: 1fr;
-  }
   #content-effectiveness .types-info__summary {
     max-width: none;
   }
@@ -18635,8 +18657,10 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
 #content-effectiveness .info-type-heading {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.22rem;
+  font-size: clamp(1.08rem, 1.6vw, 1.28rem);
   color: #f5fbff;
+  line-height: 1.2;
+  text-align: center;
 }
 
 #content-effectiveness .types-empty-state__copy p {
@@ -18653,10 +18677,10 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
 
 #content-effectiveness .types-empty-card,
 #content-effectiveness .types-info__summary {
-  padding: 0.92rem 0.96rem;
+  padding: 1rem 1.05rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(8, 14, 25, 0.72);
 }
 
 #content-effectiveness .types-empty-card strong {
@@ -18705,6 +18729,37 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   width: 100%;
 }
 
+#content-effectiveness .types-info__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.38rem;
+  margin-top: 0.1rem;
+}
+
+#content-effectiveness .types-info__legend-item {
+  --legend-accent: 148, 163, 184;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0.22rem 0.52rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--legend-accent), 0.28);
+  background: rgba(var(--legend-accent), 0.1);
+  color: rgba(238, 246, 255, 0.88);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+#content-effectiveness .types-info__legend-item--super { --legend-accent: 34, 197, 94; }
+#content-effectiveness .types-info__legend-item--effective { --legend-accent: 59, 130, 246; }
+#content-effectiveness .types-info__legend-item--resist { --legend-accent: 245, 193, 66; }
+#content-effectiveness .types-info__legend-item--vulnerable { --legend-accent: 249, 115, 22; }
+#content-effectiveness .types-info__legend-item--super-vulnerable { --legend-accent: 239, 68, 68; }
+
 #content-effectiveness .types-selection-pill img {
   width: 18px;
   height: 18px;
@@ -18712,88 +18767,107 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
 
 #content-effectiveness .info-section {
   --section-accent: 104, 215, 255;
-  padding: 0.95rem;
-  border-radius: 22px;
-  border: 1px solid rgba(var(--section-accent), 0.22);
+  min-width: 0;
+  padding: 0.86rem;
+  border-radius: 18px;
+  border: 1px solid rgba(var(--section-accent), 0.34);
   background:
-    linear-gradient(180deg, rgba(var(--section-accent), 0.12), rgba(255, 255, 255, 0.02)),
-    rgba(255, 255, 255, 0.03);
+    linear-gradient(180deg, rgba(var(--section-accent), 0.14), rgba(var(--section-accent), 0.04)),
+    rgba(8, 14, 25, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 28px rgba(2, 8, 18, 0.16);
+  scroll-snap-align: start;
 }
 
-#content-effectiveness .info-section--effective { --section-accent: 96, 211, 148; }
-#content-effectiveness .info-section--super { --section-accent: 255, 191, 102; }
-#content-effectiveness .info-section--vulnerable { --section-accent: 255, 125, 125; }
-#content-effectiveness .info-section--super-vulnerable { --section-accent: 255, 89, 89; }
-#content-effectiveness .info-section--resist { --section-accent: 94, 166, 255; }
+#content-effectiveness .info-section--super { --section-accent: 34, 197, 94; }
+#content-effectiveness .info-section--effective { --section-accent: 59, 130, 246; }
+#content-effectiveness .info-section--resist { --section-accent: 245, 193, 66; }
+#content-effectiveness .info-section--vulnerable { --section-accent: 249, 115, 22; }
+#content-effectiveness .info-section--super-vulnerable { --section-accent: 239, 68, 68; }
 #content-effectiveness .info-section--immune { --section-accent: 154, 166, 182; }
 
 #content-effectiveness .info-section__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.7rem;
-  margin-bottom: 0.7rem;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.28rem;
+  min-height: 48px;
+  margin-bottom: 0.62rem;
+  text-align: center;
 }
 
 #content-effectiveness .info-section__header h4 {
   margin: 0;
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   color: #f4f8ff;
+  line-height: 1.12;
+  text-wrap: balance;
 }
 
 #content-effectiveness .info-section__header span {
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(231, 240, 248, 0.72);
+  color: rgba(231, 240, 248, 0.68);
+  line-height: 1.18;
 }
 
 #content-effectiveness .info-icons {
   gap: 0.6rem;
-  justify-content: flex-start;
 }
 
 #content-effectiveness .info-type {
   --chip-accent: 104, 215, 255;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.62rem;
+  justify-content: center;
+  gap: 0.36rem;
   min-width: 0;
-  padding: 0.56rem 0.68rem;
-  border-radius: 16px;
-  border: 1px solid rgba(var(--chip-accent), 0.22);
-  background: rgba(7, 13, 24, 0.5);
-  text-align: left;
+  min-height: 86px;
+  padding: 0.6rem 0.62rem;
+  border-radius: 14px;
+  border: 1px solid rgba(var(--chip-accent), 0.28);
+  background: rgba(5, 10, 19, 0.68);
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
-#content-effectiveness .info-type--effective { --chip-accent: 96, 211, 148; }
-#content-effectiveness .info-type--super { --chip-accent: 255, 191, 102; }
-#content-effectiveness .info-type--vulnerable { --chip-accent: 255, 125, 125; }
-#content-effectiveness .info-type--super-vulnerable { --chip-accent: 255, 89, 89; }
-#content-effectiveness .info-type--resist { --chip-accent: 94, 166, 255; }
+#content-effectiveness .info-type--super { --chip-accent: 34, 197, 94; }
+#content-effectiveness .info-type--effective { --chip-accent: 59, 130, 246; }
+#content-effectiveness .info-type--resist { --chip-accent: 245, 193, 66; }
+#content-effectiveness .info-type--vulnerable { --chip-accent: 249, 115, 22; }
+#content-effectiveness .info-type--super-vulnerable { --chip-accent: 239, 68, 68; }
 #content-effectiveness .info-type--immune { --chip-accent: 154, 166, 182; }
 
 #content-effectiveness .info-type .info-icon {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   flex: 0 0 auto;
 }
 
 #content-effectiveness .info-type-copy {
   display: grid;
-  gap: 0.16rem;
+  justify-items: center;
+  gap: 0.08rem;
+  min-width: 0;
 }
 
 #content-effectiveness .info-type-label {
   font-size: 0.86rem;
   font-weight: 700;
   color: #f4f8ff;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 #content-effectiveness .info-type-mult {
   font-size: 0.76rem;
   color: rgba(220, 230, 240, 0.78);
+  line-height: 1.1;
 }
 
 #content-effectiveness .info-empty-msg {
@@ -18914,8 +18988,7 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   }
 
   #content-effectiveness .info-section__header {
-    align-items: flex-start;
-    flex-direction: column;
+    min-height: 44px;
   }
 
   #content-effectiveness .types-quick-hint {

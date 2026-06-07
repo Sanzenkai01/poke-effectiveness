@@ -813,6 +813,18 @@ function getRouteInfoFromPathname(pathname = location.pathname){
     return null;
 }
 
+function isEffectivenessRouteActive(){
+    if(tabEffectBtn && tabEffectBtn.classList.contains('active')) return true;
+    const pathRouteInfo = getRouteInfoFromPathname();
+    if(pathRouteInfo?.tab === 'effectiveness') return true;
+    try{
+        const params = new URLSearchParams(location.search);
+        return getRouteInfo(params.get('tab'))?.tab === 'effectiveness' || params.has('types');
+    }catch(error){
+        return false;
+    }
+}
+
 function normalizePokemonCatalogVariant(value){
     return String(value || '').trim().toLowerCase() === POKEMON_CATALOG_VARIANT_MEGA
         ? POKEMON_CATALOG_VARIANT_MEGA
@@ -6178,14 +6190,21 @@ function renderSelection(){
             <div class="types-selection-pills">
                 ${currentSelection.map(type=>`<span class="types-selection-pill"><img src="icons-type/${type}.png" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>${getTypeDisplayName(type)}</span></span>`).join('')}
             </div>
+            <div class="types-info__legend" aria-label="Legenda da análise atual">
+                <span class="types-info__legend-item types-info__legend-item--super">2x</span>
+                <span class="types-info__legend-item types-info__legend-item--effective">1.5x</span>
+                <span class="types-info__legend-item types-info__legend-item--resist">Resiste</span>
+                <span class="types-info__legend-item types-info__legend-item--vulnerable">Vulnerável</span>
+                <span class="types-info__legend-item types-info__legend-item--super-vulnerable">2x defesa</span>
+            </div>
         </div>
         <div class="types-info__sections">
     `;
     html += makeSection(t('superEffective'), 'Ataque 2x', superEffectiveTargets, 'super');
     html += makeSection('Efetivo', 'Ataque 1.5x', effectiveTargets, 'effective');
-    html += makeSection('Muito vulnerável', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
-    html += makeSection(t('vulnerable'), 'Defesa 1.5x', weakEntries, 'vulnerable');
     html += makeSection(t('resistLabel'), 'Defesa 0.75x / 0.5x', resistEntries, 'resist');
+    html += makeSection(t('vulnerable'), 'Defesa 1.5x', weakEntries, 'vulnerable');
+    html += makeSection('Muito vulnerável', 'Defesa 2x', superWeakEntries, 'super-vulnerable');
     html += makeSection(t('immune'), 'Defesa 0x', immuneEntries, 'immune');
     if(!superEffectiveTargets.length && !effectiveTargets.length && !superWeakEntries.length && !weakEntries.length && !resistEntries.length && !immuneEntries.length){
         html += `<div class="info-empty-msg">${t('noRelation')}</div>`;
@@ -12113,7 +12132,7 @@ function updateUrl(options = {}){
         params.delete('plan');
         params.delete('variant');
     } else if(currentSelection.length) params.set('types',currentSelection.join(','));
-    else params.delete('types');
+    else if(!(isEffectivenessRouteActive() && !typesDataLoaded && params.has('types'))) params.delete('types');
     const activeTab = isHomeView ? '' :
                       (contentBoost && !contentBoost.hidden) ? 'boost' :
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
@@ -12243,14 +12262,25 @@ function updateUrl(options = {}){
 function initFromUrl(){
     const params=new URLSearchParams(location.search);
     const tparam=params.get('types');
+    currentSelection = [];
     if(tparam){
-        tparam.split(',').forEach(type=>{if(menuTypes.includes(type))currentSelection.push(type);});
+        tparam.split(',').forEach(type=>{
+            const normalizedType = normalizePokemonTypeKey(type);
+            if(menuTypes.includes(normalizedType) && !currentSelection.includes(normalizedType)){
+                currentSelection.push(normalizedType);
+            }
+        });
     }
 
     if(!currentSelection.length) {
         const stored = localStorage.getItem('selectedTypes');
         if(stored) {
-            stored.split(',').forEach(type=>{if(menuTypes.includes(type))currentSelection.push(type);});
+            stored.split(',').forEach(type=>{
+                const normalizedType = normalizePokemonTypeKey(type);
+                if(menuTypes.includes(normalizedType) && !currentSelection.includes(normalizedType)){
+                    currentSelection.push(normalizedType);
+                }
+            });
         }
     }
     if(currentSelection.length)renderSelection();
