@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260604h">
+  <link rel="stylesheet" href="styles.css?v=20260607c">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -154,10 +154,6 @@
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
               <span>Mapas</span>
             </button>
-            <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="full-map" data-nav-url="/mapa-completo">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;&#65039;</span>
-              <span>Mapa Completo</span>
-            </button>
             <button class="sidebar-quick-link home-landing__quick-link" type="button" data-nav-action="fishing" data-nav-url="/pescaria">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
               <span>Pescaria</span>
@@ -262,10 +258,9 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Planejador</span>
               </button>
-              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="horizons" title="Horizons — Em Breve">
+              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="horizons" title="Horizons">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Horizons</span>
-                <span class="sidebar-sublink__badge" aria-hidden="true">Em Breve</span>
               </button>
             </div>
           </section>
@@ -402,10 +397,6 @@
             <button class="sidebar-quick-link" type="button" data-nav-action="respawns" data-nav-url="/mapas">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;</span>
               <span>Mapas</span>
-            </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="full-map" data-nav-url="/mapa-completo">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#128506;&#65039;</span>
-              <span>Mapa Completo</span>
             </button>
             <button class="sidebar-quick-link" type="button" data-nav-action="fishing" data-nav-url="/pescaria">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
@@ -544,7 +535,6 @@
           <div class="respawns-modal__nav" role="group" aria-label="Mapas de respawns">
             <button type="button" class="respawns-modal__tab is-active" data-respawn-map="kanto" aria-pressed="true">Kanto</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="johto" aria-pressed="false">Johto</button>
-            <button type="button" class="respawns-modal__tab" data-respawn-map="wild-area" aria-pressed="false">Wild Area</button>
             <button type="button" class="respawns-modal__tab" data-respawn-map="orre" aria-pressed="false">Orre</button>
           </div>
           <div class="respawns-modal__subnav" id="respawns-johto-subnav" hidden>
@@ -558,14 +548,7 @@
               <button type="button" class="respawns-modal__access-btn" data-johto-page="6" aria-pressed="false">Parte 6</button>
             </div>
           </div>
-          <div class="respawns-modal__subnav" hidden>
-            <span class="respawns-modal__subnav-label">Entradas da Wild Area</span>
-            <div class="respawns-modal__access" role="group" aria-label="Entradas da Wild Area">
-              <button type="button" class="respawns-modal__access-btn" data-wild-access="south" aria-pressed="false">South</button>
-              <button type="button" class="respawns-modal__access-btn" data-wild-access="east" aria-pressed="false">East</button>
-              <button type="button" class="respawns-modal__access-btn" data-wild-access="north" aria-pressed="false">North</button>
-            </div>
-          </div>
+          <!-- Wild Area removed from respawns modal -->
           <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
             <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
             <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
@@ -848,7 +831,7 @@
           <div class="boost-hero__copy">
             <p class="boost-hero__eyebrow">Utilidades</p>
             <h2 id="boost-heading">Calculadora de Boost</h2>
-            <p class="boost-hero__description">Selecione o elemento e veja os materiais.</p>
+            <p class="boost-hero__description">Escolha o alvo e veja os materiais.</p>
           </div>
           <aside id="boost-hero-summary" class="boost-hero__summary" aria-live="polite" hidden>
             <span class="boost-hero__summary-kicker">Resumo do alvo</span>
@@ -861,14 +844,18 @@
           <section class="boost-panel boost-panel--form" aria-labelledby="boost-config-title">
             <div class="boost-panel__header">
               <span class="boost-panel__eyebrow">Etapa 1</span>
-              <h3 id="boost-config-title">Selecione o elemento</h3>
+              <h3 id="boost-config-title">Escolha o alvo</h3>
             </div>
 
             <div class="boost-fieldset">
-              <span class="boost-fieldset__legend">Elemento</span>
-              <div class="boost-type-panel boost-type-panel--inline">
-                <div class="boost-type-panel__controls">
-                  <div id="boost-type-picker" class="boost-type-picker" role="listbox" aria-label="Selecionar elemento" aria-multiselectable="true"></div>
+              <span class="boost-fieldset__legend">Busca</span>
+              <div class="boost-search-panel">
+                <div class="boost-search-panel__field">
+                  <label class="speedster-search-label" for="boost-pokemon-search">Nome</label>
+                  <input id="boost-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="boost-selection-prompt" />
+                  <div id="boost-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                  <div id="boost-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+                  <div id="boost-type-picker" class="boost-type-picker" role="listbox" aria-label="Selecionar elemento" aria-multiselectable="true" hidden></div>
 
                   <!-- hidden selects kept for form-state compatibility -->
                   <label class="visually-hidden" for="boost-type1-select">Tipo 1</label>
@@ -881,7 +868,7 @@
                     <option value="">(Opcional) Segundo elemento</option>
                   </select>
                 </div>
-                <p id="boost-selection-prompt" class="boost-selection-prompt">Selecione um elemento para liberar o cálculo.</p>
+                <p id="boost-selection-prompt" class="boost-selection-prompt">Selecione um resultado para liberar o calculo.</p>
                 <div id="boost-pokemon-meta" class="boost-pokemon-meta" aria-live="polite"></div>
               </div>
             </div>
@@ -1174,12 +1161,6 @@
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card catch-card">
         <div class="catch-hero">
-          <div class="catch-hero__copy">
-            <p id="catch-eyebrow" class="catch-hero__eyebrow">Captura otimizada</p>
-            <h2 id="catch-heading">Calculadora de Captura</h2>
-            <p id="catch-description" class="catch-hero__description">Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.
- (Layout provisório até a adição de todos os pokémons)</p>
-          </div>
           <div class="catch-hero__preview" aria-live="polite">
             <span id="catch-selected-ball-label" class="catch-hero__preview-label">Pokébola selecionada</span>
             <div class="catch-ball-preview">
@@ -1197,37 +1178,49 @@
             <div class="catch-panel__header">
               <span class="catch-panel__eyebrow">Estimativa</span>
               <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de pokébolas</h3>
-              <p id="catch-calc-hint" class="catch-panel__hint">Escolha a pokébola, o nível e o tipo de captura para ver uma estimativa rápida.</p>
+              <p id="catch-calc-hint" class="catch-panel__hint">Escolha o alvo e a variante para liberar a estimativa.</p>
+            </div>
+
+            <div class="catch-section catch-field catch-field--full catch-target-picker">
+              <span class="catch-variant-group__label catch-target-picker__title"><strong>Escolha o Alvo</strong></span>
+              <div class="boost-search-panel catch-search-panel">
+                <div class="boost-search-panel__field">
+                  <label class="speedster-search-label" for="catch-pokemon-search">Nome</label>
+                  <input id="catch-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="catch-selection-prompt" />
+                  <div id="catch-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                  <div id="catch-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+                </div>
+              </div>
+              <div id="catch-pokemon-meta" class="boost-pokemon-meta catch-pokemon-meta" aria-live="polite"></div>
             </div>
 
             <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
-              <span id="catch-variant-label" class="catch-variant-group__label">Tipo de captura</span>
+              <span id="catch-variant-label" class="catch-variant-group__label">Variante</span>
               <div class="catch-variant-options">
                 <label class="catch-variant-card">
                   <input type="radio" name="catch-variant-legacy" value="normal">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Normal</strong>
-                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Estimativa padr&atilde;o de captura.</span>
+                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Usa os dados cadastrados do alvo.</span>
                   </span>
                 </label>
                 <label class="catch-variant-card">
                   <input type="radio" name="catch-variant-legacy" value="shiny">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Shiny</strong>
-                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Mostra a m&eacute;dia para capturas shiny.</span>
+                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Calcula pelo nivel do alvo.</span>
                   </span>
                 </label>
               </div>
             </div>
 
             <div id="catch-selection-prompt" class="catch-selection-prompt" aria-live="polite">
-              <strong id="catch-selection-prompt-title">Escolha Normal ou Shiny para come&ccedil;ar</strong>
-              <span id="catch-selection-prompt-hint">No Normal voc&ecirc; escolhe o pre&ccedil;o registrado do pok&eacute;mon. No Shiny, o c&aacute;lculo continua por n&iacute;vel.</span>
+              <span id="catch-selection-prompt-hint">Depois disso, a p&aacute;gina usa pre&ccedil;o, n&iacute;vel e tipos cadastrados automaticamente.</span>
             </div>
 
             <div id="catch-config-shell" class="catch-config-shell" hidden>
               <div class="catch-form-grid">
-              <div class="catch-section catch-field">
+              <div class="catch-section catch-field catch-ball-choice-field">
                 <label for="ball-select">Escolha a pokébola:</label>
                 <select id="ball-select">
                   <option value="ultra">Pokébola Ultra</option>
@@ -1259,32 +1252,6 @@
                   <div id="catch-price-picker-ui" class="catch-price-picker__ui" aria-hidden="true"></div>
                 </div>
               </div>
-            </div>
-
-            <div class="catch-section catch-field catch-field--full catch-elemental-config">
-              <div class="catch-elemental-config__header">
-                <div>
-                  <span class="catch-variant-group__label">Regras das balls elementais</span>
-                  <p class="catch-elemental-config__hint">Selecione os tipos do alvo. O log separa automaticamente quais balls elementais continuam como Elemental e quais passam a contar como Story.</p>
-                </div>
-              </div>
-              <div class="catch-elemental-config__grid">
-                <div class="catch-elemental-config__field">
-                  <label for="catch-target-type-primary">Tipo principal do alvo</label>
-                  <div class="catch-type-select" data-catch-type-select="primary">
-                    <select id="catch-target-type-primary" class="catch-type-select__native"></select>
-                    <div id="catch-target-type-primary-ui" class="catch-type-select__ui" aria-hidden="true"></div>
-                  </div>
-                </div>
-                <div class="catch-elemental-config__field">
-                  <label for="catch-target-type-secondary">2&ordm; tipo do alvo</label>
-                  <div class="catch-type-select" data-catch-type-select="secondary">
-                    <select id="catch-target-type-secondary" class="catch-type-select__native"></select>
-                    <div id="catch-target-type-secondary-ui" class="catch-type-select__ui" aria-hidden="true"></div>
-                  </div>
-                </div>
-              </div>
-              <div id="catch-elemental-rule-status" class="catch-elemental-rule-status" aria-live="polite"></div>
             </div>
 
             <div id="catch-legacy-variant-group" class="catch-section catch-variant-group" hidden aria-hidden="true">
@@ -1628,7 +1595,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        v11.0.0 - 2026
+        v12.0.0 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1643,7 +1610,7 @@
     </footer>
     </main>
     </div>
-    <script src="js/utf8-guard.js?v=20260521a" defer></script>
+    <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/main.js" defer></script>
 
     <!-- Local config (gitignored) — defines window.POKE_YT_API_KEY for local testing -->
@@ -1653,9 +1620,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
-    <script src="js/streamers.shared.js?v=20260524a" defer></script>
-    <script src="js/visits.shared.js?v=20260601b" defer></script>
-    <script src="script.js?v=20260605m" defer></script>
+    <script src="js/streamers.shared.js?v=20260606a" defer></script>
+    <script src="js/visits.shared.js?v=20260607a" defer></script>
+    <script src="script.js?v=20260607j" defer></script>
 </body>
 </html>
 

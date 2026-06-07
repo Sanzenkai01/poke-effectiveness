@@ -14,6 +14,19 @@ function setActiveTabTheme(tabName) {
     }
 }
 
+// Apply highlighted prompt text to the top label in the Catch panel
+function applyCatchTopLabelHighlight(){
+    try{
+        const catchTopLabelEl = document.querySelector('.catch-target-picker .catch-variant-group__label');
+        if(catchTopLabelEl && !catchTopLabelEl.querySelector('strong')){
+            const strong = document.createElement('strong');
+            strong.textContent = 'Escolha o Alvo';
+            catchTopLabelEl.innerHTML = '';
+            catchTopLabelEl.appendChild(strong);
+        }
+    }catch(e){/* ignore */}
+}
+
 // if opened via file:// the fetch will fail; warn user early
 if(location.protocol === 'file:'){
     window.addEventListener('load', ()=>{
@@ -195,6 +208,10 @@ let boostLastFormMessage = '';
 let boostSelectedTypes = [];
 let catchPageInitialized = false;
 let catchLogState = null;
+let catchPokemonEntries = [];
+let catchPokemonSearchIndex = new Map();
+let catchSelectedPokemonEntry = null;
+let catchPokemonSearchHideTimer = 0;
 let bossesPageLoadPromise = null;
 let pokemonCatalogLoaded = false;
 let pokemonCatalogLoadPromise = null;
@@ -228,7 +245,7 @@ let teamModalHistoryPushed = false;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260605g';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260607j';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -281,10 +298,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260605d';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260605c';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260605b';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260605c';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260607a';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260606a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260606a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260606a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -905,6 +922,31 @@ function getRequestedPokemonCatalogPageFromPath(pathname = location.pathname){
     return normalizePokemonCatalogPageNumber(match[1], 1);
 }
 
+function normalizeCatchRouteToken(value){
+    try{
+        return decodeURIComponent(String(value || ''))
+            .trim()
+            .toLowerCase();
+    }catch(error){
+        return String(value || '')
+            .trim()
+            .toLowerCase();
+    }
+}
+
+function getCatchRouteMatch(pathname = location.pathname){
+    const match = String(pathname || '').match(/\/catch\/([a-z0-9][a-z0-9-]*)\/?$/i);
+    if(!match) return null;
+    const routeToken = normalizeCatchRouteToken(match[1]);
+    return routeToken ? { routeToken } : null;
+}
+
+function slugifyCatchRouteToken(value){
+    return normalizePokemonSearchText(value)
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
 function getPokemonCatalogRoutePath(page = pokemonCatalogCurrentPage, variant = getCurrentPokemonCatalogVariant()){
     const basePath = getPokemonRoutePathForVariant(variant);
     const normalizedPage = normalizePokemonCatalogPageNumber(page, 1);
@@ -960,7 +1002,7 @@ function getBossRouteMatch(pathname = location.pathname){
     if(!segments.length) return null;
 
     const bossMode = normalizeBossModeParam(segments[0]);
-    if(!bossMode || !['hoopa', 'champion', 'mew2', 'special'].includes(bossMode)) return null;
+    if(!bossMode || !['hoopa', 'champion', 'mew2', 'special', 'horizons'].includes(bossMode)) return null;
     const detailSuffix = String(segments[2] || '').trim().toLowerCase();
     if((detailSuffix && !['mapa', 'video'].includes(detailSuffix)) || segments.length > 3) return null;
 
@@ -2941,24 +2983,24 @@ const strings = {
         stoneItems: 'pedras do elemento',
         /* catch calculator */
         catchTitle: 'Calculadora de Captura',
-        catchEyebrow: 'Captura otimizada',
-        catchDescription: 'Consulte a média de pokébolas e acompanhe o progresso do log em uma tela mais direta.\n (Layout provisório até a adição de todos os pokémons)',
+        catchEyebrow: '',
+        catchDescription: '',
         selectedBallLabel: 'Pokébola selecionada',
         catchCalcTitle: 'Calcule a média de pokébolas',
-        catchCalcHint: 'Escolha primeiro entre Normal e Shiny para liberar os campos corretos da estimativa.',
+        catchCalcHint: 'Escolha o alvo e a variante para liberar a estimativa.',
         ballChoiceLabel: 'Escolha a pokébola:',
         pokemonLevelLabel: 'Nível do pokémon:',
         catchPriceLabel: 'Preço do pokémon:',
         catchPricePlaceholder: 'Selecione o preço',
         catchPriceLoading: 'Carregando preços...',
         catchPriceUnavailable: 'Preços indisponíveis no momento',
-        catchVariantLabel: 'Tipo de captura',
-        catchVariantNormalHint: 'Usa o preço registrado do pokémon como base.',
-        catchVariantShinyHint: 'Mantém a captura por nível, como no fluxo atual.',
-        catchSelectionPromptTitle: 'Escolha Normal ou Shiny para começar',
-        catchSelectionPromptHint: 'No Normal você seleciona o preço registrado. No Shiny, o cálculo é feito por nível.',
-        catchSelectVariantFirst: 'Selecione Normal ou Shiny para liberar a estimativa.',
-        catchSelectPriceFirst: 'Selecione um preço para calcular a captura normal.',
+        catchVariantLabel: 'Variante',
+        catchVariantNormalHint: 'Usa o preço e os tipos cadastrados do alvo.',
+        catchVariantShinyHint: 'Usa o nível e os tipos cadastrados do alvo.',
+        catchSelectionPromptTitle: 'Escolha o alvo e a variante para começar',
+        catchSelectionPromptHint: 'Depois disso, a página usa preço, nível e tipos cadastrados automaticamente.',
+        catchSelectVariantFirst: 'Selecione um alvo e uma variante para liberar a estimativa.',
+        catchSelectPriceFirst: 'Dados de captura indisponíveis para esta seleção.',
         optionsLabel: 'Opções',
         catchOptionLabel: 'Opção',
         calcCatchBtn: 'Calcular estimativa',
@@ -3353,6 +3395,7 @@ function updateTextContent(){
     if(tabSpeedstersBtn) tabSpeedstersBtn.textContent = t('tabSpeedsters');
     if(tabStreamersBtn) tabStreamersBtn.textContent = t('tabStreamers');
     if(tabCommunityBtn) tabCommunityBtn.textContent = t('tabCommunity');
+    
     const homeEyebrow = document.getElementById('home-eyebrow');
     if(homeEyebrow) homeEyebrow.textContent = t('homeEyebrow');
     const homeTitle = document.getElementById('home-hero-title');
@@ -3476,6 +3519,8 @@ function updateTextContent(){
     if(catchSelectionPromptTitleEl) catchSelectionPromptTitleEl.textContent = t('catchSelectionPromptTitle');
     const catchSelectionPromptHintEl = document.getElementById('catch-selection-prompt-hint');
     if(catchSelectionPromptHintEl) catchSelectionPromptHintEl.textContent = t('catchSelectionPromptHint');
+    // Substitui o rótulo 'Alvo' acima do campo Nome pelo texto destacado do prompt (mantém destaque)
+    try { applyCatchTopLabelHighlight(); } catch(e) { /* ignore */ }
     const catchLogTitleEl = document.getElementById('catch-log-title');
     if(catchLogTitleEl) catchLogTitleEl.textContent = t('catchLogTitle');
     const catchLogHintEl = document.getElementById('catch-log-hint');
@@ -4471,22 +4516,489 @@ function renderCatchPricePicker(){
     uiRoot.appendChild(panel);
 }
 
+function getCatchPokemonCaptureValue(entry, variant){
+    if(!entry) return '';
+    if(variant === 'normal'){
+        const price = Number(entry.price || 0);
+        return price > 0 ? String(price) : '';
+    }
+    if(variant === 'shiny'){
+        const isAce = Array.isArray(entry.specialTags) && entry.specialTags.includes('ace');
+        const levelKey = isAce ? 'ace' : getPokemonCaptureLevelKey(entry.level);
+        return levelKey ? String(levelKey) : '';
+    }
+    return '';
+}
+
+function isCatchVariantUsable(entry, variant){
+    if(!entry || !variant) return false;
+    if(!isPokemonCaptureVariantAvailable(entry, variant)) return false;
+    return Boolean(getCatchPokemonCaptureValue(entry, variant));
+}
+
+function getCatchAvailablePokemonEntries(){
+    const entries = Array.isArray(pokemonCatalogEntriesByVariant.default)
+        ? pokemonCatalogEntriesByVariant.default
+        : [];
+    const seen = new Set();
+
+    return entries
+        .filter(entry => (
+            entry
+            && entry.name
+            && entry.type1
+            && entry.registered !== false
+            && !isMegaPokemonCatalogEntry(entry)
+            && (isCatchVariantUsable(entry, 'normal') || isCatchVariantUsable(entry, 'shiny'))
+        ))
+        .filter(entry => {
+            const key = `${entry.id || ''}:${entry.name}`;
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+}
+
+function getCatchPokemonEntrySearchKey(entry){
+    return entry?.searchName || normalizePokemonSearchText(entry?.name || '');
+}
+
+function getCatchPokemonRouteToken(entry){
+    if(!entry) return '';
+    return String(entry.routeSlug || entry.id || slugifyCatchRouteToken(entry.name) || '')
+        .trim()
+        .toLowerCase();
+}
+
+function getCatchRoutePath(entry = catchSelectedPokemonEntry){
+    const routeToken = getCatchPokemonRouteToken(entry);
+    return routeToken ? `/catch/${encodeURIComponent(routeToken)}` : '/catch';
+}
+
+function findCatchPokemonEntryByRouteToken(routeToken){
+    const normalizedToken = normalizeCatchRouteToken(routeToken);
+    if(!normalizedToken) return null;
+    return catchPokemonEntries.find((entry) => {
+        if(!entry) return false;
+        if(getCatchPokemonRouteToken(entry) === normalizedToken) return true;
+        return getCatchPokemonEntrySearchKey(entry) === normalizedToken;
+    }) || null;
+}
+
+function getCatchVariantFromUrl(search = location.search){
+    const params = new URLSearchParams(search);
+    const variant = String(params.get('variante') || params.get('variant') || '').trim().toLowerCase();
+    return variant === 'normal' || variant === 'shiny' ? variant : '';
+}
+
+function getCatchBallFromUrl(search = location.search){
+    const params = new URLSearchParams(search);
+    const ball = String(params.get('ball') || params.get('pokebola') || '').trim().toLowerCase();
+    return catchBallOrder.includes(ball) ? ball : '';
+}
+
+function shouldRenderCatchEstimateFromUrl(search = location.search){
+    const params = new URLSearchParams(search);
+    const value = String(params.get('estimativa') || params.get('calcular') || '').trim().toLowerCase();
+    return ['1', 'true', 'sim', 'yes'].includes(value);
+}
+
+function setCatchEstimateRenderedState(rendered){
+    if(catchResult){
+        catchResult.dataset.estimateRendered = rendered ? 'true' : 'false';
+    }
+}
+
+function isCatchEstimateRendered(){
+    return catchResult?.dataset?.estimateRendered === 'true';
+}
+
+function refreshCatchPokemonSearchStore(){
+    catchPokemonEntries = getCatchAvailablePokemonEntries();
+    catchPokemonSearchIndex = new Map();
+    catchPokemonEntries.forEach(entry => {
+        const searchKey = getCatchPokemonEntrySearchKey(entry);
+        if(searchKey && !catchPokemonSearchIndex.has(searchKey)){
+            catchPokemonSearchIndex.set(searchKey, entry);
+        }
+    });
+    return catchPokemonEntries;
+}
+
+function findCatchMatchingPokemonEntries(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
+    if(!normalizedValue) return [];
+    return catchPokemonEntries.filter(entry => {
+        const searchKey = getCatchPokemonEntrySearchKey(entry);
+        return searchKey === normalizedValue || searchKey.includes(normalizedValue);
+    });
+}
+
+function getCatchPokemonSearchResultEntries(value = '', limit = 8){
+    const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
+    const entries = normalizedValue
+        ? findCatchMatchingPokemonEntries(normalizedValue)
+        : [...catchPokemonEntries];
+
+    return entries
+        .sort((left, right) => {
+            const leftKey = getCatchPokemonEntrySearchKey(left);
+            const rightKey = getCatchPokemonEntrySearchKey(right);
+            const leftStartsWith = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
+            const rightStartsWith = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
+            if(leftStartsWith !== rightStartsWith){
+                return leftStartsWith ? -1 : 1;
+            }
+            return left.name.localeCompare(right.name, 'pt-BR');
+        })
+        .slice(0, limit);
+}
+
+function resolveCatchPokemonEntry(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
+    if(!normalizedValue) return null;
+    const exactEntry = catchPokemonSearchIndex.get(normalizedValue) || null;
+    if(exactEntry) return exactEntry;
+
+    const matchingEntries = findCatchMatchingPokemonEntries(normalizedValue);
+    return matchingEntries.length === 1 ? matchingEntries[0] : null;
+}
+
+function getCatchSelectedPokemonEntry(value = ''){
+    const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
+    if(!normalizedValue) return null;
+    if(catchSelectedPokemonEntry && getCatchPokemonEntrySearchKey(catchSelectedPokemonEntry) === normalizedValue){
+        return catchSelectedPokemonEntry;
+    }
+    return resolveCatchPokemonEntry(normalizedValue);
+}
+
+function clearCatchPokemonSearchHideTimer(){
+    if(catchPokemonSearchHideTimer){
+        clearTimeout(catchPokemonSearchHideTimer);
+        catchPokemonSearchHideTimer = 0;
+    }
+}
+
+function hideCatchPokemonSearchResults(){
+    clearCatchPokemonSearchHideTimer();
+    const searchField = catchPokemonSearchInput?.closest('.boost-search-panel__field');
+    if(searchField){
+        searchField.classList.remove('boost-search-panel__field--drop-up');
+    }
+    if(catchPokemonResults){
+        catchPokemonResults.hidden = true;
+        catchPokemonResults.replaceChildren();
+    }
+    if(catchPokemonNoResults){
+        catchPokemonNoResults.hidden = true;
+    }
+}
+
+function syncCatchPokemonSearchResultsDirection(){
+    const searchField = catchPokemonSearchInput?.closest('.boost-search-panel__field');
+    if(!searchField) return;
+
+    searchField.classList.remove('boost-search-panel__field--drop-up');
+    const activePanel = !catchPokemonResults?.hidden
+        ? catchPokemonResults
+        : (!catchPokemonNoResults?.hidden ? catchPokemonNoResults : null);
+    if(!activePanel) return;
+
+    const fieldRect = searchField.getBoundingClientRect();
+    const panelRect = activePanel.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+    const availableBelow = viewportHeight - fieldRect.bottom;
+    const availableAbove = fieldRect.top;
+    const desiredHeight = Math.min(
+        Math.max(panelRect.height, activePanel.scrollHeight || 0),
+        viewportHeight * 0.7
+    );
+
+    if(availableBelow < desiredHeight && availableAbove > availableBelow){
+        searchField.classList.add('boost-search-panel__field--drop-up');
+    }
+}
+
+function createCatchSearchResultContent(entry){
+    const sprite = document.createElement('img');
+    sprite.className = 'speedster-search-item-icon boost-search-item-icon boost-search-item-icon--pokemon';
+    sprite.src = getPokemonImageSource(entry);
+    sprite.alt = entry.name;
+    sprite.title = entry.name;
+    sprite.loading = 'lazy';
+    sprite.decoding = 'async';
+    setImageFallback(sprite, POKEMON_IMAGE_PLACEHOLDER);
+
+    const typeIcons = [entry.type1, entry.type2]
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(typeKey => {
+            const img = document.createElement('img');
+            img.className = 'speedster-search-item-icon boost-search-item-icon';
+            img.src = `icons-type/${typeKey}.png`;
+            img.alt = typeKey;
+            img.title = getTypeDisplayName(typeKey);
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            return img;
+        });
+
+    const name = document.createElement('span');
+    name.className = 'boost-search-item-name';
+    name.textContent = entry.name;
+
+    const content = document.createElement('div');
+    content.className = 'boost-search-item-content';
+    content.appendChild(sprite);
+    typeIcons.forEach(icon => content.appendChild(icon));
+    content.appendChild(name);
+    return content;
+}
+
+function renderCatchPokemonSearchResults(value = '', options = {}){
+    const { keepClosed = false } = options;
+    if(!catchPokemonResults || !catchPokemonNoResults) return;
+    if(keepClosed){
+        hideCatchPokemonSearchResults();
+        return;
+    }
+
+    const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
+    const entries = getCatchPokemonSearchResultEntries(value);
+
+    if(!entries.length){
+        catchPokemonResults.hidden = true;
+        catchPokemonResults.replaceChildren();
+        catchPokemonNoResults.hidden = !normalizedValue;
+        window.requestAnimationFrame(syncCatchPokemonSearchResultsDirection);
+        return;
+    }
+
+    catchPokemonNoResults.hidden = true;
+    catchPokemonResults.hidden = false;
+    catchPokemonResults.replaceChildren();
+
+    const currentEntry = getCatchSelectedPokemonEntry(value);
+    const fragment = document.createDocumentFragment();
+    entries.forEach(entry => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'speedster-search-item boost-search-item';
+        item.dataset.pokemonName = entry.name;
+        item.setAttribute('aria-label', `Selecionar ${entry.name} para calcular captura.`);
+        if(currentEntry && currentEntry.id === entry.id){
+            item.dataset.selected = 'true';
+        }
+        item.appendChild(createCatchSearchResultContent(entry));
+        item.addEventListener('click', () => {
+            applyCatchPokemonSearchSelection(entry);
+        });
+        fragment.appendChild(item);
+    });
+
+    catchPokemonResults.appendChild(fragment);
+    window.requestAnimationFrame(syncCatchPokemonSearchResultsDirection);
+}
+
+function syncCatchTargetTypesFromPokemon(entry = catchSelectedPokemonEntry){
+    if(catchTargetTypePrimarySelect){
+        catchTargetTypePrimarySelect.value = entry?.type1 || '';
+        syncCatchTypeSelectUi(catchTargetTypePrimarySelect);
+    }
+    if(catchTargetTypeSecondarySelect){
+        catchTargetTypeSecondarySelect.value = entry?.type2 || '';
+        syncCatchTypeSelectUi(catchTargetTypeSecondarySelect);
+    }
+    updateCatchElementalRuleStatus();
+}
+
+function syncCatchVariantOptionAvailability(){
+    catchVariantInputs.forEach(input => {
+        const enabled = catchSelectedPokemonEntry
+            ? isCatchVariantUsable(catchSelectedPokemonEntry, input.value)
+            : true;
+        input.disabled = !enabled;
+        const card = input.closest('.catch-variant-card');
+        if(card){
+            card.classList.toggle('catch-variant-card--disabled', !enabled);
+            card.setAttribute('aria-disabled', String(!enabled));
+        }
+        if(!enabled && input.checked){
+            input.checked = false;
+        }
+    });
+}
+
+function renderCatchPokemonMeta(){
+    if(!catchPokemonMeta) return;
+    catchPokemonMeta.replaceChildren();
+    const entry = catchSelectedPokemonEntry;
+    if(!entry) return;
+
+    const preview = document.createElement('article');
+    preview.className = 'boost-selected-preview catch-selected-preview';
+
+    const header = document.createElement('div');
+    header.className = 'boost-selected-preview__header';
+
+    const media = document.createElement('span');
+    media.className = 'boost-selected-preview__media';
+    const image = document.createElement('img');
+    image.src = getPokemonImageSource(entry);
+    image.alt = entry.name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.addEventListener('error', () => {
+        media.replaceChildren(createBoostMediaFallback(entry.name));
+    }, { once: true });
+    media.appendChild(image);
+
+    const identity = document.createElement('div');
+    identity.className = 'boost-selected-preview__identity';
+
+    const kicker = document.createElement('span');
+    kicker.className = 'boost-selected-preview__kicker';
+    kicker.textContent = 'Alvo selecionado';
+
+    const title = document.createElement('strong');
+    title.className = 'boost-selected-preview__title';
+    title.textContent = entry.name;
+
+    identity.append(kicker, title);
+    header.append(media, identity);
+
+    const groups = document.createElement('div');
+    groups.className = 'boost-selected-preview__groups';
+
+    const typeGroup = document.createElement('div');
+    typeGroup.className = 'boost-selected-preview__group';
+    const typeLabel = document.createElement('span');
+    typeLabel.className = 'boost-selected-preview__group-label';
+    typeLabel.textContent = 'Tipos';
+    const typeChips = document.createElement('div');
+    typeChips.className = 'boost-selected-preview__chips';
+    [entry.type1, entry.type2].filter(Boolean).forEach(type => {
+        typeChips.appendChild(createBoostTypeChip(type));
+    });
+    typeGroup.append(typeLabel, typeChips);
+
+    const dataGroup = document.createElement('div');
+    dataGroup.className = 'boost-selected-preview__group';
+    const dataLabel = document.createElement('span');
+    dataLabel.className = 'boost-selected-preview__group-label';
+    dataLabel.textContent = 'Dados';
+    const dataChips = document.createElement('div');
+    dataChips.className = 'boost-selected-preview__chips';
+    dataChips.appendChild(createBoostTextChip(getPokemonEntryPriceLabel(entry) || 'Preco nao informado'));
+    dataChips.appendChild(createBoostTextChip(getPokemonEntryLevelLabel(entry)));
+    dataGroup.append(dataLabel, dataChips);
+
+    groups.append(typeGroup, dataGroup);
+    preview.append(header, groups);
+    catchPokemonMeta.appendChild(preview);
+}
+
+function applyCatchPokemonSearchSelection(entry){
+    if(!entry) return;
+    catchSelectedPokemonEntry = entry;
+    if(catchPokemonSearchInput){
+        catchPokemonSearchInput.value = entry.name;
+    }
+    hideCatchPokemonSearchResults();
+    syncCatchTargetTypesFromPokemon(entry);
+    syncCatchVariantOptionAvailability();
+    renderCatchPokemonMeta();
+    syncCatchSelectionUi();
+    updateUrl({ historyMode: 'push' });
+}
+
+function hydrateCatchPokemonOptions(){
+    if(!catchPokemonSearchInput) return;
+    const entries = refreshCatchPokemonSearchStore();
+    catchPokemonSearchInput.placeholder = entries.length
+        ? 'Digite para buscar'
+        : 'Catalogo indisponivel no momento';
+    catchSelectedPokemonEntry = resolveCatchPokemonEntry(catchPokemonSearchInput.value || '');
+    syncCatchTargetTypesFromPokemon(catchSelectedPokemonEntry);
+    syncCatchVariantOptionAvailability();
+    renderCatchPokemonMeta();
+    hideCatchPokemonSearchResults();
+}
+
+function applyCatchUrlState(options = {}){
+    const { updateHistory = false } = options || {};
+    const routeMatch = getCatchRouteMatch();
+    const params = new URLSearchParams(location.search);
+    const queryTarget = params.get('pokemon') || params.get('alvo') || '';
+    const hasTargetRequest = Boolean(routeMatch?.routeToken || queryTarget);
+    const requestedEntry = routeMatch?.routeToken
+        ? findCatchPokemonEntryByRouteToken(routeMatch.routeToken)
+        : (queryTarget ? resolveCatchPokemonEntry(queryTarget) : null);
+
+    if(requestedEntry){
+        catchSelectedPokemonEntry = requestedEntry;
+        if(catchPokemonSearchInput){
+            catchPokemonSearchInput.value = requestedEntry.name;
+        }
+        syncCatchTargetTypesFromPokemon(requestedEntry);
+    } else if(!hasTargetRequest){
+        catchSelectedPokemonEntry = null;
+        if(catchPokemonSearchInput){
+            catchPokemonSearchInput.value = '';
+        }
+        catchVariantInputs.forEach((input) => {
+            input.checked = false;
+        });
+        syncCatchTargetTypesFromPokemon(null);
+    }
+    syncCatchVariantOptionAvailability();
+
+    const requestedVariant = getCatchVariantFromUrl();
+    if(requestedVariant){
+        catchVariantInputs.forEach((input) => {
+            input.checked = input.value === requestedVariant && !input.disabled;
+        });
+    }
+
+    const requestedBall = getCatchBallFromUrl();
+    if(requestedBall && ballSelect){
+        ballSelect.value = requestedBall;
+        updateBallPreview();
+    }
+
+    renderCatchPokemonMeta();
+    syncCatchSelectionUi();
+    if(shouldRenderCatchEstimateFromUrl()){
+        renderCatchCalculation({ updateHistory: false });
+    } else {
+        setCatchEstimateRenderedState(false);
+    }
+    if(updateHistory){
+        updateUrl({ historyMode: 'replace' });
+    }
+}
+
 function getSelectedCatchVariant(){
     return Array.from(catchVariantInputs || []).find((input) => input.checked)?.value || '';
 }
 
 function getCatchSelectionValue(variant = getSelectedCatchVariant()){
+    const entry = catchSelectedPokemonEntry || getCatchSelectedPokemonEntry();
     if(variant === 'shiny'){
-        return levelSelect ? String(levelSelect.value || '5') : '5';
+        return getCatchPokemonCaptureValue(entry, 'shiny');
     }
     if(variant === 'normal'){
-        return catchPriceSelect ? String(catchPriceSelect.value || '').trim() : '';
+        return getCatchPokemonCaptureValue(entry, 'normal');
     }
     return '';
 }
 
 function isCatchSelectionReady(variant = getSelectedCatchVariant()){
-    if(!variant) return false;
+    const entry = catchSelectedPokemonEntry || getCatchSelectedPokemonEntry();
+    if(!entry || !variant) return false;
+    if(!isCatchVariantUsable(entry, variant)) return false;
     return Boolean(getCatchSelectionValue(variant));
 }
 
@@ -4971,10 +5483,16 @@ function renderCatchTypeSelect(select){
 
 function getCatchSelectedTargetTypes(){
     const seen = new Set();
-    return [
+    const selectedTypes = [
         normalizePokemonTypeKey(catchTargetTypePrimarySelect?.value),
         normalizePokemonTypeKey(catchTargetTypeSecondarySelect?.value)
-    ].filter((type) => {
+    ].filter(Boolean);
+    const sourceTypes = selectedTypes.length ? selectedTypes : [
+        normalizePokemonTypeKey(catchSelectedPokemonEntry?.type1),
+        normalizePokemonTypeKey(catchSelectedPokemonEntry?.type2)
+    ];
+
+    return sourceTypes.filter((type) => {
         if(!type || seen.has(type)) return false;
         seen.add(type);
         return true;
@@ -5140,14 +5658,23 @@ function updateBallPreview(){
 
 function renderCatchPendingState(target, message){
     if(!target) return;
+    if(target === catchResult){
+        setCatchEstimateRenderedState(false);
+    }
     target.innerHTML = `<div class="calc-result-highlight catch-result-empty">${message}</div>`;
 }
 
 function renderCatchEstimateResult(target, chosen, selectionValue, variant, optionItems){
     if(!target) return;
     if(!optionItems.length){
+        if(target === catchResult){
+            setCatchEstimateRenderedState(false);
+        }
         target.innerHTML = `<div class="calc-result-highlight catch-result-empty">${t('noBallsParsed')}</div>`;
         return;
+    }
+    if(target === catchResult){
+        setCatchEstimateRenderedState(true);
     }
     const selectedBallLabel = getCatchBallDisplayLabel(chosen);
     const selectionSummary = getCatchSelectionSummary(selectionValue, variant);
@@ -5201,15 +5728,22 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
     const breakdown = renderCatchPills(
         catchBallOrder.map((ball) => `${getCatchBallDisplayLabel(ball)}: ${counts[ball] || 0}`)
     );
-    const statusLines = remainingItems.length
-        ? remainingItems.map(item=>formatBallAmountWithLabel(item.needed, selectedBallLabel))
-        : [
-            t('avgReached').replace('{avg}', avgNeeded).replace('{ball}', selectedBallLabel),
-            over > 0 ? t('overAvg').replace('{over}', over).replace('{ball}', selectedBallLabel) : '',
-            t('encouragement')
-        ];
-    const statusTitle = remainingItems.length ? t('catchRemainingTitle') : t('catchAchievedTitle');
-    const statusMarkup = renderCatchPills(statusLines, remainingItems.length);
+    const hasSelection = manualState?.hasSelection !== false;
+    const statusLines = hasSelection
+        ? (
+            remainingItems.length
+                ? remainingItems.map(item=>formatBallAmountWithLabel(item.needed, selectedBallLabel))
+                : [
+                    t('avgReached').replace('{avg}', avgNeeded).replace('{ball}', selectedBallLabel),
+                    over > 0 ? t('overAvg').replace('{over}', over).replace('{ball}', selectedBallLabel) : '',
+                    t('encouragement')
+                ]
+        )
+        : ['Escolha o alvo e a variante para calcular quanto falta.'];
+    const statusTitle = hasSelection
+        ? (remainingItems.length ? t('catchRemainingTitle') : t('catchAchievedTitle'))
+        : 'Estimativa bloqueada';
+    const statusMarkup = renderCatchPills(statusLines, hasSelection && remainingItems.length);
     const manualCount = Number(manualState?.manualCount || 0);
     const adjustableBallCount = Number(manualState?.baseCount || 0);
     const quickAdjustSummary = formatCatchQuickAdjustment(chosen, manualCount);
@@ -10089,10 +10623,15 @@ function normalizeBoostLevel(value){
 }
 
 function getBoostAvailablePokemonEntries(){
-    const combinedEntries = [
-        ...(Array.isArray(pokemonCatalogEntriesByVariant.default) ? pokemonCatalogEntriesByVariant.default : []),
-        ...(Array.isArray(pokemonCatalogEntriesByVariant.mega) ? pokemonCatalogEntriesByVariant.mega : [])
-    ].filter(entry => entry && entry.name && entry.type1);
+    const combinedEntries = (Array.isArray(pokemonCatalogEntriesByVariant.default)
+        ? pokemonCatalogEntriesByVariant.default
+        : []
+    ).filter(entry => (
+        entry
+        && entry.name
+        && entry.type1
+        && entry.registered !== false
+    ));
 
     const seen = new Set();
     return combinedEntries
@@ -10203,20 +10742,24 @@ function getBoostDefaultFormState(){
 }
 
 function hasBoostSelectedPokemon(state){
-    return Boolean(state?.type1);
+    return Boolean(state?.pokemonEntry && state?.type1);
+}
+
+function hasBoostSelectedLevel(state){
+    return normalizeBoostLevel(state?.bronzeLevel) > 0 || normalizeBoostLevel(state?.silverLevel) > 0;
 }
 
 function getBoostSelectionPromptText(state){
     // If the new type selects are present, prefer guiding the user to pick a type
-    if(boostType1Select){
+    if(false && boostType1Select){
         if(!state?.type1) return 'Selecione um elemento para liberar o cálculo.';
         return '';
     }
     if(!boostPokemonEntries.length) return 'Catalogo indisponivel.';
     if(state?.pokemonEntry) return '';
-    if(!state?.pokemonName) return 'Selecione um Pokemon para liberar o calculo.';
-    if((state.pokemonMatches || []).length > 1) return 'Escolha um Pokemon da lista.';
-    return 'Pokemon nao encontrado.';
+    if(!state?.pokemonName) return 'Selecione um resultado para liberar o calculo.';
+    if((state.pokemonMatches || []).length > 1) return 'Escolha uma opcao da lista.';
+    return 'Nenhum resultado encontrado.';
 }
 
 function renderBoostSelectionPrompt(state){
@@ -10228,6 +10771,7 @@ function renderBoostSelectionPrompt(state){
 
 function syncBoostCalculatorVisibility(state){
     const hasSelection = hasBoostSelectedPokemon(state);
+    const hasSelectedBoost = hasSelection && hasBoostSelectedLevel(state);
 
     if(boostLayout){
         boostLayout.dataset.hasSelection = hasSelection ? 'true' : 'false';
@@ -10236,10 +10780,10 @@ function syncBoostCalculatorVisibility(state){
         boostConfigControls.hidden = !hasSelection;
     }
     if(boostResultsShell){
-        boostResultsShell.hidden = !hasSelection;
+        boostResultsShell.hidden = !hasSelectedBoost;
     }
     if(boostHeroSummary){
-        boostHeroSummary.hidden = !hasSelection;
+        boostHeroSummary.hidden = !hasSelectedBoost;
     }
     if(boostHelpPanel){
         boostHelpPanel.hidden = !hasSelection;
@@ -10363,12 +10907,9 @@ function applyBoostPokemonSearchSelection(entry){
         boostPokemonSearchInput.value = entry.name;
     }
 
-    if(boostType1Select){
-        // noop here; listeners registered during page init
-    }
-    if(boostType2Select){
-        // noop here; listeners registered during page init
-    }
+    if(boostType1Select) boostType1Select.value = entry.type1 || '';
+    if(boostType2Select) boostType2Select.value = entry.type2 || '';
+    boostSelectedTypes = [entry.type1, entry.type2].filter(Boolean);
     hideBoostPokemonSearchResults();
     renderBoostCalculator();
 }
@@ -10423,7 +10964,7 @@ function hydrateBoostPokemonOptions(){
 
     const entries = refreshBoostPokemonSearchStore();
     boostPokemonSearchInput.placeholder = entries.length
-        ? 'Digite o nome do Pokemon'
+        ? 'Digite para buscar'
         : 'Catalogo indisponivel no momento';
 
     hideBoostPokemonSearchResults();
@@ -10461,7 +11002,7 @@ function hydrateBoostTypeSelects(){
 
 function renderBoostTypePicker(){
     const picker = document.getElementById('boost-type-picker');
-    if(!picker || !menuTypes) return;
+    if(!picker || picker.hidden || !menuTypes) return;
     picker.replaceChildren();
     const fragment = document.createDocumentFragment();
     menuTypes.forEach(type => {
@@ -10541,8 +11082,10 @@ function applyBoostFormState(nextState = getBoostDefaultFormState()){
         boostPokemonSearchInput.value = String(state.pokemonName || '').trim();
     }
     boostSelectedPokemonEntry = resolveBoostPokemonEntry(state.pokemonName || '');
-    if(boostType1Select) boostType1Select.value = String(state.type1 || '');
-    if(boostType2Select) boostType2Select.value = String(state.type2 || '');
+    const resolvedTypes = [boostSelectedPokemonEntry?.type1 || '', boostSelectedPokemonEntry?.type2 || ''];
+    if(boostType1Select) boostType1Select.value = resolvedTypes[0] || '';
+    if(boostType2Select) boostType2Select.value = resolvedTypes[1] || '';
+    boostSelectedTypes = resolvedTypes.filter(Boolean);
     boostShinyInputs.forEach(input => {
         input.checked = input.value === state.shiny;
     });
@@ -10567,15 +11110,11 @@ function getBoostFormState(){
     const pokemonName = String(boostPokemonSearchInput?.value || '').trim();
     const pokemonMatches = findBoostMatchingPokemonEntries(pokemonName);
     const pokemonEntry = getBoostSelectedPokemonEntry(pokemonName);
-    let type1 = '';
-    let type2 = '';
-    if(boostType1Select && boostType1Select.value){
-        type1 = String(boostType1Select.value || '').trim();
-        type2 = String(boostType2Select?.value || '').trim();
-    } else {
-        type1 = pokemonEntry?.type1 || '';
-        type2 = pokemonEntry?.type2 || '';
-    }
+    const type1 = pokemonEntry?.type1 || '';
+    const type2 = pokemonEntry?.type2 || '';
+
+    if(boostType1Select) boostType1Select.value = type1;
+    if(boostType2Select) boostType2Select.value = type2;
 
     return {
         pokemonName,
@@ -10592,7 +11131,7 @@ function getBoostFormState(){
 
 function validateBoostFormState(state){
     // If using the new type selects, validate based on selected type(s)
-    if(boostType1Select){
+    if(false && boostType1Select){
         if(!state.type1){
             return { valid: false, message: 'Selecione um elemento.' };
         }
@@ -11321,20 +11860,25 @@ function renderBoostOverview(state, breakdown){
     const naturalTypeCount = [state.type1, state.type2].filter(Boolean).length;
     const bronzeDirectCount = breakdown.bronzeItems.length;
     const craftCount = breakdown.starCraftItems.length;
+    const selectedPokemonName = state?.pokemonEntry?.name || 'Pokemon selecionado';
+    const selectedTypeLabel = [state.type1, state.type2]
+        .filter(Boolean)
+        .map(getTypeDisplayName)
+        .join(' + ');
 
     if(boostSummaryTarget){
-        boostSummaryTarget.textContent = `Bronze ${state.bronzeLevel} • Silver ${state.silverLevel}`;
+        boostSummaryTarget.textContent = selectedPokemonName;
     }
     if(boostSummaryFlags){
-        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} • ${naturalTypeCount} tipo(s)`;
+        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} - ${selectedTypeLabel || `${naturalTypeCount} tipo(s)`} - Bronze ${state.bronzeLevel} - Silver ${state.silverLevel}`;
     }
     if(!boostOverviewCards) return;
 
     const cards = [
         {
-            label: 'Status',
-            value: state.shiny === 'yes' ? 'Shiny' : 'Normal',
-            note: naturalTypeCount > 1 ? 'Pokemon de 2 tipos' : 'Pokemon de 1 tipo'
+            label: 'Pokemon',
+            value: selectedPokemonName,
+            note: selectedTypeLabel || (naturalTypeCount > 1 ? 'Pokemon de 2 tipos' : 'Pokemon de 1 tipo')
         },
         {
             label: 'Bronze',
@@ -11593,6 +12137,45 @@ function updateUrl(options = {}){
     } else {
         params.delete('topic');
     }
+    const pendingCatchUrlState = activeTab === 'catch'
+        && !catchPokemonEntries.length
+        && !catchSelectedPokemonEntry
+        && Boolean(getCatchRouteMatch()?.routeToken || params.has('pokemon') || params.has('alvo'));
+    if(activeTab === 'catch'){
+        if(!pendingCatchUrlState){
+            params.delete('pokemon');
+            params.delete('alvo');
+            params.delete('variant');
+            params.delete('pokebola');
+            params.delete('calcular');
+            const catchVariant = getSelectedCatchVariant();
+            const catchBall = String(ballSelect?.value || '').trim().toLowerCase();
+            if(catchSelectedPokemonEntry && catchVariant){
+                params.set('variante', catchVariant);
+            } else {
+                params.delete('variante');
+            }
+            if(catchSelectedPokemonEntry && catchBall && catchBall !== 'ultra'){
+                params.set('ball', catchBall);
+            } else {
+                params.delete('ball');
+            }
+            if(catchSelectedPokemonEntry && catchVariant && isCatchEstimateRendered()){
+                params.set('estimativa', '1');
+            } else {
+                params.delete('estimativa');
+            }
+        }
+    } else {
+        params.delete('pokemon');
+        params.delete('alvo');
+        params.delete('variant');
+        params.delete('variante');
+        params.delete('ball');
+        params.delete('pokebola');
+        params.delete('estimativa');
+        params.delete('calcular');
+    }
     if(activeTab === 'pokemons'){
         syncPokemonCatalogFilterParams(params, pokemonCatalogFilters);
     } else {
@@ -11603,7 +12186,9 @@ function updateUrl(options = {}){
     } else {
         syncTeamFilterParams(params, DEFAULT_TEAM_FILTERS);
     }
-    params.delete('variant');
+    if(!pendingCatchUrlState){
+        params.delete('variant');
+    }
     const query = params.toString();
     // If a pokemon details modal is open, prefer the per-pokemon deep-link path
     let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
@@ -11617,6 +12202,13 @@ function updateUrl(options = {}){
             } else {
                 routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
             }
+        } else if(!isHomeView && activeTab === 'catch'){
+            const activeCatchMatch = getCatchRouteMatch();
+            routePath = catchSelectedPokemonEntry
+                ? getCatchRoutePath(catchSelectedPokemonEntry)
+                : (activeCatchMatch?.routeToken && !catchPokemonEntries.length
+                    ? `/catch/${encodeURIComponent(activeCatchMatch.routeToken)}`
+                    : getRoutePathForTab(activeTab));
         } else if(!isHomeView && activeTab === 'times'){
             if(timesDetailsModal && timesDetailsModal.getAttribute('aria-hidden') !== 'true' && activeTeamEntry){
                 routePath = getTeamDetailRoutePath(activeTeamEntry) || getRoutePathForTab(activeTab);
@@ -11735,6 +12327,11 @@ const catchResult = document.getElementById('catch-result');
 const calcCatchBtn = document.getElementById('calc-catch-btn');
 const parseLogBtn = document.getElementById('parse-log');
 const logResult = document.getElementById('log-result');
+const catchPokemonSearchInput = document.getElementById('catch-pokemon-search');
+const catchPokemonResults = document.getElementById('catch-pokemon-results');
+const catchPokemonNoResults = document.getElementById('catch-pokemon-no-results');
+const catchPokemonMeta = document.getElementById('catch-pokemon-meta');
+const catchHeroPreview = document.querySelector('.catch-hero__preview');
 const catchVariantInputs = document.querySelectorAll('input[name="catch-variant-legacy"]');
 const catchConfigShell = document.getElementById('catch-config-shell');
 const catchSelectionPrompt = document.getElementById('catch-selection-prompt');
@@ -11786,20 +12383,24 @@ function getCatchOptionItems(lvl, variant, chosen){
         .filter(Boolean);
 }
 
-function renderCatchCalculation(){
+function renderCatchCalculation(options = {}){
+    const shouldUpdateUrl = !(options && typeof options === 'object' && options.updateHistory === false);
     const variant = getSelectedCatchVariant();
-    if(!variant){
+    if(!catchSelectedPokemonEntry || !variant){
         renderCatchPendingState(catchResult, t('catchSelectVariantFirst'));
+        if(shouldUpdateUrl) updateUrl();
         return;
     }
     const selectionValue = getCatchSelectionValue(variant);
     if(!selectionValue){
         renderCatchPendingState(catchResult, t('catchSelectPriceFirst'));
+        if(shouldUpdateUrl) updateUrl();
         return;
     }
     const chosen = ballSelect ? ballSelect.value : 'ultra';
     const optionItems = getCatchOptionItems(selectionValue, variant, chosen);
     renderCatchEstimateResult(catchResult, chosen, selectionValue, variant, optionItems);
+    if(shouldUpdateUrl) updateUrl();
     const logText = document.getElementById('log-input')?.value || '';
     if(logText.trim()){
         processLogText(logText);
@@ -11809,14 +12410,13 @@ function renderCatchCalculation(){
 function renderCatchLogFromState(){
     if(!logResult) return;
     const variant = getSelectedCatchVariant();
-    if(!isCatchSelectionReady(variant)){
-        logResult.innerHTML = '';
-        return;
-    }
+    const hasReadySelection = isCatchSelectionReady(variant);
     const state = catchLogState || createCatchLogState('');
     const chosen = ballSelect ? ballSelect.value : 'ultra';
-    const selectionValue = getCatchSelectionValue(variant);
-    const selectedOptions = getSelectedCatchRequirementOptions(selectionValue, variant, chosen);
+    const selectionValue = hasReadySelection ? getCatchSelectionValue(variant) : '';
+    const selectedOptions = hasReadySelection
+        ? getSelectedCatchRequirementOptions(selectionValue, variant, chosen)
+        : [];
     const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
     const chosenPrice = getCatchBallUnitPrice(chosen);
     const counts = getCatchLogCombinedCounts(state);
@@ -11840,15 +12440,17 @@ function renderCatchLogFromState(){
     const costBased = chosenPrice ? Math.floor(totalCost / chosenPrice) : 0;
     const effectiveUsed = Math.max(converted, costBased);
     const remMap = {};
-    selectedOptions.forEach(opt=>{
-        const needed = Math.max(getCatchRequiredAmount(opt, requirementBall, variant) - effectiveUsed, 0);
-        if(needed > 0){
-            const key = `${needed}`;
-            if(!remMap[key]){
-                remMap[key] = {needed};
+    if(hasReadySelection){
+        selectedOptions.forEach(opt=>{
+            const needed = Math.max(getCatchRequiredAmount(opt, requirementBall, variant) - effectiveUsed, 0);
+            if(needed > 0){
+                const key = `${needed}`;
+                if(!remMap[key]){
+                    remMap[key] = {needed};
+                }
             }
-        }
-    });
+        });
+    }
     const remLines = Object.values(remMap);
     if(totalCost === 0){
         totalCost = 0;
@@ -11860,14 +12462,17 @@ function renderCatchLogFromState(){
         });
     }
     let avgNeeded = 0;
-    const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, requirementBall, variant) > 0);
-    if(directOpt){
-        avgNeeded = getCatchRequiredAmount(directOpt, requirementBall, variant);
-    } else if(selectedOptions.length && chosenPrice){
-        avgNeeded = convertToChosen(selectedOptions[0], chosen);
+    if(hasReadySelection){
+        const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, requirementBall, variant) > 0);
+        if(directOpt){
+            avgNeeded = getCatchRequiredAmount(directOpt, requirementBall, variant);
+        } else if(selectedOptions.length && chosenPrice){
+            avgNeeded = convertToChosen(selectedOptions[0], chosen);
+        }
     }
     const over = effectiveUsed - avgNeeded;
     renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over, {
+        hasSelection: hasReadySelection,
         manualCount: Number(state?.manualCounts?.[chosen] || 0),
         baseCount: Number(state?.parsedCounts?.[chosen] || 0) + Number(state?.manualCounts?.[chosen] || 0)
     });
@@ -11896,6 +12501,7 @@ function adjustCatchLogCount(ball, step){
 }
 
 function clearCatchOutputs(){
+    setCatchEstimateRenderedState(false);
     if(catchResult) catchResult.innerHTML = '';
     if(logResult) logResult.innerHTML = '';
 }
@@ -11903,23 +12509,41 @@ function clearCatchOutputs(){
 function updateCatchActionState(){
     const ready = isCatchSelectionReady();
     if(calcCatchBtn) calcCatchBtn.disabled = !ready;
-    if(parseLogBtn) parseLogBtn.disabled = !ready;
+    if(parseLogBtn) parseLogBtn.disabled = false;
 }
 
 function syncCatchSelectionUi(){
     const variant = getSelectedCatchVariant();
+    const searchValue = String(catchPokemonSearchInput?.value || '').trim();
+    catchSelectedPokemonEntry = searchValue ? getCatchSelectedPokemonEntry(searchValue) : null;
+    syncCatchVariantOptionAvailability();
+    renderCatchPokemonMeta();
+
+    const hasTarget = Boolean(catchSelectedPokemonEntry);
     const hasVariant = Boolean(variant);
-    if(catchSelectionPrompt) catchSelectionPrompt.hidden = hasVariant;
-    if(catchConfigShell) catchConfigShell.hidden = !hasVariant;
-    if(catchLevelField) catchLevelField.hidden = variant !== 'shiny';
-    if(catchPriceField) catchPriceField.hidden = variant !== 'normal';
+    const ready = isCatchSelectionReady(variant);
 
-    if(variant === 'normal' && !syncCatchNormalPriceSelect()){
-        ensureCatchNormalPriceOptionsLoaded();
+    if(catchSelectionPrompt){
+        catchSelectionPrompt.hidden = ready;
+        const hint = catchSelectionPrompt.querySelector('#catch-selection-prompt-hint');
+        if(hint){
+            if(!hasTarget){
+                hint.textContent = 'Busque um Pokemon cadastrado para carregar preco, nivel e tipos automaticamente.';
+            } else if(!hasVariant){
+                hint.textContent = 'Selecione Normal ou Shiny para liberar os controles da estimativa.';
+            } else {
+                hint.textContent = catchSelectedPokemonEntry?.[`${variant}CaptureNote`] || 'Esta variante nao possui dados suficientes para calculo.';
+            }
+        }
     }
+    if(catchConfigShell) catchConfigShell.hidden = !ready;
+    if(catchHeroPreview) catchHeroPreview.hidden = !ready;
+    if(catchLevelField) catchLevelField.hidden = true;
+    if(catchPriceField) catchPriceField.hidden = true;
 
-    if(!isCatchSelectionReady(variant)){
-        clearCatchOutputs();
+    if(!ready && catchResult){
+        setCatchEstimateRenderedState(false);
+        catchResult.innerHTML = '';
     }
 
     updateCatchActionState();
@@ -11927,8 +12551,17 @@ function syncCatchSelectionUi(){
 
 function initializeCatchPage(){
     if(catchPageInitialized){
+        ensurePokemonCatalogLoaded()
+            .then(() => {
+                hydrateCatchPokemonOptions();
+                applyCatchUrlState({ updateHistory: true });
+            })
+            .catch(() => {
+                if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+            });
         syncCatchSelectionUi();
         updateBallPreview();
+        try { applyCatchTopLabelHighlight(); } catch(e) { /* ignore */ }
         return;
     }
     if(catchLegacyVariantGroup instanceof HTMLElement){
@@ -11938,9 +12571,50 @@ function initializeCatchPage(){
     setCatchPriceSelectPlaceholder(t('catchPricePlaceholder'));
     syncCatchSelectionUi();
 
+    if(catchPokemonSearchInput){
+        catchPokemonSearchInput.addEventListener('input', () => {
+            const value = String(catchPokemonSearchInput.value || '').trim();
+            const normalizedValue = normalizePokemonSearchText(value);
+            catchSelectedPokemonEntry = normalizedValue
+                ? catchPokemonSearchIndex.get(normalizedValue) || null
+                : null;
+            syncCatchTargetTypesFromPokemon(catchSelectedPokemonEntry);
+            syncCatchVariantOptionAvailability();
+            renderCatchPokemonMeta();
+            syncCatchSelectionUi();
+            renderCatchPokemonSearchResults(value);
+            updateUrl();
+        });
+        catchPokemonSearchInput.addEventListener('focus', () => {
+            renderCatchPokemonSearchResults(catchPokemonSearchInput.value || '');
+        });
+        catchPokemonSearchInput.addEventListener('keydown', (event) => {
+            if(event.key !== 'Enter') return;
+            const firstEntry = getCatchPokemonSearchResultEntries(catchPokemonSearchInput.value || '', 1)[0];
+            if(!firstEntry) return;
+            event.preventDefault();
+            applyCatchPokemonSearchSelection(firstEntry);
+        });
+        catchPokemonSearchInput.addEventListener('blur', () => {
+            clearCatchPokemonSearchHideTimer();
+            catchPokemonSearchHideTimer = setTimeout(hideCatchPokemonSearchResults, 160);
+        });
+    }
+
+    ensurePokemonCatalogLoaded()
+        .then(() => {
+            hydrateCatchPokemonOptions();
+            applyCatchUrlState({ updateHistory: true });
+        })
+        .catch(() => {
+            if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+            syncCatchSelectionUi();
+        });
+
     if(ballSelect){
         ballSelect.addEventListener('change',()=>{
             updateBallPreview();
+            updateUrl();
             if(catchResult && catchResult.innerHTML.trim() !== ''){
                 renderCatchCalculation();
             } else if(logResult && logResult.innerHTML.trim() !== ''){
@@ -11985,6 +12659,7 @@ function initializeCatchPage(){
     catchVariantInputs.forEach(input=>{
         input.addEventListener('change',()=>{
             syncCatchSelectionUi();
+            updateUrl();
             if(!isCatchSelectionReady()){
                 return;
             }
@@ -12020,6 +12695,7 @@ function initializeCatchPage(){
 
     updateBallPreview();
     initTrainingVideo();
+    try { applyCatchTopLabelHighlight(); } catch(e) { /* ignore */ }
     catchPageInitialized = true;
 }
 
@@ -15568,6 +16244,7 @@ window.addEventListener('popstate', () => {
     const requestedTeamRoute = getTeamRouteMatch(pathname);
     const isTeamCatalogRoute = isTeamCatalogPathname(pathname);
     const requestedBossRoute = getBossRouteMatch(pathname);
+    const isCatchRoute = /\/catch(?:\/|$)/i.test(pathname);
     if(detailMatch){
         const requestedVariant = getPokemonCatalogVariantFromUrl();
         if(!pokemonCatalogLoaded){
@@ -15641,6 +16318,18 @@ window.addEventListener('popstate', () => {
             }
         } else if(isTeamCatalogRoute){
             showTimes({ requestedFilters: requestedTeamFilters });
+        }
+    }
+
+    if(isCatchRoute){
+        const applyCatchRoute = () => {
+            applyCatchUrlState({ updateHistory: false });
+        };
+        if(contentCatch && !contentCatch.hidden){
+            ensurePokemonCatalogLoaded().then(applyCatchRoute).catch(console.error);
+        } else {
+            showCatch();
+            ensurePokemonCatalogLoaded().then(applyCatchRoute).catch(console.error);
         }
     }
 

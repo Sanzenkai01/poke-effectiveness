@@ -290,18 +290,26 @@
         return `${API_PROXY_BASE_URL}${encodeURIComponent(upstreamUrl)}&cb=${Date.now()}`;
     }
 
-    async function requestCounterFromUrl(url){
+    function isMissingCounterPayload(response, payload){
+        return response.status === 400
+            && String(payload?.message || '').trim().toLowerCase() === 'record not found';
+    }
+
+    async function requestCounterFromUrl(url, action = 'get'){
         const response = await fetch(url, {
             cache: 'no-store',
             credentials: 'omit',
             mode: 'cors',
             redirect: 'follow'
         });
+        const payload = await response.json();
         if(!response.ok){
+            if(action === 'get' && isMissingCounterPayload(response, payload)){
+                return 0;
+            }
             throw new Error(`counter request failed (${response.status})`);
         }
-        const payload = await response.json();
-        return Number(payload?.count || 0);
+        return Number(payload?.count || payload?.value || payload?.data?.count || 0);
     }
 
     async function requestCounter(counterKey, action = 'get'){
@@ -315,7 +323,7 @@
                 ? buildCounterProxyUrl(counterKey, action)
                 : buildCounterUrl(counterKey, action);
             try{
-                const count = await requestCounterFromUrl(requestUrl);
+                const count = await requestCounterFromUrl(requestUrl, action);
                 preferProxyRequests = transport === 'proxy';
                 return count;
             }catch(error){

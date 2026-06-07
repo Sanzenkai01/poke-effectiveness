@@ -826,6 +826,14 @@ const roleboardRoleLabels = {
   tank: 'Tank'
 };
 
+function getRoleboardRoleDisplayLabel(roleKey, mode = activeBossMode) {
+  const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+  if (String(mode || '').trim().toLowerCase() === 'horizons' && normalizedRoleKey === 'dps') {
+    return 'Speedster';
+  }
+  return roleboardRoleLabels[normalizedRoleKey] || normalizedRoleKey;
+}
+
 const roleboardRoleNotes = {
   support: [
     'Abre a luta com utilidade e mantem a rotacao do trio segura.',
@@ -1828,6 +1836,198 @@ const championPathBosses = createManualRoleboardBosses([
   encounterNote: 'Recomendacoes definitivas por cla e funcao para os mega chefes do Champion Path.'
 });
 
+const horizonsMediumSideABosses = createManualRoleboardBosses([
+  {
+    id: 'alolan-golem',
+    name: 'Alolan Golem',
+    image: 'pokemons/7gen/alolan-golem.png',
+    types: ['rock', 'electric'],
+    moveType: 'electric',
+    description: 'Boss do Lado A no Medio. O moveset Electric valoriza imunidade ou resistencia eletrica.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Marowak', ['ground'], 'ground'),
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
+          createRolePick('Lurantis', ['grass'], 'grass')
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
+          createRolePick('Tangrowth', ['grass'], 'grass'),
+          createRolePick('Appletun', ['grass', 'dragon'], 'grass')
+        ],
+        support: [
+          createRolePick('Bellossom', ['grass'], 'grass'),
+          createRolePick('Pachirisu', ['electric'], 'electric')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Seaking', ['water'], 'water'),
+          createRolePick('BlastoiseTwo', ['water'], 'water'),
+          createRolePick('Lombre', ['water', 'grass'], 'grass'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'water'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Mega Skarmory', ['steel', 'flying'], 'steel')
+        ],
+        tank: [
+          createRolePick('Carracosta', ['water', 'rock'], 'water'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+        ],
+        support: [
+          createRolePick('Politoed', ['water'], 'water'),
+          createRolePick('Comfey', ['fairy'], 'fairy'),
+          createRolePick('Misdreavus', ['ghost'], 'ghost'),
+          createRolePick('Smoochum', ['ice', 'psychic'], 'ice')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('Kabutops', ['rock', 'water'], 'water'),
+          createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
+        ],
+        tank: [
+          createRolePick('Miltank', ['normal'], 'ground'),
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Chansey', ['normal'], 'psychic'),
+          createRolePick('Houndour', ['dark', 'fire'], 'dark'),
+          createRolePick('Zorua', ['dark'], 'dark')
+        ]
+      }
+    }
+  },
+  {
+    id: 'stakataka',
+    name: 'Stakataka',
+    image: 'pokemons/7gen/stakataka.png',
+    types: ['rock', 'steel'],
+    moveType: 'rock',
+    description: 'Boss do Lado A no Medio. O moveset Rock favorece tanques que resistem pedra e speedsters Fighting/Ground/Water.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Marowak', ['ground'], 'ground'),
+          createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
+          createRolePick('VenusaurTwo', ['grass', 'poison'], 'grass')
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'fighting'),
+          createRolePick('Tangrowth', ['grass'], 'grass')
+        ],
+        support: [
+          createRolePick('Bellossom', ['grass'], 'grass'),
+          createRolePick('Wynaut', ['psychic'], 'psychic')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Seaking', ['water'], 'water'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'water'),
+          createRolePick('BlastoiseTwo', ['water'], 'water')
+        ],
+        tank: [
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Carracosta', ['water', 'rock'], 'water')
+        ],
+        support: [
+          createRolePick('Politoed', ['water'], 'water'),
+          createRolePick('Comfey', ['fairy'], 'fairy')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
+          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('Kabutops', ['rock', 'water'], 'water'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
+        ],
+        tank: [
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
+          createRolePick('Shieldon', ['rock', 'steel'], 'steel'),
+          createRolePick('Probopass', ['rock', 'steel'], 'rock')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Lopunny', ['normal'], 'fighting')
+        ]
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Medio - Lado A',
+  encounterNote: 'Recomendacoes por cla e funcao para o Lado A do Medio.'
+});
+
+const horizonsRunsData = [
+  {
+    id: 'medio-a',
+    difficulty: 'medio',
+    side: 'a',
+    title: 'Medio - Lado A',
+    eyebrow: 'Configurado',
+    summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
+    pathSections: [
+      {
+        id: 'primeira-parte',
+        title: 'Primeira Parte',
+        subtitle: 'Antes do Fly',
+        mobs: [
+          { name: 'Minior Meteor Form', image: 'pokemons/7gen/minior-meteor.png', types: ['rock', 'flying'] },
+          { name: 'Minior Core Form', image: 'pokemons/7gen/minior-core.png', types: ['rock', 'flying'] },
+          { name: 'Dwebble', image: 'pokemons/5gen/dwebble.png', types: ['bug', 'rock'] },
+          { name: 'Crustle', image: 'pokemons/5gen/crustle.png', types: ['bug', 'rock'] },
+          { name: 'Lycanroc', image: 'pokemons/7gen/lycanroc.png', types: ['rock'] }
+        ],
+        effectiveTypes: ['electric', 'ice', 'grass', 'fighting'],
+        superEffectiveTypes: ['water', 'rock', 'steel']
+      },
+      {
+        id: 'apos-fly',
+        title: 'Segunda Parte',
+        subtitle: 'Após o Fly',
+        mobs: [
+          { name: 'Alolan Graveler', image: 'pokemons/7gen/alolan-graveler.png', types: ['rock', 'electric'] },
+          { name: 'Alolan Geodude', image: 'pokemons/7gen/alolan-geodude.png', types: ['rock', 'electric'] }
+        ],
+        effectiveTypes: ['water', 'grass', 'fighting', 'steel'],
+        superEffectiveTypes: ['ground']
+      },
+      {
+        id: 'apos-alolan-golem',
+        title: 'Terceira Parte',
+        subtitle: '',
+        mobs: [
+          { name: 'Lycanroc Midnight Form', image: 'pokemons/7gen/midnight-lycanroc.png', types: ['rock'] },
+          { name: 'Lycanroc Midday Form', image: 'pokemons/7gen/midday-lycanroc.png', types: ['rock'] },
+          { name: 'Lycanroc', image: 'pokemons/7gen/lycanroc.png', types: ['rock'] },
+          { name: 'Rockruff', image: 'pokemons/7gen/rockruff.png', types: ['rock'] },
+          { name: 'Roggenrola', image: 'pokemons/5gen/roggenrola.png', types: ['rock'] },
+          { name: 'Boldore', image: 'pokemons/5gen/boldore.png', types: ['rock'] }
+        ],
+        effectiveTypes: ['water', 'grass'],
+        superEffectiveTypes: ['fighting', 'ground', 'steel']
+      }
+    ],
+    bosses: horizonsMediumSideABosses
+  }
+];
+
 function cloneRolePickConfig(pick) {
   if (!pick || typeof pick !== 'object') return pick;
 
@@ -2213,12 +2413,15 @@ const bossCatalogs = {
   ,horizons: {
     id: 'horizons',
     label: 'Horizons',
-    variant: 'hoopa',
+    variant: 'horizons',
     searchEnabled: false,
+    summary: 'Rotas separadas por dificuldade e lado, com mobs do caminho e bosses finais.',
+    pills: ['Dificuldade', 'Lado A/B', 'Mobs + Bosses'],
     introLines: [
-      'Em breve.'
+      'Escolha a dificuldade e o lado para ver mobs do caminho, sugestões de tipos e bosses finais.'
     ],
-    data: []
+    data: horizonsMediumSideABosses,
+    runs: horizonsRunsData
   }
 };
 
@@ -2279,7 +2482,7 @@ function normalizeBossMode(mode) {
 }
 
 function isBossRouteableMode(mode) {
-  return ['hoopa', 'champion', 'mew2', 'special'].includes(normalizeBossMode(mode));
+  return ['hoopa', 'champion', 'mew2', 'special', 'horizons'].includes(normalizeBossMode(mode));
 }
 
 function normalizeBossRouteSlug(value) {
@@ -3136,18 +3339,15 @@ function getImplicitRecommendationProfile(poke) {
     return {
       immunities: ['ground'],
       passiveName: 'Levitate',
-      passiveDescription: 'O Pokémon é imune a danos do tipo terra.'
+      passiveDescription: 'O Pokémon é imune a danos do tipo GROUND.'
     };
   }
 
   if (nameKey === 'shinybronzong') {
     return {
       immunities: ['ground'],
-      defenseDamageFactorByBossType: {
-        fire: 0.5
-      },
-      passiveName: 'Levitate + Heatproof',
-      passiveDescription: 'O Pokémon e imune a danos do tipo terra. O Pokémon sofre menos dano de ataque do tipo Fire (0.5x).'
+      passiveName: 'Levitate + Protective Bell',
+      passiveDescription: 'O Pokémon é imune a danos do tipo GROUND.; Sempre que o Shiny Bronzong utiliza o golpe Iron Defense, seu corpo ecoa como um sino. Esse som envolve todos os aliados proximos, garantindo a eles um bônus de 20% de Defesa durante 10 segundos.'
     };
   }
 
@@ -4067,6 +4267,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'bouffalant.png': 'pokemons/5gen/bouffalant.png',
   'bronzong.png': 'pokemons/4gen/bronzong.png',
   'carracosta.png': 'pokemons/5gen/carracosta.png',
+  'chansey.png': 'pokemons/1gen/chansey.png',
   'charizard.png': 'pokemons/1gen/charizard.png',
   'chesnaught.png': 'pokemons/6gen/chesnaught.png',
   'claydol.png': 'pokemons/3gen/claydol.png',
@@ -4094,6 +4295,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'greninja.png': 'pokemons/6gen/greninja.png',
   'hawlucha.png': 'pokemons/6gen/hawlucha.png',
   'heracross.png': 'pokemons/2gen/heracross.png',
+  'houndour.png': 'pokemons/2gen/houndour.png',
   'hydrapple.png': 'pokemons/9gen/hydrapple.png',
   'hitmonchan.png': 'pokemons/1gen/hitmonchan.png',
   'jynx.png': 'pokemons/1gen/jynx.png',
@@ -5297,12 +5499,13 @@ function getAllRecommendedForClan(boss, clanData) {
   return dedupeRecommendedPicksByName(picks || []);
 }
 
-const pokemonBossUsageCatalogIds = Object.freeze(['hoopa', 'champion', 'mew2']);
+const pokemonBossUsageCatalogIds = Object.freeze(['hoopa', 'champion', 'horizons', 'mew2']);
 const pokemonBossUsageClanOrder = Object.freeze(['instinct', 'mystic', 'valor']);
 const pokemonBossUsageShortLabels = Object.freeze({
   hoopa: 'Hoopa',
   champion: 'Champion',
-  mew2: 'Mewtwo'
+  mew2: 'Mewtwo',
+  horizons: 'Horizons'
 });
 
 function getPokemonBossUsageMatchKeys(pokemonName) {
@@ -5347,6 +5550,48 @@ function getPokemonBossUsageRoleOrder(roleKey) {
   return index === -1 ? roleboardRoleOrder.length : index;
 }
 
+function shouldApplyHorizonsTierVisibilityRules(catalogOrMode) {
+  const mode = typeof catalogOrMode === 'string'
+    ? catalogOrMode
+    : catalogOrMode?.id;
+  return String(mode || '').trim().toLowerCase() === 'horizons';
+}
+
+function shouldKeepAllHorizonsNonRuimPicks(boss, clanKey, roleKey) {
+  return String(boss?.id || '').trim().toLowerCase() === 'alolan-golem'
+    && String(roleKey || '').trim().toLowerCase() === 'support'
+    && ['mystic', 'valor'].includes(String(clanKey || '').trim().toLowerCase());
+}
+
+function filterHorizonsVisibleRolePicks(picks = [], context = {}) {
+  const withoutRuim = (Array.isArray(picks) ? picks : [])
+    .filter((pick) => normalizeTierKey(pick?.tier) !== 'ruim');
+
+  if (shouldKeepAllHorizonsNonRuimPicks(context?.boss, context?.clanKey, context?.roleKey)) {
+    return withoutRuim;
+  }
+
+  if (withoutRuim.length <= 1) {
+    return withoutRuim;
+  }
+
+  const withoutAceitavel = withoutRuim
+    .filter((pick) => normalizeTierKey(pick?.tier) !== 'aceitavel');
+
+  return withoutAceitavel.length ? withoutAceitavel : withoutRuim.slice(0, 1);
+}
+
+function getVisibleRolePicksForBoss(catalogOrMode, boss, clanKey, roleKey) {
+  const ranked = rankRecommendedForBoss(
+    boss,
+    getFixedRecommendationRolePicks(boss, clanKey, roleKey)
+  );
+
+  return shouldApplyHorizonsTierVisibilityRules(catalogOrMode)
+    ? filterHorizonsVisibleRolePicks(ranked, { boss, clanKey, roleKey })
+    : ranked;
+}
+
 function createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, options = {}) {
   const mode = String(catalog?.id || '').trim().toLowerCase();
   const bossSlug = getBossRouteSlug(boss);
@@ -5368,7 +5613,9 @@ function createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, op
     clanKey,
     clanLabel: clanData?.label || (clanKey ? clanKey.charAt(0).toUpperCase() + clanKey.slice(1) : 'Cla'),
     roleKey,
-    roleLabel: roleKey ? (roleboardRoleLabels[roleKey] || roleKey) : '',
+    roleLabel: roleKey
+      ? (mode === 'horizons' ? getRoleboardRoleDisplayLabel(roleKey, mode) : (roleboardRoleLabels[roleKey] || roleKey))
+      : '',
     groupTitle: groupTitle && getRecommendationNameKey(groupTitle) !== getRecommendationNameKey(boss?.name)
       ? groupTitle
       : '',
@@ -5398,10 +5645,7 @@ function addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanDat
 
 function collectPokemonBossUsagesFromRoleboard(usages, seen, catalog, boss, clanKey, clanData, matchKeys) {
   roleboardRoleOrder.forEach((roleKey) => {
-    const ranked = rankRecommendedForBoss(
-      boss,
-      getFixedRecommendationRolePicks(boss, clanKey, roleKey)
-    );
+    const ranked = getVisibleRolePicksForBoss(catalog, boss, clanKey, roleKey);
 
     ranked.forEach((pick) => {
       if (!isRecommendationPickUsedByPokemon(pick, matchKeys)) return;
@@ -9578,6 +9822,244 @@ function makeSpeedsterCard(speedster) {
     : makeHoopaBossCard(speedster);
 }
 
+const horizonsDifficultyLabels = Object.freeze({
+  normal: 'Normal',
+  medio: 'Medio',
+  dificil: 'Dificil',
+  especialista: 'Especialista'
+});
+
+const horizonsSideLabels = Object.freeze({
+  a: 'Lado A',
+  b: 'Lado B'
+});
+
+const horizonsDifficultyOrder = Object.freeze(['normal', 'medio', 'dificil', 'especialista']);
+const horizonsSideOrder = Object.freeze(['a', 'b']);
+
+function getHorizonsRuns() {
+  const runs = getActiveBossCatalog()?.runs;
+  return Array.isArray(runs) ? runs : [];
+}
+
+function hasHorizonsRun(difficulty, side) {
+  return getHorizonsRuns().some((run) => run?.difficulty === difficulty && run?.side === side);
+}
+
+function getActiveHorizonsRun() {
+  return getHorizonsRuns()[0] || null;
+}
+
+function createHorizonsSelectorGroup(label, items, activeValue, type) {
+  const group = document.createElement('div');
+  group.className = 'horizons-selector-group';
+
+  const title = document.createElement('span');
+  title.className = 'horizons-selector-group__label';
+  title.textContent = label;
+  group.appendChild(title);
+
+  const list = document.createElement('div');
+  list.className = 'horizons-selector-group__list';
+
+  items.forEach((item) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'horizons-selector';
+    const available = type === 'difficulty'
+      ? hasHorizonsRun(item.value, getActiveHorizonsRun()?.side || 'a')
+      : hasHorizonsRun(getActiveHorizonsRun()?.difficulty || 'medio', item.value);
+    const active = item.value === activeValue;
+    button.classList.toggle('is-active', active);
+    button.disabled = !available;
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    button.textContent = item.label;
+    if (!available) {
+      const soon = document.createElement('span');
+      soon.className = 'horizons-selector__soon';
+      soon.textContent = 'Em breve';
+      button.appendChild(soon);
+    }
+    list.appendChild(button);
+  });
+
+  group.appendChild(list);
+  return group;
+}
+
+function createHorizonsTypeChip(type, tone = '') {
+  const chip = document.createElement('span');
+  chip.className = 'horizons-type-chip';
+  if (tone) chip.dataset.tone = tone;
+  getBossTypeIcons([type]).forEach((icon) => chip.appendChild(icon));
+  chip.appendChild(document.createTextNode(formatTypeLabel(type)));
+  return chip;
+}
+
+function createHorizonsMobCard(mob) {
+  const card = document.createElement('article');
+  card.className = 'horizons-mob-card';
+
+  const imageWrap = document.createElement('div');
+  imageWrap.className = 'horizons-mob-card__image-wrap';
+
+  const image = document.createElement('img');
+  image.className = 'horizons-mob-card__image';
+  image.src = resolveBossAssetSrc(mob.image || '');
+  image.alt = mob.name || 'Mob';
+  image.loading = 'lazy';
+  imageWrap.appendChild(image);
+
+  const name = document.createElement('strong');
+  name.className = 'horizons-mob-card__name';
+  name.textContent = mob.name || 'Mob';
+
+  const types = document.createElement('div');
+  types.className = 'horizons-mob-card__types';
+  (mob.types || []).forEach((type) => types.appendChild(createHorizonsTypeChip(type)));
+
+  card.append(imageWrap, name, types);
+  return card;
+}
+
+function createHorizonsPathSection(sectionData) {
+  const section = document.createElement('section');
+  section.className = 'horizons-path-section';
+
+  const header = document.createElement('div');
+  header.className = 'horizons-section-header';
+
+  const copy = document.createElement('div');
+  copy.className = 'horizons-section-header__copy';
+
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'horizons-section-header__eyebrow';
+  eyebrow.textContent = 'Mobs no caminho';
+
+  const title = document.createElement('h3');
+  title.className = 'horizons-section-header__title';
+  title.textContent = sectionData.title || 'Trecho';
+
+  const subtitle = document.createElement('p');
+  subtitle.className = 'horizons-section-header__subtitle';
+  subtitle.textContent = sectionData.subtitle || '';
+
+  copy.append(eyebrow, title);
+  if (subtitle.textContent) copy.appendChild(subtitle);
+  header.appendChild(copy);
+  section.appendChild(header);
+
+  const mobGrid = document.createElement('div');
+  mobGrid.className = 'horizons-mob-grid';
+  (sectionData.mobs || []).forEach((mob) => mobGrid.appendChild(createHorizonsMobCard(mob)));
+  section.appendChild(mobGrid);
+
+  const suggestions = document.createElement('div');
+  suggestions.className = 'horizons-type-suggestions';
+
+  const effective = document.createElement('div');
+  effective.className = 'horizons-type-suggestions__group';
+  const effectiveLabel = document.createElement('span');
+  effectiveLabel.className = 'horizons-type-suggestions__label';
+  effectiveLabel.textContent = 'Efetivos';
+  effective.appendChild(effectiveLabel);
+  (sectionData.effectiveTypes || []).forEach((type) => effective.appendChild(createHorizonsTypeChip(type, 'effective')));
+
+  const superEffective = document.createElement('div');
+  superEffective.className = 'horizons-type-suggestions__group';
+  const superLabel = document.createElement('span');
+  superLabel.className = 'horizons-type-suggestions__label';
+  superLabel.textContent = 'Super-efetivos';
+  superEffective.appendChild(superLabel);
+  (sectionData.superEffectiveTypes || []).forEach((type) => superEffective.appendChild(createHorizonsTypeChip(type, 'super')));
+
+  suggestions.append(effective, superEffective);
+  section.appendChild(suggestions);
+
+  return section;
+}
+
+function renderHorizonsGrid() {
+  const run = getActiveHorizonsRun();
+  if (!run) {
+    const empty = document.createElement('div');
+    empty.className = 'speedster-clan-empty';
+    empty.textContent = 'Nenhuma rota de Horizons configurada ainda.';
+    grid.appendChild(empty);
+    return;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'horizons-board';
+
+  const selectors = document.createElement('section');
+  selectors.className = 'horizons-selectors';
+  selectors.append(
+    createHorizonsSelectorGroup(
+      'Dificuldade',
+      horizonsDifficultyOrder.map((value) => ({ value, label: horizonsDifficultyLabels[value] })),
+      run.difficulty,
+      'difficulty'
+    ),
+    createHorizonsSelectorGroup(
+      'Lado',
+      horizonsSideOrder.map((value) => ({ value, label: horizonsSideLabels[value] })),
+      run.side,
+      'side'
+    )
+  );
+  wrap.appendChild(selectors);
+
+  const overview = document.createElement('section');
+  overview.className = 'horizons-overview';
+  const overviewCopy = document.createElement('div');
+  overviewCopy.className = 'horizons-overview__copy';
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'horizons-overview__eyebrow';
+  eyebrow.textContent = run.eyebrow || 'Horizons';
+  const title = document.createElement('h3');
+  title.className = 'horizons-overview__title';
+  title.textContent = run.title || 'Rota';
+  const summary = document.createElement('p');
+  summary.className = 'horizons-overview__summary';
+  summary.textContent = run.summary || '';
+  overviewCopy.append(eyebrow, title, summary);
+  overview.appendChild(overviewCopy);
+  wrap.appendChild(overview);
+
+  (run.pathSections || []).forEach((sectionData) => {
+    wrap.appendChild(createHorizonsPathSection(sectionData));
+  });
+
+  const bossesSection = document.createElement('section');
+  bossesSection.className = 'horizons-bosses-section';
+
+  const bossHeader = document.createElement('div');
+  bossHeader.className = 'horizons-section-header';
+  const bossCopy = document.createElement('div');
+  bossCopy.className = 'horizons-section-header__copy';
+  const bossEyebrow = document.createElement('span');
+  bossEyebrow.className = 'horizons-section-header__eyebrow';
+  bossEyebrow.textContent = 'Bosses';
+  const bossTitle = document.createElement('h3');
+  bossTitle.className = 'horizons-section-header__title';
+  bossTitle.textContent = 'Recomendacoes por cla e funcao';
+  const bossSubtitle = document.createElement('p');
+  bossSubtitle.className = 'horizons-section-header__subtitle';
+  bossSubtitle.textContent = 'Clique em um dos Bosses para ver os Pokémons Recomendados.';
+  bossCopy.append(bossEyebrow, bossTitle, bossSubtitle);
+  bossHeader.appendChild(bossCopy);
+  bossesSection.appendChild(bossHeader);
+
+  const bossGrid = document.createElement('div');
+  bossGrid.className = 'horizons-boss-grid';
+  (run.bosses || []).forEach((boss) => bossGrid.appendChild(makeRoleBossCard(boss)));
+  bossesSection.appendChild(bossGrid);
+  wrap.appendChild(bossesSection);
+
+  grid.appendChild(wrap);
+}
+
 function renderGrid() {
   if (!grid) return;
   hidePassiveTooltip({ immediate: true });
@@ -9590,6 +10072,10 @@ function renderGrid() {
   grid.dataset.bossMode = activeBossMode;
   if (catalog.variant === 'planner') {
     renderPlannerGrid();
+    return;
+  }
+  if (catalog.variant === 'horizons') {
+    renderHorizonsGrid();
     return;
   }
   getActiveBossesData().forEach((boss) => {
@@ -11094,9 +11580,9 @@ function openRoleBossModal(boss, options = {}) {
 
       const label = document.createElement('span');
       label.className = 'boss-role-label';
-      label.textContent = roleboardRoleLabels[roleKey];
+      label.textContent = getRoleboardRoleDisplayLabel(roleKey);
 
-      const picks = rankRecommendedForBoss(boss, getFixedRecommendationRolePicks(boss, clanKey, roleKey));
+      const picks = getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, roleKey);
       const count = document.createElement('span');
       count.className = 'boss-role-count';
       count.textContent = `${picks.length} picks`;
@@ -11438,7 +11924,8 @@ function openBossModal(speedster) {
 
 function openBossModalV2(speedster, options = {}) {
   const { pushState = true, skipRouteSync = false } = options || {};
-  if (getActiveBossCatalog().variant === 'roleboard') {
+  const activeCatalogVariant = getActiveBossCatalog().variant;
+  if (activeCatalogVariant === 'roleboard' || activeCatalogVariant === 'horizons') {
     openRoleBossModal(speedster, options);
     return;
   }
