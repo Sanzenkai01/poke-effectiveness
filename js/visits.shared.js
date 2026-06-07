@@ -19,7 +19,7 @@
     const TOTAL_ACCESS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
-    const COUNTER_REQUEST_TIMEOUT_MS = 4000;
+    const COUNTER_REQUEST_TIMEOUT_MS = 6000;
     const PORTALED_TOOLTIP_SURFACE = 'header';
     const PORTALED_TOOLTIP_HIDE_DELAY_MS = 140;
 
@@ -353,6 +353,25 @@
         throw lastError || new Error('counter request failed');
     }
 
+    async function requestCounterIncrement(counterKey){
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => {
+            controller.abort();
+        }, COUNTER_REQUEST_TIMEOUT_MS);
+
+        try{
+            await fetch(buildCounterUrl(counterKey, 'up'), {
+                cache: 'no-store',
+                credentials: 'omit',
+                mode: 'no-cors',
+                redirect: 'follow',
+                signal: controller.signal
+            });
+        }finally{
+            window.clearTimeout(timeoutId);
+        }
+    }
+
     async function syncCounterValue(counterKey, action = 'get'){
         if(action !== 'up'){
             return {
@@ -362,8 +381,9 @@
         }
 
         try{
+            await requestCounterIncrement(counterKey);
             return {
-                count: await requestCounter(counterKey, 'up'),
+                count: await requestCounter(counterKey, 'get'),
                 incremented: true
             };
         }catch(error){
