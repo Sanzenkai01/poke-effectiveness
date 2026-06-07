@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v308`;
+const CACHE_NAME = `${CACHE_PREFIX}v309`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -36,7 +36,7 @@ const APP_SHELL = [
   new URL('./script.js?v=20260607j', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260606a', self.registration.scope).toString(),
-  new URL('./js/visits.shared.js?v=20260607a', self.registration.scope).toString(),
+  new URL('./js/visits.shared.js?v=20260607b', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
   new URL('./bosses/bosses.js?v=20260607j', self.registration.scope).toString(),

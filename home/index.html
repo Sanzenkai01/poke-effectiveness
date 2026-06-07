@@ -24,7 +24,30 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="../styles.css?v=20260606a">
+    <script>
+      (function(){
+        var CACHE_PREFIX = 'poke-effectiveness-';
+        if(!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.getRegistrations()
+          .then(function(registrations){
+            return Promise.all(registrations.map(function(registration){
+              return registration.unregister();
+            }));
+          })
+          .then(function(){
+            if(!('caches' in window)) return null;
+            return caches.keys().then(function(keys){
+              return Promise.all(keys
+                .filter(function(key){ return key.indexOf(CACHE_PREFIX) === 0; })
+                .map(function(key){ return caches.delete(key); }));
+            });
+          })
+          .catch(function(error){
+            console.error('service worker cleanup failed', error);
+          });
+      })();
+    </script>
+    <link rel="stylesheet" href="../styles.css?v=20260607c">
 </head>
 <body class="dark home-view">
     <main>
@@ -177,7 +200,7 @@
     </main>
     <script src="../js/utf8-guard.js?v=20260606a" defer></script>
     <script src="../js/streamers.shared.js?v=20260606a" defer></script>
-    <script src="../js/visits.shared.js?v=20260607a" defer></script>
+    <script src="../js/visits.shared.js?v=20260607b" defer></script>
     <script src="../home/home.js?v=20260606a" defer></script>
 </body>
 </html>

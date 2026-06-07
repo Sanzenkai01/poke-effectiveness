@@ -3,7 +3,9 @@
     if(!mounts.length) return;
 
     const API_BASE_URL = 'https://api.counterapi.dev/v1';
-    const API_PROXY_BASE_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+    const API_PROXY_BUILDERS = Object.freeze({
+        codetabs: (upstreamUrl) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(upstreamUrl)}&cb=${Date.now()}`
+    });
     const API_NAMESPACE = 'poke-utilities-traffic-20260520c';
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
@@ -17,12 +19,13 @@
     const TOTAL_ACCESS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
+    const COUNTER_REQUEST_TIMEOUT_MS = 4000;
     const PORTALED_TOOLTIP_SURFACE = 'header';
     const PORTALED_TOOLTIP_HIDE_DELAY_MS = 140;
 
     let activeSyncPromise = null;
     let lastCompletedSyncAt = 0;
-    let preferProxyRequests = false;
+    let preferredCounterTransport = 'direct';
     let portaledTooltipSurface = null;
     let portaledTooltipMount = null;
     let portaledTooltipHideTimer = 0;
@@ -285,9 +288,13 @@
         return `${API_BASE_URL}/${encodedNamespace}/${encodedKey}${suffix}`;
     }
 
-    function buildCounterProxyUrl(counterKey, action = 'get'){
+    function buildCounterProxyUrl(transport, counterKey, action = 'get'){
         const upstreamUrl = buildCounterUrl(counterKey, action);
-        return `${API_PROXY_BASE_URL}${encodeURIComponent(upstreamUrl)}&cb=${Date.now()}`;
+        const buildProxyUrl = API_PROXY_BUILDERS[transport];
+        if(typeof buildProxyUrl !== 'function'){
+            throw new Error(`unknown counter transport (${transport})`);
+        }
+        return buildProxyUrl(upstreamUrl);
     }
 
     function isMissingCounterPayload(response, payload){
@@ -296,35 +303,47 @@
     }
 
     async function requestCounterFromUrl(url, action = 'get'){
-        const response = await fetch(url, {
-            cache: 'no-store',
-            credentials: 'omit',
-            mode: 'cors',
-            redirect: 'follow'
-        });
-        const payload = await response.json();
-        if(!response.ok){
-            if(action === 'get' && isMissingCounterPayload(response, payload)){
-                return 0;
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => {
+            controller.abort();
+        }, COUNTER_REQUEST_TIMEOUT_MS);
+
+        try{
+            const response = await fetch(url, {
+                cache: 'no-store',
+                credentials: 'omit',
+                mode: 'cors',
+                redirect: 'follow',
+                signal: controller.signal
+            });
+            const payload = await response.json();
+            if(!response.ok){
+                if(action === 'get' && isMissingCounterPayload(response, payload)){
+                    return 0;
+                }
+                throw new Error(`counter request failed (${response.status})`);
             }
-            throw new Error(`counter request failed (${response.status})`);
+            return Number(payload?.count || payload?.value || payload?.data?.count || 0);
+        }finally{
+            window.clearTimeout(timeoutId);
         }
-        return Number(payload?.count || payload?.value || payload?.data?.count || 0);
     }
 
     async function requestCounter(counterKey, action = 'get'){
-        const transports = preferProxyRequests
-            ? ['proxy', 'direct']
-            : ['direct', 'proxy'];
+        const fallbackTransports = ['direct', 'codetabs'];
+        const transports = [
+            preferredCounterTransport,
+            ...fallbackTransports.filter((transport) => transport !== preferredCounterTransport)
+        ];
         let lastError = null;
 
         for(const transport of transports){
-            const requestUrl = transport === 'proxy'
-                ? buildCounterProxyUrl(counterKey, action)
-                : buildCounterUrl(counterKey, action);
+            const requestUrl = transport === 'direct'
+                ? buildCounterUrl(counterKey, action)
+                : buildCounterProxyUrl(transport, counterKey, action);
             try{
                 const count = await requestCounterFromUrl(requestUrl, action);
-                preferProxyRequests = transport === 'proxy';
+                preferredCounterTransport = transport;
                 return count;
             }catch(error){
                 lastError = error;
@@ -332,6 +351,28 @@
         }
 
         throw lastError || new Error('counter request failed');
+    }
+
+    async function syncCounterValue(counterKey, action = 'get'){
+        if(action !== 'up'){
+            return {
+                count: await requestCounter(counterKey, 'get'),
+                incremented: false
+            };
+        }
+
+        try{
+            return {
+                count: await requestCounter(counterKey, 'up'),
+                incremented: true
+            };
+        }catch(error){
+            console.error('visit counter increment error', error);
+            return {
+                count: await requestCounter(counterKey, 'get'),
+                incremented: false
+            };
+        }
     }
 
     function normalizeCounts(dailyCount, totalCount){
@@ -489,15 +530,15 @@
         const dailyCounterKey = `${DAILY_COUNTER_KEY_PREFIX}-${todayStamp}`;
 
         const [dailyResult, totalResult] = await Promise.allSettled([
-            requestCounter(dailyCounterKey, shouldIncrementDaily ? 'up' : 'get'),
-            requestCounter(TOTAL_COUNTER_KEY, shouldIncrementTotal ? 'up' : 'get')
+            syncCounterValue(dailyCounterKey, shouldIncrementDaily ? 'up' : 'get'),
+            syncCounterValue(TOTAL_COUNTER_KEY, shouldIncrementTotal ? 'up' : 'get')
         ]);
 
-        if(dailyResult.status === 'fulfilled' && shouldIncrementDaily){
+        if(dailyResult.status === 'fulfilled' && shouldIncrementDaily && dailyResult.value.incremented){
             writeMarkedDate(todayStamp);
         }
 
-        if(totalResult.status === 'fulfilled' && shouldIncrementTotal){
+        if(totalResult.status === 'fulfilled' && shouldIncrementTotal && totalResult.value.incremented){
             writeTotalAccessMarker(now);
         }
 
@@ -508,7 +549,7 @@
             throw syncError;
         }
 
-        return normalizeCounts(dailyResult.value, totalResult.value);
+        return normalizeCounts(dailyResult.value.count, totalResult.value.count);
     }
 
     async function syncCounters({ showLoading = true } = {}){
