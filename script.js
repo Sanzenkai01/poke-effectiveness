@@ -120,6 +120,9 @@ const appShellBackdrop = document.getElementById('app-shell-backdrop');
 const sidebarHomeBtn = document.querySelector('.sidebar-home[data-nav-target="home"]');
 const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggle]');
 const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
+const siteGlobalSearch = document.getElementById('site-global-search');
+const siteGlobalSearchInput = document.getElementById('site-global-search-input');
+const siteGlobalSearchResults = document.getElementById('site-global-search-results');
 const pokemonCatalogStatus = document.getElementById('pokemon-catalog-status');
 const pokemonCardGrid = document.getElementById('pokemon-card-grid');
 const pokemonCatalogPagination = document.getElementById('pokemon-catalog-pagination');
@@ -245,7 +248,13 @@ let teamModalHistoryPushed = false;
 let initialDeepLinkedPokemonRouteToken = null;
 // Tracks whether we created a history entry for the open pokemon modal.
 let pokemonModalHistoryPushed = false;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260607j';
+let globalSearchInitialized = false;
+let globalSearchHydrated = false;
+let globalSearchHydrationPromise = null;
+let globalSearchEntries = [];
+let globalSearchActiveIndex = -1;
+let globalSearchRenderTimer = 0;
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260608a';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -301,7 +310,7 @@ const APP_ROUTE_ALIASES = {
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260607a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260606a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260606a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260606a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260608c';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -2753,6 +2762,573 @@ function initializeSidebarNavigation(){
 
     setSidebarOpen(false);
     syncSidebarNavigationState();
+}
+
+const GLOBAL_SEARCH_TYPE_ALIASES = Object.freeze({
+    normal: ['normal'],
+    fire: ['fire', 'fogo'],
+    water: ['water', 'agua'],
+    electric: ['electric', 'eletrico', 'eletrica', 'raio'],
+    grass: ['grass', 'planta', 'grama'],
+    ice: ['ice', 'gelo'],
+    fighting: ['fighting', 'lutador', 'luta'],
+    poison: ['poison', 'veneno'],
+    ground: ['ground', 'terra'],
+    flying: ['flying', 'voador', 'voo'],
+    psychic: ['psychic', 'psiquico', 'psiquica'],
+    bug: ['bug', 'inseto'],
+    rock: ['rock', 'pedra'],
+    ghost: ['ghost', 'fantasma'],
+    dragon: ['dragon', 'dragao'],
+    dark: ['dark', 'noturno', 'sombrio'],
+    steel: ['steel', 'aco', 'metal'],
+    fairy: ['fairy', 'fada']
+});
+
+function normalizeGlobalSearchValue(value){
+    return normalizePokemonSearchText(String(value || ''));
+}
+
+function createGlobalSearchEntry(entry){
+    if(!entry || !entry.id || !entry.title) return null;
+    const tags = Array.isArray(entry.tags) ? entry.tags.filter(Boolean) : [];
+    const searchText = normalizeGlobalSearchValue([
+        entry.title,
+        entry.category,
+        entry.description,
+        entry.searchText,
+        ...tags
+    ].join(' '));
+    return {
+        ...entry,
+        tags,
+        searchText
+    };
+}
+
+function getGlobalSearchStaticEntries(){
+    const entries = [
+        { id: 'route:home', kind: 'route', target: 'home', title: 'Home', category: 'Pagina', description: 'Inicio do Poke Utilities', icon: 'PU', tags: ['inicio', 'hub'] },
+        { id: 'route:effectiveness', kind: 'route', target: 'effectiveness', title: 'Tipos', category: 'Ferramenta', description: 'Efetividade, fraquezas e resistencias', icon: 'TY', tags: ['type', 'elemento', 'fraqueza'] },
+        { id: 'route:fossils', kind: 'route', target: 'fossils', title: 'Fosseis', category: 'Sistema', description: 'Combinacoes e revivals de fosseis', icon: 'FO', tags: ['fossil', 'dna'] },
+        { id: 'route:calculator', kind: 'route', target: 'calculator', title: 'Treinamento', category: 'Calculadora', description: 'Plates, custos e treino', icon: 'TR', tags: ['calculadora', 'plate'] },
+        { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
+        { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo normal de Pokemon', icon: 'PK', tags: ['catalogo', 'normal'] },
+        { id: 'route:pokemons-mega', kind: 'route', target: 'pokemons', variant: POKEMON_CATALOG_VARIANT_MEGA, title: 'Pokemons Mega', category: 'Catalogo', description: 'Catalogo de Megas', icon: 'ME', tags: ['mega', 'catalogo'] },
+        { id: 'route:times', kind: 'route', target: 'times', title: 'Times', category: 'Catalogo', description: 'Composicoes por cla e elemento', icon: 'TM', tags: ['mystic', 'valor', 'instinct', 'composicao'] },
+        { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
+        { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
+        { id: 'route:champion', kind: 'route', target: 'bosses', bossMode: 'champion', title: 'Champion Path', category: 'Bosses', description: 'Bosses Champion Path', icon: 'CP', tags: ['chefes', 'tanque', 'dps', 'suporte'] },
+        { id: 'route:mewtwo', kind: 'route', target: 'bosses', bossMode: 'mew2', title: 'Mewtwo', category: 'Bosses', description: 'Bosses do Mewtwo', icon: 'M2', tags: ['mew2', 'chefes'] },
+        { id: 'route:ranger', kind: 'route', target: 'bosses', bossMode: 'special', title: 'Ranger Bosses', category: 'Bosses', description: 'Bosses especiais Ranger', icon: 'RB', tags: ['especial', 'speedster'] },
+        { id: 'route:planner', kind: 'route', target: 'bosses', bossMode: 'planner', title: 'Planejador', category: 'Bosses', description: 'Montador de composicao para boss', icon: 'PL', tags: ['boss', 'planejar'] },
+        { id: 'route:horizons', kind: 'route', target: 'bosses', bossMode: 'horizons', title: 'Horizons', category: 'Bosses', description: 'Rotas, mobs e bosses finais', icon: 'HZ', tags: ['rota', 'boss'] },
+        { id: 'route:streamers', kind: 'route', target: 'streamers', title: 'Streamers', category: 'Comunidade', description: 'Canais ao vivo e drops', icon: 'TV', tags: ['twitch', 'live', 'drops'] },
+        { id: 'route:youtube', kind: 'route', target: 'youtube', title: 'Videos', category: 'Comunidade', description: 'Videos recentes da comunidade', icon: 'YT', tags: ['youtube', 'comunidade'] },
+        { id: 'quick:commands', kind: 'quick', action: 'commands', navUrl: '/comandos', title: 'Comandos', category: 'Atalho', description: 'Comandos uteis do servidor', icon: '!', tags: ['chat'] },
+        { id: 'quick:pokebolas', kind: 'quick', action: 'elemental-balls', navUrl: '/pokebolas', title: 'Pokebolas Elementais', category: 'Atalho', description: 'Craft e informacoes de Pokebolas', image: 'balls/pokebola.png', tags: ['balls', 'craft'] },
+        { id: 'quick:mapas', kind: 'quick', action: 'respawns', navUrl: '/mapas', title: 'Mapas', category: 'Atalho', description: 'Respawns e mapas', icon: 'MP', tags: ['respawn', 'local'] },
+        { id: 'quick:mapa-completo', kind: 'quick', action: 'full-map', navUrl: '/mapa-completo', title: 'Mapa Completo', category: 'Atalho', description: 'Video do mapa completo', icon: 'MC', tags: ['mapa', 'video'] },
+        { id: 'quick:pescaria', kind: 'quick', action: 'fishing', navUrl: '/pescaria', title: 'Pescaria', category: 'Atalho', description: 'Guia de pescaria', icon: 'PS', tags: ['fishing', 'fish'] },
+        { id: 'external:discord', kind: 'external', url: 'https://discord.com/invite/Gn2x6F5vB6', title: 'Discord PStory', category: 'Comunidade', description: 'Convite da comunidade', image: 'icons-type/discord.png', tags: ['discord'] }
+    ];
+    return entries.map(createGlobalSearchEntry).filter(Boolean);
+}
+
+function buildGlobalSearchTypeEntries(){
+    if(!Array.isArray(menuTypes) || !menuTypes.length) return [];
+    return menuTypes.map((type) => createGlobalSearchEntry({
+        id: `type:${type}`,
+        kind: 'type',
+        type,
+        title: getTypeDisplayName(type),
+        category: 'Tipo',
+        description: 'Efetividade e combinacoes',
+        image: `icons-type/${type}.png`,
+        tags: GLOBAL_SEARCH_TYPE_ALIASES[type] || [type]
+    })).filter(Boolean);
+}
+
+function buildGlobalSearchPokemonEntries(){
+    const variantLabels = {
+        [POKEMON_CATALOG_VARIANT_DEFAULT]: 'Pokemon',
+        [POKEMON_CATALOG_VARIANT_MEGA]: 'Pokemon Mega'
+    };
+    return [
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+    ].filter(canOpenPokemonCatalogEntry).map((entry) => {
+        const variant = normalizePokemonCatalogVariant(entry.variant);
+        const teamInfo = getPokemonTeamInfo(entry.team);
+        const types = [entry.type1, entry.type2].filter(Boolean);
+        const moveset = (Array.isArray(entry.moveset) ? entry.moveset : []).filter(Boolean);
+        return createGlobalSearchEntry({
+            id: `pokemon:${variant}:${entry.routeSlug || entry.id}`,
+            kind: 'pokemon',
+            variant,
+            routeToken: getPokemonDetailRouteToken(entry),
+            title: entry.name,
+            category: variantLabels[variant] || 'Pokemon',
+            description: [
+                entry.role,
+                teamInfo.label,
+                entry.generationKey ? `Geracao ${entry.generationKey}` : ''
+            ].filter(Boolean).join(' - '),
+            image: getPokemonImageSource(entry),
+            tags: [
+                ...types.map(getTypeDisplayName),
+                ...moveset.map(getTypeDisplayName),
+                ...getPokemonEntrySpecialTags(entry),
+                entry.levelKey,
+                entry.priceLabel,
+                entry.dex ? String(entry.dex).padStart(3, '0') : ''
+            ],
+            searchText: [
+                entry.searchName,
+                entry.routeSlug,
+                entry.role,
+                entry.roleKey,
+                teamInfo.label,
+                entry.team,
+                entry.movesetLabel,
+                entry.normalCaptureNote,
+                entry.shinyCaptureNote
+            ].join(' ')
+        });
+    }).filter(Boolean);
+}
+
+function buildGlobalSearchTeamEntries(){
+    return (teamsCatalog || []).map((entry) => createGlobalSearchEntry({
+        id: `team:${entry.routeSlug}`,
+        kind: 'team',
+        routeSlug: entry.routeSlug,
+        title: `${entry.clanLabel} ${entry.elementLabel}`,
+        category: 'Time',
+        description: [
+            entry.tags?.join(', '),
+            entry.pokemons?.slice(0, 3).map(member => member.name).join(', ')
+        ].filter(Boolean).join(' - '),
+        icon: String(entry.clanLabel || 'TM').slice(0, 2).toUpperCase(),
+        tags: [
+            entry.clanLabel,
+            entry.clanKey,
+            entry.elementLabel,
+            ...(entry.elementKeys || []).map(getTypeDisplayName),
+            ...(entry.tags || []),
+            ...(entry.pokemons || []).map(member => member.name),
+            ...(entry.hunts || []).map(hunt => hunt.name),
+            ...(entry.alternativePokemons || []).map(pokemon => pokemon.name)
+        ],
+        searchText: entry.searchText
+    })).filter(Boolean);
+}
+
+function buildGlobalSearchBossEntries(){
+    const provider = typeof window.getBossSearchEntries === 'function'
+        ? window.getBossSearchEntries
+        : null;
+    if(!provider) return [];
+    const rawEntries = provider();
+    if(!Array.isArray(rawEntries)) return [];
+    return rawEntries.map((entry) => createGlobalSearchEntry({
+        id: `boss:${entry.mode}:${entry.slug}`,
+        kind: 'boss',
+        mode: entry.mode,
+        slug: entry.slug,
+        title: entry.name,
+        category: entry.catalogLabel || 'Boss',
+        description: entry.description || '',
+        image: entry.image || '',
+        tags: [
+            entry.catalogLabel,
+            ...(entry.types || []).map(getTypeDisplayName),
+            ...(entry.tags || [])
+        ],
+        searchText: entry.searchText
+    })).filter(Boolean);
+}
+
+function buildGlobalSearchStreamerEntries(){
+    const registry = Array.isArray(sharedStreamerCatalog.STREAMER_REGISTRY)
+        ? sharedStreamerCatalog.STREAMER_REGISTRY
+        : [];
+    return registry.map((entry) => createGlobalSearchEntry({
+        id: `streamer:${entry.key}`,
+        kind: 'streamer',
+        channel: entry.name,
+        title: formatStreamerDisplayName(entry.name),
+        category: 'Streamer',
+        description: entry.supportsDrops ? 'Canal com drops' : 'Canal sem drops',
+        icon: 'TV',
+        tags: [
+            entry.name,
+            entry.key,
+            entry.hasPack ? 'pack' : '',
+            entry.supportsDrops ? 'drops' : 'sem drops',
+            entry.discord ? 'discord' : ''
+        ]
+    })).filter(Boolean);
+}
+
+function setGlobalSearchEntries(entries){
+    const seen = new Set();
+    globalSearchEntries = (entries || []).filter((entry) => {
+        if(!entry || seen.has(entry.id)) return false;
+        seen.add(entry.id);
+        return true;
+    });
+}
+
+function ensureGlobalSearchHydrated(){
+    if(globalSearchHydrated) return Promise.resolve(globalSearchEntries);
+    if(globalSearchHydrationPromise) return globalSearchHydrationPromise;
+
+    globalSearchHydrationPromise = Promise.allSettled([
+        ensureTypesDataLoaded(),
+        ensurePokemonCatalogLoaded(),
+        ensureTeamsCatalogLoaded(),
+        ensureBossesPageReady()
+    ]).then(() => {
+        setGlobalSearchEntries([
+            ...getGlobalSearchStaticEntries(),
+            ...buildGlobalSearchTypeEntries(),
+            ...buildGlobalSearchPokemonEntries(),
+            ...buildGlobalSearchTeamEntries(),
+            ...buildGlobalSearchBossEntries(),
+            ...buildGlobalSearchStreamerEntries()
+        ]);
+        globalSearchHydrated = true;
+        return globalSearchEntries;
+    }).catch((error) => {
+        console.error('Global search hydration failed', error);
+        return globalSearchEntries;
+    }).finally(() => {
+        globalSearchHydrationPromise = null;
+    });
+
+    return globalSearchHydrationPromise;
+}
+
+function scoreGlobalSearchEntry(entry, normalizedQuery, terms){
+    if(!entry || !normalizedQuery) return 0;
+    const haystack = entry.searchText || '';
+    const title = normalizeGlobalSearchValue(entry.title);
+    if(!terms.every(term => haystack.includes(term))) return 0;
+
+    let score = 10;
+    if(title === normalizedQuery) score += 80;
+    else if(title.startsWith(normalizedQuery)) score += 52;
+    else if(title.includes(normalizedQuery)) score += 34;
+    if(String(entry.category || '').toLowerCase() === 'pagina') score += 5;
+    if(entry.kind === 'pokemon' || entry.kind === 'boss' || entry.kind === 'team') score += 3;
+    score += Math.max(0, 12 - Math.min(12, title.length / 3));
+    return score;
+}
+
+function getGlobalSearchMatches(query, limit = 12){
+    const normalizedQuery = normalizeGlobalSearchValue(query);
+    const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+    if(normalizedQuery.length < 2 || !terms.length) return [];
+    return (globalSearchEntries || [])
+        .map(entry => ({ entry, score: scoreGlobalSearchEntry(entry, normalizedQuery, terms) }))
+        .filter(item => item.score > 0)
+        .sort((left, right) => right.score - left.score || String(left.entry.title).localeCompare(String(right.entry.title)))
+        .slice(0, limit)
+        .map(item => item.entry);
+}
+
+function hideGlobalSearchResults(){
+    globalSearchActiveIndex = -1;
+    if(siteGlobalSearchResults){
+        siteGlobalSearchResults.hidden = true;
+        siteGlobalSearchResults.replaceChildren();
+    }
+    if(siteGlobalSearchInput){
+        siteGlobalSearchInput.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function renderGlobalSearchStatus(message){
+    if(!siteGlobalSearchResults) return;
+    const status = document.createElement('div');
+    status.className = 'site-global-search__status';
+    status.textContent = message;
+    siteGlobalSearchResults.replaceChildren(status);
+    siteGlobalSearchResults.hidden = false;
+    if(siteGlobalSearchInput){
+        siteGlobalSearchInput.setAttribute('aria-expanded', 'true');
+    }
+}
+
+function createGlobalSearchResultButton(entry, index){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'site-global-search__result';
+    button.role = 'option';
+    button.dataset.globalSearchIndex = String(index);
+    button.setAttribute('aria-selected', index === globalSearchActiveIndex ? 'true' : 'false');
+    if(index === globalSearchActiveIndex){
+        button.dataset.active = 'true';
+    }
+
+    const media = document.createElement('span');
+    media.className = 'site-global-search__media';
+    if(entry.image){
+        const image = document.createElement('img');
+        image.src = entry.image;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.addEventListener('error', () => {
+            media.textContent = entry.icon || String(entry.title || '?').slice(0, 2).toUpperCase();
+        }, { once: true });
+        media.appendChild(image);
+    } else {
+        media.textContent = entry.icon || String(entry.title || '?').slice(0, 2).toUpperCase();
+    }
+
+    const copy = document.createElement('span');
+    copy.className = 'site-global-search__copy';
+
+    const title = document.createElement('span');
+    title.className = 'site-global-search__title';
+    title.textContent = entry.title;
+
+    const meta = document.createElement('span');
+    meta.className = 'site-global-search__meta';
+    meta.textContent = [entry.category, entry.description].filter(Boolean).join(' - ');
+
+    const tags = document.createElement('span');
+    tags.className = 'site-global-search__tags';
+    tags.textContent = (entry.tags || []).slice(0, 4).join(' / ');
+    tags.hidden = !tags.textContent;
+
+    copy.append(title, meta, tags);
+    button.append(media, copy);
+    button.addEventListener('click', () => {
+        runGlobalSearchEntry(entry);
+    });
+    return button;
+}
+
+function syncGlobalSearchActiveResult(){
+    if(!siteGlobalSearchResults) return;
+    const buttons = Array.from(siteGlobalSearchResults.querySelectorAll('.site-global-search__result'));
+    buttons.forEach((button, index) => {
+        const isActive = index === globalSearchActiveIndex;
+        button.dataset.active = isActive ? 'true' : 'false';
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        if(isActive){
+            button.scrollIntoView({ block: 'nearest' });
+        }
+    });
+}
+
+function renderGlobalSearchResults(){
+    if(!siteGlobalSearchResults || !siteGlobalSearchInput) return;
+    const query = siteGlobalSearchInput.value || '';
+    const normalizedQuery = normalizeGlobalSearchValue(query);
+    if(normalizedQuery.length < 2){
+        hideGlobalSearchResults();
+        return;
+    }
+
+    const matches = getGlobalSearchMatches(query, 12);
+    globalSearchActiveIndex = matches.length ? Math.min(Math.max(globalSearchActiveIndex, 0), matches.length - 1) : -1;
+
+    if(!matches.length){
+        renderGlobalSearchStatus(globalSearchHydrated ? 'Nenhum resultado encontrado.' : 'Carregando catalogos...');
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    matches.forEach((entry, index) => {
+        fragment.appendChild(createGlobalSearchResultButton(entry, index));
+    });
+    if(!globalSearchHydrated){
+        const status = document.createElement('div');
+        status.className = 'site-global-search__status';
+        status.textContent = 'Carregando catalogos...';
+        fragment.appendChild(status);
+    }
+
+    siteGlobalSearchResults.replaceChildren(fragment);
+    siteGlobalSearchResults.hidden = false;
+    siteGlobalSearchInput.setAttribute('aria-expanded', 'true');
+}
+
+function scheduleGlobalSearchRender(){
+    if(globalSearchRenderTimer){
+        clearTimeout(globalSearchRenderTimer);
+    }
+    globalSearchRenderTimer = window.setTimeout(() => {
+        globalSearchRenderTimer = 0;
+        renderGlobalSearchResults();
+    }, 60);
+}
+
+function runGlobalSearchRouteEntry(entry){
+    if(entry.target === 'home'){
+        navigateToHomePage();
+        return;
+    }
+    if(entry.target === 'pokemons' && entry.variant === POKEMON_CATALOG_VARIANT_MEGA){
+        showPokemons(POKEMON_CATALOG_VARIANT_MEGA);
+        return;
+    }
+    const proxy = document.createElement('button');
+    proxy.type = 'button';
+    if(entry.target) proxy.dataset.navTarget = entry.target;
+    if(entry.bossMode) proxy.dataset.bossMode = entry.bossMode;
+    activateSidebarTarget(proxy);
+}
+
+function runGlobalSearchQuickEntry(entry){
+    const proxy = document.createElement('button');
+    proxy.type = 'button';
+    proxy.dataset.navAction = entry.action || '';
+    proxy.dataset.navUrl = entry.navUrl || '';
+    activateSidebarTarget(proxy);
+}
+
+function runGlobalSearchTypeEntry(entry){
+    ensureTypesDataLoaded().then(() => {
+        showEffectiveness();
+        const type = String(entry.type || '').trim().toLowerCase();
+        if(type && menuTypes.includes(type)){
+            currentSelection = [type];
+            if(searchInput) searchInput.value = '';
+            createButtons();
+            renderSelection();
+            updateUrl();
+        }
+    }).catch(console.error);
+}
+
+function runGlobalSearchPokemonEntry(entry){
+    const variant = normalizePokemonCatalogVariant(entry.variant);
+    showPokemons(variant);
+    ensurePokemonCatalogLoaded().then(() => {
+        const pokemon = findPokemonCatalogEntryByRouteToken(entry.routeToken, variant);
+        if(canOpenPokemonCatalogEntry(pokemon)){
+            openPokemonDetailsModal(pokemon, { pushState: true });
+        }
+    }).catch(console.error);
+}
+
+function runGlobalSearchTeamEntry(entry){
+    showTimes();
+    ensureTeamsCatalogLoaded().then(() => {
+        openTeamDetailsByRouteSlug(entry.routeSlug, { pushState: true });
+    }).catch(console.error);
+}
+
+function runGlobalSearchBossEntry(entry){
+    const mode = normalizeBossModeParam(entry.mode) || 'hoopa';
+    showSpeedsters(mode);
+    ensureBossesPageReady().then(() => {
+        if(typeof window.openBossModalByRouteSlug === 'function'){
+            window.openBossModalByRouteSlug(mode, entry.slug, { pushState: true });
+        }
+    }).catch(console.error);
+}
+
+function runGlobalSearchStreamerEntry(entry){
+    showStreamers();
+    try{
+        openSiteStreamModal({
+            channel: entry.channel,
+            title: formatStreamerDisplayName(entry.channel)
+        });
+    }catch(error){
+        console.error('Nao foi possivel abrir o streamer pela busca.', error);
+    }
+}
+
+function runGlobalSearchEntry(entry){
+    if(!entry) return;
+    hideGlobalSearchResults();
+    if(siteGlobalSearchInput){
+        siteGlobalSearchInput.value = '';
+        try{ siteGlobalSearchInput.blur(); }catch(error){}
+    }
+
+    if(entry.kind === 'route') return runGlobalSearchRouteEntry(entry);
+    if(entry.kind === 'quick') return runGlobalSearchQuickEntry(entry);
+    if(entry.kind === 'type') return runGlobalSearchTypeEntry(entry);
+    if(entry.kind === 'pokemon') return runGlobalSearchPokemonEntry(entry);
+    if(entry.kind === 'team') return runGlobalSearchTeamEntry(entry);
+    if(entry.kind === 'boss') return runGlobalSearchBossEntry(entry);
+    if(entry.kind === 'streamer') return runGlobalSearchStreamerEntry(entry);
+    if(entry.kind === 'external' && entry.url){
+        openExternalWindow(entry.url);
+    }
+}
+
+function getVisibleGlobalSearchEntries(){
+    if(!siteGlobalSearchInput) return [];
+    return getGlobalSearchMatches(siteGlobalSearchInput.value || '', 12);
+}
+
+function initializeGlobalSearch(){
+    if(globalSearchInitialized || !siteGlobalSearch || !siteGlobalSearchInput || !siteGlobalSearchResults) return;
+    globalSearchInitialized = true;
+    setGlobalSearchEntries([
+        ...getGlobalSearchStaticEntries(),
+        ...buildGlobalSearchStreamerEntries()
+    ]);
+
+    siteGlobalSearchInput.addEventListener('input', () => {
+        globalSearchActiveIndex = -1;
+        scheduleGlobalSearchRender();
+        const query = normalizeGlobalSearchValue(siteGlobalSearchInput.value || '');
+        if(query.length >= 2){
+            ensureGlobalSearchHydrated().then(() => {
+                if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length >= 2){
+                    renderGlobalSearchResults();
+                }
+            }).catch(console.error);
+        }
+    });
+
+    siteGlobalSearchInput.addEventListener('focus', () => {
+        if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length >= 2){
+            renderGlobalSearchResults();
+        }
+    });
+
+    siteGlobalSearchInput.addEventListener('keydown', (event) => {
+        const entries = getVisibleGlobalSearchEntries();
+        if(event.key === 'Escape'){
+            hideGlobalSearchResults();
+            return;
+        }
+        if(event.key === 'ArrowDown' && entries.length){
+            event.preventDefault();
+            globalSearchActiveIndex = (globalSearchActiveIndex + 1) % entries.length;
+            renderGlobalSearchResults();
+            syncGlobalSearchActiveResult();
+            return;
+        }
+        if(event.key === 'ArrowUp' && entries.length){
+            event.preventDefault();
+            globalSearchActiveIndex = globalSearchActiveIndex <= 0 ? entries.length - 1 : globalSearchActiveIndex - 1;
+            renderGlobalSearchResults();
+            syncGlobalSearchActiveResult();
+            return;
+        }
+        if(event.key === 'Enter' && entries.length){
+            event.preventDefault();
+            const selectedIndex = globalSearchActiveIndex >= 0 ? globalSearchActiveIndex : 0;
+            runGlobalSearchEntry(entries[selectedIndex]);
+        }
+    });
+
+    document.addEventListener('click', (event) => {
+        if(siteGlobalSearch.contains(event.target)) return;
+        hideGlobalSearchResults();
+    });
 }
 
 function resolveCommunityTopicKey(topicKey){
@@ -7723,6 +8299,12 @@ const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStrea
 const detectPstoryTitleState = typeof sharedStreamerCatalog.detectPstoryTitleState === 'function'
     ? sharedStreamerCatalog.detectPstoryTitleState
     : () => false;
+const createStreamerRatAlertWatcher = typeof sharedStreamerCatalog.createStreamerRatAlertWatcher === 'function'
+    ? sharedStreamerCatalog.createStreamerRatAlertWatcher
+    : () => () => '';
+const playStreamerRatAlertSound = typeof sharedStreamerCatalog.playStreamerRatAlertSound === 'function'
+    ? sharedStreamerCatalog.playStreamerRatAlertSound
+    : () => false;
 
 function clearHomeStreamerRatSummary(){
     homeStreamerRatSummaryCleanup();
@@ -9023,6 +9605,8 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         return () => {};
     }
 
+    const getRatAlertTriggerKey = createStreamerRatAlertWatcher();
+
     const render = () => {
         const validState = getStreamerRatTimerState(monitorInfo.name, monitorInfo.startedAt || '');
 
@@ -9031,6 +9615,10 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         if(validState?.lastMessageAt){
             touchStreamerRatTimerState(monitorInfo.name);
             const msUntilNext = validState.remainingMs;
+            const alertKey = getRatAlertTriggerKey(validState);
+            if(alertKey){
+                playStreamerRatAlertSound(alertKey);
+            }
             if(msUntilNext <= 0){
                 timerEl.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
                 timerEl.style.color = '#ffd166';
@@ -9042,6 +9630,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             return;
         }
 
+        getRatAlertTriggerKey(null);
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
             timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.';
@@ -16403,6 +16992,7 @@ function closePokemonDetailsModal(options = {}){
 }
 
 initializeSidebarNavigation();
+initializeGlobalSearch();
 
 // Sync modal open/close with browser history (back/forward)
 window.addEventListener('popstate', () => {

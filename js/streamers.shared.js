@@ -138,6 +138,295 @@
         return false;
     }
 
+    const RAT_ALERT_SOUND_STORAGE_KEY = 'poke-effectiveness-rat-alert-sound-v1';
+    const RAT_ALERT_VOLUME_STORAGE_KEY = 'poke-effectiveness-rat-alert-volume-v1';
+    const RAT_ALERT_DEFAULT_VOLUME_SLIDER = 50;
+    const RAT_ALERT_BASE_GAIN = 0.32;
+    let ratAlertAudioContext = null;
+    const ratAlertState = {
+        enabled: loadRatAlertSoundEnabled(),
+        volumeSlider: loadRatAlertVolumeSlider()
+    };
+
+    function loadRatAlertSoundEnabled(){
+        try{
+            return global.localStorage?.getItem(RAT_ALERT_SOUND_STORAGE_KEY) === 'on';
+        }catch(err){
+            return false;
+        }
+    }
+
+    function loadRatAlertVolumeSlider(){
+        try{
+            const value = Number(global.localStorage?.getItem(RAT_ALERT_VOLUME_STORAGE_KEY));
+            if(Number.isFinite(value)){
+                return Math.min(100, Math.max(0, value));
+            }
+        }catch(err){
+            // ignore storage failures
+        }
+        return RAT_ALERT_DEFAULT_VOLUME_SLIDER;
+    }
+
+    function getRatAlertGainMultiplier(sliderValue = ratAlertState.volumeSlider){
+        const value = Math.min(100, Math.max(0, Number(sliderValue) || 0));
+        if(value <= 50){
+            return value / 50;
+        }
+        return 1 + ((value - 50) / 50) * 0.5;
+    }
+
+    function formatRatAlertVolumeLabel(sliderValue = ratAlertState.volumeSlider){
+        return `${Math.round(getRatAlertGainMultiplier(sliderValue) * 100)}%`;
+    }
+
+    function persistRatAlertSoundEnabled(enabled){
+        ratAlertState.enabled = !!enabled;
+        try{
+            global.localStorage?.setItem(RAT_ALERT_SOUND_STORAGE_KEY, ratAlertState.enabled ? 'on' : 'off');
+        }catch(err){
+            // Ignore storage failures; the in-memory toggle still works.
+        }
+        syncRatAlertSettingsControls();
+    }
+
+    function persistRatAlertVolumeSlider(value){
+        ratAlertState.volumeSlider = Math.min(100, Math.max(0, Number(value) || 0));
+        try{
+            global.localStorage?.setItem(RAT_ALERT_VOLUME_STORAGE_KEY, String(ratAlertState.volumeSlider));
+        }catch(err){
+            // Ignore storage failures; the in-memory value still works.
+        }
+        syncRatAlertSettingsControls();
+    }
+
+    function getRatAlertAudioContext(){
+        const AudioContextCtor = global.AudioContext || global.webkitAudioContext;
+        if(!AudioContextCtor) return null;
+        if(!ratAlertAudioContext){
+            ratAlertAudioContext = new AudioContextCtor();
+        }
+        return ratAlertAudioContext;
+    }
+
+    function prepareStreamerRatAlertSound(){
+        const context = getRatAlertAudioContext();
+        if(!context) return Promise.resolve(false);
+        if(context.state === 'suspended' && typeof context.resume === 'function'){
+            return context.resume().then(() => true).catch(() => false);
+        }
+        return Promise.resolve(true);
+    }
+
+    function scheduleRatAlertTone(context, startAt, frequency, duration, volumeMultiplier){
+        const peakGain = RAT_ALERT_BASE_GAIN * volumeMultiplier;
+        if(peakGain <= 0) return;
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, startAt);
+        gain.gain.setValueAtTime(0.0001, startAt);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, peakGain), startAt + 0.018);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(startAt);
+        oscillator.stop(startAt + duration + 0.04);
+    }
+
+    function playStreamerRatAlertSound(options = {}){
+        if(!options.force && !ratAlertState.enabled) return false;
+        const context = getRatAlertAudioContext();
+        if(!context || context.state === 'suspended') return false;
+
+        const volumeMultiplier = getRatAlertGainMultiplier();
+        if(volumeMultiplier <= 0) return false;
+
+        const startAt = context.currentTime + 0.02;
+        scheduleRatAlertTone(context, startAt, 880, 0.16, volumeMultiplier);
+        scheduleRatAlertTone(context, startAt + 0.2, 1175, 0.18, volumeMultiplier);
+        return true;
+    }
+
+    function syncRatAlertSettingsToggle(button){
+        if(!button) return;
+        const enabled = !!ratAlertState.enabled;
+        button.dataset.enabled = enabled ? 'true' : 'false';
+        button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        button.textContent = enabled ? 'Som ligado' : 'Som desligado';
+    }
+
+    function syncRatAlertSettingsControls(){
+        global.document?.querySelectorAll('[data-rat-alert-setting="toggle"]')
+            .forEach(button => syncRatAlertSettingsToggle(button));
+        global.document?.querySelectorAll('[data-rat-alert-setting="volume"]')
+            .forEach(input => {
+                input.value = String(ratAlertState.volumeSlider);
+                input.setAttribute('aria-valuetext', formatRatAlertVolumeLabel());
+            });
+        global.document?.querySelectorAll('[data-rat-alert-setting="volume-value"]')
+            .forEach(output => {
+                output.textContent = formatRatAlertVolumeLabel();
+            });
+    }
+
+    function getRatAlertSettingsMountTarget(){
+        return global.document?.querySelector('#content-streamers .calc-card') || null;
+    }
+
+    function mountStreamerRatAlertSettingsButton(){
+        const mountTarget = getRatAlertSettingsMountTarget();
+        if(!mountTarget) return null;
+
+        const existing = global.document.querySelector('.streamer-rat-settings');
+        if(existing) return existing;
+
+        const wrapper = global.document.createElement('div');
+        wrapper.className = 'streamer-rat-settings';
+
+        const gearButton = global.document.createElement('button');
+        gearButton.type = 'button';
+        gearButton.className = 'streamer-rat-settings__button';
+        gearButton.textContent = '⚙️';
+        gearButton.setAttribute('aria-label', 'Configurações do som do Rattata');
+        gearButton.setAttribute('aria-expanded', 'false');
+        gearButton.title = 'Configurações do som do Rattata';
+
+        const panel = global.document.createElement('div');
+        panel.className = 'streamer-rat-settings__panel';
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-label', 'Configurações do som do Rattata');
+        panel.hidden = true;
+
+        const title = global.document.createElement('strong');
+        title.className = 'streamer-rat-settings__title';
+        title.textContent = 'Rattata';
+
+        const toggleButton = global.document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = 'streamer-rat-settings__option';
+        toggleButton.dataset.ratAlertSetting = 'toggle';
+        syncRatAlertSettingsToggle(toggleButton);
+        toggleButton.addEventListener('click', () => {
+            const nextEnabled = !ratAlertState.enabled;
+            persistRatAlertSoundEnabled(nextEnabled);
+            if(nextEnabled){
+                prepareStreamerRatAlertSound();
+            }
+        });
+
+        const volumeGroup = global.document.createElement('label');
+        volumeGroup.className = 'streamer-rat-settings__volume';
+
+        const volumeHeader = global.document.createElement('span');
+        volumeHeader.className = 'streamer-rat-settings__volume-head';
+
+        const volumeTitle = global.document.createElement('span');
+        volumeTitle.textContent = 'Volume';
+
+        const volumeValue = global.document.createElement('output');
+        volumeValue.dataset.ratAlertSetting = 'volume-value';
+        volumeValue.textContent = formatRatAlertVolumeLabel();
+
+        volumeHeader.append(volumeTitle, volumeValue);
+
+        const volumeInput = global.document.createElement('input');
+        volumeInput.type = 'range';
+        volumeInput.min = '0';
+        volumeInput.max = '100';
+        volumeInput.step = '1';
+        volumeInput.value = String(ratAlertState.volumeSlider);
+        volumeInput.dataset.ratAlertSetting = 'volume';
+        volumeInput.setAttribute('aria-label', 'Volume do som do Rattata');
+        volumeInput.setAttribute('aria-valuetext', formatRatAlertVolumeLabel());
+        volumeInput.addEventListener('input', () => {
+            persistRatAlertVolumeSlider(volumeInput.value);
+        });
+
+        const volumeScale = global.document.createElement('span');
+        volumeScale.className = 'streamer-rat-settings__scale';
+        volumeScale.innerHTML = '<span>0%</span><span>100%</span><span>150%</span>';
+
+        volumeGroup.append(volumeHeader, volumeInput, volumeScale);
+
+        const testButton = global.document.createElement('button');
+        testButton.type = 'button';
+        testButton.className = 'streamer-rat-settings__option';
+        testButton.textContent = 'Testar som';
+        testButton.addEventListener('click', () => {
+            prepareStreamerRatAlertSound().then(() => {
+                playStreamerRatAlertSound({ force: true });
+            });
+        });
+
+        const closePanel = () => {
+            panel.hidden = true;
+            gearButton.setAttribute('aria-expanded', 'false');
+        };
+
+        const openPanel = () => {
+            panel.hidden = false;
+            gearButton.setAttribute('aria-expanded', 'true');
+        };
+
+        gearButton.addEventListener('click', () => {
+            if(panel.hidden){
+                openPanel();
+            } else {
+                closePanel();
+            }
+        });
+
+        global.document.addEventListener('click', (event) => {
+            if(wrapper.contains(event.target)) return;
+            closePanel();
+        });
+
+        global.document.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape'){
+                closePanel();
+            }
+        });
+
+        panel.append(title, toggleButton, volumeGroup, testButton);
+        wrapper.append(gearButton, panel);
+        mountTarget.appendChild(wrapper);
+        return wrapper;
+    }
+
+    function createStreamerRatAlertWatcher(){
+        let activeKey = '';
+        let wasRunning = false;
+
+        return (snapshot) => {
+            if(!snapshot?.lastMessageAt || !snapshot?.expectedNextAt){
+                activeKey = '';
+                wasRunning = false;
+                return '';
+            }
+
+            const key = `${normalizeStreamerChannelName(snapshot.channel)}:${snapshot.lastMessageAt}:${snapshot.expectedNextAt}`;
+            const remainingMs = Number(snapshot.remainingMs || 0);
+            if(key !== activeKey){
+                activeKey = key;
+                wasRunning = remainingMs > 0;
+                return '';
+            }
+
+            if(remainingMs > 0){
+                wasRunning = true;
+                return '';
+            }
+
+            if(wasRunning){
+                wasRunning = false;
+                return key;
+            }
+
+            return '';
+        };
+    }
+
     global.POKE_STREAMERS_SHARED = Object.freeze({
         STREAMER_REGISTRY: Object.freeze(registry.slice()),
         STREAMERS: streamers,
@@ -146,8 +435,17 @@
         STREAMER_DISCORD_LINKS: discordLinks,
         normalizeStreamerChannelName,
         detectPstoryTitleState,
+        createStreamerRatAlertWatcher,
+        mountStreamerRatAlertSettingsButton,
+        playStreamerRatAlertSound,
         getStreamerEntry(name){
             return byKey.get(normalizeStreamerChannelName(name)) || null;
         }
     });
+
+    if(global.document?.readyState === 'loading'){
+        global.document.addEventListener('DOMContentLoaded', mountStreamerRatAlertSettingsButton, { once: true });
+    } else {
+        mountStreamerRatAlertSettingsButton();
+    }
 })(window);

@@ -5704,8 +5704,51 @@ function getPokemonBossUsages(pokemonName) {
   ));
 }
 
+function getBossSearchEntries() {
+  const entries = [];
+  Object.entries(bossCatalogs).forEach(([mode, catalog]) => {
+    if (!catalog || catalog.searchEnabled === false || !isBossRouteableMode(mode)) return;
+    const bosses = Array.isArray(catalog.data) ? catalog.data : [];
+    bosses.forEach((boss) => {
+      const slug = getBossRouteSlug(boss);
+      if (!slug) return;
+      const types = mergeLowercaseUniqueValues([
+        ...(Array.isArray(boss.types) ? boss.types : []),
+        ...(Array.isArray(boss.bossTypes) ? boss.bossTypes : []),
+        ...(Array.isArray(boss.effectiveness?.offenseTargetTypes) ? boss.effectiveness.offenseTargetTypes : [])
+      ]);
+      const names = Array.isArray(boss.bosses)
+        ? boss.bosses.map((entry) => entry?.name).filter(Boolean)
+        : [];
+      entries.push({
+        mode,
+        slug,
+        name: boss.name || slug,
+        catalogLabel: catalog.label || 'Bosses',
+        description: boss.summary || boss.description || boss.encounterNote || '',
+        image: boss.image ? resolveBossAssetSrc(boss.image) : '',
+        types,
+        tags: names,
+        searchText: [
+          mode,
+          catalog.label,
+          boss.id,
+          boss.name,
+          boss.summary,
+          boss.description,
+          boss.encounterNote,
+          ...names,
+          ...types
+        ].filter(Boolean).join(' ')
+      });
+    });
+  });
+  return entries;
+}
+
 if (typeof window !== 'undefined') {
   window.getPokemonBossUsages = getPokemonBossUsages;
+  window.getBossSearchEntries = getBossSearchEntries;
 }
 
 function pickBetterTier(currentTier, nextTier) {

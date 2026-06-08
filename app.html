@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260607d">
+  <link rel="stylesheet" href="styles.css?v=20260608l">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -65,6 +65,12 @@
       <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
       <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
     </header>
+    <div id="site-global-search" class="site-global-search" role="search">
+      <label class="visually-hidden" for="site-global-search-input">Buscar no site</label>
+      <span class="site-global-search__icon" aria-hidden="true"></span>
+      <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Buscar no site..." autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
+      <div id="site-global-search-results" class="site-global-search__results" role="listbox" aria-label="Resultados da busca" hidden></div>
+    </div>
     <nav class="tabs" role="tablist" aria-label="Seções principais">
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
@@ -1161,6 +1167,7 @@
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card catch-card">
         <div class="catch-hero">
+          <p id="catch-description" class="visually-hidden">Calculadora de captura com estimativa por alvo, variante e pokebola.</p>
           <div class="catch-hero__preview" aria-live="polite">
             <span id="catch-selected-ball-label" class="catch-hero__preview-label">Pokébola selecionada</span>
             <div class="catch-ball-preview">
@@ -1620,9 +1627,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
-    <script src="js/streamers.shared.js?v=20260606a" defer></script>
+    <script src="js/streamers.shared.js?v=20260608e" defer></script>
     <script src="js/visits.shared.js?v=20260607d" defer></script>
-    <script src="script.js?v=20260607n" defer></script>
+    <script src="script.js?v=20260608e" defer></script>
 </body>
 </html>
 
