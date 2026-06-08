@@ -57,6 +57,10 @@
         {name: 'kaueotp', supportsDrops: false },
         {name: 'suximy', supportsDrops: false },
         {name: 'teffox4', supportsDrops: false },
+        {name: 'lucasnaikan', supportsDrops: false },
+        {name: 'orodault', supportsDrops: false },
+        {name: 'leomarnc', supportsDrops: false },
+        {name: 'luizsanninoficial', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

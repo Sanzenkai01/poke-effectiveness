@@ -2871,6 +2871,33 @@ const BOOST_TYPE_STONE_META = Object.freeze({
     water: { name: 'Water Stone', image: 'calculadora/water_stone.gif' },
     fairy: { name: 'Fairy Stone', image: 'calculadora/fairy_stone.gif' }
 });
+const BOOST_NAMED_STONE_META = Object.freeze({
+    'Fire Stone': { image: 'calculadora/fire_stone.gif' },
+    'Water Stone': { image: 'calculadora/water_stone.gif' },
+    'Leaf Stone': { image: 'calculadora/leaf_stone.gif' },
+    'Cocoon Stone': { image: 'calculadora/cocoon_stone.gif' },
+    'Venom Stone': { image: 'calculadora/venom_stone.gif' },
+    'Punch Stone': { image: '' },
+    'Thunder Stone': { image: 'calculadora/thunder_stone.gif' },
+    'Ice Stone': { image: '' },
+    'Rock Stone': { image: 'calculadora/rock_stone.gif' },
+    'Feather Stone': { image: 'calculadora/feather_stone.gif' },
+    'Earth Stone': { image: 'calculadora/earth_stone.gif' },
+    'Darkness Stone': { image: 'calculadora/darkness_stone.png' },
+    'Enigma Stone': { image: 'calculadora/enigma_stone.gif' },
+    'Hearth Stone': { image: 'calculadora/heart_stone.gif' },
+    'Metal Stone': { image: 'calculadora/metal_stone.png' },
+    'Dragon Stone': { image: 'calculadora/dragon_stone.gif' },
+    'Fairy Stone': { image: 'calculadora/fairy_stone.gif' },
+    'Ghost Stone': { image: '' }
+});
+const BOOST_DITTO_BRONZE_STONE_STEPS = Object.freeze({
+    1: { quantity: 20, stones: ['Fire Stone', 'Water Stone', 'Leaf Stone'] },
+    2: { quantity: 30, stones: ['Cocoon Stone', 'Venom Stone', 'Punch Stone'] },
+    3: { quantity: 40, stones: ['Thunder Stone', 'Ice Stone', 'Rock Stone', 'Feather Stone'] },
+    4: { quantity: 50, stones: ['Earth Stone', 'Darkness Stone', 'Enigma Stone', 'Hearth Stone'] },
+    5: { quantity: 60, stones: ['Metal Stone', 'Dragon Stone', 'Fairy Stone', 'Ghost Stone'] }
+});
 const BOOST_SILVER_STAR_RECIPE = Object.freeze({
     'Shining Ancient Stone': 1,
     'Silver Flask': 10,
@@ -10650,6 +10677,10 @@ function getBoostAvailablePokemonEntries(){
         && entry.name
         && entry.type1
         && entry.registered !== false
+        && (
+            !getPokemonEntrySpecialTags(entry).includes('pack')
+            || normalizePokemonSearchText(entry.name) === 'ditto'
+        )
     ));
 
     const seen = new Set();
@@ -11270,13 +11301,22 @@ function renderBoostPokemonMeta(state){
 
         const stoneLabel = document.createElement('span');
         stoneLabel.className = 'boost-selected-preview__group-label';
-        stoneLabel.textContent = typeKeys.length > 1 ? 'Stones' : 'Stone';
+        const usesAceBronzeRule = hasBoostSpecialTag(state, 'ace');
+        const usesDittoBronzeRule = isBoostDittoState(state);
+        stoneLabel.textContent = usesAceBronzeRule
+            ? 'Ace'
+            : (usesDittoBronzeRule ? 'Ditto' : (typeKeys.length > 1 ? 'Stones' : 'Stone'));
 
         const stoneChips = document.createElement('div');
         stoneChips.className = 'boost-selected-preview__chips';
-        typeKeys.forEach(typeKey => {
-            stoneChips.appendChild(createBoostStoneChip(typeKey));
-        });
+        if(usesDittoBronzeRule){
+        } else if(usesAceBronzeRule){
+            stoneChips.appendChild(createBoostNamedStoneChip('Ancient Stone'));
+        } else {
+            typeKeys.forEach(typeKey => {
+                stoneChips.appendChild(createBoostStoneChip(typeKey));
+            });
+        }
         stoneGroup.append(stoneLabel, stoneChips);
 
         const movesetGroup = document.createElement('div');
@@ -11423,10 +11463,32 @@ function createBoostStoneChip(typeKey){
     return chip;
 }
 
+function createBoostNamedStoneChip(name){
+    const materialMeta = getBoostMaterialMeta(name, {
+        category: 'stone',
+        craftable: false
+    });
+    const chip = document.createElement('span');
+    chip.className = 'boost-pokemon-chip boost-pokemon-chip--stone';
+
+    const label = document.createElement('span');
+    label.textContent = name;
+
+    chip.append(createBoostInlineMedia(name, materialMeta.image), label);
+    return chip;
+}
+
 function getBoostMaterialMeta(name, overrides = {}){
+    const namedStoneMeta = BOOST_NAMED_STONE_META[name]
+        ? {
+            ...BOOST_NAMED_STONE_META[name],
+            craftable: false,
+            category: 'stone'
+        }
+        : {};
     const staticMeta = BOOST_STATIC_MATERIAL_META[name]
         ? { ...BOOST_STATIC_MATERIAL_META[name] }
-        : {};
+        : { ...namedStoneMeta };
     const typeKey = overrides.typeKey || staticMeta.typeKey || '';
     const stoneMeta = typeKey ? getBoostStoneMetaByType(typeKey) : null;
 
@@ -11464,6 +11526,110 @@ function createBoostStoneMaterialItem(typeKey, quantity, overrides = {}){
         ...overrides,
         typeKey: stoneMeta.typeKey
     });
+}
+
+function createBoostNamedStoneMaterialItem(name, quantity, overrides = {}){
+    return createBoostMaterialItem(name, quantity, {
+        craftable: false,
+        category: 'stone',
+        ...overrides
+    });
+}
+
+function hasBoostSpecialTag(state, tag){
+    const tags = state?.pokemonEntry?.specialTags;
+    return Array.isArray(tags) && tags.includes(tag);
+}
+
+function isBoostDittoState(state){
+    return normalizePokemonSearchText(state?.pokemonEntry?.name || state?.pokemonName || '') === 'ditto';
+}
+
+function getBoostBronzeNormalStoneQuantity(state, cumulative = false){
+    const normalizedLevel = normalizeBoostLevel(state?.bronzeLevel);
+    if(normalizedLevel <= 0) return 0;
+    const levelMultiplier = cumulative
+        ? getBoostLevelCumulativeStepSum(normalizedLevel)
+        : normalizedLevel;
+    if(state?.typeMode === 'double'){
+        return levelMultiplier * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL * 2;
+    }
+    return levelMultiplier * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL;
+}
+
+function createBoostDittoBronzeStoneItems(level, options = {}){
+    const {
+        cumulative = false,
+        contextLabel = '',
+        detail = ''
+    } = options;
+    const normalizedLevel = normalizeBoostLevel(level);
+    if(normalizedLevel <= 0) return [];
+
+    const levels = cumulative
+        ? Array.from({ length: normalizedLevel }, (_, index) => index + 1)
+        : [normalizedLevel];
+
+    return levels.flatMap(stepLevel => {
+        const step = BOOST_DITTO_BRONZE_STONE_STEPS[stepLevel];
+        if(!step) return [];
+        return step.stones.map(name => createBoostNamedStoneMaterialItem(name, step.quantity, {
+            detail: detail || `Bronze ${stepLevel} do Ditto.`,
+            contextLabel
+        }));
+    });
+}
+
+function createBoostBronzeStoneItems(state, options = {}){
+    const {
+        cumulative = false,
+        contextLabel = '',
+        directDetail = ''
+    } = options;
+    const normalizedLevel = normalizeBoostLevel(state?.bronzeLevel);
+    if(normalizedLevel <= 0) return [];
+
+    if(isBoostDittoState(state)){
+        return createBoostDittoBronzeStoneItems(normalizedLevel, {
+            cumulative,
+            contextLabel,
+            detail: directDetail
+        });
+    }
+
+    if(hasBoostSpecialTag(state, 'ace')){
+        return [
+            createBoostMaterialItem('Ancient Stone', getBoostBronzeNormalStoneQuantity(state, cumulative), {
+                category: 'ancient',
+                detail: directDetail || 'Mesma quantidade das stones normais, trocada por Ancient Stone para Pokemon Ace.',
+                contextLabel
+            })
+        ];
+    }
+
+    const levelMultiplier = cumulative
+        ? getBoostLevelCumulativeStepSum(normalizedLevel)
+        : normalizedLevel;
+
+    if(state.typeMode === 'double'){
+        return [
+            createBoostStoneMaterialItem(state.type1, levelMultiplier * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
+                detail: directDetail || `Tipo ${getTypeDisplayName(state.type1)}.`,
+                contextLabel
+            }),
+            createBoostStoneMaterialItem(state.type2, levelMultiplier * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
+                detail: directDetail || `Tipo ${getTypeDisplayName(state.type2)}.`,
+                contextLabel
+            })
+        ];
+    }
+
+    return [
+        createBoostStoneMaterialItem(state.type1, levelMultiplier * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL, {
+            detail: directDetail || `Tipo ${getTypeDisplayName(state.type1)}.`,
+            contextLabel
+        })
+    ];
 }
 
 function aggregateBoostMaterialItems(groups = [], options = {}){
@@ -11551,22 +11717,13 @@ function sortBoostTotalItems(items = []){
 
 function calculateBoostTotalDirectItems(state){
     const totalDirectItems = [];
-    const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
     const silverStepSum = getBoostLevelCumulativeStepSum(state.silverLevel);
 
     if(state.bronzeLevel > 0){
-        if(state.typeMode === 'double'){
-            totalDirectItems.push(
-                createBoostStoneMaterialItem(state.type1, bronzeStepSum * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL),
-                createBoostStoneMaterialItem(state.type2, bronzeStepSum * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL)
-            );
-        } else {
-            totalDirectItems.push(
-                createBoostStoneMaterialItem(state.type1, bronzeStepSum * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL)
-            );
-        }
+        totalDirectItems.push(...createBoostBronzeStoneItems(state, { cumulative: true }));
 
         if(state.shiny === 'yes'){
+            const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
             totalDirectItems.push(
                 createBoostMaterialItem('Bronze Star', bronzeStepSum * BOOST_BRONZE_STAR_PER_LEVEL, {
                     category: 'bronze'
@@ -11647,25 +11804,7 @@ function calculateBoostMaterials(state){
     let silverPieceCount = 0;
 
     if(state.bronzeLevel > 0){
-        if(state.typeMode === 'double'){
-            bronzeItems.push(
-                createBoostStoneMaterialItem(state.type1, state.bronzeLevel * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
-                    detail: `Tipo ${getTypeDisplayName(state.type1)}.`,
-                    contextLabel: 'Direto'
-                }),
-                createBoostStoneMaterialItem(state.type2, state.bronzeLevel * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL, {
-                    detail: `Tipo ${getTypeDisplayName(state.type2)}.`,
-                    contextLabel: 'Direto'
-                })
-            );
-        } else {
-            bronzeItems.push(
-                createBoostStoneMaterialItem(state.type1, state.bronzeLevel * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL, {
-                    detail: `Tipo ${getTypeDisplayName(state.type1)}.`,
-                    contextLabel: 'Direto'
-                })
-            );
-        }
+        bronzeItems.push(...createBoostBronzeStoneItems(state, { contextLabel: 'Direto' }));
 
         if(state.shiny === 'yes'){
             const bronzeStarCount = state.bronzeLevel * BOOST_BRONZE_STAR_PER_LEVEL;
