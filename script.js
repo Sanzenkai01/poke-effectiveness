@@ -12263,15 +12263,6 @@ function updateUrl(options = {}){
         ? window.getActiveBossRouteState()
         : null;
     const requestedQuickAction = getRequestedQuickActionFromUrl();
-    if(isHomeView){
-        params.delete('types');
-        params.delete('tab');
-        params.delete('topic');
-        params.delete('bossmode');
-        params.delete('plan');
-        params.delete('variant');
-    } else if(currentSelection.length) params.set('types',currentSelection.join(','));
-    else if(!(isEffectivenessRouteActive() && !typesDataLoaded && params.has('types'))) params.delete('types');
     const activeTab = isHomeView ? '' :
                       (contentBoost && !contentBoost.hidden) ? 'boost' :
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
@@ -12283,6 +12274,17 @@ function updateUrl(options = {}){
                       (tabCommunityBtn && tabCommunityBtn.classList.contains('active')) ? 'youtube' :
                       (tabStreamersBtn && tabStreamersBtn.classList.contains('active')) ? 'streamers' :
                       (tabCatchBtn && tabCatchBtn.classList.contains('active')) ? 'catch' : '';
+    if(isHomeView){
+        params.delete('types');
+        params.delete('tab');
+        params.delete('topic');
+        params.delete('bossmode');
+        params.delete('plan');
+        params.delete('variant');
+    } else if(activeTab !== 'effectiveness'){
+        params.delete('types');
+    } else if(currentSelection.length) params.set('types',currentSelection.join(','));
+    else if(!(isEffectivenessRouteActive() && !typesDataLoaded && params.has('types'))) params.delete('types');
     params.delete('tab');
     params.delete('bossmode');
     params.delete('quick');
