@@ -4,6 +4,9 @@
       "name": "Mega Clefable",
       "image": "pokemons/megas/mega-clefable.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "fairy",
       "type2": "flying",
       "moveset": [
@@ -19,6 +22,9 @@
       "name": "Mega Steelix",
       "image": "pokemons/megas/mega-steelix.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "steel",
       "type2": "ground",
       "moveset": [
@@ -48,7 +54,7 @@
     {
       "name": "Mega Gyarados",
       "image": "pokemons/megas/mega-gyarados.png",
-      "role": "attacker",
+      "role": "speedster",
       "type1": "water",
       "type2": "dark",
       "moveset": [
@@ -64,6 +70,10 @@
       "name": "Mega Meganium",
       "image": "pokemons/megas/mega-meganium.png",
       "role": "attacker",
+      "subFunctions": [
+        "Finisher",
+        "Silencer"
+      ],
       "type1": "grass",
       "type2": "fairy",
       "moveset": [
@@ -79,6 +89,9 @@
       "name": "Mega Victreebel",
       "image": "pokemons/megas/megavictreebel.png",
       "role": "attacker",
+      "subFunctions": [
+        "Finisher"
+      ],
       "type1": "grass",
       "type2": "poison",
       "moveset": [
@@ -94,6 +107,9 @@
       "name": "Mega Venusaur",
       "image": "pokemons/megas/mega-venusaur.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "grass",
       "type2": "poison",
       "moveset": [
@@ -110,6 +126,9 @@
       "name": "Mega Charizard",
       "image": "pokemons/megas/mega-charizard-x.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "fire",
       "type2": "dragon",
       "moveset": [
@@ -179,6 +198,8 @@
       "team": "instinct",
       "level": 80,
       "priceLabel": "$mega",
+      "passiveName": "Lightning Rod",
+      "passiveDescription": "O Pokemon se torna imune a danos do tipo Electric.",
       "registered": false,
       "variant": "mega",
       "dex": null
@@ -187,6 +208,9 @@
       "name": "Mega Blaziken",
       "image": "pokemons/megas/mega-blaziken.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "fire",
       "type2": "fighting",
       "moveset": [
@@ -203,6 +227,10 @@
       "name": "Mega Swampert",
       "image": "pokemons/megas/mega-swampert.png",
       "role": "attacker",
+      "subFunctions": [
+        "Area Pull",
+        "Stunner"
+      ],
       "type1": "water",
       "type2": "ground",
       "moveset": [
@@ -245,12 +273,18 @@
       "priceLabel": "$mega",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "subFunctions": [
+        "Stunner"
+      ]
     },
     {
       "name": "Mega Manectric",
       "image": "pokemons/megas/mega-manectric.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "electric",
       "moveset": [
         "electric"
@@ -266,6 +300,9 @@
       "name": "Mega Camerupt",
       "image": "pokemons/megas/mega-camerupt.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "fire",
       "type2": "ground",
       "moveset": [
@@ -297,6 +334,9 @@
       "name": "Mega Absol",
       "image": "pokemons/megas/mega-absol.png",
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "dark",
       "moveset": [
         "dark"
@@ -418,6 +458,10 @@
       "name": "Mega Staraptor",
       "image": "pokemons/megas/megastaraptor.png",
       "role": "attacker",
+      "subFunctions": [
+        "Frontal Pull",
+        "Finisher"
+      ],
       "type1": "fighting",
       "type2": "flying",
       "moveset": [
@@ -430,6 +474,79 @@
       "registered": false,
       "variant": "mega",
       "dex": null
+    },
+    {
+      "name": "Mega Scolipede",
+      "variant": "mega",
+      "registered": false,
+      "dex": null,
+      "team": "valor",
+      "role": "attacker",
+      "type1": "bug",
+      "moveset": [
+        "poison"
+      ],
+      "type2": "poison",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "level": 80,
+      "generation": 5,
+      "image": "pokemons/megas/mega-scolipede.png"
+    },
+    {
+      "name": "Mega Drampa",
+      "variant": "mega",
+      "registered": false,
+      "catalogHidden": true,
+      "dex": null,
+      "team": "valor",
+      "role": "attacker",
+      "type1": "normal",
+      "moveset": [
+        "dragon"
+      ],
+      "type2": "dragon",
+      "subFunctions": [
+        "Stunner",
+        "Finisher"
+      ],
+      "level": 80,
+      "generation": 7,
+      "image": "pokemons/7gen/drampa.png",
+      "notes": "Stunner com HP +40%; Finisher com HP -40%."
+    },
+    {
+      "name": "Mega Pyroar",
+      "variant": "mega",
+      "registered": false,
+      "dex": null,
+      "team": "valor",
+      "role": "defender",
+      "type1": "normal",
+      "moveset": [
+        "fire"
+      ],
+      "type2": "fire",
+      "level": 80,
+      "generation": 6,
+      "image": "pokemons/6gen/pyroar-female.png"
+    },
+    {
+      "name": "Mega Chesnaught",
+      "variant": "mega",
+      "registered": false,
+      "dex": null,
+      "team": "instinct",
+      "role": "defender",
+      "type1": "grass",
+      "moveset": [
+        "grass"
+      ],
+      "type2": "fighting",
+      "level": 80,
+      "generation": 6,
+      "image": "pokemons/megas/megachesnaught.png"
     }
   ]
 }

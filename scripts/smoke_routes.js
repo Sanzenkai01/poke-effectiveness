@@ -76,6 +76,14 @@ const routes = [
     ]
   },
   {
+    path: '/team-builder',
+    label: 'team-builder',
+    checks: [
+      { pattern: /data-active-tab="team-builder"/i, description: 'team builder active tab' },
+      { pattern: /id="team-builder-slots"/i, description: 'team builder slots' }
+    ]
+  },
+  {
     path: '/catch',
     label: 'catch',
     checks: [

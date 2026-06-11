@@ -271,7 +271,7 @@
     }
 
     function getRatAlertSettingsMountTarget(){
-        return global.document?.querySelector('#content-streamers .calc-card') || null;
+        return global.document?.getElementById('matrix-btn')?.parentElement || null;
     }
 
     function mountStreamerRatAlertSettingsButton(){
@@ -390,7 +390,12 @@
 
         panel.append(title, toggleButton, volumeGroup, testButton);
         wrapper.append(gearButton, panel);
-        mountTarget.appendChild(wrapper);
+        const matrixButton = global.document?.getElementById('matrix-btn');
+        if(matrixButton?.parentElement === mountTarget){
+            matrixButton.insertAdjacentElement('afterend', wrapper);
+        } else {
+            mountTarget.appendChild(wrapper);
+        }
         return wrapper;
     }
 

@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260608l">
+  <link rel="stylesheet" href="styles.css?v=20260611k">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -69,6 +69,7 @@
       <label class="visually-hidden" for="site-global-search-input">Buscar no site</label>
       <span class="site-global-search__icon" aria-hidden="true"></span>
       <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Buscar no site..." autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
+      <div id="site-rat-summary" class="site-global-search__rat streamer-rat-summary" aria-live="polite"></div>
       <div id="site-global-search-results" class="site-global-search__results" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Seções principais">
@@ -294,6 +295,10 @@
               <button class="sidebar-sublink" type="button" data-nav-target="catch">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Catch</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="team-builder">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Team Builder</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="fossils">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
@@ -1030,6 +1035,13 @@
               </select>
             </label>
 
+            <label class="pokemon-filter-field" for="pokemon-filter-sub-function">
+              <span>Sub-fun&ccedil;&atilde;o</span>
+              <select id="pokemon-filter-sub-function">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
             <label class="pokemon-filter-field" for="pokemon-filter-clan">
               <span>Clã</span>
               <select id="pokemon-filter-clan">
@@ -1155,12 +1167,87 @@
           <p id="times-status" class="pokemon-hub__status" aria-live="polite">Carregando times...</p>
         </div>
 
+        <div class="times-team-builder-cta">
+          <button type="button" class="times-team-builder-cta__button" data-nav-target="team-builder">
+            Montar meu time
+          </button>
+        </div>
+
         <div id="times-card-grid" class="times-card-grid" role="list" aria-label="Lista de times cadastrados"></div>
 
         <div id="times-empty-state" class="times-empty-state" hidden aria-live="polite">
           <strong id="times-empty-title">Nenhum time encontrado.</strong>
           <p id="times-empty-text">Tente ajustar o cl&atilde; ativo ou os termos da busca.</p>
         </div>
+      </div>
+    </div>
+
+    <div id="content-team-builder" role="tabpanel" aria-label="Team Builder" hidden>
+      <div class="team-builder-shell">
+        <section class="team-builder-hero" aria-labelledby="team-builder-title">
+          <div class="team-builder-hero__copy">
+            <span class="team-builder-eyebrow">Sistemas</span>
+            <h2 id="team-builder-title">Team Builder</h2>
+          </div>
+          <div class="team-builder-summary" aria-live="polite">
+            <span id="team-builder-filled-count">0/6</span>
+            <strong>Slots preenchidos</strong>
+          </div>
+        </section>
+
+        <section class="team-builder-board" aria-labelledby="team-builder-board-title">
+          <div class="team-builder-section-head">
+            <span class="team-builder-eyebrow">Composi&ccedil;&atilde;o</span>
+            <h3 id="team-builder-board-title">Slots do time</h3>
+          </div>
+          <p class="team-builder-drag-hint">Arraste DPS e Finisher preenchidos para trocar as posi&ccedil;&otilde;es entre eles.</p>
+          <div id="team-builder-slots" class="team-builder-slots" role="list" aria-label="Slots do time"></div>
+        </section>
+
+        <section id="team-builder-picker" class="team-builder-picker" aria-labelledby="team-builder-picker-title">
+          <div class="team-builder-section-head">
+            <span id="team-builder-active-slot-label" class="team-builder-eyebrow">Sele&ccedil;&atilde;o</span>
+            <h3 id="team-builder-picker-title">Escolha um Pok&eacute;mon</h3>
+          </div>
+
+          <div class="team-builder-filters" aria-label="Filtros do Team Builder">
+            <div class="team-builder-filters__head">
+              <span class="team-builder-eyebrow">Filtros</span>
+            </div>
+            <div class="team-builder-filters__main">
+              <label class="team-builder-filter-field team-builder-filter-field--search" for="team-builder-search">
+                <span>Nome</span>
+                <input id="team-builder-search" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar Pok&eacute;mon" />
+              </label>
+              <div id="team-builder-sub-function-filter-field" class="team-builder-filter-field">
+                <span>Sub-fun&ccedil;&atilde;o</span>
+                <div id="team-builder-sub-function-filter-row" class="team-builder-filter-button-row" role="group" aria-label="Filtro de sub-fun&ccedil;&atilde;o"></div>
+              </div>
+            </div>
+            <div class="team-builder-filter-field team-builder-filter-field--types">
+              <div class="team-builder-filter-field team-builder-filter-field--clan">
+                <span>Cl&atilde;</span>
+              <div id="team-builder-clan-filter-row" class="team-builder-filter-button-row" role="group" aria-label="Filtro de cl&atilde;"></div>
+              </div>
+              <div class="team-builder-filter-field__head">
+                <span>Moveset</span>
+              </div>
+              <div id="team-builder-type-filter-row" class="team-builder-filter-button-row team-builder-filter-button-row--types" role="group" aria-label="Filtro de moveset"></div>
+            </div>
+          </div>
+
+          <p id="team-builder-status" class="team-builder-status" aria-live="polite">Carregando cat&aacute;logo...</p>
+          <div id="team-builder-results" class="team-builder-results" role="list" aria-label="Pok&eacute;mons dispon&iacute;veis"></div>
+        </section>
+
+        <section id="team-builder-complete" class="team-builder-complete" aria-labelledby="team-builder-complete-title" hidden>
+          <div class="team-builder-section-head">
+            <span class="team-builder-eyebrow">Recomenda&ccedil;&atilde;o</span>
+            <h3 id="team-builder-complete-title">Time completo</h3>
+          </div>
+          <p>As hunts s&atilde;o apenas recomenda&ccedil;&otilde;es automaticas com base na sua composi&ccedil;&atilde;o, tenha certeza de checar antes de fazer algo.</p>
+          <div id="team-builder-hunts" class="team-builder-hunts" aria-live="polite" hidden></div>
+        </section>
       </div>
     </div>
 
@@ -1627,9 +1714,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
-    <script src="js/streamers.shared.js?v=20260608e" defer></script>
+    <script src="js/streamers.shared.js?v=20260608f" defer></script>
     <script src="js/visits.shared.js?v=20260607d" defer></script>
-    <script src="script.js?v=20260608e" defer></script>
+    <script src="script.js?v=20260611m" defer></script>
 </body>
 </html>
 

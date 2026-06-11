@@ -1921,7 +1921,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
         ],
         tank: [
           createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
-          createRolePick('Chesnaught', ['grass', 'fighting'], 'fighting'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass'),
           createRolePick('Tangrowth', ['grass'], 'grass')
         ],
         support: [
@@ -2394,8 +2394,7 @@ const bossCatalogs = {
     variant: 'hoopa',
     searchEnabled: true,
     introLines: [
-      'Clique em um chefe para ver apenas speedsters tier Bom ou maior por cla.',
-      'A lista considera ATK do moveset do speedster contra a tipagem do boss e DEF contra o moveset do boss.'
+      'Clique em um chefe para ver a lista de Speedsters recomendados.',
     ],
     data: specialBossesData
   },
@@ -3201,6 +3200,14 @@ function getImplicitRecommendationProfile(poke) {
   }
 
   if (nameKey === 'seaking' || nameKey === 'shinyseaking') {
+    return {
+      immunities: ['electric'],
+      passiveName: 'Lightning Rod',
+      passiveDescription: 'O Pokemon se torna imune a danos do tipo Electric.'
+    };
+  }
+
+  if (nameKey === 'megasceptile' || nameKey === 'shinymegasceptile') {
     return {
       immunities: ['electric'],
       passiveName: 'Lightning Rod',

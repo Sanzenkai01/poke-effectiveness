@@ -375,6 +375,12 @@ function formatRatCountdown(msUntilNext){
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+function pickPreferredTimerState(timerState){
+    return Array.from(timerState?.values?.() || [])
+        .filter(state => state?.lastMessageAt)
+        .sort((left, right) => Number(right.updatedAt || 0) - Number(left.updatedAt || 0))[0] || null;
+}
+
 function startRatSummaryTimer(state){
     if(ratSummaryIntervalId){
         window.clearInterval(ratSummaryIntervalId);
@@ -408,11 +414,16 @@ async function refreshHomeWidget(){
     if(!homeStreamerInfo) return;
 
     const timerState = loadStreamerRatTimerState();
+    const initialTimerState = pickPreferredTimerState(timerState);
     let resolvedCount = 0;
     let totalPstoryOnline = 0;
     const onlineCandidates = [];
 
-    renderStaticRatSummary('Preparando timer do Rattata...');
+    if(initialTimerState){
+        startRatSummaryTimer(initialTimerState);
+    } else {
+        renderStaticRatSummary('Preparando timer do Rattata...');
+    }
     setHomeStreamerLoading(resolvedCount);
 
     const requests = HOME_STREAMERS.map(async (name) => {
@@ -432,6 +443,10 @@ async function refreshHomeWidget(){
 
     const selectedCandidate = pickPreferredCandidate(onlineCandidates, timerState);
     if(!selectedCandidate){
+        if(initialTimerState){
+            startRatSummaryTimer(initialTimerState);
+            return;
+        }
         const emptyMessage = totalPstoryOnline === 0
             ? 'Sem live de PStory online para acompanhar o Rattata.'
             : 'Nenhuma live com DROP:ON confirmada para monitorar o Rattata.';
