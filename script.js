@@ -325,10 +325,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260611d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260611f';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260611d';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260606a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260611a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -827,7 +827,7 @@ const TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
     dragonite: ['dragon', 'flying'],
     'mega dragonite': ['dragon', 'flying'],
     glaceon: ['flying', 'dragon'],
-    mamoswine: ['ice', 'fire'],
+    mamoswine: ['flying', 'dragon', 'ice', 'fire'],
     shelgon: ['flying', 'dragon'],
     cradily: ['water'],
     crawdaunt: ['water'],
@@ -840,7 +840,35 @@ const TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
     poliwrath: ['water'],
     stantler: ['fighting'],
     toxicroak: ['water'],
+    torterra: ['water'],
+    grotle: ['water'],
+    turtwig: ['water'],
     vaporeon: ['water']
+});
+const TIMES_NORMAL_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
+    dragonite: ['dragon', 'flying'],
+    'mega dragonite': ['dragon', 'flying'],
+    glaceon: ['flying', 'dragon'],
+    mamoswine: ['flying', 'dragon'],
+    shelgon: ['flying', 'dragon'],
+    cradily: ['water'],
+    crawdaunt: ['water'],
+    donphan: ['steel'],
+    forretress: ['rock'],
+    metagross: ['fighting'],
+    'mega metagross': ['fighting'],
+    poliwrath: ['water'],
+    stantler: ['fighting'],
+    torterra: ['water'],
+    grotle: ['water'],
+    turtwig: ['water'],
+    vaporeon: ['water']
+});
+const TIMES_SHINY_EXTRA_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
+    growlithe: ['fire'],
+    lanturn: ['electric'],
+    mamoswine: ['ice', 'fire'],
+    toxicroak: ['water']
 });
 const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     aggron: { naturalElements: ['steel', 'rock'], moveset: ['ground'] },
@@ -894,6 +922,10 @@ let teamBuilderSelections = {};
 let teamBuilderHuntsVisible = false;
 let teamBuilderDragSlotId = '';
 let teamBuilderHuntsLoading = false;
+let teamBuilderPassiveTooltipSurface = null;
+let teamBuilderPassiveTooltipActiveBadge = null;
+let teamBuilderPassiveTooltipListenersBound = false;
+let teamBuilderPassiveTooltipHideTimer = 0;
 let teamBuilderFilters = {
     search: '',
     clan: 'all',
@@ -7269,13 +7301,17 @@ function showTimes(options = {}){
     if(titleEl) titleEl.textContent = t('timesTitle');
     updateBrowserTitle();
 
-    if(!teamsCatalogLoaded){
+    if(!teamsCatalogLoaded || !pokemonCatalogLoaded || !typesDataLoaded){
         showTimesLoadingState();
     } else {
         renderTeamsCatalog();
     }
 
-    ensureTeamsCatalogLoaded()
+    Promise.all([
+        ensureTypesDataLoaded(),
+        ensureTeamsCatalogLoaded(),
+        ensurePokemonCatalogLoaded()
+    ])
         .then(() => {
             renderTeamsCatalog({ animate: true });
             if(requestedTeamSlug){
@@ -7955,7 +7991,8 @@ function createTeamCard(entry){
     const clanBadge = createPokemonTeamBadge(entry.clanKey);
     const huntsCount = document.createElement('span');
     huntsCount.className = 'team-card__count';
-    huntsCount.textContent = `${entry.hunts.length} hunt${entry.hunts.length === 1 ? '' : 's'}`;
+    const compatibleHunts = getTeamEntryCompatibleHunts(entry);
+    huntsCount.textContent = `${compatibleHunts.length} hunt${compatibleHunts.length === 1 ? '' : 's'}`;
     header.append(clanBadge, huntsCount);
 
     const hero = document.createElement('div');
@@ -8182,6 +8219,7 @@ function createTeamTipCard(tipText, index){
 
 function renderTeamEntityCollection(container, values, options = {}){
     if(!(container instanceof HTMLElement)) return;
+    container.classList.remove('times-details-hunt-groups');
 
     const { emptyText = '', showNote = false, showHuntMoveset = false } = options;
     if(!Array.isArray(values) || !values.length){
@@ -8203,8 +8241,56 @@ function renderTeamEntityCollection(container, values, options = {}){
     container.replaceChildren(fragment);
 }
 
+function createTeamHuntGroupSection(label, values, options = {}){
+    const section = document.createElement('section');
+    section.className = 'times-details-hunt-group';
+
+    const heading = document.createElement('strong');
+    heading.className = 'times-details-alt-label times-details-hunt-group__label';
+    heading.textContent = label;
+
+    const grid = document.createElement('div');
+    grid.className = 'times-details-entity-grid';
+    renderTeamEntityCollection(grid, values, options);
+
+    section.append(heading, grid);
+    return section;
+}
+
+function renderTeamHuntGroups(container, groups, options = {}){
+    if(!(container instanceof HTMLElement)) return;
+
+    const normalHunts = Array.isArray(groups?.normal) ? groups.normal : [];
+    const shinyHunts = Array.isArray(groups?.shiny) ? groups.shiny : [];
+    const allHunts = Array.isArray(groups?.all) ? groups.all : [...normalHunts, ...shinyHunts];
+    const { emptyText = 'Nenhuma hunt cadastrada para este time.', showHuntMoveset = true } = options;
+
+    container.classList.add('times-details-hunt-groups');
+    if(!allHunts.length){
+        const empty = document.createElement('span');
+        empty.className = 'team-empty-copy';
+        empty.textContent = emptyText;
+        container.replaceChildren(empty);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    if(normalHunts.length){
+        fragment.appendChild(createTeamHuntGroupSection('AR normal', normalHunts, { showHuntMoveset }));
+    }
+    if(shinyHunts.length){
+        fragment.appendChild(createTeamHuntGroupSection('Apenas com AR shiny', shinyHunts, { showHuntMoveset }));
+    }
+    container.replaceChildren(fragment);
+}
+
 function renderTeamDetailsModal(entry){
     if(!entry) return;
+
+    const compatibleHuntGroups = getTeamEntryCompatibleHuntGroups(entry);
+    const compatibleAlternativeHuntGroups = getTeamEntryCompatibleHuntGroups(entry, entry.alternativeHunts);
+    const compatibleHunts = compatibleHuntGroups.all;
+    const compatibleAlternativeHunts = compatibleAlternativeHuntGroups.all;
 
     activeTeamEntry = entry;
     if(timesDetailsClan){
@@ -8214,7 +8300,7 @@ function renderTeamDetailsModal(entry){
         timesDetailsTitle.textContent = entry.elementLabel;
     }
     if(timesDetailsSubtitle){
-        timesDetailsSubtitle.textContent = `${entry.clanLabel} • ${entry.pokemons.length} Pokemons • ${entry.hunts.length} hunts`;
+        timesDetailsSubtitle.textContent = `${entry.clanLabel} • ${entry.pokemons.length} Pokemons • ${compatibleHunts.length} hunts`;
     }
     if(timesDetailsTypes){
         timesDetailsTypes.replaceChildren(createTeamTypeTokenRow(entry));
@@ -8245,14 +8331,14 @@ function renderTeamDetailsModal(entry){
         timesDetailsRoster.replaceChildren(rosterFragment);
     }
     if(timesDetailsHunts){
-        renderTeamEntityCollection(timesDetailsHunts, entry.hunts, {
+        renderTeamHuntGroups(timesDetailsHunts, compatibleHuntGroups, {
             emptyText: 'Nenhuma hunt cadastrada para este time.',
             showHuntMoveset: true
         });
     }
     if(timesDetailsAlternativesPanel){
         const hasAlternativePokemons = Array.isArray(entry.alternativePokemons) && entry.alternativePokemons.length > 0;
-        const hasAlternativeHunts = Array.isArray(entry.alternativeHunts) && entry.alternativeHunts.length > 0;
+        const hasAlternativeHunts = compatibleAlternativeHunts.length > 0;
         const hasAlternatives = hasAlternativePokemons || hasAlternativeHunts;
         timesDetailsAlternativesPanel.hidden = !hasAlternatives;
 
@@ -8264,7 +8350,7 @@ function renderTeamDetailsModal(entry){
         }
         if(timesDetailsAltHuntsGroup && timesDetailsAltHunts){
             timesDetailsAltHuntsGroup.hidden = !hasAlternativeHunts;
-            renderTeamEntityCollection(timesDetailsAltHunts, hasAlternativeHunts ? entry.alternativeHunts : [], {
+            renderTeamHuntGroups(timesDetailsAltHunts, hasAlternativeHunts ? compatibleAlternativeHuntGroups : {}, {
                 showHuntMoveset: true
             });
         }
@@ -8364,6 +8450,119 @@ function isTeamBuilderDpsSlot(slotConfig){
     return Boolean(slotConfig && (slotConfig.kind === 'dps' || slotConfig.kind === 'finisher'));
 }
 
+function getTimesDefensivePassiveTypes(entry, source = 'normal'){
+    const store = source === 'shiny'
+        ? TIMES_SHINY_EXTRA_DEFENSIVE_PASSIVE_TYPES
+        : TIMES_NORMAL_DEFENSIVE_PASSIVE_TYPES;
+    const passiveTypes = [];
+    getTeamBuilderPassiveLookupKeys(entry).forEach(key => {
+        const types = store[key];
+        if(Array.isArray(types)){
+            types.forEach(type => {
+                const normalizedType = normalizePokemonTypeKey(type);
+                if(normalizedType && !passiveTypes.includes(normalizedType)){
+                    passiveTypes.push(normalizedType);
+                }
+            });
+        }
+    });
+    return passiveTypes;
+}
+
+function getTimesTankDefenseTierAgainstType(entry, attackType){
+    const normalizedType = normalizePokemonTypeKey(attackType);
+    if(!entry || !normalizedType) return '';
+
+    const naturalTypes = normalizeTeamBuilderTypeList(entry.naturalElements || []);
+    if(naturalTypes.length && getPokemonTypeMultiplier(normalizedType, naturalTypes) < 1){
+        return 'normal';
+    }
+
+    if(getTimesDefensivePassiveTypes(entry, 'normal').includes(normalizedType)){
+        return 'normal';
+    }
+
+    if(getTimesDefensivePassiveTypes(entry, 'shiny').includes(normalizedType)){
+        return 'shiny';
+    }
+
+    return '';
+}
+
+function getTimesTankHuntDefenseTier(tankEntry, huntMeta, fallbackAttackTypes = []){
+    const attackTypes = huntMeta?.hasMoveset
+        ? huntMeta.moveset
+        : normalizeTeamBuilderTypeList(fallbackAttackTypes);
+    if(!attackTypes.length) return '';
+
+    let shinyOnly = false;
+    for(const type of attackTypes){
+        const tier = getTimesTankDefenseTierAgainstType(tankEntry, type);
+        if(tier === 'normal') return 'normal';
+        if(tier === 'shiny') shinyOnly = true;
+    }
+
+    return shinyOnly ? 'shiny' : '';
+}
+
+function getTeamEntryHuntCompatibilityInfo(entry, hunt, slotEntries){
+    const huntName = String(hunt?.name || hunt || '').trim();
+    if(!huntName) return null;
+
+    const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
+    const weaknessTypes = getTeamBuilderHuntWeaknessTypes(huntName, entry.elementKeys || []);
+    const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
+    if(!huntMeta.hasNaturalElements && !normalizedWeaknessTypes.length) return null;
+
+    const tankEntry = slotEntries.find(item => item.slot.kind === 'tank')?.entry || null;
+    const tankDefenseTier = getTimesTankHuntDefenseTier(tankEntry, huntMeta, normalizedWeaknessTypes);
+    if(!tankEntry || !tankDefenseTier) return null;
+
+    const effectiveDamageCount = getTeamBuilderEffectiveDamageCount(slotEntries, huntMeta, normalizedWeaknessTypes);
+    if(effectiveDamageCount < 5) return null;
+
+    return {
+        hunt,
+        huntName,
+        tankDefenseTier,
+        effectiveDamageCount
+    };
+}
+
+function getTeamEntryCompatibleHuntGroups(entry, hunts = entry?.hunts){
+    const safeHunts = Array.isArray(hunts) ? hunts : [];
+    const groups = {
+        normal: [],
+        shiny: [],
+        all: []
+    };
+    if(!entry || !safeHunts.length) return groups;
+
+    const slotEntries = getTeamEntrySlotEntries(entry);
+    const expectedSlots = Array.isArray(entry.pokemons) ? entry.pokemons.length : 0;
+    if((expectedSlots && slotEntries.length < expectedSlots) || !slotEntries.length){
+        groups.normal = safeHunts.slice();
+        groups.all = safeHunts.slice();
+        return groups;
+    }
+
+    safeHunts.forEach(hunt => {
+        const compatibility = getTeamEntryHuntCompatibilityInfo(entry, hunt, slotEntries);
+        if(!compatibility) return;
+        if(compatibility.tankDefenseTier === 'shiny'){
+            groups.shiny.push(hunt);
+        } else {
+            groups.normal.push(hunt);
+        }
+        groups.all.push(hunt);
+    });
+    return groups;
+}
+
+function getTeamEntryCompatibleHunts(entry, hunts = entry?.hunts){
+    return getTeamEntryCompatibleHuntGroups(entry, hunts).all;
+}
+
 function isTeamBuilderTankSlot(slotConfig){
     return Boolean(slotConfig && slotConfig.kind === 'tank');
 }
@@ -8404,13 +8603,17 @@ function isTeamBuilderMegaSelectionBlocked(entry, slotId = teamBuilderActiveSlot
     return isMegaPokemonCatalogEntry(entry) && Boolean(getTeamBuilderSelectedMegaEntry(slotId));
 }
 
+function isTeamBuilderBossEntry(entry){
+    return getPokemonEntrySpecialTags(entry).includes('boss');
+}
+
 function getTeamBuilderCatalogEntries(){
     const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
     const allowedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
         .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
 
     return [...normalEntries, ...allowedMegaEntries].filter(entry => {
-        if(!canOpenPokemonCatalogEntry(entry)) return false;
+        if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderBossEntry(entry)) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
         if(entry.roleKey === 'speedster') return false;
         if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
@@ -8507,6 +8710,135 @@ function getTeamBuilderPassiveInfo(entry){
     return passives;
 }
 
+function ensureTeamBuilderPassiveTooltipSurface(){
+    if(teamBuilderPassiveTooltipSurface instanceof HTMLElement) return teamBuilderPassiveTooltipSurface;
+
+    const tooltip = document.createElement('div');
+    tooltip.id = 'team-builder-passive-tooltip';
+    tooltip.className = 'team-builder-passive-tooltip';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('data-open', 'false');
+    tooltip.setAttribute('data-placement', 'bottom');
+    tooltip.addEventListener('mouseenter', cancelTeamBuilderPassiveTooltipHide);
+    tooltip.addEventListener('mouseleave', scheduleTeamBuilderPassiveTooltipHide);
+    document.body.appendChild(tooltip);
+    teamBuilderPassiveTooltipSurface = tooltip;
+    return tooltip;
+}
+
+function cancelTeamBuilderPassiveTooltipHide(){
+    if(teamBuilderPassiveTooltipHideTimer){
+        window.clearTimeout(teamBuilderPassiveTooltipHideTimer);
+        teamBuilderPassiveTooltipHideTimer = 0;
+    }
+}
+
+function scheduleTeamBuilderPassiveTooltipHide(){
+    cancelTeamBuilderPassiveTooltipHide();
+    teamBuilderPassiveTooltipHideTimer = window.setTimeout(() => {
+        teamBuilderPassiveTooltipHideTimer = 0;
+        hideTeamBuilderPassiveTooltip();
+    }, 120);
+}
+
+function positionTeamBuilderPassiveTooltip(){
+    const badge = teamBuilderPassiveTooltipActiveBadge;
+    const tooltip = teamBuilderPassiveTooltipSurface;
+    if(!(badge instanceof HTMLElement) || !(tooltip instanceof HTMLElement)) return;
+
+    const viewportMargin = 12;
+    const gap = 8;
+    const badgeRect = badge.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipWidth = Math.min(tooltipRect.width || 0, window.innerWidth - (viewportMargin * 2));
+    const tooltipHeight = tooltipRect.height || 0;
+    const availableBelow = window.innerHeight - badgeRect.bottom - viewportMargin - gap;
+    const availableAbove = badgeRect.top - viewportMargin - gap;
+    const placeAbove = availableBelow < tooltipHeight && availableAbove > availableBelow;
+    const maxLeft = Math.max(viewportMargin, window.innerWidth - viewportMargin - tooltipWidth);
+    const preferredLeft = badgeRect.right - tooltipWidth;
+    const left = Math.min(Math.max(preferredLeft, viewportMargin), maxLeft);
+    const top = placeAbove
+        ? Math.max(viewportMargin, badgeRect.top - tooltipHeight - gap)
+        : Math.min(window.innerHeight - viewportMargin - tooltipHeight, badgeRect.bottom + gap);
+    const arrowLeft = Math.min(
+        Math.max((badgeRect.left + (badgeRect.width / 2)) - left, 16),
+        Math.max(16, tooltipWidth - 16)
+    );
+
+    tooltip.dataset.placement = placeAbove ? 'top' : 'bottom';
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+    tooltip.style.setProperty('--team-builder-passive-tooltip-arrow-left', `${Math.round(arrowLeft)}px`);
+}
+
+function hideTeamBuilderPassiveTooltip(){
+    cancelTeamBuilderPassiveTooltipHide();
+    const tooltip = teamBuilderPassiveTooltipSurface;
+    if(tooltip instanceof HTMLElement){
+        tooltip.setAttribute('data-open', 'false');
+    }
+    if(teamBuilderPassiveTooltipActiveBadge instanceof HTMLElement){
+        teamBuilderPassiveTooltipActiveBadge.removeAttribute('aria-describedby');
+        teamBuilderPassiveTooltipActiveBadge.setAttribute('aria-expanded', 'false');
+    }
+    teamBuilderPassiveTooltipActiveBadge = null;
+}
+
+function showTeamBuilderPassiveTooltip(badge){
+    if(!(badge instanceof HTMLElement)) return;
+    cancelTeamBuilderPassiveTooltipHide();
+    const passives = Array.isArray(badge._teamBuilderPassives)
+        ? badge._teamBuilderPassives
+        : [];
+    if(!passives.length) return;
+
+    const tooltip = ensureTeamBuilderPassiveTooltipSurface();
+    const title = document.createElement('strong');
+    title.textContent = 'Passiva';
+    const list = document.createElement('span');
+    list.className = 'team-builder-passive-tooltip__list';
+    passives.forEach(passive => {
+        const item = document.createElement('span');
+        item.textContent = passive;
+        list.appendChild(item);
+    });
+
+    tooltip.replaceChildren(title, list);
+    tooltip.setAttribute('data-open', 'true');
+    badge.setAttribute('aria-describedby', tooltip.id);
+    badge.setAttribute('aria-expanded', 'true');
+    teamBuilderPassiveTooltipActiveBadge = badge;
+    positionTeamBuilderPassiveTooltip();
+    requestAnimationFrame(positionTeamBuilderPassiveTooltip);
+}
+
+function bindTeamBuilderPassiveTooltipListeners(){
+    if(teamBuilderPassiveTooltipListenersBound) return;
+
+    window.addEventListener('scroll', () => {
+        if(teamBuilderPassiveTooltipActiveBadge) positionTeamBuilderPassiveTooltip();
+    }, true);
+    window.addEventListener('resize', () => {
+        if(teamBuilderPassiveTooltipActiveBadge) positionTeamBuilderPassiveTooltip();
+    });
+    document.addEventListener('keydown', event => {
+        if(event.key === 'Escape') hideTeamBuilderPassiveTooltip();
+    });
+    document.addEventListener('pointerdown', event => {
+        const target = event.target;
+        if(
+            teamBuilderPassiveTooltipActiveBadge
+            && !teamBuilderPassiveTooltipActiveBadge.contains(target)
+            && !(teamBuilderPassiveTooltipSurface instanceof HTMLElement && teamBuilderPassiveTooltipSurface.contains(target))
+        ){
+            hideTeamBuilderPassiveTooltip();
+        }
+    });
+
+    teamBuilderPassiveTooltipListenersBound = true;
+}
+
 function createTeamBuilderPassiveBadge(entry){
     const passives = getTeamBuilderPassiveInfo(entry);
     if(!passives.length) return null;
@@ -8514,27 +8846,28 @@ function createTeamBuilderPassiveBadge(entry){
     badge.className = 'team-builder-passive-badge';
     badge.tabIndex = 0;
     badge.setAttribute('aria-label', 'Pokemon com passiva registrada');
+    badge.setAttribute('aria-expanded', 'false');
+    badge._teamBuilderPassives = passives;
 
     const marker = document.createElement('span');
     marker.className = 'team-builder-passive-badge__mark';
     marker.textContent = '!';
 
-    const tooltip = document.createElement('span');
-    tooltip.className = 'team-builder-passive-badge__tooltip';
-    tooltip.setAttribute('role', 'tooltip');
-
-    const title = document.createElement('strong');
-    title.textContent = 'Passiva';
-    const list = document.createElement('span');
-    list.className = 'team-builder-passive-badge__list';
-    passives.forEach(passive => {
-        const item = document.createElement('span');
-        item.textContent = passive;
-        list.appendChild(item);
+    badge.addEventListener('mouseenter', () => showTeamBuilderPassiveTooltip(badge));
+    badge.addEventListener('mouseleave', scheduleTeamBuilderPassiveTooltipHide);
+    badge.addEventListener('focus', () => showTeamBuilderPassiveTooltip(badge));
+    badge.addEventListener('blur', () => hideTeamBuilderPassiveTooltip());
+    badge.addEventListener('click', event => {
+        event.stopPropagation();
+        if(teamBuilderPassiveTooltipActiveBadge === badge){
+            hideTeamBuilderPassiveTooltip();
+        } else {
+            showTeamBuilderPassiveTooltip(badge);
+        }
     });
+    bindTeamBuilderPassiveTooltipListeners();
 
-    tooltip.append(title, list);
-    badge.append(marker, tooltip);
+    badge.append(marker);
     return badge;
 }
 
@@ -9131,10 +9464,44 @@ function getTeamBuilderSelectedSlotEntries(){
 function findTeamBuilderPokemonCatalogEntry(name){
     const normalizedName = normalizePokemonSearchText(name);
     if(!normalizedName) return null;
-    const entries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
+    const entries = [
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+    ];
     return entries.find(entry => normalizePokemonSearchText(entry.name) === normalizedName)
         || entries.find(entry => entry.searchName && entry.searchName.includes(normalizedName))
         || null;
+}
+
+function isTeamMemberTankRole(member){
+    const roleText = normalizePokemonSearchText(member?.role || '');
+    if(!roleText) return false;
+    const roleTokens = roleText.split(/\s+/).filter(Boolean);
+    return roleTokens.includes('ar')
+        || roleTokens.includes('tank')
+        || roleTokens.includes('defender')
+        || roleText.includes('all rounder');
+}
+
+function getTeamMemberSlotKind(member){
+    if(isTeamMemberTankRole(member)) return 'tank';
+    const roleText = normalizePokemonSearchText(member?.role || '');
+    if(roleText.includes('finisher')) return 'finisher';
+    return 'dps';
+}
+
+function getTeamEntrySlotEntries(teamEntry){
+    return (Array.isArray(teamEntry?.pokemons) ? teamEntry.pokemons : [])
+        .map(member => {
+            const entry = findTeamBuilderPokemonCatalogEntry(member?.name || '');
+            if(!entry) return null;
+            return {
+                slot: { kind: getTeamMemberSlotKind(member) },
+                entry,
+                member
+            };
+        })
+        .filter(Boolean);
 }
 
 function normalizeTeamBuilderTypeList(types = []){
@@ -9205,6 +9572,7 @@ function teamBuilderDamageEntryHitsHunt(entry, huntMeta){
     if(!huntMeta?.hasNaturalElements) return true;
     const moveset = normalizeTeamBuilderTypeList(entry?.moveset || []);
     if(!moveset.length) return false;
+    // Dano efetivo: qualquer fraqueza da hunt (> 1x), nao exige multiplicador 4x.
     return moveset.some(type => getPokemonTypeMultiplier(type, huntMeta.naturalElements) > 1);
 }
 
@@ -9215,27 +9583,38 @@ function teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes = []){
     return moveset.some(type => normalizedWeaknessTypes.includes(type));
 }
 
-function isTeamBuilderHuntCompatible(huntName, weaknessTypes = []){
+function getTeamBuilderEffectiveDamageCount(selectedSlotEntries = [], huntMeta, weaknessTypes = []){
+    return selectedSlotEntries
+        .filter(item => item.slot.kind === 'dps' || item.slot.kind === 'finisher')
+        .map(item => item.entry)
+        .filter(entry => {
+            return huntMeta?.hasNaturalElements
+                ? teamBuilderDamageEntryHitsHunt(entry, huntMeta)
+                : teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes);
+        }).length;
+}
+
+function areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries = [], huntName, weaknessTypes = []){
     const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     if(!huntMeta.hasNaturalElements && !normalizedWeaknessTypes.length) return false;
 
-    const selectedSlotEntries = getTeamBuilderSelectedSlotEntries();
     const tankEntry = selectedSlotEntries.find(item => item.slot.kind === 'tank')?.entry || null;
     if(!tankEntry || !teamBuilderTankCanHoldHunt(tankEntry, huntMeta, normalizedWeaknessTypes)){
         return false;
     }
 
-    const damageEntries = selectedSlotEntries
-        .filter(item => item.slot.kind === 'dps' || item.slot.kind === 'finisher')
-        .map(item => item.entry);
-    const effectiveDamageCount = damageEntries.filter(entry => {
-        return huntMeta.hasNaturalElements
-            ? teamBuilderDamageEntryHitsHunt(entry, huntMeta)
-            : teamBuilderDamageEntryHitsWeaknessTypes(entry, normalizedWeaknessTypes);
-    }).length;
+    const effectiveDamageCount = getTeamBuilderEffectiveDamageCount(selectedSlotEntries, huntMeta, normalizedWeaknessTypes);
 
     return effectiveDamageCount >= 5;
+}
+
+function isTeamBuilderHuntCompatible(huntName, weaknessTypes = []){
+    return areTeamBuilderSlotEntriesCompatibleWithHunt(
+        getTeamBuilderSelectedSlotEntries(),
+        huntName,
+        weaknessTypes
+    );
 }
 
 function getTeamBuilderHuntWeaknessTypes(huntName, fallbackTypes = []){
@@ -9246,48 +9625,95 @@ function getTeamBuilderHuntWeaknessTypes(huntName, fallbackTypes = []){
     return normalizeTeamBuilderTypeList(fallbackTypes);
 }
 
-function getTeamBuilderHuntRecommendations(){
-    const selectedEntries = getTeamBuilderSelectedEntries();
-    const selectedNames = new Set(selectedEntries.map(entry => normalizePokemonSearchText(entry.name)).filter(Boolean));
-    const selectedTypes = new Set(selectedEntries.flatMap(getTeamBuilderEntryTypeKeys));
-    const selectedClan = selectedEntries.map(entry => entry.team).find(Boolean) || '';
-    const huntScores = new Map();
-
+function getTeamBuilderKnownHuntCandidates(){
+    const huntCandidates = new Map();
     (teamsCatalog || []).forEach(team => {
-        const teamMembers = Array.isArray(team.pokemons) ? team.pokemons : [];
-        const memberScore = teamMembers.reduce((score, member) => {
-            return score + (selectedNames.has(normalizePokemonSearchText(member.name)) ? 4 : 0);
-        }, 0);
-        const typeScore = (team.elementKeys || []).reduce((score, typeKey) => {
-            return score + (selectedTypes.has(normalizePokemonTypeKey(typeKey)) ? 1 : 0);
-        }, 0);
-        const clanScore = selectedClan && selectedClan === team.clanKey ? 1 : 0;
-        const score = memberScore + typeScore + clanScore;
-        if(score <= 0) return;
-
+        const fallbackTypeKeys = Array.from(new Set(
+            (Array.isArray(team.elementKeys) ? team.elementKeys : [])
+                .map(normalizePokemonTypeKey)
+                .filter(Boolean)
+        ));
         [...(team.hunts || []), ...(team.alternativeHunts || [])].forEach(hunt => {
             const huntName = String(hunt?.name || '').trim();
             if(!huntName) return;
-            const fallbackTypeKeys = Array.from(new Set(
-                (Array.isArray(team.elementKeys) ? team.elementKeys : [])
-                    .map(normalizePokemonTypeKey)
-                    .filter(Boolean)
-            ));
-            const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(huntName, fallbackTypeKeys);
-            if(!isTeamBuilderHuntCompatible(huntName, weaknessTypeKeys)) return;
             const key = normalizePokemonSearchText(huntName);
-            const existing = huntScores.get(key);
-            const source = {
+            const existing = huntCandidates.get(key);
+            if(existing){
+                existing.sourceTeams.push(team);
+                fallbackTypeKeys.forEach(typeKey => {
+                    if(!existing.fallbackTypeKeys.includes(typeKey)) existing.fallbackTypeKeys.push(typeKey);
+                });
+                if(!existing.image && hunt?.image) existing.image = String(hunt.image || '').trim();
+                if(!existing.note && hunt?.note) existing.note = String(hunt.note || '').trim();
+                return;
+            }
+            huntCandidates.set(key, {
                 name: huntName,
                 note: String(hunt?.note || '').trim(),
                 image: String(hunt?.image || '').trim(),
-                score,
-                typeKeys: weaknessTypeKeys
-            };
-            if(!existing || source.score > existing.score){
-                huntScores.set(key, source);
-            }
+                fallbackTypeKeys,
+                sourceTeams: [team]
+            });
         });
+    });
+    Object.keys(TEAM_BUILDER_HUNT_META_OVERRIDES || {}).forEach(key => {
+        if(key === 'tsaarena' && huntCandidates.has('tsareena')) return;
+        if(!huntCandidates.has(key)){
+            huntCandidates.set(key, {
+                name: key.split(' ').map(part => part ? part[0].toUpperCase() + part.slice(1) : '').join(' '),
+                note: '',
+                image: '',
+                fallbackTypeKeys: [],
+                sourceTeams: []
+            });
+        }
+    });
+    return Array.from(huntCandidates.values());
+}
+
+function getTeamBuilderHuntRecommendations(){
+    const selectedEntries = getTeamBuilderSelectedEntries();
+    const selectedSlotEntries = getTeamBuilderSelectedSlotEntries();
+    const selectedNames = new Set(selectedEntries.map(entry => normalizePokemonSearchText(entry.name)).filter(Boolean));
+    const selectedTypes = new Set(selectedEntries.flatMap(getTeamBuilderEntryTypeKeys));
+    const selectedMovesetTypes = new Set(selectedEntries.flatMap(getTeamBuilderEntryMovesetKeys));
+    const selectedClan = selectedEntries.map(entry => entry.team).find(Boolean) || '';
+    const huntScores = new Map();
+
+    getTeamBuilderKnownHuntCandidates().forEach(candidate => {
+        const huntName = String(candidate?.name || '').trim();
+        if(!huntName) return;
+        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(huntName, candidate.fallbackTypeKeys || []);
+        if(!areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, huntName, weaknessTypeKeys)) return;
+        const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
+        const sourceScore = (Array.isArray(candidate.sourceTeams) ? candidate.sourceTeams : []).reduce((score, team) => {
+            const teamMembers = Array.isArray(team.pokemons) ? team.pokemons : [];
+            const memberScore = teamMembers.reduce((memberTotal, member) => {
+                return memberTotal + (selectedNames.has(normalizePokemonSearchText(member.name)) ? 4 : 0);
+            }, 0);
+            const typeScore = (team.elementKeys || []).reduce((typeTotal, typeKey) => {
+                return typeTotal + (selectedTypes.has(normalizePokemonTypeKey(typeKey)) ? 1 : 0);
+            }, 0);
+            const clanScore = selectedClan && selectedClan === team.clanKey ? 1 : 0;
+            return Math.max(score, memberScore + typeScore + clanScore);
+        }, 0);
+        const effectiveDamageCount = getTeamBuilderEffectiveDamageCount(selectedSlotEntries, huntMeta, weaknessTypeKeys);
+        const selectedWeaknessTypeScore = weaknessTypeKeys.reduce((score, typeKey) => {
+            return score + (selectedMovesetTypes.has(typeKey) ? 2 : 0);
+        }, 0);
+        const score = sourceScore + (effectiveDamageCount * 3) + selectedWeaknessTypeScore;
+        const key = normalizePokemonSearchText(huntName);
+        const existing = huntScores.get(key);
+        const source = {
+            name: huntName,
+            note: String(candidate.note || '').trim(),
+            image: String(candidate.image || '').trim(),
+            score,
+            typeKeys: weaknessTypeKeys
+        };
+        if(!existing || source.score > existing.score){
+            huntScores.set(key, source);
+        }
     });
 
     return Array.from(huntScores.values())
