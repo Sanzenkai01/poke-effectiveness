@@ -13917,6 +13917,12 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   grid-column: span 2;
 }
 
+#content-pokemons .pokemon-filter-field--search {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(100%, 560px);
+}
+
 .pokemon-filter-field span {
   color: rgba(216, 229, 244, 0.76);
   font-size: 0.73rem;
@@ -14093,6 +14099,11 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   border-color: rgba(120, 210, 255, 0.3);
   box-shadow: 0 0 0 3px rgba(120, 210, 255, 0.12);
   background: rgba(6, 12, 22, 0.86);
+}
+
+.pokemon-filter-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .pokemon-filter-clear {
@@ -16617,6 +16628,10 @@ button.pokemon-evolution-card:focus-visible {
 
   .pokemon-filter-field--search {
     grid-column: span 1;
+  }
+
+  #content-pokemons .pokemon-filter-field--search {
+    grid-column: 1 / -1;
   }
 
   .pokemon-catalog-pagination {

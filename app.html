@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260612e">
+  <link rel="stylesheet" href="styles.css?v=20260612g">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -1019,27 +1019,12 @@
               <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
               <p>Combine nome, role, cl&atilde;, n&iacute;vel, gera&ccedil;&atilde;o, tags, tipos e moveset para refinar os cards sem sair da p&aacute;gina.</p>
             </div>
-            <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
           </div>
 
           <div class="pokemon-filter-grid">
             <label class="pokemon-filter-field pokemon-filter-field--search" for="pokemon-filter-name">
               <span>Nome do Pokémon</span>
               <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off" />
-            </label>
-
-            <label class="pokemon-filter-field" for="pokemon-filter-role">
-              <span>Role</span>
-              <select id="pokemon-filter-role">
-                <option value="">Todas</option>
-              </select>
-            </label>
-
-            <label class="pokemon-filter-field" for="pokemon-filter-sub-function">
-              <span>Sub-fun&ccedil;&atilde;o</span>
-              <select id="pokemon-filter-sub-function">
-                <option value="">Todas</option>
-              </select>
             </label>
 
             <label class="pokemon-filter-field" for="pokemon-filter-clan">
@@ -1049,9 +1034,37 @@
               </select>
             </label>
 
+            <label class="pokemon-filter-field" for="pokemon-filter-role">
+              <span>Role</span>
+              <select id="pokemon-filter-role">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-moveset">
+              <span>Moveset</span>
+              <select id="pokemon-filter-moveset">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
             <label class="pokemon-filter-field" for="pokemon-filter-level">
               <span>Nível</span>
               <select id="pokemon-filter-level">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type1">
+              <span>Tipo 1</span>
+              <select id="pokemon-filter-type1">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type2">
+              <span>Tipo 2</span>
+              <select id="pokemon-filter-type2">
                 <option value="">Todos</option>
               </select>
             </label>
@@ -1070,26 +1083,16 @@
               </select>
             </label>
 
-            <label class="pokemon-filter-field" for="pokemon-filter-type1">
-              <span>Tipo 1</span>
-              <select id="pokemon-filter-type1">
-                <option value="">Todos</option>
+            <label class="pokemon-filter-field" for="pokemon-filter-sub-function">
+              <span>Sub-fun&ccedil;&atilde;o</span>
+              <select id="pokemon-filter-sub-function">
+                <option value="">Todas</option>
               </select>
             </label>
+          </div>
 
-            <label class="pokemon-filter-field" for="pokemon-filter-type2">
-              <span>Tipo 2</span>
-              <select id="pokemon-filter-type2">
-                <option value="">Todos</option>
-              </select>
-            </label>
-
-            <label class="pokemon-filter-field" for="pokemon-filter-moveset">
-              <span>Moveset</span>
-              <select id="pokemon-filter-moveset">
-                <option value="">Todos</option>
-              </select>
-            </label>
+          <div class="pokemon-filter-actions">
+            <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
           </div>
 
           <div id="pokemon-filter-share-links" class="pokemon-filter-share-links" hidden></div>
