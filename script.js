@@ -887,7 +887,6 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     golisopod: { naturalElements: ['bug', 'water'], moveset: ['bug'] },
     goodra: { naturalElements: ['dragon'], moveset: ['water'] },
     grimmsnarl: { naturalElements: ['dark', 'fairy'], moveset: ['fairy'] },
-    'hakomo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['dragon'] },
     hariyama: { naturalElements: ['fighting'], moveset: ['fighting'] },
     honedge: { naturalElements: ['steel', 'ghost'], moveset: ['steel'] },
     hydreigon: { naturalElements: ['dark', 'dragon'], moveset: ['dragon'] },
