@@ -3209,6 +3209,13 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'heracross' || nameKey === 'shinyheracross') {
+    return {
+      passiveName: 'Guts',
+      passiveDescription: 'O Pokemon se torna imune aos status Slow, Paralyze e Silence.'
+    };
+  }
+
   if (nameKey === 'dragonair' || nameKey === 'shinydragonair') {
     return {
       defenseDamageFactorByBossType: {
@@ -6216,7 +6223,10 @@ function ensureMew2BossRolePicks(bossId, clanKey, roleKey, picks = []) {
 }
 
 function createHeracrossPick() {
-  return createRolePick('Heracross', ['bug', 'fighting'], 'fighting');
+  return createRolePick('Heracross', ['bug', 'fighting'], 'fighting', {
+    passiveName: 'Guts',
+    passiveDescription: 'O Pokemon se torna imune aos status Slow, Paralyze e Silence.'
+  });
 }
 
 function createMiltankPick() {
@@ -6314,8 +6324,6 @@ function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
   const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick(), { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) return;
-  if ((scored?._offense ?? 0) < 2) return;
-  if ((scored?._defenseWorst ?? Infinity) > 2) return;
 
   ensureRolePickNames(picks, [scored], roleKey);
 }
@@ -6362,6 +6370,10 @@ function injectHeracrossRecommendations() {
 
       if (Array.isArray(valorClan.roles?.dps)) {
         addHeracrossIfCompatible(boss, valorClan.roles.dps, 'dps');
+      }
+
+      if (Array.isArray(valorClan.dps)) {
+        addHeracrossIfCompatible(boss, valorClan.dps, 'dps');
       }
     });
   });

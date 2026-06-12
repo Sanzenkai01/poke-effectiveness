@@ -270,7 +270,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260612a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260612b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -325,9 +325,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260612d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260612f';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260612a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260612b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -715,6 +715,7 @@ const TEAM_BUILDER_ALLOWED_MEGA_KEYS = Object.freeze(
 );
 const TEAM_BUILDER_PASSIVE_TEXTS = Object.freeze({
     sturdy: 'Sturdy: Ao chegar a menos de 1/3 de vida e ser atacado, o Pokemon ganha 30% de defesa por 5 segundos.',
+    sturdyShiny: 'Sturdy: Ao chegar a menos de 1/3 de vida e ser atacado, o Pokemon ganha 30% de defesa por 5 segundos (shiny).',
     intimidate: 'Intimidate: Ao ser atacado existe uma chance de reduzir o ataque de todos os Pokemon em volta em 30% por 5 segundos.',
     static: 'Static: Concede resistencia a ataques do tipo Water caso o Pokemon seja da classe All-Rounder.',
     rainDish: 'Rain Dish: O Pokemon se cura em 30% da sua vida ao longo de 5 segundos apos usar Rain Dance.',
@@ -787,7 +788,7 @@ const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     luxio: [TEAM_BUILDER_PASSIVE_TEXTS.intimidate, TEAM_BUILDER_PASSIVE_TEXTS.guts],
     machoke: [TEAM_BUILDER_PASSIVE_TEXTS.noGuard, TEAM_BUILDER_PASSIVE_TEXTS.guts],
     magmar: [TEAM_BUILDER_PASSIVE_TEXTS.flameBody, TEAM_BUILDER_PASSIVE_TEXTS.vitalSpirit],
-    magneton: [TEAM_BUILDER_PASSIVE_TEXTS.analytic, TEAM_BUILDER_PASSIVE_TEXTS.sturdy],
+    magneton: [TEAM_BUILDER_PASSIVE_TEXTS.analytic, TEAM_BUILDER_PASSIVE_TEXTS.sturdyShiny],
     mamoswine: [TEAM_BUILDER_PASSIVE_TEXTS.snowCloak, TEAM_BUILDER_PASSIVE_TEXTS.thickFat],
     marshtomp: [TEAM_BUILDER_PASSIVE_TEXTS.damp, TEAM_BUILDER_PASSIVE_TEXTS.torrent],
     'mega sceptile': [TEAM_BUILDER_PASSIVE_TEXTS.lightningRod],
@@ -968,11 +969,12 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     ranger: { key: 'ranger', label: 'Ranger' },
     maniac: { key: 'maniac', label: 'Maniac' },
     'mewtwo-solo': { key: 'mewtwo-solo', label: 'Mewtwo Solo' },
+    'poke-gift': { key: 'poke-gift', label: 'Poke Gift' },
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
     ace: { key: 'ace', label: 'Ace' },
     stuck: { key: 'stuck', label: 'Stuck' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'legendary', 'ace', 'stuck']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'ace', 'stuck']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
         acc[value] = index;
@@ -14959,6 +14961,7 @@ const catchHeroPreview = document.querySelector('.catch-hero__preview');
 const catchVariantInputs = document.querySelectorAll('input[name="catch-variant-legacy"]');
 const catchConfigShell = document.getElementById('catch-config-shell');
 const catchSelectionPrompt = document.getElementById('catch-selection-prompt');
+const catchLogPanel = document.getElementById('catch-log-panel');
 const catchLevelField = document.getElementById('catch-level-field');
 const catchPriceField = document.getElementById('catch-price-field');
 const catchLegacyVariantGroup = document.getElementById('catch-legacy-variant-group');
@@ -15132,8 +15135,9 @@ function clearCatchOutputs(){
 
 function updateCatchActionState(){
     const ready = isCatchSelectionReady();
+    const hasTarget = Boolean(catchSelectedPokemonEntry);
     if(calcCatchBtn) calcCatchBtn.disabled = !ready;
-    if(parseLogBtn) parseLogBtn.disabled = false;
+    if(parseLogBtn) parseLogBtn.disabled = !hasTarget;
 }
 
 function syncCatchSelectionUi(){
@@ -15160,6 +15164,8 @@ function syncCatchSelectionUi(){
             }
         }
     }
+    if(catchLogPanel) catchLogPanel.hidden = !hasTarget;
+    if(!hasTarget && logResult) logResult.innerHTML = '';
     if(catchConfigShell) catchConfigShell.hidden = !ready;
     if(catchHeroPreview) catchHeroPreview.hidden = !ready;
     if(catchLevelField) catchLevelField.hidden = true;
@@ -16445,6 +16451,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'ranger') return 'ranger';
     if(normalized === 'maniac') return 'maniac';
     if(normalized === 'mewtwo-solo' || normalized === 'mew2-solo') return 'mewtwo-solo';
+    if(normalized === 'poke-gift' || normalized === 'pokegift') return 'poke-gift';
     if(normalized === 'ace') return 'ace';
     if(normalized === 'stuck') return 'stuck';
     if(normalized === 'shiny' || normalized === 'brilhante') return 'shiny';
