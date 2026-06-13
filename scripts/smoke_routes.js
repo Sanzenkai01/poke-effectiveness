@@ -56,7 +56,7 @@ const routes = [
     label: 'pokemon',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemon active tab' },
-      { pattern: /aria-label="Lista de pokemons registrados"/i, description: 'normal pokemon grid' }
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'unified pokemon grid' }
     ]
   },
   {
@@ -64,7 +64,7 @@ const routes = [
     label: 'pokemons',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
-      { pattern: /aria-label="Lista de pokemons Mega"/i, description: 'mega pokemon grid' }
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'legacy unified pokemon grid' }
     ]
   },
   {

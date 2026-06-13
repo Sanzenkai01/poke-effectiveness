@@ -14614,6 +14614,31 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.32));
 }
 
+.pokemon-entry-card--mewtwo-solo .pokemon-entry-card__media img {
+  width: 92px;
+  height: 92px;
+  max-height: 92px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  object-fit: cover;
+}
+
+.pokemon-acquisition-link {
+  color: #8ed8ff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: rgba(142, 216, 255, 0.5);
+  text-underline-offset: 0.2em;
+}
+
+.pokemon-acquisition-link:hover,
+.pokemon-acquisition-link:focus-visible {
+  color: #c7eeff;
+  text-decoration-color: currentColor;
+}
+
 .pokemon-entry-card__sections,
 .pokemon-entry-card__block,
 .pokemon-details-modal__copy,

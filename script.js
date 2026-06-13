@@ -135,8 +135,6 @@ const pokemonCatalogPaginationBottom = document.getElementById('pokemon-catalog-
 const pokemonCatalogPrevPageBottomBtn = document.getElementById('pokemon-catalog-prev-page-bottom');
 const pokemonCatalogNextPageBottomBtn = document.getElementById('pokemon-catalog-next-page-bottom');
 const pokemonCatalogPageIndicatorBottom = document.getElementById('pokemon-catalog-page-indicator-bottom');
-const pokemonVariantMegaLink = document.getElementById('pokemon-variant-mega-link');
-const pokemonVariantMegaLabel = pokemonVariantMegaLink?.querySelector('.pokemon-hub__mega-label') || null;
 const pokemonDetailsModal = document.getElementById('pokemon-details-modal');
 const pokemonDetailsContent = pokemonDetailsModal?.querySelector('.pokemon-details-modal__content') || null;
 const pokemonDetailsImage = document.getElementById('pokemon-details-image');
@@ -270,7 +268,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260612b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260612d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -325,8 +323,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260612g';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260612j';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260612b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -962,6 +960,7 @@ const POKEMON_LEVEL_FILTER_SORT_INDEX = Object.freeze(
     }, {})
 );
 const POKEMON_SPECIAL_TAG_META = Object.freeze({
+    mega: { key: 'mega', label: 'Mega' },
     pack: { key: 'pack', label: 'Pack' },
     shiny: { key: 'shiny', label: 'Shiny' },
     fossil: { key: 'fossil', label: 'F\u00f3ssil' },
@@ -974,7 +973,8 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     ace: { key: 'ace', label: 'Ace' },
     stuck: { key: 'stuck', label: 'Stuck' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'ace', 'stuck']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'ace', 'stuck']);
+const POKEMON_STANDARD_CARD_IMAGE_ENTRIES = new Set(['venusaurtwo', 'charizardtwo', 'blastoisetwo']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
         acc[value] = index;
@@ -1124,51 +1124,25 @@ function normalizePokemonCatalogVariant(value){
 }
 
 function getPokemonCatalogVariantFromUrl(){
-    const pathname = String(location.pathname || '');
-    const isMegaCatalogPath = /\/pokemons(?:\/|$)/i.test(pathname);
-    try{
-        const params = new URLSearchParams(location.search);
-        if(params.has('variant')){
-            return normalizePokemonCatalogVariant(params.get('variant'));
-        }
-        return isMegaCatalogPath
-            ? POKEMON_CATALOG_VARIANT_MEGA
-            : POKEMON_CATALOG_VARIANT_DEFAULT;
-    }catch(error){
-        return isMegaCatalogPath
-            ? POKEMON_CATALOG_VARIANT_MEGA
-            : POKEMON_CATALOG_VARIANT_DEFAULT;
-    }
+    return POKEMON_CATALOG_VARIANT_DEFAULT;
 }
 
 function getCurrentPokemonCatalogVariant(){
     return normalizePokemonCatalogVariant(document.body?.dataset?.pokemonVariant || '');
 }
 
-function getPokemonRoutePathForVariant(variant = getCurrentPokemonCatalogVariant()){
-    return normalizePokemonCatalogVariant(variant) === POKEMON_CATALOG_VARIANT_MEGA
-        ? '/pokemons'
-        : '/pokemon';
+function getPokemonRoutePathForVariant(){
+    return '/pokemon';
 }
 
 function setCurrentPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT){
     const normalizedVariant = normalizePokemonCatalogVariant(variant);
-    const isMegaVariant = normalizedVariant === POKEMON_CATALOG_VARIANT_MEGA;
     if(document.body){
-        if(isMegaVariant){
+        if(normalizedVariant === POKEMON_CATALOG_VARIANT_MEGA){
             document.body.dataset.pokemonVariant = POKEMON_CATALOG_VARIANT_MEGA;
         } else {
             delete document.body.dataset.pokemonVariant;
         }
-    }
-    if(pokemonVariantMegaLink){
-        pokemonVariantMegaLink.hidden = false;
-        pokemonVariantMegaLink.href = isMegaVariant ? '/pokemon' : '/pokemons?variant=mega';
-        pokemonVariantMegaLink.title = isMegaVariant ? 'Voltar aos Pokémons normais' : 'Abrir Pokémons Mega';
-        pokemonVariantMegaLink.setAttribute('aria-label', isMegaVariant ? 'Voltar aos Pokémons normais' : 'Abrir Pokémons Mega');
-    }
-    if(pokemonVariantMegaLabel){
-        pokemonVariantMegaLabel.textContent = isMegaVariant ? 'Normais' : 'Mega';
     }
     return normalizedVariant;
 }
@@ -1176,7 +1150,7 @@ function setCurrentPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAU
 function getPokemonCatalogSubjectLabel(variant = getCurrentPokemonCatalogVariant()){
     return normalizePokemonCatalogVariant(variant) === POKEMON_CATALOG_VARIANT_MEGA
         ? 'pokemons Mega'
-        : 'pokemons registrados';
+        : 'pokemons';
 }
 
 function isPokemonCatalogPathname(pathname = location.pathname){
@@ -1287,8 +1261,15 @@ function findPokemonCatalogEntryByRouteToken(routeToken, variant = getCurrentPok
     const dex = /^\d{3,}$/.test(normalizedToken)
         ? Number.parseInt(normalizedToken, 10)
         : null;
+    const normalizedVariant = normalizePokemonCatalogVariant(variant);
+    const entries = normalizedVariant === POKEMON_CATALOG_VARIANT_DEFAULT
+        ? [
+            ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+            ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+        ]
+        : getPokemonCatalogEntriesForVariant(normalizedVariant);
 
-    return getPokemonCatalogEntriesForVariant(variant).find((entry) => {
+    return entries.find((entry) => {
         if(!entry) return false;
         if(dex !== null && Number.isFinite(entry.dex) && entry.dex === dex){
             return true;
@@ -3099,8 +3080,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:fossils', kind: 'route', target: 'fossils', title: 'Fosseis', category: 'Sistema', description: 'Combinacoes e revivals de fosseis', icon: 'FO', tags: ['fossil', 'dna'] },
         { id: 'route:calculator', kind: 'route', target: 'calculator', title: 'Treinamento', category: 'Calculadora', description: 'Plates, custos e treino', icon: 'TR', tags: ['calculadora', 'plate'] },
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
-        { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo normal de Pokemon', icon: 'PK', tags: ['catalogo', 'normal'] },
-        { id: 'route:pokemons-mega', kind: 'route', target: 'pokemons', variant: POKEMON_CATALOG_VARIANT_MEGA, title: 'Pokemons Mega', category: 'Catalogo', description: 'Catalogo de Megas', icon: 'ME', tags: ['mega', 'catalogo'] },
+        { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo de Pokemon e Megas', icon: 'PK', tags: ['catalogo', 'mega'] },
         { id: 'route:times', kind: 'route', target: 'times', title: 'Times', category: 'Catalogo', description: 'Composicoes por cla e elemento', icon: 'TM', tags: ['mystic', 'valor', 'instinct', 'composicao'] },
         { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
@@ -3459,10 +3439,6 @@ function runGlobalSearchRouteEntry(entry){
         navigateToHomePage();
         return;
     }
-    if(entry.target === 'pokemons' && entry.variant === POKEMON_CATALOG_VARIANT_MEGA){
-        showPokemons(POKEMON_CATALOG_VARIANT_MEGA);
-        return;
-    }
     const proxy = document.createElement('button');
     proxy.type = 'button';
     if(entry.target) proxy.dataset.navTarget = entry.target;
@@ -3493,10 +3469,9 @@ function runGlobalSearchTypeEntry(entry){
 }
 
 function runGlobalSearchPokemonEntry(entry){
-    const variant = normalizePokemonCatalogVariant(entry.variant);
-    showPokemons(variant);
+    showPokemons(POKEMON_CATALOG_VARIANT_DEFAULT);
     ensurePokemonCatalogLoaded().then(() => {
-        const pokemon = findPokemonCatalogEntryByRouteToken(entry.routeToken, variant);
+        const pokemon = findPokemonCatalogEntryByRouteToken(entry.routeToken, POKEMON_CATALOG_VARIANT_DEFAULT);
         if(canOpenPokemonCatalogEntry(pokemon)){
             openPokemonDetailsModal(pokemon, { pushState: true });
         }
@@ -7248,7 +7223,7 @@ function showPokemons(requestedVariant = POKEMON_CATALOG_VARIANT_DEFAULT, option
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('pokemonsTitle');
     updateBrowserTitle();
-    const normalizedVariant = setCurrentPokemonCatalogVariant(requestedVariant);
+    const normalizedVariant = setCurrentPokemonCatalogVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
     const shouldResetFilters = activePokemonCatalogVariant !== normalizedVariant && !hasRequestedFilters;
     if(hasRequestedFilters){
         pendingPokemonCatalogRouteFilters = normalizedRequestedFilters;
@@ -16445,6 +16420,7 @@ function formatPokemonGenerationLabel(value){
 
 function normalizePokemonSpecialTagKey(value){
     const normalized = normalizePokemonSearchText(value).replace(/[_\s]+/g, '-');
+    if(normalized === 'mega') return 'mega';
     if(normalized === 'lendario' || normalized === 'legendario' || normalized === 'legendary') return 'legendary';
     if(normalized === 'fossil' || normalized === 'fossil-pokemon') return 'fossil';
     if(normalized === 'boss') return 'boss';
@@ -16612,6 +16588,13 @@ function getPokemonEntryPriceLabel(entry){
 
 function getPokemonEntrySpecialTags(entry){
     return Array.isArray(entry?.specialTags) ? entry.specialTags : [];
+}
+
+function getPokemonCardSpecialTags(entry){
+    const tags = getPokemonEntrySpecialTags(entry);
+    return entry?.searchName === 'zoroark'
+        ? tags.filter(tagKey => tagKey !== 'boss')
+        : tags;
 }
 
 function getPokemonEntrySubFunctions(entry){
@@ -17506,11 +17489,10 @@ function hasPokemonCatalogActiveFilters(filters = pokemonCatalogFilters){
 }
 
 function getVisiblePokemonCatalogEntries(entries = pokemonCatalog){
-    const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
     return (Array.isArray(entries) ? entries : []).filter((entry) => {
         if(!entry) return false;
         if(entry.catalogHidden) return false;
-        return isMegaVariant || entry.registered !== false;
+        return isMegaPokemonCatalogEntry(entry) || entry.registered !== false;
     });
 }
 
@@ -17634,19 +17616,14 @@ function goToPokemonCatalogPage(page){
 
 function updatePokemonCatalogStatus(totalCount, visibleCount, filters = pokemonCatalogFilters){
     if(!pokemonCatalogStatus) return;
-    const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
 
     if(!totalCount){
-        pokemonCatalogStatus.textContent = isMegaVariant
-            ? 'Nenhum pokemon Mega disponivel ainda.'
-            : 'Nenhum pokemon registrado ainda.';
+        pokemonCatalogStatus.textContent = 'Nenhum pokemon disponivel ainda.';
         return;
     }
 
     if(!hasPokemonCatalogActiveFilters(filters)){
-        pokemonCatalogStatus.textContent = isMegaVariant
-            ? `${totalCount} pokemons Mega disponiveis.`
-            : `${totalCount} pokemons registrados.`;
+        pokemonCatalogStatus.textContent = `${totalCount} pokemons disponiveis.`;
         return;
     }
 
@@ -17921,12 +17898,13 @@ function createPokemonTeamBadge(teamKey, options = {}){
     return badge;
 }
 
-function createPokemonSpecialTagBadge(tagKey){
+function createPokemonSpecialTagBadge(tagKey, options = {}){
+    const { labelOverride = '' } = options;
     const normalized = normalizePokemonSpecialTagKey(tagKey);
     const badge = document.createElement('span');
     badge.className = 'pokemon-special-tag-badge';
     badge.dataset.tag = normalized || 'custom';
-    badge.textContent = formatPokemonSpecialTagLabel(normalized);
+    badge.textContent = String(labelOverride || formatPokemonSpecialTagLabel(normalized)).trim();
     return badge;
 }
 
@@ -18310,6 +18288,7 @@ function normalizePokemonCatalogEntry(entry, index){
         image: hasImage ? String(entry.image || '').trim() : `${slug}.png`,
         price: Number(entry.price ?? entry.preco ?? 0) || 0,
         priceLabel: String(entry.priceLabel || '').trim(),
+        acquisitionUrl: String(entry.acquisitionUrl || '').trim(),
         levelLabel: String(entry.levelLabel || '').trim(),
         movesetLabel: String(entry.movesetLabel || '').trim(),
         teamLabel: String(entry.teamLabel || '').trim(),
@@ -18362,6 +18341,10 @@ function buildMegaPokemonCatalogEntries(rawMegaEntries = [], registeredEntries =
             normalCaptureNote: entry?.normalCaptureNote || 'Mega nao pode ser capturado.',
             shinyCaptureAvailable: false,
             shinyCaptureNote: entry?.shinyCaptureNote || 'Mega nao pode ser capturado.',
+            specialTags: [
+                ...(Array.isArray(entry?.specialTags) ? entry.specialTags : []),
+                'mega'
+            ],
             variant: POKEMON_CATALOG_VARIANT_MEGA
         }, index))
         .filter((entry) => {
@@ -18373,21 +18356,152 @@ function buildMegaPokemonCatalogEntries(rawMegaEntries = [], registeredEntries =
         });
 }
 
+function getPokemonCatalogAttachedFormBaseKey(entry){
+    if(isMegaPokemonCatalogEntry(entry)){
+        return getPokemonMegaBaseRegistryKey(entry);
+    }
+
+    const name = String(entry?.name || '').trim();
+    if(!name || /^mewtwo$/i.test(name) || !/two$/i.test(name)) return '';
+    return getPokemonCatalogRegistryKey(name.replace(/two$/i, ''));
+}
+
+function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
+    const normalList = Array.isArray(normalEntries) ? normalEntries : [];
+    const megaList = Array.isArray(megaEntries) ? megaEntries : [];
+    const sourceIndexByEntry = new Map(normalList.map((entry, index) => [entry, index]));
+    const baseEntries = normalList.filter(entry => !getPokemonCatalogAttachedFormBaseKey(entry));
+    const baseEntryByKey = new Map(
+        baseEntries
+            .map(entry => [getPokemonCatalogRegistryKey(entry?.name), entry])
+            .filter(([key]) => Boolean(key))
+    );
+    const attachedEntriesByBaseKey = new Map();
+    const unattachedEntries = [];
+
+    [...megaList, ...normalList.filter(entry => getPokemonCatalogAttachedFormBaseKey(entry))]
+        .forEach((entry) => {
+            const baseKey = getPokemonCatalogAttachedFormBaseKey(entry);
+            if(!baseKey || !baseEntryByKey.has(baseKey)){
+                unattachedEntries.push(entry);
+                return;
+            }
+            if(!attachedEntriesByBaseKey.has(baseKey)){
+                attachedEntriesByBaseKey.set(baseKey, []);
+            }
+            attachedEntriesByBaseKey.get(baseKey).push(entry);
+        });
+
+    const childrenByKey = new Map();
+    const parentsByKey = new Map();
+    const undirectedNeighborsByKey = new Map();
+    const ensureKey = (key) => {
+        if(!childrenByKey.has(key)) childrenByKey.set(key, new Set());
+        if(!parentsByKey.has(key)) parentsByKey.set(key, new Set());
+        if(!undirectedNeighborsByKey.has(key)) undirectedNeighborsByKey.set(key, new Set());
+    };
+
+    baseEntryByKey.forEach((entry, key) => ensureKey(key));
+    POKEMON_EVOLUTION_EDGES.forEach(([parentName, childName]) => {
+        const parentKey = getPokemonCatalogRegistryKey(parentName);
+        const childKey = getPokemonCatalogRegistryKey(childName);
+        if(!baseEntryByKey.has(parentKey) || !baseEntryByKey.has(childKey)) return;
+        ensureKey(parentKey);
+        ensureKey(childKey);
+        childrenByKey.get(parentKey).add(childKey);
+        parentsByKey.get(childKey).add(parentKey);
+        undirectedNeighborsByKey.get(parentKey).add(childKey);
+        undirectedNeighborsByKey.get(childKey).add(parentKey);
+    });
+
+    const entrySourceIndex = key => sourceIndexByEntry.get(baseEntryByKey.get(key)) ?? Number.MAX_SAFE_INTEGER;
+    const visitedKeys = new Set();
+    const families = [];
+
+    baseEntries.forEach((entry) => {
+        const startKey = getPokemonCatalogRegistryKey(entry?.name);
+        if(!startKey || visitedKeys.has(startKey)) return;
+
+        const familyKeys = [];
+        const pendingKeys = [startKey];
+        visitedKeys.add(startKey);
+        while(pendingKeys.length){
+            const key = pendingKeys.shift();
+            familyKeys.push(key);
+            Array.from(undirectedNeighborsByKey.get(key) || [])
+                .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+                .forEach((neighborKey) => {
+                    if(visitedKeys.has(neighborKey)) return;
+                    visitedKeys.add(neighborKey);
+                    pendingKeys.push(neighborKey);
+                });
+        }
+
+        const familyKeySet = new Set(familyKeys);
+        const pendingParentCount = new Map(
+            familyKeys.map(key => [
+                key,
+                Array.from(parentsByKey.get(key) || []).filter(parentKey => familyKeySet.has(parentKey)).length
+            ])
+        );
+        const readyKeys = familyKeys
+            .filter(key => pendingParentCount.get(key) === 0)
+            .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right));
+        const orderedKeys = [];
+
+        while(readyKeys.length){
+            const key = readyKeys.shift();
+            orderedKeys.push(key);
+            Array.from(childrenByKey.get(key) || [])
+                .filter(childKey => familyKeySet.has(childKey))
+                .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+                .forEach((childKey) => {
+                    const remainingParents = (pendingParentCount.get(childKey) || 0) - 1;
+                    pendingParentCount.set(childKey, remainingParents);
+                    if(remainingParents === 0){
+                        readyKeys.push(childKey);
+                        readyKeys.sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right));
+                    }
+                });
+        }
+
+        familyKeys
+            .filter(key => !orderedKeys.includes(key))
+            .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+            .forEach(key => orderedKeys.push(key));
+
+        families.push({
+            sourceIndex: Math.min(...familyKeys.map(entrySourceIndex)),
+            keys: orderedKeys
+        });
+    });
+
+    families.sort((left, right) => left.sourceIndex - right.sourceIndex);
+    const orderedEntries = [];
+    families.forEach((family) => {
+        family.keys.forEach((key) => {
+            const entry = baseEntryByKey.get(key);
+            if(entry) orderedEntries.push(entry);
+            (attachedEntriesByBaseKey.get(key) || []).forEach(attachedEntry => orderedEntries.push(attachedEntry));
+        });
+    });
+    unattachedEntries.forEach(entry => orderedEntries.push(entry));
+    return orderedEntries;
+}
+
 function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, options = {}){
     const { resetFilters = false } = options;
     const normalizedVariant = setCurrentPokemonCatalogVariant(variant);
     const variantChanged = activePokemonCatalogVariant !== normalizedVariant;
     activePokemonCatalogVariant = normalizedVariant;
-    pokemonCatalog = Array.isArray(pokemonCatalogEntriesByVariant[normalizedVariant])
-        ? pokemonCatalogEntriesByVariant[normalizedVariant]
-        : [];
+    pokemonCatalog = normalizedVariant === POKEMON_CATALOG_VARIANT_DEFAULT
+        ? orderPokemonCatalogByEvolution(
+            getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+            getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+        )
+        : getPokemonCatalogEntriesForVariant(normalizedVariant);
     if(pokemonCardGrid){
-        pokemonCardGrid.setAttribute(
-            'aria-label',
-            normalizedVariant === POKEMON_CATALOG_VARIANT_MEGA
-                ? 'Lista de pokemons Mega'
-                : 'Lista de pokemons registrados'
-        );
+        pokemonCardGrid.setAttribute('aria-label', 'Lista de pokemons');
     }
 
     if(resetFilters || variantChanged){
@@ -18403,7 +18517,6 @@ function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, o
 function renderPokemonCatalog(options = {}){
     const { animate = false, historyMode = 'replace' } = options;
     if(!pokemonCardGrid) return;
-    const isMegaVariant = getCurrentPokemonCatalogVariant() === POKEMON_CATALOG_VARIANT_MEGA;
     const visibleEntries = getVisiblePokemonCatalogEntries();
 
     if(!visibleEntries.length){
@@ -18412,9 +18525,7 @@ function renderPokemonCatalog(options = {}){
         pokemonCardGrid.replaceChildren(
             createInlineStatusMessage(
                 'pokemon-empty-message',
-                isMegaVariant
-                    ? 'Adicione itens em pokemons/mega-pokemons.json para preencher esta pagina.'
-                    : 'Adicione itens em pokemons/pokemons.json para preencher esta pagina.'
+                'Adicione itens nos catalogos de pokemon para preencher esta pagina.'
             )
         );
         if(contentPokemons && !contentPokemons.hidden){
@@ -18441,10 +18552,13 @@ function renderPokemonCatalog(options = {}){
     const fragment = document.createDocumentFragment();
     paginationState.entries.forEach((entry) => {
         const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
-        const specialTags = getPokemonEntrySpecialTags(entry);
+        const specialTags = getPokemonCardSpecialTags(entry);
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'pokemon-entry-card';
+        if(specialTags.includes('mewtwo-solo') && !POKEMON_STANDARD_CARD_IMAGE_ENTRIES.has(entry.searchName)){
+            card.classList.add('pokemon-entry-card--mewtwo-solo');
+        }
         card.setAttribute('role', 'listitem');
         // expose the entry id on the DOM for targeted styling
         card.dataset.pokemonId = entry.id;
@@ -18476,7 +18590,9 @@ function renderPokemonCatalog(options = {}){
             metaRow.appendChild(createPokemonNaturalShinyBadge());
         }
         specialTags.forEach((tagKey) => {
-            metaRow.appendChild(createPokemonSpecialTagBadge(tagKey));
+            metaRow.appendChild(createPokemonSpecialTagBadge(tagKey, {
+                labelOverride: tagKey === 'mewtwo-solo' ? 'Mewtwo' : ''
+            }));
         });
 
         titleWrap.append(title, metaRow);
@@ -18826,9 +18942,19 @@ function renderPokemonDetailsModal(entry){
     }
     if(pokemonDetailsAveragesKicker){
         const priceLabel = getPokemonEntryPriceLabel(entry);
-        pokemonDetailsAveragesKicker.textContent = priceLabel
-            ? `Médias • ${priceLabel}`
-            : 'Médias';
+        pokemonDetailsAveragesKicker.replaceChildren(document.createTextNode('Médias'));
+        if(priceLabel){
+            pokemonDetailsAveragesKicker.appendChild(document.createTextNode(' • '));
+            if(entry.acquisitionUrl){
+                const link = document.createElement('a');
+                link.className = 'pokemon-acquisition-link';
+                link.href = entry.acquisitionUrl;
+                link.textContent = priceLabel;
+                pokemonDetailsAveragesKicker.appendChild(link);
+            } else {
+                pokemonDetailsAveragesKicker.appendChild(document.createTextNode(priceLabel));
+            }
+        }
     }
 
     if(pokemonDetailsMeta){

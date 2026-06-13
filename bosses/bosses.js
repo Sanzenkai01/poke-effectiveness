@@ -92,7 +92,7 @@ const hoopaPortalsData = [
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -238,7 +238,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], description: 'Tipo move: Bug.' },
           { name: 'Pikachu', image: 'pikachu.png', tier: 'excelente', types: ['electric'], description: 'Tipo move: Electric.' },
-          { name: 'VenusaurTwo', image: 'venusaur.png', tier: 'excelente', types: ['grass','poison'], description: 'Tipo move: Grass.' },
+          { name: 'VenusaurTwo', image: 'VenusaurTwo.png', tier: 'excelente', types: ['grass','poison'], description: 'Tipo move: Grass.' },
           { name: 'Mega Sceptile', image: 'mega-sceptile.png', tier: 'excelente', types: ['grass','dragon'], description: 'Tipo move: Grass.' },
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
@@ -305,7 +305,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'May\'s Beautifly', image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' }
         ]
@@ -334,7 +334,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Banette', image: 'banette.png', tier: 'excelente', types: ['ghost'], description: 'Tipo move: Ghost.' },
-          { name: 'BlastoiseTwo', image: 'blastoisetwo.png', tier: 'excelente', types: ['water'], description: 'Tipo move: Water.' },
+          { name: 'BlastoiseTwo', image: 'BlastoiseTwo.png', tier: 'excelente', types: ['water'], description: 'Tipo move: Water.' },
           { name: 'Greninja', image: 'greninja.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Water.' },
           { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Dark.' },
           { name: 'Seaking', image: 'seaking.png', tier: 'excelente', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' }
@@ -386,7 +386,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' }
@@ -428,7 +428,7 @@ const hoopaPortalsData = [
           { name: 'Bouffalant', image: 'bouffalant.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Ground.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' }
         ]
@@ -557,7 +557,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
           { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
@@ -638,7 +638,7 @@ const hoopaPortalsData = [
         label: 'Valor',
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
-          { name: 'CharizardTwo', image: 'charizard.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
+          { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -1133,8 +1133,8 @@ function createRoleboardBosses(entries, catalogMeta) {
 
 const rolePickImageOverrides = {
   bannet: 'banette.png',
-  blastoisetwo: 'blastoisetwo.png',
-  charizardtwo: 'charizard.png',
+  blastoisetwo: 'BlastoiseTwo.png',
+  charizardtwo: 'CharizardTwo.png',
   cramorant: 'flying-cramorant.png',
   drifloom: 'drifloon.png',
   megadelphox: 'megadelphox.png',
@@ -1145,7 +1145,7 @@ const rolePickImageOverrides = {
   shinysableye: 'sableye.png',
   shinyscyther: 'scyther.png',
   ribombee: 'Ribombee.png',
-  venusaurtwo: 'venusaur.png'
+  venusaurtwo: 'VenusaurTwo.png'
   ,rosasserperior: 'serperior.png'
   ,shinyclaydol: 'claydol.png'
 };
@@ -4313,13 +4313,14 @@ const bossPokemonAssetAliases = Object.freeze({
   'bastiodon.png': 'pokemons/4gen/bastiodon.png',
   'bellossom.png': 'pokemons/2gen/bellossom.png',
   'blastoise.png': 'pokemons/1gen/blastoise.png',
-  'blastoisetwo.png': 'pokemons/1gen/blastoisetwo.png',
+  'blastoisetwo.png': 'pokemons/1gen/BlastoiseTwo.png',
   'blissey.png': 'pokemons/2gen/blissey.png',
   'bouffalant.png': 'pokemons/5gen/bouffalant.png',
   'bronzong.png': 'pokemons/4gen/bronzong.png',
   'carracosta.png': 'pokemons/5gen/carracosta.png',
   'chansey.png': 'pokemons/1gen/chansey.png',
   'charizard.png': 'pokemons/1gen/charizard.png',
+  'charizardtwo.png': 'pokemons/1gen/CharizardTwo.png',
   'chesnaught.png': 'pokemons/6gen/chesnaught.png',
   'claydol.png': 'pokemons/3gen/claydol.png',
   'clefable.png': 'pokemons/1gen/clefable.png',
@@ -4433,6 +4434,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'toxapex.png': 'pokemons/7gen/toxapex.png',
   'torkoal.png': 'pokemons/3gen/torkoal.png',
   'venusaur.png': 'pokemons/1gen/venusaur.png',
+  'venusaurtwo.png': 'pokemons/1gen/VenusaurTwo.png',
   'water-cramorant.png': 'pokemons/8gen/water-cramorant.png',
   'weavile.png': 'pokemons/4gen/weavile.png',
   'weezing.png': 'pokemons/1gen/weezing.png',
