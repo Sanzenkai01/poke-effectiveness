@@ -10317,10 +10317,15 @@ function buildHuntBuilderTeam(){
     const usedKeys = new Set();
     const previousKeys = new Set(huntBuilderPreviousTeamKeys);
     const selectedBySlot = {};
-    const pickEntry = (pool, slotId, offset = 0) => {
+    const pickEntry = (pool, slotId, offset = 0, options = {}) => {
         const availableEntries = rotateHuntBuilderEntries(sortHuntBuilderEntries(pool, slotId.startsWith('dps') ? 'dps' : slotId), offset)
             .filter(entry => !usedKeys.has(getTeamBuilderEntryKey(entry)));
-        const available = availableEntries.find(entry => !previousKeys.has(getTeamBuilderEntryKey(entry)))
+        const preferredEntry = options.allowPreviousMegaDragonite && isHuntBuilderFlexibleMegaDragonite(availableEntries[0])
+            ? availableEntries[0]
+            : null;
+        const available = preferredEntry
+            || availableEntries.find(entry => !previousKeys.has(getTeamBuilderEntryKey(entry)))
+            || (options.allowPreviousMegaDragonite ? availableEntries.find(isHuntBuilderFlexibleMegaDragonite) : null)
             || availableEntries[0]
             || null;
         if(!available) return null;
@@ -10339,8 +10344,8 @@ function buildHuntBuilderTeam(){
         || isHuntBuilderFlexibleMegaDragonite(entry)
     ));
 
+    pickEntry(allRounderPool, 'ar', huntBuilderGeneration, { allowPreviousMegaDragonite: true });
     pickEntry(finisherPool, 'finisher', huntBuilderGeneration);
-    pickEntry(allRounderPool, 'ar', huntBuilderGeneration);
     HUNT_BUILDER_SLOT_CONFIGS
         .filter(slot => slot.kind === 'dps')
         .forEach((slot, index) => pickEntry(dpsPool, slot.id, huntBuilderGeneration + index));
@@ -10404,12 +10409,12 @@ function createHuntBuilderHeldSuggestions(slot){
     button.setAttribute('aria-expanded', 'false');
 
     const buttonImage = document.createElement('img');
-    buttonImage.src = 'helds/Held-Button.png';
+    buttonImage.src = 'helds/Held-Button.png?v=20260614b';
     buttonImage.alt = '';
     buttonImage.setAttribute('aria-hidden', 'true');
     buttonImage.loading = 'lazy';
     buttonImage.decoding = 'async';
-    setImageFallback(buttonImage, 'helds/Held-Button.png');
+    setImageFallback(buttonImage, 'helds/Held-Button.png?v=20260614b');
     button.appendChild(buttonImage);
 
     const helds = document.createElement('span');

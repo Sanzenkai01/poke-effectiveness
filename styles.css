@@ -23162,7 +23162,7 @@ html[data-vision-mode]:not([data-vision-mode="standard"]) .speedster-boss-result
 
 .hunt-builder-search {
   position: relative;
-  z-index: 1300;
+  z-index: 4500;
   display: grid;
   gap: 0.4rem;
   width: min(100%, 580px);
@@ -23199,7 +23199,7 @@ html[data-vision-mode]:not([data-vision-mode="standard"]) .speedster-boss-result
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
-  z-index: 1301;
+  z-index: 4501;
   display: grid;
   width: 100%;
   max-height: min(360px, calc(100vh - 17rem));
@@ -23210,6 +23210,15 @@ html[data-vision-mode]:not([data-vision-mode="standard"]) .speedster-boss-result
   border-radius: 10px;
   background: rgba(7, 14, 25, 0.98);
   box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+}
+
+body[data-active-tab="hunt-builder"] #content-hunt-builder {
+  position: relative;
+  z-index: 4400;
+}
+
+body[data-active-tab="hunt-builder"] .app-shell {
+  z-index: 4400;
 }
 
 .hunt-builder-search-result {
@@ -24443,18 +24452,21 @@ body {
 }
 
 .hunt-builder-team-card__held-toggle {
-  width: 2.15rem;
-  height: 2.15rem;
-  padding: 0;
+  width: 1.82rem;
+  height: 1.82rem;
+  padding: 0.05rem;
   overflow: hidden;
 }
 
 .hunt-builder-team-card__held-toggle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: block;
+  width: 92%;
+  height: 92%;
+  margin: auto;
+  object-fit: contain;
   object-position: center;
-  transform: scale(1.22);
+  transform: none;
+  image-rendering: auto;
 }
 
 .hunt-builder-team-card__moveset .pokemon-type-token {
