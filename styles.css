@@ -2529,6 +2529,28 @@ p {
   gap: 1.15rem;
 }
 
+.speedster-modal-body.speedster-modal-body--search-results {
+  display: block;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.speedster-modal-body.speedster-modal-body--search-results > .speedster-search-results-shell {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.speedster-modal-body--search-results .speedster-search-results-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.9fr);
+  align-items: stretch;
+}
+
+.speedster-modal-body--search-results .speedster-boss-result-grid {
+  display: grid;
+}
+
 .speedster-modal-content--search-results .speedster-modal-header {
   position: relative;
   align-items: center;
@@ -3282,7 +3304,8 @@ p {
 }
 
 @media (max-width: 960px) {
-  .speedster-search-results-summary {
+  .speedster-search-results-summary,
+  .speedster-modal-body--search-results .speedster-search-results-summary {
     grid-template-columns: 1fr;
   }
 
@@ -17310,6 +17333,7 @@ button.pokemon-evolution-card:focus-visible {
 .times-details-panel__head {
   justify-items: center;
   text-align: center;
+  align-content: start;
 }
 
 .times-details-modal__hero {
@@ -17355,11 +17379,36 @@ button.pokemon-evolution-card:focus-visible {
 }
 
 .times-details-alt-group {
-  justify-items: center;
+  --times-alt-accent-rgb: var(--module-accent-rgb);
+  justify-items: stretch;
+  align-content: start;
+  gap: 0.64rem;
+  min-width: 0;
+  padding: 0.62rem;
+  border: 1px solid rgba(var(--times-alt-accent-rgb), 0.22);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(var(--times-alt-accent-rgb), 0.1), rgba(255, 255, 255, 0.025)),
+    rgba(6, 12, 22, 0.48);
   text-align: center;
 }
 
+.times-details-alt-group--pokemons {
+  --times-alt-accent-rgb: var(--module-accent-alt-rgb);
+}
+
+.times-details-alt-group--hunts {
+  --times-alt-accent-rgb: var(--module-accent-rgb);
+}
+
+.times-details-panel .times-details-alt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
 .times-details-panel {
+  align-content: start;
   padding: 0.88rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
@@ -17386,6 +17435,7 @@ button.pokemon-evolution-card:focus-visible {
 
 .times-details-roster {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
   gap: 0.58rem;
 }
 
@@ -17410,6 +17460,30 @@ button.pokemon-evolution-card:focus-visible {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.times-details-alt-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: stretch;
+  gap: 0.42rem;
+  min-height: 2rem;
+  padding: 0.4rem 0.62rem;
+  border: 1px solid rgba(var(--times-alt-accent-rgb), 0.28);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(var(--times-alt-accent-rgb), 0.18), rgba(255, 255, 255, 0.035)),
+    rgba(5, 11, 20, 0.64);
+}
+
+.times-details-alt-label::before {
+  content: "";
+  width: 0.46rem;
+  height: 0.46rem;
+  border-radius: 999px;
+  background: rgb(var(--times-alt-accent-rgb));
+  box-shadow: 0 0 0 3px rgba(var(--times-alt-accent-rgb), 0.14);
 }
 
 .team-tip-card__text {
@@ -17455,7 +17529,7 @@ button.pokemon-evolution-card:focus-visible {
 }
 
 .times-details-alt-group .times-details-entity-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .times-details-hunt-groups {
@@ -17584,6 +17658,10 @@ button.pokemon-evolution-card:focus-visible {
 
   .times-details-alt-group .times-details-entity-grid,
   .times-details-tips {
+    grid-template-columns: 1fr;
+  }
+
+  .times-details-panel .times-details-alt-grid {
     grid-template-columns: 1fr;
   }
 
@@ -24069,6 +24147,15 @@ body {
 .planner-edit-modal__body > * {
   flex: 1 1 18rem;
   min-width: min(100%, 16rem);
+}
+
+.times-details-modal__body {
+  align-items: flex-start;
+}
+
+.times-details-modal__body > .times-details-panel,
+.times-details-modal__aside {
+  align-self: flex-start;
 }
 
 .modal,

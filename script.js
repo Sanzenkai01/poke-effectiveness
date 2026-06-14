@@ -282,7 +282,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260614a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260614b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -340,8 +340,8 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260614c';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612d';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614a';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260614b';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -488,7 +488,9 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Piloswine', 'Mamoswine'],
     ['Remoraid', 'Octillery'],
     ['Houndour', 'Houndoom'],
-    ['Phanpy', 'Donphan']
+    ['Phanpy', 'Donphan'],
+    ['Larvitar', 'Pupitar'],
+    ['Pupitar', 'Tyranitar']
     ,
     // Generation 3 evolutions
     ['Treecko', 'Grovyle'],
@@ -555,7 +557,9 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Snorunt', 'Glalie'],
     ['Snorunt', 'Froslass'],
     ['Roselia', 'Roserade'],
-    ['Nosepass', 'Probopass']
+    ['Nosepass', 'Probopass'],
+    ['Goomy', 'Sliggoo'],
+    ['Sliggoo', 'Goodra']
     ,
     // Generation 4 evolutions
     ['Turtwig', 'Grotle'],
@@ -607,10 +611,37 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Eelektrik', 'Eelektross'],
     ['Sandile', 'Krokorok'],
     ['Krokorok', 'Krookodile'],
+    ['Deino', 'Zweilous'],
+    ['Zweilous', 'Hydreigon'],
+    ['Pawniard', 'Bisharp'],
+    ['Bisharp', 'Kingambit'],
+    ['Larvesta', 'Volcarona'],
+    ['Litwick', 'Lampent'],
+    ['Lampent', 'Chandelure'],
     // Generation 6 evolutions
     ['Litleo', 'Pyroar Female'],
     ['Litleo', 'Pyroar Male'],
-    ['Binacle', 'Barbaracle']
+    ['Binacle', 'Barbaracle'],
+    ['Crabrawler', 'Crabominable'],
+    ['Jangmo-o', 'Hakamo-o'],
+    ['Hakamo-o', 'Kommo-o'],
+    ['Bounsweet', 'Steenee'],
+    ['Steenee', 'Tsareena'],
+    ['Wimpod', 'Golisopod'],
+    ['Chewtle', 'Drednaw'],
+    ['Dreepy', 'Drakloak'],
+    ['Drakloak', 'Dragapult'],
+    ['Impidimp', 'Morgrem'],
+    ['Morgrem', 'Grimmsnarl'],
+    ['Toxel', 'Toxtricity'],
+    ['Duraludon', 'Archaludon'],
+    ['Charcadet', 'Armarouge'],
+    ['Charcadet', 'Ceruledge'],
+    ['Frigibax', 'Arctibax'],
+    ['Arctibax', 'Baxcalibur'],
+    ['Finizen', 'Palafin'],
+    ['Tinkatink', 'Tinkatuff'],
+    ['Tinkatuff', 'Tinkaton']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
@@ -7764,16 +7795,16 @@ function normalizeTeamEntry(entry, index){
             .filter(Boolean)
             .slice(0, 6)
         : [];
-    const hunts = normalizeTeamEntityList(entry.hunts);
+    const hunts = expandTeamHuntEntityListWithPreEvolutions(normalizeTeamEntityList(entry.hunts));
     const alternatives = entry.alternatives && typeof entry.alternatives === 'object'
         ? entry.alternatives
         : {};
     const alternativePokemons = normalizeTeamEntityList(
         alternatives.pokemons || alternatives.pokemon || entry.alternativePokemons || entry.alternativePokemon
     );
-    const alternativeHunts = normalizeTeamEntityList(
+    const alternativeHunts = expandTeamHuntEntityListWithPreEvolutions(normalizeTeamEntityList(
         alternatives.hunts || alternatives.hunt || entry.alternativeHunts || entry.alternativeHunt
-    );
+    ));
     const id = String(entry.id || `${clanKey || 'team'}-${index + 1}`).trim();
     const routeSlug = createTeamRouteSlug(id, `${clanKey || 'team'}-${index + 1}`);
     const searchTokens = [
@@ -7862,6 +7893,83 @@ function normalizeTeamEntityList(values){
             return null;
         })
         .filter(Boolean);
+}
+
+function getTeamHuntPreEvolutionSourceNames(huntName){
+    return Array.from(new Set(
+        String(huntName || '')
+            .split(/[\/,|]+/)
+            .map(name => name.trim())
+            .filter(Boolean)
+    ));
+}
+
+function getTeamHuntPreEvolutionEntries(huntName){
+    const sourceNames = getTeamHuntPreEvolutionSourceNames(huntName);
+    if(!sourceNames.length) return [];
+
+    const graph = ensurePokemonEvolutionGraph();
+    const seenKeys = new Set();
+    const orderedKeys = [];
+    const collectParents = (key) => {
+        const node = graph.get(key);
+        if(!node) return;
+        Array.from(node.parents || []).forEach(parentKey => {
+            if(!parentKey || seenKeys.has(parentKey)) return;
+            seenKeys.add(parentKey);
+            collectParents(parentKey);
+            orderedKeys.push(parentKey);
+        });
+    };
+
+    sourceNames.forEach(sourceName => {
+        collectParents(getPokemonCatalogRegistryKey(sourceName));
+    });
+
+    return orderedKeys
+        .map(key => {
+            const catalogEntry = getPokemonEvolutionCatalogEntriesByKey(key)[0] || null;
+            if(catalogEntry) return catalogEntry;
+            const edge = POKEMON_EVOLUTION_EDGES.find(([parentName, childName]) => (
+                getPokemonCatalogRegistryKey(parentName) === key
+                || getPokemonCatalogRegistryKey(childName) === key
+            ));
+            const fallbackName = edge
+                ? String(getPokemonCatalogRegistryKey(edge[0]) === key ? edge[0] : edge[1]).trim()
+                : '';
+            if(!fallbackName) return null;
+            return {
+                name: fallbackName,
+                image: buildTeamPokemonImageFileName(fallbackName)
+            };
+        })
+        .filter(Boolean);
+}
+
+function expandTeamHuntEntityListWithPreEvolutions(entities = []){
+    const expanded = [];
+    const seenKeys = new Set();
+    const addEntity = (entity) => {
+        const name = String(entity?.name || '').trim();
+        const key = normalizePokemonSearchText(name);
+        if(!name || !key || seenKeys.has(key)) return;
+        seenKeys.add(key);
+        expanded.push(entity);
+    };
+
+    (Array.isArray(entities) ? entities : []).forEach(entity => {
+        addEntity(entity);
+        getTeamHuntPreEvolutionEntries(entity?.name || '').forEach(preEvolution => {
+            addEntity({
+                name: preEvolution.name,
+                note: '',
+                image: preEvolution.image || buildTeamPokemonImageFileName(preEvolution.name),
+                sourceHuntName: entity.name
+            });
+        });
+    });
+
+    return expanded;
 }
 
 function normalizeTeamMember(member, index){
@@ -8234,7 +8342,8 @@ function createTeamEntityCard(entity, options = {}){
             ? {
                 name: String(entity.name || entity.label || entity.text || entity.pokemon || '').trim(),
                 note: String(entity.note || entity.comment || entity.description || '').trim(),
-                image: String(entity.image || buildTeamPokemonImageFileName(entity.name || entity.label || entity.text || entity.pokemon || '')).trim()
+                image: String(entity.image || buildTeamPokemonImageFileName(entity.name || entity.label || entity.text || entity.pokemon || '')).trim(),
+                sourceHuntName: String(entity.sourceHuntName || '').trim()
             }
             : null;
 
@@ -8266,7 +8375,7 @@ function createTeamEntityCard(entity, options = {}){
     card.append(media, label);
 
     if(showHuntMoveset){
-        const huntMeta = getTeamBuilderHuntCombatMeta(normalizedEntity.name);
+        const huntMeta = getTeamBuilderHuntCombatMeta(normalizedEntity.sourceHuntName || normalizedEntity.name);
         if(Array.isArray(huntMeta.moveset) && huntMeta.moveset.length){
             const movesetRow = document.createElement('span');
             movesetRow.className = 'team-hunt-card__moveset';
@@ -8600,8 +8709,9 @@ function getTeamEntryHuntCompatibilityInfo(entry, hunt, slotEntries){
     const huntName = String(hunt?.name || hunt || '').trim();
     if(!huntName) return null;
 
-    const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
-    const weaknessTypes = getTeamBuilderHuntWeaknessTypes(huntName, entry.elementKeys || []);
+    const effectiveHuntName = String(hunt?.sourceHuntName || huntName).trim();
+    const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
+    const weaknessTypes = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, entry.elementKeys || []);
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     if(!huntMeta.hasNaturalElements && !normalizedWeaknessTypes.length) return null;
 
@@ -8663,6 +8773,11 @@ function getTeamBuilderEntryKey(entry){
     return `${normalizePokemonCatalogVariant(entry.variant)}:${entry.id || entry.routeSlug || entry.name}`;
 }
 
+function getTeamBuilderEntryDuplicateKey(entry){
+    const normalizedName = entry?.searchName || normalizePokemonSearchText(entry?.name || '');
+    return normalizedName.replace(/^mega\s+/, '').trim();
+}
+
 function getTeamBuilderEntryLevelNumber(entry){
     const numericLevel = Number.parseFloat(String(entry?.level ?? '').trim());
     return Number.isFinite(numericLevel) ? numericLevel : null;
@@ -8682,6 +8797,24 @@ function getTeamBuilderSelectedKeys(exceptSlotId = ''){
     );
 }
 
+function getTeamBuilderSelectedDuplicateKeys(exceptSlotId = ''){
+    return new Set(
+        Object.entries(teamBuilderSelections || {})
+            .filter(([slotId]) => slotId !== exceptSlotId)
+            .map(([, entry]) => getTeamBuilderEntryDuplicateKey(entry))
+            .filter(Boolean)
+    );
+}
+
+function getTeamBuilderDuplicateSelectionEntry(entry, exceptSlotId = ''){
+    const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
+    if(!duplicateKey) return null;
+    return Object.entries(teamBuilderSelections || {})
+        .filter(([slotId]) => slotId !== exceptSlotId)
+        .map(([, selectedEntry]) => selectedEntry)
+        .find(selectedEntry => getTeamBuilderEntryDuplicateKey(selectedEntry) === duplicateKey) || null;
+}
+
 function getTeamBuilderSelectedMegaEntry(exceptSlotId = ''){
     const selectedMega = Object.entries(teamBuilderSelections || {})
         .filter(([slotId]) => slotId !== exceptSlotId)
@@ -8692,6 +8825,11 @@ function getTeamBuilderSelectedMegaEntry(exceptSlotId = ''){
 
 function isTeamBuilderMegaSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
     return isMegaPokemonCatalogEntry(entry) && Boolean(getTeamBuilderSelectedMegaEntry(slotId));
+}
+
+function isTeamBuilderDuplicateSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
+    const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
+    return Boolean(duplicateKey && getTeamBuilderSelectedDuplicateKeys(slotId).has(duplicateKey));
 }
 
 function isTeamBuilderBossEntry(entry){
@@ -8736,10 +8874,12 @@ function getFilteredTeamBuilderEntries(){
         ? teamBuilderFilters.roles.map(normalizePokemonRoleKey).filter(Boolean)
         : [];
     const selectedKeys = getTeamBuilderSelectedKeys(teamBuilderActiveSlotId);
+    const selectedDuplicateKeys = getTeamBuilderSelectedDuplicateKeys(teamBuilderActiveSlotId);
 
     return getTeamBuilderCatalogEntries()
         .filter(entry => {
             if(selectedKeys.has(getTeamBuilderEntryKey(entry))) return false;
+            if(selectedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))) return false;
             if(isTeamBuilderMegaSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
             if(!teamBuilderEntryMatchesSlot(entry, slotConfig)) return false;
             if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
@@ -9088,6 +9228,15 @@ function createTeamBuilderPokemonCard(entry){
     card.appendChild(roleIcon);
     if(passiveBadge) card.appendChild(passiveBadge);
     card.addEventListener('click', () => {
+        if(isTeamBuilderDuplicateSelectionBlocked(entry, teamBuilderActiveSlotId)){
+            if(teamBuilderStatus){
+                const selectedDuplicate = getTeamBuilderDuplicateSelectionEntry(entry, teamBuilderActiveSlotId);
+                teamBuilderStatus.textContent = selectedDuplicate
+                    ? `Seu time ja possui ${selectedDuplicate.name}, entao ${entry.name} nao pode entrar no mesmo time.`
+                    : `${entry.name} ja possui uma variante equivalente no time.`;
+            }
+            return;
+        }
         if(isTeamBuilderMegaSelectionBlocked(entry, teamBuilderActiveSlotId)){
             if(teamBuilderStatus){
                 const selectedMega = getTeamBuilderSelectedMegaEntry(teamBuilderActiveSlotId);
@@ -9737,12 +9886,14 @@ function getTeamBuilderKnownHuntCandidates(){
                 });
                 if(!existing.image && huntObject?.image) existing.image = String(huntObject.image || '').trim();
                 if(!existing.note && huntObject?.note) existing.note = String(huntObject.note || '').trim();
+                if(!existing.sourceHuntName && huntObject?.sourceHuntName) existing.sourceHuntName = String(huntObject.sourceHuntName || '').trim();
                 return;
             }
             huntCandidates.set(key, {
                 name: huntName,
                 note: String(huntObject?.note || '').trim(),
                 image: String(huntObject?.image || '').trim(),
+                sourceHuntName: String(huntObject?.sourceHuntName || '').trim(),
                 fallbackTypeKeys,
                 sourceTeams: [team]
             });
@@ -9776,9 +9927,10 @@ function getTeamBuilderHuntRecommendations(){
     getTeamBuilderKnownHuntCandidates().forEach(candidate => {
         const huntName = String(candidate?.name || '').trim();
         if(!huntName) return;
-        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(huntName, candidate.fallbackTypeKeys || []);
-        if(!areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, huntName, weaknessTypeKeys)) return;
-        const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
+        const effectiveHuntName = String(candidate?.sourceHuntName || huntName).trim();
+        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, candidate.fallbackTypeKeys || []);
+        if(!areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, effectiveHuntName, weaknessTypeKeys)) return;
+        const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
         const sourceScore = (Array.isArray(candidate.sourceTeams) ? candidate.sourceTeams : []).reduce((score, team) => {
             const teamMembers = Array.isArray(team.pokemons) ? team.pokemons : [];
             const memberScore = teamMembers.reduce((memberTotal, member) => {
@@ -10004,6 +10156,34 @@ function getHuntBuilderTargetDefinitionNames(definition){
     ].map(value => String(value || '').trim()).filter(Boolean)));
 }
 
+function getExpandedHuntBuilderTargetDefinitions(){
+    const definitions = [];
+    const seenKeys = new Set();
+    const addDefinition = (definition) => {
+        const name = String(definition?.name || '').trim();
+        const key = normalizePokemonSearchText(name);
+        if(!name || !key || seenKeys.has(key)) return;
+        seenKeys.add(key);
+        definitions.push(definition);
+    };
+
+    HUNT_BUILDER_TARGET_DEFINITIONS.forEach(definition => {
+        addDefinition(definition);
+        getHuntBuilderTargetDefinitionNames(definition).forEach(sourceName => {
+            getTeamHuntPreEvolutionEntries(sourceName).forEach(preEvolution => {
+                addDefinition({
+                    name: preEvolution.name,
+                    metaName: definition?.metaName || sourceName,
+                    image: preEvolution.image || buildTeamPokemonImageFileName(preEvolution.name),
+                    lookupNames: [preEvolution.name]
+                });
+            });
+        });
+    });
+
+    return definitions;
+}
+
 function findHuntBuilderTargetCatalogEntry(definition){
     const names = getHuntBuilderTargetDefinitionNames(definition);
     for(const name of names){
@@ -10036,7 +10216,7 @@ function createHuntBuilderTargetEntry(definition){
 }
 
 function getHuntBuilderTargetEntries(){
-    return HUNT_BUILDER_TARGET_DEFINITIONS
+    return getExpandedHuntBuilderTargetDefinitions()
         .map(createHuntBuilderTargetEntry)
         .filter(Boolean);
 }
@@ -10315,11 +10495,15 @@ function getHuntBuilderTeamEntryKeys(slots = []){
 function buildHuntBuilderTeam(){
     const compatibleEntries = getHuntBuilderCompatibleEntries();
     const usedKeys = new Set();
+    const usedDuplicateKeys = new Set();
     const previousKeys = new Set(huntBuilderPreviousTeamKeys);
     const selectedBySlot = {};
     const pickEntry = (pool, slotId, offset = 0, options = {}) => {
         const availableEntries = rotateHuntBuilderEntries(sortHuntBuilderEntries(pool, slotId.startsWith('dps') ? 'dps' : slotId), offset)
-            .filter(entry => !usedKeys.has(getTeamBuilderEntryKey(entry)));
+            .filter(entry => (
+                !usedKeys.has(getTeamBuilderEntryKey(entry))
+                && !usedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))
+            ));
         const preferredEntry = options.allowPreviousMegaDragonite && isHuntBuilderFlexibleMegaDragonite(availableEntries[0])
             ? availableEntries[0]
             : null;
@@ -10330,6 +10514,7 @@ function buildHuntBuilderTeam(){
             || null;
         if(!available) return null;
         usedKeys.add(getTeamBuilderEntryKey(available));
+        usedDuplicateKeys.add(getTeamBuilderEntryDuplicateKey(available));
         selectedBySlot[slotId] = available;
         return available;
     };
@@ -10379,6 +10564,19 @@ function createHuntBuilderHeldIcon(item){
     return wrapper;
 }
 
+function getHuntBuilderHeldMovesetKeys(entry){
+    const movesetKeys = getTeamBuilderEntryMovesetKeys(entry);
+    if(movesetKeys.length <= 1) return movesetKeys;
+
+    const selectedTypes = new Set(
+        (Array.isArray(huntBuilderSelectedTypes) ? huntBuilderSelectedTypes : [])
+            .map(normalizePokemonTypeKey)
+            .filter(Boolean)
+    );
+    const selectedMovesets = movesetKeys.filter(typeKey => selectedTypes.has(typeKey));
+    return selectedMovesets.length ? selectedMovesets : movesetKeys;
+}
+
 function getHuntBuilderHeldSuggestions(slot){
     if(slot?.kind === 'ar'){
         return [
@@ -10387,7 +10585,7 @@ function getHuntBuilderHeldSuggestions(slot){
             HUNT_BUILDER_HELD_ITEMS.leftovers
         ];
     }
-    const movesetItems = getTeamBuilderEntryMovesetKeys(slot?.entry)
+    const movesetItems = getHuntBuilderHeldMovesetKeys(slot?.entry)
         .flatMap(typeKey => HUNT_BUILDER_HELD_ITEMS_BY_MOVESET[typeKey] || []);
     return [
         HUNT_BUILDER_HELD_ITEMS.choiceBand,
