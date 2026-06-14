@@ -110,11 +110,12 @@ const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
 const contentTimes = document.getElementById('content-times');
 const contentTeamBuilder = document.getElementById('content-team-builder');
+const contentHuntBuilder = document.getElementById('content-hunt-builder');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -175,6 +176,19 @@ const teamBuilderCompletePanel = document.getElementById('team-builder-complete'
 const teamBuilderHunts = document.getElementById('team-builder-hunts');
 const teamBuilderStatus = document.getElementById('team-builder-status');
 const teamBuilderResults = document.getElementById('team-builder-results');
+const huntBuilderSearchInput = document.getElementById('hunt-builder-search');
+const huntBuilderSearchResults = document.getElementById('hunt-builder-search-results');
+const huntBuilderTarget = document.getElementById('hunt-builder-target');
+const huntBuilderTypesPanel = document.getElementById('hunt-builder-types-panel');
+const huntBuilderTypeOptions = document.getElementById('hunt-builder-type-options');
+const huntBuilderClanPanel = document.getElementById('hunt-builder-clan-panel');
+const huntBuilderClanOptions = document.getElementById('hunt-builder-clan-options');
+const huntBuilderResultPanel = document.getElementById('hunt-builder-result-panel');
+const huntBuilderStatus = document.getElementById('hunt-builder-status');
+const huntBuilderTeam = document.getElementById('hunt-builder-team');
+const huntBuilderRegenerateBtn = document.getElementById('hunt-builder-regenerate');
+const huntBuilderClearBtn = document.getElementById('hunt-builder-clear');
+const huntBuilderMoveTeamBtn = document.getElementById('hunt-builder-move-team');
 const timesStatus = document.getElementById('times-status');
 const timesSearchInput = document.getElementById('times-search-input');
 const timesCardGrid = document.getElementById('times-card-grid');
@@ -268,7 +282,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260612d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260614a';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -302,6 +316,8 @@ const APP_ROUTE_ALIASES = {
     times: { path: '/times', tab: 'times' },
     'team-builder': { path: '/team-builder', tab: 'team-builder' },
     teambuilder: { path: '/team-builder', tab: 'team-builder' },
+    'hunt-builder': { path: '/hunt-builder', tab: 'hunt-builder' },
+    huntbuilder: { path: '/hunt-builder', tab: 'hunt-builder' },
     catch: { path: '/catch', tab: 'catch' },
     streamers: { path: '/streamers', tab: 'streamers' },
     youtube: { path: '/youtube', tab: 'youtube' },
@@ -323,9 +339,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260612j';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612c';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260612b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260614c';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260612d';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -579,7 +595,22 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Mantyke', 'Mantine'],
     ['Snover', 'Abomasnow'],
     ['Eevee', 'Leafeon'],
-    ['Eevee', 'Glaceon']
+    ['Eevee', 'Glaceon'],
+    // Generation 5 evolutions
+    ['Snivy', 'Servine'],
+    ['Servine', 'Serperior'],
+    ['Tepig', 'Pignite'],
+    ['Pignite', 'Emboar'],
+    ['Oshawott', 'Dewott'],
+    ['Dewott', 'Samurott'],
+    ['Tynamo', 'Eelektrik'],
+    ['Eelektrik', 'Eelektross'],
+    ['Sandile', 'Krokorok'],
+    ['Krokorok', 'Krookodile'],
+    // Generation 6 evolutions
+    ['Litleo', 'Pyroar Female'],
+    ['Litleo', 'Pyroar Male'],
+    ['Binacle', 'Barbaracle']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
@@ -931,6 +962,80 @@ let teamBuilderFilters = {
     roles: [],
     type: 'all'
 };
+const HUNT_BUILDER_SLOT_CONFIGS = Object.freeze([
+    { id: 'ar', label: 'All-Rounder', kind: 'ar' },
+    { id: 'dps-1', label: 'DPS/Stun 1', kind: 'dps' },
+    { id: 'dps-2', label: 'DPS/Stun 2', kind: 'dps' },
+    { id: 'dps-3', label: 'DPS/Stun 3', kind: 'dps' },
+    { id: 'dps-4', label: 'DPS/Stun 4', kind: 'dps' },
+    { id: 'finisher', label: 'Finisher', kind: 'finisher' }
+]);
+const HUNT_BUILDER_TARGET_DEFINITIONS = Object.freeze([
+    { name: 'Dragonite' },
+    { name: 'Goodra', image: 'pokemons/6gen/goodra.png' },
+    { name: 'Garchomp' },
+    { name: 'Hydreigon' },
+    { name: 'Kommo-o', image: 'pokemons/7gen/kommo-o.png' },
+    { name: 'Honedge', image: 'pokemons/6gen/honedge.png' },
+    { name: 'Zorua' },
+    { name: 'Applin', image: 'pokemons/8gen/applin.png' },
+    { name: 'Salamance', lookupNames: ['Salamence'] },
+    { name: 'Palafin', image: 'pokemons/9gen/palafin.png' },
+    { name: 'Aggron' },
+    { name: 'Metagross' },
+    { name: 'Grimmsnawl', lookupNames: ['Grimmsnarl'], metaName: 'Grimmsnarl' },
+    { name: 'Tyranitar' },
+    { name: 'Porygon Z', lookupNames: ['Porygon-Z', 'Porygon'] },
+    { name: 'Hariyama' },
+    { name: 'Dragapult' },
+    { name: 'Tsaarena', lookupNames: ['Tsareena'], metaName: 'Tsareena' },
+    { name: 'Tinkaton' },
+    { name: 'Kingambit' },
+    { name: 'Drednaw' },
+    { name: 'Crabominable' },
+    { name: 'Baxcalibur' },
+    { name: 'Archaludon' },
+    { name: 'Volcarona' },
+    { name: 'Chandelure' },
+    { name: 'Toxtricity' },
+    { name: 'Armarouge' },
+    { name: 'Ceruledge' },
+    { name: 'Golisopod' }
+]);
+const HUNT_BUILDER_HELD_ITEMS = Object.freeze({
+    assaultVest: { name: 'Obrigatorio: Assault Vest T5~T7', file: 'assaultvest.png' },
+    berryJuice: { name: 'Opcional: Berry Juice Incomum', file: 'berryjuice.png' },
+    leftovers: { name: 'Opcional: Leftovers Incomum', file: 'leftovers.png' },
+    choiceBand: { name: 'Obrigatorio: Choice Band T5~T7', file: 'choiceband.png' },
+    laggingTail: { name: 'Opcional: Lagging Tail Incomum', file: 'laggingtail.png' }
+});
+const HUNT_BUILDER_HELD_ITEMS_BY_MOVESET = Object.freeze({
+    normal: [{ name: 'Opcional: Silk Scarf para moveset normal', file: 'silkscarf.png' }],
+    poison: [{ name: 'Opcional: Poison Barb para moveset venom', file: 'poisonbarb.png' }],
+    bug: [{ name: 'Opcional: Silver Powder para moveset insect', file: 'silverpowder.png' }],
+    grass: [{ name: 'Opcional: Miracle Seed para moveset grass', file: 'miracleseed.png' }],
+    ghost: [{ name: 'Opcional: Spell Tag para moveset ghost', file: 'spelltag.png' }],
+    dragon: [{ name: 'Opcional: Dragon Fang para moveset dragon', file: 'dragonfang.png' }],
+    electric: [{ name: 'Opcional: Magnet para moveset electric', file: 'magnet.png' }],
+    water: [{ name: 'Opcional: Mystic Water para moveset water', file: 'mysticwater.png' }],
+    psychic: [{ name: 'Opcional: Twisted Spoon para moveset psychic', file: 'twistedspoon.png' }],
+    dark: [{ name: 'Opcional: Black Glasses para moveset dark', file: 'blackglasses.png' }],
+    ground: [{ name: 'Opcional: Soft Sand para moveset ground', file: 'softsand.png' }],
+    fairy: [{ name: 'Opcional: Fairy Feather para moveset fairy', file: 'fairyfeather.png' }],
+    fire: [{ name: 'Opcional: Charcoal para moveset fire', file: 'charcoal.png' }],
+    fighting: [{ name: 'Opcional: Black Belt para moveset fighter', file: 'blackbelt.png' }],
+    ice: [{ name: 'Opcional: Never-Melt Ice para moveset ice', file: 'never-meltice.png' }],
+    flying: [{ name: 'Opcional: Sharp Beak para moveset flying', file: 'sharpbeak.png' }],
+    steel: [{ name: 'Opcional: Metal Powder para moveset steel', file: 'metalpowder.png' }]
+});
+let huntBuilderInitialized = false;
+let huntBuilderSelectedTarget = null;
+let huntBuilderSelectedTypes = [];
+let huntBuilderSelectedClan = '';
+let huntBuilderGeneration = 0;
+let huntBuilderSearchHideTimer = 0;
+let huntBuilderLastTeamKeys = [];
+let huntBuilderPreviousTeamKeys = [];
 const POKEMON_ROLE_ORDER = Object.freeze(['supporter', 'all-rounder', 'attacker', 'defender', 'speedster']);
 const POKEMON_ROLE_ALIASES = Object.freeze({
     support: 'supporter',
@@ -2773,6 +2878,7 @@ function getActiveSiteTarget(){
     if(contentPokemons && !contentPokemons.hidden) return 'pokemons';
     if(contentTimes && !contentTimes.hidden) return 'times';
     if(contentTeamBuilder && !contentTeamBuilder.hidden) return 'team-builder';
+    if(contentHuntBuilder && !contentHuntBuilder.hidden) return 'hunt-builder';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
     if(tabCalcBtn?.classList.contains('active')) return 'calculator';
@@ -2945,6 +3051,7 @@ function activateSidebarTarget(button){
         pokemons: showPokemons,
         times: showTimes,
         'team-builder': showTeamBuilder,
+        'hunt-builder': showHuntBuilder,
         catch: showCatch,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
         streamers: showStreamers,
@@ -3082,6 +3189,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
         { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo de Pokemon e Megas', icon: 'PK', tags: ['catalogo', 'mega'] },
         { id: 'route:times', kind: 'route', target: 'times', title: 'Times', category: 'Catalogo', description: 'Composicoes por cla e elemento', icon: 'TM', tags: ['mystic', 'valor', 'instinct', 'composicao'] },
+        { id: 'route:hunt-builder', kind: 'route', target: 'hunt-builder', title: 'Hunt Builder', category: 'Sistema', description: 'Gera times por hunt, fraqueza e cla', icon: 'HB', tags: ['hunt', 'time', 'fraqueza', 'finisher', 'stunner'] },
         { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
         { id: 'route:champion', kind: 'route', target: 'bosses', bossMode: 'champion', title: 'Champion Path', category: 'Bosses', description: 'Bosses Champion Path', icon: 'CP', tags: ['chefes', 'tanque', 'dps', 'suporte'] },
@@ -4224,6 +4332,8 @@ function updateTextContent(){
         if(titleEl) titleEl.textContent = t('timesTitle');
     } else if(contentTeamBuilder && !contentTeamBuilder.hidden){
         if(titleEl) titleEl.textContent = 'Team Builder';
+    } else if(contentHuntBuilder && !contentHuntBuilder.hidden){
+        if(titleEl) titleEl.textContent = 'Hunt Builder';
     } else if(tabCalcBtn && tabCalcBtn.classList.contains('active')){
         if(titleEl) titleEl.textContent = t('calculatorTitle');
     } else if(tabFossilsBtn && tabFossilsBtn.classList.contains('active')){
@@ -4739,6 +4849,7 @@ function openHomeDestination(target){
         pokemons: showPokemons,
         times: showTimes,
         'team-builder': showTeamBuilder,
+        'hunt-builder': showHuntBuilder,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
@@ -9614,7 +9725,8 @@ function getTeamBuilderKnownHuntCandidates(){
                 .filter(Boolean)
         ));
         [...(team.hunts || []), ...(team.alternativeHunts || [])].forEach(hunt => {
-            const huntName = String(hunt?.name || '').trim();
+            const huntObject = hunt && typeof hunt === 'object' ? hunt : null;
+            const huntName = String(huntObject?.name || hunt || '').trim();
             if(!huntName) return;
             const key = normalizePokemonSearchText(huntName);
             const existing = huntCandidates.get(key);
@@ -9623,14 +9735,14 @@ function getTeamBuilderKnownHuntCandidates(){
                 fallbackTypeKeys.forEach(typeKey => {
                     if(!existing.fallbackTypeKeys.includes(typeKey)) existing.fallbackTypeKeys.push(typeKey);
                 });
-                if(!existing.image && hunt?.image) existing.image = String(hunt.image || '').trim();
-                if(!existing.note && hunt?.note) existing.note = String(hunt.note || '').trim();
+                if(!existing.image && huntObject?.image) existing.image = String(huntObject.image || '').trim();
+                if(!existing.note && huntObject?.note) existing.note = String(huntObject.note || '').trim();
                 return;
             }
             huntCandidates.set(key, {
                 name: huntName,
-                note: String(hunt?.note || '').trim(),
-                image: String(hunt?.image || '').trim(),
+                note: String(huntObject?.note || '').trim(),
+                image: String(huntObject?.image || '').trim(),
                 fallbackTypeKeys,
                 sourceTeams: [team]
             });
@@ -9638,6 +9750,7 @@ function getTeamBuilderKnownHuntCandidates(){
     });
     Object.keys(TEAM_BUILDER_HUNT_META_OVERRIDES || {}).forEach(key => {
         if(key === 'tsaarena' && huntCandidates.has('tsareena')) return;
+        if(key === 'salamance' && huntCandidates.has('salamence')) return;
         if(!huntCandidates.has(key)){
             huntCandidates.set(key, {
                 name: key.split(' ').map(part => part ? part[0].toUpperCase() + part.slice(1) : '').join(' '),
@@ -9879,6 +9992,669 @@ function showTeamBuilder(){
     }).catch(error => {
         console.error('Team Builder load failed', error);
         if(teamBuilderStatus) teamBuilderStatus.textContent = 'Nao foi possivel carregar o Team Builder.';
+    });
+    updateUrl();
+}
+
+function getHuntBuilderTargetDefinitionNames(definition){
+    return Array.from(new Set([
+        definition?.name,
+        definition?.metaName,
+        ...(Array.isArray(definition?.lookupNames) ? definition.lookupNames : [])
+    ].map(value => String(value || '').trim()).filter(Boolean)));
+}
+
+function findHuntBuilderTargetCatalogEntry(definition){
+    const names = getHuntBuilderTargetDefinitionNames(definition);
+    for(const name of names){
+        const entry = findTeamBuilderPokemonCatalogEntry(name);
+        if(entry) return entry;
+    }
+    return null;
+}
+
+function createHuntBuilderTargetEntry(definition){
+    const catalogEntry = findHuntBuilderTargetCatalogEntry(definition);
+    const combatMeta = getTeamBuilderHuntCombatMeta(definition?.metaName || definition?.name || '');
+    const names = getHuntBuilderTargetDefinitionNames(definition);
+    const displayName = String(definition?.name || catalogEntry?.name || '').trim();
+    if(!displayName) return null;
+    const entry = {
+        ...(catalogEntry || {}),
+        id: `hunt:${normalizePokemonSearchText(displayName)}`,
+        name: displayName,
+        searchName: normalizePokemonSearchText(displayName),
+        huntSearchBase: normalizePokemonSearchText(names.join(' ')),
+        huntLookupNames: names,
+        naturalElements: combatMeta.naturalElements,
+        moveset: combatMeta.moveset,
+        catalogHidden: false
+    };
+    if(definition?.image) entry.image = definition.image;
+    else if(catalogEntry?.image && !entry.image) entry.image = catalogEntry.image;
+    return entry;
+}
+
+function getHuntBuilderTargetEntries(){
+    return HUNT_BUILDER_TARGET_DEFINITIONS
+        .map(createHuntBuilderTargetEntry)
+        .filter(Boolean);
+}
+
+function getHuntBuilderSearchEntries(query = ''){
+    const normalizedQuery = normalizePokemonSearchText(query);
+    return getHuntBuilderTargetEntries()
+        .filter(entry => {
+            const searchBase = entry.huntSearchBase || entry.searchName || normalizePokemonSearchText(entry.name);
+            return !normalizedQuery || searchBase.includes(normalizedQuery);
+        })
+        .slice(0, 12);
+}
+
+function hideHuntBuilderSearchResults(){
+    if(huntBuilderSearchResults){
+        huntBuilderSearchResults.hidden = true;
+        huntBuilderSearchResults.replaceChildren();
+    }
+    if(huntBuilderSearchInput){
+        huntBuilderSearchInput.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function clearHuntBuilderSearchHideTimer(){
+    if(!huntBuilderSearchHideTimer) return;
+    window.clearTimeout(huntBuilderSearchHideTimer);
+    huntBuilderSearchHideTimer = 0;
+}
+
+function createHuntBuilderSearchResult(entry){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'hunt-builder-search-result';
+    button.setAttribute('role', 'option');
+
+    const image = document.createElement('img');
+    image.src = getPokemonImageSource(entry);
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+
+    const copy = document.createElement('span');
+    copy.className = 'hunt-builder-search-result__copy';
+    const name = document.createElement('strong');
+    name.textContent = entry.name;
+    const meta = document.createElement('span');
+    meta.className = 'hunt-builder-search-result__meta';
+    const types = createTeamBuilderTypeSummaryRow('Tipo', entry.naturalElements || []);
+    const moveset = createTeamBuilderTypeSummaryRow('Moveset', entry.moveset || []);
+    if(moveset) moveset.classList.add('hunt-builder-search-result__moveset');
+    if(moveset) meta.appendChild(moveset);
+    if(types) meta.appendChild(types);
+    copy.append(name, meta);
+
+    button.append(image, copy);
+    button.addEventListener('mousedown', event => event.preventDefault());
+    button.addEventListener('click', () => {
+        huntBuilderSelectedTarget = entry;
+        huntBuilderSelectedTypes = [];
+        huntBuilderSelectedClan = '';
+        resetHuntBuilderRegenerationState();
+        if(huntBuilderSearchInput) huntBuilderSearchInput.value = entry.name;
+        hideHuntBuilderSearchResults();
+        renderHuntBuilder();
+    });
+    return button;
+}
+
+function renderHuntBuilderSearchResults(query = huntBuilderSearchInput?.value || ''){
+    if(!huntBuilderSearchResults || !huntBuilderSearchInput) return;
+    const entries = getHuntBuilderSearchEntries(query);
+    if(!entries.length){
+        const empty = document.createElement('p');
+        empty.className = 'hunt-builder-search-empty';
+        empty.textContent = 'Nenhum Pokemon encontrado.';
+        huntBuilderSearchResults.replaceChildren(empty);
+    } else {
+        const fragment = document.createDocumentFragment();
+        entries.forEach(entry => fragment.appendChild(createHuntBuilderSearchResult(entry)));
+        huntBuilderSearchResults.replaceChildren(fragment);
+    }
+    huntBuilderSearchResults.hidden = false;
+    huntBuilderSearchInput.setAttribute('aria-expanded', 'true');
+}
+
+function renderHuntBuilderTarget(){
+    if(!huntBuilderTarget) return;
+    const entry = huntBuilderSelectedTarget;
+    if(!entry){
+        huntBuilderTarget.hidden = true;
+        huntBuilderTarget.replaceChildren();
+        return;
+    }
+
+    const image = document.createElement('img');
+    image.src = getPokemonImageSource(entry);
+    image.alt = `Imagem de ${entry.name}`;
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+
+    const copy = document.createElement('div');
+    const eyebrow = document.createElement('span');
+    eyebrow.className = 'hunt-builder-eyebrow';
+    eyebrow.textContent = 'Hunt selecionada';
+    const name = document.createElement('strong');
+    name.textContent = entry.name;
+    const types = createPokemonTokenRow(entry.naturalElements);
+    const moveset = createTeamBuilderTypeSummaryRow('Moveset', entry.moveset || []);
+    if(moveset) moveset.classList.add('hunt-builder-target__moveset');
+    copy.append(eyebrow, name, types);
+    if(moveset) copy.appendChild(moveset);
+
+    huntBuilderTarget.replaceChildren(image, copy);
+    huntBuilderTarget.hidden = false;
+}
+
+function renderHuntBuilderTypeOptions(){
+    if(!huntBuilderTypeOptions || !huntBuilderTypesPanel) return;
+    const entry = huntBuilderSelectedTarget;
+    if(!entry || !huntBuilderSelectedClan){
+        huntBuilderTypesPanel.hidden = true;
+        huntBuilderTypeOptions.replaceChildren();
+        return;
+    }
+
+    const weaknessesList = getPokemonWeaknesses(entry.naturalElements);
+    const fragment = document.createDocumentFragment();
+    weaknessesList.forEach(weakness => {
+        const typeKey = normalizePokemonTypeKey(weakness.type);
+        const selected = huntBuilderSelectedTypes.includes(typeKey);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'hunt-builder-option hunt-builder-option--type';
+        button.dataset.type = typeKey;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        button.setAttribute('aria-label', `${formatPokemonTypeLabel(typeKey)} ${formatTypeMultiplierValue(weakness.multiplier)}`);
+        button.title = formatPokemonTypeLabel(typeKey);
+
+        const icon = document.createElement('img');
+        icon.src = `icons-type/${typeKey}.png`;
+        icon.alt = '';
+        icon.loading = 'lazy';
+        icon.decoding = 'async';
+        setImageFallback(icon, POKEMON_IMAGE_PLACEHOLDER);
+
+        const multiplier = document.createElement('span');
+        multiplier.textContent = formatTypeMultiplierValue(weakness.multiplier);
+        button.append(icon, multiplier);
+        button.addEventListener('click', () => {
+            const current = new Set(huntBuilderSelectedTypes);
+            if(current.has(typeKey)) current.delete(typeKey);
+            else current.add(typeKey);
+            huntBuilderSelectedTypes = Array.from(current);
+            resetHuntBuilderRegenerationState();
+            renderHuntBuilder();
+        });
+        fragment.appendChild(button);
+    });
+
+    huntBuilderTypeOptions.replaceChildren(fragment);
+    huntBuilderTypesPanel.hidden = false;
+}
+
+function renderHuntBuilderClanOptions(){
+    if(!huntBuilderClanOptions || !huntBuilderClanPanel) return;
+    if(!huntBuilderSelectedTarget){
+        huntBuilderClanPanel.hidden = true;
+        huntBuilderClanOptions.replaceChildren();
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    ['instinct', 'mystic', 'valor'].forEach(clanKey => {
+        const teamInfo = getPokemonTeamInfo(clanKey);
+        const selected = huntBuilderSelectedClan === clanKey;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'hunt-builder-option hunt-builder-option--clan';
+        button.dataset.clan = clanKey;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        button.setAttribute('aria-label', teamInfo.label);
+        button.title = teamInfo.label;
+
+        const image = document.createElement('img');
+        image.src = teamInfo.image;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        button.appendChild(image);
+        button.addEventListener('click', () => {
+            huntBuilderSelectedClan = clanKey;
+            resetHuntBuilderRegenerationState();
+            renderHuntBuilder();
+        });
+        fragment.appendChild(button);
+    });
+
+    huntBuilderClanOptions.replaceChildren(fragment);
+    huntBuilderClanPanel.hidden = false;
+}
+
+function getHuntBuilderCandidateLevel(entry){
+    const numericLevel = Number(entry?.level);
+    if(Number.isFinite(numericLevel)) return numericLevel;
+    return String(entry?.level || '').trim().toLowerCase() === 'ace' ? 100 : 0;
+}
+
+function getHuntBuilderEntrySubFunctionKeys(entry){
+    return getPokemonEntrySubFunctions(entry).map(subFunction => subFunction.key);
+}
+
+function getHuntBuilderSelectedTargetKeys(){
+    return new Set(
+        [huntBuilderSelectedTarget?.name, ...(Array.isArray(huntBuilderSelectedTarget?.huntLookupNames) ? huntBuilderSelectedTarget.huntLookupNames : [])]
+            .map(normalizePokemonSearchText)
+            .filter(Boolean)
+    );
+}
+
+function getHuntBuilderCompatibleEntries(){
+    const selectedTypes = new Set(huntBuilderSelectedTypes.map(normalizePokemonTypeKey));
+    const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
+    const allowedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+        .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
+
+    return [...normalEntries, ...allowedMegaEntries]
+        .filter(entry => {
+            if(!entry || entry.catalogHidden) return false;
+            if(entry.team !== huntBuilderSelectedClan) return false;
+            if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
+            if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
+            return getTeamBuilderEntryMovesetKeys(entry).some(typeKey => selectedTypes.has(typeKey));
+        });
+}
+
+function isHuntBuilderFlexibleMegaDragonite(entry){
+    return normalizePokemonSearchText(entry?.name) === 'mega dragonite';
+}
+
+function sortHuntBuilderEntries(entries, kind){
+    return [...entries].sort((left, right) => {
+        const leftFunctions = getHuntBuilderEntrySubFunctionKeys(left);
+        const rightFunctions = getHuntBuilderEntrySubFunctionKeys(right);
+        if(kind === 'dps'){
+            const leftStunner = leftFunctions.includes('stunner') ? 1 : 0;
+            const rightStunner = rightFunctions.includes('stunner') ? 1 : 0;
+            if(leftStunner !== rightStunner) return rightStunner - leftStunner;
+        }
+        const levelDifference = getHuntBuilderCandidateLevel(right) - getHuntBuilderCandidateLevel(left);
+        if(levelDifference) return levelDifference;
+        return left.name.localeCompare(right.name);
+    });
+}
+
+function rotateHuntBuilderEntries(entries, offset){
+    if(!entries.length) return [];
+    const safeOffset = Math.abs(Number(offset) || 0) % entries.length;
+    return [...entries.slice(safeOffset), ...entries.slice(0, safeOffset)];
+}
+
+function resetHuntBuilderRegenerationState(){
+    huntBuilderGeneration = 0;
+    huntBuilderLastTeamKeys = [];
+    huntBuilderPreviousTeamKeys = [];
+}
+
+function getHuntBuilderTeamEntryKeys(slots = []){
+    return (Array.isArray(slots) ? slots : [])
+        .map(slot => getTeamBuilderEntryKey(slot?.entry))
+        .filter(Boolean);
+}
+
+function buildHuntBuilderTeam(){
+    const compatibleEntries = getHuntBuilderCompatibleEntries();
+    const usedKeys = new Set();
+    const previousKeys = new Set(huntBuilderPreviousTeamKeys);
+    const selectedBySlot = {};
+    const pickEntry = (pool, slotId, offset = 0) => {
+        const availableEntries = rotateHuntBuilderEntries(sortHuntBuilderEntries(pool, slotId.startsWith('dps') ? 'dps' : slotId), offset)
+            .filter(entry => !usedKeys.has(getTeamBuilderEntryKey(entry)));
+        const available = availableEntries.find(entry => !previousKeys.has(getTeamBuilderEntryKey(entry)))
+            || availableEntries[0]
+            || null;
+        if(!available) return null;
+        usedKeys.add(getTeamBuilderEntryKey(available));
+        selectedBySlot[slotId] = available;
+        return available;
+    };
+
+    const finisherPool = compatibleEntries.filter(entry => (
+        getHuntBuilderEntrySubFunctionKeys(entry).includes('finisher')
+        || isHuntBuilderFlexibleMegaDragonite(entry)
+    ));
+    const allRounderPool = compatibleEntries.filter(entry => entry.roleKey === 'all-rounder');
+    const dpsPool = compatibleEntries.filter(entry => (
+        entry.roleKey === 'attacker'
+        || isHuntBuilderFlexibleMegaDragonite(entry)
+    ));
+
+    pickEntry(finisherPool, 'finisher', huntBuilderGeneration);
+    pickEntry(allRounderPool, 'ar', huntBuilderGeneration);
+    HUNT_BUILDER_SLOT_CONFIGS
+        .filter(slot => slot.kind === 'dps')
+        .forEach((slot, index) => pickEntry(dpsPool, slot.id, huntBuilderGeneration + index));
+
+    return HUNT_BUILDER_SLOT_CONFIGS.map(slot => ({
+        ...slot,
+        entry: selectedBySlot[slot.id] || null
+    }));
+}
+
+function createHuntBuilderHeldIcon(item){
+    const wrapper = document.createElement('span');
+    wrapper.className = 'hunt-builder-team-card__held-item';
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('aria-label', item.name);
+
+    const icon = document.createElement('img');
+    icon.src = `helds/${item.file}`;
+    icon.alt = '';
+    icon.loading = 'lazy';
+    icon.decoding = 'async';
+    icon.onerror = () => {
+        wrapper.hidden = true;
+    };
+
+    const tooltip = document.createElement('span');
+    tooltip.className = 'hunt-builder-team-card__held-tooltip';
+    tooltip.textContent = item.name;
+
+    wrapper.append(icon, tooltip);
+    return wrapper;
+}
+
+function getHuntBuilderHeldSuggestions(slot){
+    if(slot?.kind === 'ar'){
+        return [
+            HUNT_BUILDER_HELD_ITEMS.assaultVest,
+            HUNT_BUILDER_HELD_ITEMS.berryJuice,
+            HUNT_BUILDER_HELD_ITEMS.leftovers
+        ];
+    }
+    const movesetItems = getTeamBuilderEntryMovesetKeys(slot?.entry)
+        .flatMap(typeKey => HUNT_BUILDER_HELD_ITEMS_BY_MOVESET[typeKey] || []);
+    return [
+        HUNT_BUILDER_HELD_ITEMS.choiceBand,
+        ...movesetItems,
+        HUNT_BUILDER_HELD_ITEMS.laggingTail
+    ];
+}
+
+function createHuntBuilderHeldSuggestions(slot){
+    const items = getHuntBuilderHeldSuggestions(slot);
+    const menu = document.createElement('span');
+    menu.className = 'hunt-builder-team-card__held-menu';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'hunt-builder-team-card__held-toggle';
+    button.title = 'Itens sugeridos';
+    button.setAttribute('aria-label', 'Abrir itens sugeridos');
+    button.setAttribute('aria-expanded', 'false');
+
+    const buttonImage = document.createElement('img');
+    buttonImage.src = 'helds/Held-Button.png';
+    buttonImage.alt = '';
+    buttonImage.setAttribute('aria-hidden', 'true');
+    buttonImage.loading = 'lazy';
+    buttonImage.decoding = 'async';
+    setImageFallback(buttonImage, 'helds/Held-Button.png');
+    button.appendChild(buttonImage);
+
+    const helds = document.createElement('span');
+    helds.className = 'hunt-builder-team-card__helds';
+    helds.setAttribute('aria-label', 'Sugestoes de held');
+    helds.hidden = true;
+    items.forEach(item => helds.appendChild(createHuntBuilderHeldIcon(item)));
+
+    button.addEventListener('click', event => {
+        event.stopPropagation();
+        const isOpen = !helds.hidden;
+        helds.hidden = isOpen;
+        button.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    });
+
+    menu.append(button, helds);
+    return menu;
+}
+
+function createHuntBuilderTeamCard(slot){
+    const card = document.createElement('article');
+    card.className = 'hunt-builder-team-card';
+    card.dataset.slot = slot.id;
+    card.setAttribute('role', 'listitem');
+
+    const header = document.createElement('div');
+    header.className = 'hunt-builder-team-card__header';
+    const slotLabel = document.createElement('strong');
+    slotLabel.textContent = slot.label;
+    header.appendChild(slotLabel);
+
+    if(!slot.entry){
+        card.classList.add('is-empty');
+        const empty = document.createElement('p');
+        empty.textContent = 'Nenhuma opcao compativel.';
+        card.append(header, empty);
+        return card;
+    }
+
+    const entry = slot.entry;
+    const heldMenu = createHuntBuilderHeldSuggestions(slot);
+    const roleIcon = createTeamBuilderRoleIcon(entry);
+    header.appendChild(heldMenu);
+    header.appendChild(roleIcon);
+
+    const image = document.createElement('img');
+    image.className = 'hunt-builder-team-card__pokemon';
+    image.src = getPokemonImageSource(entry);
+    image.alt = `Imagem de ${entry.name}`;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+
+    const name = document.createElement('h4');
+    name.textContent = entry.name;
+
+    const moveset = document.createElement('div');
+    moveset.className = 'hunt-builder-team-card__moveset';
+    getTeamBuilderEntryMovesetKeys(entry).forEach(typeKey => {
+        moveset.appendChild(createPokemonTypeToken(typeKey, { compact: true }));
+    });
+
+    const footer = document.createElement('div');
+    footer.className = 'hunt-builder-team-card__footer';
+    const subFunctions = getPokemonEntrySubFunctions(entry);
+    if(subFunctions.length){
+        footer.appendChild(createPokemonSubFunctionTokenRow(subFunctions));
+    }
+
+    card.append(header, image, name, moveset, footer);
+    return card;
+}
+
+function renderHuntBuilderTeam(){
+    if(!huntBuilderResultPanel || !huntBuilderTeam || !huntBuilderStatus) return;
+    const ready = Boolean(
+        huntBuilderSelectedTarget
+        && huntBuilderSelectedTypes.length
+        && huntBuilderSelectedClan
+    );
+    huntBuilderResultPanel.hidden = !ready;
+    if(!ready){
+        huntBuilderTeam.replaceChildren();
+        huntBuilderStatus.textContent = '';
+        huntBuilderLastTeamKeys = [];
+        huntBuilderPreviousTeamKeys = [];
+        if(huntBuilderMoveTeamBtn){
+            huntBuilderMoveTeamBtn.disabled = true;
+            huntBuilderMoveTeamBtn.title = 'Complete os 6 slots para mover ao Team Builder';
+        }
+        return;
+    }
+
+    const slots = buildHuntBuilderTeam();
+    const fragment = document.createDocumentFragment();
+    slots.forEach(slot => fragment.appendChild(createHuntBuilderTeamCard(slot)));
+    huntBuilderTeam.replaceChildren(fragment);
+    huntBuilderLastTeamKeys = getHuntBuilderTeamEntryKeys(slots);
+
+    const filledCount = slots.filter(slot => slot.entry).length;
+    const isComplete = filledCount === HUNT_BUILDER_SLOT_CONFIGS.length;
+    if(huntBuilderMoveTeamBtn){
+        huntBuilderMoveTeamBtn.disabled = !isComplete;
+        huntBuilderMoveTeamBtn.title = isComplete
+            ? 'Copiar o time sugerido para o Team Builder'
+            : 'Complete os 6 slots para mover ao Team Builder';
+    }
+    const selectedTypeLabels = huntBuilderSelectedTypes.map(formatPokemonTypeLabel).join(', ');
+    huntBuilderStatus.textContent = isComplete
+        ? `Time completo para ${huntBuilderSelectedTarget.name} usando ${selectedTypeLabels}.`
+        : `${filledCount}/6 slots encontrados. Selecione mais tipos ou outro cla para ampliar as opcoes.`;
+}
+
+function renderHuntBuilder(){
+    renderHuntBuilderTarget();
+    renderHuntBuilderTypeOptions();
+    renderHuntBuilderClanOptions();
+    renderHuntBuilderTeam();
+}
+
+function initializeHuntBuilderPage(){
+    if(huntBuilderInitialized) return;
+    huntBuilderInitialized = true;
+
+    if(huntBuilderSearchInput){
+        huntBuilderSearchInput.addEventListener('input', () => {
+            if(
+                huntBuilderSelectedTarget
+                && normalizePokemonSearchText(huntBuilderSearchInput.value) !== huntBuilderSelectedTarget.searchName
+            ){
+                huntBuilderSelectedTarget = null;
+                huntBuilderSelectedTypes = [];
+                huntBuilderSelectedClan = '';
+                resetHuntBuilderRegenerationState();
+                renderHuntBuilder();
+            }
+            renderHuntBuilderSearchResults();
+        });
+        huntBuilderSearchInput.addEventListener('focus', () => {
+            clearHuntBuilderSearchHideTimer();
+            renderHuntBuilderSearchResults();
+        });
+        huntBuilderSearchInput.addEventListener('blur', () => {
+            clearHuntBuilderSearchHideTimer();
+            huntBuilderSearchHideTimer = window.setTimeout(hideHuntBuilderSearchResults, 140);
+        });
+        huntBuilderSearchInput.addEventListener('keydown', event => {
+            if(event.key === 'Escape'){
+                hideHuntBuilderSearchResults();
+                return;
+            }
+            if(event.key !== 'Enter') return;
+            const firstEntry = getHuntBuilderSearchEntries(huntBuilderSearchInput.value)[0];
+            if(!firstEntry) return;
+            event.preventDefault();
+            huntBuilderSelectedTarget = firstEntry;
+            huntBuilderSelectedTypes = [];
+            huntBuilderSelectedClan = '';
+            resetHuntBuilderRegenerationState();
+            huntBuilderSearchInput.value = firstEntry.name;
+            hideHuntBuilderSearchResults();
+            renderHuntBuilder();
+        });
+    }
+
+    if(huntBuilderRegenerateBtn){
+        huntBuilderRegenerateBtn.addEventListener('click', () => {
+            huntBuilderPreviousTeamKeys = huntBuilderLastTeamKeys.slice();
+            huntBuilderGeneration += 1;
+            renderHuntBuilderTeam();
+        });
+    }
+
+    if(huntBuilderClearBtn){
+        huntBuilderClearBtn.addEventListener('click', () => {
+            huntBuilderSelectedTarget = null;
+            huntBuilderSelectedTypes = [];
+            huntBuilderSelectedClan = '';
+            resetHuntBuilderRegenerationState();
+            if(huntBuilderSearchInput) huntBuilderSearchInput.value = '';
+            hideHuntBuilderSearchResults();
+            renderHuntBuilder();
+        });
+    }
+
+    if(huntBuilderMoveTeamBtn){
+        huntBuilderMoveTeamBtn.addEventListener('click', () => {
+            const slots = buildHuntBuilderTeam();
+            const slotMap = {
+                ar: 'tank-ar',
+                'dps-1': 'dps-1',
+                'dps-2': 'dps-2',
+                'dps-3': 'dps-3',
+                'dps-4': 'dps-4',
+                finisher: 'finisher'
+            };
+            const nextSelections = {};
+            slots.forEach(slot => {
+                const targetSlotId = slotMap[slot.id];
+                if(targetSlotId && slot.entry) nextSelections[targetSlotId] = slot.entry;
+            });
+            if(Object.keys(nextSelections).length !== HUNT_BUILDER_SLOT_CONFIGS.length) return;
+            teamBuilderSelections = nextSelections;
+            teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS.find(slot => !teamBuilderSelections[slot.id])?.id
+                || TEAM_BUILDER_SLOT_CONFIGS[0]?.id
+                || '';
+            teamBuilderFilters = {
+                search: '',
+                clan: 'all',
+                subFunctions: [],
+                roles: [],
+                type: 'all'
+            };
+            if(teamBuilderSearchInput) teamBuilderSearchInput.value = '';
+            teamBuilderHuntsVisible = true;
+            teamBuilderHuntsLoading = false;
+            localStorage.setItem('selectedTab', 'team-builder');
+            showTeamBuilder();
+        });
+    }
+}
+
+function showHuntBuilder(){
+    initializeHuntBuilderPage();
+    clearTabHighlights();
+    setActiveTabTheme('hunt-builder');
+    setVisiblePanel(contentHuntBuilder);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Hunt Builder';
+    updateBrowserTitle();
+
+    Promise.all([
+        ensureTypesDataLoaded(),
+        ensurePokemonCatalogLoaded()
+    ]).then(() => {
+        renderHuntBuilder();
+        if(useGsap && contentHuntBuilder){
+            gsap.from(contentHuntBuilder, { opacity: 0, y: -10, duration: 0.4 });
+        }
+    }).catch(error => {
+        console.error('Hunt Builder load failed', error);
+        if(huntBuilderStatus) huntBuilderStatus.textContent = 'Nao foi possivel carregar o Hunt Builder.';
     });
     updateUrl();
 }
@@ -12284,6 +13060,7 @@ function initTabFromUrl(){
     if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
     if(resolvedTab==='team-builder') return showTeamBuilder();
+    if(resolvedTab==='hunt-builder') return showHuntBuilder();
     if(resolvedTab==='times') return showTimes({
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
         requestedFilters: requestedTeamFilters
@@ -12335,6 +13112,7 @@ function initTabFromUrl(){
     if(saved==='fossils') return showFossils();
     if(saved==='times') return showTimes();
     if(saved==='team-builder') return showTeamBuilder();
+    if(saved==='hunt-builder') return showHuntBuilder();
     if(saved==='pokemons') return showPokemons();
     if(saved==='catch') return showCatch();
     if(saved==='bosses' || saved==='speedsters') return showSpeedsters();
@@ -14693,6 +15471,7 @@ function updateUrl(options = {}){
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
                       (contentTimes && !contentTimes.hidden) ? 'times' :
                       (contentTeamBuilder && !contentTeamBuilder.hidden) ? 'team-builder' :
+                      (contentHuntBuilder && !contentHuntBuilder.hidden) ? 'hunt-builder' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
@@ -16592,18 +17371,27 @@ function getPokemonEntrySpecialTags(entry){
 
 function getPokemonCardSpecialTags(entry){
     const tags = getPokemonEntrySpecialTags(entry);
-    return entry?.searchName === 'zoroark'
-        ? tags.filter(tagKey => tagKey !== 'boss')
-        : tags;
+    if(entry?.searchName === 'zoroark'){
+        return tags.filter(tagKey => tagKey !== 'boss');
+    }
+    if(entry?.routeSlug === 'rosas-serperior'){
+        return tags.filter(tagKey => tagKey !== 'shiny');
+    }
+    return tags;
 }
 
 function getPokemonEntrySubFunctions(entry){
     return Array.isArray(entry?.subFunctions) ? entry.subFunctions : [];
 }
 
-function getPokemonEntryPassiveLabel(entry){
-    const passiveName = String(entry?.passiveName || '').trim();
-    const passiveDescription = String(entry?.passiveDescription || entry?.passiveText || '').trim();
+function getPokemonEntryPassiveLabel(entry, variant = 'normal'){
+    const isShiny = variant === 'shiny';
+    const passiveName = String(isShiny ? entry?.shinyPassiveName : entry?.passiveName || '').trim();
+    const passiveDescription = String(
+        isShiny
+            ? entry?.shinyPassiveDescription
+            : entry?.passiveDescription || entry?.passiveText || ''
+    ).trim();
     if(!passiveName && !passiveDescription) return '';
     if(passiveName && passiveDescription && !passiveDescription.toLowerCase().startsWith(`${passiveName.toLowerCase()}:`)){
         return `${passiveName}: ${passiveDescription}`;
@@ -17970,14 +18758,16 @@ function createPokemonRoleBadge(roleValue, options = {}){
     return badge;
 }
 
-function createPokemonPassiveBadge(entry){
-    const passiveLabel = getPokemonEntryPassiveLabel(entry);
+function createPokemonPassiveBadge(entry, options = {}){
+    const { variant = 'normal' } = options;
+    const isShiny = variant === 'shiny';
+    const passiveLabel = getPokemonEntryPassiveLabel(entry, variant);
     if(!passiveLabel) return null;
 
     const badge = document.createElement('span');
     badge.className = 'pokemon-passive-badge';
     badge.tabIndex = 0;
-    badge.setAttribute('aria-label', `Passiva: ${passiveLabel}`);
+    badge.setAttribute('aria-label', `${isShiny ? 'Passiva Shiny' : 'Passiva'}: ${passiveLabel}`);
 
     const mark = document.createElement('span');
     mark.className = 'pokemon-passive-badge__mark';
@@ -17985,7 +18775,7 @@ function createPokemonPassiveBadge(entry){
 
     const label = document.createElement('span');
     label.className = 'pokemon-passive-badge__label';
-    label.textContent = 'Passiva';
+    label.textContent = isShiny ? 'Passiva Shiny' : 'Passiva';
 
     const tooltip = document.createElement('span');
     tooltip.className = 'pokemon-passive-badge__tooltip';
@@ -18071,6 +18861,7 @@ function getPokemonNormalCaptureAverageForBall(entry, ballKey){
 
 function isPokemonCaptureVariantAvailable(entry, variant){
     if(isMegaPokemonCatalogEntry(entry)) return false;
+    if(getPokemonEntrySpecialTags(entry).includes('pack')) return false;
     if(variant === 'normal') return entry?.normalCaptureAvailable !== false;
     if(variant === 'shiny') return entry?.shinyCaptureAvailable !== false;
     return false;
@@ -18107,41 +18898,44 @@ function getPokemonAverageValueForVariant(entry, variant, ballKey){
     return getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey);
 }
 
+function isPokemonNormalCaptureBallAllowed(entry, ballKey){
+    const allowedBalls = Array.isArray(entry?.normalCaptureBalls) ? entry.normalCaptureBalls : [];
+    if(!allowedBalls.length) return true;
+    const rawBallKey = String(ballKey || '').trim().toLowerCase();
+    if(allowedBalls.includes(rawBallKey)) return true;
+    const requirementBallKey = getCatchRequirementBallKey(rawBallKey);
+    return requirementBallKey !== rawBallKey && allowedBalls.includes(requirementBallKey);
+}
+
 function buildPokemonAverageCards(entry, variant){
-    const cards = [
-        createPokemonBallCard(
-            { key: 'ultra', label: 'Ultra Ball' },
-            getPokemonAverageValueForVariant(entry, variant, 'ultra'),
-            variant === 'shiny' ? 'Shiny' : 'Normal'
-        ),
-        createPokemonBallCard(
-            { key: 'story', label: 'Story Ball' },
-            getPokemonAverageValueForVariant(entry, variant, 'story'),
-            variant === 'shiny' ? 'Shiny' : 'Normal'
-        )
-    ];
+    const cards = [];
+    const appendBallCard = (ball, caption = variant === 'shiny' ? 'Shiny' : 'Normal') => {
+        if(variant === 'normal' && !isPokemonNormalCaptureBallAllowed(entry, ball.key)) return;
+        cards.push(createPokemonBallCard(
+            ball,
+            getPokemonAverageValueForVariant(entry, variant, ball.key),
+            caption
+        ));
+    };
+
+    appendBallCard({ key: 'ultra', label: 'Ultra Ball' });
+    appendBallCard({ key: 'story', label: 'Story Ball' });
+    if(variant === 'normal'){
+        appendBallCard({ key: 'safari', label: 'Safari Ball' });
+    }
 
     const elementalOptions = getPokemonElementalBallOptions(entry?.naturalElements || []);
     if(elementalOptions.length){
         elementalOptions.forEach((ball) => {
-            cards.push(
-                createPokemonBallCard(
-                    ball,
-                    getPokemonAverageValueForVariant(entry, variant, ball.key),
-                    `${variant === 'shiny' ? 'Shiny' : 'Normal'} \u2022 ${getPokemonElementalBallTypeLabel(ball.key, entry?.naturalElements || [])}`
-                )
+            appendBallCard(
+                ball,
+                `${variant === 'shiny' ? 'Shiny' : 'Normal'} \u2022 ${getPokemonElementalBallTypeLabel(ball.key, entry?.naturalElements || [])}`
             );
         });
         return cards;
     }
 
-    cards.push(
-        createPokemonBallCard(
-            { key: 'elemental', label: 'Ball Elemental' },
-            getPokemonAverageValueForVariant(entry, variant, 'elemental'),
-            variant === 'shiny' ? 'Shiny' : 'Normal'
-        )
-    );
+    appendBallCard({ key: 'elemental', label: 'Ball Elemental' });
     return cards;
 }
 
@@ -18294,6 +19088,11 @@ function normalizePokemonCatalogEntry(entry, index){
         teamLabel: String(entry.teamLabel || '').trim(),
         normalCaptureAvailable: entry.normalCaptureAvailable !== false,
         normalCaptureNote: String(entry.normalCaptureNote || '').trim(),
+        normalCaptureBalls: Array.from(new Set(
+            (Array.isArray(entry.normalCaptureBalls) ? entry.normalCaptureBalls : [])
+                .map(value => String(value || '').trim().toLowerCase())
+                .filter(value => catchBallOrder.includes(value) || value === 'elemental')
+        )),
         registered: entry.registered !== false,
         shinyCaptureAvailable: entry.shinyCaptureAvailable !== false,
         shinyCaptureNote: String(entry.shinyCaptureNote || '').trim(),
@@ -18304,6 +19103,8 @@ function normalizePokemonCatalogEntry(entry, index){
         passiveName: String(entry.passiveName || '').trim(),
         passiveDescription: String(entry.passiveDescription || '').trim(),
         passiveText: String(entry.passiveText || '').trim(),
+        shinyPassiveName: String(entry.shinyPassiveName || '').trim(),
+        shinyPassiveDescription: String(entry.shinyPassiveDescription || '').trim(),
         passiveSuperEffectiveTypes: Array.from(new Set(
             (Array.isArray(entry.passiveSuperEffectiveTypes) ? entry.passiveSuperEffectiveTypes : [])
                 .map(normalizePokemonTypeKey)
@@ -18972,6 +19773,10 @@ function renderPokemonDetailsModal(entry){
         const passiveBadge = createPokemonPassiveBadge(entry);
         if(passiveBadge){
             metaFragment.appendChild(passiveBadge);
+        }
+        const shinyPassiveBadge = createPokemonPassiveBadge(entry, { variant: 'shiny' });
+        if(shinyPassiveBadge){
+            metaFragment.appendChild(shinyPassiveBadge);
         }
         pokemonDetailsMeta.replaceChildren(metaFragment);
     }

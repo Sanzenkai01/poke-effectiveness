@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260612i">
+  <link rel="stylesheet" href="styles.css?v=20260614u">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -300,6 +300,10 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Team Builder</span>
               </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="hunt-builder">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Hunt Builder</span>
+              </button>
               <button class="sidebar-sublink" type="button" data-nav-target="fossils">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Fósseis</span>
@@ -342,7 +346,7 @@
               <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Pokémons</span>
-                <span class="sidebar-sublink__badge" aria-hidden="true">Pausado</span>
+                <span class="sidebar-sublink__badge" aria-hidden="true">5º Gen</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="times">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
@@ -1250,6 +1254,79 @@
       </div>
     </div>
 
+    <div id="content-hunt-builder" role="tabpanel" aria-label="Hunt Builder" hidden>
+      <div class="hunt-builder-shell">
+        <section class="hunt-builder-hero" aria-labelledby="hunt-builder-title">
+          <div>
+            <span class="hunt-builder-eyebrow">Sistemas</span>
+            <h2 id="hunt-builder-title">Hunt Builder</h2>
+            <p>Escolha a hunt, filtre o time pelo cl&atilde; e selecione os tipos vantajosos.</p>
+          </div>
+          <div class="hunt-builder-composition" aria-label="Composi&ccedil;&atilde;o gerada">
+            <strong>1 AR</strong>
+            <strong>4 DPS/Stun</strong>
+            <strong>1 Finisher</strong>
+          </div>
+        </section>
+
+        <section class="hunt-builder-panel" aria-labelledby="hunt-builder-target-title">
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">1</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Alvo</span>
+              <h3 id="hunt-builder-target-title">Qual Pok&eacute;mon voc&ecirc; quer ca&ccedil;ar?</h3>
+            </div>
+            <button id="hunt-builder-clear" class="hunt-builder-action hunt-builder-action--clear" type="button">Limpar</button>
+          </div>
+          <div class="hunt-builder-search">
+            <label for="hunt-builder-search">Nome do Pok&eacute;mon</label>
+            <input id="hunt-builder-search" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar hunt..." aria-controls="hunt-builder-search-results" aria-expanded="false" />
+            <div id="hunt-builder-search-results" class="hunt-builder-search-results" role="listbox" hidden></div>
+          </div>
+          <div id="hunt-builder-target" class="hunt-builder-target" hidden aria-live="polite"></div>
+        </section>
+
+        <section id="hunt-builder-clan-panel" class="hunt-builder-panel" aria-labelledby="hunt-builder-clan-title" hidden>
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">2</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Cl&atilde;</span>
+              <h3 id="hunt-builder-clan-title">Escolha o cl&atilde; do time</h3>
+            </div>
+          </div>
+          <div id="hunt-builder-clan-options" class="hunt-builder-option-grid hunt-builder-option-grid--clans" role="group" aria-label="Escolha de cl&atilde;"></div>
+        </section>
+
+        <section id="hunt-builder-types-panel" class="hunt-builder-panel" aria-labelledby="hunt-builder-types-title" hidden>
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">3</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Vantagem</span>
+              <h3 id="hunt-builder-types-title">Escolha um ou mais tipos</h3>
+              <p>As op&ccedil;&otilde;es abaixo s&atilde;o as fraquezas da hunt selecionada.</p>
+            </div>
+          </div>
+          <div id="hunt-builder-type-options" class="hunt-builder-option-grid hunt-builder-option-grid--types" role="group" aria-label="Tipos com vantagem"></div>
+        </section>
+
+        <section id="hunt-builder-result-panel" class="hunt-builder-panel hunt-builder-result-panel" aria-labelledby="hunt-builder-result-title" hidden>
+          <div class="hunt-builder-section-head hunt-builder-section-head--result">
+            <span class="hunt-builder-step">4</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Time sugerido</span>
+              <h3 id="hunt-builder-result-title">Composi&ccedil;&atilde;o para a hunt</h3>
+            </div>
+            <div class="hunt-builder-result-actions">
+              <button id="hunt-builder-regenerate" class="hunt-builder-action" type="button">&#128260; Gerar Novamente</button>
+              <button id="hunt-builder-move-team" class="hunt-builder-action hunt-builder-action--primary" type="button">Mover para o Team Builder</button>
+            </div>
+          </div>
+          <p id="hunt-builder-status" class="hunt-builder-status" aria-live="polite"></p>
+          <div id="hunt-builder-team" class="hunt-builder-team" role="list" aria-label="Time sugerido"></div>
+        </section>
+      </div>
+    </div>
+
     <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card catch-card">
         <div class="catch-hero">
@@ -1688,7 +1765,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        v12.0.0 - 2026
+        Build v461 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1715,7 +1792,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260608f" defer></script>
     <script src="js/visits.shared.js?v=20260607d" defer></script>
-    <script src="script.js?v=20260612u" defer></script>
+    <script src="script.js?v=20260614s" defer></script>
 </body>
 </html>
 

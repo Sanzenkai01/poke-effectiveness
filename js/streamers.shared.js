@@ -60,7 +60,7 @@
         {name: 'lucasnaikan', supportsDrops: false },
         {name: 'orodault', supportsDrops: false },
         {name: 'leomarnc', supportsDrops: false },
-        {name: 'luizsanninoficial', supportsDrops: false },
+        {name: 'ImFoxyy', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

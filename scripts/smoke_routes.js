@@ -84,6 +84,15 @@ const routes = [
     ]
   },
   {
+    path: '/hunt-builder',
+    label: 'hunt-builder',
+    checks: [
+      { pattern: /data-active-tab="hunt-builder"/i, description: 'hunt builder active tab' },
+      { pattern: /id="hunt-builder-search"/i, description: 'hunt builder search' },
+      { pattern: /id="hunt-builder-team"/i, description: 'hunt builder team grid' }
+    ]
+  },
+  {
     path: '/catch',
     label: 'catch',
     checks: [

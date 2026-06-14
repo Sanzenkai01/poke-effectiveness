@@ -81,7 +81,7 @@ const hoopaPortalsData = [
           { name: 'Orthworm', image: 'orthworm.png', tier: 'excelente', types: ['steel'], description: 'Tipo move: Ground.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'bom', types: ['water','psychic'], description: 'Tipo move: Psychic.' }
         ]
       },
@@ -293,7 +293,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Dewgong', image: 'dewgong.png', tier: 'excelente', types: ['water','ice'], description: 'Tipo move: Ice.' },
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'excelente', types: ['water','poison'], description: 'Tipo move: Poison.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
@@ -376,7 +376,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' },
           { name: 'Mega Starmie', image: 'mega-starmie.png', tier: 'bom', types: ['water','psychic'], description: 'Tipo move: Psychic.' },
           { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' }
@@ -416,7 +416,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Mantine', image: 'mantine.png', tier: 'excelente', types: ['water','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Qwilfish', image: 'qwilfish.png', tier: 'excelente', types: ['water','poison'], description: 'Tipo move: Poison.' },
           { name: "Melony's Frosmoth", image: 'frosmoth.png', tier: 'excelente', types: ['ice','bug'], description: 'Tipo move: Ice.' },
           { name: 'Mega Skarmory', image: 'mega-skarmory.png', tier: 'excelente', types: ['steel','flying'], description: 'Tipo move: Flying.' }
@@ -548,7 +548,7 @@ const hoopaPortalsData = [
       mystic: {
         label: 'Mystic',
         recommended: [
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Duraludon', image: 'duraludon.png', tier: 'excelente', types: ['steel','dragon'], description: 'Tipo move: Electric.' },
           { name: 'Mega Lucario Z', image: 'mega-lucario-z.png', tier: 'excelente', types: ['fighting','steel'], description: 'Tipo move: Steel.' }
         ]
@@ -630,7 +630,7 @@ const hoopaPortalsData = [
         label: 'Mystic',
         recommended: [
           { name: 'Seaking', image: 'seaking.png', tier: 'excelente', types: ['water'], immunities: ['electric'], description: 'Tipo move: Ground.' },
-          { name: 'Drifloom', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
+          { name: 'Drifloon', image: 'drifloon.png', tier: 'excelente', types: ['ghost','flying'], description: 'Tipo move: Fire.' },
           { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
         ]
       },
@@ -1136,7 +1136,7 @@ const rolePickImageOverrides = {
   blastoisetwo: 'BlastoiseTwo.png',
   charizardtwo: 'CharizardTwo.png',
   cramorant: 'flying-cramorant.png',
-  drifloom: 'drifloon.png',
+  drifloon: 'drifloon.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
   shinybanette: 'banette.png',
@@ -1616,7 +1616,7 @@ const championPathBosses = createManualRoleboardBosses([
       mystic: {
         dps: [
           createRolePick('Banette', ['ghost'], 'ghost'),
-          createRolePick('Drifloom', ['ghost', 'flying'], 'ghost'),
+          createRolePick('Drifloon', ['ghost', 'flying'], 'ghost'),
           createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
           createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting'),
           createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
@@ -2143,12 +2143,6 @@ function buildChampionPathRolePools() {
 
 const championPathRolePoolsForMew2 = buildChampionPathRolePools();
 
-const mew2NeutralBossEffectiveness = Object.freeze({
-  attackMode: 'move-only',
-  offenseMode: 'neutral',
-  rankMode: 'defense-only'
-});
-
 const mew2TypedBossEffectiveness = Object.freeze({
   attackMode: 'move-only',
   offenseMode: 'types',
@@ -2177,15 +2171,15 @@ function cloneChampionPathRolePoolsForMew2() {
 }
 
 const mew2Bosses = createManualRoleboardBosses([
-  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', effectiveness: mew2NeutralBossEffectiveness, description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
-  { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', effectiveness: mew2NeutralBossEffectiveness, description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
-  { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', effectiveness: mew2NeutralBossEffectiveness, description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
-  { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', effectiveness: mew2NeutralBossEffectiveness, description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
+  { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
+  { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
+  { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
+  { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', effectiveness: mew2TypedBossEffectiveness, description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
   { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
-  { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', effectiveness: mew2NeutralBossEffectiveness, description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
+  { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', effectiveness: mew2TypedBossEffectiveness, description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
   { id: 'venusaur', name: 'Venusaur', types: ['grass', 'poison'], moveType: 'grass', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro com pressao progressiva, bom para testar abertura de suporte e DPS.', ration: { label: 'Rindo Ration', shortLabel: 'Rindo', image: 'rations/rindo_ration.png', description: 'Aumenta a resistencia contra ataques Grass em 30% por 60 minutos.' } },
   { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
-  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', effectiveness: mew2NeutralBossEffectiveness, description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
+  { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
   { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
 ].map((entry) => ({
   ...entry,
@@ -2334,7 +2328,7 @@ const specialBossesData = [
           createRolePick('Orthworm', ['steel'], 'ground', { tier: 'muitobom' }),
           createRolePick('Seaking', ['water'], 'ground', { tier: 'muitobom' }),
           createRolePick('Banette', ['ghost'], 'ghost', { tier: 'bom' }),
-          createRolePick('Drifloom', ['ghost', 'flying'], 'fire', { tier: 'bom' }),
+          createRolePick('Drifloon', ['ghost', 'flying'], 'fire', { tier: 'bom' }),
           createRolePick('BlastoiseTwo', ['water'], 'water', { tier: 'bom' }),
           createRolePick('Duraludon', ['steel', 'dragon'], 'electric', { tier: 'bom' }),
           createRolePick('Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
@@ -2788,25 +2782,33 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Mega Sceptile", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Pikachu", 'electric', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Rosa's Serperior", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Serperior", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Seviper", 'poison', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Shiftry", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("VenusaurTwo", 'grass', 'dps', 'instinct')
     ]),
     tank: Object.freeze([
       createFixedRecommendationDefinition("Appletun", 'grass', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Bayleef", 'grass', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Chesnaught", 'grass', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Chikorita", 'grass', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Claydol", 'ground', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Goodra", 'dragon', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Grumpig", 'psychic', 'tank', 'instinct', { moveType: 'dark' }),
+      createFixedRecommendationDefinition("Hippowdon Female", 'ground', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Magnezone", 'electric', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Tangrowth", 'grass', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Toxapex", 'poison', 'tank', 'instinct'),
+      createFixedRecommendationDefinition("Weezing", 'poison', 'tank', 'instinct'),
       createFixedRecommendationDefinition("Wobbuffet", 'psychic', 'tank', 'instinct')
     ]),
     support: Object.freeze([
       createFixedRecommendationDefinition("Bellossom", 'grass', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Chingling", 'psychic', 'support', 'instinct'),
       createFixedRecommendationDefinition("Kadabra", 'psychic', 'support', 'instinct'),
       createFixedRecommendationDefinition("Kirlia", 'psychic', 'support', 'instinct'),
       createFixedRecommendationDefinition("Pachirisu", 'electric', 'support', 'instinct'),
+      createFixedRecommendationDefinition("Swalot", 'poison', 'support', 'instinct'),
       createFixedRecommendationDefinition("Wynaut", 'psychic', 'support', 'instinct')
     ])
   }),
@@ -2816,7 +2818,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("BlastoiseTwo", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Dachsbun", 'fairy', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Dewgong", 'water', 'dps', 'mystic'),
-      createFixedRecommendationDefinition("Drifloom", 'ghost', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Drifloon", 'ghost', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Duraludon", 'steel', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Greninja", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Hawlucha", 'fighting', 'dps', 'mystic'),
@@ -2841,13 +2843,19 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Bronzong", 'steel', 'tank', 'mystic'),
       createFixedRecommendationDefinition("Carracosta", 'water', 'tank', 'mystic'),
       createFixedRecommendationDefinition("Drifblim", 'ghost', 'tank', 'mystic'),
-      createFixedRecommendationDefinition("Dusclops", 'ghost', 'tank', 'mystic')
+      createFixedRecommendationDefinition("Dusclops", 'ghost', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Hitmonchan", 'fighting', 'tank', 'mystic'),
+      createFixedRecommendationDefinition("Slowbro", 'water', 'tank', 'mystic', { moveType: 'psychic' }),
+      createFixedRecommendationDefinition("Tentacruel", 'water', 'tank', 'mystic', { moveType: 'poison' }),
+      createFixedRecommendationDefinition("Walrein", 'ice', 'tank', 'mystic')
     ]),
     support: Object.freeze([
       createFixedRecommendationDefinition("Comfey", 'fairy', 'support', 'mystic'),
+      createFixedRecommendationDefinition("Corsola", 'water', 'support', 'mystic', { moveType: 'rock' }),
       createFixedRecommendationDefinition("Misdreavus", 'ghost', 'support', 'mystic'),
       createFixedRecommendationDefinition("Politoed", 'water', 'support', 'mystic'),
-      createFixedRecommendationDefinition("Smoochum", 'ice', 'support', 'mystic')
+      createFixedRecommendationDefinition("Smoochum", 'ice', 'support', 'mystic'),
+      createFixedRecommendationDefinition("Vanilluxe", 'ice', 'support', 'mystic')
     ])
   }),
   valor: Object.freeze({
@@ -2875,6 +2883,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
     ]),
     tank: Object.freeze([
       createFixedRecommendationDefinition("Bastiodon", 'rock', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Lickitung", 'normal', 'tank', 'valor'),
       createFixedRecommendationDefinition("Magcargo", 'fire', 'tank', 'valor'),
       createFixedRecommendationDefinition("Miltank", 'normal', 'tank', 'valor'),
       createFixedRecommendationDefinition("Nosepass", 'rock', 'tank', 'valor'),
@@ -2884,13 +2893,16 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Sableye", 'dark', 'tank', 'valor'),
       createFixedRecommendationDefinition("Shieldon", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Shuckle", 'bug', 'tank', 'valor'),
+      createFixedRecommendationDefinition("Snorlax", 'normal', 'tank', 'valor'),
       createFixedRecommendationDefinition("Torkoal", 'fire', 'tank', 'valor')
     ]),
     support: Object.freeze([
       createFixedRecommendationDefinition("Blissey", 'normal', 'support', 'valor'),
       createFixedRecommendationDefinition("Chansey", 'normal', 'support', 'valor', { moveType: 'psychic' }),
+      createFixedRecommendationDefinition("Dustox", 'bug', 'support', 'valor', { moveType: 'poison' }),
       createFixedRecommendationDefinition("Houndour", 'dark', 'support', 'valor'),
       createFixedRecommendationDefinition("Lopunny", 'normal', 'support', 'valor'),
+      createFixedRecommendationDefinition("Munchlax", 'normal', 'support', 'valor', { moveType: 'fighting' }),
       createFixedRecommendationDefinition("Ponyta", 'fire', 'support', 'valor'),
       createFixedRecommendationDefinition("Porygon2", 'normal', 'support', 'valor'),
       createFixedRecommendationDefinition("Zorua", 'dark', 'support', 'valor')
@@ -4311,6 +4323,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'armarouge.png': 'pokemons/9gen/armarouge.png',
   'banette.png': 'pokemons/3gen/banette.png',
   'bastiodon.png': 'pokemons/4gen/bastiodon.png',
+  'bayleef.png': 'pokemons/2gen/bayleef.png',
   'bellossom.png': 'pokemons/2gen/bellossom.png',
   'blastoise.png': 'pokemons/1gen/blastoise.png',
   'blastoisetwo.png': 'pokemons/1gen/BlastoiseTwo.png',
@@ -4322,10 +4335,13 @@ const bossPokemonAssetAliases = Object.freeze({
   'charizard.png': 'pokemons/1gen/charizard.png',
   'charizardtwo.png': 'pokemons/1gen/CharizardTwo.png',
   'chesnaught.png': 'pokemons/6gen/chesnaught.png',
+  'chikorita.png': 'pokemons/2gen/chikorita.png',
+  'chingling.png': 'pokemons/4gen/chingling.png',
   'claydol.png': 'pokemons/3gen/claydol.png',
   'clefable.png': 'pokemons/1gen/clefable.png',
   'comfey.png': 'pokemons/7gen/comfey.png',
   'conkeldurr.png': 'pokemons/5gen/conkeldurr.png',
+  'corsola.png': 'pokemons/2gen/corsola.png',
   'dachsbun.png': 'pokemons/9gen/dachsbun.png',
   'dedenne.png': 'pokemons/6gen/dedenne.png',
   'delphox.png': 'pokemons/6gen/delphox.png',
@@ -4333,6 +4349,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'dragonair.png': 'pokemons/1gen/dragonair.png',
   'drifblim.png': 'pokemons/4gen/drifblim.png',
   'drifloon.png': 'pokemons/4gen/drifloon.png',
+  'dustox.png': 'pokemons/3gen/dustox.png',
   'dugtrio.png': 'pokemons/1gen/dugtrio.png',
   'duraludon.png': 'pokemons/8gen/duraludon.png',
   'dusclops.png': 'pokemons/3gen/dusclops.png',
@@ -4345,8 +4362,10 @@ const bossPokemonAssetAliases = Object.freeze({
   'garbodor.png': 'pokemons/5gen/garbodor.png',
   'goodra.png': 'pokemons/6gen/goodra.png',
   'greninja.png': 'pokemons/6gen/greninja.png',
+  'grumpig.png': 'pokemons/3gen/grumpig.png',
   'hawlucha.png': 'pokemons/6gen/hawlucha.png',
   'heracross.png': 'pokemons/2gen/heracross.png',
+  'hippowdon-female.png': 'pokemons/4gen/hippowdon-female.png',
   'houndour.png': 'pokemons/2gen/houndour.png',
   'hydrapple.png': 'pokemons/9gen/hydrapple.png',
   'hitmonchan.png': 'pokemons/1gen/hitmonchan.png',
@@ -4355,6 +4374,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'kadabra.png': 'pokemons/1gen/kadabra.png',
   'kingdra.png': 'pokemons/2gen/kingdra.png',
   'kirlia.png': 'pokemons/3gen/kirlia.png',
+  'lickitung.png': 'pokemons/1gen/lickitung.png',
   'lombre.png': 'pokemons/3gen/lombre.png',
   'lopunny.png': 'pokemons/4gen/lopunny.png',
   'lurantis.png': 'pokemons/7gen/lurantis.png',
@@ -4401,6 +4421,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'mewtwo.png': 'pokemons/1gen/mewtwo.png',
   'miltank.png': 'pokemons/2gen/miltank.png',
   'misdreavus.png': 'pokemons/2gen/misdreavus.png',
+  'munchlax.png': 'pokemons/4gen/munchlax.png',
   'nosepass.png': 'pokemons/3gen/nosepass.png',
   'onix.png': 'pokemons/1gen/onix.png',
   'orbeetle.png': 'pokemons/8gen/orbeetle.png',
@@ -4428,13 +4449,19 @@ const bossPokemonAssetAliases = Object.freeze({
   'shiftry.png': 'pokemons/3gen/shiftry.png',
   'shiny-bronzong.png': 'pokemons/4gen/shiny-bronzong.png',
   'shuckle.png': 'pokemons/2gen/shuckle.png',
+  'slowbro.png': 'pokemons/1gen/slowbro.png',
   'smoochum.png': 'pokemons/2gen/smoochum.png',
+  'snorlax.png': 'pokemons/1gen/snorlax.png',
+  'swalot.png': 'pokemons/3gen/swalot.png',
   'tangrowth.png': 'pokemons/4gen/tangrowth.png',
   'tauros.png': 'pokemons/1gen/tauros.png',
+  'tentacruel.png': 'pokemons/1gen/tentacruel.png',
   'toxapex.png': 'pokemons/7gen/toxapex.png',
   'torkoal.png': 'pokemons/3gen/torkoal.png',
   'venusaur.png': 'pokemons/1gen/venusaur.png',
   'venusaurtwo.png': 'pokemons/1gen/VenusaurTwo.png',
+  'vanilluxe.png': 'pokemons/5gen/vanilluxe.png',
+  'walrein.png': 'pokemons/3gen/walrein.png',
   'water-cramorant.png': 'pokemons/8gen/water-cramorant.png',
   'weavile.png': 'pokemons/4gen/weavile.png',
   'weezing.png': 'pokemons/1gen/weezing.png',
@@ -6433,11 +6460,145 @@ function injectRequestedSupportRecommendations() {
   });
 }
 
+const catalogSpeedsterRecommendationConfigs = Object.freeze([
+  { name: 'VenusaurTwo', types: ['grass', 'poison'], moveTypes: ['grass'], clan: 'instinct' },
+  { name: 'BlastoiseTwo', types: ['water'], moveTypes: ['water'], clan: 'mystic' },
+  { name: 'CharizardTwo', types: ['fire', 'flying'], moveTypes: ['flying'], clan: 'valor' },
+  { name: 'Raticate', types: ['normal'], moveTypes: ['dark'], clan: 'valor' },
+  { name: 'Pikachu', types: ['electric'], moveTypes: ['electric'], clan: 'instinct' },
+  { name: 'Alakazam', types: ['psychic'], moveTypes: ['psychic'], clan: 'instinct' },
+  { name: "Farfetch'd", types: ['normal', 'flying'], moveTypes: ['flying'], clan: 'valor' },
+  { name: 'Dewgong', types: ['water', 'ice'], moveTypes: ['ice'], clan: 'mystic' },
+  { name: 'Marowak', types: ['ground'], moveTypes: ['ground'], clan: 'instinct' },
+  { name: 'Kingdra', types: ['water', 'dragon'], moveTypes: ['dragon'], clan: 'mystic' },
+  { name: 'Seaking', types: ['water'], moveTypes: ['ground'], clan: 'mystic' },
+  { name: 'Scyther', types: ['bug', 'flying'], moveTypes: ['bug'], clan: 'valor' },
+  { name: 'Tauros', types: ['normal'], moveTypes: ['electric'], clan: 'valor' },
+  { name: 'Kabutops', types: ['rock', 'water'], moveTypes: ['rock'], clan: 'valor' },
+  { name: 'Dragonair', types: ['dragon'], moveTypes: ['dragon'], clan: 'instinct' },
+  { name: 'Qwilfish', types: ['water', 'poison'], moveTypes: ['poison'], clan: 'mystic' },
+  { name: 'Heracross', types: ['bug', 'fighting'], moveTypes: ['fighting'], clan: 'valor' },
+  { name: 'Weavile', types: ['dark', 'ice'], moveTypes: ['ice'], clan: 'valor' },
+  { name: 'Mantine', types: ['water', 'flying'], moveTypes: ['flying'], clan: 'mystic' },
+  { name: "May's Beautifly", types: ['bug', 'flying'], moveTypes: ['flying'], clan: 'valor' },
+  { name: 'Seviper', types: ['poison'], moveTypes: ['poison'], clan: 'instinct' },
+  { name: 'Banette', types: ['ghost'], moveTypes: ['ghost'], clan: 'mystic' },
+  { name: 'Absol', types: ['dark'], moveTypes: ['dark'], clan: 'valor' },
+  { name: 'Drifloon', types: ['ghost', 'flying'], moveTypes: ['fire'], clan: 'mystic' },
+  { name: 'Serperior', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
+  { name: "Rosa's Serperior", types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
+  { name: 'Excadrill', types: ['ground', 'steel'], moveTypes: ['steel'], clan: 'instinct' },
+  { name: 'Bouffalant', types: ['normal'], moveTypes: ['ground'], clan: 'valor' }
+]);
+
+function createBestCatalogSpeedsterPick(config, bossRef) {
+  const scoredPicks = (config?.moveTypes || []).map((moveType) => {
+    const pick = createRolePick(config.name, config.types, moveType);
+    pick.bossEntries = [{ bossName: bossRef?.name || bossRef?.id || '' }];
+    const scored = scoreRecommendationForBoss(bossRef, pick, { roleKey: 'dps' });
+    delete scored.bossEntries;
+    return scored;
+  });
+
+  return scoredPicks.sort((left, right) => (
+    getRecommendationTierPriority(left?.tier) - getRecommendationTierPriority(right?.tier)
+    || (right?._score ?? 0) - (left?._score ?? 0)
+  ))[0] || null;
+}
+
+function addCatalogSpeedstersToRecommendationList(bossRef, list, clanKey) {
+  if (!Array.isArray(list)) return;
+
+  catalogSpeedsterRecommendationConfigs
+    .filter((config) => config.clan === clanKey)
+    .forEach((config) => {
+      const scored = createBestCatalogSpeedsterPick(config, bossRef);
+      if (!scored || getRecommendationTierPriority(scored.tier) > tierPriority.bom) return;
+      ensureRolePickNames(list, [scored], 'dps');
+    });
+}
+
+function injectCatalogSpeedsterRecommendations() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog?.data || []).forEach((boss) => {
+      Object.entries(boss?.clans || {}).forEach(([clanKey, clanData]) => {
+        if (Array.isArray(clanData?.recommended)) {
+          addCatalogSpeedstersToRecommendationList(boss, clanData.recommended, clanKey);
+        }
+
+        (clanData?.recommendationGroups || []).forEach((group) => {
+          addCatalogSpeedstersToRecommendationList(
+            getRecommendationGroupBossRef(boss, group),
+            group.recommended,
+            clanKey
+          );
+        });
+
+        if (Array.isArray(clanData?.roles?.dps)) {
+          addCatalogSpeedstersToRecommendationList(boss, clanData.roles.dps, clanKey);
+        }
+      });
+    });
+  });
+}
+
+const catalogRoleRecommendationConfigs = Object.freeze([
+  { name: 'Chingling', roleKey: 'support', types: ['psychic'], moveTypes: ['psychic'], clan: 'instinct' },
+  { name: 'Swalot', roleKey: 'support', types: ['poison'], moveTypes: ['poison'], clan: 'instinct' },
+  { name: 'Corsola', roleKey: 'support', types: ['water', 'rock'], moveTypes: ['rock'], clan: 'mystic' },
+  { name: 'Vanilluxe', roleKey: 'support', types: ['ice'], moveTypes: ['ice'], clan: 'mystic' },
+  { name: 'Dustox', roleKey: 'support', types: ['bug', 'poison'], moveTypes: ['poison'], clan: 'valor' },
+  { name: 'Munchlax', roleKey: 'support', types: ['normal'], moveTypes: ['fighting'], clan: 'valor' },
+  { name: 'Bayleef', roleKey: 'tank', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
+  { name: 'Chikorita', roleKey: 'tank', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
+  { name: 'Grumpig', roleKey: 'tank', types: ['psychic'], moveTypes: ['dark'], clan: 'instinct' },
+  { name: 'Hippowdon Female', roleKey: 'tank', types: ['ground'], moveTypes: ['ground'], clan: 'instinct' },
+  { name: 'Weezing', roleKey: 'tank', types: ['poison'], moveTypes: ['poison'], clan: 'instinct' },
+  { name: 'Hitmonchan', roleKey: 'tank', types: ['fighting'], moveTypes: ['fighting'], clan: 'mystic' },
+  { name: 'Slowbro', roleKey: 'tank', types: ['water', 'psychic'], moveTypes: ['psychic'], clan: 'mystic' },
+  { name: 'Tentacruel', roleKey: 'tank', types: ['water', 'poison'], moveTypes: ['poison'], clan: 'mystic' },
+  { name: 'Walrein', roleKey: 'tank', types: ['ice', 'water'], moveTypes: ['ice'], clan: 'mystic' },
+  { name: 'Lickitung', roleKey: 'tank', types: ['normal'], moveTypes: ['normal'], clan: 'valor' },
+  { name: 'Snorlax', roleKey: 'tank', types: ['normal'], moveTypes: ['normal'], clan: 'valor' }
+]);
+
+function createBestCatalogRolePick(config, bossRef) {
+  const scoredPicks = (config?.moveTypes || []).map((moveType) => (
+    scoreRecommendationForBoss(
+      bossRef,
+      createRolePick(config.name, config.types, moveType),
+      { roleKey: config.roleKey }
+    )
+  ));
+
+  return scoredPicks.sort((left, right) => (
+    getRecommendationTierPriority(left?.tier) - getRecommendationTierPriority(right?.tier)
+    || (right?._score ?? 0) - (left?._score ?? 0)
+  ))[0] || null;
+}
+
+function injectCatalogRoleRecommendations() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog?.data || []).forEach((boss) => {
+      catalogRoleRecommendationConfigs.forEach((config) => {
+        const roleList = boss?.clans?.[config.clan]?.roles?.[config.roleKey];
+        if (!Array.isArray(roleList)) return;
+
+        const scored = createBestCatalogRolePick(config, boss);
+        if (!scored || getRecommendationTierPriority(scored.tier) > tierPriority.bom) return;
+        ensureRolePickNames(roleList, [scored], config.roleKey);
+      });
+    });
+  });
+}
+
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
 injectMiltankRecommendations();
 injectMegaAbsolZRecommendations();
 injectRequestedSupportRecommendations();
+injectCatalogSpeedsterRecommendations();
+injectCatalogRoleRecommendations();
 normalizeAllBossRecommendationAssignments();
 applyFixedRecommendationRegistryChecks();
 hydrateRecommendationCatalog();
@@ -6571,10 +6732,10 @@ function filterRecommendationListByTier(list = [], bossRef, minimumTier = 'bom')
 
 function removeRuimRecommendationsAndBackfillMissingBosses() {
   const seedConfigs = buildFixedRecommendationSeedConfigs();
-  const targetCatalogs = ['hoopa', 'champion', 'mew2'];
+  const targetCatalogs = Object.values(bossCatalogs)
+    .filter((catalog) => Array.isArray(catalog?.data) && catalog.data.length);
 
-  targetCatalogs.forEach((catalogId) => {
-    const catalog = bossCatalogs[catalogId];
+  targetCatalogs.forEach((catalog) => {
     (catalog?.data || []).forEach((boss) => {
       Object.entries(boss?.clans || {}).forEach(([clanKey, clanData]) => {
         if (!clanData) return;

@@ -1607,7 +1607,7 @@
       "type1": "grass",
       "type2": "psychic",
       "moveset": [
-        "psychic"
+        "grass"
       ],
       "team": "instinct",
       "price": 15800,
@@ -4209,6 +4209,7 @@
         "Finisher"
       ],
       "type1": "fire",
+      "type2": "fighting",
       "moveset": [
         "fire"
       ],
@@ -4979,10 +4980,18 @@
       "image": "pokemons/3gen/plusle.png",
       "type1": "electric",
       "team": "instinct",
-      "normalCaptureAvailable": false,
+      "normalCaptureAvailable": true,
       "normalCaptureNote": "Impossível de capturar.",
-      "shinyCaptureAvailable": false,
-      "shinyCaptureNote": "Versão shiny não pode ser capturada."
+      "shinyCaptureAvailable": true,
+      "shinyCaptureNote": "Versão shiny não pode ser capturada.",
+      "generation": 3,
+      "dex": 311,
+      "role": "supporter",
+      "moveset": [
+        "electric"
+      ],
+      "price": 5000,
+      "level": 50
     },
     {
       "name": "Minun",
@@ -6829,7 +6838,7 @@
       "dex": 450,
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Finisher"
       ],
       "type1": "ground",
       "moveset": [
@@ -7313,7 +7322,13 @@
       ],
       "team": "instinct",
       "price": 1000,
-      "level": 5
+      "level": 5,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Servine",
@@ -7327,7 +7342,13 @@
       ],
       "team": "instinct",
       "price": 4000,
-      "level": 30
+      "level": 30,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Serperior",
@@ -7346,6 +7367,12 @@
       "passiveDescription": "O Pokemon torna-se capaz de causar dano super efetivo a qualquer Pokemon do tipo Dragon.",
       "passiveSuperEffectiveTypes": [
         "dragon"
+      ],
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
       ]
     },
     {
@@ -7360,8 +7387,13 @@
         "grass"
       ],
       "team": "instinct",
-      "price": 16000,
-      "level": 80,
+      "price": 0,
+      "priceLabel": "$99 P-Bucks",
+      "level": 100,
+      "specialTags": [
+        "pack",
+        "shiny"
+      ],
       "passiveName": "Royal Garden",
       "passiveDescription": "O Pokemon torna-se capaz de causar dano super efetivo a qualquer Pokemon do tipo Dragon.",
       "passiveSuperEffectiveTypes": [
@@ -7380,7 +7412,13 @@
       ],
       "team": "valor",
       "price": 1000,
-      "level": 5
+      "level": 5,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Pignite",
@@ -7395,7 +7433,13 @@
       ],
       "team": "valor",
       "price": 4000,
-      "level": 30
+      "level": 30,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Emboar",
@@ -7404,7 +7448,8 @@
       "dex": 500,
       "role": "all-rounder",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Finisher"
       ],
       "type1": "fire",
       "type2": "fighting",
@@ -7413,7 +7458,13 @@
       ],
       "team": "valor",
       "price": 16000,
-      "level": 80
+      "level": 80,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Oshawott",
@@ -7427,7 +7478,13 @@
       ],
       "team": "mystic",
       "price": 1000,
-      "level": 5
+      "level": 5,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Dewott",
@@ -7441,7 +7498,13 @@
       ],
       "team": "mystic",
       "price": 4000,
-      "level": 30
+      "level": 30,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Samurott",
@@ -7459,7 +7522,33 @@
       ],
       "team": "mystic",
       "price": 16000,
-      "level": 80
+      "level": 80,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Liepard",
+      "image": "pokemons/5gen/liepard.png",
+      "generation": 5,
+      "dex": 510,
+      "role": "attacker",
+      "type1": "dark",
+      "moveset": [
+        "dark"
+      ],
+      "team": "valor",
+      "price": 9000,
+      "level": 50,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Não é possível capturar agora.",
+      "passiveName": "Limber",
+      "passiveDescription": "Torna o Pokémon imune ao status Paralyze.",
+      "shinyPassiveName": "Unburden",
+      "shinyPassiveDescription": "Aumenta a velocidade base do pokémon."
     },
     {
       "name": "Drilbur",
@@ -7496,11 +7585,86 @@
       ]
     },
     {
+      "name": "Scolipede",
+      "image": "pokemons/5gen/scolipede.png",
+      "generation": 5,
+      "dex": 545,
+      "role": "speedster",
+      "type1": "bug",
+      "type2": "poison",
+      "moveset": [
+        "poison"
+      ],
+      "team": "valor",
+      "price": 0,
+      "priceLabel": "Obtido em troca com o Maniac",
+      "level": 80,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon maniac nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
+      "specialTags": [
+        "maniac"
+      ]
+    },
+    {
+      "name": "Sandile",
+      "image": "pokemons/5gen/sandile.png",
+      "generation": 5,
+      "dex": 551,
+      "role": "",
+      "type1": "ground",
+      "type2": "dark",
+      "moveset": [
+        "ground"
+      ],
+      "team": "instinct",
+      "price": 0,
+      "priceLabel": "Obtido em troca com o Maniac",
+      "level": 30,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon maniac nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
+      "specialTags": [
+        "maniac"
+      ]
+    },
+    {
+      "name": "Krokorok",
+      "image": "pokemons/5gen/krokorok.png",
+      "generation": 5,
+      "dex": 552,
+      "role": "attacker",
+      "subFunctions": [
+        "Finisher"
+      ],
+      "type1": "ground",
+      "type2": "dark",
+      "moveset": [
+        "ground"
+      ],
+      "team": "instinct",
+      "price": 0,
+      "priceLabel": "Obtido em troca com o Maniac",
+      "level": 65,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon maniac nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
+      "specialTags": [
+        "maniac"
+      ]
+    },
+    {
       "name": "Krookodile",
       "image": "pokemons/5gen/krookodile.png",
       "generation": 5,
       "dex": 553,
       "role": "attacker",
+      "subFunctions": [
+        "Finisher"
+      ],
       "type1": "ground",
       "type2": "dark",
       "moveset": [
@@ -7821,6 +7985,83 @@
       "shinyCaptureNote": "Versao shiny nao pode ser capturada."
     },
     {
+      "name": "Tynamo",
+      "image": "pokemons/5gen/tynamo.png",
+      "generation": 5,
+      "dex": 602,
+      "role": "attacker",
+      "type1": "ground",
+      "type2": "dark",
+      "moveset": [
+        "electric"
+      ],
+      "team": "instinct",
+      "price": 21000,
+      "level": 65,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "passiveName": "Levitate",
+      "passiveDescription": "O Pokemon e imune a danos do tipo Ground.",
+      "defenseByBossType": {
+        "ground": 0
+      },
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Eelektrik",
+      "image": "pokemons/5gen/eelektrik.png",
+      "generation": 5,
+      "dex": 603,
+      "role": "attacker",
+      "subFunctions": [
+        "Finisher"
+      ],
+      "type1": "electric",
+      "moveset": [
+        "electric"
+      ],
+      "team": "instinct",
+      "price": 21000,
+      "level": 65,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Eelektross",
+      "image": "pokemons/5gen/eelektross.png",
+      "generation": 5,
+      "dex": 604,
+      "role": "attacker",
+      "subFunctions": [
+        "Finisher"
+      ],
+      "type1": "electric",
+      "moveset": [
+        "electric"
+      ],
+      "team": "instinct",
+      "price": 39000,
+      "level": 95,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ],
+      "passiveName": "Levitate",
+      "passiveDescription": "O Pokemon e imune a danos do tipo Ground.",
+      "defenseByBossType": {
+        "ground": 0
+      }
+    },
+    {
       "name": "Litwick",
       "image": "pokemons/5gen/litwick.png",
       "generation": 5,
@@ -8109,14 +8350,110 @@
         "water"
       ],
       "type2": "water",
-      "subFunctions": [
-        "Finisher",
-        "Frontal Pull"
-      ],
-      "level": 80,
+      "level": 95,
       "generation": 6,
       "dex": 689,
-      "image": "pokemons/6gen/barbaracle.png"
+      "image": "pokemons/6gen/barbaracle.png",
+      "price": 70000,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Litleo",
+      "image": "pokemons/6gen/litleo.png",
+      "generation": 6,
+      "dex": 667,
+      "role": "",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "fire",
+      "type2": "normal",
+      "moveset": [
+        "fire"
+      ],
+      "team": "valor",
+      "price": 4000,
+      "level": 30,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Pyroar Female",
+      "image": "pokemons/6gen/pyroar-female.png",
+      "generation": 6,
+      "dex": 668,
+      "role": "speedster",
+      "type1": "fire",
+      "type2": "normal",
+      "moveset": [
+        "grass"
+      ],
+      "team": "valor",
+      "price": 18000,
+      "level": 80,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Pyroar Male",
+      "image": "pokemons/6gen/pyroar.png",
+      "generation": 6,
+      "dex": 668,
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "fire",
+      "type2": "normal",
+      "moveset": [
+        "electric"
+      ],
+      "team": "valor",
+      "price": 18000,
+      "level": 80,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
+    },
+    {
+      "name": "Binacle",
+      "image": "pokemons/6gen/binacle.png",
+      "generation": 6,
+      "dex": 688,
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "rock",
+      "type2": "water",
+      "moveset": [
+        "water"
+      ],
+      "team": "valor",
+      "price": 15000,
+      "level": 65,
+      "normalCaptureNote": "Captura apenas com Safari Ball, Story Ball e Elemental Balls.",
+      "normalCaptureBalls": [
+        "safari",
+        "story",
+        "elemental"
+      ]
     },
     {
       "name": "Cramorant",
