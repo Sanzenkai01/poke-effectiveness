@@ -43,7 +43,7 @@
         { name: 'nazgulplayer', supportsDrops: false },
         { name: 'especialbr', supportsDrops: false },
         { name: 'manoblaze', supportsDrops: false },
-        { name: 'eaisantinho', supportsDrops: true },
+        { name: 'eaisantinho', supportsDrops: true, discord: 'https://discord.gg/GAwMgTMEmf' },
         { name: 'kingszt', supportsDrops: false },
         { name: 'prodigyz_gameplay', supportsDrops: false },
         { name: 'BruxoNoir', supportsDrops: false },

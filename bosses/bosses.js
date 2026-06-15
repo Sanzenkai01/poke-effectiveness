@@ -2397,26 +2397,20 @@ const mainQuestBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
+          createRolePick('Dedenne', ['electric', 'fairy'], 'electric'),
+          createRolePick('Mega Raichu X', ['electric'], 'electric'),
           createRolePick('Mega Raichu Y', ['electric'], 'electric'),
-          createRolePick('Pikachu', ['electric'], 'electric'),
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+          createRolePick('Pikachu', ['electric'], 'electric')
         ]
       },
       mystic: {
         dps: [
-          createRolePick('Dewgong', ['water', 'ice'], 'ice'),
-          createRolePick('Mega Greninja', ['water', 'dark'], 'water'),
-          createRolePick('Greninja', ['water', 'dark'], 'water'),
-          createRolePick('Hawlucha', ['fighting', 'flying'], 'flying')
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric')
         ]
       },
       valor: {
         dps: [
-          createRolePick('Weavile', ['dark', 'ice'], 'ice'),
-          createRolePick('Scyther', ['bug', 'flying'], 'flying'),
-          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water')
+          createRolePick('Kabutops', ['rock', 'water'], 'rock')
         ]
       }
     }
@@ -2431,25 +2425,24 @@ const mainQuestBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Lurantis', ['grass'], 'grass'),
           createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
           createRolePick("Rosa's Serperior", ['grass'], 'grass'),
-          createRolePick('Tangrowth', ['grass'], 'grass')
+          createRolePick('Shiftry', ['grass', 'dark'], 'grass')
         ]
       },
       mystic: {
         dps: [
-          createRolePick('Greninja', ['water', 'dark'], 'water'),
-          createRolePick('Mega Greninja', ['water', 'dark'], 'water'),
-          createRolePick('BlastoiseTwo', ['water'], 'water'),
-          createRolePick('Dewgong', ['water', 'ice'], 'ice')
+          createRolePick('Mantine', ['water', 'flying'], 'water')
         ]
       },
       valor: {
         dps: [
-          createRolePick('Cramorant', ['flying', 'water'], 'water'),
-          createRolePick('Kabutops', ['rock', 'water'], 'water'),
-          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy')
+          createRolePick('CharizardTwo', ['fire', 'flying'], 'fire'),
+          createRolePick("Farfetch'd", ['normal', 'flying'], 'normal'),
+          createRolePick("May's Beautifly", ['bug', 'flying'], 'bug'),
+          createRolePick('Scyther', ['bug', 'flying'], 'bug'),
+          createRolePick('Shiny Scyther', ['bug', 'flying'], 'bug'),
+          createRolePick('Heracross', ['bug', 'fighting'], 'bug')
         ]
       }
     }
@@ -2464,26 +2457,19 @@ const mainQuestBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
-          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
-          createRolePick('Pikachu', ['electric'], 'electric'),
           createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
-          createRolePick('Lurantis', ['grass'], 'grass')
+          createRolePick("Rosa's Serperior", ['grass'], 'grass'),
+          createRolePick('Shiftry', ['grass', 'dark'], 'grass'),
+          createRolePick('VenusaurTwo', ['grass', 'poison'], 'grass')
         ]
       },
       mystic: {
         dps: [
-          createRolePick('Lombre', ['water', 'grass'], 'grass'),
-          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel'),
-          createRolePick('Hawlucha', ['fighting', 'flying'], 'flying')
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric')
         ]
       },
       valor: {
-        dps: [
-          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
-          createRolePick('Scyther', ['bug', 'flying'], 'bug'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water')
-        ]
+        dps: []
       }
     }
   },
@@ -2497,43 +2483,45 @@ const mainQuestBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         tank: [
-          createRolePick('Magnezone', ['electric', 'steel'], 'steel'),
-          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass')
+          createRolePick('Magnezone', ['electric', 'steel'], 'electric'),
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground'),
+          createRolePick('Shiny Claydol', ['ground', 'psychic'], 'ground')
         ],
         dps: [
-          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Lurantis', ['grass'], 'bug')
-        ],
-        support: [
-          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
-          createRolePick('Bellossom', ['grass'], 'grass')
+          createRolePick('Shiftry', ['grass', 'dark'], 'grass'),
+          createRolePick('Excadrill', ['ground', 'steel'], 'ground')
         ]
       },
       mystic: {
         tank: [
           createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
           createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
-          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Dusclops', ['ghost'], 'ghost')
         ],
         dps: [
-          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
-          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
-          createRolePick('Mega Greninja', ['water', 'dark'], 'water')
-        ],
-        support: [
-          createRolePick('Smoochum', ['ice', 'psychic'], 'ice')
+          createRolePick('Dachsbun', ['fairy'], 'fairy'),
+          createRolePick('Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'water'),
+          createRolePick('Banette', ['ghost'], 'ghost'),
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric'),
+          createRolePick('Mega Skarmory', ['steel', 'flying'], 'steel'),
+          createRolePick('Mega Starmie', ['water', 'psychic'], 'water'),
+          createRolePick('Orthworm', ['steel'], 'steel')
         ]
       },
       valor: {
         tank: [
-          createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
-          createRolePick('Sableye', ['dark', 'ghost'], 'dark')
+          createRolePick('Orbeetle', ['bug', 'psychic'], 'bug'),
+          createRolePick('Shuckle', ['bug', 'rock'], 'bug'),
+          createRolePick('Sableye', ['dark', 'ghost'], 'dark'),
+          createRolePick('Bastiodon', ['rock', 'steel'], 'rock'),
+          createRolePick('Probopass', ['rock', 'steel'], 'rock'),
+          createRolePick('Shieldon', ['rock', 'steel'], 'rock')
         ],
         dps: [
-          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
-          createRolePick('Mega Absol Z', ['dark'], 'fairy'),
-          createRolePick('Scyther', ['bug', 'flying'], 'bug')
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'bug')
         ],
         support: [
           createRolePick('Houndour', ['dark', 'fire'], 'dark'),
@@ -3029,7 +3017,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Dachsbun", 'fairy', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Dewgong", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Drifloon", 'ghost', 'dps', 'mystic'),
-      createFixedRecommendationDefinition("Duraludon", 'steel', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Duraludon", 'steel', 'dps', 'mystic', { moveType: 'electric' }),
       createFixedRecommendationDefinition("Greninja", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Hawlucha", 'fighting', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Kingdra", 'water', 'dps', 'mystic'),
@@ -4565,10 +4553,12 @@ const bossPokemonAssetAliases = Object.freeze({
   'dusclops.png': 'pokemons/3gen/dusclops.png',
   'electrode.png': 'pokemons/1gen/electrode.png',
   'excadrill.png': 'pokemons/5gen/excadrill.png',
+  'farfetch-d.png': 'pokemons/1gen/farfetchd.png',
   'farfetchd.png': 'pokemons/1gen/farfetchd.png',
   'fidough.png': 'pokemons/9gen/fidough.png',
   'flying-cramorant.png': 'pokemons/8gen/flying-cramorant.png',
   'frosmoth.png': 'pokemons/8gen/frosmoth.png',
+  'melony-s-frosmoth.png': 'pokemons/8gen/frosmoth.png',
   'garbodor.png': 'pokemons/5gen/garbodor.png',
   'goodra.png': 'pokemons/6gen/goodra.png',
   'greninja.png': 'pokemons/6gen/greninja.png',
@@ -4594,6 +4584,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'mantine.png': 'pokemons/2gen/mantine.png',
   'marowak.png': 'pokemons/1gen/marowak.png',
   'may-beautifly.png': 'pokemons/3gen/may-beautifly.png',
+  'may-s-beautifly.png': 'pokemons/3gen/may-beautifly.png',
   'mega-absol.png': 'pokemons/megas/mega-absol.png',
   'mega-absol-z.png': 'pokemons/megas/mega-absol-z.png',
   'mega-aerodactyl.png': 'pokemons/megas/mega-aerodactyl.png',
@@ -5887,12 +5878,24 @@ function filterMainQuestVisibleRolePicks(picks = [], context = {}) {
   }
 
   const maximumPriority = getRecommendationMaximumPriority('bom');
-  return (Array.isArray(picks) ? picks : []).filter((pick) => {
+  const eligiblePicks = (Array.isArray(picks) ? picks : []).filter((pick) => {
     if (shouldExcludeMainQuestPick(pick, context)) return false;
     if (getRecommendationTierPriority(pick?.tier) > maximumPriority) return false;
     if (typeof pick?._defenseWorst === 'number' && pick._defenseWorst >= 2) return false;
     return true;
   });
+
+  const highTierPicks = eligiblePicks.filter((pick) => (
+    getRecommendationTierPriority(pick?.tier) <= tierPriority.muitobom
+  ));
+  if (highTierPicks.length > 1) return highTierPicks;
+  if (highTierPicks.length === 1) {
+    const bomAlternatives = eligiblePicks
+      .filter((pick) => getRecommendationTierPriority(pick?.tier) === tierPriority.bom)
+      .slice(0, 3);
+    return [...highTierPicks, ...bomAlternatives];
+  }
+  return eligiblePicks;
 }
 
 function shouldKeepAllHorizonsNonRuimPicks(boss, clanKey, roleKey) {
