@@ -15016,11 +15016,12 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   padding: 0.58rem 0.68rem;
 }
 
-.pokemon-details-modal__section--boss-usage {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: start;
-  padding: 0.46rem 0.54rem;
+.pokemon-details-modal__boss-usage-block {
+  display: grid;
+  gap: 0.24rem;
+  margin-top: 0.44rem;
+  padding-top: 0.38rem;
+  border-top: 1px solid rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.14);
 }
 
 .pokemon-details-modal__section-head {
@@ -24147,6 +24148,41 @@ body {
 .planner-edit-modal__body > * {
   flex: 1 1 18rem;
   min-width: min(100%, 16rem);
+}
+
+.pokemon-details-modal__body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  align-items: start;
+  gap: 0.36rem;
+  flex-wrap: nowrap;
+}
+
+.pokemon-details-modal__body > .pokemon-details-modal__section {
+  flex: initial;
+  min-width: 0;
+}
+
+.pokemon-details-modal__body > .pokemon-details-modal__section--info {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pokemon-details-modal__body > .pokemon-details-modal__section--averages {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+@media (max-width: 980px) {
+  .pokemon-details-modal__body {
+    grid-template-columns: 1fr;
+  }
+
+  .pokemon-details-modal__body > .pokemon-details-modal__section--info,
+  .pokemon-details-modal__body > .pokemon-details-modal__section--averages {
+    grid-column: auto;
+    grid-row: auto;
+  }
 }
 
 .times-details-modal__body {

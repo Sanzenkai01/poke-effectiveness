@@ -257,6 +257,8 @@ let pokemonDetailsLastFocus = null;
 let pokemonDetailsKeyHandler = null;
 let pokemonEvolutionGraph = null;
 let pokemonBossUsageRenderToken = 0;
+let pokemonHuntPreAceStageByKey = null;
+let pokemonHuntAceSourceKeys = null;
 let pokemonCatalogFiltersInitialized = false;
 let pokemonCatalogPaginationInitialized = false;
 let pokemonCatalogRenderFrame = null;
@@ -339,7 +341,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260614c';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615b';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260614b';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
@@ -986,6 +988,7 @@ let teamBuilderPassiveTooltipSurface = null;
 let teamBuilderPassiveTooltipActiveBadge = null;
 let teamBuilderPassiveTooltipListenersBound = false;
 let teamBuilderPassiveTooltipHideTimer = 0;
+let teamBuilderUrlHydratedValue = '';
 let teamBuilderFilters = {
     search: '',
     clan: 'all',
@@ -993,6 +996,7 @@ let teamBuilderFilters = {
     roles: [],
     type: 'all'
 };
+const TEAM_BUILDER_SHARE_PARAM = 'team';
 const HUNT_BUILDER_SLOT_CONFIGS = Object.freeze([
     { id: 'ar', label: 'All-Rounder', kind: 'ar' },
     { id: 'dps-1', label: 'DPS/Stun 1', kind: 'dps' },
@@ -1106,10 +1110,11 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     'mewtwo-solo': { key: 'mewtwo-solo', label: 'Mewtwo Solo' },
     'poke-gift': { key: 'poke-gift', label: 'Poke Gift' },
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
+    'pre-ace': { key: 'pre-ace', label: 'Pr\u00e9-Ace' },
     ace: { key: 'ace', label: 'Ace' },
     stuck: { key: 'stuck', label: 'Stuck' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'ace', 'stuck']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'pre-ace', 'ace', 'stuck']);
 const POKEMON_STANDARD_CARD_IMAGE_ENTRIES = new Set(['venusaurtwo', 'charizardtwo', 'blastoisetwo']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
@@ -7717,6 +7722,8 @@ function ensureTeamsCatalogLoaded(force = false){
         teamsCatalogLoaded = false;
         teamsCatalog = [];
         teamsCatalogLoadPromise = null;
+        pokemonHuntPreAceStageByKey = null;
+        pokemonHuntAceSourceKeys = null;
     }
 
     showTimesLoadingState();
@@ -7725,6 +7732,8 @@ function ensureTeamsCatalogLoaded(force = false){
             teamsCatalog = entries;
             renderTeamTagFilterButtons(teamsCatalog);
             teamsCatalogLoaded = true;
+            pokemonHuntPreAceStageByKey = null;
+            pokemonHuntAceSourceKeys = null;
             return teamsCatalog;
         })
         .finally(() => {
@@ -9713,6 +9722,71 @@ function findTeamBuilderPokemonCatalogEntry(name){
         || null;
 }
 
+function findTeamBuilderPokemonCatalogEntryByToken(token){
+    const normalizedToken = normalizePokemonDetailRouteToken(token);
+    if(!normalizedToken) return null;
+    return findPokemonCatalogEntryByRouteToken(normalizedToken, POKEMON_CATALOG_VARIANT_DEFAULT)
+        || findTeamBuilderPokemonCatalogEntry(normalizedToken);
+}
+
+function getTeamBuilderShareTokenForEntry(entry){
+    return String(entry?.routeSlug || entry?.id || '')
+        .trim()
+        .toLowerCase();
+}
+
+function getTeamBuilderShareValue(){
+    if(!isTeamBuilderComplete()) return '';
+    const tokens = TEAM_BUILDER_SLOT_CONFIGS.map(slot => getTeamBuilderShareTokenForEntry(teamBuilderSelections[slot.id]));
+    if(tokens.some(token => !token)) return '';
+    return tokens.map(encodeURIComponent).join('.');
+}
+
+function applyTeamBuilderShareValue(rawValue){
+    const shareValue = String(rawValue || '').trim();
+    if(!shareValue || shareValue === teamBuilderUrlHydratedValue) return false;
+    const tokens = shareValue.split('.').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
+    if(tokens.length !== TEAM_BUILDER_SLOT_CONFIGS.length) return false;
+
+    const nextSelections = {};
+    const usedDuplicateKeys = new Set();
+    let selectedMegaKey = '';
+    for(let index = 0; index < TEAM_BUILDER_SLOT_CONFIGS.length; index += 1){
+        const slot = TEAM_BUILDER_SLOT_CONFIGS[index];
+        const entry = findTeamBuilderPokemonCatalogEntryByToken(tokens[index]);
+        if(!entry || !teamBuilderEntryMatchesSlot(entry, slot) || !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
+        const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
+        if(duplicateKey && usedDuplicateKeys.has(duplicateKey)) return false;
+        if(duplicateKey) usedDuplicateKeys.add(duplicateKey);
+        if(isMegaPokemonCatalogEntry(entry)){
+            const megaKey = getTeamBuilderEntryKey(entry);
+            if(selectedMegaKey && selectedMegaKey !== megaKey) return false;
+            selectedMegaKey = megaKey;
+        }
+        nextSelections[slot.id] = entry;
+    }
+
+    teamBuilderSelections = nextSelections;
+    teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS[0]?.id || '';
+    teamBuilderHuntsVisible = true;
+    teamBuilderHuntsLoading = false;
+    teamBuilderFilters = {
+        search: '',
+        clan: 'all',
+        subFunctions: [],
+        roles: [],
+        type: 'all'
+    };
+    if(teamBuilderSearchInput) teamBuilderSearchInput.value = '';
+    teamBuilderUrlHydratedValue = shareValue;
+    return true;
+}
+
+function applyTeamBuilderShareValueFromUrl(){
+    const params = new URLSearchParams(location.search);
+    return applyTeamBuilderShareValue(params.get(TEAM_BUILDER_SHARE_PARAM) || '');
+}
+
 function isTeamMemberTankRole(member){
     const roleText = normalizePokemonSearchText(member?.role || '');
     if(!roleText) return false;
@@ -10098,6 +10172,9 @@ function renderTeamBuilder(){
     if(!isTeamBuilderComplete()){
         renderTeamBuilderResults();
     }
+    if(teamBuilderInitialized && contentTeamBuilder && !contentTeamBuilder.hidden){
+        updateUrl();
+    }
 }
 
 function initializeTeamBuilderPage(){
@@ -10137,6 +10214,7 @@ function showTeamBuilder(){
         renderTeamBuilderClanFilters();
         renderTeamBuilderSubFunctionFilters();
         renderTeamBuilderTypeFilters();
+        applyTeamBuilderShareValueFromUrl();
         renderTeamBuilder();
         if(useGsap && contentTeamBuilder){
             gsap.from(contentTeamBuilder, { opacity: 0, y: -10, duration: 0.4 });
@@ -10145,7 +10223,6 @@ function showTeamBuilder(){
         console.error('Team Builder load failed', error);
         if(teamBuilderStatus) teamBuilderStatus.textContent = 'Nao foi possivel carregar o Team Builder.';
     });
-    updateUrl();
 }
 
 function getHuntBuilderTargetDefinitionNames(definition){
@@ -15754,6 +15831,13 @@ function updateUrl(options = {}){
     } else {
         syncTeamFilterParams(params, DEFAULT_TEAM_FILTERS);
     }
+    if(activeTab === 'team-builder'){
+        const teamShareValue = getTeamBuilderShareValue();
+        if(teamShareValue) params.set(TEAM_BUILDER_SHARE_PARAM, teamShareValue);
+        else params.delete(TEAM_BUILDER_SHARE_PARAM);
+    } else {
+        params.delete(TEAM_BUILDER_SHARE_PARAM);
+    }
     if(!pendingCatchUrlState){
         params.delete('variant');
     }
@@ -17410,6 +17494,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'maniac') return 'maniac';
     if(normalized === 'mewtwo-solo' || normalized === 'mew2-solo') return 'mewtwo-solo';
     if(normalized === 'poke-gift' || normalized === 'pokegift') return 'poke-gift';
+    if(normalized === 'pre-ace' || normalized === 'preace') return 'pre-ace';
     if(normalized === 'ace') return 'ace';
     if(normalized === 'stuck') return 'stuck';
     if(normalized === 'shiny' || normalized === 'brilhante') return 'shiny';
@@ -17574,13 +17659,14 @@ function getPokemonEntrySpecialTags(entry){
 
 function getPokemonCardSpecialTags(entry){
     const tags = getPokemonEntrySpecialTags(entry);
+    const visibleTags = tags.filter(tagKey => tagKey !== 'pre-ace');
     if(entry?.searchName === 'zoroark'){
-        return tags.filter(tagKey => tagKey !== 'boss');
+        return visibleTags.filter(tagKey => tagKey !== 'boss');
     }
     if(entry?.routeSlug === 'rosas-serperior'){
-        return tags.filter(tagKey => tagKey !== 'shiny');
+        return visibleTags.filter(tagKey => tagKey !== 'shiny');
     }
-    return tags;
+    return visibleTags;
 }
 
 function getPokemonEntrySubFunctions(entry){
@@ -19089,14 +19175,87 @@ function getPokemonCaptureAverageForBall(level, variant, ballKey){
     return fallbackOption ? Number(getCatchRequiredAmount(fallbackOption, ballKey, variant) || 0) : 0;
 }
 
+function forEachTeamHuntSourceName(callback){
+    if(!teamsCatalogLoaded || !Array.isArray(teamsCatalog) || typeof callback !== 'function') return;
+
+    const collectHuntSource = (entity) => {
+        const sourceName = String(entity?.name || '').trim();
+        if(!sourceName || entity?.sourceHuntName) return;
+        getTeamHuntPreEvolutionSourceNames(sourceName).forEach(callback);
+    };
+
+    teamsCatalog.forEach((team) => {
+        (Array.isArray(team?.hunts) ? team.hunts : []).forEach(collectHuntSource);
+        (Array.isArray(team?.alternativeHunts) ? team.alternativeHunts : []).forEach(collectHuntSource);
+    });
+}
+
+function getPokemonHuntAceSourceKeySet(){
+    if(!teamsCatalogLoaded || !Array.isArray(teamsCatalog)) return new Set();
+    if(pokemonHuntAceSourceKeys instanceof Set) return pokemonHuntAceSourceKeys;
+
+    const sourceKeys = new Set();
+    forEachTeamHuntSourceName((sourceName) => {
+        const key = getPokemonCatalogRegistryKey(sourceName);
+        if(key) sourceKeys.add(key);
+    });
+
+    pokemonHuntAceSourceKeys = sourceKeys;
+    return pokemonHuntAceSourceKeys;
+}
+
+function isPokemonHuntAceSourceEntry(entry){
+    const key = getPokemonCatalogRegistryKey(entry?.name);
+    return !!key && getPokemonHuntAceSourceKeySet().has(key);
+}
+
+function getPokemonHuntPreAceStageMap(){
+    if(!teamsCatalogLoaded || !Array.isArray(teamsCatalog)) return new Map();
+    if(pokemonHuntPreAceStageByKey instanceof Map) return pokemonHuntPreAceStageByKey;
+
+    const stageByKey = new Map();
+    forEachTeamHuntSourceName((sourceName) => {
+        getTeamHuntPreEvolutionEntries(sourceName).forEach((preEvolution, index) => {
+            const key = getPokemonCatalogRegistryKey(preEvolution?.name);
+            const stage = Math.min(index + 1, 2);
+            if(!key || !stage) return;
+            stageByKey.set(key, Math.max(Number(stageByKey.get(key) || 0), stage));
+        });
+    });
+
+    pokemonHuntPreAceStageByKey = stageByKey;
+    return pokemonHuntPreAceStageByKey;
+}
+
+function getPokemonHuntPreAceEvolutionStage(entry){
+    const key = getPokemonCatalogRegistryKey(entry?.name);
+    if(!key) return 0;
+    return Number(getPokemonHuntPreAceStageMap().get(key) || 0);
+}
+
+function isPokemonHuntPreAceEntry(entry){
+    if(Array.isArray(entry?.specialTags) && entry.specialTags.includes('pre-ace')) return true;
+    return getPokemonHuntPreAceEvolutionStage(entry) > 0;
+}
+
+function getPokemonHuntPreAceShinyAverageForBall(entry, ballKey){
+    if(!isPokemonHuntPreAceEntry(entry)) return 0;
+    return getPokemonCaptureAverageForBall(95, 'shiny', ballKey);
+}
+
 function getPokemonAverageValueForVariant(entry, variant, ballKey){
     if(!isPokemonCaptureVariantAvailable(entry, variant)) return 0;
     if(variant === 'normal') return getPokemonNormalCaptureAverageForBall(entry, ballKey);
+    if(variant === 'shiny'){
+        const huntPreAceAverage = getPokemonHuntPreAceShinyAverageForBall(entry, ballKey);
+        if(huntPreAceAverage > 0) return huntPreAceAverage;
+    }
 
     // Some entries are marked as "ace" via specialTags but have numeric level (100).
     // For capture requirement lookup we must treat those as the 'ace' bucket so
     // the computeRequired() function can find the appropriate shiny requirements.
-    const isAce = Array.isArray(entry?.specialTags) && entry.specialTags.includes('ace');
+    const isAce = (Array.isArray(entry?.specialTags) && entry.specialTags.includes('ace'))
+        || isPokemonHuntAceSourceEntry(entry);
     const levelForRequirements = isAce ? 'ace' : entry?.level;
     return getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey);
 }
@@ -19108,6 +19267,12 @@ function isPokemonNormalCaptureBallAllowed(entry, ballKey){
     if(allowedBalls.includes(rawBallKey)) return true;
     const requirementBallKey = getCatchRequirementBallKey(rawBallKey);
     return requirementBallKey !== rawBallKey && allowedBalls.includes(requirementBallKey);
+}
+
+function isPokemonSafariCaptureEntry(entry){
+    return isPokemonNormalCaptureBallAllowed(entry, 'safari')
+        && Array.isArray(entry?.normalCaptureBalls)
+        && entry.normalCaptureBalls.some(ball => getCatchRequirementBallKey(ball) === 'safari');
 }
 
 function buildPokemonAverageCards(entry, variant){
@@ -19123,7 +19288,7 @@ function buildPokemonAverageCards(entry, variant){
 
     appendBallCard({ key: 'ultra', label: 'Ultra Ball' });
     appendBallCard({ key: 'story', label: 'Story Ball' });
-    if(variant === 'normal'){
+    if(variant === 'normal' && isPokemonSafariCaptureEntry(entry)){
         appendBallCard({ key: 'safari', label: 'Safari Ball' });
     }
 
@@ -19920,10 +20085,51 @@ function renderPokemonBossUsageSection(entry){
         });
 }
 
+function renderPokemonDetailsAverages(entry){
+    if(!pokemonDetailsAverages) return;
+
+    const averageFragment = document.createDocumentFragment();
+    averageFragment.append(
+        createPokemonAverageGroup(
+            'Pokémon Normal',
+            getPokemonAverageDescription(entry, 'normal'),
+            buildPokemonAverageCards(entry, 'normal')
+        ),
+        createPokemonAverageGroup(
+            'Pokémon Shiny',
+            getPokemonAverageDescription(entry, 'shiny'),
+            buildPokemonAverageCards(entry, 'shiny')
+        )
+    );
+    pokemonDetailsAverages.replaceChildren(averageFragment);
+}
+
+function refreshPokemonDetailsAveragesWhenTeamsLoaded(entry){
+    if(teamsCatalogLoaded || !entry) return;
+    const entryKey = getPokemonCatalogRegistryKey(entry.name);
+    if(!entryKey) return;
+
+    ensureTeamsCatalogLoaded()
+        .then(() => {
+            const activeKey = getPokemonCatalogRegistryKey(activePokemonCatalogEntry?.name);
+            if(
+                activeKey === entryKey
+                && pokemonDetailsModal
+                && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'
+            ){
+                renderPokemonDetailsAverages(activePokemonCatalogEntry || entry);
+            }
+        })
+        .catch((error) => {
+            console.error('Nao foi possivel carregar hunts para medias de captura.', error);
+        });
+}
+
 function renderPokemonDetailsModal(entry){
     if(!entry || !pokemonDetailsModal) return;
     const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
     const specialTags = getPokemonEntrySpecialTags(entry);
+    const visibleSpecialTags = specialTags.filter(tagKey => tagKey !== 'pre-ace');
     const subFunctions = getPokemonEntrySubFunctions(entry);
 
     activePokemonCatalogEntry = entry;
@@ -20000,7 +20206,7 @@ function renderPokemonDetailsModal(entry){
         if(entry.naturalShiny){
             badgesWrap.appendChild(createPokemonNaturalShinyBadge());
         }
-        specialTags.forEach((tagKey) => {
+        visibleSpecialTags.forEach((tagKey) => {
             badgesWrap.appendChild(createPokemonSpecialTagBadge(tagKey));
         });
 
@@ -20032,6 +20238,8 @@ function renderPokemonDetailsModal(entry){
         );
         pokemonDetailsAverages.replaceChildren(averageFragment);
     }
+
+    refreshPokemonDetailsAveragesWhenTeamsLoaded(entry);
 
     if(pokemonDetailsWeaknesses){
         const weaknessEntries = getPokemonWeaknesses(entry.naturalElements);
