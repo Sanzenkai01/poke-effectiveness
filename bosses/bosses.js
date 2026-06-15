@@ -11098,12 +11098,20 @@ function getRecommendedSpeedsters() {
   getActiveBossesData().forEach((boss) => {
     Object.values(boss.clans || {}).forEach((clanData) => {
       getAllRecommendedForClan(boss, clanData).forEach((poke) => {
-        const key = `${poke.name.toLowerCase()}|${poke.image || ''}`;
+        const key = getRecommendationNameKey(poke);
+        if (!key) return;
         if (!map.has(key)) {
           map.set(key, {
             ...poke,
             bossEntries: []
           });
+        } else {
+          const existing = map.get(key);
+          if (!existing.image && poke.image) existing.image = poke.image;
+          if ((!Array.isArray(existing.types) || !existing.types.length) && Array.isArray(poke.types)) {
+            existing.types = [...poke.types];
+          }
+          if (!existing.moveType && poke.moveType) existing.moveType = poke.moveType;
         }
 
         const entry = map.get(key);
