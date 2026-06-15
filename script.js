@@ -344,9 +344,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615c';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260615a';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615f';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260615b';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260615a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -781,6 +781,8 @@ const TEAM_BUILDER_ALLOWED_MEGA_NAMES = Object.freeze([
     'Mega Manectric',
     'Mega Camerupt',
     'Mega Scolipede',
+    'Mega Malamar',
+    'Mega Hawlucha',
     'Mega Absol',
     'Mega Dragonite',
     'Mega Drampa',
@@ -790,6 +792,8 @@ const TEAM_BUILDER_ALLOWED_MEGA_NAMES = Object.freeze([
     'Mega Chesnaught',
     'Mega Delphox',
     'Mega Greninja',
+    'Mega Golisopod',
+    'Mega Tyranitar',
     'Mega Metagross'
 ]);
 const TEAM_BUILDER_ALLOWED_MEGA_KEYS = Object.freeze(
@@ -8874,6 +8878,7 @@ function getTeamBuilderCatalogEntries(){
         .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
 
     return [...normalEntries, ...allowedMegaEntries].filter(entry => {
+        if(!entry || entry.catalogHidden) return false;
         if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderBossEntry(entry)) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
         if(entry.roleKey === 'speedster') return false;
