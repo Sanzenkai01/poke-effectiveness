@@ -284,7 +284,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260614b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260615c';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -337,6 +337,9 @@ const APP_ROUTE_ALIASES = {
     'ranger-bosses': { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
     especiais: { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
     'bosses-especiais': { path: '/ranger-bosses', tab: 'bosses', bossMode: 'special' },
+    mainquest: { path: '/main-quest', tab: 'bosses', bossMode: 'mainquest' },
+    'main-quest': { path: '/main-quest', tab: 'bosses', bossMode: 'mainquest' },
+    'main-quest-bosses': { path: '/main-quest', tab: 'bosses', bossMode: 'mainquest' },
     planejador: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
@@ -1445,7 +1448,7 @@ function getBossRouteMatch(pathname = location.pathname){
     if(!segments.length) return null;
 
     const bossMode = normalizeBossModeParam(segments[0]);
-    if(!bossMode || !['hoopa', 'champion', 'mew2', 'special', 'horizons'].includes(bossMode)) return null;
+    if(!bossMode || !['hoopa', 'champion', 'mew2', 'special', 'mainquest', 'horizons'].includes(bossMode)) return null;
     const detailSuffix = String(segments[2] || '').trim().toLowerCase();
     if((detailSuffix && !['mapa', 'video', 'pokemon'].includes(detailSuffix)) || segments.length > 3) return null;
 
@@ -2950,8 +2953,9 @@ function normalizeBossModeParam(value){
     if(normalized === 'champions') return 'champion';
     if(normalized === 'mewtwo') return 'mew2';
     if(normalized === 'bosses-especiais' || normalized === 'especiais' || normalized === 'ranger-bosses' || normalized === 'ranger') return 'special';
+    if(normalized === 'mainquest' || normalized === 'main-quest' || normalized === 'main-quest-bosses') return 'mainquest';
     if(normalized === 'planejador') return 'planner';
-    return ['hoopa', 'champion', 'mew2', 'special', 'planner', 'horizons'].includes(normalized) ? normalized : '';
+    return ['hoopa', 'champion', 'mew2', 'special', 'mainquest', 'planner', 'horizons'].includes(normalized) ? normalized : '';
 }
 
 function isTeamCatalogPathname(pathname = location.pathname){
@@ -2993,6 +2997,7 @@ function getBossModeQueryValue(value){
     const normalized = normalizeBossModeParam(value);
     if(normalized === 'mew2') return 'mewtwo';
     if(normalized === 'special') return 'ranger-bosses';
+    if(normalized === 'mainquest') return 'main-quest';
     if(normalized === 'planner') return 'planejador';
     return normalized;
 }
@@ -3247,6 +3252,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
         { id: 'route:champion', kind: 'route', target: 'bosses', bossMode: 'champion', title: 'Champion Path', category: 'Bosses', description: 'Bosses Champion Path', icon: 'CP', tags: ['chefes', 'tanque', 'dps', 'suporte'] },
         { id: 'route:mewtwo', kind: 'route', target: 'bosses', bossMode: 'mew2', title: 'Mewtwo', category: 'Bosses', description: 'Bosses do Mewtwo', icon: 'M2', tags: ['mew2', 'chefes'] },
+        { id: 'route:mainquest', kind: 'route', target: 'bosses', bossMode: 'mainquest', title: 'Main Quest', category: 'Bosses', description: 'Bosses da Main Quest', icon: 'MQ', tags: ['chefes', 'main quest', 'alpha'] },
         { id: 'route:ranger', kind: 'route', target: 'bosses', bossMode: 'special', title: 'Ranger Bosses', category: 'Bosses', description: 'Bosses especiais Ranger', icon: 'RB', tags: ['especial', 'speedster'] },
         { id: 'route:planner', kind: 'route', target: 'bosses', bossMode: 'planner', title: 'Planejador', category: 'Bosses', description: 'Montador de composicao para boss', icon: 'PL', tags: ['boss', 'planejar'] },
         { id: 'route:horizons', kind: 'route', target: 'bosses', bossMode: 'horizons', title: 'Horizons', category: 'Bosses', description: 'Rotas, mobs e bosses finais', icon: 'HZ', tags: ['rota', 'boss'] },

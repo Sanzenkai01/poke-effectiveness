@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v483`;
+const CACHE_NAME = `${CACHE_PREFIX}v487`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -26,22 +26,24 @@ const APP_SHELL = [
   new URL('./mewtwo/index.html', self.registration.scope).toString(),
   new URL('./planejador/index.html', self.registration.scope).toString(),
   new URL('./ranger-bosses/index.html', self.registration.scope).toString(),
+  new URL('./main-quest/index.html', self.registration.scope).toString(),
   new URL('./bosses/index.html', self.registration.scope).toString(),
   new URL('./bosses/hoopa-portais.html', self.registration.scope).toString(),
   new URL('./bosses/champion-path.html', self.registration.scope).toString(),
   new URL('./bosses/mewtwo.html', self.registration.scope).toString(),
   new URL('./bosses/ranger-bosses.html', self.registration.scope).toString(),
+  new URL('./bosses/main-quest.html', self.registration.scope).toString(),
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260615a', self.registration.scope).toString(),
-  new URL('./script.js?v=20260615e', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260615e', self.registration.scope).toString(),
+  new URL('./script.js?v=20260615g', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260608c', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260608f', self.registration.scope).toString(),
   new URL('./js/visits.shared.js?v=20260607d', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260614b', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260615c', self.registration.scope).toString(),
   new URL('./times/teams.json?v=20260611d', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()

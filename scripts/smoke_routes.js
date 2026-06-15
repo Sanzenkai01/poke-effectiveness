@@ -150,6 +150,15 @@ const routes = [
     ]
   },
   {
+    path: '/main-quest',
+    label: 'main-quest',
+    checks: [
+      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
+      { pattern: /data-boss-mode="mainquest"/i, description: 'main quest boss mode' },
+      { pattern: /Main Quest/i, description: 'main quest label' }
+    ]
+  },
+  {
     path: '/planejador',
     label: 'planejador',
     checks: [

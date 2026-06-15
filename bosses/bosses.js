@@ -752,6 +752,12 @@ const modalClan = document.getElementById('modal-clan');
 const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
 let activeSpeedsterContextName = null;
 let knownSpeedsterNames = null;
+const mainQuestNonSpeedsterNameKeys = Object.freeze(new Set([
+  'cramorant',
+  'lombre',
+  'lurantis',
+  'ribombee'
+]));
 
 function syncSharedModalOpenState() {
   if (!document.body) return;
@@ -797,6 +803,12 @@ let locationOverlayPreviousUrl = '';
 let activeBossTutorialBoss = null;
 let bossTutorialHistoryPushed = false;
 let bossTutorialPreviousUrl = '';
+let mainQuestPuzzleZoomScale = 1;
+const mainQuestPuzzleImages = Object.freeze([
+  { src: '/mainquest/puzzle1.png', label: 'Quebra-cabeça 1' },
+  { src: '/mainquest/puzzle2.png', label: 'Quebra-cabeça 2' },
+  { src: '/mainquest/puzzle3.png', label: 'Quebra-cabeça 3' }
+]);
 const HOOPA_BOSS_PROGRESS_STORAGE_KEY = 'hoopaBossProgressStateV1';
 const HOOPA_BOSS_RESET_TIMEZONE = 'America/Sao_Paulo';
 const HOOPA_BOSS_RESET_HOUR = 10;
@@ -829,6 +841,9 @@ const roleboardRoleLabels = {
 
 function getRoleboardRoleDisplayLabel(roleKey, mode = activeBossMode) {
   const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+  if (String(mode || '').trim().toLowerCase() === 'mainquest' && normalizedRoleKey === 'dps') {
+    return 'Speedster';
+  }
   if (String(mode || '').trim().toLowerCase() === 'horizons' && normalizedRoleKey === 'dps') {
     return 'Speedster';
   }
@@ -2352,6 +2367,166 @@ const specialBossesData = [
   }
 ];
 
+const mainQuestBosses = createManualRoleboardBosses([
+  {
+    id: 'alpha-fearow',
+    name: 'Alpha Fearow',
+    image: '/mainquest/alpha-fearow.png',
+    types: ['normal', 'flying'],
+    moveType: 'flying',
+    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Dewgong', ['water', 'ice'], 'ice'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'flying')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Weavile', ['dark', 'ice'], 'ice'),
+          createRolePick('Scyther', ['bug', 'flying'], 'flying'),
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water')
+        ]
+      }
+    }
+  },
+  {
+    id: 'alpha-marowak',
+    name: 'Alpha Marowak',
+    image: '/mainquest/alpha-marowak.png',
+    types: ['ground'],
+    moveType: 'ground',
+    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Lurantis', ['grass'], 'grass'),
+          createRolePick("Rosa's Serperior", ['grass'], 'grass'),
+          createRolePick('Tangrowth', ['grass'], 'grass')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water'),
+          createRolePick('BlastoiseTwo', ['water'], 'water'),
+          createRolePick('Dewgong', ['water', 'ice'], 'ice')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Kabutops', ['rock', 'water'], 'water'),
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy')
+        ]
+      }
+    }
+  },
+  {
+    id: 'alpha-kingler',
+    name: 'Alpha Kingler',
+    image: '/mainquest/alpha-kingler.png',
+    types: ['water'],
+    moveType: 'water',
+    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Lurantis', ['grass'], 'grass')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Lombre', ['water', 'grass'], 'grass'),
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel'),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'flying')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
+          createRolePick('Scyther', ['bug', 'flying'], 'bug'),
+          createRolePick('Cramorant', ['flying', 'water'], 'water')
+        ]
+      }
+    }
+  },
+  {
+    id: 'mega-malamar',
+    name: 'Mega Malamar',
+    image: 'megamalamar.png',
+    types: ['dark', 'psychic'],
+    moveType: 'psychic',
+    description: 'Luta 3v1 da Main Quest. Monte a composicao com Tank, Speedster e Suporte.',
+    clans: {
+      instinct: {
+        tank: [
+          createRolePick('Magnezone', ['electric', 'steel'], 'steel'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass')
+        ],
+        dps: [
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Lurantis', ['grass'], 'bug')
+        ],
+        support: [
+          createRolePick('Kirlia', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Bellossom', ['grass'], 'grass')
+        ]
+      },
+      mystic: {
+        tank: [
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel'),
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Shiny Bronzong', ['steel', 'psychic'], 'steel')
+        ],
+        dps: [
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water')
+        ],
+        support: [
+          createRolePick('Smoochum', ['ice', 'psychic'], 'ice')
+        ]
+      },
+      valor: {
+        tank: [
+          createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
+          createRolePick('Sableye', ['dark', 'ghost'], 'dark')
+        ],
+        dps: [
+          createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
+          createRolePick('Mega Absol Z', ['dark'], 'fairy'),
+          createRolePick('Scyther', ['bug', 'flying'], 'bug')
+        ],
+        support: [
+          createRolePick('Houndour', ['dark', 'fire'], 'dark'),
+          createRolePick('Zorua', ['dark'], 'dark')
+        ]
+      }
+    }
+  }
+], {
+  id: 'mainquest',
+  encounterLabel: 'Main Quest',
+  encounterNote: 'Lutas da campanha principal.'
+});
+
 const bossCatalogs = {
   hoopa: {
     id: 'hoopa',
@@ -2393,6 +2568,15 @@ const bossCatalogs = {
     ],
     data: specialBossesData
   },
+  mainquest: {
+    id: 'mainquest',
+    label: 'Main Quest',
+    variant: 'roleboard',
+    searchEnabled: true,
+    summary: 'Lutas da Main Quest com recomendações por clã. Alphas são 1v1; Mega Malamar é 3v1, obrigatóriamente de clãs diferentes.',
+    pills: ['Alpha 1v1', 'Mega Malamar 3v1', 'Quebra-cabeças'],
+    data: mainQuestBosses
+  },
   planner: {
     id: 'planner',
     label: 'Planejador',
@@ -2432,6 +2616,9 @@ const bossModeAliases = Object.freeze({
   'bosses-especiais': 'special',
   'ranger-bosses': 'special',
   ranger: 'special',
+  mainquest: 'mainquest',
+  'main-quest': 'mainquest',
+  'main-quest-bosses': 'mainquest',
   planner: 'planner',
   planejador: 'planner'
   ,horizons: 'horizons'
@@ -2442,6 +2629,7 @@ const standaloneBossModePages = Object.freeze({
   champion: 'champion-path.html',
   mew2: 'mewtwo.html',
   special: 'ranger-bosses.html',
+  mainquest: 'main-quest.html',
   planner: 'planejador.html'
   ,horizons: 'horizons.html'
 });
@@ -2476,7 +2664,7 @@ function normalizeBossMode(mode) {
 }
 
 function isBossRouteableMode(mode) {
-  return ['hoopa', 'champion', 'mew2', 'special', 'horizons'].includes(normalizeBossMode(mode));
+  return ['hoopa', 'champion', 'mew2', 'special', 'mainquest', 'horizons'].includes(normalizeBossMode(mode));
 }
 
 function normalizeBossRouteSlug(value) {
@@ -2494,6 +2682,7 @@ function getBossRouteBasePath(mode = activeBossMode) {
   if (normalizedMode === 'champion') return '/champion';
   if (normalizedMode === 'mew2') return '/mewtwo';
   if (normalizedMode === 'special') return '/ranger-bosses';
+  if (normalizedMode === 'mainquest') return '/main-quest';
   return '/hoopa';
 }
 
@@ -3240,7 +3429,7 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
-  if (nameKey === 'rosasserperior') {
+  if (nameKey === 'serperior' || nameKey === 'rosasserperior') {
     return {
       passiveSuperEffectiveTypes: ['dragon'],
       passiveName: 'Royal Garden',
@@ -5563,7 +5752,11 @@ function getAllRecommendedForClan(boss, clanData) {
   const clanKey = resolveBossClanKey(boss, clanData);
   let picks;
   if (clanData?.roles && clanKey) {
-    picks = roleboardRoleOrder.flatMap((roleKey) => getFixedRecommendationRolePicks(boss, clanKey, roleKey));
+    if (isMainQuestBoss(boss)) {
+      picks = roleboardRoleOrder.flatMap((roleKey) => getVisibleRolePicksForBoss('mainquest', boss, clanKey, roleKey));
+    } else {
+      picks = roleboardRoleOrder.flatMap((roleKey) => getFixedRecommendationRolePicks(boss, clanKey, roleKey));
+    }
   } else {
     picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
@@ -5637,6 +5830,50 @@ function shouldApplyHorizonsTierVisibilityRules(catalogOrMode) {
   return String(mode || '').trim().toLowerCase() === 'horizons';
 }
 
+function isMainQuestBoss(boss) {
+  return String(boss?.encounterLabel || '').trim().toLowerCase() === 'main quest';
+}
+
+function isMainQuestAlphaBoss(boss) {
+  return isMainQuestBoss(boss) && String(boss?.id || '').trim().toLowerCase().startsWith('alpha-');
+}
+
+function shouldApplyMainQuestTierVisibilityRules(catalogOrMode, boss) {
+  const mode = typeof catalogOrMode === 'string'
+    ? catalogOrMode
+    : catalogOrMode?.id;
+  return String(mode || '').trim().toLowerCase() === 'mainquest' || isMainQuestBoss(boss);
+}
+
+function shouldExcludeMainQuestPick(pick, context = {}) {
+  const bossId = String(context?.boss?.id || '').trim().toLowerCase();
+  const roleKey = String(context?.roleKey || '').trim().toLowerCase();
+  const pickKey = getRecommendationNameKey(pick);
+
+  if (roleKey === 'dps' && mainQuestNonSpeedsterNameKeys.has(pickKey)) {
+    return true;
+  }
+
+  return bossId === 'mega-malamar'
+    && roleKey === 'tank'
+    && pickKey === 'grumpig';
+}
+
+function filterMainQuestVisibleRolePicks(picks = [], context = {}) {
+  const normalizedRoleKey = String(context?.roleKey || '').trim().toLowerCase();
+  if (isMainQuestAlphaBoss(context?.boss) && normalizedRoleKey !== 'dps') {
+    return [];
+  }
+
+  const maximumPriority = getRecommendationMaximumPriority('bom');
+  return (Array.isArray(picks) ? picks : []).filter((pick) => {
+    if (shouldExcludeMainQuestPick(pick, context)) return false;
+    if (getRecommendationTierPriority(pick?.tier) > maximumPriority) return false;
+    if (typeof pick?._defenseWorst === 'number' && pick._defenseWorst >= 2) return false;
+    return true;
+  });
+}
+
 function shouldKeepAllHorizonsNonRuimPicks(boss, clanKey, roleKey) {
   return String(boss?.id || '').trim().toLowerCase() === 'alolan-golem'
     && String(roleKey || '').trim().toLowerCase() === 'support'
@@ -5666,6 +5903,10 @@ function getVisibleRolePicksForBoss(catalogOrMode, boss, clanKey, roleKey) {
     boss,
     getFixedRecommendationRolePicks(boss, clanKey, roleKey)
   );
+
+  if (shouldApplyMainQuestTierVisibilityRules(catalogOrMode, boss)) {
+    return filterMainQuestVisibleRolePicks(ranked, { boss, clanKey, roleKey });
+  }
 
   return shouldApplyHorizonsTierVisibilityRules(catalogOrMode)
     ? filterHorizonsVisibleRolePicks(ranked, { boss, clanKey, roleKey })
@@ -7161,6 +7402,239 @@ function createHoopaPortalTickerElement() {
   return ticker;
 }
 
+function closeMainQuestPuzzleZoom() {
+  const zoom = document.querySelector('.mainquest-puzzle-zoom');
+  if (zoom) zoom.remove();
+}
+
+function openMainQuestPuzzleZoom(imageData) {
+  closeMainQuestPuzzleZoom();
+  mainQuestPuzzleZoomScale = 1;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'mainquest-puzzle-zoom';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', imageData?.label || 'Quebra-cabeça ampliado');
+
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'mainquest-puzzle-zoom__backdrop';
+  backdrop.setAttribute('aria-label', 'Fechar imagem ampliada');
+  backdrop.addEventListener('click', closeMainQuestPuzzleZoom);
+
+  const frame = document.createElement('div');
+  frame.className = 'mainquest-puzzle-zoom__frame';
+
+  const controls = document.createElement('div');
+  controls.className = 'mainquest-puzzle-zoom__controls';
+
+  const title = document.createElement('strong');
+  title.className = 'mainquest-puzzle-zoom__title';
+  title.textContent = imageData?.label || 'Quebra-cabeça';
+
+  const zoomOut = document.createElement('button');
+  zoomOut.type = 'button';
+  zoomOut.className = 'mainquest-puzzle-zoom__btn';
+  zoomOut.textContent = '-';
+  zoomOut.setAttribute('aria-label', 'Diminuir zoom');
+
+  const zoomIn = document.createElement('button');
+  zoomIn.type = 'button';
+  zoomIn.className = 'mainquest-puzzle-zoom__btn';
+  zoomIn.textContent = '+';
+  zoomIn.setAttribute('aria-label', 'Aumentar zoom');
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'mainquest-puzzle-zoom__btn mainquest-puzzle-zoom__btn--close';
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Fechar zoom');
+  close.addEventListener('click', closeMainQuestPuzzleZoom);
+
+  const imageWrap = document.createElement('div');
+  imageWrap.className = 'mainquest-puzzle-zoom__image-wrap';
+
+  const image = document.createElement('img');
+  image.className = 'mainquest-puzzle-zoom__image';
+  image.src = imageData?.src || '';
+  image.alt = imageData?.label || 'Quebra-cabeça ampliado';
+  image.decoding = 'async';
+
+  const syncZoom = () => {
+    image.style.transform = `scale(${mainQuestPuzzleZoomScale})`;
+  };
+
+  zoomOut.addEventListener('click', () => {
+    mainQuestPuzzleZoomScale = Math.max(1, Math.round((mainQuestPuzzleZoomScale - 0.25) * 100) / 100);
+    syncZoom();
+  });
+
+  zoomIn.addEventListener('click', () => {
+    mainQuestPuzzleZoomScale = Math.min(3, Math.round((mainQuestPuzzleZoomScale + 0.25) * 100) / 100);
+    syncZoom();
+  });
+
+  controls.append(title, zoomOut, zoomIn, close);
+  imageWrap.appendChild(image);
+  frame.append(controls, imageWrap);
+  overlay.append(backdrop, frame);
+  document.body.appendChild(overlay);
+  document.body.classList.add('modal-open');
+  close.focus({ preventScroll: true });
+}
+
+function closeMainQuestPuzzleModal() {
+  closeMainQuestPuzzleZoom();
+  const modal = document.querySelector('.mainquest-puzzle-modal');
+  if (!modal) return;
+  modal.remove();
+  if (!document.querySelector('.modal[aria-hidden="false"]') && !document.querySelector('.speedster-modal[data-open="true"]')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function openMainQuestPuzzleModal() {
+  closeMainQuestPuzzleModal();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'mainquest-puzzle-modal';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Quebra-cabeças da Main Quest');
+
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'mainquest-puzzle-modal__backdrop';
+  backdrop.setAttribute('aria-label', 'Fechar quebra-cabeças');
+  backdrop.addEventListener('click', closeMainQuestPuzzleModal);
+
+  const content = document.createElement('div');
+  content.className = 'mainquest-puzzle-modal__content';
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'mainquest-puzzle-modal__close';
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Fechar quebra-cabeças');
+  close.addEventListener('click', closeMainQuestPuzzleModal);
+
+  const title = document.createElement('h2');
+  title.className = 'mainquest-puzzle-modal__title';
+  title.textContent = 'Quebra-cabeças';
+
+  const grid = document.createElement('div');
+  grid.className = 'mainquest-puzzle-grid';
+
+  mainQuestPuzzleImages.forEach((imageData) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'mainquest-puzzle-card';
+    button.setAttribute('aria-label', `Ampliar ${imageData.label}`);
+
+    const image = document.createElement('img');
+    image.className = 'mainquest-puzzle-card__image';
+    image.src = imageData.src;
+    image.alt = imageData.label;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    const label = document.createElement('span');
+    label.className = 'mainquest-puzzle-card__label';
+    label.textContent = imageData.label;
+
+    button.append(image, label);
+    button.addEventListener('click', () => openMainQuestPuzzleZoom(imageData));
+    grid.appendChild(button);
+  });
+
+  content.append(close, title, grid);
+  overlay.append(backdrop, content);
+  document.body.appendChild(overlay);
+  document.body.classList.add('modal-open');
+  close.focus({ preventScroll: true });
+}
+
+function closeMainQuestAdvancedJennyModal() {
+  const modal = document.querySelector('.mainquest-advanced-jenny-modal');
+  if (!modal) return;
+  modal.remove();
+  if (!document.querySelector('.modal[aria-hidden="false"]') && !document.querySelector('.speedster-modal[data-open="true"]')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function openMainQuestAdvancedJennyModal() {
+  closeMainQuestAdvancedJennyModal();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'mainquest-advanced-jenny-modal';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Saffron Subway');
+
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'mainquest-advanced-jenny-modal__backdrop';
+  backdrop.setAttribute('aria-label', 'Fechar Advanced Jenny');
+  backdrop.addEventListener('click', closeMainQuestAdvancedJennyModal);
+
+  const content = document.createElement('div');
+  content.className = 'mainquest-advanced-jenny-modal__content';
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'mainquest-advanced-jenny-modal__close';
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Fechar Advanced Jenny');
+  close.addEventListener('click', closeMainQuestAdvancedJennyModal);
+
+  const title = document.createElement('h2');
+  title.className = 'mainquest-advanced-jenny-modal__title';
+  title.textContent = 'Saffron Subway';
+
+  const image = document.createElement('img');
+  image.className = 'mainquest-advanced-jenny-modal__image';
+  image.src = '/mainquest/advancedjenny.gif';
+  image.alt = 'Saffron Subway - Advanced Jenny';
+  image.decoding = 'async';
+
+  const description = document.createElement('p');
+  description.className = 'mainquest-advanced-jenny-modal__description';
+  description.textContent = 'Desça todas as escadas até encontrar a Advanced Jenny';
+
+  content.append(close, title, image, description);
+  overlay.append(backdrop, content);
+  document.body.appendChild(overlay);
+  document.body.classList.add('modal-open');
+  close.focus({ preventScroll: true });
+}
+
+function createMainQuestPuzzleButton() {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mainquest-action-btn mainquest-puzzle-open-btn';
+  button.textContent = 'Quebra-cabeças';
+  button.addEventListener('click', openMainQuestPuzzleModal);
+  return button;
+}
+
+function createMainQuestAdvancedJennyButton() {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mainquest-action-btn mainquest-advanced-jenny-open-btn';
+  button.textContent = 'Advanced Jenny';
+  button.addEventListener('click', openMainQuestAdvancedJennyModal);
+  return button;
+}
+
+function createMainQuestActions() {
+  const actions = document.createElement('div');
+  actions.className = 'mainquest-actions';
+  actions.append(createMainQuestPuzzleButton(), createMainQuestAdvancedJennyButton());
+  return actions;
+}
+
 function renderBossModeIntro() {
   const titleEl = document.getElementById('bosses-mode-title');
   const introEl = document.getElementById('bosses-mode-intro');
@@ -7223,6 +7697,17 @@ function renderBossModeIntro() {
       }
     } else if (existingTochasBtn) {
       existingTochasBtn.remove();
+    }
+  } catch (e) {}
+
+  try {
+    const existingActions = document.querySelector('.mainquest-actions');
+    if (catalog && String(catalog.id || '').toLowerCase() === 'mainquest') {
+      if (!existingActions && introEl) {
+        introEl.appendChild(createMainQuestActions());
+      }
+    } else if (existingActions) {
+      existingActions.remove();
     }
   } catch (e) {}
 
@@ -11895,6 +12380,9 @@ function openRoleBossModal(boss, options = {}) {
     roleGrid.className = 'boss-role-role-grid';
 
     roleboardRoleOrder.forEach((roleKey) => {
+      const picks = getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, roleKey);
+      if (activeBossMode === 'mainquest' && !picks.length) return;
+
       const column = document.createElement('div');
       column.className = 'boss-role-column';
       column.dataset.role = roleKey;
@@ -11906,7 +12394,6 @@ function openRoleBossModal(boss, options = {}) {
       label.className = 'boss-role-label';
       label.textContent = getRoleboardRoleDisplayLabel(roleKey);
 
-      const picks = getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, roleKey);
       const count = document.createElement('span');
       count.className = 'boss-role-count';
       count.textContent = `${picks.length} picks`;

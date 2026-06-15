@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bosses | Main Quest</title>
+  <link rel="icon" type="image/x-icon" href="../icons-type/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    (function(){
+      try {
+        var cursorMode = localStorage.getItem('siteCursorMode');
+        var visionMode = localStorage.getItem('siteVisionMode');
+        var allowedVisionModes = { standard: true, protan: true, deutan: true, tritan: true };
+        if (visionMode === 'colorblind') visionMode = 'deutan';
+        document.documentElement.dataset.cursorMode = cursorMode === 'pikachu' ? 'pikachu' : 'system';
+        document.documentElement.dataset.visionMode = allowedVisionModes[visionMode] ? visionMode : 'standard';
+      } catch (error) {
+        document.documentElement.dataset.cursorMode = 'system';
+        document.documentElement.dataset.visionMode = 'standard';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../styles.css?v=20260615e">
+</head>
+<body data-active-tab="bosses" data-initial-boss-mode="mainquest">
+  <header class="header">
+    <button id="back-btn" class="icon-button" onclick="location.href='../index.html?tab=main-quest'" aria-label="Voltar ao site">&#8592;</button>
+    <h1>Bosses</h1>
+    <div style="width:48px;" aria-hidden="true"></div>
+  </header>
+
+  <div class="speedster-layout" style="margin-top:0.4rem;">
+    <div class="card calc-card bosses-shell bosses-shell--standalone">
+      <div class="bosses-header">
+        <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
+          <label for="speedster-search" class="speedster-search-label">Buscar Pokemon</label>
+          <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokemon" aria-label="Buscar Pokemon" autocomplete="off" />
+          <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
+          <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokemon ainda nao foi adicionado.</div>
+        </aside>
+      </div>
+      <div class="bosses-hero">
+        <div class="bosses-copy">
+          <h2 id="bosses-mode-title" class="bosses-mode-title">Main Quest</h2>
+          <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de Bosses"></div>
+    </div>
+  </div>
+
+  <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+    <div class="speedster-modal-backdrop" data-close="true"></div>
+    <div class="speedster-modal-content" role="document">
+      <button class="speedster-modal-close" aria-label="Fechar">&#10006;</button>
+      <div class="speedster-modal-header">
+        <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+        <div class="speedster-modal-title">
+          <h2 id="modal-title"></h2>
+          <p id="modal-subtitle" class="speedster-subtitle"></p>
+          <div class="tier-legend" aria-label="Legenda de cores de recomendacao" role="list">
+            <span class="tier-legend__item" data-tier="excelente" role="listitem">
+              <span class="tier-dot tier-excelente" aria-hidden="true"></span>
+              <span class="tier-legend__label">Excelente</span>
+            </span>
+            <span class="tier-legend__item" data-tier="muitobom" role="listitem">
+              <span class="tier-dot tier-muitobom" aria-hidden="true"></span>
+              <span class="tier-legend__label">Muito bom</span>
+            </span>
+            <span class="tier-legend__item" data-tier="bom" role="listitem">
+              <span class="tier-dot tier-bom" aria-hidden="true"></span>
+              <span class="tier-legend__label">Bom</span>
+            </span>
+            <span class="tier-legend__item" data-tier="aceitavel" role="listitem">
+              <span class="tier-dot tier-aceitavel" aria-hidden="true"></span>
+              <span class="tier-legend__label">Aceitavel</span>
+            </span>
+            <span class="tier-legend__item" data-tier="ruim" role="listitem">
+              <span class="tier-dot tier-ruim" aria-hidden="true"></span>
+              <span class="tier-legend__label">Ruim</span>
+            </span>
+            <span class="tier-legend__item" data-tier="seminformacao" role="listitem">
+              <span class="tier-dot tier-seminformacao" aria-hidden="true"></span>
+              <span class="tier-legend__label">Unica Opcao</span>
+            </span>
+          </div>
+        </div>
+        <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+      </div>
+      <div id="modal-body" class="speedster-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" integrity="sha512-tdbXbHLXZBBNJ0u2vhuGKxAyYfO/FTISM+zYo/vWABzZT/K+VjmQjA66tqBy6RchQXi+bXV2qa1J4CxSYx18Rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="../js/utf8-guard.js?v=20260521a" defer></script>
+  <script src="bosses.js?v=20260615c"></script>
+</body>
+</html>
