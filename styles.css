@@ -8557,6 +8557,7 @@ textarea:focus {
 
 .mainquest-puzzle-modal,
 .mainquest-advanced-jenny-modal,
+.mainquest-team-member-modal,
 .mainquest-puzzle-zoom {
   position: fixed;
   inset: 0;
@@ -8572,6 +8573,7 @@ textarea:focus {
 
 .mainquest-puzzle-modal__backdrop,
 .mainquest-advanced-jenny-modal__backdrop,
+.mainquest-team-member-modal__backdrop,
 .mainquest-puzzle-zoom__backdrop {
   position: absolute;
   inset: 0;
@@ -8581,6 +8583,7 @@ textarea:focus {
 
 .mainquest-puzzle-modal__content,
 .mainquest-advanced-jenny-modal__content,
+.mainquest-team-member-modal__content,
 .mainquest-puzzle-zoom__frame {
   position: relative;
   z-index: 1;
@@ -8618,11 +8621,139 @@ textarea:focus {
 
 .mainquest-puzzle-modal__title,
 .mainquest-advanced-jenny-modal__title,
+.mainquest-team-member-modal__title,
 .mainquest-puzzle-zoom__title {
   margin: 0;
   color: #f7fbff;
   font-weight: 900;
   text-align: center;
+}
+
+.mainquest-team-member-modal__content {
+  display: grid;
+  gap: 0.72rem;
+  width: min(100%, 640px);
+  padding: 1rem;
+  text-align: left;
+}
+
+.mainquest-team-member-modal__close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mainquest-team-member-modal__title {
+  padding-right: 2.5rem;
+  color: #1683ff;
+  font-size: clamp(1.45rem, 1.1rem + 1vw, 1.9rem);
+  text-align: left;
+}
+
+.mainquest-team-member-modal__lead {
+  margin: 0;
+  color: rgba(247, 251, 255, 0.94);
+  line-height: 1.45;
+}
+
+.mainquest-team-member-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.32rem 0.42rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.mainquest-team-member-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  min-height: 1.6rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(247, 251, 255, 0.94);
+  font: inherit;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.mainquest-team-member-item::after {
+  content: "|";
+  color: rgba(247, 251, 255, 0.45);
+  margin-left: 0.08rem;
+}
+
+.mainquest-team-member-item:last-child::after {
+  content: "";
+  margin-left: 0;
+}
+
+.mainquest-team-member-item__check,
+.mainquest-team-member-continue__check {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  border: 2px solid rgba(247, 251, 255, 0.86);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px rgba(8, 14, 25, 0.94);
+}
+
+.mainquest-team-member-item__text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.1rem;
+  text-decoration-thickness: 2px;
+}
+
+.mainquest-team-member-item[data-completed="true"] .mainquest-team-member-item__check {
+  background: #8fd46c;
+  border-color: #c9f6af;
+}
+
+.mainquest-team-member-item[data-completed="true"] .mainquest-team-member-item__text {
+  color: rgba(247, 251, 255, 0.46);
+  text-decoration: line-through;
+}
+
+.mainquest-team-member-item[data-type="bug"] .mainquest-team-member-item__type { color: #9acb4a; }
+.mainquest-team-member-item[data-type="dark"] .mainquest-team-member-item__type { color: #81706a; }
+.mainquest-team-member-item[data-type="fire"] .mainquest-team-member-item__type { color: #ff8a3d; }
+.mainquest-team-member-item[data-type="normal"] .mainquest-team-member-item__type { color: #b8b78d; }
+.mainquest-team-member-item[data-type="rock"] .mainquest-team-member-item__type { color: #c9ad48; }
+.mainquest-team-member-item[data-type="steel"] .mainquest-team-member-item__type { color: #b7b7d8; }
+.mainquest-team-member-item[data-type="water"] .mainquest-team-member-item__type { color: #5d9dff; }
+.mainquest-team-member-item[data-type="fairy"] .mainquest-team-member-item__type { color: #f29be7; }
+.mainquest-team-member-item[data-type="ghost"] .mainquest-team-member-item__type { color: #8371c8; }
+.mainquest-team-member-item[data-type="ice"] .mainquest-team-member-item__type { color: #98d8d8; }
+.mainquest-team-member-item[data-type="fighting"] .mainquest-team-member-item__type { color: #d45b50; }
+.mainquest-team-member-item[data-type="electric"] .mainquest-team-member-item__type { color: #ffd95a; }
+.mainquest-team-member-item[data-type="grass"] .mainquest-team-member-item__type { color: #78c850; }
+.mainquest-team-member-item[data-type="psychic"] .mainquest-team-member-item__type { color: #ff65a3; }
+.mainquest-team-member-item[data-type="ground"] .mainquest-team-member-item__type { color: #e0c068; }
+.mainquest-team-member-item[data-type="poison"] .mainquest-team-member-item__type { color: #b45acb; }
+
+.mainquest-team-member-continue {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 0.45rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(247, 251, 255, 0.78);
+  font: inherit;
+  cursor: pointer;
 }
 
 .mainquest-advanced-jenny-modal__content {

@@ -44,5 +44,5 @@ node scripts/smoke_routes.js http://127.0.0.1:8001
 
 ## Limpeza do repositorio
 
-- Arquivos temporarios locais devem seguir o padrao `tmp_*` e ficam ignorados pelo `.gitignore`.
+- Arquivos temporarios locais devem seguir o padrao `tmp_*` ou ficar em `tmp/`; ambos ficam ignorados pelo `.gitignore`.
 - Se precisar validar scripts rapidamente, prefira ferramentas locais e nao commite esses arquivos auxiliares.

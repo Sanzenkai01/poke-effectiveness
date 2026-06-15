@@ -809,6 +809,25 @@ const mainQuestPuzzleImages = Object.freeze([
   { src: '/mainquest/puzzle2.png', label: 'Quebra-cabeça 2' },
   { src: '/mainquest/puzzle3.png', label: 'Quebra-cabeça 3' }
 ]);
+const MAIN_QUEST_TEAM_MEMBER_STORAGE_KEY = 'mainQuestTeamMemberChecklistV1';
+const mainQuestTeamMemberItems = Object.freeze([
+  { id: 'bug', type: 'Bug', amount: 750 },
+  { id: 'dark', type: 'Dark', amount: 750 },
+  { id: 'fire', type: 'Fire', amount: 750 },
+  { id: 'normal', type: 'Normal', amount: 750 },
+  { id: 'rock', type: 'Rock', amount: 750 },
+  { id: 'steel', type: 'Steel', amount: 750 },
+  { id: 'water', type: 'Water', amount: 750 },
+  { id: 'fairy', type: 'Fairy', amount: 750 },
+  { id: 'ghost', type: 'Ghost', amount: 750 },
+  { id: 'ice', type: 'Ice', amount: 750 },
+  { id: 'fighting', type: 'Fighting', amount: 750 },
+  { id: 'electric', type: 'Electric', amount: 750 },
+  { id: 'grass', type: 'Grass', amount: 750 },
+  { id: 'psychic', type: 'Psychic', amount: 750 },
+  { id: 'ground', type: 'Ground', amount: 750 },
+  { id: 'poison', type: 'Poison', amount: 750 }
+]);
 const HOOPA_BOSS_PROGRESS_STORAGE_KEY = 'hoopaBossProgressStateV1';
 const HOOPA_BOSS_RESET_TIMEZONE = 'America/Sao_Paulo';
 const HOOPA_BOSS_RESET_HOUR = 10;
@@ -2413,6 +2432,7 @@ const mainQuestBosses = createManualRoleboardBosses([
       instinct: {
         dps: [
           createRolePick('Lurantis', ['grass'], 'grass'),
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
           createRolePick("Rosa's Serperior", ['grass'], 'grass'),
           createRolePick('Tangrowth', ['grass'], 'grass')
         ]
@@ -2447,6 +2467,7 @@ const mainQuestBosses = createManualRoleboardBosses([
           createRolePick('Dedenne', ['electric', 'fairy'], 'fairy'),
           createRolePick('Mega Raichu Y', ['electric'], 'electric'),
           createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
           createRolePick('Lurantis', ['grass'], 'grass')
         ]
       },
@@ -7610,6 +7631,135 @@ function openMainQuestAdvancedJennyModal() {
   close.focus({ preventScroll: true });
 }
 
+function getMainQuestTeamMemberCompletedItems() {
+  try {
+    const raw = window.localStorage?.getItem(MAIN_QUEST_TEAM_MEMBER_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(parsed) ? parsed.filter(Boolean).map(String) : []);
+  } catch (e) {
+    return new Set();
+  }
+}
+
+function saveMainQuestTeamMemberCompletedItems(completedItems) {
+  try {
+    window.localStorage?.setItem(
+      MAIN_QUEST_TEAM_MEMBER_STORAGE_KEY,
+      JSON.stringify(Array.from(completedItems || []))
+    );
+  } catch (e) {}
+}
+
+function closeMainQuestTeamMemberModal() {
+  const modal = document.querySelector('.mainquest-team-member-modal');
+  if (!modal) return;
+  modal.remove();
+  if (!document.querySelector('.modal[aria-hidden="false"]') && !document.querySelector('.speedster-modal[data-open="true"]')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function createMainQuestTeamMemberChecklistItem(item, completedItems) {
+  const itemId = String(item?.id || '').trim().toLowerCase();
+  const isDone = completedItems.has(itemId);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mainquest-team-member-item';
+  button.dataset.type = itemId;
+  button.dataset.completed = isDone ? 'true' : 'false';
+  button.setAttribute('aria-pressed', isDone ? 'true' : 'false');
+
+  const circle = document.createElement('span');
+  circle.className = 'mainquest-team-member-item__check';
+  circle.setAttribute('aria-hidden', 'true');
+
+  const text = document.createElement('span');
+  text.className = 'mainquest-team-member-item__text';
+
+  const amount = document.createElement('span');
+  amount.className = 'mainquest-team-member-item__amount';
+  amount.textContent = `${Number(item?.amount || 0)}x `;
+
+  const type = document.createElement('span');
+  type.className = 'mainquest-team-member-item__type';
+  type.textContent = item?.type || itemId;
+
+  text.append(amount, type);
+  button.append(circle, text);
+
+  button.addEventListener('click', () => {
+    const nextDone = button.dataset.completed !== 'true';
+    button.dataset.completed = nextDone ? 'true' : 'false';
+    button.setAttribute('aria-pressed', nextDone ? 'true' : 'false');
+    if (nextDone) completedItems.add(itemId);
+    else completedItems.delete(itemId);
+    saveMainQuestTeamMemberCompletedItems(completedItems);
+  });
+
+  return button;
+}
+
+function openMainQuestTeamMemberModal() {
+  closeMainQuestTeamMemberModal();
+
+  const completedItems = getMainQuestTeamMemberCompletedItems();
+  const overlay = document.createElement('div');
+  overlay.className = 'mainquest-team-member-modal';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', '🗨️ Team Member');
+
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'mainquest-team-member-modal__backdrop';
+  backdrop.setAttribute('aria-label', 'Fechar Team Member');
+  backdrop.addEventListener('click', closeMainQuestTeamMemberModal);
+
+  const content = document.createElement('div');
+  content.className = 'mainquest-team-member-modal__content';
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'mainquest-team-member-modal__close';
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Fechar Team Member');
+  close.addEventListener('click', closeMainQuestTeamMemberModal);
+
+  const title = document.createElement('h2');
+  title.className = 'mainquest-team-member-modal__title';
+  title.textContent = '🗨️ Team Member';
+
+  const lead = document.createElement('p');
+  lead.className = 'mainquest-team-member-modal__lead';
+  lead.textContent = 'Ainda falta:';
+
+  const list = document.createElement('div');
+  list.className = 'mainquest-team-member-list';
+  mainQuestTeamMemberItems.forEach((item) => {
+    list.appendChild(createMainQuestTeamMemberChecklistItem(item, completedItems));
+  });
+
+  const continueRow = document.createElement('button');
+  continueRow.type = 'button';
+  continueRow.className = 'mainquest-team-member-continue';
+  continueRow.addEventListener('click', closeMainQuestTeamMemberModal);
+
+  const continueCircle = document.createElement('span');
+  continueCircle.className = 'mainquest-team-member-continue__check';
+  continueCircle.setAttribute('aria-hidden', 'true');
+
+  const continueText = document.createElement('span');
+  continueText.textContent = 'Vou continuar';
+
+  continueRow.append(continueCircle, continueText);
+  content.append(close, title, lead, list, continueRow);
+  overlay.append(backdrop, content);
+  document.body.appendChild(overlay);
+  document.body.classList.add('modal-open');
+  close.focus({ preventScroll: true });
+}
+
 function createMainQuestPuzzleButton() {
   const button = document.createElement('button');
   button.type = 'button';
@@ -7628,10 +7778,23 @@ function createMainQuestAdvancedJennyButton() {
   return button;
 }
 
+function createMainQuestTeamMemberButton() {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mainquest-action-btn mainquest-team-member-open-btn';
+  button.textContent = '🗨️ Team Member';
+  button.addEventListener('click', openMainQuestTeamMemberModal);
+  return button;
+}
+
 function createMainQuestActions() {
   const actions = document.createElement('div');
   actions.className = 'mainquest-actions';
-  actions.append(createMainQuestPuzzleButton(), createMainQuestAdvancedJennyButton());
+  actions.append(
+    createMainQuestPuzzleButton(),
+    createMainQuestAdvancedJennyButton(),
+    createMainQuestTeamMemberButton()
+  );
   return actions;
 }
 
