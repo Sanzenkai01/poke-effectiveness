@@ -341,8 +341,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615b';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260614b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615c';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260615a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260614b';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -621,9 +621,24 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Litwick', 'Lampent'],
     ['Lampent', 'Chandelure'],
     // Generation 6 evolutions
+    ['Chespin', 'Quilladin'],
+    ['Quilladin', 'Chesnaught'],
+    ['Fennekin', 'Braixen'],
+    ['Braixen', 'Delphox'],
+    ['Froakie', 'Frogadier'],
+    ['Frogadier', 'Greninja'],
+    ['Bunnelby', 'Diggersby'],
+    ['Pancham', 'Pangoro'],
+    ['Honedge', 'Doublade'],
+    ['Doublade', 'Aegislash'],
     ['Litleo', 'Pyroar Female'],
     ['Litleo', 'Pyroar Male'],
     ['Binacle', 'Barbaracle'],
+    ['Tyrunt', 'Tyrantrum'],
+    ['Amaura', 'Aurorus'],
+    ['Eevee', 'Sylveon'],
+    ['Goomy', 'Sliggoo'],
+    ['Sliggoo', 'Goodra'],
     ['Crabrawler', 'Crabominable'],
     ['Jangmo-o', 'Hakamo-o'],
     ['Hakamo-o', 'Kommo-o'],
@@ -770,6 +785,8 @@ const TEAM_BUILDER_ALLOWED_MEGA_NAMES = Object.freeze([
     'Mega Staraptor',
     'Mega Garchomp',
     'Mega Chesnaught',
+    'Mega Delphox',
+    'Mega Greninja',
     'Mega Metagross'
 ]);
 const TEAM_BUILDER_ALLOWED_MEGA_KEYS = Object.freeze(
