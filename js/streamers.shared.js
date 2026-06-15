@@ -61,6 +61,7 @@
         {name: 'orodault', supportsDrops: false },
         {name: 'leomarnc', supportsDrops: false },
         {name: 'ImFoxyy', supportsDrops: false },
+        {name: 'santbarbernsgames', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
