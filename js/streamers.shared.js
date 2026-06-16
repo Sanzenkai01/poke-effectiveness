@@ -55,8 +55,8 @@
         { name: 'princeofmajorr', supportsDrops: false },
         {name: 'zenithstory_gaming', supportsDrops: false },
         {name: 'kaueotp', supportsDrops: false },
-        {name: 'suximy', supportsDrops: false },
-        {name: 'teffox4', supportsDrops: false },
+        {name: 'suximy', supportsDrops: true },
+        {name: 'teffox4', supportsDrops: true },
         {name: 'lucasnaikan', supportsDrops: false },
         {name: 'orodault', supportsDrops: false },
         {name: 'leomarnc', supportsDrops: false },
@@ -64,6 +64,7 @@
         {name: 'santbarbernsgames', supportsDrops: false },
         {name: 'kiritinhu69', supportsDrops: false },
         {name: 'xvidrinho', supportsDrops: false },
+        {name: 'gokutibia', supportsDrops: true },
     ];
 
     function normalizeStreamerChannelName(name){
