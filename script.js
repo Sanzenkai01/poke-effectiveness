@@ -5155,7 +5155,7 @@ const catchBallPreviewImages = {
     elemental: 'elemental',
     safari: 'pokebola'
 };
-const ballPrices = Object.freeze({ ultra:130, story:230, elemental:330, safari:130 });
+const ballPrices = Object.freeze({ ultra:130, story:250, elemental:330, safari:130 });
 const CATCH_ELEMENTAL_BALL_OPTIONS = Object.freeze(
     Object.entries(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, [rawType, ball]) => {
         const type = normalizePokemonTypeKey(rawType);

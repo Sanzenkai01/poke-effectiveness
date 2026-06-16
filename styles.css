@@ -5202,8 +5202,10 @@ p {
 .catch-hero__preview {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   gap: 0.95rem;
+  margin-inline: auto;
   padding: 1.2rem;
   background:
     linear-gradient(145deg, rgba(255, 168, 91, 0.14), rgba(255, 255, 255, 0.03)),
@@ -5213,11 +5215,20 @@ p {
 .catch-ball-preview {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
+  width: min(100%, 342px);
+  margin-inline: auto;
   padding: 1rem;
   border-radius: 1.1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(8, 13, 21, 0.44);
+}
+
+.catch-hero__preview-label {
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .catch-ball-preview__image {
@@ -5235,7 +5246,9 @@ p {
 .catch-ball-preview__copy {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.25rem;
+  text-align: center;
 }
 
 .catch-ball-preview__copy strong {
@@ -6507,7 +6520,7 @@ p {
   }
 
   .catch-ball-preview {
-    align-items: flex-start;
+    align-items: center;
   }
 }
 
