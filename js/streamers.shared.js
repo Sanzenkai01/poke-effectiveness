@@ -63,6 +63,7 @@
         {name: 'ImFoxyy', supportsDrops: false },
         {name: 'santbarbernsgames', supportsDrops: false },
         {name: 'kiritinhu69', supportsDrops: false },
+        {name: 'xvidrinho', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
