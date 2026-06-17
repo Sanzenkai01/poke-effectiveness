@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-const CACHE_NAME = `${CACHE_PREFIX}v500`;
+let CACHE_NAME = `${CACHE_PREFIX}v500`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -12,6 +12,7 @@ const APP_SHELL = [
   new URL('./pescaria/index.html', self.registration.scope).toString(),
   new URL('./effectiveness/index.html', self.registration.scope).toString(),
   new URL('./fossils/index.html', self.registration.scope).toString(),
+  new URL('./maniacs/index.html', self.registration.scope).toString(),
   new URL('./calculator/index.html', self.registration.scope).toString(),
   new URL('./boost/index.html', self.registration.scope).toString(),
   new URL('./calculadora-boost/index.html', self.registration.scope).toString(),
@@ -36,8 +37,8 @@ const APP_SHELL = [
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260615f', self.registration.scope).toString(),
-  new URL('./script.js?v=20260615r', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260617b', self.registration.scope).toString(),
+  new URL('./script.js?v=20260617b', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260608c', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260608f', self.registration.scope).toString(),
   new URL('./js/visits.shared.js?v=20260607d', self.registration.scope).toString(),
@@ -97,11 +98,40 @@ async function cacheFirst(request){
 }
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    // Try to compute a cache name derived from the current APP_SHELL contents.
+    // This makes the cache change automatically whenever any asset in APP_SHELL changes.
+    async function computeCacheNameFromShell(){
+      try {
+        const enc = new TextEncoder();
+        const hashes = [];
+        for(const url of APP_SHELL){
+          try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if(!res || !res.ok) return CACHE_NAME;
+            const buf = await res.arrayBuffer();
+            const digest = await crypto.subtle.digest('SHA-256', buf);
+            const hex = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+            hashes.push(hex);
+          } catch (e) {
+            return CACHE_NAME;
+          }
+        }
+        const combined = enc.encode(hashes.join(''));
+        const finalDigest = await crypto.subtle.digest('SHA-256', combined);
+        const finalHex = Array.from(new Uint8Array(finalDigest)).map(b => b.toString(16).padStart(2,'0')).join('');
+        return `${CACHE_PREFIX}v${finalHex.slice(0,12)}`;
+      } catch (e) {
+        return CACHE_NAME;
+      }
+    }
+
+    const newCacheName = await computeCacheNameFromShell();
+    CACHE_NAME = newCacheName;
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(APP_SHELL);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {

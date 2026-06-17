@@ -105,6 +105,13 @@ const homeStreamerRatSummary = document.getElementById('home-streamer-rat-summar
 const contentHome = document.getElementById('content-home');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
+const contentManiacs = document.getElementById('content-maniacs');
+const maniacsStonesGrid = document.getElementById('maniacs-stones-grid');
+const maniacsEssenceGrid = document.getElementById('maniacs-essence-grid');
+const maniacsLocationModal = document.getElementById('maniacs-location-modal');
+const maniacsLocationViewport = document.getElementById('maniacs-location-viewport');
+const maniacsLocationCanvas = document.getElementById('maniacs-location-canvas');
+const maniacsLocationImage = document.getElementById('maniacs-location-image');
 const contentCalc = document.getElementById('content-calculator');
 const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
@@ -115,7 +122,7 @@ const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -228,6 +235,7 @@ let sidebarNavigationInitialized = false;
 let typesDataLoaded = false;
 let typesDataLoadPromise = null;
 let fossilsPageInitialized = false;
+let maniacsPageInitialized = false;
 let calculatorPageInitialized = false;
 let boostPageInitialized = false;
 let boostPokemonOptionsHydrated = false;
@@ -309,6 +317,7 @@ const APP_ROUTE_ALIASES = {
     fishing: { path: '/pescaria', tab: 'effectiveness', quickAction: 'fishing' },
     fossils: { path: '/fossils', tab: 'fossils' },
     fosseis: { path: '/fossils', tab: 'fossils' },
+    maniacs: { path: '/maniacs', tab: 'maniacs' },
     calculator: { path: '/treinamento', tab: 'calculator' },
     treinamento: { path: '/treinamento', tab: 'calculator' },
     boost: { path: '/boost', tab: 'boost' },
@@ -2939,6 +2948,7 @@ function getActiveSiteTarget(){
     if(contentTimes && !contentTimes.hidden) return 'times';
     if(contentTeamBuilder && !contentTeamBuilder.hidden) return 'team-builder';
     if(contentHuntBuilder && !contentHuntBuilder.hidden) return 'hunt-builder';
+    if(contentManiacs && !contentManiacs.hidden) return 'maniacs';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
     if(tabCalcBtn?.classList.contains('active')) return 'calculator';
@@ -3108,6 +3118,7 @@ function activateSidebarTarget(button){
         home: showHome,
         effectiveness: showEffectiveness,
         fossils: showFossils,
+        maniacs: showManiacs,
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
@@ -3247,6 +3258,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:home', kind: 'route', target: 'home', title: 'Home', category: 'Pagina', description: 'Inicio do Poke Utilities', icon: 'PU', tags: ['inicio', 'hub'] },
         { id: 'route:effectiveness', kind: 'route', target: 'effectiveness', title: 'Tipos', category: 'Ferramenta', description: 'Efetividade, fraquezas e resistencias', icon: 'TY', tags: ['type', 'elemento', 'fraqueza'] },
         { id: 'route:fossils', kind: 'route', target: 'fossils', title: 'Fosseis', category: 'Sistema', description: 'Combinacoes e revivals de fosseis', icon: 'FO', tags: ['fossil', 'dna'] },
+        { id: 'route:maniacs', kind: 'route', target: 'maniacs', title: 'Maniacs', category: 'Sistema', description: 'Trocas com Maniacs por stones ou Ace Essence', icon: 'MN', tags: ['maniac', 'stone', 'ace essence', 'troca'] },
         { id: 'route:calculator', kind: 'route', target: 'calculator', title: 'Treinamento', category: 'Calculadora', description: 'Plates, custos e treino', icon: 'TR', tags: ['calculadora', 'plate'] },
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
         { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo de Pokemon e Megas', icon: 'PK', tags: ['catalogo', 'mega'] },
@@ -3899,6 +3911,118 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Fairy Stone': { image: 'calculadora/fairy_stone.gif' },
     'Ghost Stone': { image: '' }
 });
+const MANIACS_ACE_ESSENCE_IMAGE = 'maniacs/ace-essence.gif';
+const MANIACS_STONE_COST = 100;
+const MANIACS_ESSENCE_COST = 100;
+const MANIACS_POKEMON_IMAGE_OVERRIDES = Object.freeze({
+    bouffalant: 'pokemons/5gen/bouffalant.png',
+    cramorant: 'pokemons/8gen/flying-cramorant.png',
+    kommoo: 'pokemons/7gen/kommo-o.png',
+    charcadet: 'pokemons/9gen/charcadet.png',
+    baxcalibur: 'pokemons/9gen/baxcalibur.png',
+    archaludon: 'pokemons/9gen/archaludon.png',
+    tinkaton: 'pokemons/9gen/tinkaton.png',
+    toxtricity: 'pokemons/8gen/toxtricity.png',
+    dragapult: 'pokemons/8gen/dragapult.png',
+    orbeetle: 'pokemons/8gen/orbeetle.png',
+    orthworm: 'pokemons/9gen/orthworm.png',
+    toxapex: 'pokemons/7gen/toxapex.png',
+    trevenant: 'pokemons/6gen/trevenant.png',
+    corviknight: 'pokemons/8gen/corviknight.png',
+    lycanroc: 'pokemons/7gen/lycanroc.png',
+    tatsugiri: 'pokemons/9gen/tatsugiri.png',
+    grafaiai: 'pokemons/9gen/grafaiai.png',
+    houndstone: 'pokemons/9gen/houndstone.png',
+    shiinotic: 'pokemons/7gen/shiinotic.png',
+    hatterene: 'pokemons/8gen/hatterene.png',
+    vikavolt: 'pokemons/7gen/vikavolt.png',
+    bewear: 'pokemons/7gen/bewear.png',
+    pawmot: 'pokemons/9gen/pawmot.png',
+    morpeko: 'pokemons/8gen/morpeko.png',
+    dondozo: 'pokemons/9gen/dondozo.png'
+    ,lurantis: 'pokemons/7gen/lurantis.png'
+    ,comfey: 'pokemons/7gen/comfey.png'
+    ,salazzle: 'pokemons/7gen/salazzle.png'
+});
+const MANIACS_TYPE_OVERRIDES = Object.freeze({
+    orthworm: { type1: 'steel' },
+    scraggy: { type1: 'dark', type2: 'fighting' },
+    toxapex: { type1: 'poison', type2: 'water' },
+    scolipede: { type1: 'bug', type2: 'poison' },
+    bouffalant: { type1: 'normal' },
+    garbodor: { type1: 'poison' },
+    dachsbun: { type1: 'fairy' },
+    hawlucha: { type1: 'fighting', type2: 'flying' },
+    cramorant: { type1: 'flying', type2: 'water' },
+    orbeetle: { type1: 'bug', type2: 'psychic' },
+    trevenant: { type1: 'ghost', type2: 'grass' },
+    corviknight: { type1: 'flying', type2: 'steel' },
+    lycanroc: { type1: 'rock' },
+    tatsugiri: { type1: 'dragon', type2: 'water' },
+    lurantis: { type1: 'grass' },
+    pangoro: { type1: 'fighting', type2: 'dark' },
+    avalugg: { type1: 'ice' },
+    krookodile: { type1: 'ground', type2: 'dark' },
+    salazzle: { type1: 'poison', type2: 'fire' },
+    cryogonal: { type1: 'ice' },
+    grafaiai: { type1: 'poison', type2: 'normal' },
+    houndstone: { type1: 'ghost' },
+    shiinotic: { type1: 'grass', type2: 'fairy' },
+    comfey: { type1: 'fairy' },
+    hatterene: { type1: 'psychic', type2: 'fairy' },
+    diggersby: { type1: 'normal', type2: 'ground' },
+    dondozo: { type1: 'water' },
+    vikavolt: { type1: 'bug', type2: 'electric' },
+    gourgeist: { type1: 'ghost', type2: 'grass' },
+    carbink: { type1: 'rock', type2: 'fairy' },
+    bewear: { type1: 'normal', type2: 'fighting' },
+    pawmot: { type1: 'electric', type2: 'fighting' },
+    dhelmise: { type1: 'ghost', type2: 'grass' },
+    morpeko: { type1: 'electric', type2: 'dark' },
+    malamar: { type1: 'dark', type2: 'psychic' }
+});
+const MANIACS_STONE_ENTRIES = Object.freeze([
+    { target: 'Orthworm', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
+    { target: 'Scraggy', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
+    { target: 'Toxapex', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
+    { target: 'Scolipede', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
+    { target: 'Bouffalant', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
+    { target: 'Garbodor', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
+    { target: 'Dachsbun', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
+    { target: 'Hawlucha', location: { image: 'maniacs/cerulean-olf-shore-warf.png', title: 'Cerulean e Old Shore Warf' } },
+    { target: 'Cramorant', location: { image: 'maniacs/cerulean-olf-shore-warf.png', title: 'Cerulean e Old Shore Warf' } }
+]);
+// Targets that should NOT render the compact location button inside the pokemon media
+// Instead the location image below the "Local" kicker will open the modal.
+const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','hawlucha','cramorant']);
+const MANIACS_ESSENCE_ENTRIES = Object.freeze([
+    { target: 'Orbeetle', hunt: 'Porygon' },
+    { target: 'Trevenant', hunt: 'Grimmsnarl' },
+    { target: 'Corviknight', hunt: 'Hydreigon' },
+    { target: 'Lycanroc', hunt: 'Volcarona' },
+    { target: 'Tatsugiri', hunt: 'Charcadet' },
+    { target: 'Lurantis', hunt: 'Tyranitar' },
+    { target: 'Pangoro', hunt: 'Kingambit' },
+    { target: 'Avalugg', hunt: 'Golisopod' },
+    { target: 'Krookodile', hunt: 'Kommo-o' },
+    { target: 'Salazzle', hunt: 'Tsareena' },
+    { target: 'Cryogonal', hunt: 'Baxcalibur' },
+    { target: 'Grafaiai', hunt: 'Toxtricity' },
+    { target: 'Houndstone', hunt: 'Dragapult' },
+    { target: 'Shiinotic', hunt: 'Goodra' },
+    { target: 'Comfey', hunt: 'Dragonite' },
+    { target: 'Hatterene', hunt: 'Salamence' },
+    { target: 'Diggersby', hunt: 'Garchomp' },
+    { target: 'Dondozo', hunt: 'Crabominable' },
+    { target: 'Vikavolt', hunt: 'Archaludon' },
+    { target: 'Gourgeist', hunt: 'Metagross' },
+    { target: 'Carbink', hunt: 'Aggron' },
+    { target: 'Bewear', hunt: 'Tinkaton' },
+    { target: 'Pawmot', hunt: 'Hariyama' },
+    { target: 'Dhelmise', hunt: 'Palafin' },
+    { target: 'Morpeko', hunt: 'Drednaw' },
+    { target: 'Malamar', hunt: 'Chandelure' }
+]);
 const BOOST_DITTO_BRONZE_STONE_STEPS = Object.freeze({
     1: { quantity: 20, stones: ['Fire Stone', 'Water Stone', 'Leaf Stone'] },
     2: { quantity: 30, stones: ['Cocoon Stone', 'Venom Stone', 'Punch Stone'] },
@@ -4907,6 +5031,7 @@ function openHomeDestination(target){
     const openers = {
         effectiveness: showEffectiveness,
         fossils: showFossils,
+        maniacs: showManiacs,
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
@@ -4952,6 +5077,402 @@ function showFossils(){
     }
     if(useGsap){
         gsap.from(contentFossils.querySelectorAll('.card'), {opacity:0, y:20, duration:0.5, stagger:0.1});
+    }
+}
+
+function getManiacPokemonRegistryKey(name){
+    return getPokemonCatalogRegistryKey(name);
+}
+
+function getManiacPokemonImageSource(name){
+    const key = getManiacPokemonRegistryKey(name);
+    const override = MANIACS_POKEMON_IMAGE_OVERRIDES[key];
+    if(override) return override;
+
+    const catalogEntry = findManiacPokemonCatalogEntry(name);
+    if(catalogEntry){
+        return getPokemonImageSource(catalogEntry);
+    }
+
+    const slug = String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return resolvePokemonImageAssetPath(`${slug}.png`) || POKEMON_IMAGE_PLACEHOLDER;
+}
+
+function findManiacPokemonCatalogEntry(name){
+    const key = getManiacPokemonRegistryKey(name);
+    if(!key) return null;
+    return getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT)
+        .find(entry => getPokemonCatalogRegistryKey(entry?.name) === key) || null;
+}
+
+function getManiacPokemonTypes(name){
+    const catalogEntry = findManiacPokemonCatalogEntry(name);
+    const override = MANIACS_TYPE_OVERRIDES[getManiacPokemonRegistryKey(name)] || {};
+    return {
+        type1: override.type1 || catalogEntry?.type1 || '',
+        type2: override.type2 || catalogEntry?.type2 || ''
+    };
+}
+
+function getManiacStoneMetaForTarget(name){
+    const { type1 } = getManiacPokemonTypes(name);
+    const normalizedType = normalizePokemonTypeKey(type1);
+    if(normalizedType === 'dark'){
+        return {
+            name: 'Darkness Stone',
+            image: BOOST_NAMED_STONE_META['Darkness Stone']?.image || BOOST_TYPE_STONE_META.ghost?.image || ''
+        };
+    }
+    if(normalizedType === 'fighting'){
+        return {
+            name: 'Punch Stone',
+            image: BOOST_NAMED_STONE_META['Punch Stone']?.image || ''
+        };
+    }
+    if(normalizedType === 'ice'){
+        return {
+            name: 'Ice Stone',
+            image: BOOST_NAMED_STONE_META['Ice Stone']?.image || ''
+        };
+    }
+    return getBoostStoneMetaByType(type1);
+}
+
+function createManiacPokemonMedia(name, options = {}){
+    const { showLocationButton = false, location = null } = options;
+    const media = document.createElement('div');
+    media.className = 'maniacs-card__pokemon';
+
+    const figure = document.createElement('figure');
+    figure.className = 'maniacs-card__figure';
+
+    const image = document.createElement('img');
+    image.className = 'maniacs-card__image';
+    image.alt = name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    // Resolve initial src. If the returned path is a root-level `pokemons/<file>.png`
+    // (no generation folder), attempt to probe generation folders automatically
+    // before falling back to the placeholder. This avoids 404s when the
+    // shared catalog/generation map isn't available at first render.
+    const initialSrc = getManiacPokemonImageSource(name) || POKEMON_IMAGE_PLACEHOLDER;
+    const simplePokemonsFileMatch = /^pokemons\/([^\/]+\.(?:png|jpg|jpeg|gif|webp))$/i;
+    const m = String(initialSrc || '').trim().match(simplePokemonsFileMatch);
+    if(m){
+        const fileName = m[1];
+        const key = getManiacPokemonRegistryKey(name);
+        const seen = new Set();
+        const candidateGens = [];
+        try{
+            if(pokemonCatalogGenerationMap && key && Number.isFinite(Number(pokemonCatalogGenerationMap[key]))){
+                candidateGens.push(Number(pokemonCatalogGenerationMap[key]));
+                seen.add(Number(pokemonCatalogGenerationMap[key]));
+            }
+        }catch(e){}
+        // append remaining generations in a reasonable order
+        [6,7,8,9,5,4,3,2,1].forEach(g => { if(!seen.has(g)) candidateGens.push(g); });
+
+        let tryIndex = 0;
+        const tryNext = () => {
+            if(tryIndex >= candidateGens.length){
+                setImageFallback(image);
+                return;
+            }
+            const gen = candidateGens[tryIndex++];
+            image.onerror = tryNext;
+            image.src = `pokemons/${gen}gen/${fileName}`;
+        };
+        // start probing
+        tryNext();
+    } else {
+        image.src = initialSrc;
+        setImageFallback(image);
+    }
+    figure.appendChild(image);
+
+    if(showLocationButton && location){
+        const locationBtn = document.createElement('button');
+        locationBtn.type = 'button';
+        locationBtn.className = 'maniacs-card__location-btn fossil-location-btn fossil-location-btn--compact';
+        locationBtn.setAttribute('aria-label', `Abrir localizacao do Maniac em ${location.title}`);
+        locationBtn.title = `Local do NPC: ${location.title}`;
+
+        const thumb = document.createElement('span');
+        thumb.className = 'fossil-location-btn__thumb';
+        const thumbImage = document.createElement('img');
+        thumbImage.src = location.image;
+        thumbImage.alt = '';
+        thumbImage.setAttribute('aria-hidden', 'true');
+        thumbImage.loading = 'lazy';
+        thumbImage.decoding = 'async';
+        thumb.appendChild(thumbImage);
+
+        const label = document.createElement('span');
+        label.className = 'fossil-location-btn__label';
+        label.textContent = 'Local';
+
+        locationBtn.append(thumb, label);
+        locationBtn.addEventListener('click', () => {
+            openManiacsLocationModal(location);
+        });
+        figure.appendChild(locationBtn);
+    }
+
+    const caption = document.createElement('figcaption');
+    caption.className = 'maniacs-card__caption';
+    caption.textContent = name;
+
+    const types = document.createElement('div');
+    types.className = 'maniacs-card__types';
+    const { type1, type2 } = getManiacPokemonTypes(name);
+    if(type1) types.appendChild(createPokemonTypeToken(type1, { compact: true }));
+    if(type2) types.appendChild(createPokemonTypeToken(type2, { compact: true }));
+
+    media.append(figure, caption, types);
+    return media;
+}
+
+function createManiacHuntMedia(name, label = 'Hunt'){
+    const media = document.createElement('div');
+    media.className = 'maniacs-card__hunt';
+
+    const figure = document.createElement('figure');
+    figure.className = 'maniacs-card__figure';
+
+    const image = document.createElement('img');
+    image.className = 'maniacs-card__image';
+    image.src = getManiacPokemonImageSource(name);
+    image.alt = name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image);
+    figure.appendChild(image);
+
+    const caption = document.createElement('figcaption');
+    caption.className = 'maniacs-card__caption';
+    caption.textContent = name;
+
+    const kicker = document.createElement('span');
+    kicker.className = 'maniacs-card__kicker';
+    kicker.textContent = label;
+
+    media.append(kicker, figure, caption);
+    return media;
+}
+
+function createManiacCostRow(options = {}){
+    const { quantity, imageSrc, label } = options;
+    const row = document.createElement('div');
+    row.className = 'maniacs-card__cost';
+
+    const amount = document.createElement('strong');
+    amount.textContent = `${quantity}x`;
+
+    const media = document.createElement('span');
+    media.className = 'maniacs-card__cost-media';
+
+    if(imageSrc){
+        const image = document.createElement('img');
+        image.src = imageSrc;
+        image.alt = label;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        media.appendChild(image);
+    }
+
+    const copy = document.createElement('span');
+    copy.textContent = label;
+
+    row.append(amount, media, copy);
+    return row;
+}
+
+function createManiacLocationMedia(location){
+    const media = document.createElement('div');
+    media.className = 'maniacs-card__hunt';
+
+    const figure = document.createElement('figure');
+    figure.className = 'maniacs-card__figure maniacs-card__figure--location';
+
+    const image = document.createElement('img');
+    image.className = 'maniacs-card__image maniacs-card__image--location';
+    image.src = location.image;
+    image.alt = location.title;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    figure.appendChild(image);
+
+    // place the kicker as an overlay inside the figure so it does not affect vertical flow
+    const kicker = document.createElement('span');
+    kicker.className = 'maniacs-card__kicker maniacs-card__kicker--overlay';
+    kicker.textContent = 'Local';
+    figure.appendChild(kicker);
+
+    // Make the location image clickable to open the modal (keyboard accessible)
+    try{
+        figure.setAttribute('role', 'button');
+        figure.setAttribute('tabindex', '0');
+        figure.setAttribute('aria-label', `Abrir local: ${location.title}`);
+        figure.style.cursor = 'pointer';
+        figure.addEventListener('click', () => {
+            openManiacsLocationModal(location);
+        });
+        figure.addEventListener('keydown', (ev) => {
+            if(ev.key === 'Enter' || ev.key === ' '){
+                ev.preventDefault();
+                openManiacsLocationModal(location);
+            }
+        });
+    }catch(e){/* ignore if DOM APIs unavailable */}
+
+    const caption = document.createElement('figcaption');
+    caption.className = 'maniacs-card__caption';
+    caption.textContent = location.title;
+
+    media.append(figure, caption);
+    return media;
+}
+
+function createManiacStoneCard(entry){
+    const card = document.createElement('article');
+    card.className = 'maniacs-card';
+    card.setAttribute('role', 'listitem');
+
+    const body = document.createElement('div');
+    body.className = 'maniacs-card__body';
+    // For some targets we prefer the location image to open the modal
+    const targetKey = String(entry.target || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const showLocationBtn = !MANIACS_INLINE_LOCATION_TARGETS.has(targetKey);
+    body.append(
+        createManiacPokemonMedia(entry.target, { showLocationButton: showLocationBtn, location: entry.location }),
+        createManiacLocationMedia(entry.location)
+    );
+
+    const stoneMeta = getManiacStoneMetaForTarget(entry.target);
+    const footer = document.createElement('footer');
+    footer.className = 'maniacs-card__footer';
+    footer.appendChild(createManiacCostRow({
+        quantity: MANIACS_STONE_COST,
+        imageSrc: stoneMeta.image,
+        label: stoneMeta.name
+    }));
+
+    card.append(body, footer);
+    return card;
+}
+
+function createManiacEssenceCard(entry){
+    const card = document.createElement('article');
+    card.className = 'maniacs-card';
+    card.setAttribute('role', 'listitem');
+
+    const body = document.createElement('div');
+    body.className = 'maniacs-card__body';
+    body.append(
+        createManiacPokemonMedia(entry.target),
+        createManiacHuntMedia(entry.hunt, 'Hunt')
+    );
+
+    const footer = document.createElement('footer');
+    footer.className = 'maniacs-card__footer';
+    footer.appendChild(createManiacCostRow({
+        quantity: MANIACS_ESSENCE_COST,
+        imageSrc: MANIACS_ACE_ESSENCE_IMAGE,
+        label: 'Ace Essence'
+    }));
+
+    card.append(body, footer);
+    return card;
+}
+
+function renderManiacsPage(){
+    if(maniacsStonesGrid){
+        const stonesFragment = document.createDocumentFragment();
+        MANIACS_STONE_ENTRIES.forEach(entry => {
+            stonesFragment.appendChild(createManiacStoneCard(entry));
+        });
+        maniacsStonesGrid.replaceChildren(stonesFragment);
+    }
+
+    if(maniacsEssenceGrid){
+        const essenceFragment = document.createDocumentFragment();
+        MANIACS_ESSENCE_ENTRIES.forEach(entry => {
+            essenceFragment.appendChild(createManiacEssenceCard(entry));
+        });
+        maniacsEssenceGrid.replaceChildren(essenceFragment);
+    }
+}
+
+function openManiacsLocationModal(location){
+    if(!maniacsLocationModal || !maniacsLocationImage || !location) return;
+
+    const titleEl = document.getElementById('maniacs-location-modal-title');
+    if(titleEl) titleEl.textContent = location.title || 'Local do Maniac';
+    maniacsLocationImage.src = location.image || '';
+    maniacsLocationImage.alt = `Localizacao do Maniac em ${location.title || 'cidade'}`;
+    maniacsLocationModal.setAttribute('aria-hidden', 'false');
+    syncBasicModalPageState();
+    if(typeof maniacsLocationModal._onOpen === 'function'){
+        maniacsLocationModal._onOpen();
+    }
+}
+
+function closeManiacsLocationModal(){
+    if(!maniacsLocationModal || maniacsLocationModal.getAttribute('aria-hidden') === 'true') return;
+    maniacsLocationModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+}
+
+function initializeManiacsPage(){
+    if(maniacsPageInitialized) return;
+    maniacsPageInitialized = true;
+    renderManiacsPage();
+
+    // Ensure shared generation map is loaded and re-render so image paths
+    // that depend on generation resolution are corrected (avoids pokemons/<name>.png 404s)
+    try{
+        loadSharedPokemonGenerationMap().then(() => {
+            try{ renderManiacsPage(); }catch(e){}
+        }).catch(()=>{});
+    }catch(e){}
+    try{
+        ensurePokemonCatalogLoaded().then(() => {
+            try{ renderManiacsPage(); }catch(e){}
+        }).catch(()=>{});
+    }catch(e){}
+
+    if(maniacsLocationModal){
+        const closeBtn = maniacsLocationModal.querySelector('.modal-close');
+        if(closeBtn){
+            closeBtn.addEventListener('click', closeManiacsLocationModal);
+        }
+        maniacsLocationModal.addEventListener('click', (event) => {
+            if(event.target === maniacsLocationModal) closeManiacsLocationModal();
+        });
+        window.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape' && maniacsLocationModal.getAttribute('aria-hidden') === 'false'){
+                closeManiacsLocationModal();
+            }
+        });
+    }
+}
+
+function showManiacs(){
+    initializeManiacsPage();
+    clearTabHighlights();
+    setActiveTabTheme('maniacs');
+    setVisiblePanel(contentManiacs);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Maniacs';
+    updateBrowserTitle();
+    renderManiacsPage();
+    if(useGsap && contentManiacs){
+        gsap.from(contentManiacs, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentManiacs.querySelectorAll('.maniacs-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.05 });
     }
 }
 
@@ -13367,6 +13888,7 @@ function initTabFromUrl(){
     if(resolvedTab==='calculator') return showCalculator();
     if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
+    if(resolvedTab==='maniacs') return showManiacs();
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
     if(resolvedTab==='times') return showTimes({
@@ -13418,6 +13940,7 @@ function initTabFromUrl(){
     if(saved==='calculator') return showCalculator();
     if(saved==='boost') return showBoostCalculator();
     if(saved==='fossils') return showFossils();
+    if(saved==='maniacs') return showManiacs();
     if(saved==='times') return showTimes();
     if(saved==='team-builder') return showTeamBuilder();
     if(saved==='hunt-builder') return showHuntBuilder();
@@ -15780,6 +16303,7 @@ function updateUrl(options = {}){
                       (contentTimes && !contentTimes.hidden) ? 'times' :
                       (contentTeamBuilder && !contentTeamBuilder.hidden) ? 'team-builder' :
                       (contentHuntBuilder && !contentHuntBuilder.hidden) ? 'hunt-builder' :
+                      (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
@@ -17070,6 +17594,7 @@ setupZoomableImageModal(respawnsModal, respawnsViewport, respawnsCanvas, respawn
 setupZoomableImageModal(fishingModal, fishingViewport, fishingCanvas, fishingImage);
 setupZoomableImageModal(baitLocationModal, baitLocationViewport, baitLocationCanvas, baitLocationImage);
 setupZoomableImageModal(fossilLocationModal, fossilLocationViewport, fossilLocationCanvas, fossilLocationImage);
+setupZoomableImageModal(maniacsLocationModal, maniacsLocationViewport, maniacsLocationCanvas, maniacsLocationImage);
 setupRespawnsModal();
 
 if(matrixBtn){

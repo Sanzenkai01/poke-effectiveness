@@ -65,6 +65,7 @@
         {name: 'kiritinhu69', supportsDrops: false },
         {name: 'xvidrinho', supportsDrops: false },
         {name: 'gokutibia', supportsDrops: true },
+        {name: 'nandinhosz', supportsDrops: true },
     ];
 
     function normalizeStreamerChannelName(name){
