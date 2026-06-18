@@ -15018,6 +15018,8 @@ function syncBoostPokemonSearchResultsDirection(){
     if(!searchField) return;
 
     searchField.classList.remove('boost-search-panel__field--drop-up');
+    if(searchField.closest('.catch-search-panel')) return;
+
     const activePanel = !boostPokemonResults?.hidden
         ? boostPokemonResults
         : (!boostPokemonNoResults?.hidden ? boostPokemonNoResults : null);
