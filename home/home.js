@@ -33,6 +33,9 @@ const createStreamerRatAlertWatcher = typeof sharedStreamerCatalog.createStreame
 const playStreamerRatAlertSound = typeof sharedStreamerCatalog.playStreamerRatAlertSound === 'function'
     ? sharedStreamerCatalog.playStreamerRatAlertSound
     : () => false;
+const triggerStreamerRatAlert = typeof sharedStreamerCatalog.triggerStreamerRatAlert === 'function'
+    ? sharedStreamerCatalog.triggerStreamerRatAlert
+    : playStreamerRatAlertSound;
 
 function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
     const normalizedChannel = normalizeStreamerChannelName(channel);
@@ -396,7 +399,7 @@ function startRatSummaryTimer(state){
             remainingMs: msUntilNext
         });
         if(alertKey){
-            playStreamerRatAlertSound(alertKey);
+            triggerStreamerRatAlert({ alertKey });
         }
         if(msUntilNext <= 0){
             renderStaticRatSummary('O proximo Rattata deve aparecer a qualquer momento.', '#ffd166');

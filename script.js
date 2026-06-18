@@ -1393,6 +1393,31 @@ function getCatchRouteMatch(pathname = location.pathname){
     return routeToken ? { routeToken } : null;
 }
 
+function normalizeManiacsLocationRouteSlug(value){
+    try{
+        return decodeURIComponent(String(value || ''))
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9-]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }catch(error){
+        return String(value || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9-]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+}
+
+function getManiacsMapRouteMatch(pathname = location.pathname){
+    const match = String(pathname || '').match(/\/maniacs\/([a-z0-9][a-z0-9-]*)\/mapa\/?$/i);
+    if(!match) return null;
+    const locationSlug = normalizeManiacsLocationRouteSlug(match[1]);
+    return locationSlug ? { locationSlug, mapView: true } : null;
+}
+
 function slugifyCatchRouteToken(value){
     return normalizePokemonSearchText(value)
         .replace(/[^a-z0-9]+/g, '-')
@@ -3914,6 +3939,21 @@ const BOOST_NAMED_STONE_META = Object.freeze({
 const MANIACS_ACE_ESSENCE_IMAGE = 'maniacs/ace-essence.gif';
 const MANIACS_STONE_COST = 100;
 const MANIACS_ESSENCE_COST = 100;
+const MANIACS_LOCATION_CELADON = Object.freeze({
+    image: 'maniacs/celadon.png',
+    title: 'Celadon',
+    routeSlug: 'celadon'
+});
+const MANIACS_LOCATION_SAFFRON = Object.freeze({
+    image: 'maniacs/saffron.png',
+    title: 'Saffron',
+    routeSlug: 'saffron'
+});
+const MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF = Object.freeze({
+    image: 'maniacs/cerulean-olf-shore-warf.png',
+    title: 'Cerulean e Old Shore Warf',
+    routeSlug: 'cerulean-old-shore-warf'
+});
 const MANIACS_POKEMON_IMAGE_OVERRIDES = Object.freeze({
     bouffalant: 'pokemons/5gen/bouffalant.png',
     cramorant: 'pokemons/8gen/flying-cramorant.png',
@@ -3982,15 +4022,20 @@ const MANIACS_TYPE_OVERRIDES = Object.freeze({
     malamar: { type1: 'dark', type2: 'psychic' }
 });
 const MANIACS_STONE_ENTRIES = Object.freeze([
-    { target: 'Orthworm', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
-    { target: 'Scraggy', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
-    { target: 'Toxapex', location: { image: 'maniacs/celadon.png', title: 'Celadon' } },
-    { target: 'Scolipede', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
-    { target: 'Bouffalant', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
-    { target: 'Garbodor', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
-    { target: 'Dachsbun', location: { image: 'maniacs/saffron.png', title: 'Saffron' } },
-    { target: 'Hawlucha', location: { image: 'maniacs/cerulean-olf-shore-warf.png', title: 'Cerulean e Old Shore Warf' } },
-    { target: 'Cramorant', location: { image: 'maniacs/cerulean-olf-shore-warf.png', title: 'Cerulean e Old Shore Warf' } }
+    { target: 'Orthworm', location: MANIACS_LOCATION_CELADON },
+    { target: 'Scraggy', location: MANIACS_LOCATION_CELADON },
+    { target: 'Toxapex', location: MANIACS_LOCATION_CELADON },
+    { target: 'Scolipede', location: MANIACS_LOCATION_SAFFRON },
+    { target: 'Bouffalant', location: MANIACS_LOCATION_SAFFRON },
+    { target: 'Garbodor', location: MANIACS_LOCATION_SAFFRON },
+    { target: 'Dachsbun', location: MANIACS_LOCATION_SAFFRON },
+    { target: 'Hawlucha', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF },
+    { target: 'Cramorant', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF }
+]);
+const MANIACS_LOCATION_ENTRIES = Object.freeze([
+    MANIACS_LOCATION_CELADON,
+    MANIACS_LOCATION_SAFFRON,
+    MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF
 ]);
 // Targets that should NOT render the compact location button inside the pokemon media
 // Instead the location image below the "Local" kicker will open the modal.
@@ -5404,24 +5449,68 @@ function renderManiacsPage(){
     }
 }
 
-function openManiacsLocationModal(location){
+function getManiacsLocationRouteSlug(location){
+    return normalizeManiacsLocationRouteSlug(
+        location?.routeSlug
+        || location?.title
+        || String(location?.image || '').split('/').pop()?.replace(/\.[^.]+$/, '')
+        || ''
+    );
+}
+
+function getManiacsLocationByRouteSlug(routeSlug){
+    const normalizedSlug = normalizeManiacsLocationRouteSlug(routeSlug);
+    if(!normalizedSlug) return null;
+    return MANIACS_LOCATION_ENTRIES.find(location => (
+        getManiacsLocationRouteSlug(location) === normalizedSlug
+    )) || null;
+}
+
+function getManiacsLocationRoutePath(location){
+    const routeSlug = getManiacsLocationRouteSlug(location);
+    return routeSlug ? `/maniacs/${encodeURIComponent(routeSlug)}/mapa` : '/maniacs';
+}
+
+function getActiveManiacsLocationRouteSlug(){
+    if(!maniacsLocationModal || maniacsLocationModal.getAttribute('aria-hidden') === 'true') return '';
+    return getManiacsLocationRouteSlug(maniacsLocationModal._activeManiacsLocation || null);
+}
+
+function openManiacsLocationModal(location, options = {}){
     if(!maniacsLocationModal || !maniacsLocationImage || !location) return;
+    const { pushState = true } = options || {};
 
     const titleEl = document.getElementById('maniacs-location-modal-title');
     if(titleEl) titleEl.textContent = location.title || 'Local do Maniac';
     maniacsLocationImage.src = location.image || '';
     maniacsLocationImage.alt = `Localizacao do Maniac em ${location.title || 'cidade'}`;
+    maniacsLocationModal._activeManiacsLocation = location;
     maniacsLocationModal.setAttribute('aria-hidden', 'false');
     syncBasicModalPageState();
     if(typeof maniacsLocationModal._onOpen === 'function'){
         maniacsLocationModal._onOpen();
     }
+    if(pushState){
+        updateUrl({ historyMode: 'push' });
+    }
 }
 
-function closeManiacsLocationModal(){
+function openManiacsLocationByRouteSlug(routeSlug, options = {}){
+    const location = getManiacsLocationByRouteSlug(routeSlug);
+    if(!location) return false;
+    openManiacsLocationModal(location, options);
+    return true;
+}
+
+function closeManiacsLocationModal(options = {}){
+    const { viaPopstate = false, skipHistory = false } = options || {};
     if(!maniacsLocationModal || maniacsLocationModal.getAttribute('aria-hidden') === 'true') return;
     maniacsLocationModal.setAttribute('aria-hidden', 'true');
+    maniacsLocationModal._activeManiacsLocation = null;
     syncBasicModalPageState();
+    if(!viaPopstate && !skipHistory){
+        updateUrl({ historyMode: 'replace' });
+    }
 }
 
 function initializeManiacsPage(){
@@ -5458,7 +5547,8 @@ function initializeManiacsPage(){
     }
 }
 
-function showManiacs(){
+function showManiacs(options = {}){
+    const requestedLocationSlug = normalizeManiacsLocationRouteSlug(options?.requestedLocationSlug || '');
     initializeManiacsPage();
     clearTabHighlights();
     setActiveTabTheme('maniacs');
@@ -5470,6 +5560,13 @@ function showManiacs(){
     if(titleEl) titleEl.textContent = 'Maniacs';
     updateBrowserTitle();
     renderManiacsPage();
+    if(requestedLocationSlug){
+        const opened = openManiacsLocationByRouteSlug(requestedLocationSlug, { pushState: false });
+        if(!opened){
+            closeManiacsLocationModal({ skipHistory: true });
+            updateUrl({ historyMode: 'replace' });
+        }
+    }
     if(useGsap && contentManiacs){
         gsap.from(contentManiacs, { opacity: 0, y: -10, duration: 0.4 });
         gsap.from(contentManiacs.querySelectorAll('.maniacs-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.05 });
@@ -11716,6 +11813,9 @@ const createStreamerRatAlertWatcher = typeof sharedStreamerCatalog.createStreame
 const playStreamerRatAlertSound = typeof sharedStreamerCatalog.playStreamerRatAlertSound === 'function'
     ? sharedStreamerCatalog.playStreamerRatAlertSound
     : () => false;
+const triggerStreamerRatAlert = typeof sharedStreamerCatalog.triggerStreamerRatAlert === 'function'
+    ? sharedStreamerCatalog.triggerStreamerRatAlert
+    : playStreamerRatAlertSound;
 
 function clearHomeStreamerRatSummary(){
     homeStreamerRatSummaryCleanup();
@@ -13087,7 +13187,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             const msUntilNext = validState.remainingMs;
             const alertKey = getRatAlertTriggerKey(validState);
             if(alertKey){
-                playStreamerRatAlertSound(alertKey);
+                triggerStreamerRatAlert({ alertKey });
             }
             if(msUntilNext <= 0){
                 timerEl.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
@@ -13863,6 +13963,7 @@ function initTabFromUrl(){
     // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/mega-charizard
     const pathname = String(location.pathname || '');
     const requestedBossRoute = getBossRouteMatch(pathname);
+    const requestedManiacsMapRoute = getManiacsMapRouteMatch(pathname);
     const requestedPokemonCatalogPage = getRequestedPokemonCatalogPageFromPath(pathname);
     const requestedTeamRoute = getTeamRouteMatch(pathname);
     const pokemonMatch = getPokemonDetailRouteMatch(pathname);
@@ -13881,14 +13982,18 @@ function initTabFromUrl(){
         resolvedTab = 'times';
     } else if(requestedBossRoute){
         resolvedTab = 'bosses';
+    } else if(requestedManiacsMapRoute){
+        resolvedTab = 'maniacs';
     }
-    if(!hasQuery && !pathRouteInfo && !requestedBossRoute && !requestedTeamRoute && initialDeepLinkedPokemonRouteToken == null && requestedPokemonCatalogPage == null && !isPokemonCatalogPathname(pathname)) return showHome();
+    if(!hasQuery && !pathRouteInfo && !requestedBossRoute && !requestedManiacsMapRoute && !requestedTeamRoute && initialDeepLinkedPokemonRouteToken == null && requestedPokemonCatalogPage == null && !isPokemonCatalogPathname(pathname)) return showHome();
     const requestedBossMode = getRequestedBossModeFromUrl();
     const requestedBossTab = normalizeBossModeParam(tabparam);
     if(resolvedTab==='calculator') return showCalculator();
     if(resolvedTab==='boost') return showBoostCalculator();
     if(resolvedTab==='fossils') return showFossils();
-    if(resolvedTab==='maniacs') return showManiacs();
+    if(resolvedTab==='maniacs') return showManiacs({
+        requestedLocationSlug: requestedManiacsMapRoute?.locationSlug || ''
+    });
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
     if(resolvedTab==='times') return showTimes({
@@ -16416,6 +16521,13 @@ function updateUrl(options = {}){
         } else if(!isHomeView && activeTab === 'times'){
             if(timesDetailsModal && timesDetailsModal.getAttribute('aria-hidden') !== 'true' && activeTeamEntry){
                 routePath = getTeamDetailRoutePath(activeTeamEntry) || getRoutePathForTab(activeTab);
+            } else {
+                routePath = getRoutePathForTab(activeTab);
+            }
+        } else if(!isHomeView && activeTab === 'maniacs'){
+            const activeManiacsLocationSlug = getActiveManiacsLocationRouteSlug();
+            if(activeManiacsLocationSlug){
+                routePath = getManiacsLocationRoutePath(getManiacsLocationByRouteSlug(activeManiacsLocationSlug));
             } else {
                 routePath = getRoutePathForTab(activeTab);
             }
@@ -20922,6 +21034,8 @@ window.addEventListener('popstate', () => {
     const isPokemonCatalogRoute = isPokemonCatalogPathname(pathname);
     const requestedTeamRoute = getTeamRouteMatch(pathname);
     const isTeamCatalogRoute = isTeamCatalogPathname(pathname);
+    const requestedManiacsMapRoute = getManiacsMapRouteMatch(pathname);
+    const isManiacsRoute = /\/maniacs(?:\/|$)/i.test(pathname);
     const requestedBossRoute = getBossRouteMatch(pathname);
     const isCatchRoute = /\/catch(?:\/|$)/i.test(pathname);
     if(detailMatch){
@@ -21010,6 +21124,27 @@ window.addEventListener('popstate', () => {
             showCatch();
             ensurePokemonCatalogLoaded().then(applyCatchRoute).catch(console.error);
         }
+    }
+
+    if(requestedManiacsMapRoute){
+        const requestedLocationSlug = requestedManiacsMapRoute.locationSlug;
+        if(contentManiacs && !contentManiacs.hidden){
+            const opened = openManiacsLocationByRouteSlug(requestedLocationSlug, { pushState: false });
+            if(!opened){
+                closeManiacsLocationModal({ viaPopstate: true });
+                updateUrl({ historyMode: 'replace' });
+            }
+        } else {
+            showManiacs({ requestedLocationSlug });
+        }
+    } else if(isManiacsRoute){
+        if(contentManiacs && !contentManiacs.hidden){
+            closeManiacsLocationModal({ viaPopstate: true });
+        } else {
+            showManiacs();
+        }
+    } else {
+        closeManiacsLocationModal({ viaPopstate: true });
     }
 
     if(requestedBossRoute){

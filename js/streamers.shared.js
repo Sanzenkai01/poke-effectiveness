@@ -147,7 +147,14 @@
     const RAT_ALERT_VOLUME_STORAGE_KEY = 'poke-effectiveness-rat-alert-volume-v1';
     const RAT_ALERT_DEFAULT_VOLUME_SLIDER = 50;
     const RAT_ALERT_BASE_GAIN = 0.32;
+    const RAT_ALERT_TAB_BLINK_DURATION_MS = 30000;
+    const RAT_ALERT_TAB_BLINK_INTERVAL_MS = 900;
     let ratAlertAudioContext = null;
+    let ratAlertTitleBlinkInterval = 0;
+    let ratAlertTitleBlinkTimeout = 0;
+    let ratAlertOriginalTitle = '';
+    let ratWakeLock = null;
+    let ratWakeLockRequest = null;
     const ratAlertState = {
         enabled: loadRatAlertSoundEnabled(),
         volumeSlider: loadRatAlertVolumeSlider()
@@ -205,6 +212,69 @@
         syncRatAlertSettingsControls();
     }
 
+    function isStreamerRatWakeLockSupported(){
+        return Boolean(global.navigator?.wakeLock?.request);
+    }
+
+    function syncRatWakeLockSettingsControls(){
+        global.document?.querySelectorAll('[data-rat-alert-setting="toggle"]')
+            .forEach(button => {
+                if(!ratAlertState.enabled){
+                    button.title = 'Ligar som do Rattata';
+                    return;
+                }
+                if(!isStreamerRatWakeLockSupported()){
+                    button.title = 'Som ligado. Wake Lock indisponivel neste navegador.';
+                    return;
+                }
+                button.title = ratWakeLock
+                    ? 'Som ligado. Tela mantida ativa enquanto a aba estiver visivel.'
+                    : 'Som ligado. Clique novamente para desligar.';
+            });
+    }
+
+    function releaseStreamerRatWakeLock(){
+        const lock = ratWakeLock;
+        ratWakeLock = null;
+        ratWakeLockRequest = null;
+        syncRatWakeLockSettingsControls();
+        if(lock && typeof lock.release === 'function'){
+            return lock.release().catch(() => false);
+        }
+        return Promise.resolve(false);
+    }
+
+    function requestStreamerRatWakeLock(){
+        if(!ratAlertState.enabled || !isStreamerRatWakeLockSupported()) return Promise.resolve(false);
+        if(global.document?.visibilityState === 'hidden') return Promise.resolve(false);
+        if(ratWakeLock) return Promise.resolve(true);
+        if(ratWakeLockRequest) return ratWakeLockRequest;
+
+        ratWakeLockRequest = global.navigator.wakeLock.request('screen')
+            .then(lock => {
+                ratWakeLock = lock;
+                ratWakeLockRequest = null;
+                if(lock && typeof lock.addEventListener === 'function'){
+                    lock.addEventListener('release', () => {
+                        if(ratWakeLock === lock){
+                            ratWakeLock = null;
+                            syncRatWakeLockSettingsControls();
+                        }
+                    });
+                }
+                syncRatWakeLockSettingsControls();
+                return true;
+            })
+            .catch(() => {
+                ratWakeLock = null;
+                ratWakeLockRequest = null;
+                syncRatWakeLockSettingsControls();
+                return false;
+            });
+
+        return ratWakeLockRequest;
+    }
+
     function getRatAlertAudioContext(){
         const AudioContextCtor = global.AudioContext || global.webkitAudioContext;
         if(!AudioContextCtor) return null;
@@ -253,12 +323,58 @@
         return true;
     }
 
+    function stopStreamerRatAlertTabBlink(){
+        if(ratAlertTitleBlinkInterval){
+            global.clearInterval(ratAlertTitleBlinkInterval);
+            ratAlertTitleBlinkInterval = 0;
+        }
+        if(ratAlertTitleBlinkTimeout){
+            global.clearTimeout(ratAlertTitleBlinkTimeout);
+            ratAlertTitleBlinkTimeout = 0;
+        }
+        if(ratAlertOriginalTitle && global.document){
+            global.document.title = ratAlertOriginalTitle;
+        }
+        ratAlertOriginalTitle = '';
+    }
+
+    function flashStreamerRatAlertTab(){
+        const doc = global.document;
+        if(!doc) return false;
+
+        const currentTitle = doc.title || 'Poke Utilities';
+        const baseTitle = ratAlertOriginalTitle || currentTitle;
+
+        if(ratAlertTitleBlinkInterval || ratAlertTitleBlinkTimeout){
+            stopStreamerRatAlertTabBlink();
+        }
+        ratAlertOriginalTitle = baseTitle;
+
+        let showAlertTitle = true;
+        const applyTitle = () => {
+            doc.title = showAlertTitle ? 'Rattata!' : ratAlertOriginalTitle;
+            showAlertTitle = !showAlertTitle;
+        };
+
+        applyTitle();
+        ratAlertTitleBlinkInterval = global.setInterval(applyTitle, RAT_ALERT_TAB_BLINK_INTERVAL_MS);
+        ratAlertTitleBlinkTimeout = global.setTimeout(stopStreamerRatAlertTabBlink, RAT_ALERT_TAB_BLINK_DURATION_MS);
+        return true;
+    }
+
+    function triggerStreamerRatAlert(options = {}){
+        const soundPlayed = playStreamerRatAlertSound(options);
+        const tabBlinkStarted = flashStreamerRatAlertTab();
+        return soundPlayed || tabBlinkStarted;
+    }
+
     function syncRatAlertSettingsToggle(button){
         if(!button) return;
         const enabled = !!ratAlertState.enabled;
         button.dataset.enabled = enabled ? 'true' : 'false';
         button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
         button.textContent = enabled ? 'Som ligado' : 'Som desligado';
+        syncRatWakeLockSettingsControls();
     }
 
     function syncRatAlertSettingsControls(){
@@ -317,6 +433,9 @@
             persistRatAlertSoundEnabled(nextEnabled);
             if(nextEnabled){
                 prepareStreamerRatAlertSound();
+                requestStreamerRatWakeLock();
+            } else {
+                releaseStreamerRatWakeLock();
             }
         });
 
@@ -448,10 +567,28 @@
         createStreamerRatAlertWatcher,
         mountStreamerRatAlertSettingsButton,
         playStreamerRatAlertSound,
+        triggerStreamerRatAlert,
+        stopStreamerRatAlertTabBlink,
+        requestStreamerRatWakeLock,
+        releaseStreamerRatWakeLock,
         getStreamerEntry(name){
             return byKey.get(normalizeStreamerChannelName(name)) || null;
         }
     });
+
+    global.addEventListener?.('focus', stopStreamerRatAlertTabBlink);
+    global.document?.addEventListener?.('visibilitychange', () => {
+        if(global.document.visibilityState === 'visible'){
+            stopStreamerRatAlertTabBlink();
+            if(ratAlertState.enabled){
+                requestStreamerRatWakeLock();
+            }
+        }
+    });
+
+    if(ratAlertState.enabled && global.document?.visibilityState === 'visible'){
+        requestStreamerRatWakeLock();
+    }
 
     if(global.document?.readyState === 'loading'){
         global.document.addEventListener('DOMContentLoaded', mountStreamerRatAlertSettingsButton, { once: true });
