@@ -20,7 +20,7 @@
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
     const COUNTER_REQUEST_TIMEOUT_MS = 6000;
-    const PORTALED_TOOLTIP_SURFACE = 'header';
+    const PORTALED_TOOLTIP_SURFACES = new Set(['header', 'home']);
     const PORTALED_TOOLTIP_HIDE_DELAY_MS = 140;
 
     let activeSyncPromise = null;
@@ -100,7 +100,7 @@
     }
 
     function getCounterTooltipMode(surface = ''){
-        return String(surface).toLowerCase() === PORTALED_TOOLTIP_SURFACE ? 'portal' : 'inline';
+        return PORTALED_TOOLTIP_SURFACES.has(String(surface).toLowerCase()) ? 'portal' : 'inline';
     }
 
     function ensurePortaledTooltipSurface(){

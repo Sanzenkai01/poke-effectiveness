@@ -4135,7 +4135,7 @@ const strings = {
         homeTitleBefore: 'Bem-vindo ao',
         homeTitleAccent: 'Poke Utilities',
         homeLead: 'Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.',
-        homeSupporting: 'Entre por Tipos e navegue por fósseis, treinamento, pokémons, captura, chefes, transmissões e vídeos em um fluxo pensado para uso diário.',
+        homeSupporting: 'Entre por Bosses, Sistemas, Utilidades e Comunidade para acessar hunts, times, captura, fósseis, maniacs, pokémons, streamers e vídeos em um fluxo pensado para uso diário.',
         homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
@@ -21338,7 +21338,6 @@ function syncHomeLandingFocusSummary(cards = []){
                 ${previewMarkup}
                 <div class="home-tool-card__footer">
                     <span class="home-tool-card__action">${actionLabel}</span>
-                    <span class="home-tool-card__meta">${(group.items || []).length} modulos</span>
                 </div>
                 <span class="home-tool-card__chev" aria-hidden="true">&#9662;</span>
             `;
@@ -21636,11 +21635,6 @@ function syncHomeLandingFocusSummary(cards = []){
                 actionText.textContent = actionLabel;
                 footerEl.appendChild(actionText);
             }
-
-            const metaEl = document.createElement('span');
-            metaEl.className = 'home-tool-card__meta';
-            metaEl.textContent = `${previewItems.length} modulo${previewItems.length === 1 ? '' : 's'}`;
-            footerEl.appendChild(metaEl);
 
             card.append(indexEl, titleEl, summaryEl, footerEl);
             homeTools.appendChild(card);

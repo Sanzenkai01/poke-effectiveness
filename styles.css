@@ -12082,11 +12082,17 @@ body.home-view .main-footer {
 }
 
 .home-landing__visit-counter .site-visit-counter__values {
+  display: grid;
+  gap: 0.1rem;
   color: #dce8f4;
   font-family: 'Space Grotesk', 'Montserrat', sans-serif;
   font-size: 0.84rem;
   justify-items: center;
   text-align: center;
+}
+
+.home-landing__visit-counter .site-visit-counter__line {
+  display: block;
 }
 
 .home-landing__visit-counter .site-visit-counter__line--secondary {
