@@ -292,7 +292,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260618c';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260618d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -1452,6 +1452,32 @@ function getPokemonCatalogEntriesForVariant(variant = getCurrentPokemonCatalogVa
         ? pokemonCatalogEntriesByVariant[normalizedVariant]
         : [];
 }
+
+function getPokemonCatalogEntryByName(name){
+    const normalizedName = normalizePokemonSearchText(name);
+    if(!normalizedName) return null;
+
+    const entries = [
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+    ];
+    const exactMatch = entries.find(entry => entry?.searchName === normalizedName);
+    if(exactMatch) return exactMatch;
+
+    if(normalizedName.startsWith('shiny ')){
+        const baseName = normalizePokemonSearchText(normalizedName.replace(/^shiny\s+/, ''));
+        return entries.find(entry => entry?.searchName === baseName) || null;
+    }
+
+    return null;
+}
+
+function getPokemonCatalogEntryLevelByName(name){
+    const entry = getPokemonCatalogEntryByName(name);
+    return entry ? entry.level : null;
+}
+
+window.getPokemonCatalogEntryLevelByName = getPokemonCatalogEntryLevelByName;
 
 function findPokemonCatalogEntryByRouteToken(routeToken, variant = getCurrentPokemonCatalogVariant()){
     const normalizedToken = normalizePokemonDetailRouteToken(routeToken);
@@ -17986,20 +18012,26 @@ function ensureBossesPageReady(){
     if(bossesPageLoadPromise) return bossesPageLoadPromise;
 
     renderBossesDeferredState('Carregando catálogo de bosses...');
-    bossesPageLoadPromise = loadDeferredScript(
-        DEFERRED_BOSSES_SCRIPT_SRC,
-        () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
-    ).then(() => {
-        if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
-            throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
-        }
-        return true;
-    }).catch(error => {
-        renderBossesDeferredState('Não foi possível carregar os bosses. Tente atualizar a página.', { error: true });
-        throw error;
-    }).finally(() => {
-        bossesPageLoadPromise = null;
-    });
+    bossesPageLoadPromise = ensurePokemonCatalogLoaded()
+        .catch(error => {
+            console.warn('Pokemon catalog unavailable before bosses load', error);
+            return false;
+        })
+        .then(() => loadDeferredScript(
+            DEFERRED_BOSSES_SCRIPT_SRC,
+            () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
+        ))
+        .then(() => {
+            if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
+                throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
+            }
+            return true;
+        }).catch(error => {
+            renderBossesDeferredState('Não foi possível carregar os bosses. Tente atualizar a página.', { error: true });
+            throw error;
+        }).finally(() => {
+            bossesPageLoadPromise = null;
+        });
 
     return bossesPageLoadPromise;
 }

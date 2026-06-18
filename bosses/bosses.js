@@ -2963,6 +2963,53 @@ function getRecommendationNameKey(nameOrPokemon) {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+const bossRecommendationMinimumLevel = 50;
+const bossRecommendationKnownLevelByNameKey = Object.freeze({
+  bayleef: 30,
+  chikorita: 5
+});
+
+function parseBossRecommendationLevel(value) {
+  const rawLevel = String(value ?? '').trim();
+  if (!rawLevel) return null;
+
+  const level = Number(rawLevel);
+  return Number.isFinite(level) ? level : null;
+}
+
+function getBossRecommendationCatalogLevel(pick) {
+  const directLevel = parseBossRecommendationLevel(pick?.level);
+  if (directLevel !== null) return directLevel;
+
+  if (typeof window !== 'undefined' && typeof window.getPokemonCatalogEntryLevelByName === 'function') {
+    const catalogLevel = parseBossRecommendationLevel(window.getPokemonCatalogEntryLevelByName(pick?.name || pick));
+    if (catalogLevel !== null) return catalogLevel;
+  }
+
+  const nameKey = getRecommendationNameKey(pick);
+  if (Object.prototype.hasOwnProperty.call(bossRecommendationKnownLevelByNameKey, nameKey)) {
+    return bossRecommendationKnownLevelByNameKey[nameKey];
+  }
+
+  if (nameKey.startsWith('shiny')) {
+    const baseNameKey = nameKey.replace(/^shiny/, '');
+    if (Object.prototype.hasOwnProperty.call(bossRecommendationKnownLevelByNameKey, baseNameKey)) {
+      return bossRecommendationKnownLevelByNameKey[baseNameKey];
+    }
+  }
+
+  return null;
+}
+
+function isBossRecommendationLevelEligible(pick) {
+  const level = getBossRecommendationCatalogLevel(pick);
+  return level === null || level >= bossRecommendationMinimumLevel;
+}
+
+function filterBossRecommendationsByMinimumLevel(picks = []) {
+  return (picks || []).filter(isBossRecommendationLevelEligible);
+}
+
 const fixedRecommendationClanTypes = Object.freeze({
   mystic: Object.freeze(['fairy', 'fighting', 'ghost', 'ice', 'steel', 'water']),
   instinct: Object.freeze(['dragon', 'electric', 'grass', 'ground', 'poison', 'psychic']),
@@ -5702,6 +5749,8 @@ function getFixedRecommendationRolePicks(boss, clanKey, roleKey) {
 
   return dedupeRecommendedPicksByName(
     collectRawRecommendationPicksForBoss(boss).filter((pick) => {
+      if (!isBossRecommendationLevelEligible(pick)) return false;
+
       const registryEntry = getFixedRecommendationEntry(pick);
       if (!registryEntry) {
         warnRecommendationWithoutRegistry(boss, pick);
@@ -5763,6 +5812,8 @@ function getFixedRecommendationGroupsForClan(boss, clanKey) {
 
     const recommended = dedupeRecommendedPicksByName(
       rawPicks.filter((pick) => {
+        if (!isBossRecommendationLevelEligible(pick)) return false;
+
         const registryEntry = getFixedRecommendationEntry(pick);
         if (!registryEntry) {
           warnRecommendationWithoutRegistry(boss, pick);
@@ -5813,6 +5864,7 @@ function getAllRecommendedForClan(boss, clanData) {
   } else {
     picks = getRecommendationGroupsForClan(boss, clanData).flatMap((group) => group.recommended || []);
   }
+  picks = filterBossRecommendationsByMinimumLevel(picks || []);
 
   // Se o boss definir filterSolo, ranqueamos e removemos picks abaixo de 'bom'
   if (boss?.filterSolo) {
@@ -6431,7 +6483,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
 }
 
 function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
-  return recommendedList
+  return filterBossRecommendationsByMinimumLevel(recommendedList || [])
     .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke, options))
     .sort((a, b) => {
       const leftPriority = getRecommendationTierPriority(a.tier);
@@ -6477,7 +6529,7 @@ function synchronizeRecommendationTiers() {
 function dedupeRecommendedPicksByName(picks = []) {
   const seen = new Set();
 
-  return (picks || []).filter((poke) => {
+  return filterBossRecommendationsByMinimumLevel(picks || []).filter((poke) => {
     const nameKey = getRecommendationNameKey(poke);
     if (!nameKey || seen.has(nameKey)) return false;
     seen.add(nameKey);
@@ -6670,6 +6722,7 @@ function addSupportPickIfTierBomOrAbove(bossRef, picks = [], createPick) {
   if (!Array.isArray(picks) || typeof createPick !== 'function') return;
 
   const basePick = createPick();
+  if (!isBossRecommendationLevelEligible(basePick)) return;
   const scored = scoreRecommendationForBoss(bossRef, basePick, { roleKey: 'support' });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) {
@@ -6683,7 +6736,9 @@ function addSupportPickIfTierBomOrAbove(bossRef, picks = [], createPick) {
 function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
-  const scored = scoreRecommendationForBoss(bossRef, createHeracrossPick(), { roleKey });
+  const basePick = createHeracrossPick();
+  if (!isBossRecommendationLevelEligible(basePick)) return;
+  const scored = scoreRecommendationForBoss(bossRef, basePick, { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) return;
 
@@ -6693,18 +6748,23 @@ function addHeracrossIfCompatible(bossRef, picks = [], roleKey = '') {
 function addMiltankIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
-  const scored = scoreRecommendationForBoss(bossRef, createMiltankPick(), { roleKey });
-  const shinyScored = scoreRecommendationForBoss(bossRef, createShinyMiltankPick(), { roleKey });
+  const basePick = createMiltankPick();
+  const shinyPick = createShinyMiltankPick();
+  if (!isBossRecommendationLevelEligible(basePick) && !isBossRecommendationLevelEligible(shinyPick)) return;
+  const scored = scoreRecommendationForBoss(bossRef, basePick, { roleKey });
+  const shinyScored = scoreRecommendationForBoss(bossRef, shinyPick, { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) return;
 
-  ensureRolePickNames(picks, [scored, shinyScored], roleKey);
+  ensureRolePickNames(picks, [scored, shinyScored].filter(isBossRecommendationLevelEligible), roleKey);
 }
 
 function addMegaAbsolZIfCompatible(bossRef, picks = [], roleKey = '') {
   if (!Array.isArray(picks)) return;
 
-  const scored = scoreRecommendationForBoss(bossRef, createMegaAbsolZPickForBoss(bossRef), { roleKey });
+  const basePick = createMegaAbsolZPickForBoss(bossRef);
+  if (!isBossRecommendationLevelEligible(basePick)) return;
+  const scored = scoreRecommendationForBoss(bossRef, basePick, { roleKey });
   const priority = getRecommendationTierPriority(scored?.tier);
   if (priority > tierPriority.bom) {
     removeRolePickByName(picks, 'Mega Absol Z');
@@ -6827,11 +6887,12 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
 function createBestCatalogSpeedsterPick(config, bossRef) {
   const scoredPicks = (config?.moveTypes || []).map((moveType) => {
     const pick = createRolePick(config.name, config.types, moveType);
+    if (!isBossRecommendationLevelEligible(pick)) return null;
     pick.bossEntries = [{ bossName: bossRef?.name || bossRef?.id || '' }];
     const scored = scoreRecommendationForBoss(bossRef, pick, { roleKey: 'dps' });
     delete scored.bossEntries;
     return scored;
-  });
+  }).filter(Boolean);
 
   return scoredPicks.sort((left, right) => (
     getRecommendationTierPriority(left?.tier) - getRecommendationTierPriority(right?.tier)
@@ -6897,12 +6958,14 @@ const catalogRoleRecommendationConfigs = Object.freeze([
 
 function createBestCatalogRolePick(config, bossRef) {
   const scoredPicks = (config?.moveTypes || []).map((moveType) => (
-    scoreRecommendationForBoss(
+    createRolePick(config.name, config.types, moveType)
+  ))
+    .filter(isBossRecommendationLevelEligible)
+    .map((pick) => scoreRecommendationForBoss(
       bossRef,
-      createRolePick(config.name, config.types, moveType),
+      pick,
       { roleKey: config.roleKey }
-    )
-  ));
+    ));
 
   return scoredPicks.sort((left, right) => (
     getRecommendationTierPriority(left?.tier) - getRecommendationTierPriority(right?.tier)
@@ -7033,6 +7096,7 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
   const rankedCandidates = registryPool
     .map((registryEntry) => createFixedRecommendationPickFromRegistryEntry(registryEntry, seedConfigs))
     .filter((pick) => pick && !excludedNameKeys.has(getRecommendationNameKey(pick)))
+    .filter(isBossRecommendationLevelEligible)
     .map((pick) => {
       const scored = scoreRecommendationForBoss(bossRef, pick);
       return { pick, scored };
@@ -7053,7 +7117,7 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
 
 function filterRecommendationListByTier(list = [], bossRef, minimumTier = 'bom') {
   const maximumPriority = getRecommendationMaximumPriority(minimumTier);
-  return dedupeRecommendedPicksByName((list || []).filter((pick) => {
+  return dedupeRecommendedPicksByName(filterBossRecommendationsByMinimumLevel(list || []).filter((pick) => {
     try {
       const scored = scoreRecommendationForBoss(bossRef, pick);
       return getRecommendationTierPriority(scored?.tier) <= maximumPriority;
