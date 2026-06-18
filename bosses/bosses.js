@@ -735,6 +735,44 @@ const hoopaPortalsData = [
       }
     }
   },
+  {
+    id: 'mega-chimecho',
+    name: 'Mega Chimecho',
+    clan: 'instinct',
+    clanLabel: 'Instinct',
+    image: 'mega-chimeco.png',
+    comingSoon: true,
+    description: 'Boss Psychic com moveset Psychic. Priorize speedsters Dark para bater super efetivo e resistir ao golpe do boss.',
+    types: ['psychic'],
+    moveType: 'psychic',
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          { name: 'Shiftry', image: 'shiftry.png', tier: 'excelente', types: ['grass','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Bug.' }
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          { name: 'Mega Gyarados', image: 'mega-gyarados.png', tier: 'excelente', types: ['water','dark'], description: 'Tipo move: Dark.' },
+          { name: 'Banette', image: 'banette.png', tier: 'bom', types: ['ghost'], description: 'Tipo move: Ghost.' }
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Dark.' },
+          { name: 'Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
+          { name: 'Shiny Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' }
+        ]
+      }
+    }
+  },
   ];
 
 const clanIcons = {
@@ -2521,6 +2559,7 @@ const mainQuestBosses = createManualRoleboardBosses([
           createRolePick('Shieldon', ['rock', 'steel'], 'rock')
         ],
         dps: [
+          createRolePick('Scyther', ['bug', 'flying'], 'bug'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'bug')
         ],
         support: [
@@ -4591,6 +4630,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'mega-aggron.png': 'pokemons/megas/mega-aggron.png',
   'mega-banette.png': 'pokemons/megas/mega-banette.png',
   'mega-chandelure.png': 'pokemons/megas/mega-chandelure.png',
+  'mega-chimeco.png': 'pokemons/megas/mega-chimeco.png',
   'mega-clefable.png': 'pokemons/megas/mega-clefable.png',
   'mega-dragonite.png': 'pokemons/megas/mega-dragonite.png',
   'mega-feraligatr.png': 'pokemons/megas/mega-feraligatr.png',
@@ -4676,6 +4716,7 @@ function normalizeBossAssetPath(assetPath) {
   const rawPath = String(assetPath || '').trim().replace(/\\/g, '/');
   if (!rawPath) return '';
   if (/^(?:https?:)?\/\//i.test(rawPath) || /^(?:data|blob):/i.test(rawPath)) return rawPath;
+  if (rawPath.includes('/')) return rawPath;
 
   const fileName = rawPath.split('/').pop().toLowerCase();
   return bossPokemonAssetAliases[fileName] || rawPath;
@@ -4687,9 +4728,9 @@ function resolveBossAssetSrc(assetPath) {
   if (/^(?:https?:)?\/\//i.test(normalizedPath) || /^(?:data|blob):/i.test(normalizedPath)) return normalizedPath;
   if (/^(?:\/|\.\/|\.\.\/)/.test(normalizedPath)) return normalizedPath;
   if (/^(?:pokemons|pokemon)\//i.test(normalizedPath)) {
-    return basePath ? normalizedPath : `../${normalizedPath}`;
+    return basePath ? `/${normalizedPath}` : `../${normalizedPath}`;
   }
-  return basePath + normalizedPath;
+  return basePath ? `/${basePath}${normalizedPath}` : normalizedPath;
 }
 
 function toggleBossMegaFileNameStyle(fileName) {
@@ -5871,6 +5912,32 @@ function shouldExcludeMainQuestPick(pick, context = {}) {
     && pickKey === 'grumpig';
 }
 
+function shouldForceMainQuestVisiblePick(pick, context = {}) {
+  const bossId = String(context?.boss?.id || '').trim().toLowerCase();
+  const clanKey = String(context?.clanKey || '').trim().toLowerCase();
+  const roleKey = String(context?.roleKey || '').trim().toLowerCase();
+  const pickKey = getRecommendationNameKey(pick);
+
+  return bossId === 'mega-malamar'
+    && clanKey === 'valor'
+    && roleKey === 'dps'
+    && pickKey === 'scyther';
+}
+
+function appendUniqueMainQuestVisiblePicks(basePicks = [], extraPicks = []) {
+  const seen = new Set((basePicks || []).map((pick) => getRecommendationNameKey(pick)).filter(Boolean));
+  const merged = [...(basePicks || [])];
+
+  (extraPicks || []).forEach((pick) => {
+    const pickKey = getRecommendationNameKey(pick);
+    if (!pickKey || seen.has(pickKey)) return;
+    seen.add(pickKey);
+    merged.push(pick);
+  });
+
+  return merged;
+}
+
 function filterMainQuestVisibleRolePicks(picks = [], context = {}) {
   const normalizedRoleKey = String(context?.roleKey || '').trim().toLowerCase();
   if (isMainQuestAlphaBoss(context?.boss) && normalizedRoleKey !== 'dps') {
@@ -5888,14 +5955,15 @@ function filterMainQuestVisibleRolePicks(picks = [], context = {}) {
   const highTierPicks = eligiblePicks.filter((pick) => (
     getRecommendationTierPriority(pick?.tier) <= tierPriority.muitobom
   ));
-  if (highTierPicks.length > 1) return highTierPicks;
+  const forcedPicks = eligiblePicks.filter((pick) => shouldForceMainQuestVisiblePick(pick, context));
+  if (highTierPicks.length > 1) return appendUniqueMainQuestVisiblePicks(highTierPicks, forcedPicks);
   if (highTierPicks.length === 1) {
     const bomAlternatives = eligiblePicks
       .filter((pick) => getRecommendationTierPriority(pick?.tier) === tierPriority.bom)
       .slice(0, 3);
-    return [...highTierPicks, ...bomAlternatives];
+    return appendUniqueMainQuestVisiblePicks([...highTierPicks, ...bomAlternatives], forcedPicks);
   }
-  return eligiblePicks;
+  return appendUniqueMainQuestVisiblePicks(eligiblePicks, forcedPicks);
 }
 
 function shouldKeepAllHorizonsNonRuimPicks(boss, clanKey, roleKey) {
@@ -10382,6 +10450,9 @@ function ensureSpeedstersElements() {
 function makeHoopaBossCard(speedster) {
   const button = document.createElement('div');
   button.className = 'speedster-card';
+  if (speedster.comingSoon) {
+    button.classList.add('speedster-card--coming-soon');
+  }
   button.setAttribute('role', 'button');
   button.setAttribute('tabindex', '0');
   button.setAttribute('aria-label', `Abrir detalhes de ${speedster.name}`);
@@ -10421,8 +10492,14 @@ function makeHoopaBossCard(speedster) {
   const isDuo = speedster.duo || speedster.mode === 'duo';
   const modeBadge = document.createElement('span');
   modeBadge.className = 'speedster-mode-badge';
-  modeBadge.textContent = isDuo ? 'Dupla' : 'Solo';
-  modeBadge.title = isDuo ? 'Chefe para dupla (2 jogadores)' : 'Chefe solo (1 jogador)';
+  if (speedster.comingSoon) {
+    modeBadge.classList.add('speedster-mode-badge--soon');
+    modeBadge.textContent = 'Em Breve';
+    modeBadge.title = 'Boss em breve';
+  } else {
+    modeBadge.textContent = isDuo ? 'Dupla' : 'Solo';
+    modeBadge.title = isDuo ? 'Chefe para dupla (2 jogadores)' : 'Chefe solo (1 jogador)';
+  }
   button.appendChild(modeBadge);
 
   const tutorialUrl = getBossTutorialUrl(speedster);

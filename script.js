@@ -292,7 +292,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260615l';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260618c';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -5368,7 +5368,7 @@ function createManiacEssenceCard(entry){
     card.setAttribute('role', 'listitem');
 
     const body = document.createElement('div');
-    body.className = 'maniacs-card__body';
+    body.className = 'maniacs-card__body maniacs-card__body--hunt';
     body.append(
         createManiacPokemonMedia(entry.target),
         createManiacHuntMedia(entry.hunt, 'Hunt')

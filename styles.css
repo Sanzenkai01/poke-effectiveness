@@ -21905,6 +21905,11 @@ body {
     0 16px 28px rgba(2, 8, 18, 0.18);
 }
 
+.bosses-shell .speedster-card--coming-soon {
+  flex: 0 1 var(--layout-card-min);
+  max-width: var(--layout-card-min);
+}
+
 .bosses-shell .speedster-card:hover,
 .bosses-shell .speedster-card:focus-visible {
   border-color: rgba(120, 190, 255, 0.24);
@@ -21929,6 +21934,13 @@ body {
   background: rgba(7, 13, 24, 0.68);
   border-color: rgba(255, 255, 255, 0.12);
   color: rgba(246, 250, 255, 0.88);
+}
+
+.bosses-shell .speedster-mode-badge--soon {
+  background: linear-gradient(135deg, rgba(255, 224, 130, 0.96), rgba(255, 181, 71, 0.96));
+  border-color: rgba(255, 231, 150, 0.72);
+  color: #2b1f00;
+  box-shadow: 0 10px 24px rgba(255, 181, 71, 0.22);
 }
 
 .bosses-shell .speedster-completion {
@@ -25179,27 +25191,34 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0.85rem;
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+  --maniacs-image-area-h: clamp(92px, 12vw, 128px);
 }
 
 .maniacs-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
   padding: 0.85rem;
   border: 1px solid rgba(150, 179, 208, 0.14);
   border-radius: 10px;
   background: rgba(8, 14, 24, 0.72);
+  height: 100%;
 }
 
 .maniacs-card__body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 0.55rem;
-  align-items: start;
+  align-items: stretch;
+  flex: 1 1 auto;
 }
 
 .maniacs-card__body::before {
-  content: '→';
+  content: '\2192';
   grid-column: 2;
+  grid-row: 1;
   justify-self: center;
   align-self: center;
   color: #75d5ff;
@@ -25214,7 +25233,32 @@ body {
   flex-direction: column;
   gap: 0.35rem;
   align-items: center;
+  justify-content: flex-start;
   text-align: center;
+}
+
+.maniacs-card__pokemon {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.maniacs-card__hunt {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.maniacs-card__body--hunt .maniacs-card__pokemon,
+.maniacs-card__body--hunt .maniacs-card__hunt {
+  display: grid;
+  grid-template-rows: auto var(--maniacs-image-area-h) auto auto;
+  align-content: start;
+}
+
+.maniacs-card__body--hunt .maniacs-card__pokemon::before {
+  content: '';
+  display: block;
+  width: 100%;
+  min-height: 0.82rem;
 }
 
 .maniacs-card__figure,
@@ -25224,7 +25268,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100px;
+  height: var(--maniacs-image-area-h);
   margin: 0;
   padding: 0.35rem;
   border-radius: 8px;
@@ -25233,9 +25277,10 @@ body {
 }
 
 .maniacs-card__image {
+  display: block;
   width: auto;
   max-width: 100%;
-  max-height: 84px;
+  max-height: calc(var(--maniacs-image-area-h) - 12px);
   object-fit: contain;
 }
 
@@ -25254,7 +25299,7 @@ body {
 }
 
 .maniacs-card__image--location {
-  max-height: 84px;
+  max-height: calc(var(--maniacs-image-area-h) - 12px);
   border-radius: 6px;
 }
 
@@ -25268,6 +25313,7 @@ body {
   color: #75d5ff;
   font-size: 0.68rem;
   font-weight: 800;
+  line-height: 1.2;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -25310,9 +25356,6 @@ body {
   place-items: center;
   width: 28px;
   height: 28px;
-.maniacs-card__body > * {
-  align-self: start;
-}
 }
 
 .maniacs-card__cost-media img {
@@ -25327,29 +25370,9 @@ body {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.75rem;
   }
-.maniacs-card__figure {
-  position: relative;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 0.25rem;
-  width: 100%;
-  min-height: 92px;
-  margin: 0;
-  padding: 0.35rem 0.35rem 0.35rem 0.35rem;
-  border-radius: 8px;
-  background: rgba(117, 213, 255, 0.05);
-}
 
   .maniacs-card__body::before {
     display: none;
   }
-.maniacs-card__figure img {
-  display: block;
-  margin: 0;
-  padding: 0;
-  vertical-align: top;
-}
 }
 
