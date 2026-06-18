@@ -353,7 +353,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260615f';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260618b';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260615b';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260615a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
@@ -15440,10 +15440,10 @@ function renderBoostPokemonMeta(state){
 
         const stoneLabel = document.createElement('span');
         stoneLabel.className = 'boost-selected-preview__group-label';
-        const usesAceBronzeRule = hasBoostSpecialTag(state, 'ace');
+        const usesAceBronzeRule = usesBoostAncientBronzeStone(state);
         const usesDittoBronzeRule = isBoostDittoState(state);
         stoneLabel.textContent = usesAceBronzeRule
-            ? 'Ace'
+            ? (hasBoostSpecialTag(state, 'pre-ace') ? 'Pre Ace' : 'Ace')
             : (usesDittoBronzeRule ? 'Ditto' : (typeKeys.length > 1 ? 'Stones' : 'Stone'));
 
         const stoneChips = document.createElement('div');
@@ -15680,6 +15680,10 @@ function hasBoostSpecialTag(state, tag){
     return Array.isArray(tags) && tags.includes(tag);
 }
 
+function usesBoostAncientBronzeStone(state){
+    return hasBoostSpecialTag(state, 'ace') || hasBoostSpecialTag(state, 'pre-ace');
+}
+
 function isBoostDittoState(state){
     return normalizePokemonSearchText(state?.pokemonEntry?.name || state?.pokemonName || '') === 'ditto';
 }
@@ -15736,11 +15740,11 @@ function createBoostBronzeStoneItems(state, options = {}){
         });
     }
 
-    if(hasBoostSpecialTag(state, 'ace')){
+    if(usesBoostAncientBronzeStone(state)){
         return [
             createBoostMaterialItem('Ancient Stone', getBoostBronzeNormalStoneQuantity(state, cumulative), {
                 category: 'ancient',
-                detail: directDetail || 'Mesma quantidade das stones normais, trocada por Ancient Stone para Pokemon Ace.',
+                detail: directDetail || 'Mesma quantidade das stones normais, trocada por Ancient Stone para Pokemon Ace ou Pre Ace.',
                 contextLabel
             })
         ];
