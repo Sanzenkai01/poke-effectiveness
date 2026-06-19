@@ -2651,6 +2651,13 @@ const bossCatalogs = {
   }
 };
 
+const bossCatalogIdByReference = new WeakMap();
+Object.entries(bossCatalogs).forEach(([catalogId, catalog]) => {
+  (catalog?.data || []).forEach((boss) => {
+    if (boss && typeof boss === 'object') bossCatalogIdByReference.set(boss, catalogId);
+  });
+});
+
 const bossModeAliases = Object.freeze({
   hoopa: 'hoopa',
   'hoopa-portais': 'hoopa',
@@ -3059,6 +3066,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Dragonair", 'dragon', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Excadrill", 'ground', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Lurantis", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Mega Excadrill", 'ground', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Marowak", 'ground', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Mega Gardevoir", 'psychic', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Mega Raichu X", 'electric', 'dps', 'instinct'),
@@ -4680,6 +4688,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'mega-chimeco.png': 'pokemons/megas/mega-chimeco.png',
   'mega-clefable.png': 'pokemons/megas/mega-clefable.png',
   'mega-dragonite.png': 'pokemons/megas/mega-dragonite.png',
+  'mega-excadrill.png': 'pokemons/megas/mega-excadrill.png',
   'mega-feraligatr.png': 'pokemons/megas/mega-feraligatr.png',
   'mega-garchomp.png': 'pokemons/megas/mega-garchomp.png',
   'mega-gardevoir.png': 'pokemons/megas/mega-gardevoir.png',
@@ -5704,6 +5713,7 @@ function getRecommendationGroupBossRef(boss, group = {}) {
   return {
     id: group.bossId || boss.id,
     name: group.title || boss.name,
+    catalogId: bossCatalogIdByReference.get(boss) || boss.catalogId || '',
     types: Array.isArray(group.bossTypes) && group.bossTypes.length ? group.bossTypes : (boss.types || []),
     moveType: group.moveType || getBossMoveTypes(boss),
     effectiveness: mergeBossEffectivenessConfig(boss?.effectiveness, group?.effectiveness)
@@ -6342,6 +6352,13 @@ function classifyDefenseOnlyRecommendationTier(worstDefense) {
   return 'ruim';
 }
 
+function getRecommendationScoreWeights(boss) {
+  const catalogId = String(bossCatalogIdByReference.get(boss) || boss?.catalogId || '').toLowerCase();
+  return catalogId === 'hoopa'
+    ? { offense: 0.7, defense: 0.3 }
+    : { offense: 0.6, defense: 0.4 };
+}
+
 function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   applyImplicitRecommendationEnhancements(poke);
@@ -6458,9 +6475,10 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     worstDefense <= 2 ? 0.18 :
     0.03;
 
+  const scoreWeights = getRecommendationScoreWeights(boss);
   const combined = rankMode === 'defense-only'
     ? ((worstDefense <= 0.5 ? 100 : 1 / worstDefense) + (bestDefense <= 0.5 ? 1 : 1 / (bestDefense * 10)))
-    : ((offenseScore * 0.6) + (defenseScore * 0.4));
+    : ((offenseScore * scoreWeights.offense) + (defenseScore * scoreWeights.defense));
   const explicitTier = poke?.tierLocked && typeof poke?.tier === 'string'
     ? normalizeTierKey(poke.tier)
     : '';
@@ -6477,6 +6495,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     _offense: (typeof _promotedOffense === 'number' ? _promotedOffense : offense),
     _defenseWorst: worstDefense,
     _defenseBest: bestDefense,
+    _scoreWeights: scoreWeights,
     _moveType: moveType,
     tier,
   };
@@ -6881,6 +6900,7 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: 'Serperior', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
   { name: "Rosa's Serperior", types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
   { name: 'Excadrill', types: ['ground', 'steel'], moveTypes: ['steel'], clan: 'instinct' },
+  { name: 'Mega Excadrill', types: ['ground', 'steel'], moveTypes: ['ground'], clan: 'instinct', requireEffectiveOffense: true },
   { name: 'Bouffalant', types: ['normal'], moveTypes: ['ground'], clan: 'valor' }
 ]);
 
@@ -6891,6 +6911,7 @@ function createBestCatalogSpeedsterPick(config, bossRef) {
     pick.bossEntries = [{ bossName: bossRef?.name || bossRef?.id || '' }];
     const scored = scoreRecommendationForBoss(bossRef, pick, { roleKey: 'dps' });
     delete scored.bossEntries;
+    if (config?.requireEffectiveOffense && scored._offense <= 1) return null;
     return scored;
   }).filter(Boolean);
 

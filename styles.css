@@ -25494,6 +25494,18 @@ body[data-active-tab="catch"] #page-title {
   max-width: min(1120px, calc(100vw - 1.5rem));
 }
 
+@media (min-width: 1440px) and (min-height: 900px) {
+  body[data-boss-mode="hoopa"] .speedster-modal-content:not(.speedster-modal-content--search-results) {
+    width: min(1180px, calc(100vw - 3rem));
+    max-width: min(1180px, calc(100vw - 3rem));
+    max-height: min(94dvh, calc(100dvh - 3rem));
+  }
+
+  body[data-boss-mode="hoopa"] .speedster-modal-content:not(.speedster-modal-content--search-results) .speedster-clan-list:not(.speedster-clan-list--split) {
+    max-height: 440px;
+  }
+}
+
 .team-builder-slots,
 .team-builder-result-grid,
 .team-builder-hunt-list,
