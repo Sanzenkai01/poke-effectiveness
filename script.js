@@ -354,7 +354,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260619d';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619e';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619g';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260619c';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260619a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -18664,6 +18664,54 @@ function getPokemonMegaEvolutionEntriesForKeys(keys = []){
     return entries.sort(comparePokemonEvolutionEntries);
 }
 
+function getPokemonEvolutionAncestorKeys(key){
+    const graph = ensurePokemonEvolutionGraph();
+    const normalizedKey = getPokemonCatalogRegistryKey(key);
+    if(!normalizedKey) return [];
+
+    const seen = new Set([normalizedKey]);
+    const collect = (currentKey) => {
+        const node = graph.get(currentKey);
+        const parentKeys = Array.from(node?.parents || [])
+            .filter(parentKey => parentKey && !seen.has(parentKey))
+            .sort((left, right) => comparePokemonEvolutionEntries(
+                getPokemonEvolutionCatalogEntriesByKey(left)[0] || { name: left },
+                getPokemonEvolutionCatalogEntriesByKey(right)[0] || { name: right }
+            ));
+
+        return parentKeys.flatMap((parentKey) => {
+            seen.add(parentKey);
+            return [...collect(parentKey), parentKey];
+        });
+    };
+
+    return collect(normalizedKey);
+}
+
+function getPokemonEvolutionDescendantKeys(key){
+    const graph = ensurePokemonEvolutionGraph();
+    const normalizedKey = getPokemonCatalogRegistryKey(key);
+    if(!normalizedKey) return [];
+
+    const seen = new Set([normalizedKey]);
+    const collect = (currentKey) => {
+        const node = graph.get(currentKey);
+        const childKeys = Array.from(node?.children || [])
+            .filter(childKey => childKey && !seen.has(childKey))
+            .sort((left, right) => comparePokemonEvolutionEntries(
+                getPokemonEvolutionCatalogEntriesByKey(left)[0] || { name: left },
+                getPokemonEvolutionCatalogEntriesByKey(right)[0] || { name: right }
+            ));
+
+        return childKeys.flatMap((childKey) => {
+            seen.add(childKey);
+            return [childKey, ...collect(childKey)];
+        });
+    };
+
+    return collect(normalizedKey);
+}
+
 function getPokemonEvolutionRelations(entry){
     if(!entry){
         return { parents: [], children: [], megas: [] };
@@ -18671,17 +18719,19 @@ function getPokemonEvolutionRelations(entry){
 
     if(isMegaPokemonCatalogEntry(entry)){
         const baseKey = getPokemonMegaBaseRegistryKey(entry);
+        const parentKeys = baseKey
+            ? [...getPokemonEvolutionAncestorKeys(baseKey), baseKey]
+            : [];
         return {
-            parents: getPokemonEvolutionNeighborEntries(baseKey ? [baseKey] : []),
+            parents: getPokemonEvolutionNeighborEntries(parentKeys),
             children: [],
             megas: []
         };
     }
 
     const key = getPokemonCatalogRegistryKey(entry.name);
-    const node = ensurePokemonEvolutionGraph().get(key);
-    const parentKeys = node ? Array.from(node.parents) : [];
-    const childKeys = node ? Array.from(node.children) : [];
+    const parentKeys = getPokemonEvolutionAncestorKeys(key);
+    const childKeys = getPokemonEvolutionDescendantKeys(key);
     const megaKeys = [key, ...childKeys];
 
     return {
@@ -18832,19 +18882,16 @@ function renderPokemonEvolutionNavigation(entry){
     const track = document.createElement('div');
     track.className = 'pokemon-evolution-nav__track';
 
-    if(parents.length){
-        track.appendChild(createPokemonEvolutionStage('previous', parents));
-    }
-
+    parents.forEach((parentEntry) => {
+        track.appendChild(createPokemonEvolutionStage('previous', [parentEntry]));
+    });
     track.appendChild(createPokemonEvolutionStage('current', [entry], { currentEntry: entry }));
-
-    if(children.length){
-        track.appendChild(createPokemonEvolutionStage('next', children));
-    }
-
-    if(megas.length){
-        track.appendChild(createPokemonEvolutionStage('mega', megas));
-    }
+    children.forEach((childEntry) => {
+        track.appendChild(createPokemonEvolutionStage('next', [childEntry]));
+    });
+    megas.forEach((megaEntry) => {
+        track.appendChild(createPokemonEvolutionStage('mega', [megaEntry]));
+    });
 
     pokemonDetailsEvolutionSection.hidden = false;
     pokemonDetailsEvolution.replaceChildren(track);

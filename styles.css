@@ -15425,9 +15425,10 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-evolution-nav__track {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 250px));
   gap: 0.58rem;
   align-items: stretch;
+  justify-content: center;
 }
 
 .pokemon-evolution-nav__stage {
@@ -15440,12 +15441,16 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 .pokemon-evolution-nav__stage-label {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.28rem;
+  width: 100%;
   color: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.86);
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   line-height: 1.1;
+  min-height: 0.9rem;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -15592,10 +15597,11 @@ button.pokemon-evolution-card:focus-visible {
 }
 
 .pokemon-evolution-mega-mark--stage {
-  width: 17px;
-  height: 17px;
-  padding: 0.14rem;
-  transform: translateY(-1px);
+  box-sizing: border-box;
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  padding: 0.08rem;
 }
 
 .pokemon-boss-usage {
