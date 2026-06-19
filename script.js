@@ -353,17 +353,16 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260618b';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260615b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260615a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260611d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260619d';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619e';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260619c';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260619a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
 const POKEMON_MEGA_SYMBOL_IMAGE = 'mega-stone.png';
 const BALL_IMAGE_FALLBACK = 'balls/pokebola.png';
 const POKEMON_IMAGE_FILE_ALIASES = Object.freeze({
-    'leafeon.png': 'leafon.png',
     'noctowl.png': 'noctawl.png',
     'porygon-z.png': 'porygonz.png',
     'wigglytuff.png': 'wigglypuff.png'
@@ -651,7 +650,17 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Eevee', 'Sylveon'],
     ['Goomy', 'Sliggoo'],
     ['Sliggoo', 'Goodra'],
+    // Generation 7 evolutions
+    ['Cutiefly', 'Ribombee'],
     ['Crabrawler', 'Crabominable'],
+    ['Rockruff', 'Dusk Lycanroc'],
+    ['Rockruff', 'Midnight Lycanroc'],
+    ['Rockruff', 'Midday Lycanroc'],
+    ['Mareanie', 'Toxapex'],
+    ['Fomantis', 'Lurantis'],
+    ['Morelull', 'Shiinotic'],
+    ['Salandit', 'Salazzle'],
+    ['Stufful', 'Bewear'],
     ['Jangmo-o', 'Hakamo-o'],
     ['Hakamo-o', 'Kommo-o'],
     ['Bounsweet', 'Steenee'],
@@ -813,6 +822,7 @@ const TEAM_BUILDER_PASSIVE_TEXTS = Object.freeze({
     sturdyShiny: 'Sturdy: Ao chegar a menos de 1/3 de vida e ser atacado, o Pokemon ganha 30% de defesa por 5 segundos (shiny).',
     intimidate: 'Intimidate: Ao ser atacado existe uma chance de reduzir o ataque de todos os Pokemon em volta em 30% por 5 segundos.',
     static: 'Static: Concede resistencia a ataques do tipo Water caso o Pokemon seja da classe All-Rounder.',
+    voltAbsorb: 'Volt Absorb: O Pok\u00e9mon se torna imune a danos do tipo Electric.',
     rainDish: 'Rain Dish: O Pokemon se cura em 30% da sua vida ao longo de 5 segundos apos usar Rain Dance.',
     cuteCharm: 'Cute Charm: O Pokemon possui chance de causar Blind a sua volta ao ser atacado fisicamente.',
     stormDrain: 'Storm Drain: O Pokemon e imune a ataques do tipo Water.',
@@ -831,6 +841,7 @@ const TEAM_BUILDER_PASSIVE_TEXTS = Object.freeze({
     shellArmor: 'Shell Armor: Concede resistência a ataques do tipo water.',
     overgrow: 'Overgrow: Ao chegar a menos de 1/3 de vida e ser atacado, o Pokemon ganha 30% de ataque especial por 20 segundos (shiny).',
     flashFire: 'Flash Fire: O Pokemon se torna imune a danos do tipo Fire (shiny).',
+    flashFireImmune: 'Flash Fire: O Pok\u00e9mon se torna imune a danos do tipo Fire.',
     stunImmune: 'O Pokemon e imune a condicao Stun.',
     waterAbsorb: 'Water Absorb: O Pokemon se torna imune a danos do tipo Water.',
     electricImmune: 'Electric Immune: O Pokemon se torna imune a danos do tipo Electric (shiny).',
@@ -879,6 +890,7 @@ const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     growlithe: [TEAM_BUILDER_PASSIVE_TEXTS.intimidate, TEAM_BUILDER_PASSIVE_TEXTS.flashFire],
     hitmontop: [TEAM_BUILDER_PASSIVE_TEXTS.intimidate],
     hypno: [TEAM_BUILDER_PASSIVE_TEXTS.stunImmune, TEAM_BUILDER_PASSIVE_TEXTS.innerFocus],
+    jolteon: [TEAM_BUILDER_PASSIVE_TEXTS.voltAbsorb],
     lanturn: [TEAM_BUILDER_PASSIVE_TEXTS.waterAbsorb, TEAM_BUILDER_PASSIVE_TEXTS.electricImmune],
     luxio: [TEAM_BUILDER_PASSIVE_TEXTS.intimidate, TEAM_BUILDER_PASSIVE_TEXTS.guts],
     machoke: [TEAM_BUILDER_PASSIVE_TEXTS.noGuard, TEAM_BUILDER_PASSIVE_TEXTS.guts],
@@ -898,6 +910,7 @@ const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     persian: [TEAM_BUILDER_PASSIVE_TEXTS.limber],
     pichu: [TEAM_BUILDER_PASSIVE_TEXTS.static],
     piplup: [TEAM_BUILDER_PASSIVE_TEXTS.torrent],
+    flareon: [TEAM_BUILDER_PASSIVE_TEXTS.flashFireImmune],
     poliwrath: [TEAM_BUILDER_PASSIVE_TEXTS.waterAbsorb, TEAM_BUILDER_PASSIVE_TEXTS.dump],
     prinplup: [TEAM_BUILDER_PASSIVE_TEXTS.torrent],
     shelgon: [TEAM_BUILDER_PASSIVE_TEXTS.overcoating],
@@ -929,7 +942,9 @@ const TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
     crawdaunt: ['water'],
     donphan: ['steel'],
     forretress: ['rock'],
+    flareon: ['fire'],
     growlithe: ['fire'],
+    jolteon: ['electric'],
     lanturn: ['water', 'electric'],
     'mega metagross': ['fighting'],
     metagross: ['fighting'],
@@ -940,6 +955,31 @@ const TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
     grotle: ['water'],
     turtwig: ['water'],
     vaporeon: ['water']
+});
+const TEAM_BUILDER_EEVEE_EVOLUTION_KEYS = Object.freeze([
+    'vaporeon',
+    'jolteon',
+    'flareon',
+    'espeon',
+    'umbreon',
+    'leafeon',
+    'glaceon',
+    'sylveon'
+]);
+const TEAM_BUILDER_NORMAL_EEVEE_EVOLUTION_KEYS = Object.freeze(['espeon', 'umbreon']);
+const TEAM_BUILDER_EEVEE_SUB_FUNCTION_OVERRIDES = Object.freeze({
+    espeon: ['Area Pull', 'Stunner', 'Finisher'],
+    umbreon: ['Area Pull', 'Stunner', 'Finisher'],
+    jolteon: ['Area Pull'],
+    flareon: ['Frontal Pull', 'Stunner'],
+    leafeon: ['Stunner', 'Area Pull', 'Finisher'],
+    sylveon: ['Area Pull', 'Stunner']
+});
+const TEAM_BUILDER_SHINY_EEVEE_SUB_FUNCTION_OVERRIDES = Object.freeze({
+    leafeon: ['Frontal Pull', 'Stunner']
+});
+const TEAM_BUILDER_SHINY_EEVEE_SPECIAL_TAG_OVERRIDES = Object.freeze({
+    jolteon: ['stuck']
 });
 const TIMES_NORMAL_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
     dragonite: ['dragon', 'flying'],
@@ -1145,9 +1185,10 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
     'pre-ace': { key: 'pre-ace', label: 'Pr\u00e9-Ace' },
     ace: { key: 'ace', label: 'Ace' },
-    stuck: { key: 'stuck', label: 'Stuck' }
+    stuck: { key: 'stuck', label: 'Stuck' },
+    saffari: { key: 'saffari', label: 'Saffari' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'pre-ace', 'ace', 'stuck']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'pre-ace', 'ace', 'stuck', 'saffari']);
 const POKEMON_STANDARD_CARD_IMAGE_ENTRIES = new Set(['venusaurtwo', 'charizardtwo', 'blastoisetwo']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
@@ -5797,7 +5838,7 @@ const catchBallPreviewImages = {
     ultra: 'ultra',
     story: 'story',
     elemental: 'elemental',
-    safari: 'pokebola'
+    safari: 'saffari'
 };
 const ballPrices = Object.freeze({ ultra:130, story:250, elemental:330, safari:130 });
 const CATCH_ELEMENTAL_BALL_OPTIONS = Object.freeze(
@@ -9455,7 +9496,83 @@ function getTeamBuilderEntryKey(entry){
 
 function getTeamBuilderEntryDuplicateKey(entry){
     const normalizedName = entry?.searchName || normalizePokemonSearchText(entry?.name || '');
-    return normalizedName.replace(/^mega\s+/, '').trim();
+    return normalizedName.replace(/^mega\s+/, '').replace(/^shiny\s+/, '').trim();
+}
+
+function getTeamBuilderEeveelutionBaseKey(entry){
+    const names = [entry?.baseName, entry?.name, entry?.id, entry?.routeSlug]
+        .map(value => normalizePokemonSearchText(value).replace(/^shiny\s+/, ''))
+        .filter(Boolean);
+    return names.find(name => TEAM_BUILDER_EEVEE_EVOLUTION_KEYS.includes(name)) || '';
+}
+
+function isTeamBuilderNormalEeveelutionAllowed(entry){
+    const baseKey = getTeamBuilderEeveelutionBaseKey(entry);
+    return Boolean(baseKey && TEAM_BUILDER_NORMAL_EEVEE_EVOLUTION_KEYS.includes(baseKey));
+}
+
+function isTeamBuilderNormalEeveelutionBlocked(entry){
+    const baseKey = getTeamBuilderEeveelutionBaseKey(entry);
+    if(!baseKey) return false;
+    const isShinyEntry = normalizePokemonSearchText(entry?.name || '').startsWith('shiny ')
+        || getPokemonEntrySpecialTags(entry).includes('shiny')
+        || entry?.naturalShiny === true;
+    return !isShinyEntry && !isTeamBuilderNormalEeveelutionAllowed(entry);
+}
+
+function applyTeamBuilderEeveelutionFunctionOverrides(entry){
+    const baseKey = getTeamBuilderEeveelutionBaseKey(entry);
+    const isShinyEntry = normalizePokemonSearchText(entry?.name || '').startsWith('shiny ')
+        || getPokemonEntrySpecialTags(entry).includes('shiny')
+        || entry?.naturalShiny === true;
+    const subFunctionOverride = isShinyEntry
+        ? (TEAM_BUILDER_SHINY_EEVEE_SUB_FUNCTION_OVERRIDES[baseKey] || TEAM_BUILDER_EEVEE_SUB_FUNCTION_OVERRIDES[baseKey])
+        : TEAM_BUILDER_EEVEE_SUB_FUNCTION_OVERRIDES[baseKey];
+    if(!baseKey || !Array.isArray(subFunctionOverride)) return entry;
+    return {
+        ...entry,
+        subFunctions: normalizePokemonSubFunctions(subFunctionOverride)
+    };
+}
+
+function createTeamBuilderShinyEeveelutionEntry(entry){
+    const baseKey = getTeamBuilderEeveelutionBaseKey(entry);
+    if(!baseKey || TEAM_BUILDER_NORMAL_EEVEE_EVOLUTION_KEYS.includes(baseKey)) return null;
+
+    const specialTags = normalizePokemonSpecialTags([
+        ...getPokemonEntrySpecialTags(entry),
+        'shiny',
+        ...(TEAM_BUILDER_SHINY_EEVEE_SPECIAL_TAG_OVERRIDES[baseKey] || [])
+    ]);
+    const routeSlug = `shiny-${entry.routeSlug || entry.id || baseKey}`;
+    return applyTeamBuilderEeveelutionFunctionOverrides({
+        ...entry,
+        id: routeSlug,
+        routeSlug,
+        dex: null,
+        name: `Shiny ${entry.name}`,
+        baseName: entry.name,
+        searchName: normalizePokemonSearchText(`Shiny ${entry.name}`),
+        naturalShiny: true,
+        normalCaptureAvailable: false,
+        normalCaptureNote: 'Versao shiny disponivel apenas como variante especial nos builders.',
+        shinyCaptureAvailable: false,
+        shinyCaptureNote: 'Ja e shiny por natureza.',
+        registered: true,
+        catalogHidden: false,
+        specialTags,
+        builderLookupNames: baseKey === 'leafeon' ? ['Shiny Leafeon', 'Leafeon'] : []
+    });
+}
+
+function isTeamBuilderVirtualShinyEeveelutionEntry(entry){
+    return Boolean(
+        getTeamBuilderEeveelutionBaseKey(entry)
+        && (
+            normalizePokemonSearchText(entry?.name || '').startsWith('shiny ')
+            || getPokemonEntrySpecialTags(entry).includes('shiny')
+        )
+    );
 }
 
 function getTeamBuilderEntryLevelNumber(entry){
@@ -9516,19 +9633,34 @@ function isTeamBuilderBossEntry(entry){
     return getPokemonEntrySpecialTags(entry).includes('boss');
 }
 
-function getTeamBuilderCatalogEntries(){
+function getTeamBuilderBaseCatalogEntries(){
     const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
     const allowedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
         .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
 
     return [...normalEntries, ...allowedMegaEntries].filter(entry => {
         if(!entry || entry.catalogHidden) return false;
+        if(isTeamBuilderNormalEeveelutionBlocked(entry)) return false;
         if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderBossEntry(entry)) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
         if(entry.roleKey === 'speedster') return false;
         if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
         return true;
-    });
+    }).map(applyTeamBuilderEeveelutionFunctionOverrides);
+}
+
+function getTeamBuilderCatalogEntries(){
+    const baseEntries = getTeamBuilderBaseCatalogEntries();
+    const baseKeys = new Set(baseEntries.map(entry => getTeamBuilderEeveelutionBaseKey(entry)).filter(Boolean));
+    const shinyEeveelutionEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT)
+        .filter(entry => {
+            if(!entry || entry.catalogHidden || !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
+            const baseKey = getTeamBuilderEeveelutionBaseKey(entry);
+            return Boolean(baseKey && !TEAM_BUILDER_NORMAL_EEVEE_EVOLUTION_KEYS.includes(baseKey) && !baseKeys.has(baseKey));
+        })
+        .map(createTeamBuilderShinyEeveelutionEntry)
+        .filter(Boolean);
+    return [...baseEntries, ...shinyEeveelutionEntries];
 }
 
 function teamBuilderEntryMatchesSlot(entry, slotConfig = getTeamBuilderSlotConfig()){
@@ -9540,6 +9672,7 @@ function teamBuilderEntryMatchesSlot(entry, slotConfig = getTeamBuilderSlotConfi
     if(isTeamBuilderDpsSlot(slotConfig) && entry.roleKey === 'all-rounder') return true;
     if(entry.roleKey !== 'attacker') return false;
     if(isMegaPokemonCatalogEntry(entry)) return true;
+    if(isTeamBuilderVirtualShinyEeveelutionEntry(entry)) return true;
     return subFunctionKeys.some(key => TEAM_BUILDER_DPS_SUB_FUNCTIONS.includes(key));
 }
 
@@ -10385,12 +10518,13 @@ function getTeamBuilderSelectedSlotEntries(){
 function findTeamBuilderPokemonCatalogEntry(name){
     const normalizedName = normalizePokemonSearchText(name);
     if(!normalizedName) return null;
-    const entries = [
-        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
-        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
-    ];
+    const entries = getTeamBuilderCatalogEntries();
     return entries.find(entry => normalizePokemonSearchText(entry.name) === normalizedName)
+        || entries.find(entry => Array.isArray(entry.builderLookupNames)
+            && entry.builderLookupNames.some(alias => normalizePokemonSearchText(alias) === normalizedName))
         || entries.find(entry => entry.searchName && entry.searchName.includes(normalizedName))
+        || entries.find(entry => Array.isArray(entry.builderLookupNames)
+            && entry.builderLookupNames.some(alias => normalizePokemonSearchText(alias).includes(normalizedName)))
         || null;
 }
 
@@ -11190,11 +11324,8 @@ function getHuntBuilderSelectedTargetKeys(){
 
 function getHuntBuilderCompatibleEntries(){
     const selectedTypes = new Set(huntBuilderSelectedTypes.map(normalizePokemonTypeKey));
-    const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
-    const allowedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
-        .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
 
-    return [...normalEntries, ...allowedMegaEntries]
+    return getTeamBuilderCatalogEntries()
         .filter(entry => {
             if(!entry || entry.catalogHidden) return false;
             if(entry.team !== huntBuilderSelectedClan) return false;
@@ -18200,6 +18331,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'pre-ace' || normalized === 'preace') return 'pre-ace';
     if(normalized === 'ace') return 'ace';
     if(normalized === 'stuck') return 'stuck';
+    if(normalized === 'saffari' || normalized === 'safari') return 'saffari';
     if(normalized === 'shiny' || normalized === 'brilhante') return 'shiny';
     if(normalized === 'pack' || normalized === 'pacote' || normalized === 'especial' || normalized === 'special') return 'pack';
     return '';
@@ -19805,7 +19937,7 @@ function createPokemonBallCard(ballConfig, averageValue, caption){
     media.className = 'pokemon-ball-card__media';
 
     const icon = document.createElement('img');
-    icon.src = ballConfig?.key ? `balls/${ballConfig.key}.png` : BALL_IMAGE_FALLBACK;
+    icon.src = ballConfig?.key ? getBallPreviewImageSrc(ballConfig.key) : BALL_IMAGE_FALLBACK;
     icon.alt = '';
     icon.loading = 'lazy';
     icon.decoding = 'async';
@@ -19972,10 +20104,37 @@ function isPokemonNormalCaptureBallAllowed(entry, ballKey){
     return requirementBallKey !== rawBallKey && allowedBalls.includes(requirementBallKey);
 }
 
+function isPokemonSafariBallValue(value){
+    const normalized = String(value || '').trim().toLowerCase();
+    return normalized === 'safari' || normalized === 'saffari';
+}
+
+function normalizePokemonNormalCaptureBalls(values, specialTags = []){
+    const normalizedBalls = Array.from(new Set(
+        (Array.isArray(values) ? values : [])
+            .map(value => {
+                const normalized = String(value || '').trim().toLowerCase();
+                return normalized === 'saffari' ? 'safari' : normalized;
+            })
+            .filter(value => catchBallOrder.includes(value) || value === 'elemental')
+    ));
+    const isSafariCapture = normalizedBalls.some(isPokemonSafariBallValue)
+        || normalizePokemonSpecialTags(specialTags).includes('saffari');
+    if(isSafariCapture){
+        return ['story', 'safari', 'elemental'];
+    }
+    return normalizedBalls;
+}
+
 function isPokemonSafariCaptureEntry(entry){
     return isPokemonNormalCaptureBallAllowed(entry, 'safari')
         && Array.isArray(entry?.normalCaptureBalls)
-        && entry.normalCaptureBalls.some(ball => getCatchRequirementBallKey(ball) === 'safari');
+        && entry.normalCaptureBalls.some(isPokemonSafariBallValue);
+}
+
+function shouldDisplayPokemonSafariAverageLabel(entry){
+    return getPokemonEntrySpecialTags(entry).some(tagKey => normalizePokemonSpecialTagKey(tagKey) === 'saffari')
+        || isPokemonSafariCaptureEntry(entry);
 }
 
 function buildPokemonAverageCards(entry, variant){
@@ -20117,11 +20276,16 @@ function normalizePokemonCatalogEntry(entry, index){
         : Number.NaN;
     const hasImage = Object.prototype.hasOwnProperty.call(entry, 'image');
     const generation = resolvePokemonCatalogGeneration(entry);
-    const specialTags = normalizePokemonSpecialTags(
+    const baseSpecialTags = normalizePokemonSpecialTags(
         entry.specialTags
         ?? entry.tags
         ?? entry.specialTag
     );
+    const normalCaptureBalls = normalizePokemonNormalCaptureBalls(entry.normalCaptureBalls, baseSpecialTags);
+    const specialTags = normalizePokemonSpecialTags([
+        ...baseSpecialTags,
+        ...(normalCaptureBalls.some(isPokemonSafariBallValue) ? ['saffari'] : [])
+    ]);
     const subFunctions = normalizePokemonSubFunctions(
         entry.subFunctions
         ?? entry.subFunction
@@ -20159,11 +20323,7 @@ function normalizePokemonCatalogEntry(entry, index){
         teamLabel: String(entry.teamLabel || '').trim(),
         normalCaptureAvailable: entry.normalCaptureAvailable !== false,
         normalCaptureNote: String(entry.normalCaptureNote || '').trim(),
-        normalCaptureBalls: Array.from(new Set(
-            (Array.isArray(entry.normalCaptureBalls) ? entry.normalCaptureBalls : [])
-                .map(value => String(value || '').trim().toLowerCase())
-                .filter(value => catchBallOrder.includes(value) || value === 'elemental')
-        )),
+        normalCaptureBalls,
         registered: entry.registered !== false,
         shinyCaptureAvailable: entry.shinyCaptureAvailable !== false,
         shinyCaptureNote: String(entry.shinyCaptureNote || '').trim(),
@@ -20856,8 +21016,13 @@ function renderPokemonDetailsModal(entry){
     if(pokemonDetailsAveragesKicker){
         const priceLabel = getPokemonEntryPriceLabel(entry);
         pokemonDetailsAveragesKicker.replaceChildren(document.createTextNode('Médias'));
-        if(priceLabel){
+
+        const appendKickerSeparator = () => {
             pokemonDetailsAveragesKicker.appendChild(document.createTextNode(' • '));
+        };
+
+        if(priceLabel){
+            appendKickerSeparator();
             if(entry.acquisitionUrl){
                 const link = document.createElement('a');
                 link.className = 'pokemon-acquisition-link';
@@ -20867,6 +21032,10 @@ function renderPokemonDetailsModal(entry){
             } else {
                 pokemonDetailsAveragesKicker.appendChild(document.createTextNode(priceLabel));
             }
+        }
+        if(shouldDisplayPokemonSafariAverageLabel(entry)){
+            appendKickerSeparator();
+            pokemonDetailsAveragesKicker.appendChild(document.createTextNode('Saffari'));
         }
     }
 
