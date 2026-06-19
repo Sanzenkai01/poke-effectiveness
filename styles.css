@@ -21913,6 +21913,12 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="champion"],
+.speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="mew2"] {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+  justify-content: center;
+}
+
 .boss-role-card {
   padding: 1.05rem;
   border-color: rgba(255, 255, 255, 0.1);
@@ -24720,6 +24726,20 @@ body {
   .planner-edit-modal__content {
     width: calc(100vw - 0.75rem);
     max-height: calc(100dvh - 0.75rem);
+  }
+}
+
+.bosses-shell[data-catalog-id="champion"] .speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="champion"] > .boss-role-card,
+.bosses-shell[data-catalog-id="mew2"] .speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="mew2"] > .boss-role-card {
+  flex: 1 1 var(--layout-card-min);
+  max-width: 14.5rem;
+}
+
+@media (max-width: 640px) {
+  .bosses-shell[data-catalog-id="champion"] .speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="champion"] > .boss-role-card,
+  .bosses-shell[data-catalog-id="mew2"] .speedster-grid[data-catalog-variant="roleboard"][data-boss-mode="mew2"] > .boss-role-card {
+    flex-basis: 100%;
+    max-width: none;
   }
 }
 
