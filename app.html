@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260619d">
+  <link rel="stylesheet" href="styles.css?v=20260619j">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -823,8 +823,69 @@
     </div>
 
     <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
-      <div class="card calc-card calc-shell">
+      <div class="card calc-card calc-shell training-calculator">
         <h2 class="visually-hidden">Calculadora de treinamento</h2>
+        <div class="training-calc-hero">
+          <div>
+            <p class="training-calc-kicker">Calculadora de Treino</p>
+            <h3>Planeje o treino ate o level 100</h3>
+            <p>Escolha o Pokemon, confirme o level atual e selecione se o treino sera Normal ou Shiny para calcular Coins, Plates e materiais.</p>
+          </div>
+          <button id="training-info-toggle" class="training-info-button" type="button" aria-expanded="false" aria-controls="training-info-panel">
+            <span aria-hidden="true">?</span>
+            Informacoes
+          </button>
+        </div>
+        <div id="training-info-panel" class="training-info-panel" hidden>
+          <div class="training-info-grid">
+            <article><strong>Coins</strong><span>1 Elemental Coin por level treinado.</span></article>
+            <article><strong>Plates (S)</strong><span>Quantidade de Plates consumidas no sucesso. A cada dezena, o custo sobe em 1.</span></article>
+            <article><strong>Plates (F)</strong><span>Quantidade estimada em falhas. O valor exibido e 2x o custo de sucesso.</span></article>
+            <article><strong>Shiny</strong><span>Usa Shining Plates junto das Plates normais, na mesma quantidade de Plates (S).</span></article>
+          </div>
+        </div>
+        <div class="training-flow">
+          <section id="training-step-pokemon" class="training-step training-step--active" aria-labelledby="training-step-pokemon-title">
+            <div class="training-step__header">
+              <span class="training-step__index">1</span>
+              <div><h3 id="training-step-pokemon-title">Pokemon</h3><p>Busque no catalogo para carregar tipo, imagem e level inicial.</p></div>
+            </div>
+            <div class="boost-search-panel training-search-panel">
+              <div class="boost-search-panel__field">
+                <label class="speedster-search-label" for="training-pokemon-search">Nome</label>
+                <input id="training-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="training-selection-status" />
+                <div id="training-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                <div id="training-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+              </div>
+            </div>
+            <div id="training-selected-pokemon" class="training-selected-pokemon" hidden></div>
+          </section>
+          <section id="training-step-level" class="training-step training-step--locked" aria-labelledby="training-step-level-title">
+            <div class="training-step__header">
+              <span class="training-step__index">2</span>
+              <div><h3 id="training-step-level-title">Level atual</h3><p>O level do Pokemon e pre-selecionado, mas pode ser ajustado.</p></div>
+            </div>
+            <div class="training-level-control">
+              <button id="training-level-decrease" class="training-stepper-btn" type="button" aria-label="Diminuir level" disabled>-</button>
+              <label for="training-current-level"><span>Level</span><input id="training-current-level" type="number" min="5" max="99" value="5" disabled /></label>
+              <button id="training-level-increase" class="training-stepper-btn" type="button" aria-label="Aumentar level" disabled>+</button>
+            </div>
+            <div id="training-level-preview" class="training-level-preview"></div>
+          </section>
+          <section id="training-step-variant" class="training-step training-step--locked" aria-labelledby="training-step-variant-title">
+            <div class="training-step__header">
+              <span class="training-step__index">3</span>
+              <div><h3 id="training-step-variant-title">Tipo de treino</h3><p>Shiny adiciona Shining Plates junto das Plates normais.</p></div>
+            </div>
+            <div class="training-variant-toggle" role="radiogroup" aria-label="Tipo de treino">
+              <label class="training-variant-option"><input type="radio" name="training-variant" value="normal" checked disabled /><span>Normal</span></label>
+              <label class="training-variant-option"><input type="radio" name="training-variant" value="shiny" disabled /><span>Shiny</span></label>
+            </div>
+          </section>
+        </div>
+        <section id="training-results" class="training-results" aria-live="polite">
+          <div id="training-selection-status" class="training-empty-state">Selecione um Pokemon para liberar as proximas etapas.</div>
+        </section>
         <div class="calc-grid calc-grid--split">
           <div class="calc-left">
             <div class="card inputs-card">
@@ -967,8 +1028,20 @@
               </div>
 
               <div class="boost-form-grid boost-form-grid--levels">
+                <label class="boost-field" for="boost-bronze-current-level">
+                  <span>Bronze atual</span>
+                  <select id="boost-bronze-current-level">
+                    <option value="0" selected>Bronze 0</option>
+                    <option value="1">Bronze 1</option>
+                    <option value="2">Bronze 2</option>
+                    <option value="3">Bronze 3</option>
+                    <option value="4">Bronze 4</option>
+                    <option value="5">Bronze 5</option>
+                  </select>
+                </label>
+
                 <label class="boost-field" for="boost-bronze-level">
-                  <span>Boost Bronze</span>
+                  <span>Bronze alvo</span>
                   <select id="boost-bronze-level">
                     <option value="0" selected>Bronze 0</option>
                     <option value="1">Bronze 1</option>
@@ -979,8 +1052,20 @@
                   </select>
                 </label>
 
+                <label class="boost-field" for="boost-silver-current-level">
+                  <span>Silver atual</span>
+                  <select id="boost-silver-current-level">
+                    <option value="0" selected>Silver 0</option>
+                    <option value="1">Silver 1</option>
+                    <option value="2">Silver 2</option>
+                    <option value="3">Silver 3</option>
+                    <option value="4">Silver 4</option>
+                    <option value="5">Silver 5</option>
+                  </select>
+                </label>
+
                 <label class="boost-field" for="boost-silver-level">
-                  <span>Boost Silver</span>
+                  <span>Silver alvo</span>
                   <select id="boost-silver-level">
                     <option value="0" selected>Silver 0</option>
                     <option value="1">Silver 1</option>
@@ -1849,7 +1934,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260618b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="script.js?v=20260619q" defer></script>
+    <script src="script.js?v=20260619ab" defer></script>
 </body>
 </html>
 

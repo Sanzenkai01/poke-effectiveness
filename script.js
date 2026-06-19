@@ -52,6 +52,22 @@ const commonResults = document.getElementById('common-results');
 const shinyInput = document.getElementById('shiny-plates');
 const shinyResults = document.getElementById('shiny-results');
 const variantRadios = document.querySelectorAll('input[name="poke-variant"]');
+const trainingPokemonSearchInput = document.getElementById('training-pokemon-search');
+const trainingPokemonResults = document.getElementById('training-pokemon-results');
+const trainingPokemonNoResults = document.getElementById('training-pokemon-no-results');
+const trainingSelectedPokemon = document.getElementById('training-selected-pokemon');
+const trainingCurrentLevelInput = document.getElementById('training-current-level');
+const trainingLevelDecreaseBtn = document.getElementById('training-level-decrease');
+const trainingLevelIncreaseBtn = document.getElementById('training-level-increase');
+const trainingLevelPreview = document.getElementById('training-level-preview');
+const trainingVariantInputs = document.querySelectorAll('input[name="training-variant"]');
+const trainingResults = document.getElementById('training-results');
+const trainingSelectionStatus = document.getElementById('training-selection-status');
+const trainingInfoToggle = document.getElementById('training-info-toggle');
+const trainingInfoPanel = document.getElementById('training-info-panel');
+const trainingStepPokemon = document.getElementById('training-step-pokemon');
+const trainingStepLevel = document.getElementById('training-step-level');
+const trainingStepVariant = document.getElementById('training-step-variant');
 const boostPokemonSearchInput = document.getElementById('boost-pokemon-search');
 const boostPokemonResults = document.getElementById('boost-pokemon-results');
 const boostPokemonNoResults = document.getElementById('boost-pokemon-no-results');
@@ -61,7 +77,9 @@ const boostType1Select = document.getElementById('boost-type1-select');
 const boostType2Select = document.getElementById('boost-type2-select');
 const boostConfigControls = document.getElementById('boost-config-controls');
 const boostShinyInputs = document.querySelectorAll('input[name="boost-shiny"]');
+const boostBronzeCurrentLevelSelect = document.getElementById('boost-bronze-current-level');
 const boostBronzeLevelSelect = document.getElementById('boost-bronze-level');
+const boostSilverCurrentLevelSelect = document.getElementById('boost-silver-current-level');
 const boostSilverLevelSelect = document.getElementById('boost-silver-level');
 const boostSilverNote = document.getElementById('boost-silver-note');
 const boostFormMessage = document.getElementById('boost-form-message');
@@ -237,6 +255,10 @@ let typesDataLoadPromise = null;
 let fossilsPageInitialized = false;
 let maniacsPageInitialized = false;
 let calculatorPageInitialized = false;
+let trainingPokemonEntries = [];
+let trainingPokemonSearchIndex = new Map();
+let trainingSelectedPokemonEntry = null;
+let trainingPokemonSearchHideTimer = 0;
 let boostPageInitialized = false;
 let boostPokemonOptionsHydrated = false;
 let boostPokemonEntries = [];
@@ -353,8 +375,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260619d';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619g';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260619e';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619h';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260619c';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260619a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -1087,26 +1109,26 @@ const HUNT_BUILDER_TARGET_DEFINITIONS = Object.freeze([
     { name: 'Honedge', image: 'pokemons/6gen/honedge.png' },
     { name: 'Zorua' },
     { name: 'Applin', image: 'pokemons/8gen/applin.png' },
-    { name: 'Salamance', lookupNames: ['Salamence'] },
+    { name: 'Salamence' },
     { name: 'Palafin', image: 'pokemons/9gen/palafin.png' },
     { name: 'Aggron' },
     { name: 'Metagross' },
-    { name: 'Grimmsnawl', lookupNames: ['Grimmsnarl'], metaName: 'Grimmsnarl' },
-    { name: 'Tyranitar' },
+    { name: 'Grimmsnarl', image: 'pokemons/8gen/grimmsnarl.png' },
+    { name: 'Tyranitar', image: 'pokemons/2gen/tyranitar.png' },
     { name: 'Porygon Z', lookupNames: ['Porygon-Z', 'Porygon'] },
     { name: 'Hariyama' },
-    { name: 'Dragapult' },
-    { name: 'Tsaarena', lookupNames: ['Tsareena'], metaName: 'Tsareena' },
-    { name: 'Tinkaton' },
+    { name: 'Dragapult', image: 'pokemons/8gen/dragapult.png' },
+    { name: 'Tsareena' },
+    { name: 'Tinkaton', image: 'pokemons/9gen/tinkaton.png' },
     { name: 'Kingambit' },
-    { name: 'Drednaw' },
+    { name: 'Drednaw', image: 'pokemons/8gen/drednaw.png' },
     { name: 'Crabominable' },
-    { name: 'Baxcalibur' },
-    { name: 'Archaludon' },
+    { name: 'Baxcalibur', image: 'pokemons/9gen/baxcalibur.png' },
+    { name: 'Archaludon', image: 'pokemons/9gen/archaludon.png' },
     { name: 'Volcarona' },
     { name: 'Chandelure' },
-    { name: 'Toxtricity' },
-    { name: 'Armarouge' },
+    { name: 'Toxtricity', image: 'pokemons/8gen/toxtricity.png' },
+    { name: 'Armarouge', image: 'pokemons/9gen/armarouge.png' },
     { name: 'Ceruledge' },
     { name: 'Golisopod' }
 ]);
@@ -1144,6 +1166,7 @@ let huntBuilderGeneration = 0;
 let huntBuilderSearchHideTimer = 0;
 let huntBuilderLastTeamKeys = [];
 let huntBuilderPreviousTeamKeys = [];
+let huntBuilderTargetEntriesCache = null;
 const POKEMON_ROLE_ORDER = Object.freeze(['supporter', 'all-rounder', 'attacker', 'defender', 'speedster']);
 const POKEMON_ROLE_ALIASES = Object.freeze({
     support: 'supporter',
@@ -3958,7 +3981,9 @@ const BOOST_DEFAULT_STATE = Object.freeze({
     shiny: 'no',
     type1: '',
     type2: '',
+    bronzeCurrentLevel: 0,
     bronzeLevel: 0,
+    silverCurrentLevel: 0,
     silverLevel: 0
 });
 const BOOST_BRONZE_SINGLE_STONES_PER_LEVEL = 50;
@@ -3978,7 +4003,8 @@ const BOOST_TYPE_STONE_META = Object.freeze({
     steel: { name: 'Metal Stone', image: 'calculadora/metal_stone.png' },
     flying: { name: 'Feather Stone', image: 'calculadora/feather_stone.gif' },
     rock: { name: 'Rock Stone', image: 'calculadora/rock_stone.gif' },
-    electric: { name: 'Thunder Stone', image: 'calculadora/thunder_stone.gif' },
+    electric: { name: 'Thunder Stone', image: 'calculadora/thunder_stone.png' },
+    ice: { name: 'Ice Stone', image: 'calculadora/ice_stone.png' },
     poison: { name: 'Venom Stone', image: 'calculadora/venom_stone.gif' },
     water: { name: 'Water Stone', image: 'calculadora/water_stone.gif' },
     fairy: { name: 'Fairy Stone', image: 'calculadora/fairy_stone.gif' }
@@ -3990,8 +4016,8 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Cocoon Stone': { image: 'calculadora/cocoon_stone.gif' },
     'Venom Stone': { image: 'calculadora/venom_stone.gif' },
     'Punch Stone': { image: '' },
-    'Thunder Stone': { image: 'calculadora/thunder_stone.gif' },
-    'Ice Stone': { image: '' },
+    'Thunder Stone': { image: 'calculadora/thunder_stone.png' },
+    'Ice Stone': { image: 'calculadora/ice_stone.png' },
     'Rock Stone': { image: 'calculadora/rock_stone.gif' },
     'Feather Stone': { image: 'calculadora/feather_stone.gif' },
     'Earth Stone': { image: 'calculadora/earth_stone.gif' },
@@ -8436,6 +8462,7 @@ function ensureTeamsCatalogLoaded(force = false){
         teamsCatalogLoadPromise = null;
         pokemonHuntPreAceStageByKey = null;
         pokemonHuntAceSourceKeys = null;
+        huntBuilderTargetEntriesCache = null;
     }
 
     showTimesLoadingState();
@@ -8446,6 +8473,7 @@ function ensureTeamsCatalogLoaded(force = false){
             teamsCatalogLoaded = true;
             pokemonHuntPreAceStageByKey = null;
             pokemonHuntAceSourceKeys = null;
+            huntBuilderTargetEntriesCache = null;
             return teamsCatalog;
         })
         .finally(() => {
@@ -11070,7 +11098,8 @@ function getExpandedHuntBuilderTargetDefinitions(){
 function findHuntBuilderTargetCatalogEntry(definition){
     const names = getHuntBuilderTargetDefinitionNames(definition);
     for(const name of names){
-        const entry = findTeamBuilderPokemonCatalogEntry(name);
+        const entry = getPokemonCatalogEntryByName(name)
+            || findTeamBuilderPokemonCatalogEntry(name);
         if(entry) return entry;
     }
     return null;
@@ -11099,19 +11128,28 @@ function createHuntBuilderTargetEntry(definition){
 }
 
 function getHuntBuilderTargetEntries(){
-    return getExpandedHuntBuilderTargetDefinitions()
+    if(Array.isArray(huntBuilderTargetEntriesCache)) return huntBuilderTargetEntriesCache;
+    const entries = getExpandedHuntBuilderTargetDefinitions()
         .map(createHuntBuilderTargetEntry)
-        .filter(Boolean);
+        .filter(Boolean)
+        .sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+    if(!pokemonCatalogLoaded) return entries;
+    huntBuilderTargetEntriesCache = entries;
+    return huntBuilderTargetEntriesCache;
 }
 
 function getHuntBuilderSearchEntries(query = ''){
     const normalizedQuery = normalizePokemonSearchText(query);
-    return getHuntBuilderTargetEntries()
-        .filter(entry => {
-            const searchBase = entry.huntSearchBase || entry.searchName || normalizePokemonSearchText(entry.name);
-            return !normalizedQuery || searchBase.includes(normalizedQuery);
-        })
-        .slice(0, 12);
+    const entries = getHuntBuilderTargetEntries();
+    if(!normalizedQuery) return entries.slice(0, 12);
+    const matches = [];
+    for(const entry of entries){
+        const searchBase = entry.huntSearchBase || entry.searchName || normalizePokemonSearchText(entry.name);
+        if(!searchBase.includes(normalizedQuery)) continue;
+        matches.push(entry);
+        if(matches.length >= 12) break;
+    }
+    return matches;
 }
 
 function hideHuntBuilderSearchResults(){
@@ -11731,6 +11769,7 @@ function showHuntBuilder(){
         ensureTypesDataLoaded(),
         ensurePokemonCatalogLoaded()
     ]).then(() => {
+        getHuntBuilderTargetEntries();
         renderHuntBuilder();
         if(useGsap && contentHuntBuilder){
             gsap.from(contentHuntBuilder, { opacity: 0, y: -10, duration: 0.4 });
@@ -14795,6 +14834,435 @@ function initializeFossilsPage(){
     fossilsPageInitialized = true;
 }
 
+function clampTrainingLevel(value){
+    const parsed = Number.parseInt(value, 10);
+    if(!Number.isFinite(parsed)) return 5;
+    return Math.max(5, Math.min(99, parsed));
+}
+
+function getTrainingEntryLevel(entry){
+    const parsed = Number.parseInt(entry?.level, 10);
+    return clampTrainingLevel(Number.isFinite(parsed) ? parsed : 5);
+}
+
+function canShowEntryInTrainingSearch(entry){
+    const parsedLevel = Number.parseInt(entry?.level, 10);
+    return !Number.isFinite(parsedLevel) || parsedLevel < 100;
+}
+
+function getTrainingAvailablePokemonEntries(){
+    const entries = [
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT),
+        ...getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+    ].filter(entry => (
+        entry
+        && entry.name
+        && entry.type1
+        && canShowEntryInTrainingSearch(entry)
+        && entry.catalogHidden !== true
+        && canOpenPokemonCatalogEntry(entry)
+    ));
+    const seen = new Set();
+    return entries
+        .filter(entry => {
+            const key = `${entry.variant || 'default'}:${entry.id || entry.routeSlug || entry.name}`;
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+}
+
+function getTrainingPokemonSearchKey(entry){
+    return entry?.searchName || normalizePokemonSearchText(entry?.name || '');
+}
+
+function hydrateTrainingPokemonOptions(){
+    trainingPokemonEntries = getTrainingAvailablePokemonEntries();
+    trainingPokemonSearchIndex = new Map();
+    trainingPokemonEntries.forEach(entry => {
+        const key = getTrainingPokemonSearchKey(entry);
+        if(key && !trainingPokemonSearchIndex.has(key)){
+            trainingPokemonSearchIndex.set(key, entry);
+        }
+    });
+    if(trainingPokemonSearchInput){
+        trainingPokemonSearchInput.placeholder = trainingPokemonEntries.length
+            ? 'Busque um Pokemon...'
+            : 'Catalogo indisponivel no momento';
+    }
+}
+
+function getTrainingPokemonSearchResultEntries(value = '', limit = 8){
+    const normalizedValue = normalizePokemonSearchText(value || trainingPokemonSearchInput?.value || '');
+    const entries = normalizedValue
+        ? trainingPokemonEntries.filter(entry => {
+            const key = getTrainingPokemonSearchKey(entry);
+            return key === normalizedValue || key.includes(normalizedValue);
+        })
+        : [...trainingPokemonEntries];
+    return entries
+        .sort((left, right) => {
+            const leftKey = getTrainingPokemonSearchKey(left);
+            const rightKey = getTrainingPokemonSearchKey(right);
+            const leftStarts = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
+            const rightStarts = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
+            if(leftStarts !== rightStarts) return leftStarts ? -1 : 1;
+            return left.name.localeCompare(right.name, 'pt-BR');
+        })
+        .slice(0, limit);
+}
+
+function createTrainingSearchResultContent(entry){
+    const sprite = document.createElement('img');
+    sprite.className = 'speedster-search-item-icon boost-search-item-icon boost-search-item-icon--pokemon';
+    sprite.src = getPokemonImageSource(entry);
+    sprite.alt = entry.name;
+    sprite.loading = 'lazy';
+    sprite.decoding = 'async';
+    setImageFallback(sprite, POKEMON_IMAGE_PLACEHOLDER);
+
+    const name = document.createElement('span');
+    name.className = 'boost-search-item-name';
+    name.textContent = entry.name;
+
+    const meta = document.createElement('span');
+    meta.className = 'training-search-item-meta';
+    meta.textContent = `Nivel ${getTrainingEntryLevel(entry)} • ${formatPokemonTypeLabel(entry.type1)}${entry.type2 ? ` / ${formatPokemonTypeLabel(entry.type2)}` : ''}`;
+
+    const text = document.createElement('span');
+    text.className = 'training-search-item-copy';
+    text.append(name, meta);
+
+    const content = document.createElement('div');
+    content.className = 'boost-search-item-content training-search-item-content';
+    content.append(sprite);
+    [entry.type1, entry.type2].filter(Boolean).slice(0, 2).forEach(typeKey => {
+        const icon = document.createElement('img');
+        icon.className = 'speedster-search-item-icon boost-search-item-icon';
+        icon.src = `icons-type/${typeKey}.png`;
+        icon.alt = formatPokemonTypeLabel(typeKey);
+        icon.loading = 'lazy';
+        icon.decoding = 'async';
+        content.appendChild(icon);
+    });
+    content.appendChild(text);
+    return content;
+}
+
+function hideTrainingPokemonSearchResults(){
+    if(trainingPokemonSearchHideTimer){
+        clearTimeout(trainingPokemonSearchHideTimer);
+        trainingPokemonSearchHideTimer = 0;
+    }
+    if(trainingPokemonResults){
+        trainingPokemonResults.hidden = true;
+        trainingPokemonResults.replaceChildren();
+    }
+    if(trainingPokemonNoResults){
+        trainingPokemonNoResults.hidden = true;
+    }
+}
+
+function renderTrainingPokemonSearchResults(value = ''){
+    if(!trainingPokemonResults || !trainingPokemonNoResults) return;
+    const normalizedValue = normalizePokemonSearchText(value || trainingPokemonSearchInput?.value || '');
+    const entries = getTrainingPokemonSearchResultEntries(value);
+    if(!entries.length){
+        trainingPokemonResults.hidden = true;
+        trainingPokemonResults.replaceChildren();
+        trainingPokemonNoResults.hidden = !normalizedValue;
+        return;
+    }
+
+    trainingPokemonNoResults.hidden = true;
+    trainingPokemonResults.hidden = false;
+    trainingPokemonResults.replaceChildren();
+    const currentKey = getTrainingPokemonSearchKey(trainingSelectedPokemonEntry);
+    const fragment = document.createDocumentFragment();
+    entries.forEach(entry => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'speedster-search-item boost-search-item';
+        item.dataset.pokemonName = entry.name;
+        if(currentKey && currentKey === getTrainingPokemonSearchKey(entry)){
+            item.dataset.selected = 'true';
+        }
+        item.setAttribute('aria-label', `Selecionar ${entry.name} para calcular treinamento.`);
+        item.appendChild(createTrainingSearchResultContent(entry));
+        item.addEventListener('click', () => applyTrainingPokemonSelection(entry));
+        fragment.appendChild(item);
+    });
+    trainingPokemonResults.appendChild(fragment);
+}
+
+function getSelectedTrainingVariant(){
+    return document.querySelector('input[name="training-variant"]:checked')?.value === 'shiny'
+        ? 'shiny'
+        : 'normal';
+}
+
+function getTrainingPlateCostForLevel(level){
+    return Math.max(1, Math.floor(Number(level) / 10));
+}
+
+function getTrainingRows(startLevel){
+    const from = clampTrainingLevel(startLevel);
+    const rows = [];
+    for(let level = from; level < 100; level += 1){
+        const successPlates = getTrainingPlateCostForLevel(level);
+        rows.push({
+            from: level,
+            to: level + 1,
+            coins: 1,
+            successPlates,
+            failPlates: successPlates * 2
+        });
+    }
+    return rows;
+}
+
+function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVariant()){
+    const rows = getTrainingRows(startLevel);
+    const coins = rows.reduce((sum, row) => sum + row.coins, 0);
+    const successPlates = rows.reduce((sum, row) => sum + row.successPlates, 0);
+    const failPlates = rows.reduce((sum, row) => sum + row.failPlates, 0);
+    const shiningPlates = variant === 'shiny' ? successPlates : 0;
+    const shiningStoneBlocks = variant === 'shiny' ? Math.ceil(shiningPlates / SHINING_PLATE_BLOCK_SIZE) : 0;
+    const craftCommonPlates = variant === 'shiny'
+        ? Math.max(successPlates, shiningStoneBlocks * SHINING_PLATE_BLOCK_SIZE)
+        : successPlates;
+    return {
+        rows,
+        coins,
+        successPlates,
+        failPlates,
+        shiningPlates,
+        shiningStoneBlocks,
+        craftCommonPlates,
+        elementItems: craftCommonPlates * COMMON_PLATE_COST.elementItems,
+        charItems: craftCommonPlates * COMMON_PLATE_COST.charItems,
+        stones: craftCommonPlates * COMMON_PLATE_COST.stones
+    };
+}
+
+function createTrainingMaterialCard(options = {}){
+    const {
+        label = '',
+        value = 0,
+        detail = '',
+        image = '',
+        tone = '',
+        info = ''
+    } = options;
+    const card = document.createElement('article');
+    card.className = `training-material-card${tone ? ` training-material-card--${tone}` : ''}`;
+    if(info){
+        const help = document.createElement('button');
+        help.type = 'button';
+        help.className = 'training-material-card__help';
+        help.textContent = '?';
+        help.dataset.tooltip = info;
+        help.setAttribute('aria-label', info);
+        card.appendChild(help);
+    }
+    const media = document.createElement('span');
+    media.className = 'training-material-card__media';
+    if(image){
+        const img = document.createElement('img');
+        img.src = image;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        media.appendChild(img);
+    }
+    const body = document.createElement('span');
+    body.className = 'training-material-card__body';
+    const title = document.createElement('strong');
+    title.textContent = label;
+    const amount = document.createElement('span');
+    amount.className = 'training-material-card__value';
+    amount.textContent = Number(value || 0).toLocaleString('pt-BR');
+    const note = document.createElement('small');
+    note.textContent = detail;
+    body.append(title, amount, note);
+    card.append(media, body);
+    return card;
+}
+
+function renderTrainingSelectedPokemon(){
+    if(!trainingSelectedPokemon) return;
+    if(!trainingSelectedPokemonEntry){
+        trainingSelectedPokemon.hidden = true;
+        trainingSelectedPokemon.replaceChildren();
+        return;
+    }
+    const entry = trainingSelectedPokemonEntry;
+    const sprite = document.createElement('img');
+    sprite.src = getPokemonImageSource(entry);
+    sprite.alt = entry.name;
+    sprite.loading = 'lazy';
+    sprite.decoding = 'async';
+    setImageFallback(sprite, POKEMON_IMAGE_PLACEHOLDER);
+
+    const title = document.createElement('strong');
+    title.textContent = entry.name;
+    const meta = document.createElement('span');
+    meta.textContent = [
+        `Nivel base ${getTrainingEntryLevel(entry)}`,
+        formatPokemonTypeLabel(entry.type1),
+        entry.type2 ? formatPokemonTypeLabel(entry.type2) : '',
+        entry.role ? formatPokemonRoleLabel(entry.role) : ''
+    ].filter(Boolean).join(' • ');
+    const copy = document.createElement('span');
+    copy.append(title, meta);
+    trainingSelectedPokemon.replaceChildren(sprite, copy);
+    trainingSelectedPokemon.hidden = false;
+}
+
+function setTrainingStepUnlocked(stepEl, unlocked){
+    if(!stepEl) return;
+    stepEl.classList.toggle('training-step--locked', !unlocked);
+    stepEl.classList.toggle('training-step--active', unlocked);
+}
+
+function updateTrainingStepState(){
+    const hasPokemon = Boolean(trainingSelectedPokemonEntry);
+    const level = clampTrainingLevel(trainingCurrentLevelInput?.value || 5);
+    const hasLevel = hasPokemon && level >= 5 && level < 100;
+    setTrainingStepUnlocked(trainingStepLevel, hasPokemon);
+    setTrainingStepUnlocked(trainingStepVariant, hasLevel);
+
+    if(trainingCurrentLevelInput) trainingCurrentLevelInput.disabled = !hasPokemon;
+    if(trainingLevelDecreaseBtn) trainingLevelDecreaseBtn.disabled = !hasPokemon || level <= 5;
+    if(trainingLevelIncreaseBtn) trainingLevelIncreaseBtn.disabled = !hasPokemon || level >= 99;
+    trainingVariantInputs.forEach(input => {
+        input.disabled = !hasLevel;
+    });
+    if(trainingLevelPreview){
+        trainingLevelPreview.textContent = hasPokemon
+            ? `${100 - level} treino(s) ate o level 100.`
+            : '';
+    }
+}
+
+function renderTrainingResults(){
+    if(!trainingResults) return;
+    if(!trainingSelectedPokemonEntry){
+        trainingResults.replaceChildren(trainingSelectionStatus || document.createTextNode('Selecione um Pokemon para liberar as proximas etapas.'));
+        if(trainingSelectionStatus) trainingSelectionStatus.textContent = 'Selecione um Pokemon para liberar as proximas etapas.';
+        return;
+    }
+
+    const level = clampTrainingLevel(trainingCurrentLevelInput?.value || getTrainingEntryLevel(trainingSelectedPokemonEntry));
+    const variant = getSelectedTrainingVariant();
+    const totals = calculateTrainingTotals(level, variant);
+    const typeMeta = BOOST_TYPE_STONE_META[trainingSelectedPokemonEntry.type1] || null;
+    const elementName = typeMeta?.name || 'Stone do tipo';
+    const elementImage = typeMeta?.image || '';
+    const elementItemImage = `icons-type/${trainingSelectedPokemonEntry.type1}.png`;
+
+    const shell = document.createElement('div');
+    shell.className = 'training-results-shell';
+
+    const summary = document.createElement('div');
+    summary.className = 'training-summary-grid';
+    summary.append(
+        createTrainingMaterialCard({ label: 'Elemental Coins', value: totals.coins, detail: `${level} -> 100`, image: 'calculadora/golden_coin.gif', tone: 'coin' }),
+        createTrainingMaterialCard({ label: 'Plates (S)', value: totals.successPlates, detail: 'Treinos com sucesso', image: 'calculadora/plate.gif', tone: 'success' }),
+        createTrainingMaterialCard({ label: 'Plates (F)', value: totals.failPlates, detail: 'Estimativa de falhas', image: 'calculadora/plate.gif', tone: 'fail' })
+    );
+    if(variant === 'shiny'){
+        summary.append(createTrainingMaterialCard({
+            label: 'Shining Plates',
+            value: totals.shiningPlates,
+            detail: 'Usadas junto das Plates normais',
+            image: 'calculadora/shiny_plate.gif',
+            tone: 'shiny'
+        }));
+    }
+
+    const materialsTitle = document.createElement('h3');
+    materialsTitle.textContent = 'Materiais para craft';
+    const materials = document.createElement('div');
+    materials.className = 'training-material-grid';
+    materials.append(
+        createTrainingMaterialCard({
+            label: 'Itens do elemento',
+            value: totals.elementItems,
+            detail: `${COMMON_PLATE_COST.elementItems} por Plate`,
+            image: elementItemImage,
+            tone: 'item',
+            info: 'Esses itens específicos são dropados por qualquer Pokémon desse elemento.'
+        }),
+        createTrainingMaterialCard({
+            label: 'Itens característicos',
+            value: totals.charItems,
+            detail: `${COMMON_PLATE_COST.charItems} por Plate`,
+            image: 'calculadora/lotitems.png',
+            tone: 'item',
+            info: 'Esses itens específicos são dropados por um Pokémon específico. Procure no jogo, na área de treinamento, para saber exatamente qual item é necessário.'
+        }),
+        createTrainingMaterialCard({ label: elementName, value: totals.stones, detail: `${COMMON_PLATE_COST.stones} por Plate`, image: elementImage, tone: 'item' })
+    );
+    if(variant === 'shiny'){
+        materials.append(createTrainingMaterialCard({
+            label: 'Shining Stones',
+            value: totals.shiningStoneBlocks,
+            detail: `1 bloco a cada ${SHINING_PLATE_BLOCK_SIZE} Shining Plates`,
+            image: 'calculadora/shining_ancient.gif',
+            tone: 'shiny'
+        }));
+    }
+
+    const detail = document.createElement('details');
+    detail.className = 'training-detail-table';
+    const detailSummary = document.createElement('summary');
+    detailSummary.innerHTML = `<span>Tabela Detalhada</span><small>${totals.rows.length} lvls</small>`;
+    const tableWrap = document.createElement('div');
+    tableWrap.className = 'training-detail-table__wrap';
+    const table = document.createElement('table');
+    table.innerHTML = '<thead><tr><th>Lv.</th><th>Coins</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>';
+    const body = document.createElement('tbody');
+    totals.rows.forEach(row => {
+        const tr = document.createElement('tr');
+        if(row.from % 10 === 0) tr.className = 'training-detail-table__decade';
+        tr.innerHTML = `<td>${row.from} -> ${row.to}</td><td>${row.coins}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`;
+        body.appendChild(tr);
+    });
+    const footer = document.createElement('tfoot');
+    footer.innerHTML = `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`;
+    table.append(body, footer);
+    tableWrap.appendChild(table);
+    detail.append(detailSummary, tableWrap);
+
+    const context = document.createElement('div');
+    context.className = 'training-result-context';
+    context.textContent = `${trainingSelectedPokemonEntry.name} • Level ${level} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • Tipo ${formatPokemonTypeLabel(trainingSelectedPokemonEntry.type1)}`;
+
+    shell.append(context, summary, materialsTitle, materials, detail);
+    trainingResults.replaceChildren(shell);
+    animateCalcResult(trainingResults);
+}
+
+function syncTrainingCalculator(){
+    updateTrainingStepState();
+    renderTrainingSelectedPokemon();
+    renderTrainingResults();
+}
+
+function applyTrainingPokemonSelection(entry){
+    trainingSelectedPokemonEntry = entry || null;
+    if(trainingPokemonSearchInput && entry){
+        trainingPokemonSearchInput.value = entry.name;
+    }
+    if(trainingCurrentLevelInput && entry){
+        trainingCurrentLevelInput.value = getTrainingEntryLevel(entry);
+    }
+    hideTrainingPokemonSearchResults();
+    syncTrainingCalculator();
+}
+
 function updateRangeResults(){
     const val = rangeSelect.value;
     const data = ranges[val];
@@ -14923,34 +15391,86 @@ function updateShiny(){
 }
 
 function initializeCalculatorPage(){
-    if(calculatorPageInitialized) return;
+    if(calculatorPageInitialized){
+        ensurePokemonCatalogLoaded()
+            .then(() => {
+                hydrateTrainingPokemonOptions();
+                syncTrainingCalculator();
+            })
+            .catch(() => {
+                if(trainingPokemonSearchInput) trainingPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+            });
+        return;
+    }
 
-    if(rangeSelect) rangeSelect.addEventListener('change', updateRangeResults);
-    variantRadios.forEach(r=>r.addEventListener('change', ()=>{
-        updateRangeResults();
-        localStorage.setItem('pokeVariant', document.querySelector('input[name="poke-variant"]:checked').value);
-    }));
-
-    if(shinyInput){
-        shinyInput.addEventListener('input', ()=>{
-            updateShiny();
-            if(commonInput) commonInput.value = shinyInput.value;
-            updateCommon();
+    if(trainingInfoToggle && trainingInfoPanel){
+        trainingInfoToggle.addEventListener('click', () => {
+            const nextHidden = !trainingInfoPanel.hidden ? true : false;
+            trainingInfoPanel.hidden = nextHidden;
+            trainingInfoToggle.setAttribute('aria-expanded', String(!nextHidden));
         });
     }
-    if(commonInput) commonInput.addEventListener('input', updateCommon);
-    if(shinyInput) shinyInput.addEventListener('input', updateShiny);
 
-    const savedVariant = localStorage.getItem('pokeVariant');
-    if(savedVariant){
-        const savedRadio = document.querySelector(`input[name="poke-variant"][value="${savedVariant}"]`);
-        if(savedRadio) savedRadio.checked = true;
+    if(trainingPokemonSearchInput){
+        trainingPokemonSearchInput.addEventListener('input', () => {
+            const value = String(trainingPokemonSearchInput.value || '').trim();
+            const key = normalizePokemonSearchText(value);
+            trainingSelectedPokemonEntry = key ? trainingPokemonSearchIndex.get(key) || null : null;
+            renderTrainingPokemonSearchResults(value);
+            syncTrainingCalculator();
+        });
+        trainingPokemonSearchInput.addEventListener('focus', () => {
+            renderTrainingPokemonSearchResults(trainingPokemonSearchInput.value || '');
+        });
+        trainingPokemonSearchInput.addEventListener('keydown', (event) => {
+            if(event.key !== 'Enter') return;
+            const firstEntry = getTrainingPokemonSearchResultEntries(trainingPokemonSearchInput.value || '', 1)[0];
+            if(!firstEntry) return;
+            event.preventDefault();
+            applyTrainingPokemonSelection(firstEntry);
+        });
+        trainingPokemonSearchInput.addEventListener('blur', () => {
+            if(trainingPokemonSearchHideTimer) clearTimeout(trainingPokemonSearchHideTimer);
+            trainingPokemonSearchHideTimer = setTimeout(hideTrainingPokemonSearchResults, 160);
+        });
     }
 
-    if(rangeSelect) updateRangeResults();
-    if(commonInput) updateCommon();
-    if(shinyInput) updateShiny();
+    if(trainingCurrentLevelInput){
+        trainingCurrentLevelInput.addEventListener('input', () => {
+            trainingCurrentLevelInput.value = clampTrainingLevel(trainingCurrentLevelInput.value);
+            syncTrainingCalculator();
+        });
+    }
+    if(trainingLevelDecreaseBtn){
+        trainingLevelDecreaseBtn.addEventListener('click', () => {
+            if(!trainingCurrentLevelInput) return;
+            trainingCurrentLevelInput.value = clampTrainingLevel(Number(trainingCurrentLevelInput.value || 5) - 1);
+            syncTrainingCalculator();
+        });
+    }
+    if(trainingLevelIncreaseBtn){
+        trainingLevelIncreaseBtn.addEventListener('click', () => {
+            if(!trainingCurrentLevelInput) return;
+            trainingCurrentLevelInput.value = clampTrainingLevel(Number(trainingCurrentLevelInput.value || 5) + 1);
+            syncTrainingCalculator();
+        });
+    }
 
+    trainingVariantInputs.forEach(input => {
+        input.addEventListener('change', syncTrainingCalculator);
+    });
+
+    ensurePokemonCatalogLoaded()
+        .then(() => {
+            hydrateTrainingPokemonOptions();
+            syncTrainingCalculator();
+        })
+        .catch(() => {
+            if(trainingPokemonSearchInput) trainingPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+            syncTrainingCalculator();
+        });
+
+    syncTrainingCalculator();
     calculatorPageInitialized = true;
 }
 
@@ -15092,7 +15612,8 @@ function hasBoostSelectedPokemon(state){
 }
 
 function hasBoostSelectedLevel(state){
-    return normalizeBoostLevel(state?.bronzeLevel) > 0 || normalizeBoostLevel(state?.silverLevel) > 0;
+    return normalizeBoostLevel(state?.bronzeLevel) > normalizeBoostLevel(state?.bronzeCurrentLevel)
+        || normalizeBoostLevel(state?.silverLevel) > normalizeBoostLevel(state?.silverCurrentLevel);
 }
 
 function getBoostSelectionPromptText(state){
@@ -15437,7 +15958,9 @@ function applyBoostFormState(nextState = getBoostDefaultFormState()){
     boostShinyInputs.forEach(input => {
         input.checked = input.value === state.shiny;
     });
+    if(boostBronzeCurrentLevelSelect) boostBronzeCurrentLevelSelect.value = String(normalizeBoostLevel(state.bronzeCurrentLevel));
     if(boostBronzeLevelSelect) boostBronzeLevelSelect.value = String(normalizeBoostLevel(state.bronzeLevel));
+    if(boostSilverCurrentLevelSelect) boostSilverCurrentLevelSelect.value = String(normalizeBoostLevel(state.silverCurrentLevel));
     if(boostSilverLevelSelect) boostSilverLevelSelect.value = String(normalizeBoostLevel(state.silverLevel));
 }
 
@@ -15472,7 +15995,9 @@ function getBoostFormState(){
         type1,
         type2,
         shiny: Array.from(boostShinyInputs).find(input => input.checked)?.value === 'yes' ? 'yes' : 'no',
+        bronzeCurrentLevel: normalizeBoostLevel(boostBronzeCurrentLevelSelect?.value),
         bronzeLevel: normalizeBoostLevel(boostBronzeLevelSelect?.value),
+        silverCurrentLevel: normalizeBoostLevel(boostSilverCurrentLevelSelect?.value),
         silverLevel: normalizeBoostLevel(boostSilverLevelSelect?.value)
     };
 }
@@ -15514,6 +16039,18 @@ function validateBoostFormState(state){
         return {
             valid: false,
             message: 'Tipo do Pokemon indisponivel.'
+        };
+    }
+    if(normalizeBoostLevel(state.bronzeLevel) < normalizeBoostLevel(state.bronzeCurrentLevel)){
+        return {
+            valid: false,
+            message: 'O Bronze alvo precisa ser igual ou maior que o Bronze atual.'
+        };
+    }
+    if(normalizeBoostLevel(state.silverLevel) < normalizeBoostLevel(state.silverCurrentLevel)){
+        return {
+            valid: false,
+            message: 'O Silver alvo precisa ser igual ou maior que o Silver atual.'
         };
     }
     return { valid: true, message: '' };
@@ -15847,29 +16384,37 @@ function isBoostDittoState(state){
     return normalizePokemonSearchText(state?.pokemonEntry?.name || state?.pokemonName || '') === 'ditto';
 }
 
-function getBoostBronzeNormalStoneQuantity(state, cumulative = false){
-    const normalizedLevel = normalizeBoostLevel(state?.bronzeLevel);
+function getBoostBronzeNormalStoneQuantity(state, options = {}){
+    const {
+        currentLevel = 0,
+        targetLevel = state?.bronzeLevel,
+        cumulative = false
+    } = options;
+    const normalizedLevel = normalizeBoostLevel(targetLevel);
     if(normalizedLevel <= 0) return 0;
     const levelMultiplier = cumulative
-        ? getBoostLevelCumulativeStepSum(normalizedLevel)
-        : normalizedLevel;
+        ? getBoostLevelRangeStepSum(currentLevel, normalizedLevel)
+        : getBoostLevelDelta(currentLevel, normalizedLevel);
+    if(levelMultiplier <= 0) return 0;
     if(state?.typeMode === 'double'){
         return levelMultiplier * BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL * 2;
     }
     return levelMultiplier * BOOST_BRONZE_SINGLE_STONES_PER_LEVEL;
 }
 
-function createBoostDittoBronzeStoneItems(level, options = {}){
+function createBoostDittoBronzeStoneItems(targetLevel, options = {}){
     const {
+        currentLevel = 0,
         cumulative = false,
         contextLabel = '',
         detail = ''
     } = options;
-    const normalizedLevel = normalizeBoostLevel(level);
-    if(normalizedLevel <= 0) return [];
+    const current = normalizeBoostLevel(currentLevel);
+    const normalizedLevel = normalizeBoostLevel(targetLevel);
+    if(normalizedLevel <= current) return [];
 
     const levels = cumulative
-        ? Array.from({ length: normalizedLevel }, (_, index) => index + 1)
+        ? Array.from({ length: normalizedLevel - current }, (_, index) => current + index + 1)
         : [normalizedLevel];
 
     return levels.flatMap(stepLevel => {
@@ -15884,15 +16429,19 @@ function createBoostDittoBronzeStoneItems(level, options = {}){
 
 function createBoostBronzeStoneItems(state, options = {}){
     const {
+        currentLevel = 0,
+        targetLevel = state?.bronzeLevel,
         cumulative = false,
         contextLabel = '',
         directDetail = ''
     } = options;
-    const normalizedLevel = normalizeBoostLevel(state?.bronzeLevel);
-    if(normalizedLevel <= 0) return [];
+    const current = normalizeBoostLevel(currentLevel);
+    const normalizedLevel = normalizeBoostLevel(targetLevel);
+    if(normalizedLevel <= current) return [];
 
     if(isBoostDittoState(state)){
         return createBoostDittoBronzeStoneItems(normalizedLevel, {
+            currentLevel: current,
             cumulative,
             contextLabel,
             detail: directDetail
@@ -15901,7 +16450,7 @@ function createBoostBronzeStoneItems(state, options = {}){
 
     if(usesBoostAncientBronzeStone(state)){
         return [
-            createBoostMaterialItem('Ancient Stone', getBoostBronzeNormalStoneQuantity(state, cumulative), {
+            createBoostMaterialItem('Ancient Stone', getBoostBronzeNormalStoneQuantity(state, { currentLevel: current, targetLevel: normalizedLevel, cumulative }), {
                 category: 'ancient',
                 detail: directDetail || 'Mesma quantidade das stones normais, trocada por Ancient Stone para Pokemon Ace ou Pre Ace.',
                 contextLabel
@@ -15910,8 +16459,9 @@ function createBoostBronzeStoneItems(state, options = {}){
     }
 
     const levelMultiplier = cumulative
-        ? getBoostLevelCumulativeStepSum(normalizedLevel)
-        : normalizedLevel;
+        ? getBoostLevelRangeStepSum(current, normalizedLevel)
+        : getBoostLevelDelta(current, normalizedLevel);
+    if(levelMultiplier <= 0) return [];
 
     if(state.typeMode === 'double'){
         return [
@@ -15969,6 +16519,17 @@ function getBoostLevelCumulativeStepSum(level){
     return (normalizedLevel * (normalizedLevel + 1)) / 2;
 }
 
+function getBoostLevelRangeStepSum(currentLevel, targetLevel){
+    const current = normalizeBoostLevel(currentLevel);
+    const target = normalizeBoostLevel(targetLevel);
+    if(target <= current) return 0;
+    return getBoostLevelCumulativeStepSum(target) - getBoostLevelCumulativeStepSum(current);
+}
+
+function getBoostLevelDelta(currentLevel, targetLevel){
+    return Math.max(0, normalizeBoostLevel(targetLevel) - normalizeBoostLevel(currentLevel));
+}
+
 function getBoostTotalMaterialBadgeText(item){
     const materialCategories = new Set([
         'ancient-shiny',
@@ -16019,22 +16580,26 @@ function sortBoostTotalItems(items = []){
 
 function calculateBoostTotalDirectItems(state){
     const totalDirectItems = [];
-    const silverStepSum = getBoostLevelCumulativeStepSum(state.silverLevel);
+    const bronzeCurrent = normalizeBoostLevel(state.bronzeCurrentLevel);
+    const bronzeTarget = normalizeBoostLevel(state.bronzeLevel);
+    const silverCurrent = normalizeBoostLevel(state.silverCurrentLevel);
+    const silverTarget = normalizeBoostLevel(state.silverLevel);
+    const bronzeDelta = getBoostLevelDelta(bronzeCurrent, bronzeTarget);
+    const silverStepSum = getBoostLevelRangeStepSum(silverCurrent, silverTarget);
 
-    if(state.bronzeLevel > 0){
-        totalDirectItems.push(...createBoostBronzeStoneItems(state, { cumulative: true }));
+    if(bronzeTarget > bronzeCurrent){
+        totalDirectItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true }));
 
         if(state.shiny === 'yes'){
-            const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
             totalDirectItems.push(
-                createBoostMaterialItem('Bronze Star', bronzeStepSum * BOOST_BRONZE_STAR_PER_LEVEL, {
+                createBoostMaterialItem('Bronze Star', bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL, {
                     category: 'bronze'
                 })
             );
         }
     }
 
-    if(state.silverLevel > 0){
+    if(silverTarget > silverCurrent){
         totalDirectItems.push(
             createBoostMaterialItem('Ancient Stone', silverStepSum * BOOST_SILVER_ANCIENT_STONE_PER_LEVEL, {
                 category: 'ancient'
@@ -16051,10 +16616,10 @@ function calculateBoostTotalDirectItems(state){
 
 function calculateBoostTotalCraftItems(state){
     const totalCraftItems = [];
-    const bronzeStepSum = getBoostLevelCumulativeStepSum(state.bronzeLevel);
-    const silverStepSum = getBoostLevelCumulativeStepSum(state.silverLevel);
+    const bronzeDelta = getBoostLevelDelta(state.bronzeCurrentLevel, state.bronzeLevel);
+    const silverStepSum = getBoostLevelRangeStepSum(state.silverCurrentLevel, state.silverLevel);
     const totalBronzeStarCount = state.shiny === 'yes'
-        ? bronzeStepSum * BOOST_BRONZE_STAR_PER_LEVEL
+        ? bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL
         : 0;
     const totalSilverStarCount = silverStepSum;
     const totalSilverPieceCount = totalSilverStarCount * (BOOST_SILVER_STAR_RECIPE['Piece of Silver Star'] || 0);
@@ -16104,12 +16669,17 @@ function calculateBoostMaterials(state){
     const starCraftItems = [];
     let bronzeStarCraftCount = 0;
     let silverPieceCount = 0;
+    const bronzeCurrent = normalizeBoostLevel(state.bronzeCurrentLevel);
+    const bronzeTarget = normalizeBoostLevel(state.bronzeLevel);
+    const silverCurrent = normalizeBoostLevel(state.silverCurrentLevel);
+    const silverTarget = normalizeBoostLevel(state.silverLevel);
+    const bronzeDelta = getBoostLevelDelta(bronzeCurrent, bronzeTarget);
 
-    if(state.bronzeLevel > 0){
-        bronzeItems.push(...createBoostBronzeStoneItems(state, { contextLabel: 'Direto' }));
+    if(bronzeTarget > bronzeCurrent){
+        bronzeItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true, contextLabel: 'Direto' }));
 
         if(state.shiny === 'yes'){
-            const bronzeStarCount = state.bronzeLevel * BOOST_BRONZE_STAR_PER_LEVEL;
+            const bronzeStarCount = bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL;
             bronzeItems.push(
                 createBoostMaterialItem('Bronze Star', bronzeStarCount, {
                     detail: 'Custo direto do shiny.',
@@ -16120,13 +16690,14 @@ function calculateBoostMaterials(state){
         }
     }
 
-    if(state.silverLevel > 0){
+    if(silverTarget > silverCurrent){
+        const silverStepSum = getBoostLevelRangeStepSum(silverCurrent, silverTarget);
         silverItems.push(
-            createBoostMaterialItem('Ancient Stone', state.silverLevel * BOOST_SILVER_ANCIENT_STONE_PER_LEVEL, {
+            createBoostMaterialItem('Ancient Stone', silverStepSum * BOOST_SILVER_ANCIENT_STONE_PER_LEVEL, {
                 detail: 'Custo direto do Silver.',
                 contextLabel: 'Direto'
             }),
-            createBoostMaterialItem('Silver Star', state.silverLevel, {
+            createBoostMaterialItem('Silver Star', silverStepSum, {
                 craftable: true,
                 category: 'silver-star',
                 detail: 'Custo direto do Silver.',
@@ -16140,7 +16711,7 @@ function calculateBoostMaterials(state){
             if(name === 'Piece of Silver Star') category = 'silver-piece';
             if(name === 'Shining Ancient Stone') category = 'ancient-shiny';
             starCraftItems.push(
-                createBoostMaterialItem(name, amount * state.silverLevel, {
+                createBoostMaterialItem(name, amount * silverStepSum, {
                     category,
                     detail: name === 'Piece of Silver Star'
                         ? 'Item usado no craft da Silver Star.'
@@ -16149,7 +16720,7 @@ function calculateBoostMaterials(state){
                 })
             );
             if(name === 'Piece of Silver Star'){
-                silverPieceCount += amount * state.silverLevel;
+                silverPieceCount += amount * silverStepSum;
             }
         });
     }
@@ -16330,7 +16901,7 @@ function renderBoostOverview(state, breakdown){
         boostSummaryTarget.textContent = selectedPokemonName;
     }
     if(boostSummaryFlags){
-        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} - ${selectedTypeLabel || `${naturalTypeCount} tipo(s)`} - Bronze ${state.bronzeLevel} - Silver ${state.silverLevel}`;
+        boostSummaryFlags.textContent = `${state.shiny === 'yes' ? 'Shiny' : 'Comum'} - ${selectedTypeLabel || `${naturalTypeCount} tipo(s)`} - Bronze ${state.bronzeCurrentLevel} -> ${state.bronzeLevel} - Silver ${state.silverCurrentLevel} -> ${state.silverLevel}`;
     }
     if(!boostOverviewCards) return;
 
@@ -16342,12 +16913,12 @@ function renderBoostOverview(state, breakdown){
         },
         {
             label: 'Bronze',
-            value: `Nivel ${state.bronzeLevel}`,
+            value: `${state.bronzeCurrentLevel} -> ${state.bronzeLevel}`,
             note: bronzeDirectCount ? `${formatBoostQuantity(bronzeDirectCount)} material(is) direto(s)` : 'Sem custo direto'
         },
         {
             label: 'Silver',
-            value: `Nivel ${state.silverLevel}`,
+            value: `${state.silverCurrentLevel} -> ${state.silverLevel}`,
             note: 'Silver disponivel'
         },
         {
@@ -16432,16 +17003,16 @@ function renderBoostCalculator(options = {}){
     renderBoostMaterialGrid(
         boostBronzeResults,
         breakdown.bronzeItems,
-        state.bronzeLevel > 0 ? 'Sem materiais de Bronze.' : 'Bronze 0.',
-        state.bronzeLevel > 0
+        state.bronzeLevel > state.bronzeCurrentLevel ? 'Sem materiais de Bronze.' : 'Bronze sem alteracao.',
+        state.bronzeLevel > state.bronzeCurrentLevel
             ? 'Nada para mostrar.'
-            : 'Aumente o Bronze para gerar materiais.'
+            : 'Escolha um Bronze alvo maior que o Bronze atual.'
     );
     renderBoostMaterialGrid(
         boostSilverResults,
         breakdown.silverItems,
-        'Silver 0.',
-        'Aumente o Silver para incluir esta etapa.'
+        'Silver sem alteracao.',
+        'Escolha um Silver alvo maior que o Silver atual.'
     );
     renderBoostMaterialGrid(
         boostStarResults,
@@ -16453,7 +17024,7 @@ function renderBoostCalculator(options = {}){
         boostTotalResults,
         breakdown.totalItems,
         'Sem materiais.',
-        'Ajuste Bronze ou Silver.'
+        'Escolha um alvo maior que o boost atual.'
     );
 }
 function initializeBoostCalculatorPage(){
@@ -16480,7 +17051,7 @@ function initializeBoostCalculatorPage(){
     };
 
     boostShinyInputs.forEach(input => input.addEventListener('change', handleBoostChange));
-    [boostBronzeLevelSelect, boostSilverLevelSelect]
+    [boostBronzeCurrentLevelSelect, boostBronzeLevelSelect, boostSilverCurrentLevelSelect, boostSilverLevelSelect]
         .filter(Boolean)
         .forEach(element => {
             element.addEventListener('change', handleBoostChange);
@@ -20779,6 +21350,7 @@ function loadPokemonCatalog(){
                 mega: megaEntries
             };
             pokemonCatalogLoaded = true;
+            huntBuilderTargetEntriesCache = null;
             applyPokemonCatalogVariant(getCurrentPokemonCatalogVariant(), { resetFilters: false });
             return true;
         })
@@ -20799,6 +21371,7 @@ function ensurePokemonCatalogLoaded(options = {}){
     if(force){
         pokemonCatalogLoaded = false;
         pokemonCatalogLoadPromise = null;
+        huntBuilderTargetEntriesCache = null;
     }
 
     showPokemonCatalogLoadingState();
