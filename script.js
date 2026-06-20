@@ -375,10 +375,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620a';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619h';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260619c';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260619a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620d';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260620b';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260620c';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -688,20 +688,38 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Bounsweet', 'Steenee'],
     ['Steenee', 'Tsareena'],
     ['Wimpod', 'Golisopod'],
+    // Generation 8 evolutions
+    ['Grookey', 'Thwackey'],
+    ['Thwackey', 'Rillaboom'],
+    ['Scorbunny', 'Raboot'],
+    ['Raboot', 'Cinderace'],
+    ['Sobble', 'Drizzile'],
+    ['Drizzile', 'Inteleon'],
+    ['Corvisquire', 'Corviknight'],
+    ['Dottler', 'Orbeetle'],
     ['Chewtle', 'Drednaw'],
+    ['Applin', 'Flapple'],
+    ['Applin', 'Dipplin'],
+    ['Dipplin', 'Hydrapple'],
     ['Dreepy', 'Drakloak'],
     ['Drakloak', 'Dragapult'],
     ['Impidimp', 'Morgrem'],
     ['Morgrem', 'Grimmsnarl'],
-    ['Toxel', 'Toxtricity'],
+    ['Toxel', 'Toxtricity Amped'],
+    ['Toxel', 'Toxtricity Low Key'],
+    ['Hatenna', 'Hattrem'],
+    ['Hattrem', 'Hatterene'],
     ['Duraludon', 'Archaludon'],
     ['Charcadet', 'Armarouge'],
     ['Charcadet', 'Ceruledge'],
     ['Frigibax', 'Arctibax'],
     ['Arctibax', 'Baxcalibur'],
     ['Finizen', 'Palafin'],
+    ['Finizen', 'Hero Palafin'],
     ['Tinkatink', 'Tinkatuff'],
-    ['Tinkatuff', 'Tinkaton']
+    ['Tinkatuff', 'Tinkaton'],
+    ['Shroodle', 'Grafaiai'],
+    ['Greavard', 'Houndstone']
 ]);
 const POKEMON_CATALOG_VARIANT_DEFAULT = 'default';
 const POKEMON_CATALOG_VARIANT_MEGA = 'mega';
@@ -1181,7 +1199,9 @@ const POKEMON_ROLE_META = Object.freeze({
     defender: { key: 'defender', label: 'defender' },
     speedster: { key: 'speedster', label: 'speedster' }
 });
-const POKEMON_LEVEL_FILTER_ORDER = Object.freeze(['5', '20', '30', '50', '65', '80', '95', '100', 'pre', 'ace']);
+const POKEMON_UNKNOWN_LEVEL_FILTER_VALUE = 'unknown';
+const POKEMON_LEVEL_FILTER_ORDER = Object.freeze(['5', '20', '30', '50', '65', '80', '95', '100', 'pre', 'ace', POKEMON_UNKNOWN_LEVEL_FILTER_VALUE]);
+const POKEMON_LEVEL_FILTER_HIDDEN_OPTIONS = new Set(['ace', POKEMON_UNKNOWN_LEVEL_FILTER_VALUE]);
 const POKEMON_LEVEL_FILTER_SORT_INDEX = Object.freeze(
     POKEMON_LEVEL_FILTER_ORDER.reduce((acc, value, index) => {
         acc[value] = index;
@@ -18988,9 +19008,19 @@ function normalizePokemonRoleKey(value){
     return POKEMON_ROLE_ALIASES[normalized] || normalized;
 }
 
-function normalizePokemonLevelFilterValue(level){
+function isPokemonUnknownLevelLabel(value){
+    return /\?\?/.test(String(value || ''));
+}
+
+function normalizePokemonLevelFilterValue(level, levelLabel = ''){
+    const normalizedLevel = String(level || '').trim().toLowerCase();
+    if(normalizedLevel === POKEMON_UNKNOWN_LEVEL_FILTER_VALUE || normalizedLevel === '??'){
+        return POKEMON_UNKNOWN_LEVEL_FILTER_VALUE;
+    }
     const levelKey = getPokemonCaptureLevelKey(level);
-    return String(levelKey || '').trim().toLowerCase();
+    const normalizedLevelKey = String(levelKey || '').trim().toLowerCase();
+    if(normalizedLevelKey) return normalizedLevelKey;
+    return isPokemonUnknownLevelLabel(levelLabel) ? POKEMON_UNKNOWN_LEVEL_FILTER_VALUE : '';
 }
 
 function getPokemonRoleInfo(value){
@@ -19037,6 +19067,7 @@ function formatPokemonTypeLabel(value){
 function formatPokemonLevelLabel(level){
     if(level === 'pre') return 'Pré Ace';
     if(level === 'ace') return 'Ace';
+    if(level === POKEMON_UNKNOWN_LEVEL_FILTER_VALUE) return 'Nível ??';
     const numericLevel = Number(level);
     return Number.isFinite(numericLevel) ? `Nível ${numericLevel}` : String(level || 'Nível não informado');
 }
@@ -20228,6 +20259,7 @@ function populatePokemonFilterControls(){
             .map(entry => entry.levelKey)
             .filter(Boolean)
     ))
+        .filter(levelKey => !POKEMON_LEVEL_FILTER_HIDDEN_OPTIONS.has(levelKey))
         .sort(comparePokemonLevelFilterValues)
         .map(levelKey => ({ value: levelKey, label: formatPokemonLevelLabel(levelKey) }));
 
@@ -20803,6 +20835,7 @@ function getPokemonAverageDescription(entry, variant){
         if(entry?.normalCaptureNote) return entry.normalCaptureNote;
         if(isMegaPokemonCatalogEntry(entry)) return 'Mega nao pode ser capturado.';
         if(entry?.normalCaptureAvailable === false) return 'Nao pode ser capturado no momento.';
+        if(isPokemonSafariCaptureEntry(entry)) return 'Captura apenas com Safari Ball, Story Ball e Elemental Balls.';
         return 'Preco do Pokemon dividido pelo preco da Ultra, Story e Elemental Ball.';
     }
     if(entry?.shinyCaptureNote) return entry.shinyCaptureNote;
@@ -20935,7 +20968,7 @@ function normalizePokemonCatalogEntry(entry, index){
         role: roleInfo.label,
         roleKey: roleInfo.key,
         level: entry.level,
-        levelKey: normalizePokemonLevelFilterValue(entry.level),
+        levelKey: normalizePokemonLevelFilterValue(entry.level, entry.levelLabel),
         generation,
         generationKey: normalizePokemonGenerationFilterValue(generation),
         type1: primaryType,
