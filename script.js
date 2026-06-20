@@ -375,9 +375,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620e';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260620b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260620c';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260620d';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -664,6 +664,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Pancham', 'Pangoro'],
     ['Honedge', 'Doublade'],
     ['Doublade', 'Aegislash'],
+    ['Bergmite', 'Avalugg'],
     ['Litleo', 'Pyroar Female'],
     ['Litleo', 'Pyroar Male'],
     ['Binacle', 'Barbaracle'],
@@ -688,6 +689,8 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Bounsweet', 'Steenee'],
     ['Steenee', 'Tsareena'],
     ['Wimpod', 'Golisopod'],
+    ['Pikipek', 'Toucannon'],
+    ['Grubbin', 'Vikavolt'],
     // Generation 8 evolutions
     ['Grookey', 'Thwackey'],
     ['Thwackey', 'Rillaboom'],
@@ -695,10 +698,12 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Raboot', 'Cinderace'],
     ['Sobble', 'Drizzile'],
     ['Drizzile', 'Inteleon'],
+    ['Rookidee', 'Corvisquire'],
     ['Corvisquire', 'Corviknight'],
     ['Dottler', 'Orbeetle'],
     ['Chewtle', 'Drednaw'],
     ['Applin', 'Flapple'],
+    ['Applin', 'Appletun'],
     ['Applin', 'Dipplin'],
     ['Dipplin', 'Hydrapple'],
     ['Dreepy', 'Drakloak'],
@@ -4028,7 +4033,7 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Leaf Stone': { image: 'calculadora/leaf_stone.gif' },
     'Cocoon Stone': { image: 'calculadora/cocoon_stone.gif' },
     'Venom Stone': { image: 'calculadora/venom_stone.gif' },
-    'Punch Stone': { image: '' },
+    'Punch Stone': { image: 'calculadora/punch_stone.png' },
     'Thunder Stone': { image: 'calculadora/thunder_stone.png' },
     'Ice Stone': { image: 'calculadora/ice_stone.png' },
     'Rock Stone': { image: 'calculadora/rock_stone.gif' },
@@ -4054,6 +4059,16 @@ const MANIACS_LOCATION_SAFFRON = Object.freeze({
     image: 'maniacs/saffron.png',
     title: 'Saffron',
     routeSlug: 'saffron'
+});
+const MANIACS_LOCATION_VERMILLION = Object.freeze({
+    image: 'maniacs/vermillion.png',
+    title: 'Vermillion',
+    routeSlug: 'vermillion'
+});
+const MANIACS_LOCATION_FUCHSIA = Object.freeze({
+    image: 'maniacs/fuchsia.png',
+    title: 'Fuchsia',
+    routeSlug: 'fuchsia'
 });
 const MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF = Object.freeze({
     image: 'maniacs/cerulean-olf-shore-warf.png',
@@ -4135,17 +4150,21 @@ const MANIACS_STONE_ENTRIES = Object.freeze([
     { target: 'Bouffalant', location: MANIACS_LOCATION_SAFFRON },
     { target: 'Garbodor', location: MANIACS_LOCATION_SAFFRON },
     { target: 'Dachsbun', location: MANIACS_LOCATION_SAFFRON },
+    { target: 'Dedenne', location: MANIACS_LOCATION_VERMILLION },
+    { target: 'Ribombee', location: MANIACS_LOCATION_FUCHSIA },
     { target: 'Hawlucha', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF },
     { target: 'Cramorant', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF }
 ]);
 const MANIACS_LOCATION_ENTRIES = Object.freeze([
     MANIACS_LOCATION_CELADON,
     MANIACS_LOCATION_SAFFRON,
+    MANIACS_LOCATION_VERMILLION,
+    MANIACS_LOCATION_FUCHSIA,
     MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF
 ]);
 // Targets that should NOT render the compact location button inside the pokemon media
 // Instead the location image below the "Local" kicker will open the modal.
-const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','hawlucha','cramorant']);
+const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','dedenne','ribombee','hawlucha','cramorant']);
 const MANIACS_ESSENCE_ENTRIES = Object.freeze([
     { target: 'Orbeetle', hunt: 'Porygon' },
     { target: 'Trevenant', hunt: 'Grimmsnarl' },
