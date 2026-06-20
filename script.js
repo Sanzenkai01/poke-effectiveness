@@ -314,7 +314,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260619c';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260619d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -375,7 +375,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260619e';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260619h';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260619c';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260619a';
@@ -807,37 +807,30 @@ const TEAM_ASSETS = Object.freeze({
 });
 const TEAM_BUILDER_DPS_SUB_FUNCTIONS = Object.freeze(['finisher', 'stunner', 'silencer']);
 const TEAM_BUILDER_TANK_ROLE_FILTERS = Object.freeze(['defender', 'all-rounder']);
-const TEAM_BUILDER_ALLOWED_MEGA_NAMES = Object.freeze([
-    'Mega Clefable',
-    'Mega Steelix',
-    'Mega Meganium',
-    'Mega Victreebel',
-    'Mega Venusaur',
-    'Mega Charizard',
-    'Mega Blastoise',
-    'Mega Blaziken',
-    'Mega Swampert',
-    'Mega Gallade',
-    'Mega Manectric',
-    'Mega Camerupt',
-    'Mega Scolipede',
-    'Mega Malamar',
-    'Mega Hawlucha',
-    'Mega Absol',
-    'Mega Dragonite',
-    'Mega Drampa',
-    'Mega Pyroar',
-    'Mega Staraptor',
-    'Mega Garchomp',
-    'Mega Chesnaught',
+const TEAM_BUILDER_BLOCKED_MEGA_NAMES = Object.freeze([
+    'Mega Starmie',
+    'Mega Gyarados',
+    'Mega Raichu X',
+    'Mega Raichu Y',
+    'Mega Scizor',
+    'Mega Houndoom',
+    'Mega Sceptile',
+    'Mega Gardevoir',
+    'Mega Banette',
+    'Mega Absol Z',
+    'Mega Aggron',
+    'Mega Salamence',
     'Mega Delphox',
     'Mega Greninja',
-    'Mega Golisopod',
-    'Mega Tyranitar',
-    'Mega Metagross'
+    'Mega Hawlucha',
+    'Mega Barbaracle',
+    'Mega Eelektross',
+    'Mega Excadrill',
+    'Mega Feraligatr',
+    'Mega Lucario Z'
 ]);
-const TEAM_BUILDER_ALLOWED_MEGA_KEYS = Object.freeze(
-    TEAM_BUILDER_ALLOWED_MEGA_NAMES.map(name => normalizePokemonSearchText(name))
+const TEAM_BUILDER_BLOCKED_MEGA_KEYS = Object.freeze(
+    TEAM_BUILDER_BLOCKED_MEGA_NAMES.map(name => normalizePokemonSearchText(name))
 );
 const TEAM_BUILDER_PASSIVE_TEXTS = Object.freeze({
     sturdy: 'Sturdy: Ao chegar a menos de 1/3 de vida e ser atacado, o Pokemon ganha 30% de defesa por 5 segundos.',
@@ -9663,15 +9656,15 @@ function isTeamBuilderBossEntry(entry){
 
 function getTeamBuilderBaseCatalogEntries(){
     const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
-    const allowedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
-        .filter(entry => TEAM_BUILDER_ALLOWED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
+    const permittedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
+        .filter(entry => !TEAM_BUILDER_BLOCKED_MEGA_KEYS.includes(entry.searchName || normalizePokemonSearchText(entry.name)));
 
-    return [...normalEntries, ...allowedMegaEntries].filter(entry => {
+    return [...normalEntries, ...permittedMegaEntries].filter(entry => {
         if(!entry || entry.catalogHidden) return false;
         if(isTeamBuilderNormalEeveelutionBlocked(entry)) return false;
         if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderBossEntry(entry)) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
-        if(entry.roleKey === 'speedster') return false;
+        if(entry.roleKey === 'speedster' || entry.roleKey === 'supporter') return false;
         if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
         return true;
     }).map(applyTeamBuilderEeveelutionFunctionOverrides);
@@ -19452,6 +19445,14 @@ function renderPokemonEvolutionNavigation(entry){
 
     const track = document.createElement('div');
     track.className = 'pokemon-evolution-nav__track';
+    const baseStageEntries = [...parents, entry, ...children];
+    const baseStageColumnByKey = new Map(
+        baseStageEntries.map((stageEntry, index) => [
+            getPokemonCatalogRegistryKey(stageEntry?.name),
+            index + 1
+        ])
+    );
+    const alignedMegaNames = new Set(['mega gardevoir', 'mega gallade']);
 
     parents.forEach((parentEntry) => {
         track.appendChild(createPokemonEvolutionStage('previous', [parentEntry]));
@@ -19461,7 +19462,17 @@ function renderPokemonEvolutionNavigation(entry){
         track.appendChild(createPokemonEvolutionStage('next', [childEntry]));
     });
     megas.forEach((megaEntry) => {
-        track.appendChild(createPokemonEvolutionStage('mega', [megaEntry]));
+        const megaStage = createPokemonEvolutionStage('mega', [megaEntry]);
+        const normalizedMegaName = normalizePokemonSearchText(megaEntry?.name);
+        const megaBaseKey = getPokemonMegaBaseRegistryKey(megaEntry);
+        const baseColumn = baseStageColumnByKey.get(megaBaseKey);
+        if(alignedMegaNames.has(normalizedMegaName) && baseColumn){
+            const isCurrentBase = getPokemonCatalogRegistryKey(entry?.name) === megaBaseKey;
+            megaStage.classList.add('pokemon-evolution-nav__stage--aligned-mega');
+            megaStage.style.setProperty('--pokemon-evolution-base-column', String(baseColumn + (isCurrentBase ? 1 : 0)));
+            megaStage.style.setProperty('--pokemon-evolution-base-row', isCurrentBase ? '1' : '2');
+        }
+        track.appendChild(megaStage);
     });
 
     pokemonDetailsEvolutionSection.hidden = false;

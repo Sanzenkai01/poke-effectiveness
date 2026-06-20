@@ -15998,6 +15998,13 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   min-width: 0;
 }
 
+@media (min-width: 900px) {
+  .pokemon-evolution-nav__stage--aligned-mega {
+    grid-column: var(--pokemon-evolution-base-column);
+    grid-row: var(--pokemon-evolution-base-row);
+  }
+}
+
 .pokemon-evolution-nav__stage-label {
   display: inline-flex;
   align-items: center;

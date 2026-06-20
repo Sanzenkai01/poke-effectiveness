@@ -1781,9 +1781,10 @@
     {
       "name": "Rhyperior",
       "image": "pokemons/4gen/rhyperior.png",
-      "role": "all-rounder",
+      "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "type1": "ground",
       "type2": "rock",
@@ -3503,7 +3504,7 @@
       "team": "valor",
       "price": 5000,
       "moveset": [
-        "rock"
+        "ice"
       ],
       "level": 30
     },
@@ -4826,7 +4827,7 @@
       ],
       "type1": "rock",
       "moveset": [
-        "rock"
+        "electric"
       ],
       "team": "valor",
       "price": 8000,
@@ -5758,7 +5759,10 @@
     {
       "name": "Froslass",
       "image": "pokemons/4gen/froslass.png",
-      "role": "",
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "ice",
       "type2": "ghost",
       "moveset": [
@@ -9312,12 +9316,23 @@
       ],
       "type2": "grass",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "level": 80,
       "generation": 7,
       "dex": 781,
-      "image": "pokemons/7gen/dhelmise.png"
+      "image": "pokemons/7gen/dhelmise.png",
+      "price": 0,
+      "specialTags": [
+        "maniac"
+      ],
+      "priceLabel": "Obtido em troca com o Maniac",
+      "acquisitionUrl": "/maniacs",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon maniac nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
     },
     {
       "name": "Vikavolt",
@@ -10096,7 +10111,11 @@
       "level": 65,
       "generation": 5,
       "dex": 611,
-      "image": "pokemons/5gen/fraxure.png"
+      "image": "pokemons/5gen/fraxure.png",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
     },
     {
       "name": "Haxorus",
@@ -10118,7 +10137,9 @@
       "dex": 612,
       "image": "pokemons/5gen/haxorus.png",
       "normalCaptureAvailable": false,
-      "normalCaptureNote": "Pokemon de boss nao pode ser capturado."
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
     },
     {
       "name": "Dracozolt",
@@ -10187,6 +10208,160 @@
       "generation": 8,
       "dex": 883,
       "image": "pokemons/8gen/arctovish.png"
+    },
+    {
+      "name": "Alolan Ninetales",
+      "image": "pokemons/7gen/alolan-ninetales.png",
+      "generation": 7,
+      "dex": 38,
+      "role": "attacker",
+      "subFunctions": [
+        "Silencer"
+      ],
+      "type1": "ice",
+      "type2": "fairy",
+      "moveset": [
+        "fairy"
+      ],
+      "team": "mystic",
+      "level": 80,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
+    },
+    {
+      "name": "Alolan Golem",
+      "image": "pokemons/7gen/alolan-golem.png",
+      "generation": 7,
+      "dex": 76,
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "rock",
+      "type2": "electric",
+      "moveset": [
+        "electric"
+      ],
+      "team": "valor",
+      "level": 80,
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
+    },
+    {
+      "name": "Gigalith",
+      "image": "pokemons/5gen/gigalith.png",
+      "generation": 5,
+      "dex": 526,
+      "role": "all-rounder",
+      "type1": "rock",
+      "moveset": [
+        "rock"
+      ],
+      "team": "valor",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
+    },
+    {
+      "name": "Beartic",
+      "image": "pokemons/5gen/beartic.png",
+      "generation": 5,
+      "dex": 614,
+      "role": "all-rounder",
+      "type1": "ice",
+      "moveset": [
+        "ice"
+      ],
+      "team": "mystic",
+      "level": 80,
+      "passiveName": "Frighten",
+      "passiveDescription": "Concede resistencia a pokemon do tipo grass.",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Impossivel de capturar.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada."
+    },
+    {
+      "name": "Timburr",
+      "image": "pokemons/5gen/timburr.png",
+      "generation": 5,
+      "dex": 532,
+      "role": "supporter",
+      "type1": "fighting",
+      "moveset": [
+        "fighting"
+      ],
+      "team": "mystic",
+      "passiveName": "Guts",
+      "passiveDescription": "O Pokemon se torna imune aos status Slow, Paralyze e Silence."
+    },
+    {
+      "name": "Gurdurr",
+      "image": "pokemons/5gen/gurdurr.png",
+      "generation": 5,
+      "dex": 533,
+      "role": "supporter",
+      "type1": "fighting",
+      "moveset": [
+        "fighting"
+      ],
+      "team": "mystic",
+      "passiveName": "Guts",
+      "passiveDescription": "O Pokemon se torna imune aos status Slow, Paralyze e Silence."
+    },
+    {
+      "name": "Conkeldurr",
+      "image": "pokemons/5gen/conkeldurr.png",
+      "generation": 5,
+      "dex": 534,
+      "role": "attacker",
+      "type1": "fighting",
+      "moveset": [
+        "fighting"
+      ],
+      "team": "mystic",
+      "level": 100,
+      "passiveName": "Guts",
+      "passiveDescription": "O Pokemon se torna imune aos status Slow, Paralyze e Silence.",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon de boss nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
+      "specialTags": [
+        "boss"
+      ]
+    },
+    {
+      "name": "Noivern",
+      "image": "pokemons/6gen/noivern.png",
+      "generation": 6,
+      "dex": 715,
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "flying",
+      "type2": "dragon",
+      "moveset": [
+        "flying"
+      ],
+      "team": "valor",
+      "level": 100,
+      "passiveName": "Frisk",
+      "shinyPassiveName": "Infiltrator",
+      "shinyPassiveDescription": "O Pokémon causa dano super efetivo contra outros pokémon de uma mesma tipagem que a sua (Shiny Noivern: causa dano em Dragon também)",
+      "normalCaptureAvailable": false,
+      "normalCaptureNote": "Pokemon de boss nao pode ser capturado.",
+      "shinyCaptureAvailable": false,
+      "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
+      "specialTags": [
+        "boss"
+      ]
     }
   ]
 }

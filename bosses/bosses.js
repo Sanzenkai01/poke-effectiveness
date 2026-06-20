@@ -1469,7 +1469,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
           createRolePick('Shieldon', ['rock', 'steel'], 'rock'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
-          createRolePick('Nosepass', ['rock'], 'rock'),
           createRolePick('Probopass', ['rock', 'steel'], 'rock')
         ],
         support: [
@@ -1714,7 +1713,6 @@ const championPathBosses = createManualRoleboardBosses([
         ],
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
-          createRolePick('Nosepass', ['rock'], 'rock'),
           createRolePick('Shuckle', ['bug', 'rock'], 'rock'),
           createRolePick('Magcargo', ['fire', 'rock'], 'rock'),
           createRolePick('Shieldon', ['rock', 'steel'], 'rock'),
@@ -3178,7 +3176,6 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Lickitung", 'normal', 'tank', 'valor'),
       createFixedRecommendationDefinition("Magcargo", 'fire', 'tank', 'valor'),
       createFixedRecommendationDefinition("Miltank", 'normal', 'tank', 'valor'),
-      createFixedRecommendationDefinition("Nosepass", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Onix", 'rock', 'tank', 'valor'),
       createFixedRecommendationDefinition("Orbeetle", 'bug', 'tank', 'valor'),
       createFixedRecommendationDefinition("Probopass", 'rock', 'tank', 'valor'),
