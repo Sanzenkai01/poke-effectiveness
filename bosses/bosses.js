@@ -2429,6 +2429,7 @@ const mainQuestBosses = createManualRoleboardBosses([
     image: '/mainquest/alpha-fearow.png',
     types: ['normal', 'flying'],
     moveType: 'flying',
+    cardTags: ['Solo'],
     description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
@@ -2457,6 +2458,7 @@ const mainQuestBosses = createManualRoleboardBosses([
     image: '/mainquest/alpha-marowak.png',
     types: ['ground'],
     moveType: 'ground',
+    cardTags: ['Solo'],
     description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
@@ -2489,6 +2491,7 @@ const mainQuestBosses = createManualRoleboardBosses([
     image: '/mainquest/alpha-kingler.png',
     types: ['water'],
     moveType: 'water',
+    cardTags: ['Solo'],
     description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
@@ -2515,6 +2518,7 @@ const mainQuestBosses = createManualRoleboardBosses([
     image: 'megamalamar.png',
     types: ['dark', 'psychic'],
     moveType: 'psychic',
+    cardTags: ['Trio'],
     description: 'Luta 3v1 da Main Quest. Monte a composicao com Tank, Speedster e Suporte.',
     clans: {
       instinct: {
@@ -10892,6 +10896,14 @@ function makeRoleBossCard(boss) {
     chip.appendChild(icon);
     chip.appendChild(document.createTextNode(icon.title || 'Tipo'));
     chips.appendChild(chip);
+  });
+  (Array.isArray(boss.cardTags) ? boss.cardTags : []).forEach((label) => {
+    const normalizedLabel = String(label || '').trim();
+    if (!normalizedLabel) return;
+    const tag = document.createElement('span');
+    tag.className = 'boss-role-card__chip boss-role-card__chip--tag';
+    tag.textContent = normalizedLabel;
+    chips.appendChild(tag);
   });
 
   button.append(title, avatar);
