@@ -375,9 +375,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260620f';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260621a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260620b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260620d';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260621a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -642,8 +642,11 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Pignite', 'Emboar'],
     ['Oshawott', 'Dewott'],
     ['Dewott', 'Samurott'],
+    ['Roggenrola', 'Boldore'],
+    ['Boldore', 'Gigalith'],
     ['Tynamo', 'Eelektrik'],
     ['Eelektrik', 'Eelektross'],
+    ['Dwebble', 'Crustle'],
     ['Sandile', 'Krokorok'],
     ['Krokorok', 'Krookodile'],
     ['Deino', 'Zweilous'],
