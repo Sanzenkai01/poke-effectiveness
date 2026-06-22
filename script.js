@@ -4031,7 +4031,6 @@ const BOOST_DEFAULT_STATE = Object.freeze({
 });
 const BOOST_BRONZE_SINGLE_STONES_PER_LEVEL = 50;
 const BOOST_BRONZE_DOUBLE_STONES_PER_LEVEL = 25;
-const BOOST_BRONZE_STAR_PER_LEVEL = 3;
 const BOOST_BRONZE_PIECES_PER_STAR = 3;
 const BOOST_SILVER_ANCIENT_STONE_PER_LEVEL = 100;
 const BOOST_TYPE_STONE_META = Object.freeze({
@@ -4224,6 +4223,13 @@ const BOOST_DITTO_BRONZE_STONE_STEPS = Object.freeze({
     3: { quantity: 40, stones: ['Thunder Stone', 'Ice Stone', 'Rock Stone', 'Feather Stone'] },
     4: { quantity: 50, stones: ['Earth Stone', 'Darkness Stone', 'Enigma Stone', 'Hearth Stone'] },
     5: { quantity: 60, stones: ['Metal Stone', 'Dragon Stone', 'Fairy Stone', 'Ghost Stone'] }
+});
+const BOOST_BRONZE_STAR_STEPS = Object.freeze({
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5
 });
 const BOOST_SILVER_STAR_RECIPE = Object.freeze({
     'Shining Ancient Stone': 1,
@@ -16981,6 +16987,23 @@ function getBoostLevelDelta(currentLevel, targetLevel){
     return Math.max(0, normalizeBoostLevel(targetLevel) - normalizeBoostLevel(currentLevel));
 }
 
+function getBoostBronzeStarQuantity(state, options = {}){
+    if(state?.shiny !== 'yes') return 0;
+    const {
+        currentLevel = state?.bronzeCurrentLevel,
+        targetLevel = state?.bronzeLevel
+    } = options;
+    const current = normalizeBoostLevel(currentLevel);
+    const target = normalizeBoostLevel(targetLevel);
+    if(target <= current) return 0;
+
+    let total = 0;
+    for(let level = current + 1; level <= target; level += 1){
+        total += Number(BOOST_BRONZE_STAR_STEPS[level] || 0);
+    }
+    return total;
+}
+
 function getBoostTotalMaterialBadgeText(item){
     const materialCategories = new Set([
         'ancient-shiny',
@@ -17035,15 +17058,15 @@ function calculateBoostTotalDirectItems(state){
     const bronzeTarget = normalizeBoostLevel(state.bronzeLevel);
     const silverCurrent = normalizeBoostLevel(state.silverCurrentLevel);
     const silverTarget = normalizeBoostLevel(state.silverLevel);
-    const bronzeDelta = getBoostLevelDelta(bronzeCurrent, bronzeTarget);
     const silverStepSum = getBoostLevelRangeStepSum(silverCurrent, silverTarget);
 
     if(bronzeTarget > bronzeCurrent){
         totalDirectItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true }));
 
         if(state.shiny === 'yes'){
+            const bronzeStarCount = getBoostBronzeStarQuantity(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget });
             totalDirectItems.push(
-                createBoostMaterialItem('Bronze Star', bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL, {
+                createBoostMaterialItem('Bronze Star', bronzeStarCount, {
                     category: 'bronze'
                 })
             );
@@ -17067,11 +17090,8 @@ function calculateBoostTotalDirectItems(state){
 
 function calculateBoostTotalCraftItems(state){
     const totalCraftItems = [];
-    const bronzeDelta = getBoostLevelDelta(state.bronzeCurrentLevel, state.bronzeLevel);
     const silverStepSum = getBoostLevelRangeStepSum(state.silverCurrentLevel, state.silverLevel);
-    const totalBronzeStarCount = state.shiny === 'yes'
-        ? bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL
-        : 0;
+    const totalBronzeStarCount = getBoostBronzeStarQuantity(state);
     const totalSilverStarCount = silverStepSum;
     const totalSilverPieceCount = totalSilverStarCount * (BOOST_SILVER_STAR_RECIPE['Piece of Silver Star'] || 0);
     const totalPieceBronzeFromBronzeStars = totalBronzeStarCount * BOOST_BRONZE_PIECES_PER_STAR;
@@ -17124,13 +17144,12 @@ function calculateBoostMaterials(state){
     const bronzeTarget = normalizeBoostLevel(state.bronzeLevel);
     const silverCurrent = normalizeBoostLevel(state.silverCurrentLevel);
     const silverTarget = normalizeBoostLevel(state.silverLevel);
-    const bronzeDelta = getBoostLevelDelta(bronzeCurrent, bronzeTarget);
 
     if(bronzeTarget > bronzeCurrent){
         bronzeItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true, contextLabel: 'Direto' }));
 
         if(state.shiny === 'yes'){
-            const bronzeStarCount = bronzeDelta * BOOST_BRONZE_STAR_PER_LEVEL;
+            const bronzeStarCount = getBoostBronzeStarQuantity(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget });
             bronzeItems.push(
                 createBoostMaterialItem('Bronze Star', bronzeStarCount, {
                     detail: 'Custo direto do shiny.',
