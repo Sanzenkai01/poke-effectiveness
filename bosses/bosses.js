@@ -50,7 +50,7 @@ const hoopaPortalsData = [
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
-          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
+          { name: 'Gorging Cramorant', image: 'gorging-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -167,7 +167,7 @@ const hoopaPortalsData = [
       valor: {
         label: 'Valor',
         recommended: [
-          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Gorging Cramorant', image: 'gorging-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: "Farfetch'd", image: 'farfetchd.png', tier: 'excelente', types: ['normal','flying'], description: 'Tipo move: Flying.' },
           { name: "May's Beautifly", image: 'may-beautifly.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Flying.' },
           { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
@@ -347,7 +347,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
-          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Gorging Cramorant', image: 'gorging-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Raticate', image: 'raticate.png', tier: 'bom', types: ['normal'], description: 'Tipo move: Dark.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' }
         ]
@@ -509,7 +509,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Scolipede', image: 'scolipede.png', tier: 'excelente', types: ['bug','poison'], description: 'Tipo move: Poison.' },
           { name: 'Mega Scizor', image: 'mega-scizor.png', tier: 'excelente', types: ['bug','steel'], description: 'Tipo move: Steel.' },
-          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
+          { name: 'Gorging Cramorant', image: 'gorging-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' },
           { name: 'Kabutops', image: 'kabutops.png', tier: 'excelente', types: ['rock','water'], description: 'Tipo move: Rock.' },
           { name: 'Tauros', image: 'tauros.png', tier: 'excelente', types: ['normal'], description: 'Tipo move: Electric.' }
         ]
@@ -558,7 +558,7 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Delphox', image: 'delphox.png', tier: 'excelente', types: ['fire','psychic'], description: 'Tipo move: Fire.' },
           { name: 'CharizardTwo', image: 'CharizardTwo.png', tier: 'excelente', types: ['fire','flying'], description: 'Tipo move: Fire.' },
-          { name: 'Cramorant', image: 'flying-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
+          { name: 'Gorging Cramorant', image: 'gorging-cramorant.png', tier: 'excelente', types: ['flying','water'], description: 'Tipo move: Water.' }
         ]
       }
     }
@@ -791,7 +791,7 @@ const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
 let activeSpeedsterContextName = null;
 let knownSpeedsterNames = null;
 const mainQuestNonSpeedsterNameKeys = Object.freeze(new Set([
-  'cramorant',
+  'gorgingcramorant',
   'lombre',
   'lurantis',
   'ribombee'
@@ -1208,7 +1208,7 @@ const rolePickImageOverrides = {
   bannet: 'banette.png',
   blastoisetwo: 'BlastoiseTwo.png',
   charizardtwo: 'CharizardTwo.png',
-  cramorant: 'flying-cramorant.png',
+  gorgingcramorant: 'gorging-cramorant.png',
   drifloon: 'drifloon.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
@@ -1407,7 +1407,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
           createRolePick('Scyther', ['bug', 'flying'], 'bug'),
           createRolePick('Shiny Scyther', ['bug', 'flying'], 'bug'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
@@ -1465,7 +1465,7 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
           createRolePick('Weavile', ['dark', 'ice'], 'ice'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water')
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water')
         ],
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
@@ -1594,7 +1594,7 @@ const championPathBosses = createManualRoleboardBosses([
         dps: [
           createRolePick('Weavile', ['dark', 'ice'], 'ice'),
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water')
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water')
         ],
         tank: [
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
@@ -1648,7 +1648,7 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Bouffalant', ['normal'], 'ground'),
           createRolePick('Absol', ['dark'], 'dark'),
           createRolePick('Kabutops', ['rock', 'water'], 'rock'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Raticate', ['normal'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
           // Lopunny é suporte — removida de DPS
@@ -1961,7 +1961,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
           createRolePick('Bouffalant', ['normal'], 'ground'),
           createRolePick('Kabutops', ['rock', 'water'], 'water'),
           createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
@@ -2026,7 +2026,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
           createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
           createRolePick('Bouffalant', ['normal'], 'ground'),
           createRolePick('Kabutops', ['rock', 'water'], 'water'),
-          createRolePick('Cramorant', ['flying', 'water'], 'water'),
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
@@ -2417,7 +2417,7 @@ const specialBossesData = [
           createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' }),
           createRolePick('Raticate', ['normal'], 'dark', { tier: 'bom' }),
           createRolePick('Bouffalant', ['normal'], 'ground', { tier: 'bom' }),
-          createRolePick('Cramorant', ['flying', 'water'], 'water', { tier: 'bom' })
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water', { tier: 'bom' })
         ]
       }
     }
@@ -3159,7 +3159,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Absol", 'dark', 'dps', 'valor'),
       createFixedRecommendationDefinition("Bouffalant", 'normal', 'dps', 'valor'),
       createFixedRecommendationDefinition("CharizardTwo", 'fire', 'dps', 'valor'),
-      createFixedRecommendationDefinition("Cramorant", 'flying', 'dps', 'valor', { moveType: 'water' }),
+      createFixedRecommendationDefinition("Gorging Cramorant", 'flying', 'dps', 'valor', { moveType: 'water' }),
       createFixedRecommendationDefinition("Delphox", 'fire', 'dps', 'valor'),
       createFixedRecommendationDefinition("Farfetch'd", 'normal', 'dps', 'valor'),
       createFixedRecommendationDefinition("Heracross", 'bug', 'dps', 'valor'),
@@ -3408,7 +3408,7 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
-  if (nameKey === 'cramorant') {
+  if (nameKey === 'gorgingcramorant') {
     return {
       passiveSuperEffectiveTypes: ['flying'],
       passiveText: 'Passiva: Gulp Missile: causa dano super efetivo em qualquer pokemon do tipo Flying.'
@@ -4653,7 +4653,7 @@ const bossPokemonAssetAliases = Object.freeze({
   'farfetch-d.png': 'pokemons/1gen/farfetchd.png',
   'farfetchd.png': 'pokemons/1gen/farfetchd.png',
   'fidough.png': 'pokemons/9gen/fidough.png',
-  'flying-cramorant.png': 'pokemons/8gen/flying-cramorant.png',
+  'gorging-cramorant.png': 'pokemons/8gen/gorging-cramorant.png',
   'frosmoth.png': 'pokemons/8gen/frosmoth.png',
   'melony-s-frosmoth.png': 'pokemons/8gen/frosmoth.png',
   'garbodor.png': 'pokemons/5gen/garbodor.png',
@@ -6878,7 +6878,7 @@ function injectRequestedSupportRecommendations() {
 const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: 'VenusaurTwo', types: ['grass', 'poison'], moveTypes: ['grass'], clan: 'instinct' },
   { name: 'BlastoiseTwo', types: ['water'], moveTypes: ['water'], clan: 'mystic' },
-  { name: 'CharizardTwo', types: ['fire', 'flying'], moveTypes: ['flying'], clan: 'valor' },
+  { name: 'CharizardTwo', types: ['fire', 'flying'], moveTypes: ['fire'], clan: 'valor' },
   { name: 'Raticate', types: ['normal'], moveTypes: ['dark'], clan: 'valor' },
   { name: 'Pikachu', types: ['electric'], moveTypes: ['electric'], clan: 'instinct' },
   { name: 'Alakazam', types: ['psychic'], moveTypes: ['psychic'], clan: 'instinct' },
@@ -6899,6 +6899,7 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: 'Seviper', types: ['poison'], moveTypes: ['poison'], clan: 'instinct' },
   { name: 'Banette', types: ['ghost'], moveTypes: ['ghost'], clan: 'mystic' },
   { name: 'Absol', types: ['dark'], moveTypes: ['dark'], clan: 'valor' },
+  { name: 'Gorging Cramorant', types: ['flying', 'water'], moveTypes: ['water'], clan: 'valor' },
   { name: 'Drifloon', types: ['ghost', 'flying'], moveTypes: ['fire'], clan: 'mystic' },
   { name: 'Serperior', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
   { name: "Rosa's Serperior", types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },

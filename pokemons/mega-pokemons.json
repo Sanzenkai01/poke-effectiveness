@@ -254,7 +254,8 @@
       "image": "pokemons/megas/mega-blaziken.png",
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "type1": "fire",
       "type2": "fighting",
@@ -375,7 +376,13 @@
       "priceLabel": "Banettite",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "passiveName": "Red Eyes",
+      "passiveDescription": "O Pokemon recebe dano inafetivo de ataques dos tipos Psychic e Ghost.",
+      "defenseByBossType": {
+        "psychic": 0.75,
+        "ghost": 0.75
+      }
     },
     {
       "name": "Mega Absol",
@@ -393,7 +400,9 @@
       "priceLabel": "Absolite",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "passiveName": "Super Luck",
+      "passiveDescription": "Ao atacar fisicamente tem chance de conceder um bonus de 20% de forca para a proxima habilidade. So pode ocorrer uma vez a cada 20 segundos."
     },
     {
       "name": "Mega Absol Z",
@@ -413,7 +422,9 @@
       "priceLabel": "Absolite Z",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "passiveName": "Super Luck",
+      "passiveDescription": "Ao atacar fisicamente tem chance de conceder um bonus de 20% de forca para a proxima habilidade. So pode ocorrer uma vez a cada 20 segundos. Possui moveset Dark e um ataque que muda seu moveset para Fairy."
     },
     {
       "name": "Mega Dragonite",
@@ -581,7 +592,8 @@
       "type2": "dragon",
       "subFunctions": [
         "Stunner",
-        "Finisher"
+        "Finisher",
+        "Area Pull"
       ],
       "level": 80,
       "generation": 7,
@@ -610,7 +622,10 @@
       "defenseDamageFactorByBossType": {
         "water": 0.5,
         "ground": 0.5
-      }
+      },
+      "subFunctions": [
+        "Area Pull"
+      ]
     },
     {
       "name": "Mega Chesnaught",
@@ -629,7 +644,10 @@
       "image": "pokemons/megas/megachesnaught.png",
       "priceLabel": "Chesnaughtite",
       "passiveName": "Bulletproof",
-      "passiveDescription": "O Pokemon torna-se imune a alguns ataques de alvo unico."
+      "passiveDescription": "O Pokemon torna-se imune a alguns ataques de alvo unico.",
+      "subFunctions": [
+        "Area Pull"
+      ]
     },
     {
       "name": "Mega Delphox",
@@ -783,7 +801,10 @@
       ],
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "subFunctions": [
+        "Area Pull"
+      ]
     },
     {
       "name": "Mega Excadrill",
@@ -800,7 +821,10 @@
       "priceLabel": "Excadrillite",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "subFunctions": [
+        "Area Pull"
+      ]
     },
     {
       "name": "Mega Emboar",
@@ -834,7 +858,9 @@
       "priceLabel": "Feraligite",
       "registered": false,
       "variant": "mega",
-      "dex": null
+      "dex": null,
+      "passiveName": "Torrent",
+      "passiveDescription": "Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos."
     },
     {
       "name": "Mega Lucario",
