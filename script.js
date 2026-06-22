@@ -9822,10 +9822,11 @@ function getTimesOffensivePassiveMeta(entry, source = 'normal'){
         }
     };
 
-    if(source !== 'shiny'){
-        (Array.isArray(entry?.passiveSuperEffectiveTypes) ? entry.passiveSuperEffectiveTypes : [])
-            .forEach(addType);
-    }
+    const explicitPassiveTypes = source === 'shiny'
+        ? entry?.shinyPassiveSuperEffectiveTypes
+        : entry?.passiveSuperEffectiveTypes;
+    (Array.isArray(explicitPassiveTypes) ? explicitPassiveTypes : [])
+        .forEach(addType);
 
     getTimesOffensivePassiveTextCandidates(entry, source).forEach(text => {
         const meta = getTimesOffensiveTypesFromPassiveText(entry, text);
@@ -21496,6 +21497,11 @@ function normalizePokemonCatalogEntry(entry, index){
         shinyPassiveDescription: String(entry.shinyPassiveDescription || '').trim(),
         passiveSuperEffectiveTypes: Array.from(new Set(
             (Array.isArray(entry.passiveSuperEffectiveTypes) ? entry.passiveSuperEffectiveTypes : [])
+                .map(normalizePokemonTypeKey)
+                .filter(Boolean)
+        )),
+        shinyPassiveSuperEffectiveTypes: Array.from(new Set(
+            (Array.isArray(entry.shinyPassiveSuperEffectiveTypes) ? entry.shinyPassiveSuperEffectiveTypes : [])
                 .map(normalizePokemonTypeKey)
                 .filter(Boolean)
         )),
