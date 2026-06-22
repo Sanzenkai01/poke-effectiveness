@@ -1167,6 +1167,7 @@ function createRoleboardBosses(entries, catalogMeta) {
     types: Array.isArray(entry.types) ? entry.types : [],
     moveType: entry.moveType || (Array.isArray(entry.types) ? entry.types[0] : null),
     effectiveness: cloneBossEffectivenessConfig(entry.effectiveness),
+    cardTags: Array.isArray(entry.cardTags) ? entry.cardTags : [],
     pokeblock: cloneBossConsumableConfig(entry.pokeblock || entry.pokebloc),
     ration: cloneBossConsumableConfig(entry.ration),
     disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
@@ -1333,6 +1334,7 @@ function createManualRoleboardBosses(entries, catalogMeta) {
     types: Array.isArray(entry.types) ? entry.types : [],
     moveType: entry.moveType || (Array.isArray(entry.types) ? entry.types[0] : null),
     effectiveness: cloneBossEffectivenessConfig(entry.effectiveness),
+    cardTags: Array.isArray(entry.cardTags) ? entry.cardTags : [],
     pokeblock: cloneBossConsumableConfig(entry.pokeblock || entry.pokebloc),
     ration: cloneBossConsumableConfig(entry.ration),
     disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
@@ -10688,41 +10690,43 @@ function makeHoopaBossCard(speedster) {
     button.appendChild(consumables);
   }
 
-  const completionLabel = document.createElement('label');
-  completionLabel.className = 'speedster-completion';
-  completionLabel.setAttribute('aria-label', `Marcar ${speedster.name} como feito`);
+  if (activeBossMode !== 'special') {
+    const completionLabel = document.createElement('label');
+    completionLabel.className = 'speedster-completion';
+    completionLabel.setAttribute('aria-label', `Marcar ${speedster.name} como feito`);
 
-  const completionCheckbox = document.createElement('input');
-  completionCheckbox.type = 'checkbox';
-  completionCheckbox.className = 'speedster-completion__checkbox';
-  completionCheckbox.checked = isHoopaBossCompleted(speedster.id);
-  completionCheckbox.setAttribute('aria-label', `Chefe ${speedster.name} concluido hoje`);
+    const completionCheckbox = document.createElement('input');
+    completionCheckbox.type = 'checkbox';
+    completionCheckbox.className = 'speedster-completion__checkbox';
+    completionCheckbox.checked = isHoopaBossCompleted(speedster.id);
+    completionCheckbox.setAttribute('aria-label', `Chefe ${speedster.name} concluido hoje`);
 
-  const completionText = document.createElement('span');
-  completionText.className = 'speedster-completion__text';
+    const completionText = document.createElement('span');
+    completionText.className = 'speedster-completion__text';
 
-  const syncCompletionState = (completed) => {
-    button.dataset.completed = completed ? 'true' : 'false';
-    completionText.textContent = completed ? 'Feito hoje' : 'Pendente';
-    completionCheckbox.checked = completed;
-  };
+    const syncCompletionState = (completed) => {
+      button.dataset.completed = completed ? 'true' : 'false';
+      completionText.textContent = completed ? 'Feito hoje' : 'Pendente';
+      completionCheckbox.checked = completed;
+    };
 
-  syncCompletionState(completionCheckbox.checked);
+    syncCompletionState(completionCheckbox.checked);
 
-  completionLabel.append(completionCheckbox, completionText);
-  button.appendChild(completionLabel);
+    completionLabel.append(completionCheckbox, completionText);
+    button.appendChild(completionLabel);
 
-  completionLabel.addEventListener('click', (event) => {
-    event.stopPropagation();
-  });
-  completionLabel.addEventListener('pointerdown', (event) => {
-    event.stopPropagation();
-  });
-  completionCheckbox.addEventListener('change', () => {
-    const completed = completionCheckbox.checked;
-    setHoopaBossCompleted(speedster.id, completed);
-    syncCompletionState(completed);
-  });
+    completionLabel.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+    completionLabel.addEventListener('pointerdown', (event) => {
+      event.stopPropagation();
+    });
+    completionCheckbox.addEventListener('change', () => {
+      const completed = completionCheckbox.checked;
+      setHoopaBossCompleted(speedster.id, completed);
+      syncCompletionState(completed);
+    });
+  }
 
   button.addEventListener('click', (event) => {
     if (getPassiveTooltipTrigger(event.target)) return;
@@ -10842,6 +10846,16 @@ function makeRoleBossCard(boss) {
   button.setAttribute('tabindex', '0');
   button.setAttribute('aria-label', `Abrir detalhes de ${boss.name}`);
 
+  const modeBadgeLabel = Array.isArray(boss.cardTags)
+    ? String(boss.cardTags[0] || '').trim()
+    : '';
+  if (modeBadgeLabel) {
+    const modeBadge = document.createElement('span');
+    modeBadge.className = 'boss-role-card__mode-badge';
+    modeBadge.textContent = modeBadgeLabel;
+    button.appendChild(modeBadge);
+  }
+
   const tutorialUrl = getBossTutorialUrl(boss);
   if (tutorialUrl) {
     const tutorialWrapper = document.createElement('div');
@@ -10893,17 +10907,10 @@ function makeRoleBossCard(boss) {
   getBossTypeIcons(boss.types || []).forEach((icon) => {
     const chip = document.createElement('span');
     chip.className = 'boss-role-card__chip boss-role-card__chip--type';
+    chip.title = icon.title || 'Tipo';
+    chip.setAttribute('aria-label', icon.title || 'Tipo');
     chip.appendChild(icon);
-    chip.appendChild(document.createTextNode(icon.title || 'Tipo'));
     chips.appendChild(chip);
-  });
-  (Array.isArray(boss.cardTags) ? boss.cardTags : []).forEach((label) => {
-    const normalizedLabel = String(label || '').trim();
-    if (!normalizedLabel) return;
-    const tag = document.createElement('span');
-    tag.className = 'boss-role-card__chip boss-role-card__chip--tag';
-    tag.textContent = normalizedLabel;
-    chips.appendChild(tag);
   });
 
   button.append(title, avatar);

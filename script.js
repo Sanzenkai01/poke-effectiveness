@@ -314,7 +314,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260621a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260621d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -6344,8 +6344,7 @@ function getCatchPokemonCaptureValue(entry, variant){
         return price > 0 ? String(price) : '';
     }
     if(variant === 'shiny'){
-        const isAce = Array.isArray(entry.specialTags) && entry.specialTags.includes('ace');
-        const levelKey = isAce ? 'ace' : getPokemonCaptureLevelKey(entry.level);
+        const levelKey = getPokemonShinyCaptureLevelKey(entry);
         return levelKey ? String(levelKey) : '';
     }
     return '';
@@ -21071,6 +21070,13 @@ function getPokemonCaptureLevelKey(level){
     return normalized || 0;
 }
 
+function getPokemonShinyCaptureLevelKey(entry){
+    const specialTags = Array.isArray(entry?.specialTags) ? entry.specialTags : [];
+    if(specialTags.includes('ace') || isPokemonHuntAceSourceEntry(entry)) return 'ace';
+    if(specialTags.includes('pre-ace') || isPokemonHuntPreAceEntry(entry)) return 'pre';
+    return getPokemonCaptureLevelKey(entry?.level);
+}
+
 function isMegaPokemonCatalogEntry(entry){
     return normalizePokemonCatalogVariant(entry?.variant) === POKEMON_CATALOG_VARIANT_MEGA;
 }
@@ -21175,24 +21181,17 @@ function isPokemonHuntPreAceEntry(entry){
 
 function getPokemonHuntPreAceShinyAverageForBall(entry, ballKey){
     if(!isPokemonHuntPreAceEntry(entry)) return 0;
-    return getPokemonCaptureAverageForBall(95, 'shiny', ballKey);
+    return getPokemonCaptureAverageForBall('pre', 'shiny', ballKey);
 }
 
 function getPokemonAverageValueForVariant(entry, variant, ballKey){
     if(!isPokemonCaptureVariantAvailable(entry, variant)) return 0;
     if(variant === 'normal') return getPokemonNormalCaptureAverageForBall(entry, ballKey);
     if(variant === 'shiny'){
-        const huntPreAceAverage = getPokemonHuntPreAceShinyAverageForBall(entry, ballKey);
-        if(huntPreAceAverage > 0) return huntPreAceAverage;
+        const levelForRequirements = getPokemonShinyCaptureLevelKey(entry);
+        return levelForRequirements ? getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey) : 0;
     }
-
-    // Some entries are marked as "ace" via specialTags but have numeric level (100).
-    // For capture requirement lookup we must treat those as the 'ace' bucket so
-    // the computeRequired() function can find the appropriate shiny requirements.
-    const isAce = (Array.isArray(entry?.specialTags) && entry.specialTags.includes('ace'))
-        || isPokemonHuntAceSourceEntry(entry);
-    const levelForRequirements = isAce ? 'ace' : entry?.level;
-    return getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey);
+    return 0;
 }
 
 function isPokemonNormalCaptureBallAllowed(entry, ballKey){
