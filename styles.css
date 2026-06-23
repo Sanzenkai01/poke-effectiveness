@@ -4533,6 +4533,7 @@ p {
 }
 
 .training-material-card__media {
+  position: relative;
   display: inline-flex;
   width: 48px;
   height: 48px;
@@ -4546,6 +4547,25 @@ p {
   max-width: 34px;
   max-height: 34px;
   object-fit: contain;
+}
+
+.training-material-card__media-badge {
+  position: absolute;
+  top: -0.38rem;
+  right: -0.34rem;
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(250, 204, 21, 0.34);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(91, 33, 182, 0.92), rgba(49, 20, 88, 0.96) 58%, rgba(14, 8, 28, 0.98));
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.32),
+    0 0 10px rgba(250, 204, 21, 0.16);
+  font-size: 0.82rem;
+  line-height: 1;
 }
 
 .training-material-card__body {
@@ -27508,6 +27528,26 @@ body[data-active-tab="bosses"] .bosses-shell .speedster-search-input {
   box-shadow: none;
 }
 
+.modal,
+.speedster-modal,
+.site-youtube-modal,
+.site-stream-modal,
+.planner-edit-modal,
+.location-overlay {
+  z-index: 12000 !important;
+}
+
+.mainquest-puzzle-modal,
+.mainquest-advanced-jenny-modal,
+.mainquest-team-member-modal {
+  z-index: 12020 !important;
+}
+
+.mainquest-puzzle-zoom,
+.passive-tooltip-surface {
+  z-index: 12040 !important;
+}
+
 .main-footer {
   margin-top: 1rem;
   border-top: 1px solid var(--remake-border);
@@ -27639,6 +27679,82 @@ body.sidebar-open .app-shell__backdrop {
 .home-landing__supporting,
 .home-tool-card__description {
   color: var(--remake-muted);
+}
+
+.speedster-reco-score,
+.boss-role-pick-score {
+  gap: 0.32rem;
+  padding: 0.18rem;
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg, rgba(12, 18, 22, 0.96), rgba(6, 10, 13, 0.98));
+  border: 1px solid rgba(94, 211, 193, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 10px 18px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.speedster-reco-score-row,
+.boss-role-pick-score-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.26rem;
+  min-height: 1.3rem;
+  padding: 0.14rem 0.42rem;
+  border: 1px solid rgba(169, 190, 205, 0.12);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: none;
+}
+
+.speedster-reco-score-row--atk,
+.boss-role-pick-score-row--atk {
+  border-color: rgba(118, 241, 197, 0.18);
+  background: rgba(36, 207, 155, 0.075);
+}
+
+.speedster-reco-score-row--def,
+.boss-role-pick-score-row--def {
+  border-color: rgba(255, 209, 102, 0.18);
+  background: rgba(255, 209, 102, 0.07);
+}
+
+.speedster-reco-score-label,
+.boss-role-pick-score-label {
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  color: rgba(204, 218, 226, 0.72);
+}
+
+.speedster-reco-score-value,
+.boss-role-pick-score-value {
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.speedster-reco-score-row--atk .speedster-reco-score-value,
+.boss-role-pick-score-row--atk .boss-role-pick-score-value {
+  color: #76f1c5;
+}
+
+.speedster-reco-score-row--def .speedster-reco-score-value,
+.boss-role-pick-score-row--def .boss-role-pick-score-value {
+  color: #ffd166;
+}
+
+.speedster-reco-score:not(:has(.speedster-reco-score-row)) {
+  color: rgba(231, 241, 246, 0.92);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: pre;
 }
 
 @media (max-width: 980px) {

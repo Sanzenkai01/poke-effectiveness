@@ -15694,7 +15694,8 @@ function createTrainingMaterialCard(options = {}){
         detail = '',
         image = '',
         tone = '',
-        info = ''
+        info = '',
+        badge = ''
     } = options;
     const card = document.createElement('article');
     card.className = `training-material-card${tone ? ` training-material-card--${tone}` : ''}`;
@@ -15716,6 +15717,13 @@ function createTrainingMaterialCard(options = {}){
         img.loading = 'lazy';
         img.decoding = 'async';
         media.appendChild(img);
+    }
+    if(badge){
+        const badgeEl = document.createElement('span');
+        badgeEl.className = 'training-material-card__media-badge';
+        badgeEl.textContent = badge;
+        badgeEl.setAttribute('aria-hidden', 'true');
+        media.appendChild(badgeEl);
     }
     const body = document.createElement('span');
     body.className = 'training-material-card__body';
@@ -15852,8 +15860,9 @@ function renderTrainingResults(){
             label: 'Shining Stones',
             value: totals.shiningStoneBlocks,
             detail: `1 bloco a cada ${SHINING_PLATE_BLOCK_SIZE} Shining Plates`,
-            image: 'calculadora/shining_ancient.gif',
-            tone: 'shiny'
+            image: elementImage,
+            tone: 'shiny',
+            badge: '\u2728'
         }));
     }
 
