@@ -584,7 +584,7 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Marowak', image: 'marowak.png', tier: 'excelente', types: ['ground'], description: 'Tipo move: Ground.' },
-          { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Ground.' }
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Steel.' }
         ]
       },
       mystic: {
@@ -1673,7 +1673,7 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
           createRolePick('Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
@@ -1804,7 +1804,7 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
           createRolePick('Mega Raichu Y', ['electric'], 'electric')
         ],
@@ -1920,7 +1920,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
           createRolePick('Marowak', ['ground'], 'ground'),
           createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
           createRolePick('Lurantis', ['grass'], 'grass')
@@ -1987,7 +1987,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
           createRolePick('Marowak', ['ground'], 'ground'),
           createRolePick('Mega Raichu X', ['electric', 'fighting'], 'fighting'),
           createRolePick('VenusaurTwo', ['grass', 'poison'], 'grass')
@@ -2531,7 +2531,7 @@ const mainQuestBosses = createManualRoleboardBosses([
         ],
         dps: [
           createRolePick('Shiftry', ['grass', 'dark'], 'grass'),
-          createRolePick('Excadrill', ['ground', 'steel'], 'ground')
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel')
         ]
       },
       mystic: {
@@ -3068,7 +3068,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Alakazam", 'psychic', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Dedenne", 'electric', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Dragonair", 'dragon', 'dps', 'instinct'),
-      createFixedRecommendationDefinition("Excadrill", 'ground', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Excadrill", 'ground', 'dps', 'instinct', { moveType: 'steel' }),
       createFixedRecommendationDefinition("Lurantis", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Mega Excadrill", 'ground', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Marowak", 'ground', 'dps', 'instinct'),

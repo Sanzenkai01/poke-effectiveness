@@ -298,6 +298,7 @@ let teamsCatalogLoaded = false;
 let teamsCatalogLoadPromise = null;
 let teamsCatalog = [];
 let teamsCatalogRenderFrame = null;
+let teamEntryCompatibleHuntGroupsCache = new WeakMap();
 let activeTeamEntry = null;
 let timesDetailsLastFocus = null;
 let timesDetailsKeyHandler = null;
@@ -314,7 +315,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260622a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260622b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -4016,6 +4017,14 @@ const ranges = {
     '80-100': { plates: 289, gold: 34 },
     '95-100': { plates: 135, gold: 15 }
 };
+
+const TRAINING_OFFICIAL_TOTALS = Object.freeze([
+    { level: 50, plates: 280, coins: 40 },
+    { level: 65, plates: 284, coins: 37 },
+    { level: 80, plates: 289, coins: 34 },
+    { level: 95, plates: 135, coins: 15 },
+    { level: 100, plates: 0, coins: 0 }
+]);
 
 const COMMON_PLATE_COST = {
     elementItems: 750,
@@ -8255,7 +8264,12 @@ function showTimes(options = {}){
                 }
             }
             if(useGsap && contentTimes){
-                gsap.from(contentTimes, { opacity: 0, y: -10, duration: 0.4 });
+                gsap.from(contentTimes, {
+                    opacity: 0,
+                    y: -10,
+                    duration: 0.4,
+                    clearProps: 'opacity,transform'
+                });
             }
         })
         .catch((error) => {
@@ -8532,6 +8546,7 @@ function ensureTeamsCatalogLoaded(force = false){
         pokemonHuntPreAceStageByKey = null;
         pokemonHuntAceSourceKeys = null;
         huntBuilderTargetEntriesCache = null;
+        teamEntryCompatibleHuntGroupsCache = new WeakMap();
     }
 
     showTimesLoadingState();
@@ -8543,6 +8558,7 @@ function ensureTeamsCatalogLoaded(force = false){
             pokemonHuntPreAceStageByKey = null;
             pokemonHuntAceSourceKeys = null;
             huntBuilderTargetEntriesCache = null;
+            teamEntryCompatibleHuntGroupsCache = new WeakMap();
             return teamsCatalog;
         })
         .finally(() => {
@@ -9466,6 +9482,64 @@ function compactTeamHuntsForDisplay(hunts = []){
     return compacted;
 }
 
+function compactTeamBuilderHuntRecommendations(recommendations = []){
+    const sourceGroups = new Map();
+    (Array.isArray(recommendations) ? recommendations : []).forEach(recommendation => {
+        const name = String(recommendation?.name || '').trim();
+        if(!name) return;
+        const sourceName = String(recommendation?.sourceHuntName || name).trim();
+        const key = normalizePokemonSearchText(sourceName || name);
+        if(!key) return;
+        if(!sourceGroups.has(key)){
+            sourceGroups.set(key, {
+                sourceName,
+                final: null,
+                preEvolutions: []
+            });
+        }
+        const group = sourceGroups.get(key);
+        if(recommendation?.sourceHuntName){
+            group.preEvolutions.push(recommendation);
+        } else {
+            group.final = recommendation;
+        }
+    });
+
+    const displayRecommendations = [];
+    sourceGroups.forEach(group => {
+        if(group.preEvolutions.length){
+            const evolutionOrder = getTeamHuntPreEvolutionEntries(group.sourceName)
+                .map(entry => normalizePokemonSearchText(entry?.name))
+                .filter(Boolean);
+            const orderedPreEvolutions = [...group.preEvolutions].sort((left, right) => {
+                const leftIndex = evolutionOrder.indexOf(normalizePokemonSearchText(left?.name));
+                const rightIndex = evolutionOrder.indexOf(normalizePokemonSearchText(right?.name));
+                if(leftIndex !== -1 || rightIndex !== -1){
+                    return (leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex)
+                        - (rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex);
+                }
+                return left.name.localeCompare(right.name, 'pt-BR');
+            });
+            const bestPreEvolution = orderedPreEvolutions.reduce((best, current) => (
+                !best || Number(current?.score || 0) > Number(best?.score || 0) ? current : best
+            ), null);
+            const bundle = createTeamHuntBundleDisplayEntity(orderedPreEvolutions, group.sourceName);
+            displayRecommendations.push({
+                ...bundle,
+                score: Number(bestPreEvolution?.score || 0),
+                typeKeys: Array.isArray(bestPreEvolution?.typeKeys) ? bestPreEvolution.typeKeys : [],
+                note: String(bestPreEvolution?.note || '').trim()
+            });
+        }
+        if(group.final){
+            displayRecommendations.push(group.final);
+        }
+    });
+
+    return displayRecommendations
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.name.localeCompare(right.name, 'pt-BR'));
+}
+
 function createTeamHuntGroupSection(label, values, options = {}){
     const section = document.createElement('section');
     section.className = 'times-details-hunt-group';
@@ -9907,11 +9981,18 @@ function getTeamEntryCompatibleHuntGroups(entry, hunts = entry?.hunts){
     };
     if(!entry || !safeHunts.length) return groups;
 
+    if(hunts === entry?.hunts && teamEntryCompatibleHuntGroupsCache.has(entry)){
+        return teamEntryCompatibleHuntGroupsCache.get(entry);
+    }
+
     const slotEntries = getTeamEntrySlotEntries(entry);
     const expectedSlots = Array.isArray(entry.pokemons) ? entry.pokemons.length : 0;
     if((expectedSlots && slotEntries.length < expectedSlots) || !slotEntries.length){
         groups.normal = safeHunts.slice();
         groups.all = safeHunts.slice();
+        if(hunts === entry?.hunts){
+            teamEntryCompatibleHuntGroupsCache.set(entry, groups);
+        }
         return groups;
     }
 
@@ -9925,6 +10006,9 @@ function getTeamEntryCompatibleHuntGroups(entry, hunts = entry?.hunts){
         }
         groups.all.push(hunt);
     });
+    if(hunts === entry?.hunts){
+        teamEntryCompatibleHuntGroupsCache.set(entry, groups);
+    }
     return groups;
 }
 
@@ -11325,6 +11409,7 @@ function getTeamBuilderHuntRecommendations(){
             name: huntName,
             note: String(candidate.note || '').trim(),
             image: String(candidate.image || '').trim(),
+            sourceHuntName: String(candidate.sourceHuntName || '').trim(),
             score,
             typeKeys: weaknessTypeKeys
         };
@@ -11333,8 +11418,8 @@ function getTeamBuilderHuntRecommendations(){
         }
     });
 
-    return Array.from(huntScores.values())
-        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name))
+    return compactTeamBuilderHuntRecommendations(Array.from(huntScores.values())
+        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name)))
         .slice(0, 8);
 }
 
@@ -11355,6 +11440,22 @@ function createTeamBuilderHuntImage(name, imagePath = ''){
     image.decoding = 'async';
     setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
     return image;
+}
+
+function createTeamBuilderHuntMedia(recommendation){
+    const media = document.createElement('span');
+    media.className = 'team-builder-hunt-card__media';
+    const items = Array.isArray(recommendation?.items) && recommendation.items.length
+        ? recommendation.items
+        : [recommendation];
+    if(items.length > 1) media.classList.add('team-builder-hunt-card__media--bundle');
+    items.slice(0, 3).forEach(item => {
+        media.appendChild(createTeamBuilderHuntImage(
+            String(item?.name || recommendation?.name || '').trim(),
+            String(item?.image || '').trim()
+        ));
+    });
+    return media;
 }
 
 function renderTeamBuilderHunts(){
@@ -11381,9 +11482,7 @@ function renderTeamBuilderHunts(){
     recommendations.forEach(recommendation => {
         const card = document.createElement('article');
         card.className = 'team-builder-hunt-card';
-        const media = document.createElement('span');
-        media.className = 'team-builder-hunt-card__media';
-        media.appendChild(createTeamBuilderHuntImage(recommendation.name, recommendation.image));
+        const media = createTeamBuilderHuntMedia(recommendation);
         const body = document.createElement('span');
         body.className = 'team-builder-hunt-card__body';
         const name = document.createElement('strong');
@@ -11527,7 +11626,8 @@ function getHuntBuilderTargetDefinitionNames(definition){
     return Array.from(new Set([
         definition?.name,
         definition?.metaName,
-        ...(Array.isArray(definition?.lookupNames) ? definition.lookupNames : [])
+        ...(Array.isArray(definition?.lookupNames) ? definition.lookupNames : []),
+        ...(Array.isArray(definition?.preEvolutions) ? definition.preEvolutions.map(entry => entry?.name) : [])
     ].map(value => String(value || '').trim()).filter(Boolean)));
 }
 
@@ -11544,16 +11644,29 @@ function getExpandedHuntBuilderTargetDefinitions(){
 
     HUNT_BUILDER_TARGET_DEFINITIONS.forEach(definition => {
         addDefinition(definition);
+        const preEvolutions = [];
+        const seenPreEvolutionKeys = new Set();
         getHuntBuilderTargetDefinitionNames(definition).forEach(sourceName => {
             getTeamHuntPreEvolutionEntries(sourceName).forEach(preEvolution => {
-                addDefinition({
-                    name: preEvolution.name,
-                    metaName: definition?.metaName || sourceName,
-                    image: preEvolution.image || buildTeamPokemonImageFileName(preEvolution.name),
-                    lookupNames: [preEvolution.name]
+                const preEvolutionName = String(preEvolution?.name || '').trim();
+                const preEvolutionKey = normalizePokemonSearchText(preEvolutionName);
+                if(!preEvolutionName || !preEvolutionKey || seenPreEvolutionKeys.has(preEvolutionKey)) return;
+                seenPreEvolutionKeys.add(preEvolutionKey);
+                preEvolutions.push({
+                    name: preEvolutionName,
+                    image: preEvolution.image || buildTeamPokemonImageFileName(preEvolutionName)
                 });
             });
         });
+        if(preEvolutions.length){
+            addDefinition({
+                name: formatTeamHuntBundleName(preEvolutions),
+                metaName: definition?.metaName || definition?.name,
+                image: preEvolutions[0]?.image || '',
+                lookupNames: preEvolutions.map(entry => entry.name),
+                preEvolutions
+            });
+        }
     });
 
     return definitions;
@@ -11575,6 +11688,12 @@ function createHuntBuilderTargetEntry(definition){
     const names = getHuntBuilderTargetDefinitionNames(definition);
     const displayName = String(definition?.name || catalogEntry?.name || '').trim();
     if(!displayName) return null;
+    const preEvolutionItems = (Array.isArray(definition?.preEvolutions) ? definition.preEvolutions : [])
+        .map(item => ({
+            name: String(item?.name || '').trim(),
+            image: String(item?.image || buildTeamPokemonImageFileName(item?.name || '')).trim()
+        }))
+        .filter(item => item.name);
     const entry = {
         ...(catalogEntry || {}),
         id: `hunt:${normalizePokemonSearchText(displayName)}`,
@@ -11586,9 +11705,30 @@ function createHuntBuilderTargetEntry(definition){
         moveset: combatMeta.moveset,
         catalogHidden: false
     };
+    if(preEvolutionItems.length) entry.huntDisplayItems = preEvolutionItems;
     if(definition?.image) entry.image = definition.image;
     else if(catalogEntry?.image && !entry.image) entry.image = catalogEntry.image;
     return entry;
+}
+
+function createHuntBuilderEntryMedia(entry, baseClassName, altText = ''){
+    const media = document.createElement('span');
+    media.className = baseClassName;
+    const items = Array.isArray(entry?.huntDisplayItems) && entry.huntDisplayItems.length
+        ? entry.huntDisplayItems
+        : [entry];
+    if(items.length > 1) media.classList.add(`${baseClassName}--bundle`);
+    items.slice(0, 3).forEach(item => {
+        const image = document.createElement('img');
+        const itemName = String(item?.name || entry?.name || '').trim();
+        image.src = getPokemonImageSource(item);
+        image.alt = altText ? `${altText} ${itemName}` : '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+        media.appendChild(image);
+    });
+    return media;
 }
 
 function getHuntBuilderTargetEntries(){
@@ -11638,12 +11778,7 @@ function createHuntBuilderSearchResult(entry){
     button.className = 'hunt-builder-search-result';
     button.setAttribute('role', 'option');
 
-    const image = document.createElement('img');
-    image.src = getPokemonImageSource(entry);
-    image.alt = '';
-    image.loading = 'lazy';
-    image.decoding = 'async';
-    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    const media = createHuntBuilderEntryMedia(entry, 'hunt-builder-search-result__media');
 
     const copy = document.createElement('span');
     copy.className = 'hunt-builder-search-result__copy';
@@ -11658,7 +11793,7 @@ function createHuntBuilderSearchResult(entry){
     if(types) meta.appendChild(types);
     copy.append(name, meta);
 
-    button.append(image, copy);
+    button.append(media, copy);
     button.addEventListener('mousedown', event => event.preventDefault());
     button.addEventListener('click', () => {
         huntBuilderSelectedTarget = entry;
@@ -11698,10 +11833,7 @@ function renderHuntBuilderTarget(){
         return;
     }
 
-    const image = document.createElement('img');
-    image.src = getPokemonImageSource(entry);
-    image.alt = `Imagem de ${entry.name}`;
-    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    const media = createHuntBuilderEntryMedia(entry, 'hunt-builder-target__media', 'Imagem de');
 
     const copy = document.createElement('div');
     const eyebrow = document.createElement('span');
@@ -11715,7 +11847,7 @@ function renderHuntBuilderTarget(){
     copy.append(eyebrow, name, types);
     if(moveset) copy.appendChild(moveset);
 
-    huntBuilderTarget.replaceChildren(image, copy);
+    huntBuilderTarget.replaceChildren(media, copy);
     huntBuilderTarget.hidden = false;
 }
 
@@ -15470,14 +15602,59 @@ function getTrainingPlateCostForLevel(level){
     return Math.max(1, Math.floor(Number(level) / 10));
 }
 
+function getInterpolatedTrainingTotal(startLevel){
+    const level = clampTrainingLevel(startLevel);
+    const exact = TRAINING_OFFICIAL_TOTALS.find(entry => entry.level === level);
+    if(exact) return { ...exact };
+    if(level < TRAINING_OFFICIAL_TOTALS[0].level){
+        return null;
+    }
+    for(let index = 0; index < TRAINING_OFFICIAL_TOTALS.length - 1; index += 1){
+        const current = TRAINING_OFFICIAL_TOTALS[index];
+        const next = TRAINING_OFFICIAL_TOTALS[index + 1];
+        if(level < current.level || level > next.level) continue;
+        const span = next.level - current.level;
+        const progress = span > 0 ? (level - current.level) / span : 0;
+        return {
+            level,
+            plates: Math.max(0, Math.round(current.plates + ((next.plates - current.plates) * progress))),
+            coins: Math.max(0, Math.round(current.coins + ((next.coins - current.coins) * progress)))
+        };
+    }
+    return { level, plates: 0, coins: 0 };
+}
+
+function distributeTrainingPlates(totalPlates, totalCoins){
+    const coins = Math.max(0, Number.parseInt(totalCoins, 10) || 0);
+    const plates = Math.max(0, Number.parseInt(totalPlates, 10) || 0);
+    if(!coins) return [];
+    const basePlates = Math.floor(plates / coins);
+    const extraPlates = plates % coins;
+    return Array.from({ length: coins }, (_, index) => basePlates + (index < extraPlates ? 1 : 0));
+}
+
 function getTrainingRows(startLevel){
     const from = clampTrainingLevel(startLevel);
+    const officialTotal = getInterpolatedTrainingTotal(from);
+    if(officialTotal){
+        return distributeTrainingPlates(officialTotal.plates, officialTotal.coins)
+            .map((successPlates, index) => ({
+                from,
+                to: 100,
+                trainingIndex: index + 1,
+                label: `Treino ${index + 1}`,
+                coins: 1,
+                successPlates,
+                failPlates: successPlates * 2
+            }));
+    }
     const rows = [];
     for(let level = from; level < 100; level += 1){
         const successPlates = getTrainingPlateCostForLevel(level);
         rows.push({
             from: level,
             to: level + 1,
+            trainingIndex: rows.length + 1,
             coins: 1,
             successPlates,
             failPlates: successPlates * 2
@@ -15604,8 +15781,9 @@ function updateTrainingStepState(){
         input.disabled = !hasLevel;
     });
     if(trainingLevelPreview){
+        const previewTotals = hasPokemon ? calculateTrainingTotals(level) : null;
         trainingLevelPreview.textContent = hasPokemon
-            ? `${100 - level} treino(s) ate o level 100.`
+            ? `${previewTotals.coins} treino(s) ate o level 100.`
             : '';
     }
 }
@@ -15632,7 +15810,7 @@ function renderTrainingResults(){
     const summary = document.createElement('div');
     summary.className = 'training-summary-grid';
     summary.append(
-        createTrainingMaterialCard({ label: 'Elemental Coins', value: totals.coins, detail: `${level} -> 100`, image: 'calculadora/golden_coin.gif', tone: 'coin' }),
+        createTrainingMaterialCard({ label: 'Golden Coins', value: totals.coins, detail: `${level} -> 100`, image: 'calculadora/golden_coin.gif', tone: 'coin' }),
         createTrainingMaterialCard({ label: 'Plates (S)', value: totals.successPlates, detail: 'Treinos com sucesso', image: 'calculadora/plate.gif', tone: 'success' }),
         createTrainingMaterialCard({ label: 'Plates (F)', value: totals.failPlates, detail: 'Estimativa de falhas', image: 'calculadora/plate.gif', tone: 'fail' })
     );
@@ -15682,16 +15860,16 @@ function renderTrainingResults(){
     const detail = document.createElement('details');
     detail.className = 'training-detail-table';
     const detailSummary = document.createElement('summary');
-    detailSummary.innerHTML = `<span>Tabela Detalhada</span><small>${totals.rows.length} lvls</small>`;
+    detailSummary.innerHTML = `<span>Tabela Detalhada</span><small>${totals.coins} treino(s)</small>`;
     const tableWrap = document.createElement('div');
     tableWrap.className = 'training-detail-table__wrap';
     const table = document.createElement('table');
-    table.innerHTML = '<thead><tr><th>Lv.</th><th>Coins</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>';
+    table.innerHTML = '<thead><tr><th>Treino</th><th>Coins</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>';
     const body = document.createElement('tbody');
     totals.rows.forEach(row => {
         const tr = document.createElement('tr');
-        if(row.from % 10 === 0) tr.className = 'training-detail-table__decade';
-        tr.innerHTML = `<td>${row.from} -> ${row.to}</td><td>${row.coins}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`;
+        if(row.trainingIndex % 10 === 0) tr.className = 'training-detail-table__decade';
+        tr.innerHTML = `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`;
         body.appendChild(tr);
     });
     const footer = document.createElement('tfoot');
