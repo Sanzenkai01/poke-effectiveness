@@ -8179,9 +8179,20 @@ function getPlannerConsumableOptionById(kind, value) {
 
 function getPlannerRoleSourceList(bossEntry, roleKey, clanKey) {
   const boss = bossEntry?.bossRef;
-  if (!boss || !roleKey || !clanKey) return [];
+  const catalog = bossCatalogs[bossEntry?.sourceKey];
+  const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+  const clanData = boss?.clans?.[clanKey];
+  if (!boss || !catalog || !normalizedRoleKey || !clanKey || !clanData) return [];
 
-  return getFixedRecommendationRolePicks(boss, clanKey, roleKey);
+  if (!clanData.roles) {
+    if (normalizedRoleKey !== 'dps') return [];
+    return dedupeRecommendedPicksByName(
+      getRecommendationGroupsForClan(boss, clanData)
+        .flatMap((group) => rankRecommendedForBoss(group.boss || boss, group.recommended || []))
+    );
+  }
+
+  return getVisibleRolePicksForBoss(catalog, boss, clanKey, normalizedRoleKey);
 }
 
 function getPlannerRoleRecommendations(bossEntry, roleKey, clanKey) {
@@ -8192,9 +8203,8 @@ function getPlannerRoleRecommendations(bossEntry, roleKey, clanKey) {
     return plannerRecommendationCache.get(cacheKey);
   }
 
-  const boss = bossEntry.bossRef;
   const rawList = getPlannerRoleSourceList(bossEntry, roleKey, clanKey);
-  const ranked = dedupeRecommendedPicksByName(rankRecommendedForBoss(boss, rawList || []))
+  const ranked = dedupeRecommendedPicksByName(rawList || [])
     .map((pick) => ({
       ...pick,
       plannerKey: getPlannerPokemonKey(pick)
@@ -8401,10 +8411,366 @@ function expandPlannerStateFromUrl(compact) {
   return sanitizePlannerState(next);
 }
 
+function encodePlannerBase64Url(text) {
+  try {
+    return btoa(String(text || ''))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+  } catch {
+    return '';
+  }
+}
+
+function decodePlannerBase64Url(value) {
+  const base64 = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`;
+  return atob(padded);
+}
+
+function getPlannerSourceShareCode(value) {
+  const index = plannerContentOrder.indexOf(normalizePlannerSourceFilter(value));
+  return index >= 0 ? index + 1 : 0;
+}
+
+function getPlannerSourceFromShareCode(value) {
+  const index = Number(value) - 1;
+  return plannerContentOrder[index] || '';
+}
+
+function getPlannerBossShareCode(plannerBossId) {
+  const index = getPlannerBossEntries().findIndex((entry) => entry.id === String(plannerBossId || '').trim());
+  return index >= 0 ? index + 1 : 0;
+}
+
+function getPlannerBossIdFromShareCode(value) {
+  const index = Number(value) - 1;
+  return getPlannerBossEntries()[index]?.id || '';
+}
+
+function getPlannerConsumableShareCode(kind, value) {
+  const normalized = normalizePlannerConsumableId(kind, value);
+  if (!normalized) return 0;
+  const index = getPlannerConsumableOptions(kind).findIndex((option) => option.id === normalized);
+  return index >= 0 ? index + 1 : 0;
+}
+
+function getPlannerConsumableIdFromShareCode(kind, value) {
+  const index = Number(value) - 1;
+  return getPlannerConsumableOptions(kind)[index]?.id || '';
+}
+
+function getPlannerClanShareCode(value) {
+  const index = plannerClanOrder.indexOf(normalizePlannerClanKey(value));
+  return index >= 0 ? index + 1 : 0;
+}
+
+function getPlannerClanFromShareCode(value) {
+  const index = Number(value) - 1;
+  return plannerClanOrder[index] || '';
+}
+
+function getPlannerPickShareCode(bossEntry, roleKey, clanKey, pokemonKey) {
+  const normalizedPokemonKey = getPlannerPokemonKey(pokemonKey);
+  if (!bossEntry || !roleKey || !clanKey || !normalizedPokemonKey) return 0;
+  const index = getPlannerRoleRecommendations(bossEntry, roleKey, clanKey)
+    .findIndex((pick) => pick.plannerKey === normalizedPokemonKey);
+  return index >= 0 ? index + 1 : 0;
+}
+
+function getPlannerPickKeyFromShareCode(bossEntry, roleKey, clanKey, value) {
+  const index = Number(value) - 1;
+  if (!bossEntry || !roleKey || !clanKey || index < 0) return '';
+  return getPlannerRoleRecommendations(bossEntry, roleKey, clanKey)[index]?.plannerKey || '';
+}
+
+const plannerCompactShareAlphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+function encodePlannerCompactNumber(value, width = 1) {
+  const number = Number(value);
+  const limit = Math.pow(plannerCompactShareAlphabet.length, width);
+  if (!Number.isInteger(number) || number < 0 || number >= limit) return '';
+  return number.toString(plannerCompactShareAlphabet.length).padStart(width, '0');
+}
+
+function decodePlannerCompactNumber(value) {
+  const text = String(value || '').toLowerCase();
+  if (!text || !/^[0-9a-z]+$/.test(text)) return NaN;
+  return parseInt(text, plannerCompactShareAlphabet.length);
+}
+
+function packPlannerRoleSelectionForUrl(bossEntry, roleKey, roleState = {}) {
+  const clan = normalizePlannerClanKey(roleState?.clan) || getPlannerDefaultClanForRole(bossEntry, roleKey);
+  return [
+    getPlannerClanShareCode(clan),
+    getPlannerPickShareCode(bossEntry, roleKey, clan, roleState?.pokemonKey)
+  ];
+}
+
+function packPlannerMemberForUrl(bossEntry, member = {}) {
+  const roles = roleboardRoleOrder.map((roleKey) => {
+    const pokemonKey = getPlannerPokemonKey(member?.roles?.[roleKey] || '');
+    const clan = pokemonKey ? findPlannerRecommendationOwner(bossEntry, roleKey, pokemonKey) : '';
+    return [
+      getPlannerClanShareCode(clan),
+      getPlannerPickShareCode(bossEntry, roleKey, clan, pokemonKey)
+    ];
+  });
+  return [
+    roles,
+    getPlannerConsumableShareCode('pokeblock', member?.pokeblock || ''),
+    getPlannerConsumableShareCode('ration', member?.ration || '')
+  ];
+}
+
+function packPlannerStateForUrl(state) {
+  const payload = sanitizePlannerState(state);
+  return {
+    v: 1,
+    s: getPlannerSourceShareCode(payload.sourceFilter),
+    e: (Array.isArray(payload.entries) ? payload.entries : []).map((entry) => {
+      const bossEntry = getPlannerBossById(entry?.bossId);
+      return [
+        getPlannerBossShareCode(entry?.bossId),
+        roleboardRoleOrder.map((roleKey) => packPlannerRoleSelectionForUrl(bossEntry, roleKey, entry?.roles?.[roleKey])),
+        getPlannerConsumableShareCode('pokeblock', entry?.pokeblock || ''),
+        getPlannerConsumableShareCode('ration', entry?.ration || ''),
+        (Array.isArray(entry?.members) ? entry.members : []).map((member) => packPlannerMemberForUrl(bossEntry, member))
+      ];
+    })
+  };
+}
+
+function unpackPlannerRoleSelectionFromUrl(bossEntry, roleKey, rawRole = []) {
+  const clan = getPlannerClanFromShareCode(rawRole?.[0]) || getPlannerDefaultClanForRole(bossEntry, roleKey);
+  return {
+    clan,
+    pokemonKey: getPlannerPickKeyFromShareCode(bossEntry, roleKey, clan, rawRole?.[1])
+  };
+}
+
+function unpackPlannerMemberFromUrl(bossEntry, rawMember = [], memberIndex = 0) {
+  const rawRoles = Array.isArray(rawMember?.[0]) ? rawMember[0] : [];
+  const member = {
+    id: `m${Date.now().toString(36)}${memberIndex.toString(36)}`,
+    roles: {},
+    pokeblock: getPlannerConsumableIdFromShareCode('pokeblock', rawMember?.[1]),
+    ration: getPlannerConsumableIdFromShareCode('ration', rawMember?.[2])
+  };
+
+  roleboardRoleOrder.forEach((roleKey, roleIndex) => {
+    const rawRole = rawRoles[roleIndex] || [];
+    const clan = getPlannerClanFromShareCode(rawRole?.[0]);
+    member.roles[roleKey] = getPlannerPickKeyFromShareCode(bossEntry, roleKey, clan, rawRole?.[1]);
+  });
+
+  return member;
+}
+
+function unpackPlannerStateFromUrl(packed) {
+  const next = createEmptyPlannerState();
+  next.sourceFilter = getPlannerSourceFromShareCode(packed?.s);
+  (Array.isArray(packed?.e) ? packed.e : []).forEach((rawEntry) => {
+    const bossId = getPlannerBossIdFromShareCode(rawEntry?.[0]);
+    const bossEntry = getPlannerBossById(bossId);
+    if (!bossEntry) return;
+
+    const rawRoles = Array.isArray(rawEntry?.[1]) ? rawEntry[1] : [];
+    const entry = createPlannerBossState(bossId);
+    roleboardRoleOrder.forEach((roleKey, roleIndex) => {
+      entry.roles[roleKey] = unpackPlannerRoleSelectionFromUrl(bossEntry, roleKey, rawRoles[roleIndex] || []);
+    });
+    entry.pokeblock = getPlannerConsumableIdFromShareCode('pokeblock', rawEntry?.[2]);
+    entry.ration = getPlannerConsumableIdFromShareCode('ration', rawEntry?.[3]);
+    entry.members = (Array.isArray(rawEntry?.[4]) ? rawEntry[4] : [])
+      .map((rawMember, memberIndex) => unpackPlannerMemberFromUrl(bossEntry, rawMember, memberIndex));
+    next.entries.push(entry);
+  });
+  return sanitizePlannerState(next);
+}
+
+function encodePackedPlannerStateToParam(state) {
+  const packed = packPlannerStateForUrl(state);
+  const encoded = encodePlannerBase64Url(JSON.stringify(packed));
+  return encoded ? `pl${encoded}` : '';
+}
+
+function decodePackedPlannerStateFromParam(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized.startsWith('pl')) return null;
+  const packed = JSON.parse(decodePlannerBase64Url(normalized.slice(2)));
+  return unpackPlannerStateFromUrl(packed);
+}
+
+function encodeCompactPlannerRoleForUrl(bossEntry, roleKey, roleState = {}) {
+  const clan = normalizePlannerClanKey(roleState?.clan) || getPlannerDefaultClanForRole(bossEntry, roleKey);
+  const clanCode = getPlannerClanShareCode(clan);
+  const pickCode = getPlannerPickShareCode(bossEntry, roleKey, clan, roleState?.pokemonKey);
+  const encodedClan = encodePlannerCompactNumber(clanCode, 1);
+  const encodedPick = encodePlannerCompactNumber(pickCode, 2);
+  return encodedClan && encodedPick ? `${encodedClan}${encodedPick}` : '';
+}
+
+function encodeCompactPlannerMemberForUrl(bossEntry, member = {}) {
+  const roleTokens = roleboardRoleOrder.map((roleKey) => {
+    const pokemonKey = getPlannerPokemonKey(member?.roles?.[roleKey] || '');
+    const clan = pokemonKey ? findPlannerRecommendationOwner(bossEntry, roleKey, pokemonKey) : '';
+    return encodeCompactPlannerRoleForUrl(bossEntry, roleKey, {
+      clan,
+      pokemonKey
+    });
+  });
+  if (roleTokens.some((token) => !token)) return '';
+
+  const pokeblock = encodePlannerCompactNumber(getPlannerConsumableShareCode('pokeblock', member?.pokeblock || ''), 1);
+  const ration = encodePlannerCompactNumber(getPlannerConsumableShareCode('ration', member?.ration || ''), 1);
+  return pokeblock && ration ? `${roleTokens.join('')}${pokeblock}${ration}` : '';
+}
+
+function encodeCompactPlannerStateToParam(state) {
+  const payload = sanitizePlannerState(state);
+  const entries = Array.isArray(payload.entries) ? payload.entries : [];
+  const source = encodePlannerCompactNumber(getPlannerSourceShareCode(payload.sourceFilter), 1);
+  const entryCount = encodePlannerCompactNumber(entries.length, 1);
+  if (!source || !entryCount) return '';
+
+  const entryTokens = entries.map((entry) => {
+    const bossEntry = getPlannerBossById(entry?.bossId);
+    const boss = encodePlannerCompactNumber(getPlannerBossShareCode(entry?.bossId), 2);
+    const roleTokens = roleboardRoleOrder.map((roleKey) => encodeCompactPlannerRoleForUrl(bossEntry, roleKey, entry?.roles?.[roleKey]));
+    const pokeblock = encodePlannerCompactNumber(getPlannerConsumableShareCode('pokeblock', entry?.pokeblock || ''), 1);
+    const ration = encodePlannerCompactNumber(getPlannerConsumableShareCode('ration', entry?.ration || ''), 1);
+    const members = Array.isArray(entry?.members) ? entry.members : [];
+    const memberCount = encodePlannerCompactNumber(members.length, 1);
+    const memberTokens = members.map((member) => encodeCompactPlannerMemberForUrl(bossEntry, member));
+
+    if (!boss || roleTokens.some((token) => !token) || !pokeblock || !ration || !memberCount || memberTokens.some((token) => !token)) {
+      return '';
+    }
+
+    return `${boss}${roleTokens.join('')}${pokeblock}${ration}${memberCount}${memberTokens.join('')}`;
+  });
+
+  if (entryTokens.some((token) => !token)) return '';
+  return `pc${source}${entryCount}${entryTokens.join('')}`;
+}
+
+function readPlannerCompactToken(source, offset, width) {
+  const token = String(source || '').slice(offset, offset + width);
+  if (token.length !== width) return null;
+  const value = decodePlannerCompactNumber(token);
+  return Number.isFinite(value) ? { value, nextOffset: offset + width } : null;
+}
+
+function decodeCompactPlannerRoleFromUrl(source, offset, bossEntry, roleKey) {
+  const clanToken = readPlannerCompactToken(source, offset, 1);
+  if (!clanToken) return null;
+  const pickToken = readPlannerCompactToken(source, clanToken.nextOffset, 2);
+  if (!pickToken) return null;
+
+  const clan = getPlannerClanFromShareCode(clanToken.value) || getPlannerDefaultClanForRole(bossEntry, roleKey);
+  return {
+    nextOffset: pickToken.nextOffset,
+    role: {
+      clan,
+      pokemonKey: getPlannerPickKeyFromShareCode(bossEntry, roleKey, clan, pickToken.value)
+    }
+  };
+}
+
+function decodeCompactPlannerMemberFromUrl(source, offset, bossEntry, memberIndex = 0) {
+  const member = {
+    id: `m${Date.now().toString(36)}${memberIndex.toString(36)}`,
+    roles: {},
+    pokeblock: '',
+    ration: ''
+  };
+
+  let cursor = offset;
+  for (const roleKey of roleboardRoleOrder) {
+    const decodedRole = decodeCompactPlannerRoleFromUrl(source, cursor, bossEntry, roleKey);
+    if (!decodedRole) return null;
+    cursor = decodedRole.nextOffset;
+    member.roles[roleKey] = decodedRole.role.pokemonKey;
+  }
+
+  const pokeblock = readPlannerCompactToken(source, cursor, 1);
+  if (!pokeblock) return null;
+  cursor = pokeblock.nextOffset;
+  const ration = readPlannerCompactToken(source, cursor, 1);
+  if (!ration) return null;
+  cursor = ration.nextOffset;
+
+  member.pokeblock = getPlannerConsumableIdFromShareCode('pokeblock', pokeblock.value);
+  member.ration = getPlannerConsumableIdFromShareCode('ration', ration.value);
+  return { member, nextOffset: cursor };
+}
+
+function decodeCompactPlannerStateFromParam(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized.startsWith('pc')) return null;
+
+  let cursor = 2;
+  const source = readPlannerCompactToken(normalized, cursor, 1);
+  if (!source) return null;
+  cursor = source.nextOffset;
+  const entryCount = readPlannerCompactToken(normalized, cursor, 1);
+  if (!entryCount) return null;
+  cursor = entryCount.nextOffset;
+
+  const next = createEmptyPlannerState();
+  next.sourceFilter = getPlannerSourceFromShareCode(source.value);
+
+  for (let entryIndex = 0; entryIndex < entryCount.value; entryIndex += 1) {
+    const bossCode = readPlannerCompactToken(normalized, cursor, 2);
+    if (!bossCode) return null;
+    cursor = bossCode.nextOffset;
+
+    const bossId = getPlannerBossIdFromShareCode(bossCode.value);
+    const bossEntry = getPlannerBossById(bossId);
+    if (!bossEntry) return null;
+
+    const entry = createPlannerBossState(bossId);
+    for (const roleKey of roleboardRoleOrder) {
+      const decodedRole = decodeCompactPlannerRoleFromUrl(normalized, cursor, bossEntry, roleKey);
+      if (!decodedRole) return null;
+      cursor = decodedRole.nextOffset;
+      entry.roles[roleKey] = decodedRole.role;
+    }
+
+    const pokeblock = readPlannerCompactToken(normalized, cursor, 1);
+    if (!pokeblock) return null;
+    cursor = pokeblock.nextOffset;
+    const ration = readPlannerCompactToken(normalized, cursor, 1);
+    if (!ration) return null;
+    cursor = ration.nextOffset;
+    const memberCount = readPlannerCompactToken(normalized, cursor, 1);
+    if (!memberCount) return null;
+    cursor = memberCount.nextOffset;
+
+    entry.pokeblock = getPlannerConsumableIdFromShareCode('pokeblock', pokeblock.value);
+    entry.ration = getPlannerConsumableIdFromShareCode('ration', ration.value);
+    entry.members = [];
+
+    for (let memberIndex = 0; memberIndex < memberCount.value; memberIndex += 1) {
+      const decodedMember = decodeCompactPlannerMemberFromUrl(normalized, cursor, bossEntry, memberIndex);
+      if (!decodedMember) return null;
+      cursor = decodedMember.nextOffset;
+      entry.members.push(decodedMember.member);
+    }
+
+    next.entries.push(entry);
+  }
+
+  return cursor === normalized.length ? sanitizePlannerState(next) : null;
+}
+
 function encodePlannerStateToParam(state) {
   const payload = sanitizePlannerState(state);
   const compact = compactPlannerStateForUrl(payload);
   const json = JSON.stringify(compact);
+  const compactFixed = encodeCompactPlannerStateToParam(payload);
+  const packed = encodePackedPlannerStateToParam(payload);
 
   // try LZ-String first (existing fast, URL-safe encoder)
   let lz = '';
@@ -8442,6 +8808,8 @@ function encodePlannerStateToParam(state) {
 
   // choose the shortest non-empty encoding (pako or lzstring or legacy)
   const candidates = [];
+  if (compactFixed) candidates.push(compactFixed);
+  if (packed) candidates.push(packed);
   if (lz) candidates.push(lz);
   if (pakoStr) candidates.push(pakoStr);
   if (legacy) candidates.push(legacy);
@@ -8456,6 +8824,20 @@ function encodePlannerStateToParam(state) {
 function decodePlannerStateFromParam(value) {
   const normalized = String(value || '').trim();
   if (!normalized) return createEmptyPlannerState();
+
+  try {
+    const compact = decodeCompactPlannerStateFromParam(normalized);
+    if (compact) return compact;
+  } catch (e) {
+    // fall through to previous URL formats
+  }
+
+  try {
+    const packed = decodePackedPlannerStateFromParam(normalized);
+    if (packed) return packed;
+  } catch (e) {
+    // fall through to previous URL formats
+  }
 
   try {
     if (typeof LZString === 'object' && typeof LZString.decompressFromEncodedURIComponent === 'function') {
@@ -8474,9 +8856,7 @@ function decodePlannerStateFromParam(value) {
     // fall through to legacy decode
   }
 
-  const base64 = normalized.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`;
-  const binary = atob(padded);
+  const binary = decodePlannerBase64Url(normalized);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
 
   // try legacy JSON first

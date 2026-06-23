@@ -315,7 +315,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260622b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260623b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -11090,14 +11090,51 @@ function findTeamBuilderPokemonCatalogEntry(name, options = {}){
         || null;
 }
 
-function findTeamBuilderPokemonCatalogEntryByToken(token){
+function getTeamBuilderEntryNumericShareId(entry){
+    if(!entry) return '';
+    if(isMegaPokemonCatalogEntry(entry)){
+        const baseKey = getPokemonMegaBaseRegistryKey(entry);
+        const baseEntry = baseKey ? getPokemonEvolutionCatalogEntriesByKey(baseKey)[0] || null : null;
+        const baseDex = Number(baseEntry?.dex);
+        if(Number.isFinite(baseDex) && baseDex > 0) return `m${baseDex}`;
+        return '';
+    }
+
+    const dex = Number(entry.dex);
+    return Number.isFinite(dex) && dex > 0 ? String(dex) : '';
+}
+
+function findTeamBuilderPokemonCatalogEntryByNumericToken(token, slotConfig = null){
+    const rawToken = String(token || '').trim().toLowerCase();
+    if(!rawToken) return null;
+
+    const megaMatch = rawToken.match(/^m(?:ega)?-?(\d+)$/);
+    const numericMatch = megaMatch || rawToken.match(/^(\d+)$/);
+    if(!numericMatch) return null;
+
+    const expectedToken = megaMatch ? `m${Number(numericMatch[1])}` : String(Number(numericMatch[1]));
+    const candidates = getTeamBuilderCatalogEntries().filter(entry => {
+        if(!entry) return false;
+        if(slotConfig && !teamBuilderEntryMatchesSlot(entry, slotConfig)) return false;
+        const entryToken = getTeamBuilderEntryNumericShareId(entry);
+        if(entryToken !== expectedToken) return false;
+        return megaMatch ? isMegaPokemonCatalogEntry(entry) : !isMegaPokemonCatalogEntry(entry);
+    });
+
+    return getPreferredTeamBuilderCatalogEntry(candidates) || null;
+}
+
+function findTeamBuilderPokemonCatalogEntryByToken(token, slotConfig = null){
     const normalizedToken = normalizePokemonDetailRouteToken(token);
     if(!normalizedToken) return null;
-    return findPokemonCatalogEntryByRouteToken(normalizedToken, POKEMON_CATALOG_VARIANT_DEFAULT)
+    return findTeamBuilderPokemonCatalogEntryByNumericToken(normalizedToken, slotConfig)
+        || findPokemonCatalogEntryByRouteToken(normalizedToken, POKEMON_CATALOG_VARIANT_DEFAULT)
         || findTeamBuilderPokemonCatalogEntry(normalizedToken);
 }
 
 function getTeamBuilderShareTokenForEntry(entry){
+    const numericId = getTeamBuilderEntryNumericShareId(entry);
+    if(numericId) return numericId;
     return String(entry?.routeSlug || entry?.id || '')
         .trim()
         .toLowerCase();
@@ -11107,13 +11144,74 @@ function getTeamBuilderShareValue(){
     if(!isTeamBuilderComplete()) return '';
     const tokens = TEAM_BUILDER_SLOT_CONFIGS.map(slot => getTeamBuilderShareTokenForEntry(teamBuilderSelections[slot.id]));
     if(tokens.some(token => !token)) return '';
-    return tokens.map(encodeURIComponent).join('.');
+    const canUseCompactNumericValue = tokens.every(token => /^m?\d+$/i.test(token));
+    return tokens.map(encodeURIComponent).join(canUseCompactNumericValue ? '' : '.');
+}
+
+function parseCompactTeamBuilderShareTokens(shareValue){
+    const compactValue = String(shareValue || '').trim().toLowerCase();
+    if(!compactValue || !/^[m\d]+$/.test(compactValue)) return [];
+
+    const maxDexDigits = 4;
+    const memo = new Set();
+    const readSlot = (slotIndex, offset) => {
+        const memoKey = `${slotIndex}:${offset}`;
+        if(memo.has(memoKey)) return null;
+        if(slotIndex >= TEAM_BUILDER_SLOT_CONFIGS.length){
+            return offset === compactValue.length ? [] : null;
+        }
+        if(offset >= compactValue.length){
+            memo.add(memoKey);
+            return null;
+        }
+
+        const slot = TEAM_BUILDER_SLOT_CONFIGS[slotIndex];
+        const isMegaToken = compactValue[offset] === 'm';
+        const digitStart = isMegaToken ? offset + 1 : offset;
+        let digitEnd = digitStart;
+        while(digitEnd < compactValue.length && /\d/.test(compactValue[digitEnd])){
+            digitEnd += 1;
+        }
+
+        const digitRun = compactValue.slice(digitStart, digitEnd);
+        const candidateLengths = Array.from(
+            { length: Math.min(maxDexDigits, digitRun.length) },
+            (_, index) => index + 1
+        ).sort((left, right) => right - left);
+
+        for(const length of candidateLengths){
+            const digits = digitRun.slice(0, length);
+            const token = isMegaToken ? `m${digits}` : digits;
+            const nextOffset = digitStart + length;
+            const entry = findTeamBuilderPokemonCatalogEntryByToken(token, slot);
+            if(!entry) continue;
+
+            const rest = readSlot(slotIndex + 1, nextOffset);
+            if(rest){
+                return [token, ...rest];
+            }
+        }
+
+        memo.add(memoKey);
+        return null;
+    };
+
+    return readSlot(0, 0) || [];
+}
+
+function parseTeamBuilderShareTokens(shareValue){
+    const rawValue = String(shareValue || '').trim();
+    if(!rawValue) return [];
+    if(rawValue.includes('.')){
+        return rawValue.split('.').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
+    }
+    return parseCompactTeamBuilderShareTokens(decodeURIComponent(rawValue));
 }
 
 function applyTeamBuilderShareValue(rawValue){
     const shareValue = String(rawValue || '').trim();
     if(!shareValue || shareValue === teamBuilderUrlHydratedValue) return false;
-    const tokens = shareValue.split('.').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
+    const tokens = parseTeamBuilderShareTokens(shareValue);
     if(tokens.length !== TEAM_BUILDER_SLOT_CONFIGS.length) return false;
 
     const nextSelections = {};
@@ -11121,7 +11219,7 @@ function applyTeamBuilderShareValue(rawValue){
     let selectedMegaKey = '';
     for(let index = 0; index < TEAM_BUILDER_SLOT_CONFIGS.length; index += 1){
         const slot = TEAM_BUILDER_SLOT_CONFIGS[index];
-        const entry = findTeamBuilderPokemonCatalogEntryByToken(tokens[index]);
+        const entry = findTeamBuilderPokemonCatalogEntryByToken(tokens[index], slot);
         if(!entry || !teamBuilderEntryMatchesSlot(entry, slot) || !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
         const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
         if(duplicateKey && usedDuplicateKeys.has(duplicateKey)) return false;

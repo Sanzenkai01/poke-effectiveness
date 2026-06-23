@@ -16026,17 +16026,34 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-evolution-nav__track {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 250px));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 0.58rem;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding-bottom: 0.18rem;
+  scrollbar-width: thin;
+}
+
+.pokemon-evolution-nav__track::-webkit-scrollbar {
+  height: 8px;
+}
+
+.pokemon-evolution-nav__track::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.28);
 }
 
 .pokemon-evolution-nav__stage {
   display: grid;
   align-content: start;
   gap: 0.34rem;
+  flex: 0 0 min(250px, 76vw);
   min-width: 0;
 }
 
@@ -17772,6 +17789,18 @@ button.pokemon-evolution-card:focus-visible {
   .pokemon-evolution-nav__track,
   .pokemon-evolution-nav__stage-list {
     grid-template-columns: 1fr;
+  }
+
+  .pokemon-evolution-nav__track {
+    display: grid;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    overflow-x: visible;
+  }
+
+  .pokemon-evolution-nav__stage {
+    flex-basis: auto;
   }
 
   .pokemon-evolution-card {
