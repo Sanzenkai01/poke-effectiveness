@@ -376,9 +376,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260622d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260623c';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260622b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260622c';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260623a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -10159,8 +10159,12 @@ function isTeamBuilderDuplicateSelectionBlocked(entry, slotId = teamBuilderActiv
     return Boolean(duplicateKey && getTeamBuilderSelectedDuplicateKeys(slotId).has(duplicateKey));
 }
 
-function isTeamBuilderBossEntry(entry){
-    return getPokemonEntrySpecialTags(entry).includes('boss');
+function isTeamBuilderRecommendedBossEntry(entry){
+    const specialTags = getPokemonEntrySpecialTags(entry);
+    if(!specialTags.includes('boss')) return false;
+    const priceLabel = String(entry?.priceLabel || '').trim().toLowerCase();
+    return priceLabel === '1x boss item'
+        || (specialTags.includes('ranger') && priceLabel === 'ranger boss');
 }
 
 function getTeamBuilderBaseCatalogEntries(){
@@ -10171,7 +10175,8 @@ function getTeamBuilderBaseCatalogEntries(){
     return [...normalEntries, ...permittedMegaEntries].filter(entry => {
         if(!entry || entry.catalogHidden) return false;
         if(isTeamBuilderNormalEeveelutionBlocked(entry)) return false;
-        if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderBossEntry(entry)) return false;
+        if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderRecommendedBossEntry(entry)) return false;
+        if(entry.normalCaptureAvailable === false && !isTeamBuilderRecommendedBossEntry(entry)) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
         if(entry.roleKey === 'speedster' || entry.roleKey === 'supporter') return false;
         if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
