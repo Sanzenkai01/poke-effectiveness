@@ -741,8 +741,8 @@ const hoopaPortalsData = [
     clan: 'instinct',
     clanLabel: 'Instinct',
     image: 'mega-chimeco.png',
-    comingSoon: true,
-    description: 'Boss Psychic com moveset Psychic. Priorize speedsters Dark para bater super efetivo e resistir ao golpe do boss.',
+    locationImage: 'localizações/chimeco.png',
+    description: 'Boss Psychic e Steel com moveset Psychic. Priorize speedsters Dark para bater super efetivo e resistir ao golpe do boss.',
     types: ['psychic','steel'],
     moveType: 'psychic',
     clans: {
