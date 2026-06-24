@@ -743,7 +743,7 @@ const hoopaPortalsData = [
     image: 'mega-chimeco.png',
     comingSoon: true,
     description: 'Boss Psychic com moveset Psychic. Priorize speedsters Dark para bater super efetivo e resistir ao golpe do boss.',
-    types: ['psychic'],
+    types: ['psychic','steel'],
     moveType: 'psychic',
     clans: {
       instinct: {
