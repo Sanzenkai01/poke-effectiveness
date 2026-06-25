@@ -315,7 +315,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260623b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260625d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -376,9 +376,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260623c';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260622b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260623a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260624a';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625b';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260624a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -645,11 +645,17 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Dewott', 'Samurott'],
     ['Roggenrola', 'Boldore'],
     ['Boldore', 'Gigalith'],
+    ['Drilbur', 'Excadrill'],
     ['Tynamo', 'Eelektrik'],
     ['Eelektrik', 'Eelektross'],
     ['Dwebble', 'Crustle'],
     ['Sandile', 'Krokorok'],
     ['Krokorok', 'Krookodile'],
+    ['Scraggy', 'Scrafty'],
+    ['Tirtouga', 'Carracosta'],
+    ['Archen', 'Archeops'],
+    ['Trubbish', 'Garbodor'],
+    ['Zorua', 'Zoroark'],
     ['Deino', 'Zweilous'],
     ['Zweilous', 'Hydreigon'],
     ['Pawniard', 'Bisharp'],
@@ -657,6 +663,12 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Larvesta', 'Volcarona'],
     ['Litwick', 'Lampent'],
     ['Lampent', 'Chandelure'],
+    ['Timburr', 'Gurdurr'],
+    ['Gurdurr', 'Conkeldurr'],
+    ['Axew', 'Fraxure'],
+    ['Fraxure', 'Haxorus'],
+    ['Karrablast', 'Escavalier'],
+    ['Ferroseed', 'Ferrothorn'],
     // Generation 6 evolutions
     ['Chespin', 'Quilladin'],
     ['Quilladin', 'Chesnaught'],
@@ -665,6 +677,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Froakie', 'Frogadier'],
     ['Frogadier', 'Greninja'],
     ['Bunnelby', 'Diggersby'],
+    ['Inkay', 'Malamar'],
     ['Pancham', 'Pangoro'],
     ['Honedge', 'Doublade'],
     ['Doublade', 'Aegislash (sword form)'],
@@ -678,6 +691,8 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Eevee', 'Sylveon'],
     ['Goomy', 'Sliggoo'],
     ['Sliggoo', 'Goodra'],
+    ['Phantump', 'Trevenant'],
+    ['Noibat', 'Noivern'],
     // Generation 7 evolutions
     ['Cutiefly', 'Ribombee'],
     ['Crabrawler', 'Crabominable'],
@@ -1214,7 +1229,7 @@ let huntBuilderSearchHideTimer = 0;
 let huntBuilderLastTeamKeys = [];
 let huntBuilderPreviousTeamKeys = [];
 let huntBuilderTargetEntriesCache = null;
-const POKEMON_ROLE_ORDER = Object.freeze(['supporter', 'all-rounder', 'attacker', 'defender', 'speedster']);
+const POKEMON_ROLE_ORDER = Object.freeze(['supporter', 'all-rounder', 'attacker', 'striker', 'defender', 'speedster']);
 const POKEMON_ROLE_ALIASES = Object.freeze({
     support: 'supporter',
     supporter: 'supporter',
@@ -1225,6 +1240,7 @@ const POKEMON_ROLE_ALIASES = Object.freeze({
     attack: 'attacker',
     attacker: 'attacker',
     dps: 'attacker',
+    striker: 'striker',
     defender: 'defender',
     speedster: 'speedster'
 });
@@ -1232,6 +1248,7 @@ const POKEMON_ROLE_META = Object.freeze({
     supporter: { key: 'supporter', label: 'supporter' },
     'all-rounder': { key: 'all-rounder', label: 'all-rounder' },
     attacker: { key: 'attacker', label: 'attacker' },
+    striker: { key: 'striker', label: 'striker' },
     defender: { key: 'defender', label: 'defender' },
     speedster: { key: 'speedster', label: 'speedster' }
 });
@@ -10142,6 +10159,28 @@ function getTeamBuilderDuplicateSelectionEntry(entry, exceptSlotId = ''){
         .find(selectedEntry => getTeamBuilderEntryDuplicateKey(selectedEntry) === duplicateKey) || null;
 }
 
+function isTeamBuilderAceEntry(entry){
+    if(!entry) return false;
+    const specialTags = getPokemonEntrySpecialTags(entry);
+    if(specialTags.includes('ace')) return true;
+    if(String(entry.level || '').trim().toLowerCase() === 'ace') return true;
+    return isPokemonHuntAceSourceEntry(entry);
+}
+
+function getTeamBuilderAceRoleKey(entry){
+    if(!isTeamBuilderAceEntry(entry)) return '';
+    return normalizePokemonRoleKey(entry?.roleKey || entry?.role || '');
+}
+
+function getTeamBuilderAceSameRoleSelectionEntry(entry, exceptSlotId = ''){
+    const roleKey = getTeamBuilderAceRoleKey(entry);
+    if(!roleKey) return null;
+    return Object.entries(teamBuilderSelections || {})
+        .filter(([slotId]) => slotId !== exceptSlotId)
+        .map(([, selectedEntry]) => selectedEntry)
+        .find(selectedEntry => getTeamBuilderAceRoleKey(selectedEntry) === roleKey) || null;
+}
+
 function getTeamBuilderSelectedMegaEntry(exceptSlotId = ''){
     const selectedMega = Object.entries(teamBuilderSelections || {})
         .filter(([slotId]) => slotId !== exceptSlotId)
@@ -10157,6 +10196,10 @@ function isTeamBuilderMegaSelectionBlocked(entry, slotId = teamBuilderActiveSlot
 function isTeamBuilderDuplicateSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
     const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
     return Boolean(duplicateKey && getTeamBuilderSelectedDuplicateKeys(slotId).has(duplicateKey));
+}
+
+function isTeamBuilderAceSameRoleSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
+    return Boolean(getTeamBuilderAceSameRoleSelectionEntry(entry, slotId));
 }
 
 function isTeamBuilderRecommendedBossEntry(entry){
@@ -10229,6 +10272,7 @@ function getFilteredTeamBuilderEntries(){
         .filter(entry => {
             if(selectedKeys.has(getTeamBuilderEntryKey(entry))) return false;
             if(selectedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))) return false;
+            if(isTeamBuilderAceSameRoleSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
             if(isTeamBuilderMegaSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
             if(!teamBuilderEntryMatchesSlot(entry, slotConfig)) return false;
             if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
@@ -10592,6 +10636,15 @@ function createTeamBuilderPokemonCard(entry){
                 teamBuilderStatus.textContent = selectedMega
                     ? `Seu time ja possui um Mega selecionado: ${selectedMega.name}.`
                     : 'Seu time ja possui um Mega selecionado.';
+            }
+            return;
+        }
+        if(isTeamBuilderAceSameRoleSelectionBlocked(entry, teamBuilderActiveSlotId)){
+            if(teamBuilderStatus){
+                const selectedAceRole = getTeamBuilderAceSameRoleSelectionEntry(entry, teamBuilderActiveSlotId);
+                teamBuilderStatus.textContent = selectedAceRole
+                    ? `Seu time ja possui Ace ${formatPokemonRoleLabel(entry.roleKey || entry.role)}: ${selectedAceRole.name}.`
+                    : `Seu time ja possui um Ace ${formatPokemonRoleLabel(entry.roleKey || entry.role)}.`;
             }
             return;
         }
@@ -11221,6 +11274,7 @@ function applyTeamBuilderShareValue(rawValue){
 
     const nextSelections = {};
     const usedDuplicateKeys = new Set();
+    const usedAceRoleKeys = new Set();
     let selectedMegaKey = '';
     for(let index = 0; index < TEAM_BUILDER_SLOT_CONFIGS.length; index += 1){
         const slot = TEAM_BUILDER_SLOT_CONFIGS[index];
@@ -11229,6 +11283,9 @@ function applyTeamBuilderShareValue(rawValue){
         const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
         if(duplicateKey && usedDuplicateKeys.has(duplicateKey)) return false;
         if(duplicateKey) usedDuplicateKeys.add(duplicateKey);
+        const aceRoleKey = getTeamBuilderAceRoleKey(entry);
+        if(aceRoleKey && usedAceRoleKeys.has(aceRoleKey)) return false;
+        if(aceRoleKey) usedAceRoleKeys.add(aceRoleKey);
         if(isMegaPokemonCatalogEntry(entry)){
             const megaKey = getTeamBuilderEntryKey(entry);
             if(selectedMegaKey && selectedMegaKey !== megaKey) return false;
@@ -12113,6 +12170,7 @@ function buildHuntBuilderTeam(){
     const compatibleEntries = getHuntBuilderCompatibleEntries();
     const usedKeys = new Set();
     const usedDuplicateKeys = new Set();
+    const usedAceRoleKeys = new Set();
     const previousKeys = new Set(huntBuilderPreviousTeamKeys);
     const selectedBySlot = {};
     const pickEntry = (pool, slotId, offset = 0, options = {}) => {
@@ -12120,6 +12178,7 @@ function buildHuntBuilderTeam(){
             .filter(entry => (
                 !usedKeys.has(getTeamBuilderEntryKey(entry))
                 && !usedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))
+                && !usedAceRoleKeys.has(getTeamBuilderAceRoleKey(entry))
             ));
         const preferredEntry = options.allowPreviousMegaDragonite && isHuntBuilderFlexibleMegaDragonite(availableEntries[0])
             ? availableEntries[0]
@@ -12132,6 +12191,8 @@ function buildHuntBuilderTeam(){
         if(!available) return null;
         usedKeys.add(getTeamBuilderEntryKey(available));
         usedDuplicateKeys.add(getTeamBuilderEntryDuplicateKey(available));
+        const aceRoleKey = getTeamBuilderAceRoleKey(available);
+        if(aceRoleKey) usedAceRoleKeys.add(aceRoleKey);
         selectedBySlot[slotId] = available;
         return available;
     };

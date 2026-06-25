@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20260623u';
+    var APP_SHELL_VERSION = '20260624a';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appUrl = new URL('../app.html', window.location.href);
     appUrl.searchParams.set('_shell', APP_SHELL_VERSION);

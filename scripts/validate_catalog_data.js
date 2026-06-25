@@ -122,7 +122,7 @@ function main() {
   const megaCatalog = readJson('pokemons/mega-pokemons.json');
 
   const validTypes = new Set(Object.keys(typesData.effectiveness || {}));
-  const validCatalogRoles = new Set(['', 'all-rounder', 'attacker', 'defender', 'speedster', 'supporter']);
+  const validCatalogRoles = new Set(['', 'all-rounder', 'attacker', 'defender', 'speedster', 'striker', 'supporter']);
   const validTeamRoles = new Set(['AR', 'DPS/Stun', 'Finisher']);
   const validTeamTags = new Set(['Area', 'Frontal']);
   const validCatalogTeams = new Set(Object.keys(clanLabelByKey));

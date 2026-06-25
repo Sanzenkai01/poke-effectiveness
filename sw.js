@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v647`;
+let CACHE_NAME = `${CACHE_PREFIX}v653`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -37,14 +37,14 @@ const APP_SHELL = [
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260623u', self.registration.scope).toString(),
-  new URL('./script.js?v=20260623y', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260625a', self.registration.scope).toString(),
+  new URL('./script.js?v=20260625d', self.registration.scope).toString(),
   new URL('./home/home.js?v=20260618a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260618b', self.registration.scope).toString(),
   new URL('./js/visits.shared.js?v=20260618a', self.registration.scope).toString(),
-  new URL('./route-loader.js?v=20260623u', self.registration.scope).toString(),
+  new URL('./route-loader.js?v=20260624a', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260623b', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260625d', self.registration.scope).toString(),
   new URL('./times/teams.json?v=20260620a', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()

@@ -651,7 +651,7 @@ const hoopaPortalsData = [
     image: 'mega-absol.png',
     tutorialUrl: 'https://youtu.be/dV1fS8TNIRo?si=vPEeYCiKZZEyI30t',
     locationImage: 'localizações/absol.png',
-    description: 'Mega Absol e Mega Absol Z sofrem dano super efetivo de Fairy, Fighting e Bug.',
+    description: 'Mega Absol sofre dano super efetivo de Fairy, Fighting e Bug. Mega Absol Z sofre dano super efetivo apenas de Fairy.',
     types: ['dark'],
     moveType: 'dark',
     duo: true,
@@ -678,8 +678,8 @@ const hoopaPortalsData = [
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
+            bossImmunities: ['bug', 'fighting'],
             recommended: [
-              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'muitobom', types: ['electric','fighting'], description: 'Tipo move: Fighting.' },
               { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
               { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
             ]
@@ -702,6 +702,7 @@ const hoopaPortalsData = [
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
+            bossImmunities: ['bug', 'fighting'],
             recommended: [
               { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' }
             ]
@@ -726,6 +727,7 @@ const hoopaPortalsData = [
             title: 'Mega Absol Z',
             bossId: 'mega-absol-z',
             bossTypes: ['dark'],
+            bossImmunities: ['bug', 'fighting'],
             recommended: [
               { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
               { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
@@ -743,13 +745,14 @@ const hoopaPortalsData = [
     image: 'mega-chimeco.png',
     tutorialUrl: 'https://youtu.be/COB62K8U54c',
     locationImage: 'localizações/chimecho.png',
-    description: 'Boss Psychic e Steel com moveset Psychic. Priorize speedsters Dark para bater super efetivo e resistir ao golpe do boss.',
+    description: 'Boss Psychic e Steel com moveset Psychic. Priorize speedsters Dark, Ghost e picks com passiva contra Steel.',
     types: ['psychic','steel'],
     moveType: 'psychic',
     clans: {
       instinct: {
         label: 'Instinct',
         recommended: [
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
           { name: 'Shiftry', image: 'shiftry.png', tier: 'excelente', types: ['grass','dark'], description: 'Tipo move: Dark.' },
           { name: 'Lurantis', image: 'lurantis.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Bug.' }
         ]
@@ -767,7 +770,7 @@ const hoopaPortalsData = [
           { name: 'Absol', image: 'absol.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'excelente', types: ['dark','fire'], description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Dark.' },
-          { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Dark.' },
+          { name: 'Weavile', image: 'weavile.png', tier: 'excelente', types: ['dark','ice'], description: 'Tipo move: Ice.' },
           { name: 'Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' },
           { name: 'Shiny Scyther', image: 'scyther.png', tier: 'bom', types: ['bug','flying'], description: 'Tipo move: Bug.' }
         ]
@@ -2473,7 +2476,7 @@ const mainQuestBosses = createManualRoleboardBosses([
       },
       mystic: {
         dps: [
-          createRolePick('Mantine', ['water', 'flying'], 'water')
+          createRolePick('Mantine', ['water', 'flying'], 'flying')
         ]
       },
       valor: {
@@ -2974,6 +2977,122 @@ function getRecommendationNameKey(nameOrPokemon) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '');
 }
+
+// Derivado dos movesets cadastrados em /pokemons para os Pokemon usados nas recomendacoes.
+const bossRecommendationCatalogMoveTypesByNameKey = Object.freeze({
+  absol: Object.freeze(['dark']),
+  aegislash: Object.freeze(['steel']),
+  alakazam: Object.freeze(['psychic']),
+  appletun: Object.freeze(['grass']),
+  banette: Object.freeze(['ghost']),
+  bastiodon: Object.freeze(['steel']),
+  bellossom: Object.freeze(['grass']),
+  blastoisetwo: Object.freeze(['water']),
+  blissey: Object.freeze(['fairy']),
+  bouffalant: Object.freeze(['ground']),
+  bronzong: Object.freeze(['steel']),
+  carracosta: Object.freeze(['rock']),
+  chansey: Object.freeze(['psychic']),
+  charizardtwo: Object.freeze(['fire']),
+  chesnaught: Object.freeze(['grass']),
+  chingling: Object.freeze(['psychic']),
+  claydol: Object.freeze(['ground']),
+  comfey: Object.freeze(['fairy']),
+  corsola: Object.freeze(['rock']),
+  dachsbun: Object.freeze(['fairy']),
+  dedenne: Object.freeze(['fairy']),
+  delphox: Object.freeze(['fire']),
+  dewgong: Object.freeze(['ice']),
+  dragonair: Object.freeze(['dragon']),
+  drifblim: Object.freeze(['flying']),
+  drifloon: Object.freeze(['fire']),
+  duraludon: Object.freeze(['electric']),
+  dusclops: Object.freeze(['ghost']),
+  dustox: Object.freeze(['poison']),
+  excadrill: Object.freeze(['steel']),
+  farfetchd: Object.freeze(['flying']),
+  goodra: Object.freeze(['water']),
+  gorgingcramorant: Object.freeze(['water']),
+  greninja: Object.freeze(['water']),
+  grumpig: Object.freeze(['dark']),
+  hawlucha: Object.freeze(['fighting']),
+  heracross: Object.freeze(['fighting']),
+  hippowdonfemale: Object.freeze(['ground']),
+  hitmonchan: Object.freeze(['fighting']),
+  houndour: Object.freeze(['dark']),
+  kabutops: Object.freeze(['rock']),
+  kadabra: Object.freeze(['psychic']),
+  kingdra: Object.freeze(['dragon']),
+  kirlia: Object.freeze(['fairy']),
+  lickitung: Object.freeze(['normal']),
+  lombre: Object.freeze(['grass']),
+  lopunny: Object.freeze(['fighting']),
+  lurantis: Object.freeze(['bug']),
+  magcargo: Object.freeze(['fire']),
+  magnezone: Object.freeze(['steel']),
+  mantine: Object.freeze(['flying']),
+  marowak: Object.freeze(['ground']),
+  maysbeautifly: Object.freeze(['flying']),
+  megaabsolz: Object.freeze(['dark', 'fairy']),
+  megadelphox: Object.freeze(['fire']),
+  megaexcadrill: Object.freeze(['ground']),
+  megaferaligatr: Object.freeze(['dragon']),
+  megagardevoir: Object.freeze(['fairy']),
+  megagreninja: Object.freeze(['water']),
+  megagyarados: Object.freeze(['dark']),
+  megahawlucha: Object.freeze(['fighting']),
+  megahoundoom: Object.freeze(['dark']),
+  megalucario: Object.freeze(['fighting']),
+  megalucarioz: Object.freeze(['steel']),
+  megaraichux: Object.freeze(['fighting']),
+  megaraichuy: Object.freeze(['electric']),
+  megasceptile: Object.freeze(['grass']),
+  megascizor: Object.freeze(['steel']),
+  megaskarmory: Object.freeze(['flying']),
+  megastarmie: Object.freeze(['psychic']),
+  miltank: Object.freeze(['ground']),
+  misdreavus: Object.freeze(['ghost']),
+  munchlax: Object.freeze(['fighting']),
+  onix: Object.freeze(['rock']),
+  orbeetle: Object.freeze(['psychic']),
+  orthworm: Object.freeze(['ground']),
+  pachirisu: Object.freeze(['electric']),
+  pikachu: Object.freeze(['electric']),
+  politoed: Object.freeze(['water']),
+  ponyta: Object.freeze(['fire']),
+  porygon2: Object.freeze(['electric']),
+  probopass: Object.freeze(['steel']),
+  pyroarfemale: Object.freeze(['grass']),
+  qwilfish: Object.freeze(['poison']),
+  raticate: Object.freeze(['dark']),
+  ribombee: Object.freeze(['fairy']),
+  rosasserperior: Object.freeze(['grass']),
+  sableye: Object.freeze(['ghost']),
+  scolipede: Object.freeze(['poison']),
+  scyther: Object.freeze(['bug']),
+  seaking: Object.freeze(['ground']),
+  serperior: Object.freeze(['grass']),
+  seviper: Object.freeze(['poison']),
+  shieldon: Object.freeze(['rock']),
+  shiftry: Object.freeze(['dark']),
+  shuckle: Object.freeze(['rock']),
+  slowbro: Object.freeze(['psychic']),
+  snorlax: Object.freeze(['normal']),
+  swalot: Object.freeze(['poison']),
+  tangrowth: Object.freeze(['grass']),
+  tauros: Object.freeze(['electric']),
+  tentacruel: Object.freeze(['poison']),
+  torkoal: Object.freeze(['fire']),
+  toxapex: Object.freeze(['poison']),
+  vanilluxe: Object.freeze(['ice']),
+  venusaurtwo: Object.freeze(['grass']),
+  walrein: Object.freeze(['ice']),
+  weavile: Object.freeze(['ice']),
+  weezing: Object.freeze(['poison']),
+  wobbuffet: Object.freeze(['psychic']),
+  wynaut: Object.freeze(['psychic']),
+  zorua: Object.freeze(['dark'])
+});
 
 const bossRecommendationMinimumLevel = 50;
 const bossRecommendationKnownLevelByNameKey = Object.freeze({
@@ -4592,6 +4711,7 @@ function mergeShinyRecommendationVariantsAcrossBossCatalogs() {
 
 function hydrateRecommendationCatalog() {
   visitAllRecommendationPicks((poke) => {
+    applyCatalogMoveTypesToRecommendation(poke);
     applyImplicitRecommendationEnhancements(poke);
   });
 }
@@ -5043,6 +5163,41 @@ function normalizeMoveTypeValues(value) {
   ));
 }
 
+function formatMoveTypeDescriptionPrefix(moveTypes = []) {
+  const normalizedMoveTypes = normalizeMoveTypeValues(moveTypes);
+  if (!normalizedMoveTypes.length) return '';
+  return `Tipo move: ${normalizedMoveTypes.map((type) => formatTypeLabel(type)).join('/')}.`;
+}
+
+function replaceRecommendationMoveTypeDescription(description, moveTypes = []) {
+  const prefix = formatMoveTypeDescriptionPrefix(moveTypes);
+  if (!prefix) return typeof description === 'string' ? description : '';
+
+  const currentDescription = typeof description === 'string' ? description.trim() : '';
+  const withoutMoveType = currentDescription
+    .replace(/^\s*(?:Tipo move|Tipo de golpe|Moveset|MoveType):\s*[^.]+\.?\s*/i, '')
+    .trim();
+
+  return withoutMoveType ? `${prefix} ${withoutMoveType}` : prefix;
+}
+
+function getCatalogMoveTypesForRecommendation(poke) {
+  const nameKey = getRecommendationNameKey(poke);
+  if (!nameKey) return [];
+  return normalizeMoveTypeValues(bossRecommendationCatalogMoveTypesByNameKey[nameKey]);
+}
+
+function applyCatalogMoveTypesToRecommendation(poke) {
+  if (!poke || typeof poke !== 'object') return poke;
+
+  const catalogMoveTypes = getCatalogMoveTypesForRecommendation(poke);
+  if (!catalogMoveTypes.length) return poke;
+
+  poke.moveType = catalogMoveTypes.length === 1 ? catalogMoveTypes[0] : catalogMoveTypes.slice();
+  poke.description = replaceRecommendationMoveTypeDescription(poke.description, catalogMoveTypes);
+  return poke;
+}
+
 function parseMoveTypes(poke) {
   if (!poke || typeof poke !== 'object') return [];
   const explicitMoveTypes = normalizeMoveTypeValues(poke.moveType);
@@ -5050,7 +5205,7 @@ function parseMoveTypes(poke) {
     return explicitMoveTypes;
   }
   if (typeof poke.description !== 'string') return [];
-  const match = poke.description.match(/(?:Tipo move|Tipo de golpe|Moveset|MoveType):\s*([a-zA-Z/]+)/i);
+  const match = poke.description.match(/(?:Tipo move|Tipo de golpe|Moveset|MoveType):\s*([a-zA-Z][a-zA-Z\s/-]*)/i);
   return match ? normalizeMoveTypeValues(match[1]) : [];
 }
 
@@ -5720,6 +5875,7 @@ function getRecommendationGroupBossRef(boss, group = {}) {
     catalogId: bossCatalogIdByReference.get(boss) || boss.catalogId || '',
     types: Array.isArray(group.bossTypes) && group.bossTypes.length ? group.bossTypes : (boss.types || []),
     moveType: group.moveType || getBossMoveTypes(boss),
+    immunities: mergeLowercaseUniqueValues(group.bossImmunities, group.immunities, boss.immunities),
     effectiveness: mergeBossEffectivenessConfig(boss?.effectiveness, group?.effectiveness)
   };
 }
@@ -6365,6 +6521,7 @@ function getRecommendationScoreWeights(boss) {
 
 function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
+  applyCatalogMoveTypesToRecommendation(poke);
   applyImplicitRecommendationEnhancements(poke);
   // Para DEF, o boss passa a ser lido pelo moveset sempre que ele existir.
   // Os tipos do chefe so entram quando um override explicito pedir isso
@@ -6372,13 +6529,30 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const bossAttackTypes = getBossAttackTypes(boss);
   const offenseTargetTypes = getBossOffenseTargetTypes(boss);
   const rankMode = getEffectiveRecommendationRankMode(boss, poke, options);
-  const moveType = parseMoveType(poke) || (poke.types && poke.types[0]);
+  const moveTypes = parseMoveTypes(poke);
+  const fallbackType = Array.isArray(poke.types) && poke.types.length ? poke.types[0] : null;
+  const offensiveMoveTypes = moveTypes.length ? moveTypes : normalizeMoveTypeValues(fallbackType);
+  let moveType = offensiveMoveTypes[0] || null;
   const matchupOverride = getMatchupOverride(poke, boss);
-  const offenseRaw = typeof matchupOverride?.offense === 'number'
-    ? matchupOverride.offense
-    : (offenseTargetTypes.length
-      ? getTypeMultiplier(moveType, offenseTargetTypes, [], poke.passiveSuperEffectiveTypes)
-      : 1);
+  let offenseRaw = 1;
+  if (typeof matchupOverride?.offense === 'number') {
+    offenseRaw = matchupOverride.offense;
+  } else if (offenseTargetTypes.length && offensiveMoveTypes.length) {
+    const scoredMoveTypes = offensiveMoveTypes.map((candidateMoveType) => {
+      const raw = getTypeMultiplier(candidateMoveType, offenseTargetTypes, [], poke.passiveSuperEffectiveTypes);
+      return {
+        moveType: candidateMoveType,
+        raw,
+        normalized: normalizeOffenseValue(raw)
+      };
+    });
+    const bestMoveType = scoredMoveTypes.sort((left, right) => {
+      if (right.normalized !== left.normalized) return right.normalized - left.normalized;
+      return right.raw - left.raw;
+    })[0];
+    moveType = bestMoveType?.moveType || moveType;
+    offenseRaw = typeof bestMoveType?.raw === 'number' ? bestMoveType.raw : 1;
+  }
 
   // Normalizamos o valor de ATK para a nova escala (1.0 / 1.5 / 2.0) e garantimos teto de 2.0
   const offense = normalizeOffenseValue(offenseRaw);
@@ -6904,14 +7078,14 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: 'Drifloon', types: ['ghost', 'flying'], moveTypes: ['fire'], clan: 'mystic' },
   { name: 'Serperior', types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
   { name: "Rosa's Serperior", types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
-  { name: 'Excadrill', types: ['ground', 'steel'], moveTypes: ['steel'], clan: 'instinct' },
+  { name: 'Excadrill', types: ['ground', 'steel'], moveTypes: ['steel'], clan: 'instinct', extra: { passiveSuperEffectiveTypes: ['steel'] } },
   { name: 'Mega Excadrill', types: ['ground', 'steel'], moveTypes: ['ground'], clan: 'instinct', requireEffectiveOffense: true },
   { name: 'Bouffalant', types: ['normal'], moveTypes: ['ground'], clan: 'valor' }
 ]);
 
 function createBestCatalogSpeedsterPick(config, bossRef) {
   const scoredPicks = (config?.moveTypes || []).map((moveType) => {
-    const pick = createRolePick(config.name, config.types, moveType);
+    const pick = createRolePick(config.name, config.types, moveType, config?.extra || {});
     if (!isBossRecommendationLevelEligible(pick)) return null;
     pick.bossEntries = [{ bossName: bossRef?.name || bossRef?.id || '' }];
     const scored = scoreRecommendationForBoss(bossRef, pick, { roleKey: 'dps' });
@@ -7014,6 +7188,22 @@ function injectCatalogRoleRecommendations() {
   });
 }
 
+function filterMegaAbsolZBossGroupsToFairyMoveset() {
+  Object.values(bossCatalogs).forEach((catalog) => {
+    (catalog?.data || []).forEach((boss) => {
+      Object.values(boss?.clans || {}).forEach((clanData) => {
+        (clanData?.recommendationGroups || []).forEach((group) => {
+          const groupKey = getRecommendationNameKey(group?.bossId || group?.title || '');
+          if(groupKey !== 'megaabsolz') return;
+          group.recommended = (group.recommended || []).filter((pick) => (
+            parseMoveTypes(pick).includes('fairy')
+          ));
+        });
+      });
+    });
+  });
+}
+
 ensureMirroredRecommendationVariants();
 injectHeracrossRecommendations();
 injectMiltankRecommendations();
@@ -7023,6 +7213,7 @@ injectCatalogSpeedsterRecommendations();
 injectCatalogRoleRecommendations();
 normalizeAllBossRecommendationAssignments();
 applyFixedRecommendationRegistryChecks();
+filterMegaAbsolZBossGroupsToFairyMoveset();
 hydrateRecommendationCatalog();
 synchronizeRecommendationTiers();
 limitMew2RecommendationsToTierFloor('bom');
@@ -7308,6 +7499,7 @@ removeRuimRecommendationsAndBackfillMissingBosses();
 synchronizeRecommendationTiers();
 mergeShinyRecommendationVariantsAcrossBossCatalogs();
 removeRuimRecommendationsAndBackfillMissingBosses();
+filterMegaAbsolZBossGroupsToFairyMoveset();
 synchronizeRecommendationTiers();
 refreshTierLegendLabels();
 
@@ -12140,12 +12332,9 @@ function createRecommendationCard(poke, options = {}) {
   const { showDescription = true } = options;
   {
     const formatTypeLabel = (type) => type ? type.charAt(0).toUpperCase() + type.slice(1) : '';
-    const moveTypeMatch = typeof poke?.description === 'string'
-      ? poke.description.match(/(?:Tipo move|MoveType):\s*([a-zA-Z/]+)/i)
-      : null;
-    const moveTypes = moveTypeMatch && moveTypeMatch[1]
-      ? moveTypeMatch[1].split('/').map((entry) => entry.trim().toLowerCase()).filter(Boolean)
-      : (poke?._moveType ? [poke._moveType] : []);
+    const moveTypes = parseMoveTypes(poke).length
+      ? parseMoveTypes(poke)
+      : normalizeMoveTypeValues(poke?._moveType);
     const tier = normalizeTierKey(poke.tier);
     const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
     const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
@@ -12883,7 +13072,9 @@ function createRolePickCard(poke) {
   img.src = resolveBossAssetSrc(poke.image);
   img.alt = poke.name;
   img.loading = 'lazy';
-  const moveType = poke.moveType || poke._moveType || (Array.isArray(poke.types) ? poke.types[0] : null);
+  const moveTypes = parseMoveTypes(poke).length
+    ? parseMoveTypes(poke)
+    : normalizeMoveTypeValues(poke._moveType || (Array.isArray(poke.types) ? poke.types[0] : null));
 
   const fallback = document.createElement('span');
   fallback.className = 'boss-role-pick-image-fallback';
@@ -13023,7 +13214,7 @@ function createRolePickCard(poke) {
     });
   }
 
-  if (moveType) {
+  moveTypes.slice(0, 2).forEach((moveType) => {
     const moveChip = document.createElement('span');
     moveChip.className = 'boss-role-pick-chip boss-role-pick-chip--move';
     getBossTypeIcons([moveType]).forEach((icon) => moveChip.appendChild(icon));
@@ -13033,7 +13224,7 @@ function createRolePickCard(poke) {
 
     moveChip.append(moveValue);
     moveRow.appendChild(moveChip);
-  }
+  });
 
   if (moveRow.childElementCount > 0) {
     chips.appendChild(moveGroup);

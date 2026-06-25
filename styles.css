@@ -15465,6 +15465,12 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
     rgba(255, 255, 255, 0.05);
 }
 
+.pokemon-role-badge[data-role="striker"] {
+  background:
+    linear-gradient(135deg, rgba(255, 206, 86, 0.18), rgba(255, 98, 98, 0.14)),
+    rgba(255, 255, 255, 0.05);
+}
+
 .pokemon-role-badge[data-role="supporter"],
 .pokemon-role-badge[data-role="support"] {
   background:
@@ -22577,6 +22583,12 @@ body {
   gap: 1.1rem;
 }
 
+.bosses-shell[data-catalog-id="hoopa"] .speedster-grid[data-catalog-variant="hoopa"][data-boss-mode="hoopa"] {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+  justify-content: center;
+  align-items: start;
+}
+
 .bosses-mode-title {
   color: #f7fbff;
   text-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
@@ -22594,6 +22606,11 @@ body {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     0 16px 28px rgba(2, 8, 18, 0.18);
+}
+
+.bosses-shell[data-catalog-id="hoopa"] .speedster-grid[data-catalog-variant="hoopa"][data-boss-mode="hoopa"] > .speedster-card {
+  width: 100%;
+  min-height: 17rem;
 }
 
 .bosses-shell .speedster-card--coming-soon {
@@ -22948,6 +22965,14 @@ body {
 }
 
 @media (max-width: 520px) {
+  .bosses-shell[data-catalog-id="hoopa"] .speedster-grid[data-catalog-variant="hoopa"][data-boss-mode="hoopa"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bosses-shell[data-catalog-id="hoopa"] .speedster-grid[data-catalog-variant="hoopa"][data-boss-mode="hoopa"] > .speedster-card {
+    min-height: 16.5rem;
+  }
+
   .home-landing__quick-link {
     grid-template-columns: 1.55rem minmax(0, 1fr);
     column-gap: 0.18rem;
