@@ -4034,11 +4034,10 @@ const ranges = {
 };
 
 const TRAINING_OFFICIAL_TOTALS = Object.freeze([
-    { level: 50, plates: 280, coins: 40, shiningStones: 10 },
-    { level: 65, plates: 284, coins: 37, shiningStones: 10 },
-    { level: 80, plates: 289, coins: 34, shiningStones: 10 },
-    { level: 95, plates: 135, coins: 15, shiningStones: 5 },
-    { level: 100, plates: 0, coins: 0 }
+    { level: 50, plates: 280, coins: 40 },
+    { level: 65, plates: 284, coins: 37 },
+    { level: 80, plates: 289, coins: 34 },
+    { level: 95, plates: 135, coins: 15 }
 ]);
 
 const TRAINING_EXPERIENCE_RATES = Object.freeze([
@@ -15806,95 +15805,67 @@ function getTrainingPlateCostForLevel(level){
     return Math.max(1, Math.floor(Number(level) / 10));
 }
 
-function getInterpolatedTrainingTotal(startLevel){
-    const level = clampTrainingLevel(startLevel);
-    const exact = TRAINING_OFFICIAL_TOTALS.find(entry => entry.level === level);
-    if(exact) return { ...exact };
-    if(level < TRAINING_OFFICIAL_TOTALS[0].level){
-        return null;
-    }
-    for(let index = 0; index < TRAINING_OFFICIAL_TOTALS.length - 1; index += 1){
-        const current = TRAINING_OFFICIAL_TOTALS[index];
-        const next = TRAINING_OFFICIAL_TOTALS[index + 1];
-        if(level < current.level || level > next.level) continue;
-        const span = next.level - current.level;
-        const progress = span > 0 ? (level - current.level) / span : 0;
-        return {
-            level,
-            plates: Math.max(0, Math.round(current.plates + ((next.plates - current.plates) * progress))),
-            coins: Math.max(0, Math.round(current.coins + ((next.coins - current.coins) * progress)))
-        };
-    }
-    return { level, plates: 0, coins: 0 };
-}
-
 function getTrainingExperienceRatesForLevel(level){
     const from = clampTrainingLevel(level);
     return TRAINING_EXPERIENCE_RATES.find(entry => from >= entry.minLevel) || TRAINING_EXPERIENCE_RATES[TRAINING_EXPERIENCE_RATES.length - 1];
 }
 
-function getTrainingFailureTotal(successTotal, level){
-    const total = Math.max(0, Number.parseInt(successTotal, 10) || 0);
-    if(!total) return 0;
-    const rates = getTrainingExperienceRatesForLevel(level);
-    return Math.ceil((total * rates.success) / rates.fail);
+function getTrainingBaseLevelForCalculation(currentLevel){
+    return getTrainingEntryLevel(trainingSelectedPokemonEntry) || clampTrainingLevel(currentLevel);
 }
 
-function distributeTrainingPlates(totalPlates, totalCoins){
-    const coins = Math.max(0, Number.parseInt(totalCoins, 10) || 0);
-    const plates = Math.max(0, Number.parseInt(totalPlates, 10) || 0);
-    if(!coins) return [];
-    const basePlates = Math.floor(plates / coins);
-    const extraPlates = plates % coins;
-    return Array.from({ length: coins }, (_, index) => basePlates + (index < extraPlates ? 1 : 0));
-}
-
-function getTrainingRows(startLevel){
-    const from = clampTrainingLevel(startLevel);
-    const officialTotal = getInterpolatedTrainingTotal(from);
-    if(officialTotal){
-        const successPlatesByTraining = distributeTrainingPlates(officialTotal.plates, officialTotal.coins);
-        const failPlatesByTraining = distributeTrainingPlates(getTrainingFailureTotal(officialTotal.plates, from), officialTotal.coins);
-        const failCoinsByTraining = distributeTrainingPlates(getTrainingFailureTotal(officialTotal.coins, from), officialTotal.coins);
-        return successPlatesByTraining
-            .map((successPlates, index) => ({
-                from,
-                to: 100,
-                trainingIndex: index + 1,
-                label: `Treino ${index + 1}`,
-                coins: 1,
-                failCoins: failCoinsByTraining[index] || 0,
-                successPlates,
-                failPlates: failPlatesByTraining[index] || 0
-            }));
-    }
+function getTrainingProgressRows(startLevel, baseLevel, resultType = 'success'){
     const rows = [];
-    for(let level = from; level < 100; level += 1){
-        const successPlates = getTrainingPlateCostForLevel(level);
-        const failCoins = getTrainingFailureTotal(1, level);
+    const rates = getTrainingExperienceRatesForLevel(baseLevel);
+    const expPerTraining = resultType === 'fail' ? rates.fail : rates.success;
+    if(expPerTraining <= 0) return rows;
+    let level = clampTrainingLevel(startLevel);
+    while(level < 100){
+        const from = level;
+        const to = Math.min(100, level + (expPerTraining / 100));
         rows.push({
-            from: level,
-            to: level + 1,
-            trainingIndex: rows.length + 1,
-            coins: 1,
-            failCoins,
-            successPlates,
-            failPlates: getTrainingFailureTotal(successPlates, level)
+            from,
+            to,
+            plates: getTrainingPlateCostForLevel(from)
         });
+        level = to;
     }
     return rows;
 }
 
-function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVariant()){
-    const rows = getTrainingRows(startLevel);
+function getTrainingRows(startLevel, baseLevel = getTrainingBaseLevelForCalculation(startLevel)){
+    const from = clampTrainingLevel(startLevel);
+    const base = clampTrainingLevel(baseLevel);
+    const successRows = getTrainingProgressRows(from, base, 'success');
+    const failRows = getTrainingProgressRows(from, base, 'fail');
+    const totalRows = Math.max(successRows.length, failRows.length);
+    return Array.from({ length: totalRows }, (_, index) => {
+        const successRow = successRows[index] || null;
+        const failRow = failRows[index] || null;
+        const rowFrom = successRow?.from ?? failRow?.from ?? from;
+        const rowTo = successRow?.to ?? failRow?.to ?? 100;
+        return {
+            from: rowFrom,
+            to: rowTo,
+            trainingIndex: index + 1,
+            label: `Treino ${index + 1}`,
+            coins: successRow ? 1 : 0,
+            failCoins: failRow ? 1 : 0,
+            successPlates: successRow?.plates || 0,
+            failPlates: failRow?.plates || 0
+        };
+    });
+}
+
+function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVariant(), baseLevel = getTrainingBaseLevelForCalculation(startLevel)){
+    const rows = getTrainingRows(startLevel, baseLevel);
     const coins = rows.reduce((sum, row) => sum + row.coins, 0);
     const failCoins = rows.reduce((sum, row) => sum + (row.failCoins || 0), 0);
     const successPlates = rows.reduce((sum, row) => sum + row.successPlates, 0);
     const failPlates = rows.reduce((sum, row) => sum + row.failPlates, 0);
     const shiningPlates = variant === 'shiny' ? successPlates : 0;
-    const officialTotal = getInterpolatedTrainingTotal(startLevel);
     const shiningStoneBlocks = variant === 'shiny'
-        ? officialTotal?.shiningStones || Math.ceil(shiningPlates / SHINING_PLATE_BLOCK_SIZE)
+        ? Math.ceil(shiningPlates / SHINING_PLATE_BLOCK_SIZE)
         : 0;
     const craftCommonPlates = variant === 'shiny'
         ? Math.max(successPlates, shiningStoneBlocks * SHINING_PLATE_BLOCK_SIZE)
@@ -16147,10 +16118,11 @@ function updateRangeResults(){
     const data = ranges[val];
     const variant = document.querySelector('input[name="poke-variant"]:checked')?.value || 'normal';
     if(data){
-        const plateCount = data.plates;
         const rangeStartLevel = Number.parseInt(val, 10) || 50;
-        const failPlateCount = getTrainingFailureTotal(plateCount, rangeStartLevel);
-        const failGoldCount = getTrainingFailureTotal(data.gold, rangeStartLevel);
+        const totals = calculateTrainingTotals(rangeStartLevel, variant, rangeStartLevel);
+        const plateCount = totals.successPlates;
+        const failPlateCount = totals.failPlates;
+        const failGoldCount = totals.failCoins;
         const blocks = Math.ceil(plateCount / SHINING_PLATE_BLOCK_SIZE);
         const totalInBlocks = blocks * SHINING_PLATE_BLOCK_SIZE;
         const variantLabel = variant === 'shiny' ? t('shiny') : t('normal');
@@ -16181,7 +16153,7 @@ function updateRangeResults(){
             html += `<p><strong>${t('commonPlatesLabel')}:</strong> <span class="num" data-value="${requiredCommonPlates}">${requiredCommonPlates.toLocaleString()}</span></p>`;
             html += `<p><strong>${t('shiningStonesLabel')}:</strong> <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span></p>`;
         }
-        html += `<p><strong>${t('goldCoinsLabel')}:</strong> <span class="num" data-value="${data.gold}">${typeof data.gold === 'number' && data.gold.toLocaleString ? data.gold.toLocaleString() : data.gold}</span></p>`;
+        html += `<p><strong>${t('goldCoinsLabel')}:</strong> <span class="num" data-value="${totals.coins}">${totals.coins.toLocaleString()}</span></p>`;
         html += `<p><strong>${t('goldCoinsLabel')} (F):</strong> <span class="num" data-value="${failGoldCount}">${failGoldCount.toLocaleString()}</span></p>`;
         html += `<p><strong>Plates (F):</strong> <span class="num" data-value="${failPlateCount}">${failPlateCount.toLocaleString()}</span></p>`;
         const materialsHtml = t('calcInfoItems')
