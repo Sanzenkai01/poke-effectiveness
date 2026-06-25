@@ -281,6 +281,7 @@ let pokemonCatalogEntriesByVariant = {
     default: [],
     mega: []
 };
+let pokemonCatalogPokedexMap = {};
 let activePokemonCatalogVariant = 'default';
 let activePokemonCatalogEntry = null;
 let pokemonDetailsLastFocus = null;
@@ -376,9 +377,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260624a';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625b';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260624a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260625e';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625e';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260625e';
+const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260625a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -416,6 +418,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Cleffa', 'Clefairy'],
     ['Clefairy', 'Clefable'],
     ['Vulpix', 'Ninetales'],
+    ['Alolan Vulpix', 'Alolan Ninetales'],
     ['Igglybuff', 'Jigglypuff'],
     ['Jigglypuff', 'Wigglytuff'],
     ['Zubat', 'Golbat'],
@@ -442,6 +445,8 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Tentacool', 'Tentacruel'],
     ['Geodude', 'Graveler'],
     ['Graveler', 'Golem'],
+    ['Alolan Geodude', 'Alolan Graveler'],
+    ['Alolan Graveler', 'Alolan Golem'],
     ['Ponyta', 'Rapidash'],
     ['Slowpoke', 'Slowbro'],
     ['Slowpoke', 'Slowking'],
@@ -720,6 +725,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Drizzile', 'Inteleon'],
     ['Rookidee', 'Corvisquire'],
     ['Corvisquire', 'Corviknight'],
+    ['Blipbug', 'Dottler'],
     ['Dottler', 'Orbeetle'],
     ['Chewtle', 'Drednaw'],
     ['Applin', 'Flapple'],
@@ -743,6 +749,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Finizen', 'Hero Palafin'],
     ['Tinkatink', 'Tinkatuff'],
     ['Tinkatuff', 'Tinkaton'],
+    ['Fidough', 'Dachsbun'],
     ['Shroodle', 'Grafaiai'],
     ['Greavard', 'Houndstone']
 ]);
@@ -1475,13 +1482,13 @@ function normalizePokemonDetailRouteToken(value){
 
 function getPokemonDetailRouteMatch(pathname = location.pathname){
     // Keep short numeric paths reserved for catalog pagination, e.g. /pokemon/2.
-    const match = String(pathname || '').match(/\/pokemon(?:s)?\/((?:\d{3,})|(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*))\/?$/i);
+    const match = String(pathname || '').match(/\/pokemon(?:s)?\/((?:\d{3,}(?:-[a-z0-9]+)?)|(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*))\/?$/i);
     if(!match) return null;
     const routeToken = normalizePokemonDetailRouteToken(match[1]);
     if(!routeToken) return null;
     return {
         routeToken,
-        dex: /^\d{3,}$/.test(routeToken)
+        dex: /^\d{3,}(?:-[a-z0-9]+)?$/.test(routeToken)
             ? Number.parseInt(routeToken, 10)
             : null
     };
@@ -1562,10 +1569,7 @@ function getPokemonCatalogRoutePath(page = pokemonCatalogCurrentPage, variant = 
 
 function getPokemonDetailRouteToken(entry){
     if(!entry) return '';
-    if(Number.isFinite(entry.dex) && entry.dex > 0){
-        return String(entry.dex).padStart(3, '0');
-    }
-    return String(entry.routeSlug || entry.id || '')
+    return String(entry.routeToken || entry.routeSlug || entry.id || '')
         .trim()
         .toLowerCase();
 }
@@ -1613,9 +1617,6 @@ function findPokemonCatalogEntryByRouteToken(routeToken, variant = getCurrentPok
     const normalizedToken = normalizePokemonDetailRouteToken(routeToken);
     if(!normalizedToken) return null;
 
-    const dex = /^\d{3,}$/.test(normalizedToken)
-        ? Number.parseInt(normalizedToken, 10)
-        : null;
     const normalizedVariant = normalizePokemonCatalogVariant(variant);
     const entries = normalizedVariant === POKEMON_CATALOG_VARIANT_DEFAULT
         ? [
@@ -1626,10 +1627,7 @@ function findPokemonCatalogEntryByRouteToken(routeToken, variant = getCurrentPok
 
     return entries.find((entry) => {
         if(!entry) return false;
-        if(dex !== null && Number.isFinite(entry.dex) && entry.dex === dex){
-            return true;
-        }
-        return String(entry.routeSlug || entry.id || '').trim().toLowerCase() === normalizedToken;
+        return String(entry.routeToken || '').trim().toLowerCase() === normalizedToken;
     }) || null;
 }
 
@@ -8815,12 +8813,20 @@ function expandTeamHuntEntityListWithPreEvolutions(entities = []){
                 name: preEvolution.name,
                 note: '',
                 image: preEvolution.image || buildTeamPokemonImageFileName(preEvolution.name),
-                sourceHuntName: entity.name
+                sourceHuntName: entity.name,
+                combatHuntName: preEvolution.name
             });
         });
     });
 
     return expanded;
+}
+
+function getTeamHuntCombatName(hunt){
+    const combatHuntName = String(hunt?.combatHuntName || '').trim();
+    if(combatHuntName) return combatHuntName;
+    const name = String(hunt?.name || hunt || '').trim();
+    return name;
 }
 
 function normalizeTeamMember(member, index){
@@ -9249,6 +9255,7 @@ function createTeamEntityCard(entity, options = {}){
                 note: String(entity.note || entity.comment || entity.description || '').trim(),
                 image: String(entity.image || buildTeamPokemonImageFileName(entity.name || entity.label || entity.text || entity.pokemon || '')).trim(),
                 sourceHuntName: String(entity.sourceHuntName || '').trim(),
+                combatHuntName: String(entity.combatHuntName || '').trim(),
                 huntLabel: String(entity.huntLabel || '').trim(),
                 items: Array.isArray(entity.items) ? entity.items : []
             }
@@ -9292,7 +9299,9 @@ function createTeamEntityCard(entity, options = {}){
     card.append(media, copy);
 
     if(showHuntMoveset){
-        const huntMeta = getTeamBuilderHuntCombatMeta(normalizedEntity.sourceHuntName || normalizedEntity.name);
+        const huntMeta = getTeamBuilderHuntCombatMeta(getTeamHuntCombatName(
+            normalizedEntity.items[0] || normalizedEntity
+        ));
         if(Array.isArray(huntMeta.moveset) && huntMeta.moveset.length){
             const movesetRow = document.createElement('span');
             movesetRow.className = 'team-hunt-card__moveset';
@@ -9968,7 +9977,7 @@ function getTeamEntryHuntCompatibilityInfo(entry, hunt, slotEntries){
     const huntName = String(hunt?.name || hunt || '').trim();
     if(!huntName) return null;
 
-    const effectiveHuntName = String(hunt?.sourceHuntName || huntName).trim();
+    const effectiveHuntName = getTeamHuntCombatName(hunt);
     const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
     const weaknessTypes = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, entry.elementKeys || []);
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
@@ -11503,6 +11512,7 @@ function getTeamBuilderKnownHuntCandidates(){
                 if(!existing.image && huntObject?.image) existing.image = String(huntObject.image || '').trim();
                 if(!existing.note && huntObject?.note) existing.note = String(huntObject.note || '').trim();
                 if(!existing.sourceHuntName && huntObject?.sourceHuntName) existing.sourceHuntName = String(huntObject.sourceHuntName || '').trim();
+                if(!existing.combatHuntName && huntObject?.combatHuntName) existing.combatHuntName = String(huntObject.combatHuntName || '').trim();
                 return;
             }
             huntCandidates.set(key, {
@@ -11510,6 +11520,7 @@ function getTeamBuilderKnownHuntCandidates(){
                 note: String(huntObject?.note || '').trim(),
                 image: String(huntObject?.image || '').trim(),
                 sourceHuntName: String(huntObject?.sourceHuntName || '').trim(),
+                combatHuntName: String(huntObject?.combatHuntName || '').trim(),
                 fallbackTypeKeys,
                 sourceTeams: [team]
             });
@@ -11543,7 +11554,7 @@ function getTeamBuilderHuntRecommendations(){
     getTeamBuilderKnownHuntCandidates().forEach(candidate => {
         const huntName = String(candidate?.name || '').trim();
         if(!huntName) return;
-        const effectiveHuntName = String(candidate?.sourceHuntName || huntName).trim();
+        const effectiveHuntName = getTeamHuntCombatName(candidate);
         const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, candidate.fallbackTypeKeys || []);
         if(!areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, effectiveHuntName, weaknessTypeKeys)) return;
         const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
@@ -11570,6 +11581,7 @@ function getTeamBuilderHuntRecommendations(){
             note: String(candidate.note || '').trim(),
             image: String(candidate.image || '').trim(),
             sourceHuntName: String(candidate.sourceHuntName || '').trim(),
+            combatHuntName: String(candidate.combatHuntName || '').trim(),
             score,
             typeKeys: weaknessTypeKeys
         };
@@ -11819,12 +11831,27 @@ function getExpandedHuntBuilderTargetDefinitions(){
             });
         });
         if(preEvolutions.length){
-            addDefinition({
-                name: formatTeamHuntBundleName(preEvolutions),
-                metaName: definition?.metaName || definition?.name,
-                image: preEvolutions[0]?.image || '',
-                lookupNames: preEvolutions.map(entry => entry.name),
-                preEvolutions
+            const preEvolutionGroups = new Map();
+            preEvolutions.forEach(preEvolution => {
+                const combatMeta = getTeamBuilderHuntCombatMeta(preEvolution.name);
+                const signature = [
+                    combatMeta.naturalElements.join('/'),
+                    combatMeta.moveset.join('/')
+                ].join('|');
+                if(!preEvolutionGroups.has(signature)){
+                    preEvolutionGroups.set(signature, []);
+                }
+                preEvolutionGroups.get(signature).push(preEvolution);
+            });
+
+            preEvolutionGroups.forEach(groupedPreEvolutions => {
+                addDefinition({
+                    name: formatTeamHuntBundleName(groupedPreEvolutions),
+                    metaName: groupedPreEvolutions[0]?.name || definition?.metaName || definition?.name,
+                    image: groupedPreEvolutions[0]?.image || '',
+                    lookupNames: groupedPreEvolutions.map(entry => entry.name),
+                    preEvolutions: groupedPreEvolutions
+                });
             });
         }
     });
@@ -19618,6 +19645,34 @@ function getPokemonCatalogGenerationMap(data){
     }, {});
 }
 
+function getPokemonCatalogPokedexMap(data){
+    const rawMap = data && typeof data === 'object' && !Array.isArray(data) && data.pokedex && typeof data.pokedex === 'object'
+        ? data.pokedex
+        : data;
+
+    if(!rawMap || typeof rawMap !== 'object' || Array.isArray(rawMap)) return {};
+
+    return Object.entries(rawMap).reduce((acc, [key, value]) => {
+        const normalizedKey = getPokemonCatalogRegistryKey(key);
+        const dex = Number.parseInt(value, 10);
+        if(normalizedKey && Number.isFinite(dex) && dex > 0){
+            acc[normalizedKey] = dex;
+        }
+        return acc;
+    }, {});
+}
+
+function resolvePokemonCatalogOfficialDex(entry){
+    const lookupKey = getPokemonCatalogGenerationLookupKey(entry);
+    const mappedDex = Number.parseInt(pokemonCatalogPokedexMap?.[lookupKey], 10);
+    if(Number.isFinite(mappedDex) && mappedDex > 0){
+        return mappedDex;
+    }
+
+    const explicitDex = Number(entry?.dex);
+    return Number.isFinite(explicitDex) && explicitDex > 0 ? explicitDex : null;
+}
+
 function normalizePokemonImageFileName(fileName){
     const rawFileName = String(fileName || '').trim();
     if(!rawFileName) return '';
@@ -19689,6 +19744,15 @@ function loadSharedPokemonGenerationMap(){
         });
 
     return pokemonGenerationMapLoadPromise;
+}
+
+function loadSharedPokemonPokedexMap(){
+    return fetchPokemonCatalogJson(POKEMON_POKEDEX_MAP_URL)
+        .then(data => getPokemonCatalogPokedexMap(data))
+        .catch(error => {
+            console.warn('Nao foi possivel carregar pokemons/pokedex.json.', error);
+            return {};
+        });
 }
 
 function normalizePokemonTypeKey(value){
@@ -19895,6 +19959,33 @@ function getPokemonEntryPriceLabel(entry){
     const customLabel = String(entry?.priceLabel || '').trim();
     if(customLabel) return customLabel;
     return Number(entry?.price) > 0 ? formatPokemonPriceLabel(entry.price) : '';
+}
+
+function isPokemonFossilAcquisitionLabel(label){
+    const normalized = normalizePokemonSearchText(label).replace(/[^a-z0-9]+/g, '');
+    return normalized === 'fossil'
+        || normalized === 'fosseis'
+        || normalized === 'fossils';
+}
+
+function getPokemonEntryAcquisitionLink(entry, priceLabel = getPokemonEntryPriceLabel(entry)){
+    const specialTags = getPokemonEntrySpecialTags(entry);
+    if(specialTags.includes('fossil') || isPokemonFossilAcquisitionLabel(priceLabel)){
+        return {
+            label: 'Fossil',
+            url: '/fossils'
+        };
+    }
+
+    const acquisitionUrl = String(entry?.acquisitionUrl || '').trim();
+    if(acquisitionUrl && priceLabel){
+        return {
+            label: priceLabel,
+            url: acquisitionUrl
+        };
+    }
+
+    return null;
 }
 
 function getPokemonEntrySpecialTags(entry){
@@ -21774,9 +21865,7 @@ function normalizePokemonCatalogEntry(entry, index){
     ));
 
     const roleInfo = getPokemonRoleInfo(entry.role);
-    const explicitDex = Object.prototype.hasOwnProperty.call(entry, 'dex')
-        ? Number(entry.dex)
-        : Number.NaN;
+    const officialDex = resolvePokemonCatalogOfficialDex(entry);
     const hasImage = Object.prototype.hasOwnProperty.call(entry, 'image');
     const generation = resolvePokemonCatalogGeneration(entry);
     const baseSpecialTags = normalizePokemonSpecialTags(
@@ -21805,11 +21894,8 @@ function normalizePokemonCatalogEntry(entry, index){
     return {
         id: slug,
         routeSlug: slug,
-        dex: Number.isFinite(explicitDex) && explicitDex > 0
-            ? explicitDex
-            : (Object.prototype.hasOwnProperty.call(entry, 'dex')
-                ? null
-                : (Number.isFinite(index) ? (index + 1) : null)),
+        dex: officialDex,
+        routeToken: String(entry.routeToken || entry.pokedexToken || '').trim().toLowerCase(),
         name,
         searchName: normalizePokemonSearchText(name),
         role: roleInfo.label,
@@ -21913,6 +21999,103 @@ function getPokemonCatalogAttachedFormBaseKey(entry){
     return getPokemonCatalogRegistryKey(name.replace(/two$/i, ''));
 }
 
+function formatPokemonPokedexRouteNumber(dex){
+    const numericDex = Number(dex);
+    return Number.isFinite(numericDex) && numericDex > 0
+        ? String(numericDex).padStart(3, '0')
+        : '';
+}
+
+function getPokemonCatalogRouteFallbackToken(entry){
+    return String(entry?.routeSlug || entry?.id || '')
+        .trim()
+        .toLowerCase();
+}
+
+function getPokemonCatalogFormPriority(entry){
+    const name = normalizePokemonSearchText(entry?.name);
+    if(!name) return 100;
+    if(/^mega\s+/.test(name)) return 80;
+    if(/\btwo$/.test(name) || /'s\b/.test(String(entry?.name || '').toLowerCase())) return 70;
+    if(/^alolan\s+/.test(name)) return 50;
+    if(/\b(gorging|full-belly|hangry|hero|dusk|midnight|midday|amped|low key|meteor|core|curly|droopy|stretchy)\b/.test(name)) return 40;
+    if(/\b(male|female|plant|sandy|trash|west|east|sword form|shield form)\b/.test(name)) return 35;
+    return 0;
+}
+
+function getPokemonMegaRouteSuffix(entry){
+    const name = String(entry?.name || '').trim();
+    const variantMatch = name.match(/\s+([xyz])$/i);
+    return variantMatch ? `m${variantMatch[1].toLowerCase()}` : 'm';
+}
+
+function assignPokemonCatalogRouteTokens(normalEntries = [], megaEntries = []){
+    const usedTokens = new Set();
+    const assignUniqueToken = (entry, preferredToken) => {
+        const fallbackToken = getPokemonCatalogRouteFallbackToken(entry);
+        const baseToken = String(preferredToken || fallbackToken || '').trim().toLowerCase();
+        if(!baseToken) return;
+
+        let routeToken = baseToken;
+        let suffix = 2;
+        while(usedTokens.has(routeToken)){
+            routeToken = `${baseToken}-${suffix}`;
+            suffix += 1;
+        }
+        usedTokens.add(routeToken);
+        entry.routeToken = routeToken;
+    };
+
+    const normalGroupsByDex = new Map();
+    normalEntries.forEach((entry, index) => {
+        const dex = Number(entry?.dex);
+        if(Number.isFinite(dex) && dex > 0){
+            if(!normalGroupsByDex.has(dex)) normalGroupsByDex.set(dex, []);
+            normalGroupsByDex.get(dex).push({ entry, index });
+            return;
+        }
+        assignUniqueToken(entry, entry?.routeToken);
+    });
+
+    Array.from(normalGroupsByDex.keys())
+        .sort((left, right) => left - right)
+        .forEach((dex) => {
+            const baseToken = formatPokemonPokedexRouteNumber(dex);
+            const group = normalGroupsByDex.get(dex)
+                .sort((left, right) => (
+                    getPokemonCatalogFormPriority(left.entry) - getPokemonCatalogFormPriority(right.entry)
+                    || left.index - right.index
+                ));
+            group.forEach(({ entry }, formIndex) => {
+                assignUniqueToken(entry, formIndex === 0 ? baseToken : `${baseToken}-${formIndex}`);
+            });
+        });
+
+    megaEntries
+        .slice()
+        .sort((left, right) => (
+            Number(left?.dex || Number.MAX_SAFE_INTEGER) - Number(right?.dex || Number.MAX_SAFE_INTEGER)
+            || String(left?.name || '').localeCompare(String(right?.name || ''), 'pt-BR')
+        ))
+        .forEach((entry) => {
+            const baseToken = formatPokemonPokedexRouteNumber(entry?.dex);
+            const megaToken = baseToken ? `${baseToken}-${getPokemonMegaRouteSuffix(entry)}` : '';
+            assignUniqueToken(entry, megaToken || entry?.routeToken);
+        });
+}
+
+function getPokemonCatalogSortNumber(entry){
+    const dex = Number(entry?.dex);
+    return Number.isFinite(dex) && dex > 0 ? dex : Number.MAX_SAFE_INTEGER;
+}
+
+function comparePokemonCatalogPokedexOrder(left, right){
+    return getPokemonCatalogSortNumber(left) - getPokemonCatalogSortNumber(right)
+        || getPokemonCatalogFormPriority(left) - getPokemonCatalogFormPriority(right)
+        || String(left?.routeToken || '').localeCompare(String(right?.routeToken || ''), 'pt-BR')
+        || String(left?.name || '').localeCompare(String(right?.name || ''), 'pt-BR');
+}
+
 function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
     const normalList = Array.isArray(normalEntries) ? normalEntries : [];
     const megaList = Array.isArray(megaEntries) ? megaEntries : [];
@@ -21962,6 +22145,10 @@ function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
     });
 
     const entrySourceIndex = key => sourceIndexByEntry.get(baseEntryByKey.get(key)) ?? Number.MAX_SAFE_INTEGER;
+    const compareFamilyKeys = (left, right) => (
+        comparePokemonCatalogPokedexOrder(baseEntryByKey.get(left), baseEntryByKey.get(right))
+        || entrySourceIndex(left) - entrySourceIndex(right)
+    );
     const visitedKeys = new Set();
     const families = [];
 
@@ -21976,7 +22163,7 @@ function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
             const key = pendingKeys.shift();
             familyKeys.push(key);
             Array.from(undirectedNeighborsByKey.get(key) || [])
-                .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+                .sort(compareFamilyKeys)
                 .forEach((neighborKey) => {
                     if(visitedKeys.has(neighborKey)) return;
                     visitedKeys.add(neighborKey);
@@ -21993,7 +22180,7 @@ function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
         );
         const readyKeys = familyKeys
             .filter(key => pendingParentCount.get(key) === 0)
-            .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right));
+            .sort(compareFamilyKeys);
         const orderedKeys = [];
 
         while(readyKeys.length){
@@ -22001,38 +22188,48 @@ function orderPokemonCatalogByEvolution(normalEntries = [], megaEntries = []){
             orderedKeys.push(key);
             Array.from(childrenByKey.get(key) || [])
                 .filter(childKey => familyKeySet.has(childKey))
-                .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+                .sort(compareFamilyKeys)
                 .forEach((childKey) => {
                     const remainingParents = (pendingParentCount.get(childKey) || 0) - 1;
                     pendingParentCount.set(childKey, remainingParents);
                     if(remainingParents === 0){
                         readyKeys.push(childKey);
-                        readyKeys.sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right));
+                        readyKeys.sort(compareFamilyKeys);
                     }
                 });
         }
 
         familyKeys
             .filter(key => !orderedKeys.includes(key))
-            .sort((left, right) => entrySourceIndex(left) - entrySourceIndex(right))
+            .sort(compareFamilyKeys)
             .forEach(key => orderedKeys.push(key));
 
         families.push({
+            sortNumber: Math.min(...familyKeys.map(key => getPokemonCatalogSortNumber(baseEntryByKey.get(key)))),
             sourceIndex: Math.min(...familyKeys.map(entrySourceIndex)),
             keys: orderedKeys
         });
     });
 
-    families.sort((left, right) => left.sourceIndex - right.sourceIndex);
+    families.sort((left, right) => (
+        left.sortNumber - right.sortNumber
+        || left.sourceIndex - right.sourceIndex
+    ));
     const orderedEntries = [];
     families.forEach((family) => {
         family.keys.forEach((key) => {
             const entry = baseEntryByKey.get(key);
             if(entry) orderedEntries.push(entry);
-            (attachedEntriesByBaseKey.get(key) || []).forEach(attachedEntry => orderedEntries.push(attachedEntry));
+            (attachedEntriesByBaseKey.get(key) || [])
+                .slice()
+                .sort(comparePokemonCatalogPokedexOrder)
+                .forEach(attachedEntry => orderedEntries.push(attachedEntry));
         });
     });
-    unattachedEntries.forEach(entry => orderedEntries.push(entry));
+    unattachedEntries
+        .slice()
+        .sort(comparePokemonCatalogPokedexOrder)
+        .forEach(entry => orderedEntries.push(entry));
     return orderedEntries;
 }
 
@@ -22230,10 +22427,12 @@ function loadPokemonCatalog(){
     return Promise.all([
         fetchPokemonCatalogJson(POKEMON_CATALOG_URL),
         fetchPokemonCatalogJson(POKEMON_MEGA_CATALOG_URL),
-        loadSharedPokemonGenerationMap()
+        loadSharedPokemonGenerationMap(),
+        loadSharedPokemonPokedexMap()
     ])
-        .then(([registeredData, megaData, generationMap]) => {
+        .then(([registeredData, megaData, generationMap, pokedexMap]) => {
             pokemonCatalogGenerationMap = generationMap;
+            pokemonCatalogPokedexMap = pokedexMap;
             const registeredEntries = getPokemonCatalogJsonList(registeredData)
                 .map((entry, index) => normalizePokemonCatalogEntry(entry, index))
                 .filter(Boolean);
@@ -22241,10 +22440,11 @@ function loadPokemonCatalog(){
                 getPokemonCatalogJsonList(megaData),
                 registeredEntries
             );
+            assignPokemonCatalogRouteTokens(registeredEntries, megaEntries);
 
             pokemonCatalogEntriesByVariant = {
                 default: registeredEntries,
-                mega: megaEntries
+                mega: megaEntries.slice().sort(comparePokemonCatalogPokedexOrder)
             };
             pokemonCatalogLoaded = true;
             huntBuilderTargetEntriesCache = null;
@@ -22532,19 +22732,20 @@ function renderPokemonDetailsModal(entry){
     }
     if(pokemonDetailsAveragesKicker){
         const priceLabel = getPokemonEntryPriceLabel(entry);
+        const acquisitionLink = getPokemonEntryAcquisitionLink(entry, priceLabel);
         pokemonDetailsAveragesKicker.replaceChildren(document.createTextNode('Médias'));
 
         const appendKickerSeparator = () => {
             pokemonDetailsAveragesKicker.appendChild(document.createTextNode(' • '));
         };
 
-        if(priceLabel){
+        if(priceLabel || acquisitionLink){
             appendKickerSeparator();
-            if(entry.acquisitionUrl){
+            if(acquisitionLink){
                 const link = document.createElement('a');
                 link.className = 'pokemon-acquisition-link';
-                link.href = entry.acquisitionUrl;
-                link.textContent = priceLabel;
+                link.href = acquisitionLink.url;
+                link.textContent = acquisitionLink.label;
                 pokemonDetailsAveragesKicker.appendChild(link);
             } else {
                 pokemonDetailsAveragesKicker.appendChild(document.createTextNode(priceLabel));
