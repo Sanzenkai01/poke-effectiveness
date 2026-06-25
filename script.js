@@ -10257,7 +10257,8 @@ function teamBuilderEntryMatchesSlot(entry, slotConfig = getTeamBuilderSlotConfi
         return entry.roleKey === 'defender' || entry.roleKey === 'all-rounder';
     }
     if(isTeamBuilderDpsSlot(slotConfig) && entry.roleKey === 'all-rounder') return true;
-    if(entry.roleKey !== 'attacker') return false;
+    if(!isTeamBuilderDpsRoleKey(entry)) return false;
+    if(entry.roleKey === 'striker') return true;
     if(isMegaPokemonCatalogEntry(entry)) return true;
     if(isTeamBuilderVirtualShinyEeveelutionEntry(entry)) return true;
     return subFunctionKeys.some(key => TEAM_BUILDER_DPS_SUB_FUNCTIONS.includes(key));
@@ -10288,7 +10289,7 @@ function getFilteredTeamBuilderEntries(){
             if(normalizedClan !== 'all' && entry.team !== normalizedClan) return false;
             if(normalizedType && normalizedType !== 'all' && !getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType)) return false;
             if(isTeamBuilderTankSlot(slotConfig) && activeRoles.length && !activeRoles.includes(entry.roleKey)) return false;
-            if(isTeamBuilderDpsSlot(slotConfig) && entry.roleKey === 'all-rounder' && !activeRoles.includes('all-rounder')) return false;
+            if(isTeamBuilderDpsSlot(slotConfig) && activeRoles.length && ['all-rounder', 'attacker', 'striker'].includes(entry.roleKey) && !activeRoles.includes(entry.roleKey)) return false;
             if(isTeamBuilderDpsSlot(slotConfig) && activeSubFunctions.length){
                 const entrySubFunctionKeys = getPokemonEntrySubFunctions(entry).map(subFunction => subFunction.key);
                 if(!activeSubFunctions.some(key => entrySubFunctionKeys.includes(key))) return false;
@@ -10570,6 +10571,10 @@ function getTeamBuilderEntryMovesetKeys(entry){
 
 function isTeamBuilderTankEntry(entry){
     return entry?.roleKey === 'defender' || entry?.roleKey === 'all-rounder';
+}
+
+function isTeamBuilderDpsRoleKey(entry){
+    return entry?.roleKey === 'attacker' || entry?.roleKey === 'striker';
 }
 
 function createTeamBuilderRoleFunctionToken(entry){
@@ -12230,7 +12235,7 @@ function buildHuntBuilderTeam(){
     ));
     const allRounderPool = compatibleEntries.filter(entry => entry.roleKey === 'all-rounder');
     const dpsPool = compatibleEntries.filter(entry => (
-        entry.roleKey === 'attacker'
+        isTeamBuilderDpsRoleKey(entry)
         || isHuntBuilderFlexibleMegaDragonite(entry)
     ));
 
