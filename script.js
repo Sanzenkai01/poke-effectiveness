@@ -377,7 +377,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260625e';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260625k';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625e';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260625e';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260625a';
@@ -10226,6 +10226,12 @@ function isTeamBuilderRecommendedBossEntry(entry){
         || (specialTags.includes('ranger') && priceLabel === 'ranger boss');
 }
 
+function isTeamBuilderNonCaptureAvailabilityExempt(entry){
+    if(isMegaPokemonCatalogEntry(entry)) return true;
+    const specialTags = getPokemonEntrySpecialTags(entry);
+    return ['fossil', 'maniac', 'ranger', 'poke-gift'].some(tag => specialTags.includes(tag));
+}
+
 function getTeamBuilderBaseCatalogEntries(){
     const normalEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
     const permittedMegaEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_MEGA)
@@ -10235,7 +10241,11 @@ function getTeamBuilderBaseCatalogEntries(){
         if(!entry || entry.catalogHidden) return false;
         if(isTeamBuilderNormalEeveelutionBlocked(entry)) return false;
         if(!canOpenPokemonCatalogEntry(entry) && !isTeamBuilderRecommendedBossEntry(entry)) return false;
-        if(entry.normalCaptureAvailable === false && !isTeamBuilderRecommendedBossEntry(entry)) return false;
+        if(
+            entry.normalCaptureAvailable === false
+            && !isTeamBuilderRecommendedBossEntry(entry)
+            && !isTeamBuilderNonCaptureAvailabilityExempt(entry)
+        ) return false;
         if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
         if(entry.roleKey === 'speedster' || entry.roleKey === 'supporter') return false;
         if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
@@ -10294,7 +10304,7 @@ function getFilteredTeamBuilderEntries(){
             if(!teamBuilderEntryMatchesSlot(entry, slotConfig)) return false;
             if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
             if(normalizedClan !== 'all' && entry.team !== normalizedClan) return false;
-            if(normalizedType && normalizedType !== 'all' && !getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType)) return false;
+            if(normalizedType && normalizedType !== 'all' && !teamBuilderEntryCoversType(entry, normalizedType)) return false;
             if(isTeamBuilderTankSlot(slotConfig) && activeRoles.length && !activeRoles.includes(entry.roleKey)) return false;
             if(isTeamBuilderDpsSlot(slotConfig) && activeRoles.length && ['all-rounder', 'attacker', 'striker'].includes(entry.roleKey) && !activeRoles.includes(entry.roleKey)) return false;
             if(isTeamBuilderDpsSlot(slotConfig) && activeSubFunctions.length){
@@ -10574,6 +10584,14 @@ function getTeamBuilderEntryMovesetKeys(entry){
     return (Array.isArray(entry?.moveset) ? entry.moveset : [])
         .map(normalizePokemonTypeKey)
         .filter(Boolean);
+}
+
+function teamBuilderEntryCoversType(entry, typeKey){
+    const normalizedType = normalizePokemonTypeKey(typeKey);
+    if(!entry || !normalizedType) return false;
+    if(getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType)) return true;
+    const offensivePassive = getTimesOffensivePassiveMeta(entry);
+    return offensivePassive.all || offensivePassive.types.includes(normalizedType);
 }
 
 function isTeamBuilderTankEntry(entry){
@@ -10926,7 +10944,12 @@ function renderTeamBuilderClanFilters(){
         label.textContent = option.label;
         button.appendChild(label);
         button.addEventListener('click', () => {
-            teamBuilderFilters = { ...teamBuilderFilters, clan: option.value };
+            teamBuilderFilters = {
+                ...teamBuilderFilters,
+                clan: option.value,
+                subFunctions: [],
+                roles: []
+            };
             renderTeamBuilder();
         });
         teamBuilderClanFilterRow.appendChild(button);
@@ -11063,7 +11086,12 @@ function renderTeamBuilderTypeFilters(){
         label.textContent = option.label;
         button.appendChild(label);
         button.addEventListener('click', () => {
-            teamBuilderFilters = { ...teamBuilderFilters, type: option.value };
+            teamBuilderFilters = {
+                ...teamBuilderFilters,
+                type: option.value,
+                subFunctions: [],
+                roles: []
+            };
             renderTeamBuilder();
         });
         teamBuilderTypeFilterRow.appendChild(button);
@@ -11456,6 +11484,7 @@ function teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes = []){
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     const offensivePassive = getTimesOffensivePassiveMeta(entry);
     if(offensivePassive.all) return true;
+    if(offensivePassive.types.some(type => normalizedWeaknessTypes.includes(type))) return true;
     if(!moveset.length || !normalizedWeaknessTypes.length) return false;
     return moveset.some(type => normalizedWeaknessTypes.includes(type));
 }
@@ -12164,7 +12193,7 @@ function getHuntBuilderCompatibleEntries(){
             if(entry.team !== huntBuilderSelectedClan) return false;
             if(!hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
             if(!teamBuilderEntryMeetsLevelRequirement(entry)) return false;
-            return getTeamBuilderEntryMovesetKeys(entry).some(typeKey => selectedTypes.has(typeKey));
+            return Array.from(selectedTypes).some(typeKey => teamBuilderEntryCoversType(entry, typeKey));
         });
 }
 
