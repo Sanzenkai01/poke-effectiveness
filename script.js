@@ -4128,6 +4128,7 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Earth Stone': { image: 'calculadora/earth_stone.gif' },
     'Darkness Stone': { image: 'calculadora/darkness_stone.png' },
     'Enigma Stone': { image: 'calculadora/enigma_stone.gif' },
+    'Brave Stone': { image: 'calculadora/brave_stone.png' },
     'Hearth Stone': { image: 'calculadora/heart_stone.gif' },
     'Metal Stone': { image: 'calculadora/metal_stone.png' },
     'Dragon Stone': { image: 'calculadora/dragon_stone.gif' },
@@ -17071,14 +17072,21 @@ function renderBoostPokemonMeta(state){
         const stoneLabel = document.createElement('span');
         stoneLabel.className = 'boost-selected-preview__group-label';
         const usesAceBronzeRule = usesBoostAncientBronzeStone(state);
+        const usesBraveBronzeRule = usesBoostBraveBronzeStone(state);
         const usesDittoBronzeRule = isBoostDittoState(state);
-        stoneLabel.textContent = usesAceBronzeRule
-            ? (hasBoostSpecialTag(state, 'pre-ace') ? 'Pre Ace' : 'Ace')
-            : (usesDittoBronzeRule ? 'Ditto' : (typeKeys.length > 1 ? 'Stones' : 'Stone'));
+        stoneLabel.textContent = usesBraveBronzeRule
+            ? 'Brave'
+            : (
+                usesAceBronzeRule
+                    ? (hasBoostSpecialTag(state, 'pre-ace') ? 'Pre Ace' : 'Ace')
+                    : (usesDittoBronzeRule ? 'Ditto' : (typeKeys.length > 1 ? 'Stones' : 'Stone'))
+            );
 
         const stoneChips = document.createElement('div');
         stoneChips.className = 'boost-selected-preview__chips';
         if(usesDittoBronzeRule){
+        } else if(usesBraveBronzeRule){
+            stoneChips.appendChild(createBoostNamedStoneChip('Brave Stone'));
         } else if(usesAceBronzeRule){
             stoneChips.appendChild(createBoostNamedStoneChip('Ancient Stone'));
         } else {
@@ -17314,6 +17322,16 @@ function usesBoostAncientBronzeStone(state){
     return hasBoostSpecialTag(state, 'ace') || hasBoostSpecialTag(state, 'pre-ace');
 }
 
+function usesBoostBraveBronzeStone(state){
+    const entry = state?.pokemonEntry;
+    if(!entry) return false;
+    const normalizedName = normalizePokemonSearchText(entry.name || state?.pokemonName || '');
+    const normalizedPriceLabel = normalizePokemonSearchText(entry.priceLabel || '');
+    return entry.roleKey === 'striker'
+        || normalizedPriceLabel === 'poke rush'
+        || normalizedName.includes('alolan');
+}
+
 function isBoostDittoState(state){
     return normalizePokemonSearchText(state?.pokemonEntry?.name || state?.pokemonName || '') === 'ditto';
 }
@@ -17380,6 +17398,15 @@ function createBoostBronzeStoneItems(state, options = {}){
             contextLabel,
             detail: directDetail
         });
+    }
+
+    if(usesBoostBraveBronzeStone(state)){
+        return [
+            createBoostNamedStoneMaterialItem('Brave Stone', getBoostBronzeNormalStoneQuantity(state, { currentLevel: current, targetLevel: normalizedLevel, cumulative }), {
+                detail: directDetail || 'Mesma quantidade das stones normais, trocada por Brave Stone.',
+                contextLabel
+            })
+        ];
     }
 
     if(usesBoostAncientBronzeStone(state)){
