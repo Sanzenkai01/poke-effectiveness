@@ -2534,8 +2534,8 @@ const mainQuestBosses = createManualRoleboardBosses([
           createRolePick('Shiny Claydol', ['ground', 'psychic'], 'ground')
         ],
         dps: [
-          createRolePick('Shiftry', ['grass', 'dark'], 'grass'),
-          createRolePick('Excadrill', ['ground', 'steel'], 'steel')
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy'),
+          createRolePick('Dedenne', ['electric', 'fairy'], 'fairy')
         ]
       },
       mystic: {
@@ -7102,6 +7102,13 @@ function createBestCatalogSpeedsterPick(config, bossRef) {
 
 function addCatalogSpeedstersToRecommendationList(bossRef, list, clanKey) {
   if (!Array.isArray(list)) return;
+  if (
+    String(bossRef?.id || '').trim().toLowerCase() === 'mega-malamar'
+    && String(clanKey || '').trim().toLowerCase() === 'instinct'
+    && isMainQuestBoss(bossRef)
+  ) {
+    return;
+  }
 
   catalogSpeedsterRecommendationConfigs
     .filter((config) => config.clan === clanKey)

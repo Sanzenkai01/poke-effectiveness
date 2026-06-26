@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260625d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260626a';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -1127,7 +1127,7 @@ const TIMES_PASSIVE_TYPE_TEXT_ALIASES = Object.freeze({
 const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     aggron: { naturalElements: ['steel', 'rock'], moveset: ['ground'] },
     applin: { naturalElements: ['grass', 'dragon'], moveset: ['grass'] },
-    archaludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'] },
+    archaludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'], weaknessTypes: ['ground', 'fighting'] },
     'armarouge/ceruledge': { naturalElements: ['fire', 'psychic'], moveset: ['fire'] },
     armarouge: { naturalElements: ['fire', 'psychic'], moveset: ['fire'] },
     baxcalibur: { naturalElements: ['dragon', 'ice'], moveset: ['ice'] },
@@ -1137,6 +1137,7 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     dragapult: { naturalElements: ['dragon', 'ghost'], moveset: ['ghost'] },
     dragonite: { naturalElements: ['dragon', 'flying'], moveset: ['flying'] },
     drednaw: { naturalElements: ['water', 'rock'], moveset: ['water'] },
+    duraludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'], weaknessTypes: ['ground', 'fighting'] },
     garchomp: { naturalElements: ['dragon', 'ground'], moveset: ['dragon'] },
     golisopod: { naturalElements: ['bug', 'water'], moveset: ['bug'] },
     goodra: { naturalElements: ['dragon'], moveset: ['water'] },
@@ -1146,11 +1147,13 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     hydreigon: { naturalElements: ['dark', 'dragon'], moveset: ['dragon'] },
     kingambit: { naturalElements: ['dark', 'steel'], moveset: ['steel'] },
     'kommo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['dragon'] },
+    larvitar: { naturalElements: ['rock', 'ground'], moveset: ['rock'], weaknessTypes: ['grass', 'water'] },
     metagross: { naturalElements: ['steel', 'psychic'], moveset: ['steel'] },
     palafin: { naturalElements: ['water'], moveset: ['water'] },
     porygon: { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon z': { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon-z': { naturalElements: ['normal'], moveset: ['normal'] },
+    pupitar: { naturalElements: ['rock', 'ground'], moveset: ['ground'], weaknessTypes: ['grass', 'water'] },
     salamance: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
     salamence: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
     tinkaton: { naturalElements: ['fairy', 'steel'], moveset: ['fairy'] },
@@ -11487,12 +11490,17 @@ function getTeamBuilderHuntCombatMeta(huntName){
     const moveset = normalizeTeamBuilderTypeList(
         override?.moveset || entry?.moveset || []
     );
+    const weaknessTypes = normalizeTeamBuilderTypeList(
+        override?.weaknessTypes || []
+    );
 
     return {
         naturalElements,
         moveset,
+        weaknessTypes,
         hasNaturalElements: naturalElements.length > 0,
-        hasMoveset: moveset.length > 0
+        hasMoveset: moveset.length > 0,
+        hasWeaknessTypes: weaknessTypes.length > 0
     };
 }
 
@@ -11574,6 +11582,9 @@ function isTeamBuilderHuntCompatible(huntName, weaknessTypes = []){
 
 function getTeamBuilderHuntWeaknessTypes(huntName, fallbackTypes = []){
     const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
+    if(huntMeta.hasWeaknessTypes){
+        return huntMeta.weaknessTypes;
+    }
     if(huntMeta.hasNaturalElements){
         return getPokemonWeaknesses(huntMeta.naturalElements).map(weakness => weakness.type);
     }
@@ -11924,10 +11935,7 @@ function getExpandedHuntBuilderTargetDefinitions(){
             const preEvolutionGroups = new Map();
             preEvolutions.forEach(preEvolution => {
                 const combatMeta = getTeamBuilderHuntCombatMeta(preEvolution.name);
-                const signature = [
-                    combatMeta.naturalElements.join('/'),
-                    combatMeta.moveset.join('/')
-                ].join('|');
+                const signature = combatMeta.naturalElements.join('/');
                 if(!preEvolutionGroups.has(signature)){
                     preEvolutionGroups.set(signature, []);
                 }
@@ -11980,6 +11988,7 @@ function createHuntBuilderTargetEntry(definition){
         huntLookupNames: names,
         naturalElements: combatMeta.naturalElements,
         moveset: combatMeta.moveset,
+        weaknessTypes: combatMeta.weaknessTypes,
         catalogHidden: false
     };
     if(preEvolutionItems.length) entry.huntDisplayItems = preEvolutionItems;
@@ -12137,7 +12146,14 @@ function renderHuntBuilderTypeOptions(){
         return;
     }
 
-    const weaknessesList = getPokemonWeaknesses(entry.naturalElements);
+    const weaknessesList = Array.isArray(entry.weaknessTypes) && entry.weaknessTypes.length
+        ? entry.weaknessTypes
+            .map(type => ({
+                type: normalizePokemonTypeKey(type),
+                multiplier: TYPE_EFFECTIVE_MULTIPLIER
+            }))
+            .filter(weakness => weakness.type)
+        : getPokemonWeaknesses(entry.naturalElements);
     const fragment = document.createDocumentFragment();
     weaknessesList.forEach(weakness => {
         const typeKey = normalizePokemonTypeKey(weakness.type);
