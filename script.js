@@ -377,9 +377,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260627d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260627e';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260625e';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260627a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260625a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260627a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -672,6 +672,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Gurdurr', 'Conkeldurr'],
     ['Axew', 'Fraxure'],
     ['Fraxure', 'Haxorus'],
+    ['Cubchoo', 'Beartic'],
     ['Karrablast', 'Escavalier'],
     ['Ferroseed', 'Ferrothorn'],
     // Generation 6 evolutions
@@ -1180,6 +1181,9 @@ let teamBuilderPassiveTooltipSurface = null;
 let teamBuilderPassiveTooltipActiveBadge = null;
 let teamBuilderPassiveTooltipListenersBound = false;
 let teamBuilderPassiveTooltipHideTimer = 0;
+let teamBuilderHuntsTooltipSurface = null;
+let teamBuilderHuntsTooltipActiveBadge = null;
+let teamBuilderHuntsTooltipListenersBound = false;
 let teamBuilderUrlHydratedValue = '';
 let teamBuilderFilters = {
     search: '',
@@ -10314,7 +10318,7 @@ function getTeamBuilderBaseCatalogEntries(){
             && !isTeamBuilderNonCaptureAvailabilityExempt(entry)
         ) return false;
         if(!explicitlyAllowed && !hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
-        if(!explicitlyAllowed && (entry.roleKey === 'speedster' || entry.roleKey === 'supporter')) return false;
+        if(entry.roleKey === 'speedster' || entry.roleKey === 'supporter') return false;
         if(!explicitlyAllowed && !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
         return true;
     }).map(applyTeamBuilderEeveelutionFunctionOverrides);
@@ -10343,7 +10347,7 @@ function teamBuilderEntryMatchesSlot(entry, slotConfig = getTeamBuilderSlotConfi
     if(
         isTeamBuilderDpsSlot(slotConfig)
         && isTeamBuilderExplicitlyAllowedEntry(entry)
-        && (entry.roleKey === 'supporter' || !entry.roleKey)
+        && (!entry.roleKey || isTeamBuilderDpsRoleKey(entry))
     ) return true;
     if(isTeamBuilderDpsSlot(slotConfig) && entry.roleKey === 'all-rounder') return true;
     if(!isTeamBuilderDpsRoleKey(entry)) return false;
@@ -10596,6 +10600,308 @@ function createTeamBuilderPassiveBadge(entry){
     return badge;
 }
 
+function ensureTeamBuilderHuntsTooltipSurface(){
+    if(teamBuilderHuntsTooltipSurface instanceof HTMLElement) return teamBuilderHuntsTooltipSurface;
+
+    const tooltip = document.createElement('div');
+    tooltip.id = 'team-builder-hunts-tooltip';
+    tooltip.className = 'team-builder-hunts-tooltip';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('data-open', 'false');
+    tooltip.setAttribute('data-placement', 'bottom');
+    document.body.appendChild(tooltip);
+    teamBuilderHuntsTooltipSurface = tooltip;
+    return tooltip;
+}
+
+function positionTeamBuilderHuntsTooltip(){
+    const badge = teamBuilderHuntsTooltipActiveBadge;
+    const tooltip = teamBuilderHuntsTooltipSurface;
+    if(!(badge instanceof HTMLElement) || !(tooltip instanceof HTMLElement)) return;
+
+    const viewportMargin = 12;
+    const gap = 8;
+    const badgeRect = badge.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipWidth = Math.min(tooltipRect.width || 0, window.innerWidth - (viewportMargin * 2));
+    const tooltipHeight = tooltipRect.height || 0;
+    const availableBelow = window.innerHeight - badgeRect.bottom - viewportMargin - gap;
+    const availableAbove = badgeRect.top - viewportMargin - gap;
+    const placeAbove = availableBelow < tooltipHeight && availableAbove > availableBelow;
+    const maxLeft = Math.max(viewportMargin, window.innerWidth - viewportMargin - tooltipWidth);
+    const preferredLeft = badgeRect.right - tooltipWidth;
+    const left = Math.min(Math.max(preferredLeft, viewportMargin), maxLeft);
+    const top = placeAbove
+        ? Math.max(viewportMargin, badgeRect.top - tooltipHeight - gap)
+        : Math.min(window.innerHeight - viewportMargin - tooltipHeight, badgeRect.bottom + gap);
+    const arrowLeft = Math.min(
+        Math.max((badgeRect.left + (badgeRect.width / 2)) - left, 16),
+        Math.max(16, tooltipWidth - 16)
+    );
+
+    tooltip.dataset.placement = placeAbove ? 'top' : 'bottom';
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+    tooltip.style.setProperty('--team-builder-hunts-tooltip-arrow-left', `${Math.round(arrowLeft)}px`);
+}
+
+function hideTeamBuilderHuntsTooltip(){
+    const tooltip = teamBuilderHuntsTooltipSurface;
+    if(tooltip instanceof HTMLElement){
+        tooltip.setAttribute('data-open', 'false');
+    }
+    if(teamBuilderHuntsTooltipActiveBadge instanceof HTMLElement){
+        teamBuilderHuntsTooltipActiveBadge.removeAttribute('aria-describedby');
+        teamBuilderHuntsTooltipActiveBadge.setAttribute('aria-expanded', 'false');
+    }
+    teamBuilderHuntsTooltipActiveBadge = null;
+}
+
+function getTeamBuilderEntryHuntMatches(entry){
+    if(!entry) return [];
+    const matches = [];
+    getTeamBuilderKnownHuntCandidates().forEach(candidate => {
+        const huntName = String(candidate?.name || '').trim();
+        if(!huntName) return;
+        const effectiveHuntName = getTeamHuntCombatName(candidate);
+        const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
+        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(effectiveHuntName);
+        const canHold = isTeamBuilderTankEntry(entry)
+            && teamBuilderTankCanHoldHunt(entry, huntMeta, weaknessTypeKeys);
+        const canDamage = (isTeamBuilderDpsRoleKey(entry) || entry?.roleKey === 'all-rounder')
+            && (
+                huntMeta.hasNaturalElements
+                    ? teamBuilderDamageEntryHitsHunt(entry, huntMeta)
+                    : teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypeKeys)
+            );
+        if(!canHold && !canDamage) return;
+        matches.push({
+            name: huntName,
+            note: String(candidate.note || '').trim(),
+            image: String(candidate.image || '').trim(),
+            sourceHuntName: String(candidate.sourceHuntName || '').trim(),
+            combatHuntName: String(candidate.combatHuntName || '').trim(),
+            typeKeys: weaknessTypeKeys,
+            roleLabel: canHold && canDamage ? 'Tank/Dano' : (canHold ? 'Tank' : 'Dano')
+        });
+    });
+
+    return compactTeamBuilderHuntRecommendations(matches)
+        .sort((left, right) => left.name.localeCompare(right.name));
+}
+
+function getTeamBuilderTooltipCombatNames(match){
+    const items = Array.isArray(match?.items) && match.items.length
+        ? match.items
+        : [match];
+    return Array.from(new Set(items
+        .map(item => String(item?.combatHuntName || item?.name || '').trim())
+        .filter(Boolean)
+    ));
+}
+
+function getTeamBuilderTooltipHuntCombatTypes(match, key){
+    const values = [];
+    getTeamBuilderTooltipCombatNames(match).forEach(name => {
+        const meta = getTeamBuilderHuntCombatMeta(name);
+        const typeKeys = key === 'moveset' ? meta.moveset : meta.naturalElements;
+        normalizeTeamBuilderTypeList(typeKeys).forEach(typeKey => {
+            if(!values.includes(typeKey)) values.push(typeKey);
+        });
+    });
+    return values;
+}
+
+function createTeamBuilderHuntsTooltipTypeList(typeKeys, className, label){
+    const list = document.createElement('span');
+    list.className = className;
+    list.setAttribute('aria-label', label);
+    normalizeTeamBuilderTypeList(typeKeys).forEach(typeKey => {
+        list.appendChild(createPokemonTypeToken(typeKey, { compact: true }));
+    });
+    return list;
+}
+
+function renderTeamBuilderHuntsTooltipContent(tooltip, entry){
+    const title = document.createElement('strong');
+    title.textContent = `Hunts para ${entry?.name || 'Pokemon'}`;
+
+    if(!teamsCatalogLoaded){
+        const status = document.createElement('span');
+        status.className = 'team-builder-hunts-tooltip__status';
+        status.textContent = 'Carregando hunts...';
+        tooltip.replaceChildren(title, status);
+        return;
+    }
+
+    const matches = getTeamBuilderEntryHuntMatches(entry);
+    if(!matches.length){
+        const status = document.createElement('span');
+        status.className = 'team-builder-hunts-tooltip__status';
+        status.textContent = 'Nenhuma hunt compativel encontrada.';
+        tooltip.replaceChildren(title, status);
+        return;
+    }
+
+    const list = document.createElement('span');
+    list.className = 'team-builder-hunts-tooltip__list';
+    matches.forEach(match => {
+        const item = document.createElement('span');
+        item.className = 'team-builder-hunts-tooltip__item';
+        const media = createTeamBuilderHuntMedia(match);
+        media.classList.add('team-builder-hunts-tooltip__media');
+        const copy = document.createElement('span');
+        copy.className = 'team-builder-hunts-tooltip__copy';
+        const top = document.createElement('span');
+        top.className = 'team-builder-hunts-tooltip__top';
+        const movesetKeys = getTeamBuilderTooltipHuntCombatTypes(match, 'moveset');
+        if(movesetKeys.length){
+            top.appendChild(createTeamBuilderHuntsTooltipTypeList(
+                movesetKeys,
+                'team-builder-hunts-tooltip__moveset',
+                `Moveset: ${movesetKeys.map(formatPokemonTypeLabel).join(', ')}`
+            ));
+        }
+        const name = document.createElement('span');
+        name.className = 'team-builder-hunts-tooltip__name';
+        name.textContent = match.name;
+        top.appendChild(name);
+        const naturalTypeKeys = getTeamBuilderTooltipHuntCombatTypes(match, 'naturalElements');
+        if(naturalTypeKeys.length){
+            top.appendChild(createTeamBuilderHuntsTooltipTypeList(
+                naturalTypeKeys,
+                'team-builder-hunts-tooltip__types',
+                `Tipo: ${naturalTypeKeys.map(formatPokemonTypeLabel).join(', ')}`
+            ));
+        }
+        const weaknessRow = document.createElement('span');
+        weaknessRow.className = 'team-builder-hunts-tooltip__weaknesses';
+        const typeKeys = getTeamBuilderHuntDisplayTypeKeys(match);
+        if(typeKeys.length){
+            const weaknessLabel = document.createElement('small');
+            weaknessLabel.textContent = 'Fraquezas';
+            weaknessRow.appendChild(weaknessLabel);
+            weaknessRow.appendChild(createTeamBuilderHuntsTooltipTypeList(
+                typeKeys,
+                'team-builder-hunts-tooltip__weakness-list',
+                `Fraquezas: ${typeKeys.map(formatPokemonTypeLabel).join(', ')}`
+            ));
+        } else {
+            const compatible = document.createElement('small');
+            compatible.textContent = 'Compatível';
+            weaknessRow.appendChild(compatible);
+        }
+        copy.append(top, weaknessRow);
+        item.append(media, copy);
+        list.appendChild(item);
+    });
+    tooltip.replaceChildren(title, list);
+}
+
+function showTeamBuilderHuntsTooltip(badge){
+    if(!(badge instanceof HTMLElement)) return;
+    const entry = badge._teamBuilderEntry || null;
+    if(!entry) return;
+
+    hideTeamBuilderPassiveTooltip();
+    const tooltip = ensureTeamBuilderHuntsTooltipSurface();
+    renderTeamBuilderHuntsTooltipContent(tooltip, entry);
+    tooltip.setAttribute('data-open', 'true');
+    badge.setAttribute('aria-describedby', tooltip.id);
+    badge.setAttribute('aria-expanded', 'true');
+    teamBuilderHuntsTooltipActiveBadge = badge;
+    positionTeamBuilderHuntsTooltip();
+    requestAnimationFrame(positionTeamBuilderHuntsTooltip);
+
+    if(!teamsCatalogLoaded){
+        ensureTeamsCatalogLoaded()
+            .then(() => {
+                if(teamBuilderHuntsTooltipActiveBadge === badge){
+                    renderTeamBuilderHuntsTooltipContent(tooltip, entry);
+                    positionTeamBuilderHuntsTooltip();
+                    requestAnimationFrame(positionTeamBuilderHuntsTooltip);
+                }
+            })
+            .catch(error => {
+                console.error('Team Builder hunt tooltip load failed', error);
+                if(teamBuilderHuntsTooltipActiveBadge === badge){
+                    const title = document.createElement('strong');
+                    title.textContent = `Hunts para ${entry.name}`;
+                    const status = document.createElement('span');
+                    status.className = 'team-builder-hunts-tooltip__status';
+                    status.textContent = 'Nao foi possivel carregar as hunts.';
+                    tooltip.replaceChildren(title, status);
+                    positionTeamBuilderHuntsTooltip();
+                }
+            });
+    }
+}
+
+function bindTeamBuilderHuntsTooltipListeners(){
+    if(teamBuilderHuntsTooltipListenersBound) return;
+
+    window.addEventListener('scroll', () => {
+        if(teamBuilderHuntsTooltipActiveBadge) positionTeamBuilderHuntsTooltip();
+    }, true);
+    window.addEventListener('resize', () => {
+        if(teamBuilderHuntsTooltipActiveBadge) positionTeamBuilderHuntsTooltip();
+    });
+    document.addEventListener('keydown', event => {
+        if(event.key === 'Escape') hideTeamBuilderHuntsTooltip();
+    });
+    document.addEventListener('pointerdown', event => {
+        const target = event.target;
+        if(
+            teamBuilderHuntsTooltipActiveBadge
+            && !teamBuilderHuntsTooltipActiveBadge.contains(target)
+            && !(teamBuilderHuntsTooltipSurface instanceof HTMLElement && teamBuilderHuntsTooltipSurface.contains(target))
+        ){
+            hideTeamBuilderHuntsTooltip();
+        }
+    });
+
+    teamBuilderHuntsTooltipListenersBound = true;
+}
+
+function createTeamBuilderHuntsBadge(entry){
+    if(!entry) return null;
+    const badge = document.createElement('span');
+    badge.className = 'team-builder-hunts-badge';
+    badge.tabIndex = 0;
+    badge.setAttribute('role', 'button');
+    badge.setAttribute('aria-label', `Ver hunts que ${entry.name} consegue cacar`);
+    badge.setAttribute('aria-expanded', 'false');
+    badge._teamBuilderEntry = entry;
+
+    const marker = document.createElement('img');
+    marker.className = 'team-builder-hunts-badge__mark';
+    marker.src = 'hunt-builder/hunt_symbol.png?v=20260627a';
+    marker.alt = '';
+    marker.loading = 'lazy';
+    marker.decoding = 'async';
+    setImageFallback(marker, POKEMON_IMAGE_PLACEHOLDER);
+
+    const toggle = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        if(teamBuilderHuntsTooltipActiveBadge === badge){
+            hideTeamBuilderHuntsTooltip();
+        } else {
+            showTeamBuilderHuntsTooltip(badge);
+        }
+    };
+    badge.addEventListener('click', toggle);
+    badge.addEventListener('keydown', event => {
+        if(event.key === 'Enter' || event.key === ' '){
+            toggle(event);
+        }
+    });
+    bindTeamBuilderHuntsTooltipListeners();
+
+    badge.append(marker);
+    return badge;
+}
+
 function createTeamBuilderRoleIcon(entry){
     const roleInfo = getPokemonRoleInfo(entry?.roleKey || entry?.role);
     const badge = document.createElement('span');
@@ -10663,9 +10969,7 @@ function getTeamBuilderEntryMovesetKeys(entry){
 function teamBuilderEntryCoversType(entry, typeKey){
     const normalizedType = normalizePokemonTypeKey(typeKey);
     if(!entry || !normalizedType) return false;
-    if(getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType)) return true;
-    const offensivePassive = getTimesOffensivePassiveMeta(entry);
-    return offensivePassive.all;
+    return getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType);
 }
 
 function isTeamBuilderTankEntry(entry){
@@ -10674,8 +10978,7 @@ function isTeamBuilderTankEntry(entry){
 
 function isTeamBuilderDpsRoleKey(entry){
     return entry?.roleKey === 'attacker'
-        || entry?.roleKey === 'striker'
-        || (isTeamBuilderExplicitlyAllowedEntry(entry) && entry?.roleKey === 'supporter');
+        || entry?.roleKey === 'striker';
 }
 
 function createTeamBuilderRoleFunctionToken(entry){
@@ -10726,6 +11029,7 @@ function createTeamBuilderPokemonCard(entry){
     clanIcon.title = entry.teamLabel || getPokemonTeamInfo(entry.team).label;
     clanIcon.setAttribute('aria-label', entry.teamLabel || getPokemonTeamInfo(entry.team).label);
     const roleIcon = createTeamBuilderRoleIcon(entry);
+    const huntsBadge = createTeamBuilderHuntsBadge(entry);
     const passiveBadge = createTeamBuilderPassiveBadge(entry);
     body.appendChild(name);
     const typeSummary = createTeamBuilderTypeSummary(entry);
@@ -10733,6 +11037,7 @@ function createTeamBuilderPokemonCard(entry){
 
     card.append(media, body);
     card.appendChild(clanIcon);
+    if(huntsBadge) card.appendChild(huntsBadge);
     card.appendChild(roleIcon);
     if(passiveBadge) card.appendChild(passiveBadge);
     card.addEventListener('click', () => {
@@ -10908,10 +11213,12 @@ function renderTeamBuilderSlots(){
             name.textContent = selectedEntry.name;
             const typeSummary = createTeamBuilderTypeSummary(selectedEntry);
             const roleIcon = createTeamBuilderRoleIcon(selectedEntry);
+            const huntsBadge = createTeamBuilderHuntsBadge(selectedEntry);
             const passiveBadge = createTeamBuilderPassiveBadge(selectedEntry);
             preview.append(image, name);
             if(typeSummary) preview.appendChild(typeSummary);
             button.appendChild(preview);
+            if(huntsBadge) slot.appendChild(huntsBadge);
             slot.appendChild(roleIcon);
             if(passiveBadge) slot.appendChild(passiveBadge);
         }
@@ -11890,6 +12197,7 @@ function renderTeamBuilderCompletionState(){
 }
 
 function renderTeamBuilder(){
+    hideTeamBuilderHuntsTooltip();
     const filledCount = Object.values(teamBuilderSelections || {}).filter(Boolean).length;
     if(teamBuilderFilledCount) teamBuilderFilledCount.textContent = `${filledCount}/6`;
     const activeSlot = getTeamBuilderSlotConfig();
