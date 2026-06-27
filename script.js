@@ -377,11 +377,11 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260626a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260627d';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260625e';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260625a';
-const TIMES_CATALOG_URL = 'times/teams.json?v=20260620a';
+const TIMES_CATALOG_URL = 'times/teams.json?v=20260627a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
