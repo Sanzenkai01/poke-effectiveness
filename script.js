@@ -1127,7 +1127,7 @@ const TIMES_PASSIVE_TYPE_TEXT_ALIASES = Object.freeze({
 const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     aggron: { naturalElements: ['steel', 'rock'], moveset: ['ground'] },
     applin: { naturalElements: ['grass', 'dragon'], moveset: ['grass'] },
-    archaludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'], weaknessTypes: ['ground', 'fighting'] },
+    archaludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'] },
     'armarouge/ceruledge': { naturalElements: ['fire', 'psychic'], moveset: ['fire'] },
     armarouge: { naturalElements: ['fire', 'psychic'], moveset: ['fire'] },
     baxcalibur: { naturalElements: ['dragon', 'ice'], moveset: ['ice'] },
@@ -1137,7 +1137,7 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     dragapult: { naturalElements: ['dragon', 'ghost'], moveset: ['ghost'] },
     dragonite: { naturalElements: ['dragon', 'flying'], moveset: ['flying'] },
     drednaw: { naturalElements: ['water', 'rock'], moveset: ['water'] },
-    duraludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'], weaknessTypes: ['ground', 'fighting'] },
+    duraludon: { naturalElements: ['steel', 'dragon'], moveset: ['electric'] },
     garchomp: { naturalElements: ['dragon', 'ground'], moveset: ['dragon'] },
     golisopod: { naturalElements: ['bug', 'water'], moveset: ['bug'] },
     goodra: { naturalElements: ['dragon'], moveset: ['water'] },
@@ -1147,13 +1147,11 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     hydreigon: { naturalElements: ['dark', 'dragon'], moveset: ['dragon'] },
     kingambit: { naturalElements: ['dark', 'steel'], moveset: ['steel'] },
     'kommo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['dragon'] },
-    larvitar: { naturalElements: ['rock', 'ground'], moveset: ['rock'], weaknessTypes: ['grass', 'water'] },
     metagross: { naturalElements: ['steel', 'psychic'], moveset: ['steel'] },
     palafin: { naturalElements: ['water'], moveset: ['water'] },
     porygon: { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon z': { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon-z': { naturalElements: ['normal'], moveset: ['normal'] },
-    pupitar: { naturalElements: ['rock', 'ground'], moveset: ['ground'], weaknessTypes: ['grass', 'water'] },
     salamance: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
     salamence: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
     tinkaton: { naturalElements: ['fairy', 'steel'], moveset: ['fairy'] },
@@ -9575,7 +9573,24 @@ function compactTeamBuilderHuntRecommendations(recommendations = []){
             const evolutionOrder = getTeamHuntPreEvolutionEntries(group.sourceName)
                 .map(entry => normalizePokemonSearchText(entry?.name))
                 .filter(Boolean);
-            const orderedPreEvolutions = [...group.preEvolutions].sort((left, right) => {
+            const recommendedPreEvolutionsByKey = new Map(
+                group.preEvolutions.map(entry => [normalizePokemonSearchText(entry?.name), entry])
+            );
+            const completePreEvolutionItems = getTeamHuntPreEvolutionEntries(group.sourceName)
+                .map(preEvolution => {
+                    const preEvolutionName = String(preEvolution?.name || '').trim();
+                    const key = normalizePokemonSearchText(preEvolutionName);
+                    const recommended = recommendedPreEvolutionsByKey.get(key) || {};
+                    return {
+                        ...recommended,
+                        name: preEvolutionName || String(recommended?.name || '').trim(),
+                        image: String(recommended?.image || preEvolution?.image || buildTeamPokemonImageFileName(preEvolutionName)).trim(),
+                        sourceHuntName: group.sourceName,
+                        combatHuntName: preEvolutionName || String(recommended?.combatHuntName || recommended?.name || '').trim()
+                    };
+                })
+                .filter(item => item.name);
+            const orderedPreEvolutions = (completePreEvolutionItems.length ? completePreEvolutionItems : group.preEvolutions).sort((left, right) => {
                 const leftIndex = evolutionOrder.indexOf(normalizePokemonSearchText(left?.name));
                 const rightIndex = evolutionOrder.indexOf(normalizePokemonSearchText(right?.name));
                 if(leftIndex !== -1 || rightIndex !== -1){
@@ -10017,7 +10032,7 @@ function getTeamEntryHuntCompatibilityInfo(entry, hunt, slotEntries){
 
     const effectiveHuntName = getTeamHuntCombatName(hunt);
     const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
-    const weaknessTypes = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, entry.elementKeys || []);
+    const weaknessTypes = getTeamBuilderHuntWeaknessTypes(effectiveHuntName);
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     if(!huntMeta.hasNaturalElements && !normalizedWeaknessTypes.length) return null;
 
@@ -11483,24 +11498,19 @@ function getTeamBuilderDefensivePassiveTypes(entry){
 function getTeamBuilderHuntCombatMeta(huntName){
     const normalizedName = normalizePokemonSearchText(huntName);
     const override = TEAM_BUILDER_HUNT_META_OVERRIDES[normalizedName] || null;
-    const entry = findTeamBuilderPokemonCatalogEntry(huntName);
+    const entry = getPokemonCatalogEntryByName(huntName)
+        || findTeamBuilderPokemonCatalogEntry(huntName);
     const naturalElements = normalizeTeamBuilderTypeList(
         override?.naturalElements || entry?.naturalElements || []
     );
     const moveset = normalizeTeamBuilderTypeList(
         override?.moveset || entry?.moveset || []
     );
-    const weaknessTypes = normalizeTeamBuilderTypeList(
-        override?.weaknessTypes || []
-    );
-
     return {
         naturalElements,
         moveset,
-        weaknessTypes,
         hasNaturalElements: naturalElements.length > 0,
-        hasMoveset: moveset.length > 0,
-        hasWeaknessTypes: weaknessTypes.length > 0
+        hasMoveset: moveset.length > 0
     };
 }
 
@@ -11580,15 +11590,12 @@ function isTeamBuilderHuntCompatible(huntName, weaknessTypes = []){
     );
 }
 
-function getTeamBuilderHuntWeaknessTypes(huntName, fallbackTypes = []){
+function getTeamBuilderHuntWeaknessTypes(huntName){
     const huntMeta = getTeamBuilderHuntCombatMeta(huntName);
-    if(huntMeta.hasWeaknessTypes){
-        return huntMeta.weaknessTypes;
-    }
     if(huntMeta.hasNaturalElements){
         return getPokemonWeaknesses(huntMeta.naturalElements).map(weakness => weakness.type);
     }
-    return normalizeTeamBuilderTypeList(fallbackTypes);
+    return [];
 }
 
 function getTeamBuilderKnownHuntCandidates(){
@@ -11656,7 +11663,7 @@ function getTeamBuilderHuntRecommendations(){
         const huntName = String(candidate?.name || '').trim();
         if(!huntName) return;
         const effectiveHuntName = getTeamHuntCombatName(candidate);
-        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(effectiveHuntName, candidate.fallbackTypeKeys || []);
+        const weaknessTypeKeys = getTeamBuilderHuntWeaknessTypes(effectiveHuntName);
         if(!areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, effectiveHuntName, weaknessTypeKeys)) return;
         const huntMeta = getTeamBuilderHuntCombatMeta(effectiveHuntName);
         const sourceScore = (Array.isArray(candidate.sourceTeams) ? candidate.sourceTeams : []).reduce((score, team) => {
@@ -11692,8 +11699,7 @@ function getTeamBuilderHuntRecommendations(){
     });
 
     return compactTeamBuilderHuntRecommendations(Array.from(huntScores.values())
-        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name)))
-        .slice(0, 8);
+        .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name)));
 }
 
 function findTeamBuilderPokemonImageEntry(name){
@@ -11731,6 +11737,43 @@ function createTeamBuilderHuntMedia(recommendation){
     return media;
 }
 
+function areSameTeamBuilderTypeList(left = [], right = []){
+    const normalizedLeft = normalizeTeamBuilderTypeList(left);
+    const normalizedRight = normalizeTeamBuilderTypeList(right);
+    return normalizedLeft.length === normalizedRight.length
+        && normalizedLeft.every((typeKey, index) => typeKey === normalizedRight[index]);
+}
+
+function getTeamBuilderHuntDisplayTypeKeys(recommendation){
+    if(!recommendation || typeof recommendation !== 'object') return [];
+
+    const getItemTypeKeys = (item) => {
+        const huntName = String(item?.combatHuntName || item?.name || '').trim();
+        if(!huntName) return [];
+        return normalizeTeamBuilderTypeList(getTeamBuilderHuntWeaknessTypes(huntName));
+    };
+
+    const items = Array.isArray(recommendation.items) && recommendation.items.length
+        ? recommendation.items
+        : [];
+
+    if(items.length){
+        const itemTypeLists = items
+            .map(getItemTypeKeys)
+            .filter(typeKeys => typeKeys.length);
+        if(itemTypeLists.length){
+            const firstTypeList = itemTypeLists[0];
+            if(itemTypeLists.every(typeList => areSameTeamBuilderTypeList(typeList, firstTypeList))){
+                return firstTypeList;
+            }
+            return Array.from(new Set(itemTypeLists.flat()));
+        }
+    }
+
+    const directTypeKeys = getItemTypeKeys(recommendation);
+    return directTypeKeys;
+}
+
 function renderTeamBuilderHunts(){
     if(!(teamBuilderHunts instanceof HTMLElement)) return;
     if(teamBuilderHuntsLoading){
@@ -11761,11 +11804,12 @@ function renderTeamBuilderHunts(){
         const name = document.createElement('strong');
         name.textContent = recommendation.name;
         body.appendChild(name);
-        if(Array.isArray(recommendation.typeKeys) && recommendation.typeKeys.length){
+        const displayTypeKeys = getTeamBuilderHuntDisplayTypeKeys(recommendation);
+        if(displayTypeKeys.length){
             const typeList = document.createElement('span');
             typeList.className = 'team-builder-hunt-card__types';
-            typeList.setAttribute('aria-label', `Tipos: ${recommendation.typeKeys.map(getTypeDisplayName).join(', ')}`);
-            recommendation.typeKeys.forEach(typeKey => {
+            typeList.setAttribute('aria-label', `Tipos: ${displayTypeKeys.map(getTypeDisplayName).join(', ')}`);
+            displayTypeKeys.forEach(typeKey => {
                 typeList.appendChild(createPokemonTypeToken(typeKey, { compact: true }));
             });
             body.appendChild(typeList);
@@ -11988,7 +12032,6 @@ function createHuntBuilderTargetEntry(definition){
         huntLookupNames: names,
         naturalElements: combatMeta.naturalElements,
         moveset: combatMeta.moveset,
-        weaknessTypes: combatMeta.weaknessTypes,
         catalogHidden: false
     };
     if(preEvolutionItems.length) entry.huntDisplayItems = preEvolutionItems;
@@ -12146,14 +12189,7 @@ function renderHuntBuilderTypeOptions(){
         return;
     }
 
-    const weaknessesList = Array.isArray(entry.weaknessTypes) && entry.weaknessTypes.length
-        ? entry.weaknessTypes
-            .map(type => ({
-                type: normalizePokemonTypeKey(type),
-                multiplier: TYPE_EFFECTIVE_MULTIPLIER
-            }))
-            .filter(weakness => weakness.type)
-        : getPokemonWeaknesses(entry.naturalElements);
+    const weaknessesList = getPokemonWeaknesses(entry.naturalElements);
     const fragment = document.createDocumentFragment();
     weaknessesList.forEach(weakness => {
         const typeKey = normalizePokemonTypeKey(weakness.type);
