@@ -10665,7 +10665,7 @@ function teamBuilderEntryCoversType(entry, typeKey){
     if(!entry || !normalizedType) return false;
     if(getTeamBuilderEntryMovesetKeys(entry).includes(normalizedType)) return true;
     const offensivePassive = getTimesOffensivePassiveMeta(entry);
-    return offensivePassive.all || offensivePassive.types.includes(normalizedType);
+    return offensivePassive.all;
 }
 
 function isTeamBuilderTankEntry(entry){
@@ -11549,10 +11549,18 @@ function teamBuilderDamageEntryHitsHunt(entry, huntMeta){
     const moveset = normalizeTeamBuilderTypeList(entry?.moveset || []);
     const offensivePassive = getTimesOffensivePassiveMeta(entry);
     if(offensivePassive.all) return true;
-    if(offensivePassive.types.some(type => huntMeta.naturalElements.includes(type))) return true;
+    if(teamBuilderEntryOffensivePassiveHitsNaturalTypes(entry, huntMeta.naturalElements)) return true;
     if(!moveset.length) return false;
     // Dano efetivo: qualquer fraqueza da hunt (> 1x), nao exige multiplicador 4x.
     return moveset.some(type => getPokemonTypeMultiplier(type, huntMeta.naturalElements) > 1);
+}
+
+function teamBuilderEntryOffensivePassiveHitsNaturalTypes(entry, naturalTypes = []){
+    const normalizedNaturalTypes = normalizeTeamBuilderTypeList(naturalTypes);
+    if(!normalizedNaturalTypes.length) return false;
+    const offensivePassive = getTimesOffensivePassiveMeta(entry);
+    if(offensivePassive.all) return true;
+    return offensivePassive.types.some(type => normalizedNaturalTypes.includes(type));
 }
 
 function teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes = []){
@@ -11560,7 +11568,6 @@ function teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes = []){
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     const offensivePassive = getTimesOffensivePassiveMeta(entry);
     if(offensivePassive.all) return true;
-    if(offensivePassive.types.some(type => normalizedWeaknessTypes.includes(type))) return true;
     if(!moveset.length || !normalizedWeaknessTypes.length) return false;
     return moveset.some(type => normalizedWeaknessTypes.includes(type));
 }
@@ -12294,8 +12301,20 @@ function getHuntBuilderSelectedTargetKeys(){
     );
 }
 
+function huntBuilderEntryCoversSelectedTarget(entry, selectedTypes = [], targetNaturalTypes = []){
+    const selectedTypeKeys = normalizeTeamBuilderTypeList(selectedTypes);
+    const movesetKeys = getTeamBuilderEntryMovesetKeys(entry);
+    if(selectedTypeKeys.some(typeKey => movesetKeys.includes(typeKey))) return true;
+
+    const offensivePassive = getTimesOffensivePassiveMeta(entry);
+    if(offensivePassive.all) return true;
+
+    return teamBuilderEntryOffensivePassiveHitsNaturalTypes(entry, targetNaturalTypes);
+}
+
 function getHuntBuilderCompatibleEntries(){
-    const selectedTypes = new Set(huntBuilderSelectedTypes.map(normalizePokemonTypeKey));
+    const selectedTypes = normalizeTeamBuilderTypeList(huntBuilderSelectedTypes);
+    const targetNaturalTypes = normalizeTeamBuilderTypeList(huntBuilderSelectedTarget?.naturalElements || []);
 
     return getTeamBuilderCatalogEntries()
         .filter(entry => {
@@ -12304,7 +12323,7 @@ function getHuntBuilderCompatibleEntries(){
             if(entry.team !== huntBuilderSelectedClan) return false;
             if(!explicitlyAllowed && !hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role })) return false;
             if(!explicitlyAllowed && !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
-            return Array.from(selectedTypes).some(typeKey => teamBuilderEntryCoversType(entry, typeKey));
+            return huntBuilderEntryCoversSelectedTarget(entry, selectedTypes, targetNaturalTypes);
         });
 }
 
