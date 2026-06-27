@@ -9567,8 +9567,9 @@ function compactTeamBuilderHuntRecommendations(recommendations = []){
         }
     });
 
-    const displayRecommendations = [];
+    const displayGroups = [];
     sourceGroups.forEach(group => {
+        const cards = [];
         if(group.preEvolutions.length){
             const evolutionOrder = getTeamHuntPreEvolutionEntries(group.sourceName)
                 .map(entry => normalizePokemonSearchText(entry?.name))
@@ -9603,7 +9604,7 @@ function compactTeamBuilderHuntRecommendations(recommendations = []){
                 !best || Number(current?.score || 0) > Number(best?.score || 0) ? current : best
             ), null);
             const bundle = createTeamHuntBundleDisplayEntity(orderedPreEvolutions, group.sourceName);
-            displayRecommendations.push({
+            cards.push({
                 ...bundle,
                 score: Number(bestPreEvolution?.score || 0),
                 typeKeys: Array.isArray(bestPreEvolution?.typeKeys) ? bestPreEvolution.typeKeys : [],
@@ -9611,12 +9612,20 @@ function compactTeamBuilderHuntRecommendations(recommendations = []){
             });
         }
         if(group.final){
-            displayRecommendations.push(group.final);
+            cards.push(group.final);
+        }
+        if(cards.length){
+            displayGroups.push({
+                name: String(group.final?.name || group.sourceName || cards[0]?.name || '').trim(),
+                score: cards.reduce((score, card) => Math.max(score, Number(card?.score || 0)), 0),
+                cards
+            });
         }
     });
 
-    return displayRecommendations
-        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.name.localeCompare(right.name, 'pt-BR'));
+    return displayGroups
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.name.localeCompare(right.name, 'pt-BR'))
+        .flatMap(group => group.cards);
 }
 
 function createTeamHuntGroupSection(label, values, options = {}){
