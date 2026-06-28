@@ -929,7 +929,8 @@ const TEAM_BUILDER_PASSIVE_TEXTS = Object.freeze({
     synchronize: 'Synchronize: Imune aos efeitos negativos Paralyze, Poison e Burn.',
     hydration: 'Hydration: Imune ao status Burn.',
     lightningRod: 'Lightning Rod: O Pokemon se torna imune a danos do tipo Electric.',
-    punkRock: 'Punk Rock: Todos os ataques deste Pokemon causam dano super efetivo contra Pokemon do tipo Fairy.'
+    punkRock: 'Punk Rock: Todos os ataques deste Pokemon causam dano super efetivo contra Pokemon do tipo Fairy.',
+    fluffyBewear: 'Fluffy: O Pokemon recebe super inefetivo de ataques dos tipos Ghost, Normal, Ice e Steel, mas recebe super efetivo de ataques do tipo Fire.'
 });
 const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     abomasnow: [],
@@ -937,6 +938,7 @@ const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     ampharos: [TEAM_BUILDER_PASSIVE_TEXTS.static],
     arcanine: [TEAM_BUILDER_PASSIVE_TEXTS.intimidate],
     'ashs pikachu': [TEAM_BUILDER_PASSIVE_TEXTS.static],
+    bewear: [TEAM_BUILDER_PASSIVE_TEXTS.fluffyBewear],
     blastoise: [TEAM_BUILDER_PASSIVE_TEXTS.rainDish],
     caterpie: [],
     clefable: [TEAM_BUILDER_PASSIVE_TEXTS.cuteCharm],
@@ -999,6 +1001,7 @@ const TEAM_BUILDER_PASSIVE_META = Object.freeze({
     wigglytuff: []
 });
 const TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES = Object.freeze({
+    bewear: ['ghost', 'normal', 'ice', 'steel'],
     dragonite: ['dragon', 'flying'],
     'mega dragonite': ['dragon', 'flying'],
     glaceon: ['flying', 'dragon'],
@@ -9914,10 +9917,11 @@ function getTimesDefensiveTypesFromPassiveText(entry, text){
         .replace(/em contrapartida[^.]+/gi, ' ')
         .replace(/mas leva[^.]+/gi, ' ')
         .replace(/mas recebe[^.]+/gi, ' ')
-        .replace(/recebe super efetivo[^.]+/gi, ' ');
+        .replace(/recebe super efetivo[^.]+/gi, ' ')
+        .replace(/apenas no pokemon normal/gi, ' ');
     const normalizedText = normalizeTimesPassiveText(defensiveText);
 
-    const hasDefensiveCue = /\b(resistencia|resistente|imune|inefetivo|inafetivo|dano reduzido|menos dano|reduz o dano|metade do dano|recebe metade)\b/.test(normalizedText);
+    const hasDefensiveCue = /\b(resistencia|resistente|imune|inefetivo|inafetivo|defesa|dano reduzido|menos dano|reduz o dano|metade do dano|recebe metade)\b/.test(normalizedText);
     const hasTypeContext = /\b(tipo|tipos|ataque|ataques|attack|moves|golpes|dano|danos)\b/.test(normalizedText);
     const hasOffensiveCue = /\b(causa dano|causam dano|ataques deste pokemon|ataques do usuario|dano super efetivo contra|super efetividade contra)\b/.test(normalizedText);
     if(!hasDefensiveCue || !hasTypeContext || hasOffensiveCue) return [];
@@ -10032,6 +10036,14 @@ function getTimesTankDefenseTierAgainstType(entry, attackType){
 
     if(getTimesDefensivePassiveTypes(entry, 'shiny').includes(normalizedType)){
         return 'shiny';
+    }
+
+    if(
+        teamBuilderEntryReducesSuperEffectiveDamage(entry)
+        && naturalTypes.length
+        && getPokemonTypeMultiplier(normalizedType, naturalTypes) > 1
+    ){
+        return 'normal';
     }
 
     return '';
@@ -11841,18 +11853,42 @@ function normalizeTeamBuilderTypeList(types = []){
 
 function getTeamBuilderDefensivePassiveTypes(entry){
     const passiveTypes = [];
+    const addType = type => {
+        const normalizedType = normalizePokemonTypeKey(type);
+        if(normalizedType && !passiveTypes.includes(normalizedType)){
+            passiveTypes.push(normalizedType);
+        }
+    };
     getTeamBuilderPassiveLookupKeys(entry).forEach(key => {
         const types = TEAM_BUILDER_DEFENSIVE_PASSIVE_TYPES[key];
         if(Array.isArray(types)){
-            types.forEach(type => {
-                const normalizedType = normalizePokemonTypeKey(type);
-                if(normalizedType && !passiveTypes.includes(normalizedType)){
-                    passiveTypes.push(normalizedType);
-                }
-            });
+            types.forEach(addType);
         }
     });
+    getTimesDefensivePassiveTypes(entry, 'normal').forEach(addType);
+    getTimesDefensivePassiveTypes(entry, 'shiny').forEach(addType);
+    Object.entries(entry?.defenseByBossType || {}).forEach(([type, factor]) => {
+        if(Number(factor) < 1) addType(type);
+    });
+    Object.entries(entry?.defenseDamageFactorByBossType || {}).forEach(([type, factor]) => {
+        if(Number(factor) < 1) addType(type);
+    });
     return passiveTypes;
+}
+
+function teamBuilderEntryReducesSuperEffectiveDamage(entry){
+    if(!entry) return false;
+    const texts = [
+        ...getTimesDefensivePassiveTextCandidates(entry, 'normal'),
+        ...getTimesDefensivePassiveTextCandidates(entry, 'shiny')
+    ];
+    return texts.some(text => {
+        const normalizedText = normalizeTimesPassiveText(text);
+        const hasSuperEffectiveCue = /\b(super efetivo|super efetivos)\b/.test(normalizedText);
+        const hasReductionCue = /\b(toma menos|sofre menos|menos dano|reduz|reduzido|metade|0 5x)\b/.test(normalizedText);
+        const isNegativeCue = /\b(recebe super efetivo|leva dano super efetivo|mas leva|mas recebe|em contrapartida)\b/.test(normalizedText);
+        return hasSuperEffectiveCue && hasReductionCue && !isNegativeCue;
+    });
 }
 
 function getTeamBuilderHuntCombatMeta(huntName){
@@ -11883,6 +11919,13 @@ function teamBuilderEntryDefendsAgainstType(entry, attackType){
 
     const naturalTypes = normalizeTeamBuilderTypeList(entry.naturalElements || []);
     if(!naturalTypes.length) return false;
+
+    if(
+        teamBuilderEntryReducesSuperEffectiveDamage(entry)
+        && getPokemonTypeMultiplier(normalizedType, naturalTypes) > 1
+    ){
+        return true;
+    }
 
     return getPokemonTypeMultiplier(normalizedType, naturalTypes) < 1;
 }
@@ -11923,12 +11966,15 @@ function teamBuilderDamageEntryHitsWeaknessTypes(entry, weaknessTypes = []){
     return moveset.some(type => normalizedWeaknessTypes.includes(type));
 }
 
-function teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries = [], weaknessTypes = []){
+function teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries = [], weaknessTypes = [], huntMeta = null){
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
-    if(!normalizedWeaknessTypes.length) return false;
+    if(!normalizedWeaknessTypes.length && !huntMeta?.hasNaturalElements) return false;
     return (Array.isArray(selectedSlotEntries) ? selectedSlotEntries : [])
         .filter(item => item.slot.kind === 'dps' || item.slot.kind === 'finisher')
         .some(item => {
+            if(huntMeta?.hasNaturalElements){
+                return teamBuilderDamageEntryHitsHunt(item.entry, huntMeta);
+            }
             const offensivePassive = getTimesOffensivePassiveMeta(item.entry);
             if(offensivePassive.all) return true;
             return normalizeTeamBuilderTypeList(item.entry?.moveset || [])
@@ -11963,7 +12009,7 @@ function areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries = [], h
         && (
             !huntMeta.hasNaturalElements
             || !normalizedWeaknessTypes.length
-            || teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries, normalizedWeaknessTypes)
+            || teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries, normalizedWeaknessTypes, huntMeta)
         );
 }
 
@@ -12081,7 +12127,7 @@ function getTeamBuilderHuntRecommendations(){
             const sourceCompatible = areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries, sourceHuntName, sourceWeaknessTypes);
             if(!sourceCompatible) return;
             const preEvolutionDamageCount = getTeamBuilderEffectiveDamageCount(selectedSlotEntries, huntMeta, weaknessTypeKeys);
-            if(preEvolutionDamageCount < 5 || !teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries, weaknessTypeKeys)) return;
+            if(preEvolutionDamageCount < 5 || !teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries, weaknessTypeKeys, huntMeta)) return;
         }
         const sourceScore = (Array.isArray(candidate.sourceTeams) ? candidate.sourceTeams : []).reduce((score, team) => {
             const teamMembers = Array.isArray(team.pokemons) ? team.pokemons : [];
