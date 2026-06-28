@@ -1969,6 +1969,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
+          createRolePick('Onix', ['rock', 'ground'], 'rock'),
           createRolePick('Miltank', ['normal'], 'ground'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel')
         ],
@@ -2034,6 +2035,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
           createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ],
         tank: [
+          createRolePick('Onix', ['rock', 'ground'], 'rock'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
           createRolePick('Shieldon', ['rock', 'steel'], 'steel'),
           createRolePick('Probopass', ['rock', 'steel'], 'rock')
