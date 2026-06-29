@@ -2259,6 +2259,7 @@ const mew2Bosses = createManualRoleboardBosses([
   { id: 'clefable', name: 'Clefable', types: ['fairy'], moveType: 'fairy', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe que pede constancia e protecao durante as trocas de frente.' },
   { id: 'primeape', name: 'Primeape', types: ['fighting'], moveType: 'fighting', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro focado em composicao limpa e resposta rapida ao dano.' },
   { id: 'dugtrio', name: 'Dugtrio', types: ['ground'], moveType: 'ground', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro de trio para trabalhar suporte e linha de frente sem perder dano.' },
+  { id: 'tentacruel', name: 'Tentacruel', types: ['water', 'poison'], moveType: 'poison', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro que testa resistencia e resposta consistente contra pressao venenosa.' },
   { id: 'jynx', name: 'Jynx', types: ['ice', 'psychic'], moveType: 'ice', effectiveness: mew2TypedBossEffectiveness, description: 'Pede cobertura util e boa leitura de trocas dentro do trio.' },
   { id: 'blastoise', name: 'Blastoise', types: ['water'], moveType: 'water', effectiveness: mew2TypedBossEffectiveness, description: 'Encontro mais constante, ideal para testar sustentacao e troca segura no trio.' },
   { id: 'pinsir', name: 'Pinsir', types: ['bug'], moveType: 'bug', effectiveness: mew2TypedBossEffectiveness, description: 'Luta curta que recompensa picks simples, organizados por papel dentro do cla.' },
