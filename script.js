@@ -9661,13 +9661,15 @@ function compactTeamBuilderHuntRecommendations(recommendations = []){
                 .map(preEvolution => {
                     const preEvolutionName = String(preEvolution?.name || '').trim();
                     const key = normalizePokemonSearchText(preEvolutionName);
-                    const recommended = recommendedPreEvolutionsByKey.get(key) || group.preEvolutions[0] || {};
+                    const recommended = recommendedPreEvolutionsByKey.get(key);
+                    const fallback = group.preEvolutions[0] || {};
                     return {
+                        ...fallback,
                         ...recommended,
-                        name: preEvolutionName || String(recommended?.name || '').trim(),
+                        name: preEvolutionName || String(recommended?.name || fallback?.name || '').trim(),
                         image: String(recommended?.image || preEvolution?.image || buildTeamPokemonImageFileName(preEvolutionName)).trim(),
                         sourceHuntName: group.sourceName,
-                        combatHuntName: preEvolutionName || String(recommended?.combatHuntName || recommended?.name || '').trim()
+                        combatHuntName: preEvolutionName || String(recommended?.combatHuntName || fallback?.combatHuntName || fallback?.name || '').trim()
                     };
                 })
                 .filter(item => item?.name);
@@ -11702,10 +11704,11 @@ function getTeamBuilderEntryRawNumericShareId(entry){
 }
 
 function isTeamBuilderNumericShareIdAmbiguous(entry, numericId){
-    if(!entry || !numericId || isMegaPokemonCatalogEntry(entry)) return false;
+    if(!entry || !numericId) return false;
+    const isMegaEntry = isMegaPokemonCatalogEntry(entry);
     let matchCount = 0;
     getTeamBuilderCatalogEntries().forEach(candidate => {
-        if(!candidate || isMegaPokemonCatalogEntry(candidate)) return;
+        if(!candidate || isMegaPokemonCatalogEntry(candidate) !== isMegaEntry) return;
         if(getTeamBuilderEntryRawNumericShareId(candidate) === numericId){
             matchCount += 1;
         }
@@ -11715,7 +11718,9 @@ function isTeamBuilderNumericShareIdAmbiguous(entry, numericId){
 
 function getTeamBuilderEntryNumericShareId(entry){
     const numericId = getTeamBuilderEntryRawNumericShareId(entry);
-    return isTeamBuilderNumericShareIdAmbiguous(entry, numericId) ? '' : numericId;
+    if(!isTeamBuilderNumericShareIdAmbiguous(entry, numericId)) return numericId;
+    const routeToken = String(entry?.routeToken || '').trim().toLowerCase();
+    return /^\d{3,}(?:-[a-z0-9]+)?$/.test(routeToken) ? routeToken : '';
 }
 
 function getTeamBuilderDefaultNumericTokenEntry(candidates = [], expectedToken = ''){
@@ -11759,6 +11764,22 @@ function findTeamBuilderPokemonCatalogEntryByToken(token, slotConfig = null){
         || findTeamBuilderPokemonCatalogEntry(normalizedToken);
 }
 
+function getTeamBuilderShareTokenCandidatesForSlot(slotConfig){
+    const candidates = [];
+    const seenTokens = new Set();
+    getTeamBuilderCatalogEntries().forEach(entry => {
+        if(!entry || !teamBuilderEntryMatchesSlot(entry, slotConfig)) return;
+        const token = getTeamBuilderShareTokenForEntry(entry);
+        if(!token || seenTokens.has(token)) return;
+        seenTokens.add(token);
+        candidates.push({ token, entry });
+    });
+    return candidates.sort((left, right) => (
+        right.token.length - left.token.length
+        || left.token.localeCompare(right.token, 'pt-BR')
+    ));
+}
+
 function getTeamBuilderShareTokenForEntry(entry){
     const numericId = getTeamBuilderEntryNumericShareId(entry);
     if(numericId) return numericId;
@@ -11771,15 +11792,13 @@ function getTeamBuilderShareValue(){
     if(!isTeamBuilderComplete()) return '';
     const tokens = TEAM_BUILDER_SLOT_CONFIGS.map(slot => getTeamBuilderShareTokenForEntry(teamBuilderSelections[slot.id]));
     if(tokens.some(token => !token)) return '';
-    const canUseCompactNumericValue = tokens.every(token => /^m?\d+$/i.test(token));
-    return tokens.map(encodeURIComponent).join(canUseCompactNumericValue ? '' : '.');
+    return tokens.map(encodeURIComponent).join('');
 }
 
 function parseCompactTeamBuilderShareTokens(shareValue){
     const compactValue = String(shareValue || '').trim().toLowerCase();
-    if(!compactValue || !/^[m\d]+$/.test(compactValue)) return [];
+    if(!compactValue || !/^[a-z0-9-]+$/.test(compactValue)) return [];
 
-    const maxDexDigits = 4;
     const memo = new Set();
     const readSlot = (slotIndex, offset) => {
         const memoKey = `${slotIndex}:${offset}`;
@@ -11793,29 +11812,14 @@ function parseCompactTeamBuilderShareTokens(shareValue){
         }
 
         const slot = TEAM_BUILDER_SLOT_CONFIGS[slotIndex];
-        const isMegaToken = compactValue[offset] === 'm';
-        const digitStart = isMegaToken ? offset + 1 : offset;
-        let digitEnd = digitStart;
-        while(digitEnd < compactValue.length && /\d/.test(compactValue[digitEnd])){
-            digitEnd += 1;
-        }
+        const candidates = getTeamBuilderShareTokenCandidatesForSlot(slot)
+            .filter(candidate => compactValue.startsWith(candidate.token, offset));
 
-        const digitRun = compactValue.slice(digitStart, digitEnd);
-        const candidateLengths = Array.from(
-            { length: Math.min(maxDexDigits, digitRun.length) },
-            (_, index) => index + 1
-        ).sort((left, right) => right - left);
-
-        for(const length of candidateLengths){
-            const digits = digitRun.slice(0, length);
-            const token = isMegaToken ? `m${digits}` : digits;
-            const nextOffset = digitStart + length;
-            const entry = findTeamBuilderPokemonCatalogEntryByToken(token, slot);
-            if(!entry) continue;
-
+        for(const candidate of candidates){
+            const nextOffset = offset + candidate.token.length;
             const rest = readSlot(slotIndex + 1, nextOffset);
             if(rest){
-                return [token, ...rest];
+                return [candidate.token, ...rest];
             }
         }
 
@@ -11829,6 +11833,9 @@ function parseCompactTeamBuilderShareTokens(shareValue){
 function parseTeamBuilderShareTokens(shareValue){
     const rawValue = String(shareValue || '').trim();
     if(!rawValue) return [];
+    if(rawValue.includes('--')){
+        return rawValue.split('--').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
+    }
     if(rawValue.includes('.')){
         return rawValue.split('.').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
     }
@@ -12083,15 +12090,24 @@ function teamBuilderSelectedMovesetsHitWeaknessTypes(selectedSlotEntries = [], w
     const normalizedWeaknessTypes = normalizeTeamBuilderTypeList(weaknessTypes);
     if(!normalizedWeaknessTypes.length && !huntMeta?.hasNaturalElements) return false;
     return (Array.isArray(selectedSlotEntries) ? selectedSlotEntries : [])
-        .filter(item => item.slot.kind === 'dps' || item.slot.kind === 'finisher')
-        .some(item => teamBuilderDamageEntryHitsAnyHuntWeakness(item.entry, huntMeta, normalizedWeaknessTypes));
+        .some(item => {
+            if(item.slot.kind === 'tank'){
+                return teamBuilderTankCanHoldAndDamageHunt(item.entry, huntMeta, normalizedWeaknessTypes);
+            }
+            if(item.slot.kind !== 'dps' && item.slot.kind !== 'finisher') return false;
+            return teamBuilderDamageEntryHitsAnyHuntWeakness(item.entry, huntMeta, normalizedWeaknessTypes);
+        });
 }
 
 function getTeamBuilderEffectiveDamageCount(selectedSlotEntries = [], huntMeta, weaknessTypes = []){
     return selectedSlotEntries
-        .filter(item => item.slot.kind === 'dps' || item.slot.kind === 'finisher')
-        .map(item => item.entry)
-        .filter(entry => teamBuilderDamageEntryHitsAnyHuntWeakness(entry, huntMeta, weaknessTypes)).length;
+        .filter(item => {
+            if(item.slot.kind === 'tank'){
+                return teamBuilderTankCanHoldAndDamageHunt(item.entry, huntMeta, weaknessTypes);
+            }
+            if(item.slot.kind !== 'dps' && item.slot.kind !== 'finisher') return false;
+            return teamBuilderDamageEntryHitsAnyHuntWeakness(item.entry, huntMeta, weaknessTypes);
+        }).length;
 }
 
 function areTeamBuilderSlotEntriesCompatibleWithHunt(selectedSlotEntries = [], huntName, weaknessTypes = []){
