@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v734`;
+let CACHE_NAME = `${CACHE_PREFIX}v735`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -38,7 +38,7 @@ const APP_SHELL = [
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
   new URL('./styles.css?v=20260628a', self.registration.scope).toString(),
-  new URL('./script.js?v=20260629j', self.registration.scope).toString(),
+  new URL('./script.js?v=20260629k', self.registration.scope).toString(),
   new URL('./hunt-builder/hunt_symbol.png?v=20260627a', self.registration.scope).toString(),
   new URL('./pokemons/pokemons.json?v=20260629b', self.registration.scope).toString(),
   new URL('./pokemons/generations.json?v=20260627a', self.registration.scope).toString(),
@@ -179,6 +179,12 @@ self.addEventListener('fetch', event => {
 
   if(url.pathname.endsWith('/community.json') || url.pathname.endsWith('community.json')){
     // Always try network first for community.json so scheduled updates propagate
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(url.pathname.endsWith('/streamers-status.json') || url.pathname.endsWith('streamers-status.json')){
+    // Always try network first for generated streamer status snapshots.
     event.respondWith(networkFirst(request));
     return;
   }

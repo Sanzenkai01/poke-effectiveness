@@ -13474,8 +13474,12 @@ const sharedStreamerCatalog = window.POKE_STREAMERS_SHARED || {};
 const PACK_STREAMERS = sharedStreamerCatalog.PACK_STREAMERS || new Set();
 const NON_DROP_STREAMERS = sharedStreamerCatalog.NON_DROP_STREAMERS || new Set();
 const STREAMERS = Array.isArray(sharedStreamerCatalog.STREAMERS) ? sharedStreamerCatalog.STREAMERS : [];
-const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
-const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
+const STREAMER_CACHE_TTL_MS = 10 * 60 * 1000;
+const STREAMER_ERROR_CACHE_TTL_MS = 10 * 60 * 1000;
+const STREAMER_SHARED_STATUS_URL = '/streamers-status.json';
+const STREAMER_SHARED_STATUS_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamers-status.json';
+const STREAMER_SHARED_STATUS_MAX_AGE_MS = 30 * 60 * 1000;
+const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
 const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
 const streamerAvatarCache = new Map();
@@ -13526,6 +13530,9 @@ const STREAMER_DISCORD_LINKS = sharedStreamerCatalog.STREAMER_DISCORD_LINKS || {
 let streamerFiltersInitialized = false;
 let streamerCardCleanupFns = [];
 let streamerRenderToken = 0;
+let streamerSharedStatusPayload = null;
+let streamerSharedStatusLoadedAt = 0;
+let streamerSharedStatusLoadPromise = null;
 const streamerRatTimerListeners = new Map();
 const streamerRatTimerState = loadStreamerRatTimerState();
 const streamerRatChatMonitor = createStreamerRatChatMonitor();
@@ -14184,6 +14191,118 @@ function shareStreamerRequest(requestMap, key, factory){
     return request;
 }
 
+function getStreamerStatusPayloadUpdatedAt(payload){
+    const parsed = Date.parse(payload?.updatedAt || '');
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+async function fetchServerStreamerStatusPayload(url, source){
+    try{
+        const response = await fetch(url, { cache: 'no-store' });
+        if(!response || !response.ok) return null;
+        const payload = await response.json();
+        if(!payload || !payload.streamers) return null;
+        return {
+            source,
+            payload,
+            updatedAt: getStreamerStatusPayloadUpdatedAt(payload)
+        };
+    }catch(error){
+        console.info('No server streamer status data available or fetch failed', source, error && error.message);
+        return null;
+    }
+}
+
+function normalizeSharedStreamerStatusEntry(entry){
+    if(!entry || typeof entry !== 'object') return null;
+    const normalized = normalizeStreamerStatusCacheValue(entry);
+    if(!normalized) return null;
+    return {
+        ...normalized,
+        name: entry.name ? entry.name.toString() : '',
+        key: normalizeStreamerChannelName(entry.key || entry.name || ''),
+        avatarUrl: entry.avatarUrl ? entry.avatarUrl.toString().trim() : ''
+    };
+}
+
+function applyServerStreamerStatusPayload(payload){
+    if(!payload || !payload.streamers) return false;
+
+    const updatedAt = getStreamerStatusPayloadUpdatedAt(payload);
+    if(updatedAt && Date.now() - updatedAt > STREAMER_SHARED_STATUS_MAX_AGE_MS){
+        return false;
+    }
+
+    const ttlMs = Math.max(Number(payload.refreshMs || 0), STREAMER_CACHE_TTL_MS);
+    const entries = Array.isArray(payload.streamers)
+        ? payload.streamers
+        : Object.values(payload.streamers);
+    let applied = 0;
+
+    entries.forEach(entry => {
+        const normalized = normalizeSharedStreamerStatusEntry(entry);
+        if(!normalized?.key) return;
+
+        setCachedStreamerValue(streamerStatusCache, normalized.key, {
+            status: normalized.status,
+            title: normalized.title,
+            startedAt: normalized.startedAt,
+            isPstory: normalized.isPstory,
+            isPstoryDrop: normalized.isPstoryDrop,
+            isPstoryNoDrop: normalized.isPstoryNoDrop
+        }, ttlMs);
+
+        if(normalized.avatarUrl){
+            setCachedStreamerValue(streamerAvatarCache, normalized.key, normalized.avatarUrl, ttlMs);
+        }
+        applied += 1;
+    });
+
+    if(applied > 0){
+        streamerSharedStatusPayload = payload;
+        streamerSharedStatusLoadedAt = Date.now();
+    }
+
+    return applied > 0;
+}
+
+function loadServerStreamerStatusData(){
+    const now = Date.now();
+    if(streamerSharedStatusPayload && now - streamerSharedStatusLoadedAt < STREAMER_SHARED_STATUS_RECHECK_MS){
+        return Promise.resolve(true);
+    }
+    if(streamerSharedStatusLoadPromise) return streamerSharedStatusLoadPromise;
+
+    streamerSharedStatusLoadPromise = Promise.all([
+        fetchServerStreamerStatusPayload(STREAMER_SHARED_STATUS_URL, 'site'),
+        fetchServerStreamerStatusPayload(STREAMER_SHARED_STATUS_RAW_URL, 'raw')
+    ])
+    .then(results => {
+        const candidates = results.filter(Boolean);
+        if(!candidates.length) return false;
+
+        candidates.sort((a, b) => {
+            const updatedDiff = (b.updatedAt || 0) - (a.updatedAt || 0);
+            if(updatedDiff !== 0) return updatedDiff;
+            if(a.source === b.source) return 0;
+            if(a.source === 'raw') return -1;
+            if(b.source === 'raw') return 1;
+            return 0;
+        });
+
+        return applyServerStreamerStatusPayload(candidates[0].payload);
+    })
+    .catch(error => {
+        console.info('Failed to load server streamer status data', error && error.message);
+        return false;
+    })
+    .finally(() => {
+        streamerSharedStatusLoadPromise = null;
+    });
+
+    return streamerSharedStatusLoadPromise;
+}
+
 function parseTwitchIrcTags(rawTags){
     if(!rawTags) return {};
 
@@ -14751,14 +14870,28 @@ function fetchStreamerStatus(name){
         .catch(() => queryDecapi());
     };
 
-    return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
-        queryHelix().then(result => {
+    return loadServerStreamerStatusData()
+        .then(() => {
+            const sharedCached = getCachedStreamerValue(streamerStatusCache, cacheKey);
+            if(sharedCached.hit) return sharedCached.value;
+
+            return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
+                queryHelix().then(result => {
+                    const ttl = result.status === 'partial' || result.status === 'error'
+                        ? STREAMER_ERROR_CACHE_TTL_MS
+                        : STREAMER_CACHE_TTL_MS;
+                    return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
+                })
+            );
+        })
+        .catch(() => shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
+            queryHelix().then(result => {
             const ttl = result.status === 'partial' || result.status === 'error'
                 ? STREAMER_ERROR_CACHE_TTL_MS
                 : STREAMER_CACHE_TTL_MS;
             return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
         })
-    );
+        ));
 }
 
 function fetchStreamerAvatar(name){
@@ -14814,14 +14947,28 @@ function fetchStreamerAvatar(name){
         .catch(() => queryDecapiAvatar());
     };
 
-    return shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
-        queryHelixAvatar()
-            .catch(() => null)
-            .then(result => {
-                const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
-                return setCachedStreamerValue(streamerAvatarCache, cacheKey, result, ttl);
-            })
-    );
+    return loadServerStreamerStatusData()
+        .then(() => {
+            const sharedCached = getCachedStreamerValue(streamerAvatarCache, cacheKey);
+            if(sharedCached.hit) return sharedCached.value;
+
+            return shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
+                queryHelixAvatar()
+                    .catch(() => null)
+                    .then(result => {
+                        const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
+                        return setCachedStreamerValue(streamerAvatarCache, cacheKey, result, ttl);
+                    })
+            );
+        })
+        .catch(() => shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
+            queryHelixAvatar()
+                .catch(() => null)
+                .then(result => {
+                    const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
+                    return setCachedStreamerValue(streamerAvatarCache, cacheKey, result, ttl);
+                })
+        ));
 }
 
 function refreshGlobalRatMonitor(){
