@@ -834,6 +834,13 @@ function setBossModalLayout(isRoleboard = false) {
 const speedsterSearchInput = document.getElementById('speedster-search');
 const speedsterSearchResults = document.getElementById('speedster-search-results');
 const speedsterSearchNoResults = document.getElementById('speedster-search-no-results');
+const bossSearchCatalogRoleMap = Object.freeze({
+  speedster: 'dps',
+  defender: 'tank',
+  supporter: 'support'
+});
+let bossSearchCatalogEntries = [];
+let bossSearchCatalogLoadPromise = null;
 
 let currentBoss = null;
 let activeBossMode = 'hoopa';
@@ -11853,6 +11860,168 @@ function formatSearchLabel(speedster) {
   return container;
 }
 
+function getBossSearchCatalogUrl() {
+  const prefix = isBossesStandaloneAssetContext() ? '../' : '';
+  return `${prefix}pokemons/pokemons.json?v=20260629b`;
+}
+
+function getBossSearchCatalogRole(entry) {
+  const role = String(entry?.role || '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(bossSearchCatalogRoleMap, role) ? role : '';
+}
+
+function getBossSearchCatalogEntryTypes(entry) {
+  return mergeLowercaseUniqueValues(
+    Array.isArray(entry?.types) ? entry.types : [],
+    entry?.type1,
+    entry?.type2
+  );
+}
+
+function getBossSearchCatalogEntryMoveTypes(entry) {
+  return normalizeMoveTypeValues(
+    Array.isArray(entry?.moveset) && entry.moveset.length
+      ? entry.moveset
+      : (entry?.moveType || entry?.moveTypes)
+  );
+}
+
+function cloneBossSearchCatalogMap(value) {
+  return value && typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : undefined;
+}
+
+function createBossSearchEntryFromCatalogPokemon(entry) {
+  if (!entry || typeof entry !== 'object') return null;
+  const name = String(entry.name || '').trim();
+  const catalogRole = getBossSearchCatalogRole(entry);
+  if (!name || !catalogRole) return null;
+
+  const moveTypes = getBossSearchCatalogEntryMoveTypes(entry);
+  const result = {
+    name,
+    image: entry.image || '',
+    types: getBossSearchCatalogEntryTypes(entry),
+    moveType: moveTypes.length === 1 ? moveTypes[0] : moveTypes,
+    description: replaceRecommendationMoveTypeDescription(entry.description || '', moveTypes),
+    note: entry.note || '',
+    level: entry.level,
+    team: entry.team || '',
+    searchCatalogRole: catalogRole,
+    recommendedRole: bossSearchCatalogRoleMap[catalogRole]
+  };
+
+  [
+    'passiveName',
+    'passiveDescription',
+    'passiveText'
+  ].forEach((field) => {
+    if (typeof entry[field] === 'string' && entry[field].trim()) {
+      result[field] = entry[field].trim();
+    }
+  });
+
+  [
+    'immunities',
+    'passiveSuperEffectiveTypes'
+  ].forEach((field) => {
+    if (Array.isArray(entry[field]) && entry[field].length) {
+      result[field] = mergeLowercaseUniqueValues(entry[field]);
+    }
+  });
+
+  [
+    'defenseByBossType',
+    'defenseDamageFactorByBossType',
+    'matchupOverrides'
+  ].forEach((field) => {
+    const cloned = cloneBossSearchCatalogMap(entry[field]);
+    if (cloned) result[field] = cloned;
+  });
+
+  applyImplicitRecommendationEnhancements(result);
+  return result;
+}
+
+function mergeBossSearchCatalogEntryIntoResult(target, source) {
+  if (!target || !source) return target;
+
+  if (source.searchCatalogRole && source.name) target.name = source.name;
+  if (!target.image && source.image) target.image = source.image;
+  if ((!Array.isArray(target.types) || !target.types.length) && Array.isArray(source.types)) {
+    target.types = [...source.types];
+  }
+  if (!parseMoveTypes(target).length && parseMoveTypes(source).length) {
+    target.moveType = Array.isArray(source.moveType) ? [...source.moveType] : source.moveType;
+    target.description = replaceRecommendationMoveTypeDescription(target.description || source.description || '', source.moveType);
+  }
+  [
+    'passiveName',
+    'passiveDescription',
+    'passiveText',
+    'note',
+    'level',
+    'team',
+    'searchCatalogRole',
+    'recommendedRole'
+  ].forEach((field) => {
+    if ((target[field] === undefined || target[field] === null || target[field] === '') && source[field] !== undefined) {
+      target[field] = Array.isArray(source[field]) ? [...source[field]] : source[field];
+    }
+  });
+  [
+    'immunities',
+    'passiveSuperEffectiveTypes'
+  ].forEach((field) => {
+    target[field] = mergeLowercaseUniqueValues(target[field], source[field]);
+  });
+  [
+    'defenseByBossType',
+    'defenseDamageFactorByBossType',
+    'matchupOverrides'
+  ].forEach((field) => {
+    if (!target[field] && source[field]) target[field] = cloneBossSearchCatalogMap(source[field]);
+  });
+
+  applyImplicitRecommendationEnhancements(target);
+  return target;
+}
+
+function loadBossSearchCatalogEntries() {
+  if (bossSearchCatalogLoadPromise) return bossSearchCatalogLoadPromise;
+  if (typeof fetch !== 'function') return Promise.resolve([]);
+
+  bossSearchCatalogLoadPromise = fetch(getBossSearchCatalogUrl(), { cache: 'no-store' })
+    .then((response) => {
+      if (!response.ok) throw new Error(`Falha ao carregar pokemons.json (${response.status})`);
+      return response.json();
+    })
+    .then((data) => {
+      const pokemon = Array.isArray(data?.pokemon) ? data.pokemon : [];
+      const seen = new Set();
+      bossSearchCatalogEntries = pokemon
+        .map(createBossSearchEntryFromCatalogPokemon)
+        .filter((entry) => {
+          const key = getRecommendationNameKey(entry);
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+      refreshKnownSpeedsterNames();
+      if (speedsterSearchInput && document.activeElement === speedsterSearchInput) {
+        renderSearchResults(speedsterSearchInput.value || '');
+      }
+      return bossSearchCatalogEntries;
+    })
+    .catch((error) => {
+      console.error('Nao foi possivel carregar os Pokemon da busca de bosses.', error);
+      bossSearchCatalogEntries = [];
+      return [];
+    });
+
+  return bossSearchCatalogLoadPromise;
+}
+
 function getRecommendedSpeedsters() {
   const map = new Map();
 
@@ -11886,6 +12055,19 @@ function getRecommendedSpeedsters() {
     });
   });
 
+  bossSearchCatalogEntries.forEach((entry) => {
+    const key = getRecommendationNameKey(entry);
+    if (!key) return;
+    if (map.has(key)) {
+      mergeBossSearchCatalogEntryIntoResult(map.get(key), entry);
+    } else {
+      map.set(key, {
+        ...cloneRolePickConfig(entry),
+        bossEntries: []
+      });
+    }
+  });
+
   return Array.from(map.values()).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR'));
 }
 
@@ -11915,7 +12097,7 @@ function renderSearchResults(query = '') {
   }
   const q = normalizeSpeedsterSearchText(query);
 
-  const availableSpeedsters = getRecommendedSpeedsters();
+  const availableSpeedsters = getRecommendedSpeedsters().filter(canActiveCatalogShowSearchPokemon);
   const filtered = q
     ? availableSpeedsters.filter((st) => getSpeedsterSearchBase(st).includes(q))
     : availableSpeedsters;
@@ -11965,8 +12147,66 @@ function closeSearchPanel() {
   hideSearchResults();
 }
 
-function getBossesForSpeedster(speedsterName) {
-  const lower = String(speedsterName || '').toLowerCase();
+function getSearchPokemonName(speedsterOrName) {
+  return typeof speedsterOrName === 'string'
+    ? speedsterOrName
+    : speedsterOrName?.name;
+}
+
+function findSearchPokemonByName(speedsterName) {
+  const nameKey = getRecommendationNameKey(speedsterName);
+  if (!nameKey) return null;
+  return getRecommendedSpeedsters().find((speedster) => getRecommendationNameKey(speedster) === nameKey) || null;
+}
+
+function isCatalogScoredSearchPokemon(speedsterOrName) {
+  const speedster = typeof speedsterOrName === 'object' && speedsterOrName
+    ? speedsterOrName
+    : findSearchPokemonByName(speedsterOrName);
+  return Boolean(speedster?.searchCatalogRole && bossSearchCatalogRoleMap[speedster.searchCatalogRole]);
+}
+
+function getCatalogSearchRole(speedsterOrName) {
+  const speedster = typeof speedsterOrName === 'object' && speedsterOrName
+    ? speedsterOrName
+    : findSearchPokemonByName(speedsterOrName);
+  const role = String(speedster?.searchCatalogRole || '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(bossSearchCatalogRoleMap, role) ? role : '';
+}
+
+function getAllowedCatalogSearchRolesForBoss(boss, mode = activeBossMode) {
+  const normalizedMode = normalizeBossMode(mode) || 'hoopa';
+  if (normalizedMode === 'champion' || normalizedMode === 'mew2') {
+    return Object.keys(bossSearchCatalogRoleMap);
+  }
+
+  if (normalizedMode === 'mainquest') {
+    return String(boss?.id || '').trim().toLowerCase() === 'mega-malamar'
+      ? Object.keys(bossSearchCatalogRoleMap)
+      : ['speedster'];
+  }
+
+  return ['speedster'];
+}
+
+function canBossCalculateCatalogSearchRole(boss, speedsterOrName, mode = activeBossMode) {
+  const role = getCatalogSearchRole(speedsterOrName);
+  if (!role) return true;
+  return getAllowedCatalogSearchRolesForBoss(boss, mode).includes(role);
+}
+
+function canActiveCatalogShowSearchPokemon(speedsterOrName) {
+  const role = getCatalogSearchRole(speedsterOrName);
+  if (!role) return true;
+  return getActiveBossesData().some((boss) => canBossCalculateCatalogSearchRole(boss, speedsterOrName, activeBossMode));
+}
+
+function getBossesForSpeedster(speedsterOrName) {
+  if (isCatalogScoredSearchPokemon(speedsterOrName)) {
+    return getActiveBossesData().filter((boss) => canBossCalculateCatalogSearchRole(boss, speedsterOrName, activeBossMode));
+  }
+
+  const lower = String(getSearchPokemonName(speedsterOrName) || '').toLowerCase();
   return getActiveBossesData().filter((boss) =>
     Object.values(boss.clans || {}).some((clanData) =>
       getAllRecommendedForClan(boss, clanData).some((poke) => String(poke.name || '').toLowerCase() === lower)
@@ -11987,9 +12227,61 @@ function getSpeedsterTierForBoss(boss, speedsterName) {
   return bestTier;
 }
 
-function getComputedSpeedsterTierInBoss(boss, speedsterName) {
+function getBossSearchScoringRefs(boss) {
+  const groupsByKey = new Map();
+  Object.values(boss?.clans || {}).forEach((clanData) => {
+    getRecommendationGroupsForClan(boss, clanData).forEach((group) => {
+      const ref = group?.boss || boss;
+      const key = `${String(ref?.id || '').trim().toLowerCase()}::${getRecommendationNameKey(ref?.name || boss?.name)}`;
+      if (!groupsByKey.has(key)) groupsByKey.set(key, ref);
+    });
+  });
+  return groupsByKey.size ? Array.from(groupsByKey.values()) : [boss];
+}
+
+function createBossSearchScoringPick(speedsterOrName) {
+  const source = typeof speedsterOrName === 'object' && speedsterOrName
+    ? speedsterOrName
+    : findSearchPokemonByName(speedsterOrName);
+  if (!source) return null;
+
+  const pick = cloneRolePickConfig(source);
+  delete pick.tier;
+  delete pick.tierLocked;
+  pick.recommendedRole = normalizeRecommendationRoleKey(pick.recommendedRole)
+    || bossSearchCatalogRoleMap[pick.searchCatalogRole]
+    || 'dps';
+  applyImplicitRecommendationEnhancements(pick);
+  return pick;
+}
+
+function scoreSearchPokemonForBoss(boss, speedsterOrName) {
+  if (!boss || !isCatalogScoredSearchPokemon(speedsterOrName)) return null;
+  if (!canBossCalculateCatalogSearchRole(boss, speedsterOrName, activeBossMode)) return null;
+
+  const pick = createBossSearchScoringPick(speedsterOrName);
+  if (!pick) return null;
+
+  return getBossSearchScoringRefs(boss)
+    .map((bossRef) => scoreRecommendationForBoss(bossRef, cloneRolePickConfig(pick), { roleKey: pick.recommendedRole }))
+    .sort((left, right) => {
+      const leftPriority = getRecommendationTierPriority(left?.tier);
+      const rightPriority = getRecommendationTierPriority(right?.tier);
+      if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+      if ((right?._score || 0) !== (left?._score || 0)) return (right?._score || 0) - (left?._score || 0);
+      return String(left?.name || '').localeCompare(String(right?.name || ''));
+    })[0] || null;
+}
+
+function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
+  const speedsterName = getSearchPokemonName(speedsterOrName);
   const lower = String(speedsterName || '').toLowerCase();
   if (!boss || !speedsterName) return 'seminformacao';
+
+  const scoredSearchPokemon = scoreSearchPokemonForBoss(boss, speedsterOrName);
+  if (scoredSearchPokemon) {
+    return normalizeTierKey(scoredSearchPokemon.tier);
+  }
 
   const clansOrder = ['instinct', 'mystic', 'valor'];
   let bestTier = '';
@@ -12109,8 +12401,9 @@ function createSpeedsterBossResultMetaChip(label, values = []) {
   return chip;
 }
 
-function createSpeedsterBossResultCard(boss, speedsterName) {
-  const tier = normalizeTierKey(getComputedSpeedsterTierInBoss(boss, speedsterName));
+function createSpeedsterBossResultCard(boss, speedsterOrName, precomputedTier = '') {
+  const speedsterName = getSearchPokemonName(speedsterOrName);
+  const tier = normalizeTierKey(precomputedTier || getComputedSpeedsterTierInBoss(boss, speedsterOrName));
   const moveTypes = getBossMoveTypes(boss);
   const bossTypes = Array.isArray(boss?.types) ? boss.types : [];
   const catalogLabel = getActiveBossCatalog().label || 'Bosses';
@@ -12199,11 +12492,22 @@ function openSpeedsterBossesModal(speedster, options = {}) {
   activeBossSearchResult = speedster;
   // marcar contexto ativo para que o sistema saiba qual speedster foi aberto
   activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
-  const bosses = getBossesForSpeedster(speedster.name);
+  const bosses = getBossesForSpeedster(speedster);
+  const bossResults = bosses
+    .map((boss) => ({
+      boss,
+      tier: normalizeTierKey(getComputedSpeedsterTierInBoss(boss, speedster))
+    }))
+    .sort((left, right) => {
+      const leftPriority = getRecommendationTierPriority(left.tier);
+      const rightPriority = getRecommendationTierPriority(right.tier);
+      if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+      return String(left.boss?.name || '').localeCompare(String(right.boss?.name || ''), 'pt-BR');
+    });
   const catalog = getActiveBossCatalog();
   const moveTypes = getBossMoveTypes(speedster);
-  const bestTier = bosses.reduce((best, boss) => pickBetterTier(best, getComputedSpeedsterTierInBoss(boss, speedster.name)), '');
-  const excelenteCount = bosses.filter((boss) => getComputedSpeedsterTierInBoss(boss, speedster.name) === 'excelente').length;
+  const bestTier = bossResults.reduce((best, entry) => pickBetterTier(best, entry.tier), '');
+  const excelenteCount = bossResults.filter((entry) => entry.tier === 'excelente').length;
 
   modalTitle.textContent = `${speedster.name} (Pokemon)`;
   setModalChrome({
@@ -12296,8 +12600,8 @@ function openSpeedsterBossesModal(speedster, options = {}) {
     empty.textContent = 'Nenhum chefe encontrado para este speedster.';
     list.appendChild(empty);
   } else {
-    bosses.forEach((boss) => {
-      list.appendChild(createSpeedsterBossResultCard(boss, speedster.name));
+    bossResults.forEach(({ boss, tier }) => {
+      list.appendChild(createSpeedsterBossResultCard(boss, speedster, tier));
     });
   }
 
@@ -14303,6 +14607,7 @@ try {
 }
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
+loadBossSearchCatalogEntries();
 
 
 
