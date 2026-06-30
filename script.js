@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630i';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630k';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -377,9 +377,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630d';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260629a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260630a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -15070,6 +15070,20 @@ function formatStreamerRatCountdown(msUntilNext){
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+function getStreamerRatCycleRemainingMs(state, now = Date.now()){
+    if(!state?.lastMessageAt) return 0;
+
+    const baseNextAt = Number(state.expectedNextAt || 0) > Number(state.lastMessageAt || 0)
+        ? Number(state.expectedNextAt)
+        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS;
+    if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
+    if(baseNextAt > now) return baseNextAt - now;
+
+    const elapsedSinceBase = now - baseNextAt;
+    const completedCycles = Math.floor(elapsedSinceBase / STREAMER_RAT_INTERVAL_MS) + 1;
+    return Math.max(0, (baseNextAt + completedCycles * STREAMER_RAT_INTERVAL_MS) - now);
+}
+
 function mountStreamerRatSummary(timerEl, monitorInfo){
     if(!timerEl || !monitorInfo?.name){
         if(timerEl){
@@ -15088,16 +15102,11 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
 
         if(validState?.lastMessageAt){
             touchStreamerRatTimerState(monitorInfo.name);
-            const msUntilNext = validState.remainingMs;
             const alertKey = getRatAlertTriggerKey(validState);
             if(alertKey){
                 triggerStreamerRatAlert({ alertKey });
             }
-            if(msUntilNext <= 0){
-                timerEl.textContent = 'O próximo Rattata deve aparecer a qualquer momento.';
-                timerEl.style.color = '#ffd166';
-                return;
-            }
+            const msUntilNext = getStreamerRatCycleRemainingMs(validState);
 
             timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
             timerEl.style.color = '#dff8ff';

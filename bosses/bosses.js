@@ -8145,6 +8145,38 @@ function createMainQuestAdvancedJennyButton() {
   return button;
 }
 
+const MAIN_QUEST_TUTORIAL_URL = 'https://youtu.be/pSPkBjwYuYI';
+
+function openMainQuestTutorialModal() {
+  if (typeof window.openSiteYouTubeModal === 'function') {
+    const openedInModal = window.openSiteYouTubeModal({
+      url: MAIN_QUEST_TUTORIAL_URL,
+      title: 'Tutorial Main Quest'
+    });
+    if (openedInModal) return;
+  }
+  window.open(MAIN_QUEST_TUTORIAL_URL, '_blank', 'noopener,noreferrer');
+}
+
+function createMainQuestTutorialButton() {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mainquest-action-btn mainquest-tutorial-open-btn';
+
+  const icon = document.createElement('img');
+  icon.className = 'mainquest-tutorial-icon';
+  icon.src = resolveBossAssetSrc('/mainquest/youtube_logo.png');
+  icon.alt = '';
+  icon.setAttribute('aria-hidden', 'true');
+
+  const label = document.createElement('span');
+  label.textContent = 'Tutorial';
+
+  button.append(icon, label);
+  button.addEventListener('click', openMainQuestTutorialModal);
+  return button;
+}
+
 function createMainQuestTeamMemberButton() {
   const button = document.createElement('button');
   button.type = 'button';
@@ -8160,7 +8192,8 @@ function createMainQuestActions() {
   actions.append(
     createMainQuestPuzzleButton(),
     createMainQuestAdvancedJennyButton(),
-    createMainQuestTeamMemberButton()
+    createMainQuestTeamMemberButton(),
+    createMainQuestTutorialButton()
   );
   return actions;
 }
@@ -11860,7 +11893,7 @@ function formatSearchLabel(speedster) {
 
 function getBossSearchCatalogUrl() {
   const prefix = isBossesStandaloneAssetContext() ? '../' : '';
-  return `${prefix}pokemons/pokemons.json?v=20260629b`;
+  return `${prefix}pokemons/pokemons.json?v=20260630d`;
 }
 
 function getBossSearchCatalogRole(entry) {

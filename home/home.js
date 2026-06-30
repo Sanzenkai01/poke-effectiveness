@@ -577,6 +577,20 @@ function formatRatCountdown(msUntilNext){
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+function getRatCycleRemainingMs(state, now = Date.now()){
+    if(!state?.lastMessageAt) return 0;
+
+    const baseNextAt = Number(state.expectedNextAt || 0) > Number(state.lastMessageAt || 0)
+        ? Number(state.expectedNextAt)
+        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS;
+    if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
+    if(baseNextAt > now) return baseNextAt - now;
+
+    const elapsedSinceBase = now - baseNextAt;
+    const completedCycles = Math.floor(elapsedSinceBase / STREAMER_RAT_INTERVAL_MS) + 1;
+    return Math.max(0, (baseNextAt + completedCycles * STREAMER_RAT_INTERVAL_MS) - now);
+}
+
 function pickPreferredTimerState(timerState){
     return Array.from(timerState?.values?.() || [])
         .filter(state => state?.lastMessageAt)
@@ -592,18 +606,15 @@ function startRatSummaryTimer(state){
     const getRatAlertTriggerKey = createStreamerRatAlertWatcher();
 
     const render = () => {
-        const msUntilNext = Math.max(0, Number(state?.expectedNextAt || 0) - Date.now());
+        const rawMsUntilNext = Math.max(0, Number(state?.expectedNextAt || 0) - Date.now());
         const alertKey = getRatAlertTriggerKey({
             ...state,
-            remainingMs: msUntilNext
+            remainingMs: rawMsUntilNext
         });
         if(alertKey){
             triggerStreamerRatAlert({ alertKey });
         }
-        if(msUntilNext <= 0){
-            renderStaticRatSummary('O proximo Rattata deve aparecer a qualquer momento.', '#ffd166');
-            return;
-        }
+        const msUntilNext = getRatCycleRemainingMs(state);
 
         renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`, '#dff8ff');
     };
