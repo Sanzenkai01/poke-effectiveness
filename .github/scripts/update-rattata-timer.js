@@ -6,13 +6,12 @@ const tls = require('tls');
 const STATUS_FILE = path.join(process.cwd(), 'streamers-status.json');
 const OUTPUT_FILE = path.join(process.cwd(), 'streamer-rat-timer.json');
 const EXISTING_TIMER_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
-const TWITCH_CHAT_TOKEN = (process.env.TWITCH_CHAT_OAUTH_TOKEN || process.env.TWITCH_CHAT_TOKEN || process.env.TWITCH_OAUTH_TOKEN || '')
+const TWITCH_TOKEN = (process.env.TWITCH_OAUTH_TOKEN || '')
   .trim()
   .replace(/^oauth:/i, '');
-const TWITCH_CHAT_USERNAME = (process.env.TWITCH_CHAT_USERNAME || 'selflessbot').trim().toLowerCase();
 const RAT_BOT_LOGIN = 'pstoryonline';
 const RAT_INTERVAL_MS = 20 * 60 * 1000;
-const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 25 * 60 * 1000));
+const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 21 * 60 * 1000));
 const JOIN_DELAY_MS = 900;
 const MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 
@@ -131,18 +130,73 @@ async function fetchExistingTimerPayload(){
   }
 }
 
-function getCandidateChannels(statusPayload){
+async function validateTwitchToken(){
+  if(!TWITCH_TOKEN){
+    return {
+      ok: false,
+      reason: 'missing-token',
+      message: 'TWITCH_OAUTH_TOKEN environment variable is not set.'
+    };
+  }
+
+  try{
+    const response = await fetch('https://id.twitch.tv/oauth2/validate', {
+      headers: {
+        Authorization: `OAuth ${TWITCH_TOKEN}`
+      }
+    });
+    if(!response.ok){
+      return {
+        ok: false,
+        reason: response.status === 401 ? 'auth-failed' : 'validate-failed',
+        message: `Twitch token validation failed with ${response.status}.`
+      };
+    }
+
+    const data = await response.json();
+    const login = normalizeChannelName(data?.login || '');
+    if(!login){
+      return {
+        ok: false,
+        reason: 'token-login-missing',
+        message: 'TWITCH_OAUTH_TOKEN is not a user token with a Twitch login.'
+      };
+    }
+
+    return {
+      ok: true,
+      login,
+      userId: data?.user_id ? data.user_id.toString() : '',
+      scopes: Array.isArray(data?.scopes) ? data.scopes.map(scope => scope.toString()) : []
+    };
+  }catch(error){
+    return {
+      ok: false,
+      reason: 'validate-error',
+      message: error.message
+    };
+  }
+}
+
+function getMonitorChannels(statusPayload){
   const entries = statusPayload?.streamers
     ? Object.values(statusPayload.streamers)
     : [];
   return entries
-    .filter(entry => entry?.status === 'online' && entry?.isPstoryDrop)
     .map(entry => ({
       name: entry.name || entry.key,
       channel: normalizeChannelName(entry.key || entry.name),
-      startedAt: entry.startedAt || ''
+      startedAt: entry.startedAt || '',
+      isPstoryDrop: !!entry.isPstoryDrop,
+      status: entry.status || ''
     }))
-    .filter(entry => entry.channel);
+    .filter(entry => entry.channel)
+    .sort((left, right) => {
+      if(left.isPstoryDrop !== right.isPstoryDrop) return left.isPstoryDrop ? -1 : 1;
+      if(left.status === 'online' && right.status !== 'online') return -1;
+      if(right.status === 'online' && left.status !== 'online') return 1;
+      return left.channel.localeCompare(right.channel);
+    });
 }
 
 async function loadExistingTimers(){
@@ -174,18 +228,18 @@ function createTimerSnapshot(channel, messageData, candidateByChannel){
   });
 }
 
-function monitorRatChat(candidates){
+function monitorRatChat(channels, chatLogin){
   return new Promise((resolve, reject) => {
-    if(!TWITCH_CHAT_TOKEN){
+    if(!TWITCH_TOKEN){
       resolve({ reason: 'missing-token', updates: [] });
       return;
     }
-    if(candidates.length === 0){
+    if(channels.length === 0){
       resolve({ reason: 'no-candidates', updates: [] });
       return;
     }
 
-    const candidateByChannel = new Map(candidates.map(candidate => [candidate.channel, candidate]));
+    const candidateByChannel = new Map(channels.map(candidate => [candidate.channel, candidate]));
     const updates = [];
     let buffer = '';
     let joinIndex = 0;
@@ -214,7 +268,7 @@ function monitorRatChat(candidates){
     const startJoinQueue = () => {
       if(joinTimer) return;
       joinTimer = setInterval(() => {
-        const next = candidates[joinIndex++];
+        const next = channels[joinIndex++];
         if(!next){
           clearInterval(joinTimer);
           joinTimer = null;
@@ -225,10 +279,10 @@ function monitorRatChat(candidates){
     };
 
     socket.on('secureConnect', () => {
-      send(`PASS oauth:${TWITCH_CHAT_TOKEN}`);
-      send(`NICK ${TWITCH_CHAT_USERNAME}`);
+      send(`PASS oauth:${TWITCH_TOKEN}`);
+      send(`NICK ${chatLogin}`);
       send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-      monitorTimer = setTimeout(() => finish({ reason: 'timeout', updates }), MONITOR_MS);
+      monitorTimer = setTimeout(() => finish({ reason: updates.length > 0 ? 'rat-found' : 'timeout', updates }), MONITOR_MS);
     });
 
     socket.on('data', chunk => {
@@ -257,7 +311,6 @@ function monitorRatChat(candidates){
         const snapshot = createTimerSnapshot(channel, message, candidateByChannel);
         if(snapshot){
           updates.push(snapshot);
-          finish({ reason: 'rat-found', updates });
         }
       });
     });
@@ -298,24 +351,32 @@ async function writeOutput(timers, meta){
 
 async function run(){
   const statusPayload = await readJsonFile(STATUS_FILE);
-  const candidates = getCandidateChannels(statusPayload);
+  const monitorChannels = getMonitorChannels(statusPayload);
   const timers = await loadExistingTimers();
   const startedAt = new Date().toISOString();
+  const tokenInfo = await validateTwitchToken();
   let result;
-  try{
-    result = await monitorRatChat(candidates);
-  }catch(error){
-    result = { reason: 'monitor-error', error: error.message, updates: [] };
+  if(!tokenInfo.ok){
+    result = { reason: tokenInfo.reason, error: tokenInfo.message, updates: [] };
+  } else {
+    try{
+      result = await monitorRatChat(monitorChannels, tokenInfo.login);
+    }catch(error){
+      result = { reason: 'monitor-error', error: error.message, updates: [] };
+    }
   }
   (result.updates || []).forEach(update => timers.set(update.channel, update));
   await writeOutput(timers, {
     startedAt,
     endedAt: new Date().toISOString(),
     reason: result.reason,
-    candidateChannels: candidates.map(candidate => candidate.channel),
+    candidateChannels: monitorChannels.map(candidate => candidate.channel),
+    pstoryDropChannels: monitorChannels.filter(candidate => candidate.isPstoryDrop).map(candidate => candidate.channel),
     observedChannels: (result.updates || []).map(update => update.channel),
     monitorMs: MONITOR_MS,
-    hasChatToken: Boolean(TWITCH_CHAT_TOKEN),
+    hasChatToken: Boolean(TWITCH_TOKEN),
+    tokenLogin: tokenInfo.login || '',
+    tokenScopes: tokenInfo.scopes || [],
     error: result.error || ''
   });
 }

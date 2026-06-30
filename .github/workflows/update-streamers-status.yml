@@ -37,6 +37,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p /tmp/poke-streamers-data
           cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
+          rm -f streamers-status.json
           git fetch origin
           if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
             git checkout -B streamers-data origin/streamers-data

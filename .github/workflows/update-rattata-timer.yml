@@ -15,7 +15,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,10 +49,8 @@ jobs:
       - name: Monitor Rattata timer
         if: steps.cadence.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         env:
-          TWITCH_CHAT_USERNAME: ${{ secrets.TWITCH_CHAT_USERNAME }}
-          TWITCH_CHAT_OAUTH_TOKEN: ${{ secrets.TWITCH_CHAT_OAUTH_TOKEN }}
           TWITCH_OAUTH_TOKEN: ${{ secrets.TWITCH_OAUTH_TOKEN }}
-          RAT_MONITOR_MS: 1500000
+          RAT_MONITOR_MS: 1260000
         run: |
           node .github/scripts/update-rattata-timer.js
 
@@ -65,6 +63,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p /tmp/poke-streamers-data
           cp streamer-rat-timer.json /tmp/poke-streamers-data/streamer-rat-timer.json
+          rm -f streamers-status.json streamer-rat-timer.json
           git fetch origin
           if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
             git checkout -B streamers-data origin/streamers-data
