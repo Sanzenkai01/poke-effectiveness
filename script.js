@@ -14562,6 +14562,7 @@ function createStreamerRatChatMonitor(){
     let ready = false;
     let connectionState = 'idle';
     let statusMessage = 'Timer do rato aguardando leitura do chat.';
+    let statusReason = '';
     let desiredChannels = new Set();
     let joinedChannels = new Set();
     let joinQueue = [];
@@ -14575,15 +14576,17 @@ function createStreamerRatChatMonitor(){
         desiredChannels.forEach(channel => notifyStreamerRatTimerListeners(channel));
     };
 
-    const setStatus = (nextState, nextMessage) => {
+    const setStatus = (nextState, nextMessage, nextReason = '') => {
         connectionState = nextState;
         statusMessage = nextMessage || statusMessage;
+        statusReason = nextReason || '';
         broadcastStatus();
     };
 
     const getStatus = () => ({
         state: connectionState,
         message: statusMessage,
+        reason: statusReason,
         ready,
         hasDesiredChannels: desiredChannels.size > 0
     });
@@ -14743,7 +14746,8 @@ function createStreamerRatChatMonitor(){
 
         const resolvedTokenInfo = await tokenInfoPromise;
         if(!resolvedTokenInfo?.ok){
-            setStatus('unavailable', resolvedTokenInfo?.message || 'Não foi possível validar o chat da Twitch.');
+            const fallbackMessage = 'Nao foi possivel validar o chat da Twitch.';
+            setStatus('unavailable', resolvedTokenInfo?.message || fallbackMessage, resolvedTokenInfo?.reason || 'validate-failed');
             return;
         }
 
@@ -15103,6 +15107,11 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         getRatAlertTriggerKey(null);
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
+            if(monitorStatus.reason === 'token-missing'){
+                timerEl.textContent = 'Aguardando o primeiro registro do Rattata pelo GitHub.';
+                timerEl.style.color = '#d8f3ff';
+                return;
+            }
             timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.';
             timerEl.style.color = '#b6c2cf';
             return;
