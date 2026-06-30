@@ -5,11 +5,13 @@ const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
-const STREAMER_CACHE_TTL_MS = 2 * 60 * 1000;
-const STREAMER_ERROR_CACHE_TTL_MS = 60 * 1000;
+const STREAMER_CACHE_TTL_MS = 10 * 60 * 1000;
+const STREAMER_ERROR_CACHE_TTL_MS = 10 * 60 * 1000;
+const STREAMER_SHARED_STATUS_URL = '/streamers-status.json';
+const STREAMER_SHARED_STATUS_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamers-status.json';
+const STREAMER_SHARED_STATUS_MAX_AGE_MS = 30 * 60 * 1000;
+const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
-const TWITCH_CLIENT_ID = 'g5zg0400k4vhrx2g6xi4hgveruamlv';
-const TWITCH_BEARER_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
 
 const homeStreamerInfo = document.getElementById('home-streamer-info');
 const homeStreamerCount = document.getElementById('home-streamer-count');
@@ -17,9 +19,11 @@ const homeStreamerText = document.getElementById('home-streamer-text');
 const homeStreamerRatSummary = document.getElementById('home-streamer-rat-summary');
 
 let ratSummaryIntervalId = 0;
-let twitchCredentialsInvalidUntil = 0;
 const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
+let streamerSharedStatusPayload = null;
+let streamerSharedStatusLoadedAt = 0;
+let streamerSharedStatusLoadPromise = null;
 
 const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
     ? sharedStreamerCatalog.normalizeStreamerChannelName
@@ -106,7 +110,8 @@ function loadStreamerRatTimerState(){
 function normalizeStreamerStatusCacheValue(value){
     if(!value || typeof value !== 'object') return null;
 
-    const status = value.status ? value.status.toString() : 'unknown';
+    const rawStatus = value.status ? value.status.toString() : 'unknown';
+    const status = rawStatus === 'partial' ? 'unknown' : rawStatus;
     return {
         status: ['online', 'offline', 'unknown', 'error'].includes(status) ? status : 'unknown',
         title: value.title ? value.title.toString().trim() : '',
@@ -190,6 +195,112 @@ function shareStreamerRequest(requestMap, key, factory){
     });
     requestMap.set(key, promise);
     return promise;
+}
+
+function getStreamerStatusPayloadUpdatedAt(payload){
+    const parsed = Date.parse(payload?.updatedAt || '');
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+async function fetchServerStreamerStatusPayload(url, source){
+    try{
+        const response = await fetch(url, { cache: 'no-store' });
+        if(!response || !response.ok) return null;
+        const payload = await response.json();
+        if(!payload || !payload.streamers) return null;
+        return {
+            source,
+            payload,
+            updatedAt: getStreamerStatusPayloadUpdatedAt(payload)
+        };
+    }catch(error){
+        console.info('Home streamer status snapshot unavailable', source, error && error.message);
+        return null;
+    }
+}
+
+function normalizeSharedStreamerStatusEntry(entry){
+    if(!entry || typeof entry !== 'object') return null;
+    const normalized = normalizeStreamerStatusCacheValue(entry);
+    if(!normalized) return null;
+    return {
+        ...normalized,
+        key: normalizeStreamerChannelName(entry.key || entry.name || '')
+    };
+}
+
+function applyServerStreamerStatusPayload(payload){
+    if(!payload || !payload.streamers) return false;
+
+    const updatedAt = getStreamerStatusPayloadUpdatedAt(payload);
+    if(updatedAt && Date.now() - updatedAt > STREAMER_SHARED_STATUS_MAX_AGE_MS){
+        return false;
+    }
+
+    const ttlMs = Math.max(Number(payload.refreshMs || 0), STREAMER_CACHE_TTL_MS);
+    const entries = Array.isArray(payload.streamers)
+        ? payload.streamers
+        : Object.values(payload.streamers);
+    let applied = 0;
+
+    entries.forEach(entry => {
+        const normalized = normalizeSharedStreamerStatusEntry(entry);
+        if(!normalized?.key) return;
+
+        setCachedStreamerValue(streamerStatusCache, normalized.key, {
+            status: normalized.status,
+            title: normalized.title,
+            startedAt: normalized.startedAt,
+            isPstory: normalized.isPstory,
+            isPstoryDrop: normalized.isPstoryDrop,
+            isPstoryNoDrop: normalized.isPstoryNoDrop
+        }, ttlMs);
+        applied += 1;
+    });
+
+    if(applied > 0){
+        streamerSharedStatusPayload = payload;
+        streamerSharedStatusLoadedAt = Date.now();
+    }
+
+    return applied > 0;
+}
+
+function loadServerStreamerStatusData(){
+    const now = Date.now();
+    if(streamerSharedStatusPayload && now - streamerSharedStatusLoadedAt < STREAMER_SHARED_STATUS_RECHECK_MS){
+        return Promise.resolve(true);
+    }
+    if(streamerSharedStatusLoadPromise) return streamerSharedStatusLoadPromise;
+
+    streamerSharedStatusLoadPromise = Promise.all([
+        fetchServerStreamerStatusPayload(STREAMER_SHARED_STATUS_URL, 'site'),
+        fetchServerStreamerStatusPayload(STREAMER_SHARED_STATUS_RAW_URL, 'raw')
+    ])
+    .then(results => {
+        const candidates = results.filter(Boolean);
+        if(!candidates.length) return false;
+
+        candidates.sort((a, b) => {
+            const updatedDiff = (b.updatedAt || 0) - (a.updatedAt || 0);
+            if(updatedDiff !== 0) return updatedDiff;
+            if(a.source === b.source) return 0;
+            if(a.source === 'raw') return -1;
+            if(b.source === 'raw') return 1;
+            return 0;
+        });
+
+        return applyServerStreamerStatusPayload(candidates[0].payload);
+    })
+    .catch(error => {
+        console.info('Home failed to load streamer status snapshot', error && error.message);
+        return false;
+    })
+    .finally(() => {
+        streamerSharedStatusLoadPromise = null;
+    });
+
+    return streamerSharedStatusLoadPromise;
 }
 
 function renderStaticRatSummary(message, color = '#b6c2cf'){
@@ -309,52 +420,28 @@ function fetchStreamerStatus(name){
         });
     };
 
-    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
-        !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
-        !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
+    return loadServerStreamerStatusData()
+        .then(() => {
+            const sharedCached = getCachedStreamerValue(streamerStatusCache, cacheKey);
+            if(sharedCached.hit) return sharedCached.value;
 
-    const queryHelix = () => {
-        if(!credentialsSet){
-            return queryDecapi();
-        }
-
-        if(Date.now() < twitchCredentialsInvalidUntil){
-            return queryDecapi();
-        }
-
-        const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
-        return fetch(url, {
-            headers: {
-                'Client-ID': TWITCH_CLIENT_ID,
-                'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
-                'Accept': 'application/json'
-            }
+            return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
+                queryDecapi().then((result) => {
+                    const ttl = result.status === 'unknown' || result.status === 'error'
+                        ? STREAMER_ERROR_CACHE_TTL_MS
+                        : STREAMER_CACHE_TTL_MS;
+                    return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
+                })
+            );
         })
-        .then((response) => {
-            if(!response.ok){
-                if(response.status === 401){
-                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000);
-                    console.warn('Home Twitch API returned 401; falling back to decapi.me for 60s');
-                }
-                return queryDecapi();
-            }
-            return response.json().then((data) => {
-                if(data && Array.isArray(data.data) && data.data.length > 0){
-                    const stream = data.data[0];
-                    return makeResult('online', stream.title || '', stream.started_at || '');
-                }
-                return makeResult('offline', '', '');
-            }).catch(() => queryDecapi());
-        })
-        .catch(() => queryDecapi());
-    };
-
-    return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
-        queryHelix().then((result) => {
-            const ttl = result.status === 'unknown' ? STREAMER_ERROR_CACHE_TTL_MS : STREAMER_CACHE_TTL_MS;
-            return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
-        })
-    );
+        .catch(() => shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
+            queryDecapi().then((result) => {
+                const ttl = result.status === 'unknown' || result.status === 'error'
+                    ? STREAMER_ERROR_CACHE_TTL_MS
+                    : STREAMER_CACHE_TTL_MS;
+                return setCachedStreamerValue(streamerStatusCache, cacheKey, result, ttl);
+            })
+        ));
 }
 
 function pickPreferredCandidate(candidates, timerState){

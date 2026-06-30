@@ -13488,11 +13488,9 @@ const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
 const streamerAvatarCache = new Map();
 const streamerAvatarRequests = new Map();
-const TWITCH_CLIENT_ID = 'g5zg0400k4vhrx2g6xi4hgveruamlv';
-const TWITCH_BEARER_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
-const TWITCH_CHAT_USERNAME = 'selflessbot';
-const TWITCH_CHAT_USER_ID = '1486894991';
-const TWITCH_CHAT_OAUTH_TOKEN = '29ra1bk7lmasea8bwe33dfen46sscw';
+const TWITCH_CHAT_USERNAME = (window.POKE_TWITCH_CHAT_USERNAME || '').toString().trim();
+const TWITCH_CHAT_USER_ID = (window.POKE_TWITCH_CHAT_USER_ID || '').toString().trim();
+const TWITCH_CHAT_OAUTH_TOKEN = (window.POKE_TWITCH_CHAT_OAUTH_TOKEN || window.POKE_TWITCH_CHAT_TOKEN || '').toString().trim();
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
@@ -13501,7 +13499,7 @@ const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-cr
 const STREAMER_RAT_PERSIST_HEARTBEAT_MS = 15 * 1000;
 
 function computeTwitchCredentialsFingerprint(){
-    const raw = `${TWITCH_CLIENT_ID || ''}::${TWITCH_BEARER_TOKEN || ''}::${TWITCH_CHAT_USERNAME || ''}::${TWITCH_CHAT_USER_ID || ''}`;
+    const raw = `${TWITCH_CHAT_USERNAME || ''}::${TWITCH_CHAT_USER_ID || ''}::${TWITCH_CHAT_OAUTH_TOKEN ? 'chat-token-configured' : 'chat-token-missing'}`;
     let h = 0;
     for(let i = 0; i < raw.length; i++){
         h = ((h << 5) - h) + raw.charCodeAt(i);
@@ -13509,7 +13507,6 @@ function computeTwitchCredentialsFingerprint(){
     }
     return String(h);
 }
-let twitchCredentialsInvalidUntil = 0;
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 const STREAMER_RAT_RECONNECT_DELAY_MS = 5000;
@@ -14834,53 +14831,13 @@ function fetchStreamerStatus(name){
             return makeResult('error', '');
         });
 
-    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
-                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
-                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
-
-    const queryHelix = () => {
-        if(!credentialsSet){
-            return queryDecapi();
-        }
-
-        if(Date.now() < twitchCredentialsInvalidUntil){
-            return queryDecapi();
-        }
-
-        const url = `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(name)}`;
-        return fetch(url, {
-            headers: {
-                'Client-ID': TWITCH_CLIENT_ID,
-                'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
-                'Accept': 'application/json'
-            }
-        })
-        .then(r => {
-            if(!r.ok){
-                if(r.status === 401){
-                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000);
-                    console.warn('Twitch API returned 401 Unauthorized; falling back to decapi.me for 60s');
-                }
-                return queryDecapi();
-            }
-            return r.json().then(data => {
-                if(data && Array.isArray(data.data) && data.data.length > 0){
-                    const stream = data.data[0];
-                    return makeResult('online', stream.title || '', stream.started_at || '');
-                }
-                return makeResult('offline', '', '');
-            }).catch(() => queryDecapi());
-        })
-        .catch(() => queryDecapi());
-    };
-
     return loadServerStreamerStatusData()
         .then(() => {
             const sharedCached = getCachedStreamerValue(streamerStatusCache, cacheKey);
             if(sharedCached.hit) return sharedCached.value;
 
             return shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
-                queryHelix().then(result => {
+                queryDecapi().then(result => {
                     const ttl = result.status === 'partial' || result.status === 'error'
                         ? STREAMER_ERROR_CACHE_TTL_MS
                         : STREAMER_CACHE_TTL_MS;
@@ -14889,7 +14846,7 @@ function fetchStreamerStatus(name){
             );
         })
         .catch(() => shareStreamerRequest(streamerStatusRequests, cacheKey, () =>
-            queryHelix().then(result => {
+            queryDecapi().then(result => {
             const ttl = result.status === 'partial' || result.status === 'error'
                 ? STREAMER_ERROR_CACHE_TTL_MS
                 : STREAMER_CACHE_TTL_MS;
@@ -14902,10 +14859,6 @@ function fetchStreamerAvatar(name){
     const cacheKey = normalizeStreamerChannelName(name);
     const cached = getCachedStreamerValue(streamerAvatarCache, cacheKey);
     if(cached.hit) return Promise.resolve(cached.value);
-
-    const credentialsSet = TWITCH_CLIENT_ID && TWITCH_BEARER_TOKEN &&
-                           !TWITCH_CLIENT_ID.includes('SEU_TWITCH_CLIENT_ID_AQUI') &&
-                           !TWITCH_BEARER_TOKEN.includes('SEU_TWITCH_BEARER_TOKEN_AQUI');
 
     const normalizeAvatarUrl = (value) => {
         const trimmed = (value || '').toString().trim();
@@ -14922,42 +14875,13 @@ function fetchStreamerAvatar(name){
             })
             .then(normalizeAvatarUrl);
 
-    const queryHelixAvatar = () => {
-        if(!credentialsSet || Date.now() < twitchCredentialsInvalidUntil){
-            return queryDecapiAvatar();
-        }
-
-        const url = `https://api.twitch.tv/helix/users?login=${encodeURIComponent(cacheKey)}`;
-        return fetch(url, {
-            headers: {
-                'Client-ID': TWITCH_CLIENT_ID,
-                'Authorization': `Bearer ${TWITCH_BEARER_TOKEN}`,
-                'Accept': 'application/json'
-            }
-        })
-        .then(r => {
-            if(!r.ok){
-                if(r.status === 401){
-                    twitchCredentialsInvalidUntil = Date.now() + (60 * 1000);
-                    console.warn('Twitch API returned 401 Unauthorized for avatar lookup; falling back to decapi.me for 60s');
-                }
-                return queryDecapiAvatar();
-            }
-            return r.json().then(data => {
-                const profileImageUrl = normalizeAvatarUrl(data?.data?.[0]?.profile_image_url || '');
-                return profileImageUrl || queryDecapiAvatar();
-            }).catch(() => queryDecapiAvatar());
-        })
-        .catch(() => queryDecapiAvatar());
-    };
-
     return loadServerStreamerStatusData()
         .then(() => {
             const sharedCached = getCachedStreamerValue(streamerAvatarCache, cacheKey);
             if(sharedCached.hit) return sharedCached.value;
 
             return shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
-                queryHelixAvatar()
+                queryDecapiAvatar()
                     .catch(() => null)
                     .then(result => {
                         const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
@@ -14966,7 +14890,7 @@ function fetchStreamerAvatar(name){
             );
         })
         .catch(() => shareStreamerRequest(streamerAvatarRequests, cacheKey, () =>
-            queryHelixAvatar()
+            queryDecapiAvatar()
                 .catch(() => null)
                 .then(result => {
                     const ttl = result ? STREAMER_CACHE_TTL_MS : STREAMER_ERROR_CACHE_TTL_MS;
