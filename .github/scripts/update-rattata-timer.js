@@ -6,7 +6,7 @@ const tls = require('tls');
 const STATUS_FILE = path.join(process.cwd(), 'streamers-status.json');
 const OUTPUT_FILE = path.join(process.cwd(), 'streamer-rat-timer.json');
 const EXISTING_TIMER_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
-const TWITCH_CHAT_TOKEN = (process.env.TWITCH_CHAT_OAUTH_TOKEN || process.env.TWITCH_CHAT_TOKEN || '')
+const TWITCH_CHAT_TOKEN = (process.env.TWITCH_CHAT_OAUTH_TOKEN || process.env.TWITCH_CHAT_TOKEN || process.env.TWITCH_OAUTH_TOKEN || '')
   .trim()
   .replace(/^oauth:/i, '');
 const TWITCH_CHAT_USERNAME = (process.env.TWITCH_CHAT_USERNAME || 'selflessbot').trim().toLowerCase();
