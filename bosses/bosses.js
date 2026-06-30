@@ -1684,7 +1684,6 @@ const championPathBosses = createManualRoleboardBosses([
     clans: {
       instinct: {
         dps: [
-          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
           createRolePick('Delphox', ['fire', 'psychic'], 'fire')
         ],
         tank: [
@@ -2267,10 +2266,17 @@ const mew2Bosses = createManualRoleboardBosses([
   { id: 'charizard', name: 'Charizard', image: 'charizard.png', types: ['fire', 'flying'], moveType: 'fire', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe agressivo que cobra cobertura limpa e resposta rapida ao burst.' },
   { id: 'pikachu', name: 'Pikachu', types: ['electric'], moveType: 'electric', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe rapido; deixar funcao clara por cla ajuda a compor o trio com menos erro.' },
   { id: 'mewtwo', name: 'Mewtwo', types: ['psychic'], moveType: 'psychic', effectiveness: mew2TypedBossEffectiveness, description: 'Chefe final que exige execucao limpa, com Tanque, DPS e Suporte bem definidos.' }
-].map((entry) => ({
-  ...entry,
-  clans: cloneChampionPathRolePoolsForMew2()
-})), {
+].map((entry) => {
+  const clans = cloneChampionPathRolePoolsForMew2();
+  if (entry.id === 'pinsir') {
+    const blockedDpsKeys = new Set(['dedenne', 'seviper']);
+    clans.instinct.dps = clans.instinct.dps.filter((pick) => !blockedDpsKeys.has(getRecommendationNameKey(pick?.name)));
+  }
+  return {
+    ...entry,
+    clans
+  };
+}), {
   id: 'mew2',
   encounterLabel: '',
   encounterNote: 'Layout inicial por cla e funcao para a raid de Mewtwo.'
@@ -2315,10 +2321,7 @@ const specialBossesData = [
           createRolePick('Dachsbun', ['fairy'], 'fairy', { tier: 'muitobom' }),
           createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting', { tier: 'muitobom' }),
           createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting', { tier: 'muitobom' }),
-          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting', { tier: 'muitobom' }),
-          createRolePick('Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
-          createRolePick('Mega Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
-          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel', { tier: 'bom' })
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting', { tier: 'muitobom' })
         ]
       },
       valor: {
@@ -2328,7 +2331,7 @@ const specialBossesData = [
           createRolePick('Mega Absol Z', ['dark'], 'fairy', { tier: 'muitobom' }),
           createRolePick('Ribombee', ['bug', 'fairy'], 'fairy', { tier: 'muitobom' }),
           createRolePick('Scyther', ['bug', 'flying'], 'bug', { tier: 'bom' }),
-          createRolePick('Weavile', ['dark', 'ice'], 'ice', { tier: 'bom' })
+          createRolePick('Weavile', ['dark', 'ice'], 'ice')
         ]
       }
     }
@@ -2352,7 +2355,7 @@ const specialBossesData = [
           createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'fairy', { tier: 'bom' }),
           createRolePick("Rosa's Serperior", ['grass'], 'grass', { tier: 'bom' }),
           createRolePick('Seviper', ['poison'], 'poison', { tier: 'bom' }),
-          createRolePick('Excadrill', ['ground', 'steel'], 'steel', { tier: 'bom' })
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel')
         ]
       },
       mystic: {
@@ -2364,8 +2367,8 @@ const specialBossesData = [
           createRolePick('Mantine', ['water', 'flying'], 'flying', { tier: 'bom' }),
           createRolePick("Melony's Frosmoth", ['ice', 'bug'], 'ice', { tier: 'bom' }),
           createRolePick('Qwilfish', ['water', 'poison'], 'poison', { tier: 'bom' }),
-          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting', { tier: 'bom' }),
-          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel', { tier: 'bom' })
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Mega Lucario Z', ['fighting', 'steel'], 'steel')
         ]
       },
       valor: {
@@ -2378,7 +2381,7 @@ const specialBossesData = [
           createRolePick('Scolipede', ['bug', 'poison'], 'poison', { tier: 'bom' }),
           createRolePick('Scyther', ['bug', 'flying'], 'bug', { tier: 'bom' }),
           createRolePick('Weavile', ['dark', 'ice'], 'ice', { tier: 'bom' }),
-          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel', { tier: 'bom' })
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
         ]
       }
     }
@@ -2403,8 +2406,8 @@ const specialBossesData = [
           }),
           createRolePick('Marowak', ['ground'], 'ground', { tier: 'bom' }),
           createRolePick('Shiftry', ['grass', 'dark'], 'dark', { tier: 'bom' }),
-          createRolePick('Mega Raichu Y', ['electric'], 'electric', { tier: 'bom' }),
-          createRolePick('Pikachu', ['electric'], 'electric', { tier: 'bom' })
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Pikachu', ['electric'], 'electric')
         ]
       },
       mystic: {
@@ -2415,10 +2418,10 @@ const specialBossesData = [
           createRolePick('Seaking', ['water'], 'ground', { tier: 'muitobom' }),
           createRolePick('Banette', ['ghost'], 'ghost', { tier: 'bom' }),
           createRolePick('Drifloon', ['ghost', 'flying'], 'fire', { tier: 'bom' }),
-          createRolePick('BlastoiseTwo', ['water'], 'water', { tier: 'bom' }),
-          createRolePick('Duraludon', ['steel', 'dragon'], 'electric', { tier: 'bom' }),
-          createRolePick('Greninja', ['water', 'dark'], 'water', { tier: 'bom' }),
-          createRolePick('Mega Greninja', ['water', 'dark'], 'water', { tier: 'bom' })
+          createRolePick('BlastoiseTwo', ['water'], 'water'),
+          createRolePick('Duraludon', ['steel', 'dragon'], 'electric'),
+          createRolePick('Greninja', ['water', 'dark'], 'water'),
+          createRolePick('Mega Greninja', ['water', 'dark'], 'water')
         ]
       },
       valor: {
@@ -2431,7 +2434,7 @@ const specialBossesData = [
           createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' }),
           createRolePick('Raticate', ['normal'], 'dark', { tier: 'bom' }),
           createRolePick('Bouffalant', ['normal'], 'ground', { tier: 'bom' }),
-          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water', { tier: 'bom' })
+          createRolePick('Gorging Cramorant', ['flying', 'water'], 'water')
         ]
       }
     }
@@ -6048,7 +6051,7 @@ function getAllRecommendedForClan(boss, clanData) {
 
   // Se o boss definir filterSolo, ranqueamos e removemos picks abaixo de 'bom'
   if (boss?.filterSolo) {
-    const ranked = rankRecommendedForBoss(boss, picks || []);
+    const ranked = rankRecommendedForBoss(boss, picks || [], { roleKey: 'dps' });
     return dedupeRecommendedPicksByName((ranked || []).filter((p) => (
       getRecommendationTierPriority(p?.tier) <= tierPriority.bom
     )));
@@ -6225,7 +6228,8 @@ function filterHorizonsVisibleRolePicks(picks = [], context = {}) {
 function getVisibleRolePicksForBoss(catalogOrMode, boss, clanKey, roleKey) {
   const ranked = rankRecommendedForBoss(
     boss,
-    getFixedRecommendationRolePicks(boss, clanKey, roleKey)
+    getFixedRecommendationRolePicks(boss, clanKey, roleKey),
+    { roleKey }
   );
 
   if (shouldApplyMainQuestTierVisibilityRules(catalogOrMode, boss)) {
@@ -6304,7 +6308,7 @@ function collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey
   const hasMultipleGroups = groups.length > 1;
 
   groups.forEach((group) => {
-    const ranked = rankRecommendedForBoss(group.boss, group.recommended || []);
+    const ranked = rankRecommendedForBoss(group.boss, group.recommended || [], { roleKey: 'dps' });
     ranked.forEach((pick) => {
       if (!isRecommendationPickUsedByPokemon(pick, matchKeys)) return;
       addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, pick, {
@@ -6478,7 +6482,9 @@ function getEffectiveRecommendationRankMode(boss, poke, options = {}) {
   return baseRankMode;
 }
 
-function classifyRecommendationTier(offense, worstDefense) {
+function classifyRecommendationTier(offense, worstDefense, options = {}) {
+  const normalizedRoleKey = normalizeRecommendationRoleKey(options?.roleKey);
+
   if (offense >= 2) {
     // Super efetivo: mapeamento específico solicitado
     // - DEF <= 0.5 => Excelente
@@ -6502,6 +6508,10 @@ function classifyRecommendationTier(offense, worstDefense) {
 
   if (offense >= 1) {
     // Neutro
+    if (normalizedRoleKey === 'dps') {
+      if (worstDefense <= 1) return 'aceitavel';
+      return 'ruim';
+    }
     if (worstDefense <= 0.75) return 'bom';
     if (worstDefense <= 1) return 'aceitavel';
     return 'ruim';
@@ -6674,7 +6684,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     ? explicitTier
     : (rankMode === 'defense-only'
       ? classifyDefenseOnlyRecommendationTier(worstDefense)
-      : classifyRecommendationTier(effectiveOffenseForScoring, worstDefense));
+      : classifyRecommendationTier(effectiveOffenseForScoring, worstDefense, { roleKey: options?.roleKey || poke?.recommendedRole }));
 
   return {
     ...poke,
@@ -6690,8 +6700,10 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
 }
 
 function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
+  const normalizedRoleKey = normalizeRecommendationRoleKey(options?.roleKey);
   return filterBossRecommendationsByMinimumLevel(recommendedList || [])
     .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke, options))
+    .filter((poke) => normalizedRoleKey !== 'dps' || (typeof poke?._offense === 'number' && poke._offense > 1))
     .sort((a, b) => {
       const leftPriority = getRecommendationTierPriority(a.tier);
       const rightPriority = getRecommendationTierPriority(b.tier);
@@ -6705,27 +6717,27 @@ function synchronizeRecommendationTiers() {
   Object.values(bossCatalogs).forEach((catalog) => {
     (catalog.data || []).forEach((boss) => {
       Object.values(boss.clans || {}).forEach((clanData) => {
-        const syncList = (bossRef, list) => {
+        const syncList = (bossRef, list, roleKey = '') => {
           (list || []).forEach((poke, index, entries) => {
             if (poke?.tierLocked) return;
-            const computed = scoreRecommendationForBoss(bossRef, poke);
+            const computed = scoreRecommendationForBoss(bossRef, poke, { roleKey });
             entries[index].tier = computed.tier;
           });
         };
 
         if (Array.isArray(clanData.recommended)) {
-          syncList(boss, clanData.recommended);
+          syncList(boss, clanData.recommended, 'dps');
         }
 
         if (Array.isArray(clanData.recommendationGroups)) {
           clanData.recommendationGroups.forEach((group) => {
-            syncList(getRecommendationGroupBossRef(boss, group), group.recommended);
+            syncList(getRecommendationGroupBossRef(boss, group), group.recommended, 'dps');
           });
         }
 
         if (clanData.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
-            syncList(boss, clanData.roles?.[roleKey]);
+            syncList(boss, clanData.roles?.[roleKey], roleKey);
           });
         }
       });
@@ -6754,7 +6766,7 @@ function limitMew2RecommendationsToTierFloor(minimumTier = 'bom') {
       const rankedByRole = {};
       roleboardRoleOrder.forEach((roleKey) => {
         const source = Array.isArray(clanData.roles[roleKey]) ? clanData.roles[roleKey] : [];
-        rankedByRole[roleKey] = dedupeRecommendedPicksByName(rankRecommendedForBoss(boss, source));
+        rankedByRole[roleKey] = dedupeRecommendedPicksByName(rankRecommendedForBoss(boss, source, { roleKey }));
       });
 
       const usedNames = new Set();
@@ -7182,7 +7194,8 @@ function createBestCatalogRolePick(config, bossRef) {
       bossRef,
       pick,
       { roleKey: config.roleKey }
-    ));
+    ))
+    .filter((pick) => config.roleKey !== 'dps' || (typeof pick?._offense === 'number' && pick._offense > 1));
 
   return scoredPicks.sort((left, right) => (
     getRecommendationTierPriority(left?.tier) - getRecommendationTierPriority(right?.tier)
@@ -7332,9 +7345,10 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
     .filter((pick) => pick && !excludedNameKeys.has(getRecommendationNameKey(pick)))
     .filter(isBossRecommendationLevelEligible)
     .map((pick) => {
-      const scored = scoreRecommendationForBoss(bossRef, pick);
+      const scored = scoreRecommendationForBoss(bossRef, pick, { roleKey });
       return { pick, scored };
     })
+    .filter(({ scored }) => roleKey !== 'dps' || (typeof scored?._offense === 'number' && scored._offense > 1))
     .filter(({ scored }) => getRecommendationTierPriority(scored?.tier) <= maximumPriority)
     .sort((left, right) => {
       const leftPriority = getRecommendationTierPriority(left?.scored?.tier);
@@ -7349,16 +7363,12 @@ function pickFallbackRecommendationForBoss(bossRef, clanKey, roleKey, seedConfig
   return rankedCandidates[0]?.pick ? cloneRolePickConfig(rankedCandidates[0].pick) : null;
 }
 
-function filterRecommendationListByTier(list = [], bossRef, minimumTier = 'bom') {
+function filterRecommendationListByTier(list = [], bossRef, minimumTier = 'bom', roleKey = '') {
   const maximumPriority = getRecommendationMaximumPriority(minimumTier);
-  return dedupeRecommendedPicksByName(filterBossRecommendationsByMinimumLevel(list || []).filter((pick) => {
-    try {
-      const scored = scoreRecommendationForBoss(bossRef, pick);
-      return getRecommendationTierPriority(scored?.tier) <= maximumPriority;
-    } catch (e) {
-      return true;
-    }
-  }));
+  return dedupeRecommendedPicksByName(
+    rankRecommendedForBoss(bossRef, list || [], { roleKey })
+      .filter((pick) => getRecommendationTierPriority(pick?.tier) <= maximumPriority)
+  );
 }
 
 function removeRuimRecommendationsAndBackfillMissingBosses() {
@@ -7374,19 +7384,19 @@ function removeRuimRecommendationsAndBackfillMissingBosses() {
         if (clanData.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
             const sourceList = clanData.roles?.[roleKey] || [];
-            const filtered = filterRecommendationListByTier(sourceList, boss, 'bom');
+            const filtered = filterRecommendationListByTier(sourceList, boss, 'bom', roleKey);
             if (filtered.length) {
               clanData.roles[roleKey] = filtered;
               return;
             }
 
-            const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel');
+            const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel', roleKey);
             if (acceptableFiltered.length) {
               clanData.roles[roleKey] = acceptableFiltered;
               return;
             }
 
-            const onlyOptionPick = getSingleOnlyOptionPick(sourceList, roleKey);
+            const onlyOptionPick = roleKey === 'dps' ? null : getSingleOnlyOptionPick(sourceList, roleKey);
             if (onlyOptionPick) {
               clanData.roles[roleKey] = [onlyOptionPick];
               return;
@@ -7402,21 +7412,15 @@ function removeRuimRecommendationsAndBackfillMissingBosses() {
           clanData.recommendationGroups.forEach((group) => {
             const bossRef = getRecommendationGroupBossRef(boss, group);
             const sourceList = group.recommended || [];
-            const filtered = filterRecommendationListByTier(sourceList, bossRef, 'bom');
+            const filtered = filterRecommendationListByTier(sourceList, bossRef, 'bom', 'dps');
             if (filtered.length) {
               group.recommended = filtered;
               return;
             }
 
-            const acceptableFiltered = filterRecommendationListByTier(sourceList, bossRef, 'aceitavel');
+            const acceptableFiltered = filterRecommendationListByTier(sourceList, bossRef, 'aceitavel', 'dps');
             if (acceptableFiltered.length) {
               group.recommended = acceptableFiltered;
-              return;
-            }
-
-            const onlyOptionPick = getSingleOnlyOptionPick(sourceList, 'dps');
-            if (onlyOptionPick) {
-              group.recommended = [onlyOptionPick];
               return;
             }
 
@@ -7428,21 +7432,15 @@ function removeRuimRecommendationsAndBackfillMissingBosses() {
 
         if (Array.isArray(clanData.recommended)) {
           const sourceList = clanData.recommended;
-          const filtered = filterRecommendationListByTier(sourceList, boss, 'bom');
+          const filtered = filterRecommendationListByTier(sourceList, boss, 'bom', 'dps');
           if (filtered.length) {
             clanData.recommended = filtered;
             return;
           }
 
-          const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel');
+          const acceptableFiltered = filterRecommendationListByTier(sourceList, boss, 'aceitavel', 'dps');
           if (acceptableFiltered.length) {
             clanData.recommended = acceptableFiltered;
-            return;
-          }
-
-          const onlyOptionPick = getSingleOnlyOptionPick(sourceList, 'dps');
-          if (onlyOptionPick) {
-            clanData.recommended = [onlyOptionPick];
             return;
           }
 
@@ -7487,7 +7485,6 @@ const mew2RequestedInstinctDpsByBoss = Object.freeze({
   ],
   pinsir: [
     createRolePick('Alakazam', ['psychic'], 'psychic'),
-    createRolePick('Seviper', ['poison'], 'poison'),
     createRolePick('Lurantis', ['grass'], 'bug')
   ],
   venusaur: [
@@ -8398,7 +8395,7 @@ function getPlannerRoleSourceList(bossEntry, roleKey, clanKey) {
     if (normalizedRoleKey !== 'dps') return [];
     return dedupeRecommendedPicksByName(
       getRecommendationGroupsForClan(boss, clanData)
-        .flatMap((group) => rankRecommendedForBoss(group.boss || boss, group.recommended || []))
+        .flatMap((group) => rankRecommendedForBoss(group.boss || boss, group.recommended || [], { roleKey: 'dps' }))
     );
   }
 
@@ -12196,23 +12193,41 @@ function canBossCalculateCatalogSearchRole(boss, speedsterOrName, mode = activeB
   return getAllowedCatalogSearchRolesForBoss(boss, mode).includes(role);
 }
 
+function getVisibleDpsPicksForBoss(boss, clanKey, clanData) {
+  if (!boss || !clanData) return [];
+
+  if (clanData?.roles) {
+    return getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, 'dps');
+  }
+
+  return getRecommendationGroupsForClan(boss, clanData)
+    .flatMap((group) => rankRecommendedForBoss(group.boss || boss, group.recommended || [], { roleKey: 'dps' }));
+}
+
+function hasVisibleDpsRecommendationForBoss(boss, speedsterOrName) {
+  const lower = String(getSearchPokemonName(speedsterOrName) || '').toLowerCase();
+  if (!boss || !lower) return false;
+
+  return Object.entries(boss.clans || {}).some(([clanKey, clanData]) => (
+    getVisibleDpsPicksForBoss(boss, clanKey, clanData)
+      .some((poke) => String(poke.name || '').toLowerCase() === lower)
+  ));
+}
+
 function canActiveCatalogShowSearchPokemon(speedsterOrName) {
   const role = getCatalogSearchRole(speedsterOrName);
-  if (!role) return true;
-  return getActiveBossesData().some((boss) => canBossCalculateCatalogSearchRole(boss, speedsterOrName, activeBossMode));
+  if (role) {
+    return getActiveBossesData().some((boss) => Boolean(scoreSearchPokemonForBoss(boss, speedsterOrName)));
+  }
+  return getActiveBossesData().some((boss) => hasVisibleDpsRecommendationForBoss(boss, speedsterOrName));
 }
 
 function getBossesForSpeedster(speedsterOrName) {
   if (isCatalogScoredSearchPokemon(speedsterOrName)) {
-    return getActiveBossesData().filter((boss) => canBossCalculateCatalogSearchRole(boss, speedsterOrName, activeBossMode));
+    return getActiveBossesData().filter((boss) => Boolean(scoreSearchPokemonForBoss(boss, speedsterOrName)));
   }
 
-  const lower = String(getSearchPokemonName(speedsterOrName) || '').toLowerCase();
-  return getActiveBossesData().filter((boss) =>
-    Object.values(boss.clans || {}).some((clanData) =>
-      getAllRecommendedForClan(boss, clanData).some((poke) => String(poke.name || '').toLowerCase() === lower)
-    )
-  );
+  return getActiveBossesData().filter((boss) => hasVisibleDpsRecommendationForBoss(boss, speedsterOrName));
 }
 
 function getSpeedsterTierForBoss(boss, speedsterName) {
@@ -12262,9 +12277,11 @@ function scoreSearchPokemonForBoss(boss, speedsterOrName) {
 
   const pick = createBossSearchScoringPick(speedsterOrName);
   if (!pick) return null;
+  const roleKey = pick.recommendedRole;
 
   return getBossSearchScoringRefs(boss)
-    .map((bossRef) => scoreRecommendationForBoss(bossRef, cloneRolePickConfig(pick), { roleKey: pick.recommendedRole }))
+    .map((bossRef) => scoreRecommendationForBoss(bossRef, cloneRolePickConfig(pick), { roleKey }))
+    .filter((scored) => roleKey !== 'dps' || (typeof scored?._offense === 'number' && scored._offense > 1))
     .sort((left, right) => {
       const leftPriority = getRecommendationTierPriority(left?.tier);
       const rightPriority = getRecommendationTierPriority(right?.tier);
@@ -12292,7 +12309,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
     if (!groups.length) continue;
 
     groups.forEach((group) => {
-      const ranked = rankRecommendedForBoss(group.boss, group.recommended);
+      const ranked = rankRecommendedForBoss(group.boss, group.recommended, { roleKey: 'dps' });
       const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
       if (found) {
         // Regra especial: speedsters que causam Efetivo (1.5) viram Super Efetivo (2.0).
@@ -12302,7 +12319,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
           const isSpeedsterMatch = String(found.name || '').toLowerCase() === lower;
           const offenseVal = typeof found._offense === 'number' ? found._offense : null;
           if (isSpeedsterMatch && offenseVal === 1.5) {
-            effectiveTier = classifyRecommendationTier(2.0, found._defenseWorst);
+            effectiveTier = classifyRecommendationTier(2.0, found._defenseWorst, { roleKey: 'dps' });
           }
         } catch (e) {
           // fallback para o tier já calculado
@@ -13921,7 +13938,7 @@ function openBossModal(speedster) {
       list.appendChild(empty);
     } else {
       recommendationGroups.forEach((group) => {
-        const ranked = rankRecommendedForBoss(group.boss, group.recommended);
+        const ranked = rankRecommendedForBoss(group.boss, group.recommended, { roleKey: 'dps' });
         if (hasMultipleGroups) {
           const groupBlock = document.createElement('div');
           groupBlock.className = 'speedster-reco-group';
@@ -14156,7 +14173,7 @@ function openBossModalV2(speedster, options = {}) {
         empty.textContent = 'Nenhuma recomendação disponível.';
         list.appendChild(empty);
       } else {
-        let ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended || []);
+        let ranked = rankRecommendedForBoss(activeGroup.boss, activeGroup.recommended || [], { roleKey: 'dps' });
         // Para bosses marcados com filterSolo, remover picks de tiers pior ou igual a 'aceitavel'
         if (speedster?.filterSolo) {
           const threshold = tierPriority.aceitavel ?? 3;

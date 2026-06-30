@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260628a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630i';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -377,7 +377,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260629c';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630b';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260629a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
@@ -20966,6 +20966,7 @@ function getPokemonEntryAllSubFunctions(entry){
 function pokemonEntryMatchesNameFilter(entry, normalizedName){
     if(!normalizedName) return true;
     if(entry.searchName.includes(normalizedName)) return true;
+    if(Array.isArray(entry.searchAliases) && entry.searchAliases.some(alias => alias.includes(normalizedName))) return true;
     if(getPokemonEntryShinySubFunctions(entry).length){
         return normalizePokemonSearchText(`Shiny ${entry.name}`).includes(normalizedName);
     }
@@ -22828,6 +22829,15 @@ function normalizePokemonCatalogEntry(entry, index){
         ?? entry.shinySubFuncao
         ?? entry.shinySubfuncoes
     );
+    const searchAliases = Array.from(new Set(
+        [
+            ...(Array.isArray(entry.searchAliases) ? entry.searchAliases : []),
+            ...(Array.isArray(entry.aliases) ? entry.aliases : []),
+            ...(Array.isArray(entry.searchTerms) ? entry.searchTerms : [])
+        ]
+            .map(normalizePokemonSearchText)
+            .filter(Boolean)
+    ));
 
     return {
         id: slug,
@@ -22836,6 +22846,7 @@ function normalizePokemonCatalogEntry(entry, index){
         routeToken: String(entry.routeToken || entry.pokedexToken || '').trim().toLowerCase(),
         name,
         searchName: normalizePokemonSearchText(name),
+        searchAliases,
         role: roleInfo.label,
         roleKey: roleInfo.key,
         level: entry.level,
