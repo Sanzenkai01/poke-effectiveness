@@ -311,6 +311,7 @@ function monitorRatChat(channels, chatLogin){
         const snapshot = createTimerSnapshot(channel, message, candidateByChannel);
         if(snapshot){
           updates.push(snapshot);
+          finish({ reason: 'rat-found', updates });
         }
       });
     });
