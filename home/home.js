@@ -11,6 +11,9 @@ const STREAMER_SHARED_STATUS_URL = '/streamers-status.json';
 const STREAMER_SHARED_STATUS_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamers-status.json';
 const STREAMER_SHARED_STATUS_MAX_AGE_MS = 30 * 60 * 1000;
 const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
+const STREAMER_RAT_TIMER_URL = '/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_RECHECK_MS = 60 * 1000;
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 
 const homeStreamerInfo = document.getElementById('home-streamer-info');
@@ -24,6 +27,8 @@ const streamerStatusRequests = new Map();
 let streamerSharedStatusPayload = null;
 let streamerSharedStatusLoadedAt = 0;
 let streamerSharedStatusLoadPromise = null;
+let streamerRatTimerPayloadLoadedAt = 0;
+let streamerRatTimerLoadPromise = null;
 
 const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
     ? sharedStreamerCatalog.normalizeStreamerChannelName
@@ -79,6 +84,11 @@ function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
         channel: normalizedChannel,
         lastMessageAt,
         expectedNextAt,
+        lastMessageText: value.lastMessageText ? value.lastMessageText.toString() : '',
+        streamStartedAt: value.streamStartedAt ? value.streamStartedAt.toString() : '',
+        source: value.source ? value.source.toString() : 'cache',
+        updatedAt,
+        persistedAt,
         effectiveNow,
         remainingMs: Math.max(0, expectedNextAt - effectiveNow)
     };
@@ -303,6 +313,108 @@ function loadServerStreamerStatusData(){
     return streamerSharedStatusLoadPromise;
 }
 
+async function fetchServerStreamerRatTimerPayload(url, source){
+    try{
+        const response = await fetch(url, { cache: 'no-store' });
+        if(!response || !response.ok) return null;
+        const payload = await response.json();
+        if(!payload || !payload.timers) return null;
+        return { source, payload };
+    }catch(error){
+        console.info('Home Rattata timer snapshot unavailable', source, error && error.message);
+        return null;
+    }
+}
+
+function toPersistedStreamerRatTimerState(value){
+    if(!value) return null;
+    return {
+        channel: value.channel,
+        lastMessageAt: value.lastMessageAt,
+        expectedNextAt: value.expectedNextAt,
+        lastMessageText: value.lastMessageText || '',
+        streamStartedAt: value.streamStartedAt || '',
+        source: value.source || 'server-cache',
+        updatedAt: value.updatedAt || value.lastMessageAt,
+        persistedAt: value.persistedAt || value.updatedAt || value.lastMessageAt
+    };
+}
+
+function applyServerStreamerRatTimerPayload(payload){
+    if(!payload || !payload.timers) return false;
+
+    const currentState = loadStreamerRatTimerState();
+    const now = Date.now();
+    let applied = 0;
+    Object.entries(payload.timers || {}).forEach(([channel, value]) => {
+        const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, now);
+        if(!normalizedState?.lastMessageAt) return;
+
+        const current = currentState.get(normalizedState.channel);
+        if(current && Number(current.updatedAt || 0) >= Number(normalizedState.updatedAt || 0)){
+            return;
+        }
+
+        currentState.set(normalizedState.channel, {
+            ...value,
+            ...normalizedState,
+            source: value?.source || 'server-cache',
+            updatedAt: Number(value?.updatedAt || normalizedState.lastMessageAt),
+            persistedAt: now
+        });
+        applied += 1;
+    });
+
+    if(applied > 0){
+        try{
+            const serialized = {};
+            currentState.forEach((value, channel) => {
+                const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, now);
+                if(normalizedState){
+                    serialized[normalizedState.channel] = toPersistedStreamerRatTimerState({
+                        ...value,
+                        ...normalizedState
+                    });
+                }
+            });
+            window.localStorage.setItem(STREAMER_RAT_TIMER_STORAGE_KEY, JSON.stringify(serialized));
+        }catch(error){
+            console.error('home rat state save error', error);
+        }
+    }
+
+    streamerRatTimerPayloadLoadedAt = Date.now();
+    return applied > 0;
+}
+
+function loadServerStreamerRatTimerData(){
+    const now = Date.now();
+    if(streamerRatTimerPayloadLoadedAt && now - streamerRatTimerPayloadLoadedAt < STREAMER_RAT_TIMER_RECHECK_MS){
+        return Promise.resolve(true);
+    }
+    if(streamerRatTimerLoadPromise) return streamerRatTimerLoadPromise;
+
+    streamerRatTimerLoadPromise = Promise.all([
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_URL, 'site'),
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw')
+    ])
+    .then(results => {
+        const candidates = results.filter(Boolean);
+        if(!candidates.length) return false;
+        const preferred = candidates.find(candidate => candidate.source === 'raw') || candidates[0];
+        return applyServerStreamerRatTimerPayload(preferred.payload);
+    })
+    .catch(error => {
+        console.info('Home failed to load Rattata timer snapshot', error && error.message);
+        return false;
+    })
+    .finally(() => {
+        streamerRatTimerLoadPromise = null;
+    });
+
+    return streamerRatTimerLoadPromise;
+}
+
 function renderStaticRatSummary(message, color = '#b6c2cf'){
     if(!homeStreamerRatSummary) return;
     homeStreamerRatSummary.replaceChildren();
@@ -503,6 +615,7 @@ function startRatSummaryTimer(state){
 async function refreshHomeWidget(){
     if(!homeStreamerInfo) return;
 
+    await loadServerStreamerRatTimerData().catch(() => false);
     const timerState = loadStreamerRatTimerState();
     const initialTimerState = pickPreferredTimerState(timerState);
     let resolvedCount = 0;

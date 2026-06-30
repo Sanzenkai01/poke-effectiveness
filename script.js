@@ -13484,6 +13484,9 @@ const STREAMER_SHARED_STATUS_URL = '/streamers-status.json';
 const STREAMER_SHARED_STATUS_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamers-status.json';
 const STREAMER_SHARED_STATUS_MAX_AGE_MS = 30 * 60 * 1000;
 const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
+const STREAMER_RAT_TIMER_URL = '/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_RECHECK_MS = 60 * 1000;
 const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
 const streamerAvatarCache = new Map();
@@ -13534,6 +13537,8 @@ let streamerRenderToken = 0;
 let streamerSharedStatusPayload = null;
 let streamerSharedStatusLoadedAt = 0;
 let streamerSharedStatusLoadPromise = null;
+let streamerRatTimerPayloadLoadedAt = 0;
+let streamerRatTimerLoadPromise = null;
 const streamerRatTimerListeners = new Map();
 const streamerRatTimerState = loadStreamerRatTimerState();
 const streamerRatChatMonitor = createStreamerRatChatMonitor();
@@ -14304,6 +14309,73 @@ function loadServerStreamerStatusData(){
     return streamerSharedStatusLoadPromise;
 }
 
+async function fetchServerStreamerRatTimerPayload(url, source){
+    try{
+        const response = await fetch(url, { cache: 'no-store' });
+        if(!response || !response.ok) return null;
+        const payload = await response.json();
+        if(!payload || !payload.timers) return null;
+        return { source, payload };
+    }catch(error){
+        console.info('No server Rattata timer data available or fetch failed', source, error && error.message);
+        return null;
+    }
+}
+
+function applyServerStreamerRatTimerPayload(payload){
+    if(!payload || !payload.timers) return false;
+
+    const now = Date.now();
+    let applied = 0;
+    Object.entries(payload.timers || {}).forEach(([channel, value]) => {
+        const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, { now });
+        if(!normalizedState?.lastMessageAt) return;
+
+        const current = streamerRatTimerState.get(normalizedState.channel);
+        if(current && Number(current.updatedAt || 0) >= Number(normalizedState.updatedAt || 0)){
+            return;
+        }
+
+        streamerRatTimerState.set(normalizedState.channel, normalizedState);
+        applied += 1;
+        notifyStreamerRatTimerListeners(normalizedState.channel);
+    });
+
+    if(applied > 0){
+        persistStreamerRatTimerState();
+    }
+    streamerRatTimerPayloadLoadedAt = Date.now();
+    return applied > 0;
+}
+
+function loadServerStreamerRatTimerData(){
+    const now = Date.now();
+    if(streamerRatTimerPayloadLoadedAt && now - streamerRatTimerPayloadLoadedAt < STREAMER_RAT_TIMER_RECHECK_MS){
+        return Promise.resolve(true);
+    }
+    if(streamerRatTimerLoadPromise) return streamerRatTimerLoadPromise;
+
+    streamerRatTimerLoadPromise = Promise.all([
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_URL, 'site'),
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw')
+    ])
+    .then(results => {
+        const candidates = results.filter(Boolean);
+        if(!candidates.length) return false;
+        const preferred = candidates.find(candidate => candidate.source === 'raw') || candidates[0];
+        return applyServerStreamerRatTimerPayload(preferred.payload);
+    })
+    .catch(error => {
+        console.info('Failed to load server Rattata timer data', error && error.message);
+        return false;
+    })
+    .finally(() => {
+        streamerRatTimerLoadPromise = null;
+    });
+
+    return streamerRatTimerLoadPromise;
+}
+
 function parseTwitchIrcTags(rawTags){
     if(!rawTags) return {};
 
@@ -14904,21 +14976,24 @@ function refreshGlobalRatMonitor(){
 
     const onlineRatCandidates = new Map();
     let totalPstoryOnline = 0;
-    globalRatMonitorRefreshPromise = Promise.allSettled(
-        STREAMERS.map(name => {
-            return fetchStreamerStatus(name)
-                .then(info => {
-                    if(info?.status === 'online' && info?.isPstory){
-                        totalPstoryOnline += 1;
-                    }
-                    const candidate = createRatMonitorCandidate(name, info);
-                    if(candidate){
-                        onlineRatCandidates.set(normalizeStreamerChannelName(name), candidate);
-                    }
-                })
-                .catch(() => {});
-        })
-    ).then(() => {
+    globalRatMonitorRefreshPromise = loadServerStreamerRatTimerData()
+        .catch(() => false)
+        .then(() => Promise.allSettled(
+            STREAMERS.map(name => {
+                return fetchStreamerStatus(name)
+                    .then(info => {
+                        if(info?.status === 'online' && info?.isPstory){
+                            totalPstoryOnline += 1;
+                        }
+                        const candidate = createRatMonitorCandidate(name, info);
+                        if(candidate){
+                            onlineRatCandidates.set(normalizeStreamerChannelName(name), candidate);
+                        }
+                    })
+                    .catch(() => {});
+            })
+        ))
+    .then(() => {
         const selectedInfo = getPreferredRatMonitorInfoFromTimerState()
             || pickPreferredRatMonitorInfo(onlineRatCandidates.values());
         globalRatMonitorSelectedInfo = selectedInfo;
@@ -14973,6 +15048,14 @@ function startGlobalRatMonitorBootstrap(){
     refreshGlobalRatMonitor().catch(err => {
         console.error('initial global rat monitor refresh failed', err);
     });
+    loadServerStreamerRatTimerData().then(() => {
+        const persistedTimerInfo = getPreferredRatMonitorInfoFromTimerState();
+        if(!persistedTimerInfo) return;
+        globalRatMonitorSelectedInfo = persistedTimerInfo;
+        globalRatMonitorTotalPstoryOnline = Math.max(globalRatMonitorTotalPstoryOnline, 1);
+        setGlobalRatMonitorTarget(persistedTimerInfo);
+        syncGlobalRatSummary();
+    }).catch(() => {});
     scheduleGlobalRatMonitorRefresh();
 }
 

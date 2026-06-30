@@ -35,8 +35,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/poke-streamers-data
+          cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
           git fetch origin
-          git checkout -B streamers-data
+          if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
+            git checkout -B streamers-data origin/streamers-data
+          else
+            git checkout -B streamers-data
+          fi
+          cp /tmp/poke-streamers-data/streamers-status.json streamers-status.json
           git add streamers-status.json
           if git diff --cached --quiet; then
             echo "No changes to streamers-status.json"
