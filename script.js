@@ -377,10 +377,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260629b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260629c';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260627a';
-const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260625a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260629a';
+const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -1172,6 +1172,9 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
 const TEAM_BUILDER_HUNT_IMAGE_OVERRIDES = Object.freeze({
     toxtricity: 'pokemons/8gen/toxtricity-amped.png'
 });
+const TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES = new Set([
+    'armarougeceruledge'
+]);
 const TEAM_BUILDER_SLOT_CONFIGS = Object.freeze([
     { id: 'tank-ar', label: 'Defender/AR', requirement: '', kind: 'tank' },
     { id: 'dps-1', label: 'DPS 1', requirement: '', kind: 'dps' },
@@ -12181,6 +12184,7 @@ function getTeamBuilderKnownHuntCandidates(){
             const huntName = String(huntObject?.name || hunt || '').trim();
             if(!huntName) return;
             const key = normalizePokemonSearchText(huntName);
+            if(TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES.has(key)) return;
             const existing = huntCandidates.get(key);
             if(existing){
                 existing.sourceTeams.push(team);
