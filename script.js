@@ -377,7 +377,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630g';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630h';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260630c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260630a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
@@ -13505,7 +13505,7 @@ const TWITCH_CHAT_USER_ID = (window.POKE_TWITCH_CHAT_USER_ID || '').toString().t
 const TWITCH_CHAT_OAUTH_TOKEN = (window.POKE_TWITCH_CHAT_OAUTH_TOKEN || window.POKE_TWITCH_CHAT_TOKEN || '').toString().trim();
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
-const STREAMER_RAT_EXPECTED_OFFSET_MS = 60 * 1000;
+const STREAMER_RAT_EXPECTED_OFFSET_MS = 0;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-credentials-v1';
@@ -13880,6 +13880,9 @@ function normalizeStreamerRatTimerSnapshot(channel, value, options = {}){
     const now = Number.isFinite(options.now) ? options.now : Date.now();
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
+    if(value.lastMessageText && !isStreamerRatCooldownStartMessage(value.lastMessageText)){
+        return null;
+    }
 
     const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     let expectedNextAt = Number(value.expectedNextAt || 0);
@@ -14446,7 +14449,7 @@ function parseTwitchIrcMessage(line){
     };
 }
 
-function isStreamerRatAnnouncement(message){
+function isStreamerRatCooldownStartMessage(message){
     const normalized = (message || '')
         .toString()
         .normalize('NFD')
@@ -14454,17 +14457,13 @@ function isStreamerRatAnnouncement(message){
         .toLowerCase();
     const compact = normalized.replace(/[^a-z0-9]/g, '');
 
-    const hasBattlePrompt = normalized.includes('!battle');
     const hasRattataName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
-    const hasRattataSpawn = hasRattataName && (
-        normalized.includes('apareceu') ||
-        normalized.includes('selvagem') ||
-        normalized.includes('spawnou') ||
-        normalized.includes('spawnado')
-    );
-    const hasMysteryItem = normalized.includes('item misterioso');
+    const hasEscape = normalized.includes('escapou') || normalized.includes('fugiu');
+    const hasBattle = normalized.includes('batalha') || normalized.includes('battle');
+    const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
+    const hasRetry = normalized.includes('tente novamente') || normalized.includes('proxima vez');
 
-    return (hasBattlePrompt && hasRattataSpawn) || (hasBattlePrompt && hasMysteryItem);
+    return hasRattataName && hasEscape && (hasBattle || hasWild || hasRetry);
 }
 
 function isStreamerRatBotSender(messageData){
@@ -14679,14 +14678,14 @@ function createStreamerRatChatMonitor(){
 
         const channel = normalizeStreamerChannelName(messageData.params[0] || '');
         const message = messageData.trailing || messageData.params[1] || '';
-        if(!channel || !isStreamerRatAnnouncement(message)) return;
+        if(!channel || !isStreamerRatCooldownStartMessage(message)) return;
 
         const sentTimestamp = Number(messageData.tags?.['tmi-sent-ts'] || Date.now());
         setStreamerRatTimerState(channel, {
             lastMessageAt: sentTimestamp,
             lastMessageText: message,
             streamStartedAt: getCachedStreamerStatusSnapshot(channel)?.startedAt || '',
-            source: 'live',
+            source: 'live-escape',
             updatedAt: Date.now()
         });
     };
@@ -15087,11 +15086,7 @@ function getStreamerRatCycleRemainingMs(state, now = Date.now()){
         ? Number(state.expectedNextAt)
         : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
-    if(baseNextAt > now) return baseNextAt - now;
-
-    const elapsedSinceBase = now - baseNextAt;
-    const completedCycles = Math.floor(elapsedSinceBase / STREAMER_RAT_INTERVAL_MS) + 1;
-    return Math.max(0, (baseNextAt + completedCycles * STREAMER_RAT_INTERVAL_MS) - now);
+    return Math.max(0, baseNextAt - now);
 }
 
 function mountStreamerRatSummary(timerEl, monitorInfo){
@@ -15118,7 +15113,9 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             }
             const msUntilNext = getStreamerRatCycleRemainingMs(validState);
 
-            timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
+            timerEl.textContent = msUntilNext > 0
+                ? `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`
+                : 'Rattata ativo agora. Aguardando a fuga para reiniciar o timer.';
             timerEl.style.color = '#dff8ff';
             return;
         }

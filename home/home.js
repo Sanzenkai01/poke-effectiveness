@@ -2,7 +2,7 @@ const sharedStreamerCatalog = window.POKE_STREAMERS_SHARED || {};
 const HOME_STREAMERS = Array.isArray(sharedStreamerCatalog.STREAMERS) ? sharedStreamerCatalog.STREAMERS : [];
 
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
-const STREAMER_RAT_EXPECTED_OFFSET_MS = 60 * 1000;
+const STREAMER_RAT_EXPECTED_OFFSET_MS = 0;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
@@ -47,12 +47,30 @@ const triggerStreamerRatAlert = typeof sharedStreamerCatalog.triggerStreamerRatA
     ? sharedStreamerCatalog.triggerStreamerRatAlert
     : playStreamerRatAlertSound;
 
+function isStreamerRatCooldownStartMessage(message){
+    const normalized = (message || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    const compact = normalized.replace(/[^a-z0-9]/g, '');
+    const hasRattataName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
+    const hasEscape = normalized.includes('escapou') || normalized.includes('fugiu');
+    const hasBattle = normalized.includes('batalha') || normalized.includes('battle');
+    const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
+    const hasRetry = normalized.includes('tente novamente') || normalized.includes('proxima vez');
+    return hasRattataName && hasEscape && (hasBattle || hasWild || hasRetry);
+}
+
 function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
     const normalizedChannel = normalizeStreamerChannelName(channel);
     if(!normalizedChannel || !value || typeof value !== 'object') return null;
 
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
+    if(value.lastMessageText && !isStreamerRatCooldownStartMessage(value.lastMessageText)){
+        return null;
+    }
 
     const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     let expectedNextAt = Number(value.expectedNextAt || 0);
@@ -588,11 +606,7 @@ function getRatCycleRemainingMs(state, now = Date.now()){
         ? Number(state.expectedNextAt)
         : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
-    if(baseNextAt > now) return baseNextAt - now;
-
-    const elapsedSinceBase = now - baseNextAt;
-    const completedCycles = Math.floor(elapsedSinceBase / STREAMER_RAT_INTERVAL_MS) + 1;
-    return Math.max(0, (baseNextAt + completedCycles * STREAMER_RAT_INTERVAL_MS) - now);
+    return Math.max(0, baseNextAt - now);
 }
 
 function pickPreferredTimerState(timerState){
@@ -620,7 +634,12 @@ function startRatSummaryTimer(state){
         }
         const msUntilNext = getRatCycleRemainingMs(state);
 
-        renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`, '#dff8ff');
+        renderStaticRatSummary(
+            msUntilNext > 0
+                ? `Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`
+                : 'Rattata ativo agora. Aguardando a fuga para reiniciar o timer.',
+            '#dff8ff'
+        );
     };
 
     render();
