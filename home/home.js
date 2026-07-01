@@ -2,6 +2,7 @@ const sharedStreamerCatalog = window.POKE_STREAMERS_SHARED || {};
 const HOME_STREAMERS = Array.isArray(sharedStreamerCatalog.STREAMERS) ? sharedStreamerCatalog.STREAMERS : [];
 
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
+const STREAMER_RAT_EXPECTED_OFFSET_MS = 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
@@ -53,12 +54,15 @@ function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
 
-    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS;
+    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     let expectedNextAt = Number(value.expectedNextAt || 0);
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= 0){
         expectedNextAt = defaultExpectedNextAt;
     }
-    if(expectedNextAt < lastMessageAt || expectedNextAt > defaultExpectedNextAt + STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS){
+    if(
+        expectedNextAt < defaultExpectedNextAt - STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS ||
+        expectedNextAt > defaultExpectedNextAt + STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS
+    ){
         expectedNextAt = defaultExpectedNextAt;
     }
 
@@ -582,7 +586,7 @@ function getRatCycleRemainingMs(state, now = Date.now()){
 
     const baseNextAt = Number(state.expectedNextAt || 0) > Number(state.lastMessageAt || 0)
         ? Number(state.expectedNextAt)
-        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS;
+        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
     if(baseNextAt > now) return baseNextAt - now;
 

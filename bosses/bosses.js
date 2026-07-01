@@ -2059,9 +2059,216 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
   encounterNote: 'Recomendacoes por cla e funcao para o Lado A do Medio.'
 });
 
+const horizonsGoldGigalithBosses = createManualRoleboardBosses([
+  {
+    id: 'horizons-gold-gigalith',
+    name: 'Gigalith',
+    image: 'pokemons/5gen/gigalith.png',
+    types: ['rock'],
+    moveType: 'rock',
+    description: 'Boss intermediario em trio do Gold no Dificil e Especialista.',
+    cardTags: ['Trio'],
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Excadrill', ['ground', 'steel'], 'steel'),
+          createRolePick('Marowak', ['ground'], 'ground'),
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass'),
+          createRolePick('Lurantis', ['grass'], 'grass')
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground', { tier: 'muitobom' }),
+          createRolePick('Tangrowth', ['grass'], 'grass'),
+          createRolePick('Chesnaught', ['grass', 'fighting'], 'grass')
+        ],
+        support: [
+          createRolePick('Bellossom', ['grass'], 'grass'),
+          createRolePick('Wynaut', ['psychic'], 'psychic')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Seaking', ['water'], 'water'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'water')
+        ],
+        tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'steel'),
+          createRolePick('Carracosta', ['water', 'rock'], 'water'),
+          createRolePick('Aegislash', ['steel', 'ghost'], 'steel')
+        ],
+        support: [
+          createRolePick('Politoed', ['water'], 'water'),
+          createRolePick('Comfey', ['fairy'], 'fairy')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Heracross', ['bug', 'fighting'], 'fighting'),
+          createRolePick('Kabutops', ['rock', 'water'], 'water'),
+          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('Mega Scizor', ['bug', 'steel'], 'steel')
+        ],
+        tank: [
+          createRolePick('Onix', ['rock', 'ground'], 'rock'),
+          createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
+          createRolePick('Miltank', ['normal'], 'ground')
+        ],
+        support: [
+          createRolePick('Blissey', ['normal'], 'fairy'),
+          createRolePick('Chansey', ['normal'], 'psychic'),
+          createRolePick('Lopunny', ['normal'], 'fighting')
+        ]
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Gold - Boss intermediario',
+  encounterNote: 'Boss em trio entre a primeira e a segunda parte do Gold.'
+});
+
+const horizonsSilverBosses = createManualRoleboardBosses([
+  {
+    id: 'horizons-silver-mega-alakazam',
+    name: 'Mega Alakazam',
+    image: 'pokemons/megas/mega-alakazam.png',
+    types: ['psychic'],
+    moveType: 'psychic',
+    description: 'Boss duo do Horizons Silver. As criaturas do caminho ainda serao adicionadas.',
+    cardTags: ['Silver'],
+    comingSoon: true,
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Alakazam', ['psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Wynaut', ['psychic'], 'psychic', { tier: 'seminformacao' })
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Mega Starmie', ['water', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Smoochum', ['ice', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Bouffalant', ['normal'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Chansey', ['normal'], 'psychic', { tier: 'seminformacao' })
+        ]
+      }
+    }
+  },
+  {
+    id: 'horizons-silver-mega-gengar',
+    name: 'Mega Gengar',
+    image: 'pokemons/megas/mega-gengar.png',
+    types: ['ghost', 'poison'],
+    moveType: 'ghost',
+    description: 'Boss duo do Horizons Silver. As criaturas do caminho ainda serao adicionadas.',
+    cardTags: ['Silver'],
+    comingSoon: true,
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Alakazam', ['psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Wynaut', ['psychic'], 'psychic', { tier: 'seminformacao' })
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Mega Starmie', ['water', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Bronzong', ['steel', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Smoochum', ['ice', 'psychic'], 'psychic', { tier: 'seminformacao' })
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'psychic', { tier: 'seminformacao' })
+        ],
+        tank: [
+          createRolePick('Bouffalant', ['normal'], 'psychic', { tier: 'seminformacao' })
+        ],
+        support: [
+          createRolePick('Chansey', ['normal'], 'psychic', { tier: 'seminformacao' })
+        ]
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Silver',
+  encounterNote: 'Bosses do Horizons Silver em breve.'
+});
+
+const horizonsBronzeRunsData = [
+  {
+    id: 'bronze-normal-a',
+    category: 'bronze',
+    difficulty: 'normal',
+    side: 'a',
+    title: 'Normal - Lado A',
+    eyebrow: 'Solo - Em breve',
+    summary: 'Categoria solo do Horizons. Informacoes em breve.',
+    pathSections: [],
+    bosses: []
+  }
+];
+
+const horizonsSilverRunsData = [
+  {
+    id: 'silver-normal-a',
+    category: 'silver',
+    difficulty: 'normal',
+    side: 'a',
+    title: 'Normal - Lado A',
+    eyebrow: 'Duo - Em breve',
+    summary: 'Categoria duo do Horizons. Criaturas ainda em definicao; bosses conhecidos: Mega Alakazam e Mega Gengar.',
+    pathSections: [
+      {
+        id: 'silver-em-breve',
+        title: 'Criaturas',
+        subtitle: 'Em breve',
+        mobs: [
+          { name: 'Alakazam', image: 'pokemons/1gen/alakazam.png', types: ['psychic'] }
+        ],
+        effectiveTypes: ['psychic'],
+        superEffectiveTypes: []
+      }
+    ],
+    bosses: horizonsSilverBosses
+  }
+];
+
 const horizonsRunsData = [
   {
     id: 'medio-a',
+    category: 'gold',
     difficulty: 'medio',
     side: 'a',
     title: 'Medio - Lado A',
@@ -2112,6 +2319,108 @@ const horizonsRunsData = [
     bosses: horizonsMediumSideABosses
   }
 ];
+
+function createHorizonsGoldPathSectionsWithGigalith(baseSections = []) {
+  return baseSections.map((section, index) => {
+    if (index !== 0) return section;
+    return {
+      ...section,
+      bossesAfter: horizonsGoldGigalithBosses,
+      bossesAfterOptions: {
+        eyebrow: 'Boss intermediario',
+        title: 'Gigalith',
+        subtitle: 'Boss em trio entre a primeira e a segunda parte.',
+        compact: true
+      }
+    };
+  });
+}
+
+const horizonsGoldBaseRun = horizonsRunsData[0];
+if (horizonsGoldBaseRun) {
+  horizonsRunsData.unshift({
+    ...horizonsGoldBaseRun,
+    id: 'normal-a',
+    difficulty: 'normal',
+    title: 'Normal - Lado A'
+  });
+  horizonsRunsData.push(
+    {
+      ...horizonsGoldBaseRun,
+      id: 'dificil-a',
+      difficulty: 'dificil',
+      title: 'Dificil - Lado A',
+      summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
+      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections)
+    },
+    {
+      ...horizonsGoldBaseRun,
+      id: 'especialista-a',
+      difficulty: 'especialista',
+      title: 'Especialista - Lado A',
+      summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
+      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections)
+    }
+  );
+}
+
+horizonsMediumSideABosses.forEach((boss) => {
+  if (boss && typeof boss === 'object') {
+    boss.horizonsCategory = 'gold';
+    boss.horizonsCategoryLabel = 'Gold';
+    boss.cardTags = ['Gold', ...(Array.isArray(boss.cardTags) ? boss.cardTags : [])];
+  }
+});
+
+horizonsGoldGigalithBosses.forEach((boss) => {
+  if (boss && typeof boss === 'object') {
+    boss.horizonsCategory = 'gold';
+    boss.horizonsCategoryLabel = 'Gold';
+  }
+});
+
+horizonsSilverBosses.forEach((boss) => {
+  if (boss && typeof boss === 'object') {
+    boss.horizonsCategory = 'silver';
+    boss.horizonsCategoryLabel = 'Silver';
+  }
+});
+
+const horizonsCategoriesData = Object.freeze({
+  bronze: {
+    id: 'bronze',
+    label: 'Bronze',
+    eyebrow: 'Solo',
+    title: 'Bronze',
+    summary: 'Categoria solo do Horizons. Informacoes em breve.',
+    status: 'Em breve',
+    pathSections: [],
+    bosses: [],
+    runs: horizonsBronzeRunsData
+  },
+  silver: {
+    id: 'silver',
+    label: 'Silver',
+    eyebrow: 'Duo',
+    title: 'Silver',
+    summary: 'Categoria duo do Horizons. Criaturas ainda em definicao; bosses conhecidos: Mega Alakazam e Mega Gengar.',
+    status: 'Em breve',
+    pathSections: [],
+    bosses: horizonsSilverBosses,
+    runs: horizonsSilverRunsData
+  },
+  gold: {
+    id: 'gold',
+    label: 'Gold',
+    eyebrow: 'Configurado',
+    title: 'Gold',
+    summary: 'Categoria Gold do Horizons com rotas separadas por dificuldade e lado.',
+    status: 'Configurado',
+    pathSections: [],
+    bosses: [],
+    runs: horizonsRunsData
+  }
+});
 
 function cloneRolePickConfig(pick) {
   if (!pick || typeof pick !== 'object') return pick;
@@ -2662,12 +2971,13 @@ const bossCatalogs = {
     label: 'Horizons',
     variant: 'horizons',
     searchEnabled: false,
-    summary: 'Rotas separadas por dificuldade e lado, com mobs do caminho e bosses finais.',
-    pills: ['Dificuldade', 'Lado A/B', 'Mobs + Bosses'],
+    summary: 'Categorias Bronze, Silver e Gold com mobs do caminho e bosses finais.',
+    pills: ['Bronze', 'Silver', 'Gold'],
     introLines: [
-      'Escolha a dificuldade e o lado para ver mobs do caminho, sugestões de tipos e bosses finais.'
+      'Escolha a categoria para liberar as rotas, sugestoes de tipos e bosses finais.'
     ],
-    data: horizonsMediumSideABosses,
+    data: [...horizonsMediumSideABosses, ...horizonsGoldGigalithBosses, ...horizonsSilverBosses],
+    categories: horizonsCategoriesData,
     runs: horizonsRunsData
   }
 };
@@ -4612,21 +4922,25 @@ function mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRe
 
   if (shinyPassiveSignature) {
     basePick._shinyVariantPassiveInfo = cloneRecommendationPassiveInfo(shinyPassiveInfo);
+    basePick._hasShinyVariant = true;
   }
 
   const scoredBase = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(basePick));
   const scoredShiny = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(shinyPick));
-  basePick._shinyVariantTier = scoredShiny.tier;
+  const baseTierPriority = getRecommendationTierPriority(scoredBase.tier);
+  const shinyTierPriority = getRecommendationTierPriority(scoredShiny.tier);
+  const shinyTier = shinyTierPriority <= baseTierPriority ? scoredShiny.tier : scoredBase.tier;
+  basePick._shinyVariantTier = shinyTier;
   const shinyChangesScore = scoredBase._offense !== scoredShiny._offense
     || scoredBase._defenseWorst !== scoredShiny._defenseWorst
-    || scoredBase.tier !== scoredShiny.tier;
+    || scoredBase.tier !== shinyTier;
 
   if (shinyChangesScore) {
     basePick._shinyVariantComparison = {
       name: shinyPick.name,
       offense: scoredShiny._offense,
       defenseWorst: scoredShiny._defenseWorst,
-      tier: scoredShiny.tier
+      tier: shinyTier
     };
   }
 }
@@ -5497,10 +5811,23 @@ function getRecommendationShinyComparison(poke) {
 
 function getRecommendationShinyTier(poke) {
   if (!poke || typeof poke !== 'object') return '';
+  const hasShinyPassiveVariant = Boolean(poke._hasShinyVariant || poke._shinyVariantPassiveInfo?.text);
   const shinyTier = typeof poke._shinyVariantTier === 'string' ? poke._shinyVariantTier.trim().toLowerCase() : '';
   const baseTier = typeof poke.tier === 'string' ? poke.tier.trim().toLowerCase() : '';
-  if (!shinyTier || shinyTier === baseTier) return '';
+  if (!shinyTier) return hasShinyPassiveVariant ? baseTier : '';
+  if (baseTier && getRecommendationTierPriority(shinyTier) > getRecommendationTierPriority(baseTier)) return '';
+  if (shinyTier === baseTier && !hasShinyPassiveVariant) return '';
   return shinyTier;
+}
+
+function getRecommendationShinyTierChanges(poke, shinyTier = '') {
+  if (!poke || !shinyTier) return false;
+  const baseTier = typeof poke.tier === 'string' ? poke.tier.trim().toLowerCase() : '';
+  return Boolean(baseTier && shinyTier !== baseTier);
+}
+
+function hasRecommendationShinyPassiveVariant(poke) {
+  return Boolean(poke && typeof poke === 'object' && (poke._hasShinyVariant || poke._shinyVariantPassiveInfo?.text));
 }
 
 function createRecommendationShinyHoverPanel(options = {}) {
@@ -5509,13 +5836,14 @@ function createRecommendationShinyHoverPanel(options = {}) {
     headingClassName = '',
     shinyTier = '',
     shinyComparison = null,
+    hasShinyPassiveVariant = false,
     createMetric = null,
     tierModifierClass = '',
     atkModifierClass = '',
     defModifierClass = ''
   } = options;
 
-  if (typeof createMetric !== 'function' || (!shinyTier && !shinyComparison)) {
+  if (typeof createMetric !== 'function' || (!shinyTier && !shinyComparison && !hasShinyPassiveVariant)) {
     return null;
   }
 
@@ -6308,6 +6636,8 @@ function collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey
   const hasMultipleGroups = groups.length > 1;
 
   groups.forEach((group) => {
+    if (group?.boss?.comingSoon) return;
+
     const ranked = rankRecommendedForBoss(group.boss, group.recommended || [], { roleKey: 'dps' });
     ranked.forEach((pick) => {
       if (!isRecommendationPickUsedByPokemon(pick, matchKeys)) return;
@@ -6329,6 +6659,8 @@ function getPokemonBossUsages(pokemonName) {
   pokemonBossUsageCatalogIds.forEach((catalogId) => {
     const catalog = bossCatalogs[catalogId];
     (catalog?.data || []).forEach((boss) => {
+      if (boss?.comingSoon) return;
+
       pokemonBossUsageClanOrder.forEach((clanKey) => {
         const clanData = boss?.clans?.[clanKey];
         if (!clanData) return;
@@ -11206,8 +11538,14 @@ function makeHoopaBossCard(speedster) {
     modeBadge.textContent = 'Em Breve';
     modeBadge.title = 'Boss em breve';
   } else {
-    modeBadge.textContent = isDuo ? 'Dupla' : 'Solo';
-    modeBadge.title = isDuo ? 'Chefe para dupla (2 jogadores)' : 'Chefe solo (1 jogador)';
+    const isHorizonsMode = normalizeBossMode(activeBossMode) === 'horizons';
+    const horizonsCategoryLabel = typeof speedster.horizonsCategoryLabel === 'string' && speedster.horizonsCategoryLabel.trim()
+      ? speedster.horizonsCategoryLabel.trim()
+      : '';
+    modeBadge.textContent = isHorizonsMode && horizonsCategoryLabel ? horizonsCategoryLabel : (isDuo ? 'Dupla' : 'Solo');
+    modeBadge.title = isDuo
+      ? (isHorizonsMode && horizonsCategoryLabel ? `Chefe Horizons ${horizonsCategoryLabel}` : 'Chefe para dupla (2 jogadores)')
+      : 'Chefe solo (1 jogador)';
   }
   button.appendChild(modeBadge);
 
@@ -11600,9 +11938,31 @@ const horizonsSideLabels = Object.freeze({
 
 const horizonsDifficultyOrder = Object.freeze(['normal', 'medio', 'dificil', 'especialista']);
 const horizonsSideOrder = Object.freeze(['a', 'b']);
+const horizonsCategoryOrder = Object.freeze(['bronze', 'silver', 'gold']);
 
-function getHorizonsRuns() {
-  const runs = getActiveBossCatalog()?.runs;
+let activeHorizonsCategoryId = '';
+let activeHorizonsDifficulty = 'medio';
+let activeHorizonsSide = 'a';
+
+function getHorizonsCategories() {
+  const categories = getActiveBossCatalog()?.categories;
+  return categories && typeof categories === 'object' ? categories : {};
+}
+
+function getHorizonsCategory(categoryId = activeHorizonsCategoryId) {
+  return getHorizonsCategories()[categoryId] || null;
+}
+
+function getHorizonsCategoryList() {
+  const categories = getHorizonsCategories();
+  return horizonsCategoryOrder
+    .map((categoryId) => categories[categoryId])
+    .filter(Boolean);
+}
+
+function getHorizonsRuns(categoryId = activeHorizonsCategoryId) {
+  const category = getHorizonsCategory(categoryId);
+  const runs = category?.runs;
   return Array.isArray(runs) ? runs : [];
 }
 
@@ -11611,12 +11971,39 @@ function hasHorizonsRun(difficulty, side) {
 }
 
 function getActiveHorizonsRun() {
-  return getHorizonsRuns()[0] || null;
+  const runs = getHorizonsRuns();
+  return runs.find((run) => run?.difficulty === activeHorizonsDifficulty && run?.side === activeHorizonsSide)
+    || runs[0]
+    || null;
+}
+
+function setActiveHorizonsCategory(categoryId) {
+  const category = getHorizonsCategory(categoryId);
+  activeHorizonsCategoryId = category ? category.id : '';
+  const run = getHorizonsRuns(activeHorizonsCategoryId)[0];
+  if (run) {
+    activeHorizonsDifficulty = run.difficulty || activeHorizonsDifficulty;
+    activeHorizonsSide = run.side || activeHorizonsSide;
+  }
+}
+
+function setActiveHorizonsRun(nextState = {}) {
+  const nextDifficulty = nextState.difficulty || activeHorizonsDifficulty;
+  const nextSide = nextState.side || activeHorizonsSide;
+  const run = getHorizonsRuns().find((candidate) => (
+    candidate?.difficulty === nextDifficulty && candidate?.side === nextSide
+  ));
+  if (!run) return;
+  activeHorizonsDifficulty = run.difficulty;
+  activeHorizonsSide = run.side;
 }
 
 function createHorizonsSelectorGroup(label, items, activeValue, type) {
   const group = document.createElement('div');
   group.className = 'horizons-selector-group';
+  if (type) {
+    group.classList.add(`horizons-selector-group--${type}`);
+  }
 
   const title = document.createElement('span');
   title.className = 'horizons-selector-group__label';
@@ -11630,18 +12017,28 @@ function createHorizonsSelectorGroup(label, items, activeValue, type) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'horizons-selector';
+    button.dataset.value = item.value;
+    if (type) {
+      button.classList.add(`horizons-selector--${type}`);
+    }
     const available = type === 'difficulty'
-      ? hasHorizonsRun(item.value, getActiveHorizonsRun()?.side || 'a')
-      : hasHorizonsRun(getActiveHorizonsRun()?.difficulty || 'medio', item.value);
+      ? hasHorizonsRun(item.value, getActiveHorizonsRun()?.side || activeHorizonsSide)
+      : type === 'side'
+        ? hasHorizonsRun(getActiveHorizonsRun()?.difficulty || activeHorizonsDifficulty, item.value)
+        : item.available !== false;
     const active = item.value === activeValue;
     button.classList.toggle('is-active', active);
     button.disabled = !available;
     button.setAttribute('aria-pressed', active ? 'true' : 'false');
     button.textContent = item.label;
-    if (!available) {
+    if (available && typeof item.onSelect === 'function') {
+      button.addEventListener('click', item.onSelect);
+    }
+    const statusLabel = item.statusLabel || (!available ? 'Em breve' : '');
+    if (statusLabel) {
       const soon = document.createElement('span');
       soon.className = 'horizons-selector__soon';
-      soon.textContent = 'Em breve';
+      soon.textContent = statusLabel;
       button.appendChild(soon);
     }
     list.appendChild(button);
@@ -11743,7 +12140,162 @@ function createHorizonsPathSection(sectionData) {
   return section;
 }
 
+function createHorizonsOverview(data, fallbackTitle = 'Horizons') {
+  const overview = document.createElement('section');
+  overview.className = 'horizons-overview';
+  const overviewCopy = document.createElement('div');
+  overviewCopy.className = 'horizons-overview__copy';
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'horizons-overview__eyebrow';
+  eyebrow.textContent = data?.eyebrow || 'Horizons';
+  const title = document.createElement('h3');
+  title.className = 'horizons-overview__title';
+  title.textContent = data?.title || fallbackTitle;
+  const summary = document.createElement('p');
+  summary.className = 'horizons-overview__summary';
+  summary.textContent = data?.summary || '';
+  overviewCopy.append(eyebrow, title, summary);
+  overview.appendChild(overviewCopy);
+  return overview;
+}
+
+function createHorizonsBossesSection(bosses = [], options = {}) {
+  const bossesSection = document.createElement('section');
+  bossesSection.className = 'horizons-bosses-section';
+  if (options.compact) {
+    bossesSection.classList.add('horizons-bosses-section--compact');
+  }
+
+  const bossHeader = document.createElement('div');
+  bossHeader.className = 'horizons-section-header';
+  const bossCopy = document.createElement('div');
+  bossCopy.className = 'horizons-section-header__copy';
+  const bossEyebrow = document.createElement('span');
+  bossEyebrow.className = 'horizons-section-header__eyebrow';
+  bossEyebrow.textContent = options.eyebrow || 'Bosses';
+  const bossTitle = document.createElement('h3');
+  bossTitle.className = 'horizons-section-header__title';
+  bossTitle.textContent = options.title || 'Recomendacoes por cla e funcao';
+  const bossSubtitle = document.createElement('p');
+  bossSubtitle.className = 'horizons-section-header__subtitle';
+  bossSubtitle.textContent = options.subtitle || 'Clique em um dos Bosses para ver os Pokemons Recomendados.';
+  bossCopy.append(bossEyebrow, bossTitle, bossSubtitle);
+  bossHeader.appendChild(bossCopy);
+  bossesSection.appendChild(bossHeader);
+
+  const bossGrid = document.createElement('div');
+  bossGrid.className = 'horizons-boss-grid';
+  bosses.forEach((boss) => bossGrid.appendChild(makeRoleBossCard(boss)));
+  bossesSection.appendChild(bossGrid);
+  return bossesSection;
+}
+
+function renderHorizonsCategoryGrid() {
+  const wrap = document.createElement('div');
+  wrap.className = 'horizons-board';
+
+  const selectors = document.createElement('section');
+  selectors.className = 'horizons-selectors';
+  selectors.appendChild(
+    createHorizonsSelectorGroup(
+      'Categoria',
+      getHorizonsCategoryList().map((category) => ({
+        value: category.id,
+        label: category.label,
+        statusLabel: category.status === 'Em breve' ? 'Em breve' : '',
+        onSelect: () => {
+          setActiveHorizonsCategory(category.id);
+          renderGrid();
+        }
+      })),
+      activeHorizonsCategoryId,
+      'category'
+    )
+  );
+  wrap.appendChild(selectors);
+
+  const activeCategory = getHorizonsCategory();
+  if (!activeCategory) {
+    wrap.appendChild(createHorizonsOverview({
+      eyebrow: 'Horizons',
+      title: 'Escolha uma categoria',
+      summary: 'Selecione Bronze, Silver ou Gold para liberar dificuldade, lado, criaturas e bosses.'
+    }));
+    grid.appendChild(wrap);
+    return;
+  }
+
+  const categoryRuns = getHorizonsRuns();
+  if (categoryRuns.length) {
+    const run = getActiveHorizonsRun();
+    selectors.append(
+      createHorizonsSelectorGroup(
+        'Dificuldade',
+        horizonsDifficultyOrder.map((value) => ({
+          value,
+          label: horizonsDifficultyLabels[value],
+          onSelect: () => {
+            setActiveHorizonsRun({ difficulty: value });
+            renderGrid();
+          }
+        })),
+        run?.difficulty || activeHorizonsDifficulty,
+        'difficulty'
+      ),
+      createHorizonsSelectorGroup(
+        'Lado',
+        horizonsSideOrder.map((value) => ({
+          value,
+          label: horizonsSideLabels[value],
+          onSelect: () => {
+            setActiveHorizonsRun({ side: value });
+            renderGrid();
+          }
+        })),
+        run?.side || activeHorizonsSide,
+        'side'
+      )
+    );
+
+    if (run) {
+      wrap.appendChild(createHorizonsOverview(run, 'Rota'));
+      (run.pathSections || []).forEach((sectionData) => {
+        wrap.appendChild(createHorizonsPathSection(sectionData));
+        if (Array.isArray(sectionData.bossesAfter) && sectionData.bossesAfter.length) {
+          wrap.appendChild(createHorizonsBossesSection(sectionData.bossesAfter, sectionData.bossesAfterOptions || {}));
+        }
+      });
+      if (Array.isArray(run.bosses) && run.bosses.length) {
+        wrap.appendChild(createHorizonsBossesSection(run.bosses));
+      } else {
+        const empty = document.createElement('div');
+        empty.className = 'speedster-clan-empty';
+        empty.textContent = 'Informacoes em breve.';
+        wrap.appendChild(empty);
+      }
+    }
+  } else {
+    wrap.appendChild(createHorizonsOverview(activeCategory, activeCategory.label));
+    (activeCategory.pathSections || []).forEach((sectionData) => {
+      wrap.appendChild(createHorizonsPathSection(sectionData));
+    });
+    if (Array.isArray(activeCategory.bosses) && activeCategory.bosses.length) {
+      wrap.appendChild(createHorizonsBossesSection(activeCategory.bosses));
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'speedster-clan-empty';
+      empty.textContent = 'Informacoes em breve.';
+      wrap.appendChild(empty);
+    }
+  }
+
+  grid.appendChild(wrap);
+}
+
 function renderHorizonsGrid() {
+  renderHorizonsCategoryGrid();
+  return;
+
   const run = getActiveHorizonsRun();
   if (!run) {
     const empty = document.createElement('div');
@@ -11893,7 +12445,7 @@ function formatSearchLabel(speedster) {
 
 function getBossSearchCatalogUrl() {
   const prefix = isBossesStandaloneAssetContext() ? '../' : '';
-  return `${prefix}pokemons/pokemons.json?v=20260630d`;
+  return `${prefix}pokemons/pokemons.json?v=20260630g`;
 }
 
 function getBossSearchCatalogRole(entry) {
@@ -12376,6 +12928,10 @@ function getTierUiLabel(tier = 'seminformacao') {
 }
 
 function getBossResultEncounterLabel(boss) {
+  if (activeBossMode === 'horizons' && typeof boss?.horizonsCategoryLabel === 'string' && boss.horizonsCategoryLabel.trim()) {
+    return boss.horizonsCategoryLabel.trim();
+  }
+
   if (activeBossMode === 'hoopa') {
     return boss?.duo ? 'Dupla' : 'Solo';
   }
@@ -12766,11 +13322,13 @@ function createRecommendationCard(poke, options = {}) {
 
     const shinyComparison = getRecommendationShinyComparison(poke);
     const shinyTier = getRecommendationShinyTier(poke);
+    const hasShinyPassiveVariant = hasRecommendationShinyPassiveVariant(poke);
     const shinyHoverPanel = createRecommendationShinyHoverPanel({
       panelClassName: 'speedster-reco-score-hover',
       headingClassName: 'speedster-reco-score-hover__heading',
       shinyTier,
       shinyComparison,
+      hasShinyPassiveVariant,
       createMetric: createScoreMetric,
       tierModifierClass: 'speedster-reco-score-row--tier',
       atkModifierClass: 'speedster-reco-score-row--atk',
@@ -12780,7 +13338,7 @@ function createRecommendationCard(poke, options = {}) {
       card.classList.add('speedster-reco-card--has-hover-details');
       score.classList.add('speedster-reco-score--has-hover-details');
       score.tabIndex = 0;
-      score.title = `${recommendationScoreTitle}${shinyTier ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
+      score.title = `${recommendationScoreTitle}${getRecommendationShinyTierChanges(poke, shinyTier) ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
       if (shinyTier) {
         score.appendChild(createRecommendationShinyHoverIndicator('speedster-reco-score-indicator'));
       }
@@ -13505,11 +14063,13 @@ function createRolePickCard(poke) {
   score.append(atkRow, defRow);
   const shinyComparison = getRecommendationShinyComparison(poke);
   const shinyTier = getRecommendationShinyTier(poke);
+  const hasShinyPassiveVariant = hasRecommendationShinyPassiveVariant(poke);
   const shinyHoverPanel = createRecommendationShinyHoverPanel({
     panelClassName: 'boss-role-pick-score-hover',
     headingClassName: 'boss-role-pick-score-hover__heading',
     shinyTier,
     shinyComparison,
+    hasShinyPassiveVariant,
     createMetric: (label, value, modifierClass) => {
       const row = document.createElement('div');
       row.className = `boss-role-pick-score-row ${modifierClass}`;
@@ -13532,7 +14092,7 @@ function createRolePickCard(poke) {
   if (shinyHoverPanel) {
     score.classList.add('boss-role-pick-score--has-hover-details');
     score.tabIndex = 0;
-    score.title = `${recommendationScoreTitle}${shinyTier ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
+    score.title = `${recommendationScoreTitle}${getRecommendationShinyTierChanges(poke, shinyTier) ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;
     if (shinyTier) {
       score.appendChild(createRecommendationShinyHoverIndicator('boss-role-pick-score-indicator'));
     }

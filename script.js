@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630k';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630w';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -377,8 +377,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630d';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260625g';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630g';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260630c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260630a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
@@ -1320,6 +1320,7 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     boss: { key: 'boss', label: 'Boss' },
     ranger: { key: 'ranger', label: 'Ranger' },
     maniac: { key: 'maniac', label: 'Maniac' },
+    'impossivel-capturar': { key: 'impossivel-capturar', label: 'Imposs\u00edvel de capturar' },
     'mewtwo-solo': { key: 'mewtwo-solo', label: 'Mewtwo Solo' },
     'poke-gift': { key: 'poke-gift', label: 'Poke Gift' },
     legendary: { key: 'legendary', label: 'Lend\u00e1rio' },
@@ -1327,7 +1328,7 @@ const POKEMON_SPECIAL_TAG_META = Object.freeze({
     ace: { key: 'ace', label: 'Ace' },
     saffari: { key: 'saffari', label: 'Saffari' }
 });
-const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'mewtwo-solo', 'poke-gift', 'legendary', 'pre-ace', 'ace', 'saffari']);
+const POKEMON_SPECIAL_TAG_ORDER = Object.freeze(['mega', 'pack', 'shiny', 'fossil', 'boss', 'ranger', 'maniac', 'impossivel-capturar', 'mewtwo-solo', 'poke-gift', 'legendary', 'pre-ace', 'ace', 'saffari']);
 const POKEMON_STANDARD_CARD_IMAGE_ENTRIES = new Set(['venusaurtwo', 'charizardtwo', 'blastoisetwo']);
 const POKEMON_SPECIAL_TAG_SORT_INDEX = Object.freeze(
     POKEMON_SPECIAL_TAG_ORDER.reduce((acc, value, index) => {
@@ -4289,6 +4290,7 @@ const MANIACS_ESSENCE_ENTRIES = Object.freeze([
     { target: 'Shiinotic', hunt: 'Goodra' },
     { target: 'Comfey', hunt: 'Dragonite' },
     { target: 'Hatterene', hunt: 'Salamence' },
+    { target: 'Bunnelby', hunt: 'Garchomp' },
     { target: 'Diggersby', hunt: 'Garchomp' },
     { target: 'Dondozo', hunt: 'Crabominable' },
     { target: 'Vikavolt', hunt: 'Archaludon' },
@@ -13496,6 +13498,7 @@ const TWITCH_CHAT_USER_ID = (window.POKE_TWITCH_CHAT_USER_ID || '').toString().t
 const TWITCH_CHAT_OAUTH_TOKEN = (window.POKE_TWITCH_CHAT_OAUTH_TOKEN || window.POKE_TWITCH_CHAT_TOKEN || '').toString().trim();
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
+const STREAMER_RAT_EXPECTED_OFFSET_MS = 60 * 1000;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-credentials-v1';
@@ -13871,13 +13874,13 @@ function normalizeStreamerRatTimerSnapshot(channel, value, options = {}){
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
 
-    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS;
+    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     let expectedNextAt = Number(value.expectedNextAt || 0);
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= 0){
         expectedNextAt = defaultExpectedNextAt;
     }
     if(
-        expectedNextAt < lastMessageAt ||
+        expectedNextAt < defaultExpectedNextAt - STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS ||
         expectedNextAt > defaultExpectedNextAt + STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS
     ){
         expectedNextAt = defaultExpectedNextAt;
@@ -15075,7 +15078,7 @@ function getStreamerRatCycleRemainingMs(state, now = Date.now()){
 
     const baseNextAt = Number(state.expectedNextAt || 0) > Number(state.lastMessageAt || 0)
         ? Number(state.expectedNextAt)
-        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS;
+        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
     if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
     if(baseNextAt > now) return baseNextAt - now;
 
@@ -20752,6 +20755,7 @@ function normalizePokemonSpecialTagKey(value){
     if(normalized === 'boss') return 'boss';
     if(normalized === 'ranger') return 'ranger';
     if(normalized === 'maniac') return 'maniac';
+    if(normalized === 'impossivel-capturar' || normalized === 'impossivel-de-capturar' || normalized === 'impossivelcapturar') return 'impossivel-capturar';
     if(normalized === 'mewtwo-solo' || normalized === 'mew2-solo') return 'mewtwo-solo';
     if(normalized === 'poke-gift' || normalized === 'pokegift') return 'poke-gift';
     if(normalized === 'pre-ace' || normalized === 'preace') return 'pre-ace';

@@ -11,6 +11,8 @@ const TWITCH_TOKEN = (process.env.TWITCH_OAUTH_TOKEN || '')
   .replace(/^oauth:/i, '');
 const RAT_BOT_LOGIN = 'pstoryonline';
 const RAT_INTERVAL_MS = 20 * 60 * 1000;
+const RAT_EXPECTED_OFFSET_MS = 60 * 1000;
+const RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 21 * 60 * 1000));
 const JOIN_DELAY_MS = 900;
 const MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
@@ -94,16 +96,23 @@ function normalizeTimerSnapshot(channel, value, now = Date.now()){
   const lastMessageAt = Number(value?.lastMessageAt || 0);
   if(!normalizedChannel || !Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
 
-  const expectedNextAt = Number.isFinite(Number(value?.expectedNextAt))
+  const defaultExpectedNextAt = lastMessageAt + RAT_INTERVAL_MS + RAT_EXPECTED_OFFSET_MS;
+  let expectedNextAt = Number.isFinite(Number(value?.expectedNextAt))
     ? Number(value.expectedNextAt)
-    : lastMessageAt + RAT_INTERVAL_MS;
+    : defaultExpectedNextAt;
+  if(
+    expectedNextAt < defaultExpectedNextAt - RAT_CLOCK_SKEW_TOLERANCE_MS ||
+    expectedNextAt > defaultExpectedNextAt + RAT_CLOCK_SKEW_TOLERANCE_MS
+  ){
+    expectedNextAt = defaultExpectedNextAt;
+  }
   const updatedAt = Number.isFinite(Number(value?.updatedAt)) ? Number(value.updatedAt) : lastMessageAt;
   if(now - lastMessageAt > MAX_CACHE_AGE_MS) return null;
 
   return {
     channel: normalizedChannel,
     lastMessageAt,
-    expectedNextAt: Math.max(lastMessageAt, expectedNextAt),
+    expectedNextAt,
     lastMessageText: value?.lastMessageText ? value.lastMessageText.toString() : '',
     streamStartedAt: value?.streamStartedAt ? value.streamStartedAt.toString() : '',
     source: value?.source ? value.source.toString() : 'server-cache',
@@ -220,7 +229,7 @@ function createTimerSnapshot(channel, messageData, candidateByChannel){
   return normalizeTimerSnapshot(normalizedChannel, {
     channel: normalizedChannel,
     lastMessageAt: sentTimestamp,
-    expectedNextAt: sentTimestamp + RAT_INTERVAL_MS,
+    expectedNextAt: sentTimestamp + RAT_INTERVAL_MS + RAT_EXPECTED_OFFSET_MS,
     lastMessageText: messageData.trailing || messageData.params?.[1] || '',
     streamStartedAt: candidate?.startedAt || '',
     source: 'github-action-chat',
