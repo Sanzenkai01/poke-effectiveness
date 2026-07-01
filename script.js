@@ -4116,7 +4116,8 @@ const BOOST_BRONZE_PIECES_PER_STAR = 3;
 const BOOST_SILVER_ANCIENT_STONE_PER_LEVEL = 100;
 const BOOST_TYPE_STONE_META = Object.freeze({
     bug: { name: 'Cocoon Stone', image: 'calculadora/cocoon_stone.gif' },
-    ghost: { name: 'Darkness Stone', image: 'calculadora/darkness_stone.png' },
+    ghost: { name: 'Ghost Stone', image: '' },
+    dark: { name: 'Darkness Stone', image: 'calculadora/darkness_stone.png' },
     dragon: { name: 'Dragon Stone', image: 'calculadora/dragon_stone.gif' },
     ground: { name: 'Earth Stone', image: 'calculadora/earth_stone.gif' },
     psychic: { name: 'Enigma Stone', image: 'calculadora/enigma_stone.gif' },
@@ -5403,10 +5404,16 @@ function getManiacPokemonTypes(name){
 function getManiacStoneMetaForTarget(name){
     const { type1 } = getManiacPokemonTypes(name);
     const normalizedType = normalizePokemonTypeKey(type1);
+    if(normalizedType === 'ghost'){
+        return {
+            name: 'Ghost Stone',
+            image: BOOST_NAMED_STONE_META['Ghost Stone']?.image || BOOST_TYPE_STONE_META.ghost?.image || ''
+        };
+    }
     if(normalizedType === 'dark'){
         return {
             name: 'Darkness Stone',
-            image: BOOST_NAMED_STONE_META['Darkness Stone']?.image || BOOST_TYPE_STONE_META.ghost?.image || ''
+            image: BOOST_NAMED_STONE_META['Darkness Stone']?.image || BOOST_TYPE_STONE_META.dark?.image || ''
         };
     }
     if(normalizedType === 'fighting'){
