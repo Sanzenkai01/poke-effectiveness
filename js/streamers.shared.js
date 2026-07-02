@@ -29,7 +29,7 @@
         { name: 'catarktv', supportsDrops: false },
         { name: 'espantacorvos', supportsDrops: false },
         { name: 'kiwoe', supportsDrops: false, discord: 'https://discord.com/invite/nazX2vTjGB' },
-        { name: 'karlin_nara', supportsDrops: false },
+        { name: 'karlin_nara', supportsDrops: true },
         { name: 'corbelari', supportsDrops: false },
         { name: 'linikerquadrado2', supportsDrops: false },
         { name: 'kaminarifoxy', supportsDrops: false },
