@@ -13,8 +13,8 @@ const RAT_BOT_LOGIN = 'pstoryonline';
 const RAT_INTERVAL_MS = 20 * 60 * 1000;
 const RAT_EXPECTED_OFFSET_MS = 0;
 const RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
-const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 11 * 60 * 1000));
-const JOIN_DELAY_MS = 900;
+const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 24 * 60 * 1000));
+const JOIN_DELAY_MS = 500;
 const MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 
 function normalizeChannelName(name){
@@ -74,10 +74,21 @@ function isRatCooldownStartMessage(message){
   const compact = normalized.replace(/[^a-z0-9]/g, '');
   const hasRatName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
   const hasEscape = normalized.includes('escapou') || normalized.includes('fugiu');
-  const hasBattle = normalized.includes('batalha') || normalized.includes('battle');
+  return hasRatName && hasEscape;
+}
+
+function isRatSpawnMessage(message){
+  const normalized = (message || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+  const compact = normalized.replace(/[^a-z0-9]/g, '');
+  const hasRatName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
+  const hasSpawn = normalized.includes('apareceu') || normalized.includes('aparecer') || normalized.includes('surgiu');
+  const hasBattle = normalized.includes('battle') || normalized.includes('batalha') || normalized.includes('enfrenta');
   const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
-  const hasRetry = normalized.includes('tente novamente') || normalized.includes('proxima vez');
-  return hasRatName && hasEscape && (hasBattle || hasWild || hasRetry);
+  return hasRatName && hasSpawn && (hasBattle || hasWild);
 }
 
 function isTrustedTimerSnapshot(value){
@@ -256,6 +267,8 @@ function monitorRatChat(channels, chatLogin){
 
     const candidateByChannel = new Map(channels.map(candidate => [candidate.channel, candidate]));
     const updates = [];
+    const sightingsByChannel = new Map();
+    const ratMessages = [];
     let buffer = '';
     let joinIndex = 0;
     let joinTimer = null;
@@ -280,24 +293,47 @@ function monitorRatChat(channels, chatLogin){
         socket.write(`${payload}\r\n`);
       }
     };
+    const rememberRatMessage = (channel, messageText, messageData, kind) => {
+      const compactText = String(messageText || '').replace(/\s+/g, ' ').trim();
+      if(!compactText) return;
+      ratMessages.push({
+        channel,
+        kind,
+        messageAt: Number(messageData.tags?.['tmi-sent-ts'] || Date.now()),
+        messageText: compactText
+      });
+      if(ratMessages.length > 12){
+        ratMessages.shift();
+      }
+    };
+
     const startJoinQueue = () => {
       if(joinTimer) return;
-      joinTimer = setInterval(() => {
+      const joinNext = () => {
         const next = channels[joinIndex++];
         if(!next){
-          clearInterval(joinTimer);
-          joinTimer = null;
+          if(joinTimer){
+            clearInterval(joinTimer);
+            joinTimer = null;
+          }
           return;
         }
         send(`JOIN #${next.channel}`);
-      }, JOIN_DELAY_MS);
+      };
+      joinNext();
+      joinTimer = setInterval(joinNext, JOIN_DELAY_MS);
     };
 
     socket.on('secureConnect', () => {
       send(`PASS oauth:${TWITCH_TOKEN}`);
       send(`NICK ${chatLogin}`);
       send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-      monitorTimer = setTimeout(() => finish({ reason: updates.length > 0 ? 'rat-escape-found' : 'timeout', updates }), MONITOR_MS);
+      monitorTimer = setTimeout(() => finish({
+        reason: updates.length > 0 ? 'rat-escape-found' : 'timeout',
+        updates,
+        sightings: Array.from(sightingsByChannel.values()),
+        ratMessages
+      }), MONITOR_MS);
     });
 
     socket.on('data', chunk => {
@@ -322,11 +358,37 @@ function monitorRatChat(channels, chatLogin){
         }
         if(message.command !== 'PRIVMSG' || !isRatBotSender(message)) return;
         const channel = normalizeChannelName(message.params[0] || '');
-        if(!candidateByChannel.has(channel) || !isRatCooldownStartMessage(message.trailing || message.params[1] || '')) return;
+        if(!candidateByChannel.has(channel)) return;
+        const messageText = message.trailing || message.params[1] || '';
+        const normalizedMessageText = messageText
+          .toString()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase();
+        if(normalizedMessageText.includes('rattata') || normalizedMessageText.includes('ratata')){
+          rememberRatMessage(channel, messageText, message, 'rattata-message');
+        }
+        if(isRatSpawnMessage(messageText) && !sightingsByChannel.has(channel)){
+          sightingsByChannel.set(channel, {
+            channel,
+            messageAt: Number(message.tags?.['tmi-sent-ts'] || Date.now()),
+            messageText
+          });
+          rememberRatMessage(channel, messageText, message, 'spawn');
+          console.log(`Rattata spawn observed in #${channel}; waiting for escape message.`);
+          return;
+        }
+        if(!isRatCooldownStartMessage(messageText)) return;
         const snapshot = createTimerSnapshot(channel, message, candidateByChannel);
         if(snapshot){
           updates.push(snapshot);
-          finish({ reason: 'rat-escape-found', updates });
+          rememberRatMessage(channel, messageText, message, 'escape');
+          finish({
+            reason: 'rat-escape-found',
+            updates,
+            sightings: Array.from(sightingsByChannel.values()),
+            ratMessages
+          });
         }
       });
     });
@@ -337,8 +399,8 @@ function monitorRatChat(channels, chatLogin){
       reject(error);
     });
 
-    socket.on('end', () => finish({ reason: 'socket-ended', updates }));
-    socket.on('close', () => finish({ reason: 'socket-closed', updates }));
+    socket.on('end', () => finish({ reason: 'socket-ended', updates, sightings: Array.from(sightingsByChannel.values()), ratMessages }));
+    socket.on('close', () => finish({ reason: 'socket-closed', updates, sightings: Array.from(sightingsByChannel.values()), ratMessages }));
   });
 }
 
@@ -389,6 +451,9 @@ async function run(){
     candidateChannels: monitorChannels.map(candidate => candidate.channel),
     pstoryDropChannels: monitorChannels.filter(candidate => candidate.isPstoryDrop).map(candidate => candidate.channel),
     observedChannels: (result.updates || []).map(update => update.channel),
+    observedSpawnChannels: (result.sightings || []).map(sighting => sighting.channel),
+    observedSpawns: result.sightings || [],
+    observedRatMessages: result.ratMessages || [],
     monitorMs: MONITOR_MS,
     hasChatToken: Boolean(TWITCH_TOKEN),
     tokenLogin: tokenInfo.login || '',
