@@ -13,7 +13,7 @@ const RAT_BOT_LOGIN = 'pstoryonline';
 const RAT_INTERVAL_MS = 20 * 60 * 1000;
 const RAT_EXPECTED_OFFSET_MS = 0;
 const RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
-const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 21 * 60 * 1000));
+const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 11 * 60 * 1000));
 const JOIN_DELAY_MS = 900;
 const MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
 
@@ -297,7 +297,7 @@ function monitorRatChat(channels, chatLogin){
       send(`PASS oauth:${TWITCH_TOKEN}`);
       send(`NICK ${chatLogin}`);
       send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-      monitorTimer = setTimeout(() => finish({ reason: updates.length > 0 ? 'rat-found' : 'timeout', updates }), MONITOR_MS);
+      monitorTimer = setTimeout(() => finish({ reason: updates.length > 0 ? 'rat-escape-found' : 'timeout', updates }), MONITOR_MS);
     });
 
     socket.on('data', chunk => {
@@ -326,7 +326,7 @@ function monitorRatChat(channels, chatLogin){
         const snapshot = createTimerSnapshot(channel, message, candidateByChannel);
         if(snapshot){
           updates.push(snapshot);
-          finish({ reason: 'rat-found', updates });
+          finish({ reason: 'rat-escape-found', updates });
         }
       });
     });

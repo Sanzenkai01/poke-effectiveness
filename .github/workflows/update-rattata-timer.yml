@@ -15,7 +15,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,19 +27,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Check 40 minute cadence
-        id: cadence
-        run: |
-          minute_mod=$(( ($(date +%s) / 60) % 40 ))
-          if [ "$minute_mod" -lt 10 ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping this run; outside the 40 minute cadence window."
-          fi
-
       - name: Build streamer status snapshot
-        if: steps.cadence.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_OAUTH_TOKEN: ${{ secrets.TWITCH_OAUTH_TOKEN }}
@@ -47,15 +35,13 @@ jobs:
           node .github/scripts/update-streamers-status.js
 
       - name: Monitor Rattata timer
-        if: steps.cadence.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         env:
           TWITCH_OAUTH_TOKEN: ${{ secrets.TWITCH_OAUTH_TOKEN }}
-          RAT_MONITOR_MS: 1260000
+          RAT_MONITOR_MS: 660000
         run: |
           node .github/scripts/update-rattata-timer.js
 
       - name: Commit streamer-rat-timer.json to streamers-data branch
-        if: steps.cadence.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         env:
           REPO_PAT: ${{ secrets.REPO_PAT }}
         run: |

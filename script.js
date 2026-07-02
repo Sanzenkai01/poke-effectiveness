@@ -13499,6 +13499,7 @@ const STREAMER_SHARED_STATUS_MAX_AGE_MS = 12 * 60 * 60 * 1000;
 const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
 const STREAMER_RAT_TIMER_URL = '/streamer-rat-timer.json';
 const STREAMER_RAT_TIMER_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_CDN_URL = 'https://cdn.jsdelivr.net/gh/Sanzenkai01/poke-effectiveness@streamers-data/streamer-rat-timer.json';
 const STREAMER_RAT_TIMER_RECHECK_MS = 60 * 1000;
 const streamerStatusCache = new Map();
 const streamerStatusRequests = new Map();
@@ -14349,7 +14350,9 @@ function applyServerStreamerRatTimerPayload(payload){
     const now = Date.now();
     let applied = 0;
     Object.entries(payload.timers || {}).forEach(([channel, value]) => {
-        const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, { now });
+        const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, {
+            now
+        });
         if(!normalizedState?.lastMessageAt) return;
 
         const current = streamerRatTimerState.get(normalizedState.channel);
@@ -14378,7 +14381,8 @@ function loadServerStreamerRatTimerData(){
 
     streamerRatTimerLoadPromise = Promise.all([
         fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_URL, 'site'),
-        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw')
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw'),
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_CDN_URL, 'cdn')
     ])
     .then(results => {
         const candidates = results.filter(Boolean);
@@ -15150,7 +15154,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
             if(monitorStatus.reason === 'token-missing'){
-                timerEl.textContent = 'Sincronizando timer do Rattata pelo workflow...';
+                timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(0)}.`;
                 timerEl.style.color = '#d8f3ff';
                 return;
             }
@@ -15170,7 +15174,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             return;
         }
 
-        timerEl.textContent = 'Aguardando o próximo alerta do Rattata...';
+        timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(0)}.`;
         timerEl.style.color = '#d8f3ff';
     };
 

@@ -14,6 +14,7 @@ const STREAMER_SHARED_STATUS_MAX_AGE_MS = 12 * 60 * 60 * 1000;
 const STREAMER_SHARED_STATUS_RECHECK_MS = 60 * 1000;
 const STREAMER_RAT_TIMER_URL = '/streamer-rat-timer.json';
 const STREAMER_RAT_TIMER_RAW_URL = 'https://raw.githubusercontent.com/Sanzenkai01/poke-effectiveness/streamers-data/streamer-rat-timer.json';
+const STREAMER_RAT_TIMER_CDN_URL = 'https://cdn.jsdelivr.net/gh/Sanzenkai01/poke-effectiveness@streamers-data/streamer-rat-timer.json';
 const STREAMER_RAT_TIMER_RECHECK_MS = 60 * 1000;
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 
@@ -431,7 +432,8 @@ function loadServerStreamerRatTimerData(){
 
     streamerRatTimerLoadPromise = Promise.all([
         fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_URL, 'site'),
-        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw')
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_RAW_URL, 'raw'),
+        fetchServerStreamerRatTimerPayload(STREAMER_RAT_TIMER_CDN_URL, 'cdn')
     ])
     .then(results => {
         const candidates = results.filter(Boolean);
@@ -705,10 +707,7 @@ async function refreshHomeWidget(){
             startRatSummaryTimer(initialTimerState);
             return;
         }
-        const emptyMessage = totalPstoryOnline === 0
-            ? 'Sem live de PStory online para acompanhar o Rattata.'
-            : 'Nenhuma live com DROP:ON confirmada para monitorar o Rattata.';
-        renderStaticRatSummary(emptyMessage);
+        renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(0)}.`, '#d8f3ff');
         return;
     }
 
@@ -718,7 +717,7 @@ async function refreshHomeWidget(){
         return;
     }
 
-    renderStaticRatSummary('Aguardando o próximo alerta do Rattata...','#d8f3ff');
+    renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(0)}.`,'#d8f3ff');
 }
 
 if(document.readyState === 'loading'){
