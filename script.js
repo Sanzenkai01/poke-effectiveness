@@ -377,7 +377,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260630h';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260702a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260630c';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260630a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
@@ -13510,7 +13510,9 @@ const TWITCH_CHAT_USER_ID = (window.POKE_TWITCH_CHAT_USER_ID || '').toString().t
 const TWITCH_CHAT_OAUTH_TOKEN = (window.POKE_TWITCH_CHAT_OAUTH_TOKEN || window.POKE_TWITCH_CHAT_TOKEN || '').toString().trim();
 const STREAMER_RAT_BOT_LOGIN = 'pstoryonline';
 const STREAMER_RAT_INTERVAL_MS = 20 * 60 * 1000;
-const STREAMER_RAT_EXPECTED_OFFSET_MS = 0;
+const STREAMER_RAT_SPAWN_EXPECTED_OFFSET_MS = 60 * 1000;
+const STREAMER_RAT_ESCAPE_EXPECTED_OFFSET_MS = 0;
+const STREAMER_RAT_EXPECTED_OFFSET_MS = STREAMER_RAT_SPAWN_EXPECTED_OFFSET_MS;
 const STREAMER_RAT_TIMER_STORAGE_KEY = 'poke-effectiveness-rat-timers-v1';
 const STREAMER_STATUS_CACHE_STORAGE_KEY = 'poke-effectiveness-streamer-status-cache-v2';
 const TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY = 'poke-effectiveness-twitch-credentials-v1';
@@ -13887,13 +13889,13 @@ function normalizeStreamerRatTimerSnapshot(channel, value, options = {}){
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
     if(
         value.lastMessageText
-        && !isStreamerRatCooldownStartMessage(value.lastMessageText)
+        && !isStreamerRatTimerStartMessage(value.lastMessageText)
         && !isTrustedStreamerRatTimerSnapshot(value)
     ){
         return null;
     }
 
-    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
+    const defaultExpectedNextAt = lastMessageAt + STREAMER_RAT_INTERVAL_MS + getStreamerRatExpectedOffsetMs(value);
     let expectedNextAt = Number(value.expectedNextAt || 0);
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= 0){
         expectedNextAt = defaultExpectedNextAt;
@@ -14488,13 +14490,48 @@ function isStreamerRatCooldownStartMessage(message){
     return hasRattataName && hasEscape && (hasBattle || hasWild || hasRetry);
 }
 
+function isStreamerRatSpawnMessage(message){
+    const normalized = (message || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    const compact = normalized.replace(/[^a-z0-9]/g, '');
+
+    const hasRattataName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
+    const hasSpawn = normalized.includes('apareceu') || normalized.includes('aparecer') || normalized.includes('surgiu');
+    const hasBattle = normalized.includes('batalha') || normalized.includes('battle') || normalized.includes('enfrenta');
+    const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
+    const hasBattlePrompt = normalized.includes('!battle');
+    const hasMysteryItem = normalized.includes('item misterioso');
+
+    return (hasRattataName && hasSpawn && (hasBattle || hasWild))
+        || (hasBattlePrompt && hasRattataName && (hasSpawn || hasWild))
+        || (hasBattlePrompt && hasMysteryItem);
+}
+
+function isStreamerRatTimerStartMessage(message){
+    return isStreamerRatSpawnMessage(message) || isStreamerRatCooldownStartMessage(message);
+}
+
+function getStreamerRatExpectedOffsetMs(value){
+    const source = (value?.source || '').toString().trim().toLowerCase();
+    const text = value?.lastMessageText || '';
+    return source.includes('escape') || isStreamerRatCooldownStartMessage(text)
+        ? STREAMER_RAT_ESCAPE_EXPECTED_OFFSET_MS
+        : STREAMER_RAT_SPAWN_EXPECTED_OFFSET_MS;
+}
+
 function isTrustedStreamerRatTimerSnapshot(value){
     const source = (value?.source || '').toString().trim().toLowerCase();
     const lastMessageAt = Number(value?.lastMessageAt || 0);
     const expectedNextAt = Number(value?.expectedNextAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
-    return source.includes('escape') || source === 'server-cache-escape';
+    return source.includes('escape')
+        || source.includes('spawn')
+        || source === 'server-cache-escape'
+        || source === 'github-action-chat';
 }
 
 function isStreamerRatBotSender(messageData){
@@ -14709,14 +14746,15 @@ function createStreamerRatChatMonitor(){
 
         const channel = normalizeStreamerChannelName(messageData.params[0] || '');
         const message = messageData.trailing || messageData.params[1] || '';
-        if(!channel || !isStreamerRatCooldownStartMessage(message)) return;
+        if(!channel || !isStreamerRatTimerStartMessage(message)) return;
 
         const sentTimestamp = Number(messageData.tags?.['tmi-sent-ts'] || Date.now());
+        const source = isStreamerRatCooldownStartMessage(message) ? 'live-escape' : 'live-spawn';
         setStreamerRatTimerState(channel, {
             lastMessageAt: sentTimestamp,
             lastMessageText: message,
             streamStartedAt: getCachedStreamerStatusSnapshot(channel)?.startedAt || '',
-            source: 'live-escape',
+            source,
             updatedAt: Date.now()
         });
     };
@@ -15111,14 +15149,24 @@ function formatStreamerRatCountdown(msUntilNext){
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
-function getStreamerRatCycleRemainingMs(state, now = Date.now()){
+function getStreamerRatProjectedNextAt(state, now = Date.now()){
     if(!state?.lastMessageAt) return 0;
 
     const baseNextAt = Number(state.expectedNextAt || 0) > Number(state.lastMessageAt || 0)
         ? Number(state.expectedNextAt)
-        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + STREAMER_RAT_EXPECTED_OFFSET_MS;
+        : Number(state.lastMessageAt) + STREAMER_RAT_INTERVAL_MS + getStreamerRatExpectedOffsetMs(state);
     if(!Number.isFinite(baseNextAt) || baseNextAt <= 0) return 0;
-    return Math.max(0, baseNextAt - now);
+    if(baseNextAt > now) return baseNextAt;
+
+    const elapsedSinceBase = now - baseNextAt;
+    const completedCycles = Math.floor(elapsedSinceBase / STREAMER_RAT_INTERVAL_MS) + 1;
+    return baseNextAt + completedCycles * STREAMER_RAT_INTERVAL_MS;
+}
+
+function getStreamerRatCycleRemainingMs(state, now = Date.now()){
+    const projectedNextAt = getStreamerRatProjectedNextAt(state, now);
+    if(!projectedNextAt) return 0;
+    return Math.max(0, projectedNextAt - now);
 }
 
 function mountStreamerRatSummary(timerEl, monitorInfo){
@@ -15139,11 +15187,16 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
 
         if(validState?.lastMessageAt){
             touchStreamerRatTimerState(monitorInfo.name);
-            const alertKey = getRatAlertTriggerKey(validState);
+            const projectedNextAt = getStreamerRatProjectedNextAt(validState);
+            const msUntilNext = projectedNextAt ? Math.max(0, projectedNextAt - Date.now()) : 0;
+            const alertKey = getRatAlertTriggerKey({
+                ...validState,
+                expectedNextAt: projectedNextAt || validState.expectedNextAt,
+                remainingMs: msUntilNext
+            });
             if(alertKey){
                 triggerStreamerRatAlert({ alertKey });
             }
-            const msUntilNext = getStreamerRatCycleRemainingMs(validState);
 
             timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
             timerEl.style.color = '#dff8ff';

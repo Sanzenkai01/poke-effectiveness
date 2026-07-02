@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v787`;
+let CACHE_NAME = `${CACHE_PREFIX}v789`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -38,13 +38,13 @@ const APP_SHELL = [
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
   new URL('./styles.css?v=20260630e', self.registration.scope).toString(),
-  new URL('./script.js?v=20260630ar', self.registration.scope).toString(),
+  new URL('./script.js?v=20260702c', self.registration.scope).toString(),
   new URL('./hunt-builder/hunt_symbol.png?v=20260627a', self.registration.scope).toString(),
-  new URL('./pokemons/pokemons.json?v=20260630h', self.registration.scope).toString(),
+  new URL('./pokemons/pokemons.json?v=20260702a', self.registration.scope).toString(),
   new URL('./pokemons/mega-pokemons.json?v=20260630c', self.registration.scope).toString(),
   new URL('./pokemons/generations.json?v=20260630a', self.registration.scope).toString(),
   new URL('./pokemons/pokedex.json?v=20260629a', self.registration.scope).toString(),
-  new URL('./home/home.js?v=20260630n', self.registration.scope).toString(),
+  new URL('./home/home.js?v=20260702b', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260618b', self.registration.scope).toString(),
   new URL('./js/visits.shared.js?v=20260618a', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260624a', self.registration.scope).toString(),

@@ -11,7 +11,8 @@ const TWITCH_TOKEN = (process.env.TWITCH_OAUTH_TOKEN || '')
   .replace(/^oauth:/i, '');
 const RAT_BOT_LOGIN = 'pstoryonline';
 const RAT_INTERVAL_MS = 20 * 60 * 1000;
-const RAT_EXPECTED_OFFSET_MS = 0;
+const RAT_SPAWN_EXPECTED_OFFSET_MS = 60 * 1000;
+const RAT_ESCAPE_EXPECTED_OFFSET_MS = 0;
 const RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 24 * 60 * 1000));
 const JOIN_DELAY_MS = 500;
@@ -74,7 +75,22 @@ function isRatCooldownStartMessage(message){
   const compact = normalized.replace(/[^a-z0-9]/g, '');
   const hasRatName = ['rattata', 'ratata', 'ratatta', 'rattatta'].some(term => compact.includes(term));
   const hasEscape = normalized.includes('escapou') || normalized.includes('fugiu');
-  return hasRatName && hasEscape;
+  const hasBattle = normalized.includes('batalha') || normalized.includes('battle');
+  const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
+  const hasRetry = normalized.includes('tente novamente') || normalized.includes('proxima vez');
+  return hasRatName && hasEscape && (hasBattle || hasWild || hasRetry);
+}
+
+function isRatTimerStartMessage(message){
+  return isRatSpawnMessage(message) || isRatCooldownStartMessage(message);
+}
+
+function getRatExpectedOffsetMs(value){
+  const source = (value?.source || '').toString().toLowerCase();
+  const text = value?.lastMessageText || '';
+  return source.includes('escape') || isRatCooldownStartMessage(text)
+    ? RAT_ESCAPE_EXPECTED_OFFSET_MS
+    : RAT_SPAWN_EXPECTED_OFFSET_MS;
 }
 
 function isRatSpawnMessage(message){
@@ -88,7 +104,11 @@ function isRatSpawnMessage(message){
   const hasSpawn = normalized.includes('apareceu') || normalized.includes('aparecer') || normalized.includes('surgiu');
   const hasBattle = normalized.includes('battle') || normalized.includes('batalha') || normalized.includes('enfrenta');
   const hasWild = normalized.includes('selvagem') || normalized.includes('wild');
-  return hasRatName && hasSpawn && (hasBattle || hasWild);
+  const hasBattlePrompt = normalized.includes('!battle');
+  const hasMysteryItem = normalized.includes('item misterioso');
+  return (hasRatName && hasSpawn && (hasBattle || hasWild))
+    || (hasBattlePrompt && hasRatName && (hasSpawn || hasWild))
+    || (hasBattlePrompt && hasMysteryItem);
 }
 
 function isTrustedTimerSnapshot(value){
@@ -97,7 +117,10 @@ function isTrustedTimerSnapshot(value){
   const expectedNextAt = Number(value?.expectedNextAt || 0);
   if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
   if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
-  return source.includes('escape') || source === 'server-cache-escape';
+  return source.includes('escape')
+    || source.includes('spawn')
+    || source === 'server-cache-escape'
+    || source === 'github-action-chat';
 }
 
 function isRatBotSender(messageData){
@@ -111,9 +134,9 @@ function normalizeTimerSnapshot(channel, value, now = Date.now()){
   const normalizedChannel = normalizeChannelName(channel || value?.channel);
   const lastMessageAt = Number(value?.lastMessageAt || 0);
   if(!normalizedChannel || !Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
-  if(value?.lastMessageText && !isRatCooldownStartMessage(value.lastMessageText) && !isTrustedTimerSnapshot(value)) return null;
+  if(value?.lastMessageText && !isRatTimerStartMessage(value.lastMessageText) && !isTrustedTimerSnapshot(value)) return null;
 
-  const defaultExpectedNextAt = lastMessageAt + RAT_INTERVAL_MS + RAT_EXPECTED_OFFSET_MS;
+  const defaultExpectedNextAt = lastMessageAt + RAT_INTERVAL_MS + getRatExpectedOffsetMs(value);
   let expectedNextAt = Number.isFinite(Number(value?.expectedNextAt))
     ? Number(value.expectedNextAt)
     : defaultExpectedNextAt;
@@ -239,17 +262,22 @@ async function loadExistingTimers(){
   return timers;
 }
 
-function createTimerSnapshot(channel, messageData, candidateByChannel){
+function createTimerSnapshot(channel, messageData, candidateByChannel, kind = 'spawn'){
   const sentTimestamp = Number(messageData.tags?.['tmi-sent-ts'] || Date.now());
   const normalizedChannel = normalizeChannelName(channel);
   const candidate = candidateByChannel.get(normalizedChannel);
+  const messageText = messageData.trailing || messageData.params?.[1] || '';
+  const sourceKind = kind === 'escape' ? 'escape' : 'spawn';
   return normalizeTimerSnapshot(normalizedChannel, {
     channel: normalizedChannel,
     lastMessageAt: sentTimestamp,
-    expectedNextAt: sentTimestamp + RAT_INTERVAL_MS + RAT_EXPECTED_OFFSET_MS,
-    lastMessageText: messageData.trailing || messageData.params?.[1] || '',
+    expectedNextAt: sentTimestamp + RAT_INTERVAL_MS + getRatExpectedOffsetMs({
+      lastMessageText: messageText,
+      source: `github-action-chat-${sourceKind}`
+    }),
+    lastMessageText: messageText,
     streamStartedAt: candidate?.startedAt || '',
-    source: 'github-action-chat-escape',
+    source: `github-action-chat-${sourceKind}`,
     updatedAt: Date.now()
   });
 }
@@ -329,7 +357,7 @@ function monitorRatChat(channels, chatLogin){
       send(`NICK ${chatLogin}`);
       send('CAP REQ :twitch.tv/tags twitch.tv/commands');
       monitorTimer = setTimeout(() => finish({
-        reason: updates.length > 0 ? 'rat-escape-found' : 'timeout',
+        reason: updates.length > 0 ? 'rat-found' : 'timeout',
         updates,
         sightings: Array.from(sightingsByChannel.values()),
         ratMessages
@@ -375,11 +403,20 @@ function monitorRatChat(channels, chatLogin){
             messageText
           });
           rememberRatMessage(channel, messageText, message, 'spawn');
-          console.log(`Rattata spawn observed in #${channel}; waiting for escape message.`);
+          const snapshot = createTimerSnapshot(channel, message, candidateByChannel, 'spawn');
+          if(snapshot){
+            updates.push(snapshot);
+            finish({
+              reason: 'rat-found',
+              updates,
+              sightings: Array.from(sightingsByChannel.values()),
+              ratMessages
+            });
+          }
           return;
         }
         if(!isRatCooldownStartMessage(messageText)) return;
-        const snapshot = createTimerSnapshot(channel, message, candidateByChannel);
+        const snapshot = createTimerSnapshot(channel, message, candidateByChannel, 'escape');
         if(snapshot){
           updates.push(snapshot);
           rememberRatMessage(channel, messageText, message, 'escape');
