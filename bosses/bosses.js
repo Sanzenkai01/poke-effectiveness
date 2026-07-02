@@ -825,6 +825,12 @@ function refreshKnownSpeedsterNames() {
   return knownSpeedsterNames;
 }
 
+function invalidateBossSearchCaches() {
+  bossSearchRecommendedCache.clear();
+  bossSearchAvailableCache.clear();
+  knownSpeedsterNames = null;
+}
+
 function setBossModalLayout(isRoleboard = false) {
   const content = modal?.querySelector('.speedster-modal-content');
   if (!content) return;
@@ -841,6 +847,13 @@ const bossSearchCatalogRoleMap = Object.freeze({
 });
 let bossSearchCatalogEntries = [];
 let bossSearchCatalogLoadPromise = null;
+let bossSearchCatalogVersion = 0;
+let bossSearchRecommendedCache = new Map();
+let bossSearchAvailableCache = new Map();
+let bossSearchRenderFrame = 0;
+const BOSS_SEARCH_RENDER_LIMIT_DEFAULT = 24;
+const BOSS_SEARCH_RENDER_LIMIT_QUERY = 48;
+const BOSS_SEARCH_MODAL_RENDER_LIMIT = 36;
 
 let currentBoss = null;
 let activeBossMode = 'hoopa';
@@ -8641,7 +8654,7 @@ function setBossMode(mode, options = {}) {
   if (speedsterSearchInput) {
     speedsterSearchInput.value = '';
   }
-  hideSearchResults();
+  closeSearchPanel();
 
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
     window.dispatchEvent(new CustomEvent('bossmodechange', { detail: { mode: activeBossMode } }));
@@ -12590,15 +12603,19 @@ function loadBossSearchCatalogEntries() {
           return true;
         });
 
+      bossSearchCatalogVersion += 1;
+      invalidateBossSearchCaches();
       refreshKnownSpeedsterNames();
       if (speedsterSearchInput && document.activeElement === speedsterSearchInput) {
-        renderSearchResults(speedsterSearchInput.value || '');
+        scheduleSearchResultsRender(speedsterSearchInput.value || '');
       }
       return bossSearchCatalogEntries;
     })
     .catch((error) => {
       console.error('Nao foi possivel carregar os Pokemon da busca de bosses.', error);
       bossSearchCatalogEntries = [];
+      bossSearchCatalogVersion += 1;
+      invalidateBossSearchCaches();
       return [];
     });
 
@@ -12606,6 +12623,11 @@ function loadBossSearchCatalogEntries() {
 }
 
 function getRecommendedSpeedsters() {
+  const cacheKey = `${activeBossMode}|${bossSearchCatalogVersion}`;
+  if (bossSearchRecommendedCache.has(cacheKey)) {
+    return bossSearchRecommendedCache.get(cacheKey);
+  }
+
   const map = new Map();
 
   getActiveBossesData().forEach((boss) => {
@@ -12651,7 +12673,20 @@ function getRecommendedSpeedsters() {
     }
   });
 
-  return Array.from(map.values()).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR'));
+  const recommended = Array.from(map.values()).sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR'));
+  bossSearchRecommendedCache.set(cacheKey, recommended);
+  return recommended;
+}
+
+function getAvailableBossSearchPokemon() {
+  const cacheKey = `${activeBossMode}|${bossSearchCatalogVersion}`;
+  if (bossSearchAvailableCache.has(cacheKey)) {
+    return bossSearchAvailableCache.get(cacheKey);
+  }
+
+  const available = getRecommendedSpeedsters().filter(canActiveCatalogShowSearchPokemon);
+  bossSearchAvailableCache.set(cacheKey, available);
+  return available;
 }
 
 function normalizeSpeedsterSearchText(value = '') {
@@ -12672,6 +12707,42 @@ function getSpeedsterSearchBase(speedster) {
   ].filter(Boolean).join(' '));
 }
 
+function scoreSpeedsterSearchMatch(speedster, normalizedQuery) {
+  if (!normalizedQuery) return 0;
+
+  const name = normalizeSpeedsterSearchText(speedster?.name);
+  const base = getSpeedsterSearchBase(speedster);
+  if (name === normalizedQuery) return 100;
+  if (name.startsWith(normalizedQuery)) return 80;
+  if (base.startsWith(normalizedQuery)) return 60;
+  if (name.includes(normalizedQuery)) return 40;
+  if (base.includes(normalizedQuery)) return 20;
+  return 0;
+}
+
+function getLimitedSpeedsterSearchResults(entries, normalizedQuery) {
+  const source = Array.isArray(entries) ? entries : [];
+  const renderLimit = normalizedQuery ? BOSS_SEARCH_RENDER_LIMIT_QUERY : BOSS_SEARCH_RENDER_LIMIT_DEFAULT;
+  if (!normalizedQuery) return source.slice(0, renderLimit);
+
+  return source
+    .map((entry) => ({ entry, score: scoreSpeedsterSearchMatch(entry, normalizedQuery) }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => (
+      right.score - left.score
+      || String(left.entry?.name || '').localeCompare(String(right.entry?.name || ''), 'pt-BR')
+    ))
+    .slice(0, renderLimit)
+    .map((item) => item.entry);
+}
+
+function createBossSearchLimitStatus(visibleCount, totalCount) {
+  const status = document.createElement('div');
+  status.className = 'speedster-search-results-status';
+  status.textContent = `Mostrando ${visibleCount} de ${totalCount}; refine a busca para ver os demais.`;
+  return status;
+}
+
 function renderSearchResults(query = '') {
   if (!speedsterSearchResults || !speedsterSearchNoResults) return;
   if (!getActiveBossCatalog().searchEnabled) {
@@ -12680,10 +12751,11 @@ function renderSearchResults(query = '') {
   }
   const q = normalizeSpeedsterSearchText(query);
 
-  const availableSpeedsters = getRecommendedSpeedsters().filter(canActiveCatalogShowSearchPokemon);
+  const availableSpeedsters = getAvailableBossSearchPokemon();
   const filtered = q
     ? availableSpeedsters.filter((st) => getSpeedsterSearchBase(st).includes(q))
     : availableSpeedsters;
+  const visibleResults = getLimitedSpeedsterSearchResults(filtered, q);
 
   if (filtered.length === 0) {
     speedsterSearchResults.innerHTML = '';
@@ -12699,7 +12771,7 @@ function renderSearchResults(query = '') {
   speedsterSearchNoResults.hidden = true;
   speedsterSearchResults.hidden = false;
 
-  filtered.forEach((st) => {
+  visibleResults.forEach((st) => {
     const item = document.createElement('button');
     item.type = 'button';
     item.className = 'speedster-search-item';
@@ -12718,6 +12790,10 @@ function renderSearchResults(query = '') {
 
     speedsterSearchResults.appendChild(item);
   });
+
+  if (filtered.length > visibleResults.length) {
+    speedsterSearchResults.appendChild(createBossSearchLimitStatus(visibleResults.length, filtered.length));
+  }
 }
 
 function hideSearchResults() {
@@ -12726,7 +12802,24 @@ function hideSearchResults() {
   speedsterSearchNoResults.hidden = true;
 }
 
+function cancelScheduledSearchResultsRender() {
+  if (!bossSearchRenderFrame) return;
+  window.cancelAnimationFrame(bossSearchRenderFrame);
+  bossSearchRenderFrame = 0;
+}
+
+function scheduleSearchResultsRender(query = '') {
+  if (bossSearchRenderFrame) {
+    window.cancelAnimationFrame(bossSearchRenderFrame);
+  }
+  bossSearchRenderFrame = window.requestAnimationFrame(() => {
+    bossSearchRenderFrame = 0;
+    renderSearchResults(query);
+  });
+}
+
 function closeSearchPanel() {
+  cancelScheduledSearchResultsRender();
   hideSearchResults();
 }
 
@@ -13207,9 +13300,28 @@ function openSpeedsterBossesModal(speedster, options = {}) {
     empty.textContent = 'Nenhum chefe encontrado para este speedster.';
     list.appendChild(empty);
   } else {
-    bossResults.forEach(({ boss, tier }) => {
-      list.appendChild(createSpeedsterBossResultCard(boss, speedster, tier));
-    });
+    let renderedBossResults = 0;
+    const appendBossResultsBatch = () => {
+      const nextResults = bossResults.slice(renderedBossResults, renderedBossResults + BOSS_SEARCH_MODAL_RENDER_LIMIT);
+      renderedBossResults += nextResults.length;
+
+      nextResults.forEach(({ boss, tier }) => {
+        list.appendChild(createSpeedsterBossResultCard(boss, speedster, tier));
+      });
+
+      if (renderedBossResults < bossResults.length) {
+        const showMore = document.createElement('button');
+        showMore.type = 'button';
+        showMore.className = 'speedster-search-item speedster-search-results-show-more';
+        showMore.textContent = `Mostrar mais ${Math.min(BOSS_SEARCH_MODAL_RENDER_LIMIT, bossResults.length - renderedBossResults)} (${bossResults.length - renderedBossResults} restantes)`;
+        showMore.addEventListener('click', () => {
+          showMore.remove();
+          appendBossResultsBatch();
+        });
+        list.appendChild(showMore);
+      }
+    };
+    appendBossResultsBatch();
   }
 
   shell.append(summary, list);
@@ -15162,12 +15274,12 @@ if (speedsterSearchPanel) {
 if (speedsterSearchInput) {
   speedsterSearchInput.addEventListener('focus', () => {
     const value = speedsterSearchInput.value.trim();
-    if (value) renderSearchResults(value);
-    else renderSearchResults('');
+    if (value) scheduleSearchResultsRender(value);
+    else scheduleSearchResultsRender('');
   });
 
   speedsterSearchInput.addEventListener('input', (event) => {
-    renderSearchResults(event.target.value);
+    scheduleSearchResultsRender(event.target.value);
   });
 
   speedsterSearchInput.addEventListener('blur', () => {

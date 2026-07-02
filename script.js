@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630w';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630x';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -1197,6 +1197,7 @@ let teamBuilderHuntsTooltipSurface = null;
 let teamBuilderHuntsTooltipActiveBadge = null;
 let teamBuilderHuntsTooltipListenersBound = false;
 let teamBuilderUrlHydratedValue = '';
+let teamBuilderSearchRenderFrame = 0;
 let teamBuilderFilters = {
     search: '',
     clan: 'all',
@@ -1205,6 +1206,8 @@ let teamBuilderFilters = {
     type: 'all'
 };
 const TEAM_BUILDER_SHARE_PARAM = 'team';
+const TEAM_BUILDER_RENDER_LIMIT_DEFAULT = 36;
+const TEAM_BUILDER_RENDER_LIMIT_SEARCH = 72;
 const HUNT_BUILDER_SLOT_CONFIGS = Object.freeze([
     { id: 'ar', label: 'All-Rounder', kind: 'ar' },
     { id: 'dps-1', label: 'DPS/Stun 1', kind: 'dps' },
@@ -6555,22 +6558,7 @@ function findCatchMatchingPokemonEntries(value = ''){
 
 function getCatchPokemonSearchResultEntries(value = '', limit = 8){
     const normalizedValue = normalizePokemonSearchText(value || catchPokemonSearchInput?.value || '');
-    const entries = normalizedValue
-        ? findCatchMatchingPokemonEntries(normalizedValue)
-        : [...catchPokemonEntries];
-
-    return entries
-        .sort((left, right) => {
-            const leftKey = getCatchPokemonEntrySearchKey(left);
-            const rightKey = getCatchPokemonEntrySearchKey(right);
-            const leftStartsWith = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
-            const rightStartsWith = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
-            if(leftStartsWith !== rightStartsWith){
-                return leftStartsWith ? -1 : 1;
-            }
-            return left.name.localeCompare(right.name, 'pt-BR');
-        })
-        .slice(0, limit);
+    return getLimitedPokemonSearchEntries(catchPokemonEntries, normalizedValue, getCatchPokemonEntrySearchKey, limit);
 }
 
 function resolveCatchPokemonEntry(value = ''){
@@ -11382,10 +11370,16 @@ function renderTeamBuilderResults(){
     const slotConfig = getTeamBuilderSlotConfig();
     const entries = getFilteredTeamBuilderEntries();
     const totalAvailable = getTeamBuilderCatalogEntries().filter(entry => teamBuilderEntryMatchesSlot(entry, slotConfig)).length;
+    const normalizedSearch = normalizePokemonSearchText(teamBuilderFilters.search || '');
+    const renderLimit = normalizedSearch ? TEAM_BUILDER_RENDER_LIMIT_SEARCH : TEAM_BUILDER_RENDER_LIMIT_DEFAULT;
+    const visibleEntries = entries.slice(0, renderLimit);
 
     teamBuilderStatus.textContent = entries.length
         ? `${entries.length} opcoes para ${slotConfig.label}.`
         : `Nenhuma opcao encontrada para ${slotConfig.label}.`;
+    if(entries.length > visibleEntries.length){
+        teamBuilderStatus.textContent += ` Mostrando ${visibleEntries.length}; refine a busca para ver os demais.`;
+    }
 
     if(!entries.length){
         teamBuilderResults.replaceChildren(createInlineStatusMessage('team-builder-empty-message', 'Ajuste os filtros ou escolha outro slot.'));
@@ -11394,7 +11388,7 @@ function renderTeamBuilderResults(){
 
     const fragment = document.createDocumentFragment();
     const groups = new Map();
-    entries.forEach(entry => {
+    visibleEntries.forEach(entry => {
         const groupKey = getTeamBuilderResultGroupKey(entry, slotConfig);
         if(!groups.has(groupKey)) groups.set(groupKey, []);
         groups.get(groupKey).push(entry);
@@ -12493,6 +12487,16 @@ function renderTeamBuilder(){
     }
 }
 
+function scheduleTeamBuilderSearchRender(){
+    if(teamBuilderSearchRenderFrame){
+        window.cancelAnimationFrame(teamBuilderSearchRenderFrame);
+    }
+    teamBuilderSearchRenderFrame = window.requestAnimationFrame(() => {
+        teamBuilderSearchRenderFrame = 0;
+        renderTeamBuilder();
+    });
+}
+
 function initializeTeamBuilderPage(){
     if(teamBuilderInitialized) return;
 
@@ -12502,7 +12506,7 @@ function initializeTeamBuilderPage(){
                 ...teamBuilderFilters,
                 search: teamBuilderSearchInput.value || ''
             };
-            renderTeamBuilder();
+            scheduleTeamBuilderSearchRender();
         });
     }
     teamBuilderInitialized = true;
@@ -16624,22 +16628,7 @@ function hydrateTrainingPokemonOptions(){
 
 function getTrainingPokemonSearchResultEntries(value = '', limit = 8){
     const normalizedValue = normalizePokemonSearchText(value || trainingPokemonSearchInput?.value || '');
-    const entries = normalizedValue
-        ? trainingPokemonEntries.filter(entry => {
-            const key = getTrainingPokemonSearchKey(entry);
-            return key === normalizedValue || key.includes(normalizedValue);
-        })
-        : [...trainingPokemonEntries];
-    return entries
-        .sort((left, right) => {
-            const leftKey = getTrainingPokemonSearchKey(left);
-            const rightKey = getTrainingPokemonSearchKey(right);
-            const leftStarts = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
-            const rightStarts = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
-            if(leftStarts !== rightStarts) return leftStarts ? -1 : 1;
-            return left.name.localeCompare(right.name, 'pt-BR');
-        })
-        .slice(0, limit);
+    return getLimitedPokemonSearchEntries(trainingPokemonEntries, normalizedValue, getTrainingPokemonSearchKey, limit);
 }
 
 function createTrainingSearchResultContent(entry){
@@ -17329,22 +17318,7 @@ function findBoostMatchingPokemonEntries(value = ''){
 
 function getBoostPokemonSearchResultEntries(value = '', limit = 8){
     const normalizedValue = normalizePokemonSearchText(value || boostPokemonSearchInput?.value || '');
-    const entries = normalizedValue
-        ? findBoostMatchingPokemonEntries(normalizedValue)
-        : [...boostPokemonEntries];
-
-    return entries
-        .sort((left, right) => {
-            const leftKey = left.searchName || normalizePokemonSearchText(left.name);
-            const rightKey = right.searchName || normalizePokemonSearchText(right.name);
-            const leftStartsWith = normalizedValue ? leftKey.startsWith(normalizedValue) : false;
-            const rightStartsWith = normalizedValue ? rightKey.startsWith(normalizedValue) : false;
-            if(leftStartsWith !== rightStartsWith){
-                return leftStartsWith ? -1 : 1;
-            }
-            return left.name.localeCompare(right.name, 'pt-BR');
-        })
-        .slice(0, limit);
+    return getLimitedPokemonSearchEntries(boostPokemonEntries, normalizedValue, getBoostPokemonEntrySearchKey, limit);
 }
 
 function getBoostPokemonEntrySearchKey(entry){
@@ -20739,6 +20713,30 @@ function normalizePokemonSearchText(value){
         .replace(/[\u0300-\u036f]/g, '')
         .trim()
         .toLowerCase();
+}
+
+function getLimitedPokemonSearchEntries(entries, normalizedValue, getSearchKey, limit = 8){
+    const source = Array.isArray(entries) ? entries : [];
+    const normalized = normalizePokemonSearchText(normalizedValue || '');
+    const max = Math.max(1, Number(limit) || 8);
+    if(!normalized) return source.slice(0, max);
+
+    const exact = [];
+    const prefix = [];
+    const partial = [];
+    for(const entry of source){
+        const key = normalizePokemonSearchText(getSearchKey(entry) || '');
+        if(!key) continue;
+        if(key === normalized){
+            exact.push(entry);
+        } else if(key.startsWith(normalized)){
+            prefix.push(entry);
+        } else if(key.includes(normalized) && partial.length < max){
+            partial.push(entry);
+        }
+    }
+
+    return exact.concat(prefix, partial).slice(0, max);
 }
 
 function normalizePokemonGenerationFilterValue(value){
