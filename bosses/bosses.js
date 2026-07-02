@@ -817,8 +817,29 @@ function setModalSubtitleText(text = '') {
 
 function refreshKnownSpeedsterNames() {
   try {
-    const list = typeof getRecommendedSpeedsters === 'function' ? getRecommendedSpeedsters() : [];
-    knownSpeedsterNames = new Set((list || []).map((s) => String(s?.name || '').toLowerCase()));
+    const names = new Set();
+    const addName = (entry) => {
+      const name = String(typeof entry === 'string' ? entry : entry?.name || '').trim().toLowerCase();
+      if (name) names.add(name);
+    };
+
+    getActiveBossesData().forEach((boss) => {
+      Object.entries(boss?.clans || {}).forEach(([clanKey, clanData]) => {
+        if (clanData?.roles) {
+          roleboardRoleOrder.forEach((roleKey) => {
+            getFixedRecommendationRolePicks(boss, clanKey, roleKey).forEach(addName);
+          });
+          return;
+        }
+
+        getRecommendationGroupsForClan(boss, clanData).forEach((group) => {
+          (group?.recommended || []).forEach(addName);
+        });
+      });
+    });
+
+    bossSearchCatalogEntries.forEach(addName);
+    knownSpeedsterNames = names;
   } catch (e) {
     knownSpeedsterNames = new Set();
   }
@@ -12605,7 +12626,6 @@ function loadBossSearchCatalogEntries() {
 
       bossSearchCatalogVersion += 1;
       invalidateBossSearchCaches();
-      refreshKnownSpeedsterNames();
       if (speedsterSearchInput && document.activeElement === speedsterSearchInput) {
         scheduleSearchResultsRender(speedsterSearchInput.value || '');
       }
@@ -12620,6 +12640,13 @@ function loadBossSearchCatalogEntries() {
     });
 
   return bossSearchCatalogLoadPromise;
+}
+
+function ensureBossSearchCatalogEntriesLoading() {
+  if (bossSearchCatalogEntries.length || bossSearchCatalogLoadPromise) {
+    return bossSearchCatalogLoadPromise || Promise.resolve(bossSearchCatalogEntries);
+  }
+  return loadBossSearchCatalogEntries();
 }
 
 function getRecommendedSpeedsters() {
@@ -15274,11 +15301,13 @@ if (speedsterSearchPanel) {
 if (speedsterSearchInput) {
   speedsterSearchInput.addEventListener('focus', () => {
     const value = speedsterSearchInput.value.trim();
+    ensureBossSearchCatalogEntriesLoading();
     if (value) scheduleSearchResultsRender(value);
     else scheduleSearchResultsRender('');
   });
 
   speedsterSearchInput.addEventListener('input', (event) => {
+    ensureBossSearchCatalogEntriesLoading();
     scheduleSearchResultsRender(event.target.value);
   });
 
@@ -15330,7 +15359,6 @@ try {
 }
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
-loadBossSearchCatalogEntries();
 
 
 
