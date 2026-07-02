@@ -707,7 +707,10 @@ async function refreshHomeWidget(){
             startRatSummaryTimer(initialTimerState);
             return;
         }
-        renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(0)}.`, '#d8f3ff');
+        const emptyMessage = totalPstoryOnline === 0
+            ? 'Sem live de PStory online para acompanhar o Rattata.'
+            : 'Nenhuma live com DROP:ON confirmada para monitorar o Rattata.';
+        renderStaticRatSummary(emptyMessage);
         return;
     }
 
@@ -717,7 +720,7 @@ async function refreshHomeWidget(){
         return;
     }
 
-    renderStaticRatSummary(`Proximo Rattata em ${formatRatCountdown(0)}.`,'#d8f3ff');
+    renderStaticRatSummary('Aguardando o próximo alerta do Rattata...','#d8f3ff');
 }
 
 if(document.readyState === 'loading'){

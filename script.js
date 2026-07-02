@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630z';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260702a';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -15154,7 +15154,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
             if(monitorStatus.reason === 'token-missing'){
-                timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(0)}.`;
+                timerEl.textContent = 'Sincronizando timer do Rattata pelo workflow...';
                 timerEl.style.color = '#d8f3ff';
                 return;
             }
@@ -15174,7 +15174,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             return;
         }
 
-        timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(0)}.`;
+        timerEl.textContent = 'Aguardando o próximo alerta do Rattata...';
         timerEl.style.color = '#d8f3ff';
     };
 

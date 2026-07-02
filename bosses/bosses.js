@@ -4128,9 +4128,9 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'claydol') {
     return {
-      defenseDamageFactorByBossType: {
-        psychic: 0.5,
-        ghost: 0.5
+      defenseByBossType: {
+        psychic: 0.75,
+        ghost: 0.75
       },
       passiveName: 'Force Cosmik',
       passiveDescription: 'A sua ligação transcendental com o cosmos torna a sua mente um vazio impenetrável, garantindo resistência contra ataques dos tipos Psychic e Ghost.'
@@ -4140,9 +4140,9 @@ function getImplicitRecommendationProfile(poke) {
   if (nameKey === 'shinyclaydol') {
     return {
       immunities: ['ground'],
-      defenseDamageFactorByBossType: {
-        psychic: 0.5,
-        ghost: 0.5
+      defenseByBossType: {
+        psychic: 0.75,
+        ghost: 0.75
       },
       passiveName: 'Force Cosmik + Mystery Charge',
       passiveDescription: 'A sua ligação transcendental com o cosmos torna a sua mente um vazio impenetrável, garantindo resistência contra ataques dos tipos Psychic e Ghost.; A telecinese em seu corpo de barro gera um campo magnético, concedendo imunidade a ataques do tipo Ground.'
@@ -4151,9 +4151,9 @@ function getImplicitRecommendationProfile(poke) {
 
   if (nameKey === 'dusclops' || nameKey === 'shinydusclops') {
     return {
-      defenseDamageFactorByBossType: {
-        ghost: 0.5,
-        psychic: 0.5
+      defenseByBossType: {
+        ghost: 0.75,
+        psychic: 0.75
       },
       passiveName: 'Cursed Glare',
       passiveDescription: 'O olhar vazio deste Pokémon atua como um buraco negro para energias místicas, garantindo resistência contra ataques dos tipos Ghost e Psychic.'
