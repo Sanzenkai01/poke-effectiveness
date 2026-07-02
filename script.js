@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630y';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260630z';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -13884,7 +13884,11 @@ function normalizeStreamerRatTimerSnapshot(channel, value, options = {}){
     const now = Number.isFinite(options.now) ? options.now : Date.now();
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
-    if(value.lastMessageText && !isStreamerRatCooldownStartMessage(value.lastMessageText)){
+    if(
+        value.lastMessageText
+        && !isStreamerRatCooldownStartMessage(value.lastMessageText)
+        && !isTrustedStreamerRatTimerSnapshot(value)
+    ){
         return null;
     }
 
@@ -14468,6 +14472,15 @@ function isStreamerRatCooldownStartMessage(message){
     const hasRetry = normalized.includes('tente novamente') || normalized.includes('proxima vez');
 
     return hasRattataName && hasEscape && (hasBattle || hasWild || hasRetry);
+}
+
+function isTrustedStreamerRatTimerSnapshot(value){
+    const source = (value?.source || '').toString().trim().toLowerCase();
+    const lastMessageAt = Number(value?.lastMessageAt || 0);
+    const expectedNextAt = Number(value?.expectedNextAt || 0);
+    if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
+    if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
+    return source.startsWith('github-action') || source === 'server-cache';
 }
 
 function isStreamerRatBotSender(messageData){

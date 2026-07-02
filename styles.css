@@ -10745,6 +10745,7 @@ textarea:focus {
 .boss-role-pick-score--has-hover-details {
   position: relative;
   cursor: default;
+  z-index: 20;
 }
 
 .boss-role-pick-score--has-hover-details:focus-visible {
@@ -10805,6 +10806,12 @@ textarea:focus {
   font-size: 0.58rem;
   line-height: 1;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.24);
+  pointer-events: none;
+}
+
+.boss-role-pick--has-hover-details {
+  overflow: visible;
+  z-index: 2;
 }
 
 .boss-role-pick-score-row {
@@ -11657,6 +11664,7 @@ textarea:focus {
 .speedster-reco-score--has-hover-details {
   position: relative;
   cursor: default;
+  z-index: 20;
 }
 
 .speedster-reco-score--has-hover-details:focus-visible {
@@ -11717,6 +11725,7 @@ textarea:focus {
   font-size: 0.6rem;
   line-height: 1;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.24);
+  pointer-events: none;
 }
 
 .speedster-reco-score-row {

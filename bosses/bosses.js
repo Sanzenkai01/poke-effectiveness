@@ -14229,6 +14229,7 @@ function createRolePickCard(poke) {
     defModifierClass: 'boss-role-pick-score-row--def'
   });
   if (shinyHoverPanel) {
+    card.classList.add('boss-role-pick--has-hover-details');
     score.classList.add('boss-role-pick-score--has-hover-details');
     score.tabIndex = 0;
     score.title = `${recommendationScoreTitle}${getRecommendationShinyTierChanges(poke, shinyTier) ? ' Este Pokemon muda de tier na versao shiny.' : ''} Passe o mouse sobre o card de ATK/DEF para ver os valores do shiny.`;

@@ -80,6 +80,15 @@ function isRatCooldownStartMessage(message){
   return hasRatName && hasEscape && (hasBattle || hasWild || hasRetry);
 }
 
+function isTrustedTimerSnapshot(value){
+  const source = (value?.source || '').toString().trim().toLowerCase();
+  const lastMessageAt = Number(value?.lastMessageAt || 0);
+  const expectedNextAt = Number(value?.expectedNextAt || 0);
+  if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
+  if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
+  return source.startsWith('github-action') || source === 'server-cache';
+}
+
 function isRatBotSender(messageData){
   const prefixLogin = normalizeChannelName((messageData?.prefix || '').split('!')[0] || '');
   if(prefixLogin !== RAT_BOT_LOGIN) return false;
@@ -91,7 +100,7 @@ function normalizeTimerSnapshot(channel, value, now = Date.now()){
   const normalizedChannel = normalizeChannelName(channel || value?.channel);
   const lastMessageAt = Number(value?.lastMessageAt || 0);
   if(!normalizedChannel || !Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
-  if(value?.lastMessageText && !isRatCooldownStartMessage(value.lastMessageText)) return null;
+  if(value?.lastMessageText && !isRatCooldownStartMessage(value.lastMessageText) && !isTrustedTimerSnapshot(value)) return null;
 
   const defaultExpectedNextAt = lastMessageAt + RAT_INTERVAL_MS + RAT_EXPECTED_OFFSET_MS;
   let expectedNextAt = Number.isFinite(Number(value?.expectedNextAt))

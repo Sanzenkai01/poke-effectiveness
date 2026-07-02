@@ -62,13 +62,26 @@ function isStreamerRatCooldownStartMessage(message){
     return hasRattataName && hasEscape && (hasBattle || hasWild || hasRetry);
 }
 
+function isTrustedStreamerRatTimerSnapshot(value){
+    const source = (value?.source || '').toString().trim().toLowerCase();
+    const lastMessageAt = Number(value?.lastMessageAt || 0);
+    const expectedNextAt = Number(value?.expectedNextAt || 0);
+    if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
+    if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
+    return source.startsWith('github-action') || source === 'server-cache';
+}
+
 function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
     const normalizedChannel = normalizeStreamerChannelName(channel);
     if(!normalizedChannel || !value || typeof value !== 'object') return null;
 
     const lastMessageAt = Number(value.lastMessageAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return null;
-    if(value.lastMessageText && !isStreamerRatCooldownStartMessage(value.lastMessageText)){
+    if(
+        value.lastMessageText
+        && !isStreamerRatCooldownStartMessage(value.lastMessageText)
+        && !isTrustedStreamerRatTimerSnapshot(value)
+    ){
         return null;
     }
 
