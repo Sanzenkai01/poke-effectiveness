@@ -316,7 +316,7 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260702a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260702b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -10067,7 +10067,7 @@ function getTimesOffensiveTypesFromPassiveText(entry, text){
     return { types, all };
 }
 
-function getTimesOffensivePassiveMeta(entry, source = 'normal'){
+function getTimesOffensivePassiveMeta(entry, source = 'all'){
     const types = [];
     let all = false;
     const addType = type => {
@@ -10077,16 +10077,22 @@ function getTimesOffensivePassiveMeta(entry, source = 'normal'){
         }
     };
 
-    const explicitPassiveTypes = source === 'shiny'
-        ? entry?.shinyPassiveSuperEffectiveTypes
-        : entry?.passiveSuperEffectiveTypes;
-    (Array.isArray(explicitPassiveTypes) ? explicitPassiveTypes : [])
-        .forEach(addType);
+    const sources = source === 'all'
+        ? ['normal', 'shiny']
+        : [source === 'shiny' ? 'shiny' : 'normal'];
 
-    getTimesOffensivePassiveTextCandidates(entry, source).forEach(text => {
-        const meta = getTimesOffensiveTypesFromPassiveText(entry, text);
-        meta.types.forEach(addType);
-        if(meta.all) all = true;
+    sources.forEach(passiveSource => {
+        const explicitPassiveTypes = passiveSource === 'shiny'
+            ? entry?.shinyPassiveSuperEffectiveTypes
+            : entry?.passiveSuperEffectiveTypes;
+        (Array.isArray(explicitPassiveTypes) ? explicitPassiveTypes : [])
+            .forEach(addType);
+
+        getTimesOffensivePassiveTextCandidates(entry, passiveSource).forEach(text => {
+            const meta = getTimesOffensiveTypesFromPassiveText(entry, text);
+            meta.types.forEach(addType);
+            if(meta.all) all = true;
+        });
     });
 
     return { types, all };
@@ -10527,16 +10533,47 @@ function getTeamBuilderPassiveLookupKeys(entry){
     return Array.from(keys);
 }
 
+function addTeamBuilderPassiveInfo(passives, value, options = {}){
+    const text = String(value || '').trim();
+    if(!text) return;
+    const labeledText = options.shiny && !/\(shiny\)\s*$/i.test(text)
+        ? `${text} (shiny)`
+        : text;
+    if(labeledText && !passives.includes(labeledText)) passives.push(labeledText);
+}
+
+function formatTeamBuilderCatalogPassiveText(name, description){
+    const passiveName = String(name || '').trim();
+    const passiveDescription = String(description || '').trim();
+    if(passiveName && passiveDescription){
+        const normalizedName = normalizeTimesPassiveText(passiveName);
+        const normalizedDescription = normalizeTimesPassiveText(passiveDescription);
+        if(!normalizedDescription.startsWith(normalizedName)){
+            return `${passiveName}: ${passiveDescription}`;
+        }
+    }
+    return passiveDescription || passiveName;
+}
+
 function getTeamBuilderPassiveInfo(entry){
     const passives = [];
     getTeamBuilderPassiveLookupKeys(entry).forEach(key => {
         const values = TEAM_BUILDER_PASSIVE_META[key];
         if(Array.isArray(values) && values.length){
             values.forEach(value => {
-                if(value && !passives.includes(value)) passives.push(value);
+                addTeamBuilderPassiveInfo(passives, value);
             });
         }
     });
+    addTeamBuilderPassiveInfo(
+        passives,
+        formatTeamBuilderCatalogPassiveText(entry?.passiveName, entry?.passiveDescription)
+    );
+    addTeamBuilderPassiveInfo(
+        passives,
+        formatTeamBuilderCatalogPassiveText(entry?.shinyPassiveName, entry?.shinyPassiveDescription),
+        { shiny: true }
+    );
     return passives;
 }
 

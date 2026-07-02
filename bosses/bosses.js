@@ -6859,6 +6859,7 @@ function classifyRecommendationTier(offense, worstDefense, options = {}) {
     // - DEF <= 2 => Aceitavel
     if (worstDefense <= 0.5) return 'excelente';
     if (worstDefense <= 0.75) return 'muitobom';
+    if (normalizedRoleKey === 'tank' && worstDefense <= 1) return 'aceitavel';
     if (worstDefense <= 1) return 'bom';
     if (worstDefense <= 2) return 'aceitavel';
     return 'ruim';
