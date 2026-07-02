@@ -68,7 +68,7 @@ function isTrustedStreamerRatTimerSnapshot(value){
     const expectedNextAt = Number(value?.expectedNextAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
-    return source.startsWith('github-action') || source === 'server-cache';
+    return source.includes('escape') || source === 'server-cache-escape';
 }
 
 function normalizeStreamerRatTimerSnapshot(channel, value, now = Date.now()){
@@ -436,8 +436,18 @@ function loadServerStreamerRatTimerData(){
     .then(results => {
         const candidates = results.filter(Boolean);
         if(!candidates.length) return false;
-        const preferred = candidates.find(candidate => candidate.source === 'raw') || candidates[0];
-        return applyServerStreamerRatTimerPayload(preferred.payload);
+        const orderedCandidates = candidates.sort((left, right) => {
+            if(left.source === right.source) return 0;
+            if(left.source === 'raw') return -1;
+            if(right.source === 'raw') return 1;
+            return 0;
+        });
+        for(const candidate of orderedCandidates){
+            if(applyServerStreamerRatTimerPayload(candidate.payload)){
+                return true;
+            }
+        }
+        return false;
     })
     .catch(error => {
         console.info('Home failed to load Rattata timer snapshot', error && error.message);
@@ -648,9 +658,7 @@ function startRatSummaryTimer(state){
         const msUntilNext = getRatCycleRemainingMs(state);
 
         renderStaticRatSummary(
-            msUntilNext > 0
-                ? `Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`
-                : 'Rattata ativo agora. Aguardando a fuga para reiniciar o timer.',
+            `Proximo Rattata em ${formatRatCountdown(msUntilNext)}.`,
             '#dff8ff'
         );
     };

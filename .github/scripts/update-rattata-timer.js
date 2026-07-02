@@ -86,7 +86,7 @@ function isTrustedTimerSnapshot(value){
   const expectedNextAt = Number(value?.expectedNextAt || 0);
   if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
   if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
-  return source.startsWith('github-action') || source === 'server-cache';
+  return source.includes('escape') || source === 'server-cache-escape';
 }
 
 function isRatBotSender(messageData){

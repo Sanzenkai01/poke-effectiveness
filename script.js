@@ -14383,8 +14383,18 @@ function loadServerStreamerRatTimerData(){
     .then(results => {
         const candidates = results.filter(Boolean);
         if(!candidates.length) return false;
-        const preferred = candidates.find(candidate => candidate.source === 'raw') || candidates[0];
-        return applyServerStreamerRatTimerPayload(preferred.payload);
+        const orderedCandidates = candidates.sort((left, right) => {
+            if(left.source === right.source) return 0;
+            if(left.source === 'raw') return -1;
+            if(right.source === 'raw') return 1;
+            return 0;
+        });
+        for(const candidate of orderedCandidates){
+            if(applyServerStreamerRatTimerPayload(candidate.payload)){
+                return true;
+            }
+        }
+        return false;
     })
     .catch(error => {
         console.info('Failed to load server Rattata timer data', error && error.message);
@@ -14480,7 +14490,7 @@ function isTrustedStreamerRatTimerSnapshot(value){
     const expectedNextAt = Number(value?.expectedNextAt || 0);
     if(!Number.isFinite(lastMessageAt) || lastMessageAt <= 0) return false;
     if(!Number.isFinite(expectedNextAt) || expectedNextAt <= lastMessageAt) return false;
-    return source.startsWith('github-action') || source === 'server-cache';
+    return source.includes('escape') || source === 'server-cache-escape';
 }
 
 function isStreamerRatBotSender(messageData){
@@ -15075,9 +15085,6 @@ function startGlobalRatMonitorBootstrap(){
         renderStaticRatSummary(siteRatSummary, 'Preparando timer do Rattata...');
     }
 
-    refreshGlobalRatMonitor().catch(err => {
-        console.error('initial global rat monitor refresh failed', err);
-    });
     loadServerStreamerRatTimerData().then(() => {
         const persistedTimerInfo = getPreferredRatMonitorInfoFromTimerState();
         if(!persistedTimerInfo) return;
@@ -15085,7 +15092,11 @@ function startGlobalRatMonitorBootstrap(){
         globalRatMonitorTotalPstoryOnline = Math.max(globalRatMonitorTotalPstoryOnline, 1);
         setGlobalRatMonitorTarget(persistedTimerInfo);
         syncGlobalRatSummary();
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => {
+        refreshGlobalRatMonitor().catch(err => {
+            console.error('initial global rat monitor refresh failed', err);
+        });
+    });
     scheduleGlobalRatMonitorRefresh();
 }
 
@@ -15130,9 +15141,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
             }
             const msUntilNext = getStreamerRatCycleRemainingMs(validState);
 
-            timerEl.textContent = msUntilNext > 0
-                ? `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`
-                : 'Rattata ativo agora. Aguardando a fuga para reiniciar o timer.';
+            timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
             timerEl.style.color = '#dff8ff';
             return;
         }
@@ -15141,7 +15150,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
             if(monitorStatus.reason === 'token-missing'){
-                timerEl.textContent = 'Aguardando o primeiro registro do Rattata pelo GitHub.';
+                timerEl.textContent = 'Sincronizando timer do Rattata pelo workflow...';
                 timerEl.style.color = '#d8f3ff';
                 return;
             }
