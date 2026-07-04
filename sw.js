@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v794`;
+let CACHE_NAME = `${CACHE_PREFIX}v828`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -13,12 +13,17 @@ const APP_SHELL = [
   new URL('./effectiveness/index.html', self.registration.scope).toString(),
   new URL('./fossils/index.html', self.registration.scope).toString(),
   new URL('./maniacs/index.html', self.registration.scope).toString(),
+  new URL('./bosses-info/index.html', self.registration.scope).toString(),
   new URL('./calculator/index.html', self.registration.scope).toString(),
   new URL('./boost/index.html', self.registration.scope).toString(),
   new URL('./calculadora-boost/index.html', self.registration.scope).toString(),
   new URL('./times/index.html', self.registration.scope).toString(),
   new URL('./team-builder/index.html', self.registration.scope).toString(),
   new URL('./hunt-builder/index.html', self.registration.scope).toString(),
+  new URL('./rotom-phone/index.html', self.registration.scope).toString(),
+  new URL('./police-operation/index.html', self.registration.scope).toString(),
+  new URL('./slowpoke-well/index.html', self.registration.scope).toString(),
+  new URL('./profissoes/index.html', self.registration.scope).toString(),
   new URL('./catch/index.html', self.registration.scope).toString(),
   new URL('./streamers/index.html', self.registration.scope).toString(),
   new URL('./youtube/index.html', self.registration.scope).toString(),
@@ -37,8 +42,8 @@ const APP_SHELL = [
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260630e', self.registration.scope).toString(),
-  new URL('./script.js?v=20260702h', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260704i', self.registration.scope).toString(),
+  new URL('./script.js?v=20260704k', self.registration.scope).toString(),
   new URL('./hunt-builder/hunt_symbol.png?v=20260627a', self.registration.scope).toString(),
   new URL('./pokemons/pokemons.json?v=20260702d', self.registration.scope).toString(),
   new URL('./pokemons/mega-pokemons.json?v=20260630c', self.registration.scope).toString(),

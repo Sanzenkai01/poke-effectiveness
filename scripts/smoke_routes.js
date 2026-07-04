@@ -93,6 +93,54 @@ const routes = [
     ]
   },
   {
+    path: '/rotom-phone',
+    label: 'rotom-phone',
+    checks: [
+      { pattern: /data-active-tab="rotom-phone"/i, description: 'rotom phone active tab' },
+      { pattern: /id="content-rotom-phone"/i, description: 'rotom phone panel' },
+      { pattern: /id="rotom-phone-kanto-title"/i, description: 'rotom kanto section' }
+    ]
+  },
+  {
+    path: '/police-operation',
+    label: 'police-operation',
+    checks: [
+      { pattern: /data-active-tab="police-operation"/i, description: 'police operation active tab' },
+      { pattern: /id="content-police-operation"/i, description: 'police operation panel' },
+      { pattern: /id="police-operation-rewards-title"/i, description: 'police operation rewards section' }
+    ]
+  },
+  {
+    path: '/slowpoke-well',
+    label: 'slowpoke-well',
+    checks: [
+      { pattern: /data-active-tab="slowpoke-well"/i, description: 'slowpoke well active tab' },
+      { pattern: /id="content-slowpoke-well"/i, description: 'slowpoke well panel' },
+      { pattern: /id="slowpoke-well-rewards-title"/i, description: 'slowpoke rewards section' }
+    ]
+  },
+  {
+    path: '/profissoes',
+    label: 'profissoes',
+    checks: [
+      { pattern: /data-active-tab="profissoes"/i, description: 'profissoes active tab' },
+      { pattern: /id="content-profissoes"/i, description: 'profissoes panel' },
+      { pattern: /data-profession-select="designer"/i, description: 'designer selection card' },
+      { pattern: /data-profession-select="breeder"/i, description: 'breeder selection card' },
+      { pattern: /data-profession-select="photographer"/i, description: 'photographer selection card' },
+      { pattern: /data-profession-select="researcher"/i, description: 'researcher selection card' }
+    ]
+  },
+  {
+    path: '/bosses-info',
+    label: 'bosses-info',
+    checks: [
+      { pattern: /data-active-tab="bosses-info"/i, description: 'bosses info active tab' },
+      { pattern: /id="content-bosses-info"/i, description: 'bosses info panel' },
+      { pattern: /id="bosses-info-grid"/i, description: 'bosses info grid' }
+    ]
+  },
+  {
     path: '/catch',
     label: 'catch',
     checks: [

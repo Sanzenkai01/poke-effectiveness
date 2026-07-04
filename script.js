@@ -130,17 +130,27 @@ const maniacsLocationModal = document.getElementById('maniacs-location-modal');
 const maniacsLocationViewport = document.getElementById('maniacs-location-viewport');
 const maniacsLocationCanvas = document.getElementById('maniacs-location-canvas');
 const maniacsLocationImage = document.getElementById('maniacs-location-image');
+const contentBossesInfo = document.getElementById('content-bosses-info');
+const bossesInfoGrid = document.getElementById('bosses-info-grid');
+const bossesInfoLocationModal = document.getElementById('bosses-info-location-modal');
+const bossesInfoLocationViewport = document.getElementById('bosses-info-location-viewport');
+const bossesInfoLocationCanvas = document.getElementById('bosses-info-location-canvas');
+const bossesInfoLocationImage = document.getElementById('bosses-info-location-image');
 const contentCalc = document.getElementById('content-calculator');
 const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
 const contentTimes = document.getElementById('content-times');
 const contentTeamBuilder = document.getElementById('content-team-builder');
 const contentHuntBuilder = document.getElementById('content-hunt-builder');
+const contentRotomPhone = document.getElementById('content-rotom-phone');
+const contentPoliceOperation = document.getElementById('content-police-operation');
+const contentSlowpokeWell = document.getElementById('content-slowpoke-well');
+const contentProfessions = document.getElementById('content-profissoes');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentPoliceOperation, contentSlowpokeWell, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -254,6 +264,7 @@ let typesDataLoaded = false;
 let typesDataLoadPromise = null;
 let fossilsPageInitialized = false;
 let maniacsPageInitialized = false;
+let bossesInfoPageInitialized = false;
 let calculatorPageInitialized = false;
 let trainingPokemonEntries = [];
 let trainingPokemonSearchIndex = new Map();
@@ -316,6 +327,9 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
+let professionsPageInitialized = false;
+let professionsImageModalInitialized = false;
+let activeProfessionKey = '';
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260702b';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
@@ -342,6 +356,9 @@ const APP_ROUTE_ALIASES = {
     fossils: { path: '/fossils', tab: 'fossils' },
     fosseis: { path: '/fossils', tab: 'fossils' },
     maniacs: { path: '/maniacs', tab: 'maniacs' },
+    'bosses-info': { path: '/bosses-info', tab: 'bosses-info' },
+    bossesinfo: { path: '/bosses-info', tab: 'bosses-info' },
+    'boss-locations': { path: '/bosses-info', tab: 'bosses-info' },
     calculator: { path: '/treinamento', tab: 'calculator' },
     treinamento: { path: '/treinamento', tab: 'calculator' },
     boost: { path: '/boost', tab: 'boost' },
@@ -353,6 +370,16 @@ const APP_ROUTE_ALIASES = {
     teambuilder: { path: '/team-builder', tab: 'team-builder' },
     'hunt-builder': { path: '/hunt-builder', tab: 'hunt-builder' },
     huntbuilder: { path: '/hunt-builder', tab: 'hunt-builder' },
+    'rotom-phone': { path: '/rotom-phone', tab: 'rotom-phone' },
+    rotomphone: { path: '/rotom-phone', tab: 'rotom-phone' },
+    rotom: { path: '/rotom-phone', tab: 'rotom-phone' },
+    'police-operation': { path: '/police-operation', tab: 'police-operation' },
+    policeoperation: { path: '/police-operation', tab: 'police-operation' },
+    police: { path: '/police-operation', tab: 'police-operation' },
+    'slowpoke-well': { path: '/slowpoke-well', tab: 'slowpoke-well' },
+    slowpokewell: { path: '/slowpoke-well', tab: 'slowpoke-well' },
+    profissoes: { path: '/profissoes', tab: 'profissoes' },
+    professions: { path: '/profissoes', tab: 'profissoes' },
     catch: { path: '/catch', tab: 'catch' },
     streamers: { path: '/streamers', tab: 'streamers' },
     youtube: { path: '/youtube', tab: 'youtube' },
@@ -3175,7 +3202,12 @@ function getActiveSiteTarget(){
     if(contentTimes && !contentTimes.hidden) return 'times';
     if(contentTeamBuilder && !contentTeamBuilder.hidden) return 'team-builder';
     if(contentHuntBuilder && !contentHuntBuilder.hidden) return 'hunt-builder';
+    if(contentRotomPhone && !contentRotomPhone.hidden) return 'rotom-phone';
+    if(contentPoliceOperation && !contentPoliceOperation.hidden) return 'police-operation';
+    if(contentSlowpokeWell && !contentSlowpokeWell.hidden) return 'slowpoke-well';
+    if(contentProfessions && !contentProfessions.hidden) return 'profissoes';
     if(contentManiacs && !contentManiacs.hidden) return 'maniacs';
+    if(contentBossesInfo && !contentBossesInfo.hidden) return 'bosses-info';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
     if(tabCalcBtn?.classList.contains('active')) return 'calculator';
@@ -3346,12 +3378,17 @@ function activateSidebarTarget(button){
         effectiveness: showEffectiveness,
         fossils: showFossils,
         maniacs: showManiacs,
+        'bosses-info': showBossesInfo,
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
         times: showTimes,
         'team-builder': showTeamBuilder,
         'hunt-builder': showHuntBuilder,
+        'rotom-phone': showRotomPhone,
+        'police-operation': showPoliceOperation,
+        'slowpoke-well': showSlowpokeWell,
+        profissoes: showProfessions,
         catch: showCatch,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
         streamers: showStreamers,
@@ -3486,16 +3523,21 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:effectiveness', kind: 'route', target: 'effectiveness', title: 'Tipos', category: 'Ferramenta', description: 'Efetividade, fraquezas e resistencias', icon: 'TY', tags: ['type', 'elemento', 'fraqueza'] },
         { id: 'route:fossils', kind: 'route', target: 'fossils', title: 'Fosseis', category: 'Sistema', description: 'Combinacoes e revivals de fosseis', icon: 'FO', tags: ['fossil', 'dna'] },
         { id: 'route:maniacs', kind: 'route', target: 'maniacs', title: 'Maniacs', category: 'Sistema', description: 'Trocas com Maniacs por stones ou Ace Essence', icon: 'MN', tags: ['maniac', 'stone', 'ace essence', 'troca'] },
+        { id: 'route:bosses-info', kind: 'route', target: 'bosses-info', title: 'Bosses', category: 'Sistema', description: 'Localizacoes dos bosses e stones de entrada', icon: 'BO', tags: ['boss', 'localizacao', 'stone', 'hunt', 'mapa'] },
         { id: 'route:calculator', kind: 'route', target: 'calculator', title: 'Treinamento', category: 'Calculadora', description: 'Plates, custos e treino', icon: 'TR', tags: ['calculadora', 'plate'] },
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
         { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo de Pokemon e Megas', icon: 'PK', tags: ['catalogo', 'mega'] },
         { id: 'route:times', kind: 'route', target: 'times', title: 'Times', category: 'Catalogo', description: 'Composicoes por cla e elemento', icon: 'TM', tags: ['mystic', 'valor', 'instinct', 'composicao'] },
         { id: 'route:hunt-builder', kind: 'route', target: 'hunt-builder', title: 'Hunt Builder', category: 'Sistema', description: 'Gera times por hunt, fraqueza e cla', icon: 'HB', tags: ['hunt', 'time', 'fraqueza', 'finisher', 'stunner'] },
+        { id: 'route:rotom-phone', kind: 'route', target: 'rotom-phone', title: 'Rotom Phone', category: 'Quest', description: 'Tasks de Kanto por cidade para progresso e Liga Pokemon', icon: 'RP', tags: ['rotom', 'phone', 'kanto', 'tasks', 'liga', 'quest'] },
+        { id: 'route:police-operation', kind: 'route', target: 'police-operation', title: 'Police Operation', category: 'Quest', description: 'Investigacoes semanais da Officer Jenny contra a Equipe Rocket', icon: 'PO', tags: ['police', 'operation', 'jenny', 'rocket', 'tokens', 'held ticket', 'quest'] },
+        { id: 'route:slowpoke-well', kind: 'route', target: 'slowpoke-well', title: 'Slowpoke Well', category: 'Quest', description: 'Quest semanal, requisitos, caminho e recompensas', icon: 'SW', tags: ['slowpoke', 'well', 'quest', 'expedicoes', 'timer ball', 'kurt'] },
+        { id: 'route:profissoes', kind: 'route', target: 'profissoes', title: 'Profissoes', category: 'Sistema', description: 'Guias de profissoes como Designer, Breeder, Photographer, Researcher, crafts e ranks', icon: 'PR', tags: ['designer', 'breeder', 'photographer', 'researcher', 'craft', 'pokeblock', 'ration', 'pokepedia', 'berry', 'battle item', 'camera upgrade', 'vitamin', 'pokeball', 'machine', 'outfit', 'addon'] },
         { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
         { id: 'route:champion', kind: 'route', target: 'bosses', bossMode: 'champion', title: 'Champion Path', category: 'Bosses', description: 'Bosses Champion Path', icon: 'CP', tags: ['chefes', 'tanque', 'dps', 'suporte'] },
-        { id: 'route:mewtwo', kind: 'route', target: 'bosses', bossMode: 'mew2', title: 'Mewtwo', category: 'Bosses', description: 'Bosses do Mewtwo', icon: 'M2', tags: ['mew2', 'chefes'] },
-        { id: 'route:mainquest', kind: 'route', target: 'bosses', bossMode: 'mainquest', title: 'Main Quest', category: 'Bosses', description: 'Bosses da Main Quest', icon: 'MQ', tags: ['chefes', 'main quest', 'alpha'] },
+        { id: 'route:mewtwo', kind: 'route', target: 'bosses', bossMode: 'mew2', title: 'Mewtwo', category: 'Quest', description: 'Bosses do Mewtwo', icon: 'M2', tags: ['mew2', 'chefes'] },
+        { id: 'route:mainquest', kind: 'route', target: 'bosses', bossMode: 'mainquest', title: 'Main Quest', category: 'Quest', description: 'Bosses da Main Quest', icon: 'MQ', tags: ['chefes', 'main quest', 'alpha'] },
         { id: 'route:ranger', kind: 'route', target: 'bosses', bossMode: 'special', title: 'Ranger Bosses', category: 'Bosses', description: 'Bosses especiais Ranger', icon: 'RB', tags: ['especial', 'speedster'] },
         { id: 'route:planner', kind: 'route', target: 'bosses', bossMode: 'planner', title: 'Planejador', category: 'Bosses', description: 'Montador de composicao para boss', icon: 'PL', tags: ['boss', 'planejar'] },
         { id: 'route:horizons', kind: 'route', target: 'bosses', bossMode: 'horizons', title: 'Horizons', category: 'Bosses', description: 'Rotas, mobs e bosses finais', icon: 'HZ', tags: ['rota', 'boss'] },
@@ -4157,6 +4199,129 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Fairy Stone': { image: 'calculadora/fairy_stone.gif' },
     'Ghost Stone': { image: '' }
 });
+const BOSSES_INFO_STONE_COST = 300;
+const BOSSES_INFO_ENTRIES = Object.freeze([
+    {
+        name: 'Drapion',
+        type1: 'poison',
+        type2: 'dark',
+        pokemonImage: 'pokemons/4gen/drapion.png',
+        locationImage: 'mapas/bosses/Drapion.png',
+        comment: 'Hunt de Toxicroak'
+    },
+    {
+        name: 'Rhyperior',
+        type1: 'ground',
+        type2: 'rock',
+        pokemonImage: 'pokemons/4gen/rhyperior.png',
+        locationImage: 'mapas/bosses/Rhyperior.png',
+        comment: 'Hunt de Flygon'
+    },
+    {
+        name: 'Honchkrow',
+        type1: 'dark',
+        type2: 'flying',
+        pokemonImage: 'pokemons/4gen/honchkrow.png',
+        locationImage: 'mapas/bosses/Honchkrow.png',
+        comment: 'Hunt de Drifbloom'
+    },
+    {
+        name: 'Togekiss',
+        type1: 'fairy',
+        type2: 'flying',
+        pokemonImage: 'pokemons/4gen/togekiss.png',
+        locationImage: 'mapas/bosses/Togekiss.png',
+        comment: 'Hunt de Altaria'
+    },
+    {
+        name: 'Mamoswine',
+        type1: 'ice',
+        type2: 'ground',
+        pokemonImage: 'pokemons/4gen/mamoswine.png',
+        locationImage: 'mapas/bosses/Mamoswine.png',
+        comment: 'Hunt de Sealeo'
+    },
+    {
+        name: 'Conkeldurr',
+        type1: 'fighting',
+        type2: '',
+        pokemonImage: 'pokemons/5gen/conkeldurr.png',
+        locationImage: 'mapas/bosses/Conkeldurr.png',
+        comment: 'Hunt de Pachirisu'
+    },
+    {
+        name: 'Yanmega',
+        type1: 'bug',
+        type2: 'flying',
+        pokemonImage: 'pokemons/4gen/yanmega.png',
+        locationImage: 'mapas/bosses/Yanmega.png',
+        comment: 'Hunt de Mothim'
+    },
+    {
+        name: 'Noivern',
+        type1: 'flying',
+        type2: 'dragon',
+        pokemonImage: 'pokemons/6gen/noivern.png',
+        locationImage: 'mapas/bosses/Noivern.png',
+        comment: 'Hunt de Spinda'
+    },
+    {
+        name: 'Tangrowth',
+        type1: 'grass',
+        type2: '',
+        pokemonImage: 'pokemons/4gen/tangrowth.png',
+        locationImage: 'mapas/bosses/Tangrowth.png',
+        comment: 'Sceptile \u00e0 direita do Drapion'
+    },
+    {
+        name: 'Magmortar',
+        type1: 'fire',
+        type2: '',
+        pokemonImage: 'pokemons/4gen/magmortar.png',
+        locationImage: 'mapas/bosses/Magmortar.png',
+        comment: 'Hunt de Torkoal pelo lado de fora.'
+    },
+    {
+        name: 'Electivire',
+        type1: 'electric',
+        type2: '',
+        pokemonImage: 'pokemons/4gen/electivire.png',
+        locationImage: 'mapas/bosses/Electivire.png',
+        comment: 'Hunt de Manec'
+    },
+    {
+        name: 'Slaking',
+        type1: 'normal',
+        type2: '',
+        pokemonImage: 'pokemons/3gen/slaking.png',
+        locationImage: 'mapas/bosses/Slaking.png',
+        comment: 'Hunt de Sceptile'
+    },
+    {
+        name: 'Dusknoir',
+        type1: 'ghost',
+        type2: '',
+        pokemonImage: 'pokemons/4gen/dusknoir.png',
+        locationImage: 'mapas/bosses/Dusknoir.png',
+        comment: 'Hunt de Duskull'
+    },
+    {
+        name: 'Haxorus',
+        type1: 'dragon',
+        type2: '',
+        pokemonImage: 'pokemons/5gen/haxorus.png',
+        locationImage: 'mapas/bosses/Haxorus.png',
+        comment: 'Hunt de Hippowdon Female'
+    },
+    {
+        name: 'Milotic',
+        type1: 'water',
+        type2: '',
+        pokemonImage: 'pokemons/3gen/milotic.png',
+        locationImage: 'mapas/bosses/Milotic.png',
+        comment: 'Hunt de Whiscash'
+    }
+]);
 const MANIACS_ACE_ESSENCE_IMAGE = 'maniacs/ace-essence.gif';
 const MANIACS_STONE_COST = 100;
 const MANIACS_ESSENCE_COST = 100;
@@ -4351,10 +4516,10 @@ const strings = {
         siteName: 'Poke Utilities',
         homeLabel: 'Início',
         homeEyebrow: 'Hub da comunidade',
-        homeTitleBefore: 'Bem-vindo ao',
-        homeTitleAccent: 'Poke Utilities',
-        homeLead: 'Uma base compacta para consultar o que mais importa no PStory sem perder tempo entre telas soltas.',
-        homeSupporting: 'Entre por Bosses, Sistemas, Utilidades e Comunidade para acessar hunts, times, captura, fósseis, maniacs, pokémons, streamers e vídeos em um fluxo pensado para uso diário.',
+        homeTitleBefore: 'Poke Utilities',
+        homeTitleAccent: 'para PStory',
+        homeLead: 'Guias, quests e ferramentas em uma entrada direta para jogar sem ficar pulando entre abas soltas.',
+        homeSupporting: 'Entre por Bosses, Quests, Sistemas, Utilidades e Comunidade para acessar Rotom Phone, Police Operation, Slowpoke Well, hunts, times, captura, streamers e vídeos.',
         homeDisclaimer: 'Projeto da comunidade, sem vínculo oficial com a staff do jogo.',
         homeExplore: 'Explorar',
         remainingMsg: 'Faltam',
@@ -5322,12 +5487,17 @@ function openHomeDestination(target){
         effectiveness: showEffectiveness,
         fossils: showFossils,
         maniacs: showManiacs,
+        'bosses-info': showBossesInfo,
         calculator: showCalculator,
         boost: showBoostCalculator,
         pokemons: showPokemons,
         times: showTimes,
         'team-builder': showTeamBuilder,
         'hunt-builder': showHuntBuilder,
+        'rotom-phone': showRotomPhone,
+        'police-operation': showPoliceOperation,
+        'slowpoke-well': showSlowpokeWell,
+        profissoes: showProfessions,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
         streamers: showStreamers,
@@ -5822,6 +5992,176 @@ function showManiacs(options = {}){
         gsap.from(contentManiacs, { opacity: 0, y: -10, duration: 0.4 });
         gsap.from(contentManiacs.querySelectorAll('.maniacs-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.05 });
     }
+}
+
+function getBossesInfoStoneMetaForType(type){
+    const normalizedType = normalizePokemonTypeKey(type);
+    if(normalizedType === 'fighting'){
+        return {
+            name: 'Punch Stone',
+            image: BOOST_NAMED_STONE_META['Punch Stone']?.image || ''
+        };
+    }
+    if(normalizedType === 'ghost'){
+        return {
+            name: 'Ghost Stone',
+            image: BOOST_NAMED_STONE_META['Ghost Stone']?.image || BOOST_TYPE_STONE_META.ghost?.image || ''
+        };
+    }
+    return getBoostStoneMetaByType(normalizedType);
+}
+
+function createBossesInfoPokemonMedia(entry){
+    const media = document.createElement('div');
+    media.className = 'bosses-info-card__pokemon';
+
+    const figure = document.createElement('figure');
+    figure.className = 'bosses-info-card__figure';
+
+    const image = document.createElement('img');
+    image.className = 'bosses-info-card__image bosses-info-card__image--pokemon';
+    image.src = entry.pokemonImage || POKEMON_IMAGE_PLACEHOLDER;
+    image.alt = entry.name;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image);
+    figure.appendChild(image);
+
+    const caption = document.createElement('figcaption');
+    caption.className = 'bosses-info-card__caption';
+    caption.textContent = entry.name;
+
+    const types = document.createElement('div');
+    types.className = 'bosses-info-card__types';
+    if(entry.type1) types.appendChild(createPokemonTypeToken(entry.type1, { compact: true }));
+    if(entry.type2) types.appendChild(createPokemonTypeToken(entry.type2, { compact: true }));
+
+    media.append(figure, caption, types);
+    return media;
+}
+
+function createBossesInfoLocationMedia(entry){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'bosses-info-card__location';
+    button.setAttribute('aria-label', `Abrir localizacao do boss ${entry.name}`);
+
+    const figure = document.createElement('figure');
+    figure.className = 'bosses-info-card__figure bosses-info-card__figure--location';
+
+    const image = document.createElement('img');
+    image.className = 'bosses-info-card__image bosses-info-card__image--location';
+    image.src = entry.locationImage;
+    image.alt = `Localizacao do boss ${entry.name}`;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    figure.appendChild(image);
+
+    const kicker = document.createElement('span');
+    kicker.className = 'bosses-info-card__kicker bosses-info-card__kicker--overlay';
+    kicker.textContent = 'Local';
+    figure.appendChild(kicker);
+
+    const caption = document.createElement('figcaption');
+    caption.className = 'bosses-info-card__caption';
+    caption.textContent = entry.comment || 'Localizacao';
+
+    button.append(figure, caption);
+    button.addEventListener('click', () => openBossesInfoLocationModal(entry));
+    return button;
+}
+
+function createBossesInfoCard(entry){
+    const card = document.createElement('article');
+    card.className = 'bosses-info-card';
+    card.setAttribute('role', 'listitem');
+
+    const body = document.createElement('div');
+    body.className = 'bosses-info-card__body';
+    body.append(
+        createBossesInfoPokemonMedia(entry),
+        createBossesInfoLocationMedia(entry)
+    );
+
+    const stoneMeta = getBossesInfoStoneMetaForType(entry.type1);
+    const footer = document.createElement('footer');
+    footer.className = 'bosses-info-card__footer';
+    footer.appendChild(createManiacCostRow({
+        quantity: BOSSES_INFO_STONE_COST,
+        imageSrc: stoneMeta.image,
+        label: stoneMeta.name
+    }));
+
+    card.append(body, footer);
+    return card;
+}
+
+function renderBossesInfoPage(){
+    if(!bossesInfoGrid) return;
+    const fragment = document.createDocumentFragment();
+    BOSSES_INFO_ENTRIES.forEach(entry => {
+        fragment.appendChild(createBossesInfoCard(entry));
+    });
+    bossesInfoGrid.replaceChildren(fragment);
+}
+
+function openBossesInfoLocationModal(entry){
+    if(!bossesInfoLocationModal || !bossesInfoLocationImage || !entry) return;
+    const titleEl = document.getElementById('bosses-info-location-modal-title');
+    if(titleEl) titleEl.textContent = `Local do ${entry.name}`;
+    bossesInfoLocationImage.src = entry.locationImage || '';
+    bossesInfoLocationImage.alt = `Localizacao do boss ${entry.name}`;
+    bossesInfoLocationModal.setAttribute('aria-hidden', 'false');
+    syncBasicModalPageState();
+    if(typeof bossesInfoLocationModal._onOpen === 'function'){
+        bossesInfoLocationModal._onOpen();
+    }
+}
+
+function closeBossesInfoLocationModal(){
+    if(!bossesInfoLocationModal || bossesInfoLocationModal.getAttribute('aria-hidden') === 'true') return;
+    bossesInfoLocationModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+}
+
+function initializeBossesInfoPage(){
+    if(bossesInfoPageInitialized) return;
+    bossesInfoPageInitialized = true;
+    renderBossesInfoPage();
+
+    if(bossesInfoLocationModal){
+        const closeBtn = bossesInfoLocationModal.querySelector('.modal-close');
+        if(closeBtn){
+            closeBtn.addEventListener('click', closeBossesInfoLocationModal);
+        }
+        bossesInfoLocationModal.addEventListener('click', (event) => {
+            if(event.target === bossesInfoLocationModal) closeBossesInfoLocationModal();
+        });
+        window.addEventListener('keydown', (event) => {
+            if(event.key === 'Escape' && bossesInfoLocationModal.getAttribute('aria-hidden') === 'false'){
+                closeBossesInfoLocationModal();
+            }
+        });
+    }
+}
+
+function showBossesInfo(){
+    initializeBossesInfoPage();
+    clearTabHighlights();
+    setActiveTabTheme('bosses-info');
+    setVisiblePanel(contentBossesInfo);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Bosses';
+    updateBrowserTitle();
+    renderBossesInfoPage();
+    if(useGsap && contentBossesInfo){
+        gsap.from(contentBossesInfo, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentBossesInfo.querySelectorAll('.bosses-info-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.04 });
+    }
+    updateUrl();
 }
 
 function fuzzyMatch(type,filter){
@@ -13353,6 +13693,374 @@ function initializeHuntBuilderPage(){
     }
 }
 
+function normalizeProfessionRouteKey(value){
+    const normalized = String(value || '').trim().toLowerCase().replace(/^#/, '');
+    return ['designer', 'breeder', 'photographer', 'researcher'].includes(normalized) ? normalized : '';
+}
+
+function setProfessionDetailView(professionKey = '', options = {}){
+    const normalizedProfessionKey = normalizeProfessionRouteKey(professionKey);
+    const hero = contentProfessions?.querySelector('.professions-hero') || null;
+    const selector = document.getElementById('professions-selector');
+    const details = Array.from(contentProfessions?.querySelectorAll('.profession-detail') || []);
+    const activeDetail = normalizedProfessionKey
+        ? document.getElementById(`profession-${normalizedProfessionKey}-detail`)
+        : null;
+    const showDetail = Boolean(activeDetail);
+    const shouldUpdateUrl = options.updateUrl !== false;
+
+    activeProfessionKey = showDetail ? normalizedProfessionKey : '';
+    if(hero) hero.hidden = showDetail;
+    if(selector) selector.hidden = showDetail;
+    details.forEach(detail => {
+        detail.hidden = detail !== activeDetail;
+    });
+
+    if(shouldUpdateUrl && contentProfessions && !contentProfessions.hidden){
+        updateUrl({ historyMode: options.historyMode || 'push' });
+    }
+
+    if(showDetail && activeDetail){
+        requestAnimationFrame(() => {
+            activeDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+}
+
+function initializeProfessionsPage(){
+    if(professionsPageInitialized) return;
+
+    initializeProfessionsImageModal();
+
+    document.querySelectorAll('[data-profession-select]').forEach(button => {
+        button.addEventListener('click', () => {
+            const professionKey = button.getAttribute('data-profession-select') || '';
+            setProfessionDetailView(professionKey, { historyMode: 'push' });
+        });
+    });
+
+    document.querySelectorAll('[data-profession-back]').forEach(button => {
+        button.addEventListener('click', () => {
+            setProfessionDetailView('', { historyMode: 'push' });
+            const selector = document.getElementById('professions-selector');
+            if(selector){
+                requestAnimationFrame(() => {
+                    selector.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        });
+    });
+
+    professionsPageInitialized = true;
+}
+
+function initializeProfessionsImageModal(){
+    if(professionsImageModalInitialized) return;
+
+    const modal = document.getElementById('profession-image-modal');
+    const viewport = document.getElementById('profession-image-modal-viewport');
+    const canvas = document.getElementById('profession-image-modal-canvas');
+    const image = document.getElementById('profession-image-modal-image');
+    const title = document.getElementById('profession-image-modal-title');
+    const closeBtn = modal?.querySelector('.modal-close') || null;
+    if(!modal || !viewport || !canvas || !image) return;
+
+    setupZoomableImageModal(modal, viewport, canvas, image);
+
+    const closeModal = () => {
+        if(modal.getAttribute('aria-hidden') === 'true') return;
+        modal.setAttribute('aria-hidden', 'true');
+        if(typeof modal._onClose === 'function') modal._onClose();
+        syncBasicModalPageState();
+    };
+
+    const openImage = (sourceImage) => {
+        if(!(sourceImage instanceof HTMLImageElement)) return;
+        const src = sourceImage.currentSrc || sourceImage.getAttribute('src') || '';
+        if(!src) return;
+        const caption = sourceImage.closest('figure')?.querySelector('figcaption')?.textContent?.trim()
+            || sourceImage.getAttribute('alt')
+            || 'Imagem';
+        image.src = src;
+        image.alt = sourceImage.getAttribute('alt') || caption;
+        if(title) title.textContent = caption;
+        modal.setAttribute('aria-hidden', 'false');
+        syncBasicModalPageState();
+        if(typeof modal._onOpen === 'function') modal._onOpen();
+    };
+
+    contentProfessions?.addEventListener('click', (event) => {
+        const sourceImage = event.target.closest('img');
+        if(!sourceImage || sourceImage.id === 'profession-image-modal-image') return;
+        if(sourceImage.closest('[data-profession-select]')) return;
+        openImage(sourceImage);
+    });
+
+    contentProfessions?.addEventListener('keydown', (event) => {
+        if(event.key !== 'Enter' && event.key !== ' ') return;
+        const sourceImage = event.target.closest('img');
+        if(!sourceImage || sourceImage.id === 'profession-image-modal-image') return;
+        if(sourceImage.closest('[data-profession-select]')) return;
+        event.preventDefault();
+        openImage(sourceImage);
+    });
+
+    contentProfessions?.querySelectorAll('img').forEach(img => {
+        if(img.id === 'profession-image-modal-image') return;
+        if(img.closest('[data-profession-select]')) return;
+        img.tabIndex = 0;
+        img.setAttribute('role', 'button');
+        const label = img.closest('figure')?.querySelector('figcaption')?.textContent?.trim()
+            || img.getAttribute('alt')
+            || 'imagem';
+        img.setAttribute('aria-label', `Abrir imagem: ${label}`);
+    });
+
+    if(closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if(event.target === modal) closeModal();
+    });
+    window.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape') closeModal();
+    });
+
+    professionsImageModalInitialized = true;
+}
+
+let rotomPhoneChecklistInitialized = false;
+
+function initializeRotomPhoneChecklist(){
+    if(!contentRotomPhone || rotomPhoneChecklistInitialized) return;
+    const storageKey = 'pokeEffectiveness.rotomPhone.completedTasks';
+    const stepStorageKey = 'pokeEffectiveness.rotomPhone.taskSteps';
+    const checklist = contentRotomPhone.querySelector('[data-rotom-checklist]');
+    const resetButton = contentRotomPhone.querySelector('[data-rotom-reset]');
+    if(!checklist) return;
+    const steppedTasks = {
+        'primeiros-passos-combate': [
+            '1 Etapa: Derrote 10 Pidgey.',
+            '2 Etapa: Derrote 10 Spearow.',
+            '3 Etapa: Derrote 10 Caterpie.',
+            '4 Etapa: Derrote 10 Geodude.',
+            '5 Etapa: Derrote 10 Oddish.'
+        ],
+        'coletando-info-pidgey': [
+            '1 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Pidgey.',
+            '2 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Oddish.',
+            '3 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Geodude.',
+            '4 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Spearow.',
+            '5 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Caterpie.'
+        ]
+    };
+
+    const readCompleted = () => {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            return new Set(Array.isArray(parsed) ? parsed : []);
+        } catch {
+            return new Set();
+        }
+    };
+
+    const readStepProgress = () => {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(stepStorageKey) || '{}');
+            return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+        } catch {
+            return {};
+        }
+    };
+
+    const writeCompleted = (completed) => {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(Array.from(completed)));
+        } catch {}
+    };
+
+    const writeStepProgress = (progress) => {
+        try {
+            localStorage.setItem(stepStorageKey, JSON.stringify(progress));
+        } catch {}
+    };
+
+    let completedTasks = readCompleted();
+    let stepProgress = readStepProgress();
+
+    const updateProgress = () => {
+        checklist.querySelectorAll('[data-rotom-city]').forEach((cityPanel) => {
+            const tasks = Array.from(cityPanel.querySelectorAll('[data-rotom-task]'));
+            const done = tasks.filter((task) => task.classList.contains('is-complete')).length;
+            const progress = cityPanel.querySelector('[data-rotom-city-progress]');
+            if(!progress) return;
+            progress.textContent = done === tasks.length
+                ? `${done}/${tasks.length} feitas`
+                : `${tasks.length - done} restantes`;
+        });
+    };
+
+    const applyCompletedState = () => {
+        checklist.querySelectorAll('[data-rotom-task]').forEach((taskButton) => {
+            const taskId = taskButton.getAttribute('data-rotom-task');
+            const steps = steppedTasks[taskId];
+            const isComplete = completedTasks.has(taskId);
+            if(steps){
+                const rawIndex = Number(stepProgress[taskId] || 0);
+                const stepIndex = isComplete ? steps.length - 1 : Math.min(Math.max(rawIndex, 0), steps.length - 1);
+                const description = taskButton.querySelector('.rotom-phone-task__description');
+                const count = taskButton.querySelector('.rotom-phone-task__count');
+                if(description) description.textContent = steps[stepIndex];
+                if(count) count.textContent = `${stepIndex + 1}/${steps.length}`;
+            }
+            taskButton.classList.toggle('is-complete', isComplete);
+            taskButton.setAttribute('aria-pressed', isComplete ? 'true' : 'false');
+        });
+        updateProgress();
+    };
+
+    checklist.addEventListener('click', (event) => {
+        const taskButton = event.target.closest('[data-rotom-task]');
+        if(!taskButton || !checklist.contains(taskButton)) return;
+        const taskId = taskButton.getAttribute('data-rotom-task');
+        if(!taskId) return;
+        const steps = steppedTasks[taskId];
+        if(steps){
+            if(completedTasks.has(taskId)){
+                completedTasks.delete(taskId);
+                stepProgress[taskId] = 0;
+            } else {
+                const currentStep = Math.min(Math.max(Number(stepProgress[taskId] || 0), 0), steps.length - 1);
+                if(currentStep < steps.length - 1){
+                    stepProgress[taskId] = currentStep + 1;
+                } else {
+                    completedTasks.add(taskId);
+                    stepProgress[taskId] = steps.length - 1;
+                }
+            }
+        } else if(completedTasks.has(taskId)){
+            completedTasks.delete(taskId);
+        } else {
+            completedTasks.add(taskId);
+        }
+        writeCompleted(completedTasks);
+        writeStepProgress(stepProgress);
+        applyCompletedState();
+    });
+
+    if(resetButton){
+        resetButton.addEventListener('click', () => {
+            completedTasks = new Set();
+            stepProgress = {};
+            writeCompleted(completedTasks);
+            writeStepProgress(stepProgress);
+            applyCompletedState();
+        });
+    }
+
+    applyCompletedState();
+    rotomPhoneChecklistInitialized = true;
+}
+
+function showRotomPhone(){
+    initializeRotomPhoneChecklist();
+    clearTabHighlights();
+    setActiveTabTheme('rotom-phone');
+    setVisiblePanel(contentRotomPhone);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Rotom Phone';
+    updateBrowserTitle();
+    if(useGsap && contentRotomPhone){
+        gsap.from(contentRotomPhone, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentRotomPhone.querySelectorAll('.rotom-phone-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+    }
+    updateUrl();
+}
+
+function showPoliceOperation(){
+    clearTabHighlights();
+    setActiveTabTheme('police-operation');
+    setVisiblePanel(contentPoliceOperation);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Police Operation';
+    updateBrowserTitle();
+    if(useGsap && contentPoliceOperation){
+        gsap.from(contentPoliceOperation, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentPoliceOperation.querySelectorAll('.police-operation-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+    }
+    updateUrl();
+}
+
+let slowpokeShopModalInitialized = false;
+
+function initializeSlowpokeShopModal(){
+    if(slowpokeShopModalInitialized) return;
+    const trigger = document.querySelector('[data-slowpoke-shop-zoom]');
+    const modal = document.getElementById('slowpoke-shop-modal');
+    if(!trigger || !modal) return;
+    const closeControls = modal.querySelectorAll('[data-slowpoke-shop-close]');
+    const closeModal = () => {
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        try { trigger.focus({ preventScroll: true }); } catch {}
+    };
+    const openModal = () => {
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        const closeButton = modal.querySelector('.slowpoke-shop-modal__close');
+        if(closeButton) closeButton.focus({ preventScroll: true });
+    };
+
+    trigger.addEventListener('click', openModal);
+    closeControls.forEach((control) => control.addEventListener('click', closeModal));
+    window.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    slowpokeShopModalInitialized = true;
+}
+
+function showSlowpokeWell(){
+    initializeSlowpokeShopModal();
+    clearTabHighlights();
+    setActiveTabTheme('slowpoke-well');
+    setVisiblePanel(contentSlowpokeWell);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Slowpoke Well';
+    updateBrowserTitle();
+    if(useGsap && contentSlowpokeWell){
+        gsap.from(contentSlowpokeWell, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentSlowpokeWell.querySelectorAll('.slowpoke-well-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+    }
+    updateUrl();
+}
+
+function showProfessions(){
+    initializeProfessionsPage();
+    clearTabHighlights();
+    setActiveTabTheme('profissoes');
+    setVisiblePanel(contentProfessions);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Profissoes';
+    updateBrowserTitle();
+    setProfessionDetailView(normalizeProfessionRouteKey(location.hash), { updateUrl: false });
+    if(useGsap && contentProfessions){
+        gsap.from(contentProfessions, { opacity: 0, y: -10, duration: 0.4 });
+    }
+    updateUrl();
+}
+
 function showHuntBuilder(){
     initializeHuntBuilderPage();
     clearTabHighlights();
@@ -16039,8 +16747,13 @@ function initTabFromUrl(){
     if(resolvedTab==='maniacs') return showManiacs({
         requestedLocationSlug: requestedManiacsMapRoute?.locationSlug || ''
     });
+    if(resolvedTab==='bosses-info') return showBossesInfo();
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
+    if(resolvedTab==='rotom-phone') return showRotomPhone();
+    if(resolvedTab==='police-operation') return showPoliceOperation();
+    if(resolvedTab==='slowpoke-well') return showSlowpokeWell();
+    if(resolvedTab==='profissoes') return showProfessions();
     if(resolvedTab==='times') return showTimes({
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
         requestedFilters: requestedTeamFilters
@@ -16091,9 +16804,14 @@ function initTabFromUrl(){
     if(saved==='boost') return showBoostCalculator();
     if(saved==='fossils') return showFossils();
     if(saved==='maniacs') return showManiacs();
+    if(saved==='bosses-info') return showBossesInfo();
     if(saved==='times') return showTimes();
     if(saved==='team-builder') return showTeamBuilder();
     if(saved==='hunt-builder') return showHuntBuilder();
+    if(saved==='rotom-phone') return showRotomPhone();
+    if(saved==='police-operation') return showPoliceOperation();
+    if(saved==='slowpoke-well') return showSlowpokeWell();
+    if(saved==='profissoes') return showProfessions();
     if(saved==='pokemons') return showPokemons();
     if(saved==='catch') return showCatch();
     if(saved==='bosses' || saved==='speedsters') return showSpeedsters();
@@ -16885,7 +17603,7 @@ function getTrainingRows(startLevel, baseLevel = getTrainingBaseLevelForCalculat
             trainingIndex: index + 1,
             label: `Treino ${index + 1}`,
             coins: successRow ? 1 : 0,
-            failCoins: failRow ? 1 : 0,
+            failCoins: 0,
             successPlates: successRow?.plates || 0,
             failPlates: failRow?.plates || 0
         };
@@ -17052,10 +17770,14 @@ function renderTrainingResults(){
     summary.className = 'training-summary-grid';
     summary.append(
         createTrainingMaterialCard({ label: 'Golden Coins', value: totals.coins, detail: `${level} -> 100`, image: 'calculadora/golden_coin.gif', tone: 'coin' }),
-        createTrainingMaterialCard({ label: 'Golden Coins (F)', value: totals.failCoins, detail: 'Estimativa de falhas', image: 'calculadora/golden_coin.gif', tone: 'coin' }),
-        createTrainingMaterialCard({ label: 'Plates (S)', value: totals.successPlates, detail: 'Treinos com sucesso', image: 'calculadora/plate.gif', tone: 'success' }),
-        createTrainingMaterialCard({ label: 'Plates (F)', value: totals.failPlates, detail: 'Estimativa de falhas', image: 'calculadora/plate.gif', tone: 'fail' })
+        createTrainingMaterialCard({ label: 'Plates (S)', value: totals.successPlates, detail: 'Treinos com sucesso', image: 'calculadora/plate.gif', tone: 'success' })
     );
+    if(totals.failCoins > 0){
+        summary.append(createTrainingMaterialCard({ label: 'Golden Coins (F)', value: totals.failCoins, detail: 'Estimativa de falhas', image: 'calculadora/golden_coin.gif', tone: 'coin' }));
+    }
+    if(totals.failPlates > 0){
+        summary.append(createTrainingMaterialCard({ label: 'Plates (F)', value: totals.failPlates, detail: 'Estimativa de falhas', image: 'calculadora/plate.gif', tone: 'fail' }));
+    }
     if(variant === 'shiny'){
         summary.append(createTrainingMaterialCard({
             label: 'Shining Plates',
@@ -17107,16 +17829,30 @@ function renderTrainingResults(){
     const tableWrap = document.createElement('div');
     tableWrap.className = 'training-detail-table__wrap';
     const table = document.createElement('table');
-    table.innerHTML = '<thead><tr><th>Treino</th><th>Coins (S)</th><th>Coins (F)</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>';
+    const hasFailCoins = totals.failCoins > 0;
+    const hasFailPlates = totals.failPlates > 0;
+    table.innerHTML = hasFailCoins
+        ? '<thead><tr><th>Treino</th><th>Coins (S)</th><th>Coins (F)</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>'
+        : hasFailPlates
+            ? '<thead><tr><th>Treino</th><th>Coins</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>'
+            : '<thead><tr><th>Treino</th><th>Coins</th><th>Plates</th></tr></thead>';
     const body = document.createElement('tbody');
     totals.rows.forEach(row => {
         const tr = document.createElement('tr');
         if(row.trainingIndex % 10 === 0) tr.className = 'training-detail-table__decade';
-        tr.innerHTML = `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.failCoins || 0}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`;
+        tr.innerHTML = hasFailCoins
+            ? `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.failCoins || 0}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`
+            : hasFailPlates
+                ? `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`
+                : `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.successPlates}</td>`;
         body.appendChild(tr);
     });
     const footer = document.createElement('tfoot');
-    footer.innerHTML = `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.failCoins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`;
+    footer.innerHTML = hasFailCoins
+        ? `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.failCoins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`
+        : hasFailPlates
+            ? `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`
+            : `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th></tr>`;
     table.append(body, footer);
     tableWrap.appendChild(table);
     detail.append(detailSummary, tableWrap);
@@ -17189,8 +17925,12 @@ function updateRangeResults(){
             html += `<p><strong>${t('shiningStonesLabel')}:</strong> <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span></p>`;
         }
         html += `<p><strong>${t('goldCoinsLabel')}:</strong> <span class="num" data-value="${totals.coins}">${totals.coins.toLocaleString()}</span></p>`;
-        html += `<p><strong>${t('goldCoinsLabel')} (F):</strong> <span class="num" data-value="${failGoldCount}">${failGoldCount.toLocaleString()}</span></p>`;
-        html += `<p><strong>Plates (F):</strong> <span class="num" data-value="${failPlateCount}">${failPlateCount.toLocaleString()}</span></p>`;
+        if(failGoldCount > 0){
+            html += `<p><strong>${t('goldCoinsLabel')} (F):</strong> <span class="num" data-value="${failGoldCount}">${failGoldCount.toLocaleString()}</span></p>`;
+        }
+        if(failPlateCount > 0){
+            html += `<p><strong>Plates (F):</strong> <span class="num" data-value="${failPlateCount}">${failPlateCount.toLocaleString()}</span></p>`;
+        }
         const materialsHtml = t('calcInfoItems')
             .replace('{elementItems}', `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span>`)
             .replace('{charItems}', `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span>`)
@@ -19057,7 +19797,12 @@ function updateUrl(options = {}){
                       (contentTimes && !contentTimes.hidden) ? 'times' :
                       (contentTeamBuilder && !contentTeamBuilder.hidden) ? 'team-builder' :
                       (contentHuntBuilder && !contentHuntBuilder.hidden) ? 'hunt-builder' :
+                      (contentRotomPhone && !contentRotomPhone.hidden) ? 'rotom-phone' :
+                      (contentPoliceOperation && !contentPoliceOperation.hidden) ? 'police-operation' :
+                      (contentSlowpokeWell && !contentSlowpokeWell.hidden) ? 'slowpoke-well' :
+                      (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
+                      (contentBossesInfo && !contentBossesInfo.hidden) ? 'bosses-info' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
                       tabFossilsBtn.classList.contains('active') ? 'fossils' :
                       tabCalcBtn.classList.contains('active') ? 'calculator' :
@@ -19196,7 +19941,10 @@ function updateUrl(options = {}){
             }
         }
     }catch(e){}
-    const newUrl = routePath + (query ? `?${query}` : '');
+    const routeHash = activeTab === 'profissoes' && activeProfessionKey
+        ? `#${encodeURIComponent(activeProfessionKey)}`
+        : '';
+    const newUrl = routePath + (query ? `?${query}` : '') + routeHash;
     if(historyMode === 'push'){
         history.pushState(null, '', newUrl);
     } else {
@@ -20356,6 +21104,7 @@ setupZoomableImageModal(fishingModal, fishingViewport, fishingCanvas, fishingIma
 setupZoomableImageModal(baitLocationModal, baitLocationViewport, baitLocationCanvas, baitLocationImage);
 setupZoomableImageModal(fossilLocationModal, fossilLocationViewport, fossilLocationCanvas, fossilLocationImage);
 setupZoomableImageModal(maniacsLocationModal, maniacsLocationViewport, maniacsLocationCanvas, maniacsLocationImage);
+setupZoomableImageModal(bossesInfoLocationModal, bossesInfoLocationViewport, bossesInfoLocationCanvas, bossesInfoLocationImage);
 setupRespawnsModal();
 
 if(matrixBtn){
@@ -24262,7 +25011,7 @@ function syncHomeLandingFocusSummary(cards = []){
         if(!homeTools) return;
 
         // Order to present on the landing page (must match sidebar group keys)
-        const preferredOrder = ['bosses','systems','utilities','community'];
+        const preferredOrder = ['bosses','quests','systems','utilities','community'];
 
         const sidebarGroups = Array.from(document.querySelectorAll('.sidebar-group'))
             .map(group => {
@@ -24495,7 +25244,7 @@ function syncHomeLandingFocusSummary(cards = []){
         const homeTools = document.querySelector('.home-landing__tools');
         if(!homeTools) return;
 
-        const preferredOrder = ['bosses','systems','utilities','community'];
+        const preferredOrder = ['bosses','quests','systems','utilities','community'];
         const isActionableItem = (item) => Boolean(item && (item.navTarget || item.navAction || item.href));
         const assignHomeCardControlData = (control, item) => {
             if(!(control instanceof HTMLElement) || !item) return;
