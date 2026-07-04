@@ -13763,27 +13763,92 @@ function initializeProfessionsImageModal(){
     const image = document.getElementById('profession-image-modal-image');
     const title = document.getElementById('profession-image-modal-title');
     const closeBtn = modal?.querySelector('.modal-close') || null;
+    const prevBtn = modal?.querySelector('[data-profession-image-nav="prev"]') || null;
+    const nextBtn = modal?.querySelector('[data-profession-image-nav="next"]') || null;
     if(!modal || !viewport || !canvas || !image) return;
 
     setupZoomableImageModal(modal, viewport, canvas, image);
+    let currentImageGroup = [];
+    let currentImageIndex = -1;
+
+    const getProfessionImageCaption = (sourceImage) => sourceImage.closest('figure')?.querySelector('figcaption')?.textContent?.trim()
+        || sourceImage.getAttribute('alt')
+        || 'Imagem';
+
+    const getProfessionImageGroupContainer = (sourceImage) => {
+        const selectors = [
+            '.profession-rank-gallery article',
+            '.profession-image-stack',
+            '.profession-craft-grid',
+            '.profession-resource-preview',
+            '.profession-inline-figure',
+            'figure'
+        ];
+        for(const selector of selectors){
+            const container = sourceImage.closest(selector);
+            if(container) return container;
+        }
+        return sourceImage.parentElement || contentProfessions;
+    };
+
+    const getProfessionImageGroup = (sourceImage) => {
+        const container = getProfessionImageGroupContainer(sourceImage);
+        if(!container) return [sourceImage];
+        return Array.from(container.querySelectorAll('img')).filter(candidate => {
+            if(candidate.id === 'profession-image-modal-image') return false;
+            if(candidate.closest('[data-profession-select]')) return false;
+            return candidate instanceof HTMLImageElement;
+        });
+    };
+
+    const updateProfessionImageNav = () => {
+        const hasNavigation = currentImageGroup.length > 1;
+        if(prevBtn) prevBtn.hidden = !hasNavigation;
+        if(nextBtn) nextBtn.hidden = !hasNavigation;
+        if(prevBtn) prevBtn.disabled = !hasNavigation;
+        if(nextBtn) nextBtn.disabled = !hasNavigation;
+    };
+
+    const setModalImageFromSource = (sourceImage) => {
+        if(!(sourceImage instanceof HTMLImageElement)) return false;
+        const src = sourceImage.currentSrc || sourceImage.getAttribute('src') || '';
+        if(!src) return false;
+        const caption = getProfessionImageCaption(sourceImage);
+        image.src = src;
+        image.alt = sourceImage.getAttribute('alt') || caption;
+        if(title) title.textContent = caption;
+        updateProfessionImageNav();
+        if(modal.getAttribute('aria-hidden') === 'false' && typeof modal._onOpen === 'function'){
+            modal._onOpen();
+        }
+        return true;
+    };
+
+    const navigateProfessionImage = (direction) => {
+        if(currentImageGroup.length <= 1) return;
+        const step = direction === 'prev' ? -1 : 1;
+        const nextIndex = (currentImageIndex + step + currentImageGroup.length) % currentImageGroup.length;
+        const nextImage = currentImageGroup[nextIndex];
+        if(setModalImageFromSource(nextImage)){
+            currentImageIndex = nextIndex;
+        }
+    };
 
     const closeModal = () => {
         if(modal.getAttribute('aria-hidden') === 'true') return;
         modal.setAttribute('aria-hidden', 'true');
+        currentImageGroup = [];
+        currentImageIndex = -1;
+        updateProfessionImageNav();
         if(typeof modal._onClose === 'function') modal._onClose();
         syncBasicModalPageState();
     };
 
     const openImage = (sourceImage) => {
         if(!(sourceImage instanceof HTMLImageElement)) return;
-        const src = sourceImage.currentSrc || sourceImage.getAttribute('src') || '';
-        if(!src) return;
-        const caption = sourceImage.closest('figure')?.querySelector('figcaption')?.textContent?.trim()
-            || sourceImage.getAttribute('alt')
-            || 'Imagem';
-        image.src = src;
-        image.alt = sourceImage.getAttribute('alt') || caption;
-        if(title) title.textContent = caption;
+        currentImageGroup = getProfessionImageGroup(sourceImage);
+        currentImageIndex = Math.max(0, currentImageGroup.indexOf(sourceImage));
+        if(!setModalImageFromSource(sourceImage)) return;
         modal.setAttribute('aria-hidden', 'false');
         syncBasicModalPageState();
         if(typeof modal._onOpen === 'function') modal._onOpen();
@@ -13817,12 +13882,24 @@ function initializeProfessionsImageModal(){
     });
 
     if(closeBtn) closeBtn.addEventListener('click', closeModal);
+    if(prevBtn) prevBtn.addEventListener('click', () => navigateProfessionImage('prev'));
+    if(nextBtn) nextBtn.addEventListener('click', () => navigateProfessionImage('next'));
     modal.addEventListener('click', (event) => {
         if(event.target === modal) closeModal();
     });
     window.addEventListener('keydown', (event) => {
-        if(event.key === 'Escape') closeModal();
+        if(modal.getAttribute('aria-hidden') === 'true') return;
+        if(event.key === 'Escape'){
+            closeModal();
+        } else if(event.key === 'ArrowLeft'){
+            event.preventDefault();
+            navigateProfessionImage('prev');
+        } else if(event.key === 'ArrowRight'){
+            event.preventDefault();
+            navigateProfessionImage('next');
+        }
     });
+    updateProfessionImageNav();
 
     professionsImageModalInitialized = true;
 }
