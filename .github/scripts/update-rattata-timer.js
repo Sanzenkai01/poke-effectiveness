@@ -16,7 +16,7 @@ const RAT_ESCAPE_EXPECTED_OFFSET_MS = 0;
 const RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
 const MONITOR_MS = Math.max(30 * 1000, Number(process.env.RAT_MONITOR_MS || 24 * 60 * 1000));
 const JOIN_DELAY_MS = 500;
-const MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
+const MAX_CACHE_AGE_MS = (2 * RAT_INTERVAL_MS) + (5 * 60 * 1000);
 
 function normalizeChannelName(name){
   return (name || '').toString().trim().replace(/^#/, '').toLowerCase();

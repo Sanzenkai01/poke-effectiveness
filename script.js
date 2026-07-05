@@ -14350,7 +14350,7 @@ function computeTwitchCredentialsFingerprint(){
     return String(h);
 }
 const STREAMER_RAT_CLOCK_SKEW_TOLERANCE_MS = 5 * 1000;
-const STREAMER_RAT_MAX_CACHE_AGE_MS = 8 * 60 * 60 * 1000;
+const STREAMER_RAT_MAX_CACHE_AGE_MS = (2 * STREAMER_RAT_INTERVAL_MS) + (5 * 60 * 1000);
 const STREAMER_RAT_RECONNECT_DELAY_MS = 5000;
 const STREAMER_RAT_JOIN_DELAY_MS = 900;
 let homeStreamerInfoRequestToken = 0;

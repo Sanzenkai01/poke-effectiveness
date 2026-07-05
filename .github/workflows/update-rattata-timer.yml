@@ -1,6 +1,7 @@
 name: Update Rattata Timer
 
 permissions:
+  actions: write
   contents: write
 
 on:
@@ -11,8 +12,13 @@ on:
       - '.github/workflows/update-rattata-timer.yml'
       - '.github/scripts/update-rattata-timer.js'
   schedule:
-    - cron: '3,13,23,33,43,53 * * * *'
-  workflow_dispatch: {}
+    - cron: '3 * * * *'
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: 'Queue another monitor run after this one finishes'
+        required: false
+        default: 'true'
 
 concurrency:
   group: streamers-data-branch
@@ -74,3 +80,10 @@ jobs:
               git push -u origin streamers-data --force
             fi
           fi
+
+      - name: Queue next Rattata timer monitor
+        if: ${{ success() && (github.event_name == 'schedule' || inputs.chain == 'true') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run update-rattata-timer.yml --repo "${{ github.repository }}" --ref main -f chain=true
