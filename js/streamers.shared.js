@@ -67,6 +67,7 @@
         { name: 'gokutibia' },
         { name: 'nandinhosz', supportsDrops: false },
         { name: 'itscaim', supportsDrops: false },
+        { name: 'mataradz8', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
