@@ -6,20 +6,16 @@ permissions:
 on:
   schedule:
     - cron: '3 * * * *'
-    - cron: '13 * * * *'
-    - cron: '23 * * * *'
-    - cron: '33 * * * *'
-    - cron: '43 * * * *'
-    - cron: '53 * * * *'
   workflow_dispatch: {}
 
 concurrency:
   group: streamers-status-branch
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 70
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,37 +27,52 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Build streamer status snapshot
+      - name: Update streamer status snapshots
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_OAUTH_TOKEN: ${{ secrets.TWITCH_OAUTH_TOKEN }}
-        run: |
-          node .github/scripts/update-streamers-status.js
-
-      - name: Commit streamers-status.json to streamers-data branch
-        env:
           REPO_PAT: ${{ secrets.REPO_PAT }}
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p /tmp/poke-streamers-data
-          cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
-          rm -f streamers-status.json
-          git fetch origin
-          if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
-            git checkout -B streamers-data origin/streamers-data
-          else
-            git checkout -B streamers-data
+
+          iterations=1
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            iterations=6
           fi
-          cp /tmp/poke-streamers-data/streamers-status.json streamers-status.json
-          git add streamers-status.json
-          if git diff --cached --quiet; then
-            echo "No changes to streamers-status.json"
-          else
-            git commit -m "chore: update streamers status"
-            if [ -n "$REPO_PAT" ]; then
-              git push "https://${REPO_PAT}@github.com/${{ github.repository }}" streamers-data
+
+          for iteration in $(seq 1 "$iterations"); do
+            echo "Streamer status refresh $iteration/$iterations"
+            git checkout --force "$GITHUB_SHA"
+            rm -f streamers-status.json
+            node .github/scripts/update-streamers-status.js
+
+            mkdir -p /tmp/poke-streamers-data
+            cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
+            rm -f streamers-status.json
+
+            git fetch origin streamers-data
+            if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
+              git checkout -B streamers-data origin/streamers-data
             else
-              git push -u origin streamers-data
+              git checkout -B streamers-data
             fi
-          fi
+
+            cp /tmp/poke-streamers-data/streamers-status.json streamers-status.json
+            git add streamers-status.json
+            if git diff --cached --quiet; then
+              echo "No changes to streamers-status.json"
+            else
+              git commit -m "chore: update streamers status"
+              if [ -n "$REPO_PAT" ]; then
+                git push "https://${REPO_PAT}@github.com/${{ github.repository }}" streamers-data
+              else
+                git push -u origin streamers-data
+              fi
+            fi
+
+            if [ "$iteration" -lt "$iterations" ]; then
+              sleep 600
+            fi
+          done
