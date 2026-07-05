@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-05T05:36:52.378Z",
-  "refreshMs": 2400000,
+  "updatedAt": "2026-07-05T06:18:54.641Z",
+  "refreshMs": 60000,
   "intervalMs": 1200000,
-  "source": "github-action-twitch-chat",
+  "source": "manual-rattata-correction",
   "monitor": {
-    "startedAt": "2026-07-05T05:12:51.863Z",
-    "endedAt": "2026-07-05T05:36:52.378Z",
-    "reason": "timeout",
+    "startedAt": "2026-07-05T06:18:54.641Z",
+    "endedAt": "2026-07-05T06:18:54.641Z",
+    "reason": "manual-correction",
     "candidateChannels": [
       "adivorcio",
       "hyoogplays",
@@ -79,10 +79,19 @@
     "pstoryDropChannels": [
       "adivorcio"
     ],
-    "observedChannels": [],
+    "observedChannels": [
+      "manual"
+    ],
     "observedSpawnChannels": [],
     "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedRatMessages": [
+      {
+        "channel": "manual",
+        "kind": "manual-report",
+        "messageAt": 1783231980000,
+        "messageText": "Rattata ativado conforme reporte manual as 03:13."
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -130,16 +139,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "indypereira",
-    "lastMessageAt": 1783208469142,
-    "expectedNextAt": 1783209729142,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-07-04T23:06:09Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1783208469268,
-    "persistedAt": 1783228371862
+    "channel": "manual",
+    "lastMessageAt": 1783231980000,
+    "expectedNextAt": 1783233180000,
+    "lastMessageText": "Rattata ativado conforme reporte manual as 03:13.",
+    "streamStartedAt": "",
+    "source": "manual-report-escape",
+    "updatedAt": 1783232334641,
+    "persistedAt": 1783232334641
   },
   "timers": {
+    "manual": {
+      "channel": "manual",
+      "lastMessageAt": 1783231980000,
+      "expectedNextAt": 1783233180000,
+      "lastMessageText": "Rattata ativado conforme reporte manual as 03:13.",
+      "streamStartedAt": "",
+      "source": "manual-report-escape",
+      "updatedAt": 1783232334641,
+      "persistedAt": 1783232334641
+    },
     "indypereira": {
       "channel": "indypereira",
       "lastMessageAt": 1783208469142,
