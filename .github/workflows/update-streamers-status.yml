@@ -1,21 +1,27 @@
 name: Update Streamer Status
 
 permissions:
+  actions: write
   contents: write
 
 on:
   schedule:
     - cron: '3 * * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: 'Queue another refresh after 10 minutes'
+        required: false
+        default: 'true'
 
 concurrency:
   group: streamers-status-branch
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,42 +43,39 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          iterations=1
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            iterations=6
+          echo "Streamer status refresh"
+          git checkout --force "$GITHUB_SHA"
+          rm -f streamers-status.json
+          node .github/scripts/update-streamers-status.js
+
+          mkdir -p /tmp/poke-streamers-data
+          cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
+          rm -f streamers-status.json
+
+          git fetch origin streamers-data
+          if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
+            git checkout -B streamers-data origin/streamers-data
+          else
+            git checkout -B streamers-data
           fi
 
-          for iteration in $(seq 1 "$iterations"); do
-            echo "Streamer status refresh $iteration/$iterations"
-            git checkout --force "$GITHUB_SHA"
-            rm -f streamers-status.json
-            node .github/scripts/update-streamers-status.js
-
-            mkdir -p /tmp/poke-streamers-data
-            cp streamers-status.json /tmp/poke-streamers-data/streamers-status.json
-            rm -f streamers-status.json
-
-            git fetch origin streamers-data
-            if git show-ref --verify --quiet refs/remotes/origin/streamers-data; then
-              git checkout -B streamers-data origin/streamers-data
+          cp /tmp/poke-streamers-data/streamers-status.json streamers-status.json
+          git add streamers-status.json
+          if git diff --cached --quiet; then
+            echo "No changes to streamers-status.json"
+          else
+            git commit -m "chore: update streamers status"
+            if [ -n "$REPO_PAT" ]; then
+              git push "https://${REPO_PAT}@github.com/${{ github.repository }}" streamers-data
             else
-              git checkout -B streamers-data
+              git push -u origin streamers-data
             fi
+          fi
 
-            cp /tmp/poke-streamers-data/streamers-status.json streamers-status.json
-            git add streamers-status.json
-            if git diff --cached --quiet; then
-              echo "No changes to streamers-status.json"
-            else
-              git commit -m "chore: update streamers status"
-              if [ -n "$REPO_PAT" ]; then
-                git push "https://${REPO_PAT}@github.com/${{ github.repository }}" streamers-data
-              else
-                git push -u origin streamers-data
-              fi
-            fi
-
-            if [ "$iteration" -lt "$iterations" ]; then
-              sleep 600
-            fi
-          done
+      - name: Queue next streamer status refresh
+        if: ${{ success() && (github.event_name == 'schedule' || inputs.chain == 'true') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 600
+          gh workflow run update-streamers-status.yml --repo "${{ github.repository }}" --ref main -f chain=true
