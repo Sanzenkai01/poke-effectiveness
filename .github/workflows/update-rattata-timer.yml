@@ -39,6 +39,11 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Mark Rattata monitor window
+        id: rattata-window
+        run: |
+          echo "started_at=$(date +%s)" >> "$GITHUB_OUTPUT"
+
       - name: Build streamer status snapshot
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
@@ -86,4 +91,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          elapsed=$(( $(date +%s) - ${{ steps.rattata-window.outputs.started_at }} ))
+          if [ "$elapsed" -lt 600 ]; then
+            sleep $((600 - elapsed))
+          fi
           gh workflow run update-rattata-timer.yml --repo "${{ github.repository }}" --ref main -f chain=true

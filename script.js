@@ -15172,8 +15172,18 @@ function applyServerStreamerRatTimerPayload(payload){
     if(!payload || !payload.timers) return false;
 
     const now = Date.now();
+    const timerEntries = Object.entries(payload.timers || {});
+    if(timerEntries.length === 0){
+        const previousChannels = Array.from(streamerRatTimerState.keys());
+        streamerRatTimerState.clear();
+        persistStreamerRatTimerState();
+        previousChannels.forEach(channel => notifyStreamerRatTimerListeners(channel));
+        streamerRatTimerPayloadLoadedAt = Date.now();
+        return true;
+    }
+
     let applied = 0;
-    Object.entries(payload.timers || {}).forEach(([channel, value]) => {
+    timerEntries.forEach(([channel, value]) => {
         const normalizedState = normalizeStreamerRatTimerSnapshot(channel, value, {
             now
         });
