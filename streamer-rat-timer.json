@@ -1,17 +1,19 @@
 {
-  "updatedAt": "2026-07-05T22:26:09.554Z",
+  "updatedAt": "2026-07-05T22:45:21.767Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-05T22:25:55.666Z",
-    "endedAt": "2026-07-05T22:26:09.554Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-05T22:36:16.203Z",
+    "endedAt": "2026-07-05T22:45:21.767Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
       "dragonslayerpiva",
+      "sharxera",
       "eaisantinho",
       "hyoogplays",
+      "imfoxyy",
       "itscaim",
       "lucasnaikan",
       "adivorcio",
@@ -33,7 +35,6 @@
       "gokutibia",
       "gordallink",
       "guixprox",
-      "imfoxyy",
       "indypereira",
       "kaminarifoxy",
       "karlin_nara",
@@ -67,7 +68,6 @@
       "santbarbernsgames",
       "serpion_sk",
       "shadolas1",
-      "sharxera",
       "sousupermeme",
       "strackzera",
       "suximy",
@@ -79,25 +79,34 @@
     ],
     "pstoryDropChannels": [
       "callmevitao_",
-      "dragonslayerpiva"
+      "dragonslayerpiva",
+      "sharxera"
     ],
     "observedChannels": [
-      "callmevitao_"
+      "sharxera"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "sharxera"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "sharxera",
+        "messageAt": 1783291521662,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "callmevitao_",
+        "channel": "sharxera",
         "kind": "rattata-message",
-        "messageAt": 1783290369475,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1783291521662,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "callmevitao_",
-        "kind": "escape",
-        "messageAt": 1783290369475,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "sharxera",
+        "kind": "spawn",
+        "messageAt": 1783291521662,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -147,16 +156,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "callmevitao_",
-    "lastMessageAt": 1783290369475,
-    "expectedNextAt": 1783291569475,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-05T19:11:27Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1783290369554,
-    "persistedAt": 1783290369554
+    "channel": "sharxera",
+    "lastMessageAt": 1783291521662,
+    "expectedNextAt": 1783292781662,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-05T22:34:50Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1783291521767,
+    "persistedAt": 1783291521767
   },
   "timers": {
+    "sharxera": {
+      "channel": "sharxera",
+      "lastMessageAt": 1783291521662,
+      "expectedNextAt": 1783292781662,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-05T22:34:50Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1783291521767,
+      "persistedAt": 1783291521767
+    },
     "callmevitao_": {
       "channel": "callmevitao_",
       "lastMessageAt": 1783290369475,
@@ -165,7 +184,7 @@
       "streamStartedAt": "2026-07-05T19:11:27Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783290369554,
-      "persistedAt": 1783290369554
+      "persistedAt": 1783290976202
     }
   }
 }
