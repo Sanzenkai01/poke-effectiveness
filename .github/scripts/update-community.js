@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs').promises;
 const path = require('path');
-// no direct git actions here; workflow will create a PR when files change
+// sem acoes diretas de git aqui; o workflow cria um PR quando os arquivos mudam
 
 const YT_API_KEY = process.env.YOUTUBE_API_KEY;
 if(!YT_API_KEY){
@@ -71,7 +71,7 @@ async function run(){
   await fs.writeFile(fp, JSON.stringify(out, null, 2), 'utf8');
   console.log('Wrote', fp);
 
-  // The file is written; the workflow will create a pull request if changes exist.
+// O arquivo foi escrito; o workflow cria um pull request se houver mudancas.
   console.info('community.json written. Workflow will create a PR if changes are present.');
 }
 

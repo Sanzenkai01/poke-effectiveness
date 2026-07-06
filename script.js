@@ -1,4 +1,4 @@
-// Helper to clear all tab highlights
+// Funcao auxiliar para limpar todos os destaques das abas
 function clearTabHighlights() {
     [tabEffectBtn, tabFossilsBtn, tabCalcBtn, tabCatchBtn, tabSpeedstersBtn, tabStreamersBtn, tabCommunityBtn].forEach(btn => {
         if (btn) {
@@ -14,7 +14,7 @@ function setActiveTabTheme(tabName) {
     }
 }
 
-// Apply highlighted prompt text to the top label in the Catch panel
+// Aplicar o texto destacado do prompt ao rotulo superior do painel Catch
 function applyCatchTopLabelHighlight(){
     try{
         const catchTopLabelEl = document.querySelector('.catch-target-picker .catch-variant-group__label');
@@ -24,10 +24,10 @@ function applyCatchTopLabelHighlight(){
             catchTopLabelEl.innerHTML = '';
             catchTopLabelEl.appendChild(strong);
         }
-    }catch(e){/* ignore */}
+    }catch(e){/* ignorar */}
 }
 
-// if opened via file:// the fetch will fail; warn user early
+// Se abrir via file://, o fetch falha; avisar o usuario cedo
 if(location.protocol === 'file:'){
     window.addEventListener('load', ()=>{
         alert('O site precisa ser servido por HTTP. Inicie um servidor (por exemplo python -m http.server) e acesse via http://localhost:8000');
@@ -96,7 +96,7 @@ const boostStarResults = document.getElementById('boost-star-results');
 const boostTotalResults = document.getElementById('boost-total-results');
 const boostHelpPanel = document.getElementById('boost-help-panel');
 
-// safe flag for GSAP – if CDN fails this prevents errors
+// Flag segura para GSAP; se o CDN falhar, isso evita erros
 const useGsap = typeof gsap !== 'undefined';
 
 let fossilSelections = [];
@@ -315,11 +315,11 @@ let activeTeamEntry = null;
 let timesDetailsLastFocus = null;
 let timesDetailsKeyHandler = null;
 let teamModalHistoryPushed = false;
-// If the page was loaded directly with a deep-link to a pokemon
-// (eg /pokemon/001 or /pokemons/mega-charizard) this holds the
-// requested route token until the catalog is loaded.
+// Se a pagina foi carregada diretamente com um deep-link para um Pokemon
+// (ex: /pokemon/001 ou /pokemons/mega-charizard), isso guarda o
+// token de rota pedido ate o catalogo carregar.
 let initialDeepLinkedPokemonRouteToken = null;
-// Tracks whether we created a history entry for the open pokemon modal.
+// Rastreia se criamos uma entrada de historico para o modal aberto do Pokemon.
 let pokemonModalHistoryPushed = false;
 let globalSearchInitialized = false;
 let globalSearchHydrated = false;
@@ -560,7 +560,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Larvitar', 'Pupitar'],
     ['Pupitar', 'Tyranitar']
     ,
-    // Generation 3 evolutions
+    // Evolucoes da geracao 3
     ['Treecko', 'Grovyle'],
     ['Grovyle', 'Sceptile'],
     ['Torchic', 'Combusken'],
@@ -629,7 +629,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Goomy', 'Sliggoo'],
     ['Sliggoo', 'Goodra']
     ,
-    // Generation 4 evolutions
+    // Evolucoes da geracao 4
     ['Turtwig', 'Grotle'],
     ['Grotle', 'Torterra'],
     ['Chimchar', 'Monferno'],
@@ -668,7 +668,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Snover', 'Abomasnow'],
     ['Eevee', 'Leafeon'],
     ['Eevee', 'Glaceon'],
-    // Generation 5 evolutions
+    // Evolucoes da geracao 5
     ['Snivy', 'Servine'],
     ['Servine', 'Serperior'],
     ['Tepig', 'Pignite'],
@@ -702,7 +702,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Cubchoo', 'Beartic'],
     ['Karrablast', 'Escavalier'],
     ['Ferroseed', 'Ferrothorn'],
-    // Generation 6 evolutions
+    // Evolucoes da geracao 6
     ['Chespin', 'Quilladin'],
     ['Quilladin', 'Chesnaught'],
     ['Fennekin', 'Braixen'],
@@ -726,7 +726,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Sliggoo', 'Goodra'],
     ['Phantump', 'Trevenant'],
     ['Noibat', 'Noivern'],
-    // Generation 7 evolutions
+    // Evolucoes da geracao 7
     ['Cutiefly', 'Ribombee'],
     ['Crabrawler', 'Crabominable'],
     ['Rockruff', 'Dusk Lycanroc'],
@@ -744,7 +744,7 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Wimpod', 'Golisopod'],
     ['Pikipek', 'Toucannon'],
     ['Grubbin', 'Vikavolt'],
-    // Generation 8 evolutions
+    // Evolucoes da geracao 8
     ['Grookey', 'Thwackey'],
     ['Thwackey', 'Rillaboom'],
     ['Scorbunny', 'Raboot'],
@@ -1428,7 +1428,7 @@ let activePokemonFilterDropdownController = null;
 let pokemonFilterUiListenersBound = false;
 const pokemonDecoratedFilterControllers = new Map();
 
-// Global delegated handler to guarantee the fossils Reset button always works
+// Manipulador delegado global para garantir que o botao de redefinicao dos fosseis sempre funcione
 if(!window._fossilResetGlobalAttached){
     document.addEventListener('click', (ev)=>{
         const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
@@ -1556,7 +1556,7 @@ function normalizePokemonDetailRouteToken(value){
 }
 
 function getPokemonDetailRouteMatch(pathname = location.pathname){
-    // Keep short numeric paths reserved for catalog pagination, e.g. /pokemon/2.
+    // Manter caminhos numericos curtos reservados para paginacao do catalogo, ex: /pokemon/2.
     const match = String(pathname || '').match(/\/pokemon(?:s)?\/((?:\d{3,}(?:-[a-z0-9]+)?)|(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*))\/?$/i);
     if(!match) return null;
     const routeToken = normalizePokemonDetailRouteToken(match[1]);
@@ -2010,31 +2010,31 @@ function getCommunityTopicItems(topic){
         }));
 }
 
-/* New community video loader
-   - Fetches videos from YouTube Data API (v3 search) for a topic hashtag
-   - Prefers the freshest server snapshot between /community.json and community-data
-   - Refreshes on topic entry only when the current data is stale
-   - Sorts by publishedAt (desc), then applies hashtag filter (case-insensitive)
-   - Limits displayed videos and logs debugging information
-   - Uses short-lived fallback cache plus a 24h persistent cache
+/* Novo loader de videos da comunidade
+   - Busca videos na YouTube Data API (v3 search) por hashtag do topico
+   - Prefere o snapshot de servidor mais recente entre /community.json e community-data
+   - Atualiza ao entrar no topico apenas quando os dados atuais estao desatualizados
+   - Ordena por publishedAt (desc), depois aplica filtro de hashtag sem diferenciar maiusculas
+   - Limita os videos exibidos e registra informacoes de debug
+   - Usa cache fallback de curta duracao junto com cache persistente de 24h
 */
 function getYouTubeApiKey(){
     try{ return (window.POKE_YT_API_KEY || localStorage.getItem('POKE_YT_API_KEY') || '').toString().trim(); }catch(e){ return ''; }
 }
-const COMMUNITY_FETCH_CACHE_TTL = 1000 * 60 * 5; // 5 minutes fallback cache
-const COMMUNITY_MAX_RESULTS = 50; // how many results to request from API
-const COMMUNITY_MAX_DISPLAY = 10; // how many to show after filtering/sorting
-const COMMUNITY_AUTO_REFRESH_MS = 1000 * 60 * 5; // default 5 minutes
+const COMMUNITY_FETCH_CACHE_TTL = 1000 * 60 * 5; // cache alternativo de 5 minutos
+const COMMUNITY_MAX_RESULTS = 50; // quantos resultados pedir da API
+const COMMUNITY_MAX_DISPLAY = 10; // quantos exibir depois de filtrar/ordenar
+const COMMUNITY_AUTO_REFRESH_MS = 1000 * 60 * 5; // padrao de 5 minutos
 let COMMUNITY_FETCH_LOCKS = {};
 let communityAutoRefreshTimer = null;
-// Last YouTube API error details (for debugging/fallback messaging)
+// Detalhes do ultimo erro da YouTube API (para depuracao/mensagem alternativa)
 let LAST_YT_API_ERROR = null;
-// Per-topic last fetch error (populated when API fetch fails)
+// Ultimo erro de fetch por topico (preenchido quando o fetch da API falha)
 let COMMUNITY_LAST_FETCH_ERROR = {};
-// When quota is exceeded, suspend further API calls for this duration
-const COMMUNITY_API_QUOTA_COOLDOWN_MS = 1000 * 60 * 30; // 30 minutes
+// Quando a cota estourar, suspender novas chamadas da API por esta duracao
+const COMMUNITY_API_QUOTA_COOLDOWN_MS = 1000 * 60 * 30; // 30 minutos
 let LAST_YT_QUOTA_EXCEEDED_UNTIL = 0;
-// Next scheduled daily refresh timestamp (ms since epoch) — for debug/inspection
+// Timestamp da proxima atualizacao diaria agendada (ms desde epoch) para depuracao/inspecao
 let NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
 
 function computeNextDailyRefreshTime(hour = 10, minute = 30){
@@ -2096,7 +2096,7 @@ function applyServerCommunityDataPayload(payload, source){
             } else {
                 COMMUNITY_FEED_TOPICS[key] = topic;
             }
-        }catch(e){/* ignore per-topic failures */}
+        }catch(e){/* ignorar falhas por topico */}
     });
     setCommunityDataSourceState(source, getCommunityPayloadUpdatedAt(payload));
     return true;
@@ -2119,8 +2119,8 @@ async function fetchServerCommunityPayload(url, source){
     }
 }
 
-// Try to load a server-generated community JSON (created by a scheduled job)
-// This allows updates to be applied even when client browsers were not open
+// Tentar carregar um JSON de comunidade gerado no servidor (criado por job agendado)
+// Isso permite aplicar atualizacoes mesmo quando navegadores clientes nao estavam abertos
 async function loadServerCommunityData(){
     const owner = 'Sanzenkai01';
     const repo = 'poke-effectiveness';
@@ -2155,7 +2155,7 @@ async function runDailyCommunityRefresh(){
     const topicKeys = Object.keys(COMMUNITY_FEED_TOPICS || {});
     for(const topicKey of topicKeys){
         try{
-            // Load each hashtag individually to avoid broad queries
+            // Carregar cada hashtag individualmente para evitar consultas amplas
             const changed = await loadCommunityVideos(topicKey, { force: true });
             if(changed && activeCommunityTopicKey === topicKey){
                 try{ renderCommunityFeedPanel(); }catch(e){}
@@ -2163,7 +2163,7 @@ async function runDailyCommunityRefresh(){
         }catch(err){
             console.error('Daily refresh error for topic', topicKey, err);
         }
-        // small delay between topic fetches to reduce burst rate
+        // Pequeno atraso entre fetches de topicos para reduzir rajadas
         await new Promise(r => setTimeout(r, 1200));
         if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
             console.warn('Aborting remaining daily refresh topics due to quota suspension');
@@ -2179,7 +2179,7 @@ function scheduleDailyCommunityRefresh(hour = 10, minute = 30){
     NEXT_DAILY_COMMUNITY_REFRESH_AT = next.getTime();
     communityAutoRefreshTimer = setTimeout(async function _dailyRunner(){
         try{ await runDailyCommunityRefresh(); }catch(e){ console.error('Error running scheduled daily community refresh', e); }
-        // schedule next occurrence (handles DST)
+        // Agendar a proxima ocorrencia (lida com horario de verao)
         try{ scheduleDailyCommunityRefresh(hour, minute); }catch(e){ console.error(e); }
     }, ms);
     console.info('Scheduled daily community refresh at', new Date(NEXT_DAILY_COMMUNITY_REFRESH_AT).toString());
@@ -2198,8 +2198,8 @@ function getCachedCommunityItems(topicKey){
 }
 function setCachedCommunityItems(topicKey, items){ try{ localStorage.setItem(_getCommunityCacheKey(topicKey), JSON.stringify({ts: Date.now(), items: limitCommunityItems(items)})); }catch(e){} }
 
-// Persistent cache for last-successful fetches (longer TTL so recent videos survive longer)
-const COMMUNITY_PERSISTENT_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+// Cache persistente para ultimos fetches bem-sucedidos (TTL maior para preservar videos recentes por mais tempo)
+const COMMUNITY_PERSISTENT_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 horas
 function _getPersistentCommunityCacheKey(topicKey){ return `community_persistent_cache_${topicKey}`; }
 function getPersistentCachedCommunityItems(topicKey){
     try{
@@ -2281,18 +2281,18 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
     if(!key) return null;
     if(!hashtag) return null;
 
-    // If we've previously detected a quota exhaustion, skip network calls until cooldown expires
+    // Se ja detectamos esgotamento de cota, pular chamadas de rede ate o cooldown expirar
     if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
         LAST_YT_API_ERROR = { message: 'YouTube API quota suspended', quota: true, resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString() };
         console.warn('YouTube API quota suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
         return null;
     }
-    // Strip leading '#' from the search term for canonical form
+    // Remover '#' inicial do termo de busca para a forma canonica
     const rawQuery = String(hashtag || '').replace(/^#/, '').trim();
     if(!rawQuery) return null;
     const lc = rawQuery.toLowerCase();
 
-    // First, try exact variants only to avoid broad matches leaking into specific topics
+    // Primeiro, tentar apenas variantes exatas para evitar que resultados amplos vazem para topicos especificos
     const initialVariants = [rawQuery, `#${rawQuery}`];
     const tried = [];
     const resultsAcc = [];
@@ -2320,7 +2320,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
             console.warn('YouTube API fetch failed', resp.status, resp.statusText, errText, 'query:', qRaw, 'quota:', isQuota);
 
             if(isQuota){
-                // mark cooldown window and stop auto refresh to avoid further quota usage
+                // Marcar janela de cooldown e parar atualizacao automatica para evitar mais uso de cota
                 LAST_YT_QUOTA_EXCEEDED_UNTIL = Date.now() + COMMUNITY_API_QUOTA_COOLDOWN_MS;
                 try{ stopCommunityAutoRefresh(); }catch(e){}
                 console.warn('YouTube API quota exceeded — suspending calls until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
@@ -2343,7 +2343,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
         return null;
     }
 
-    // If no results from exact variants, try broader variants (e.g., 'pstory')
+    // Se nao houver resultados das variantes exatas, tentar variantes mais amplas (ex: 'pstory')
     if(!resultsAcc.length){
         const broader = new Set();
         if(lc.startsWith('pstory')){
@@ -2370,7 +2370,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
         return null;
     }
 
-    // Deduplicate by id, keeping the latest publishedAt entry when duplicates exist
+    // Deduplicar por id, mantendo a entrada com publishedAt mais recente quando houver duplicatas
     const byId = {};
     resultsAcc.forEach(item => {
         if(!item || !item.id) return;
@@ -2385,9 +2385,9 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
 
     const combined = Object.values(byId);
 
-    // If the newest found video is older than RECENT_THRESHOLD_MS,
-    // attempt a targeted search limited to recent uploads (publishedAfter) for the same tried queries
-    const RECENT_THRESHOLD_MS = 1000 * 60 * 60 * 48; // 48 hours
+    // Se o video mais novo encontrado for mais antigo que RECENT_THRESHOLD_MS,
+    // tentar uma busca direcionada limitada a uploads recentes (publishedAfter) para as mesmas consultas testadas
+    const RECENT_THRESHOLD_MS = 1000 * 60 * 60 * 48; // 48 horas
     const newestTs = combined.reduce((acc, it) => {
         const t = Date.parse(it.snippet?.publishedAt || '') || 0;
         return Math.max(acc, t);
@@ -2459,7 +2459,7 @@ async function fetchVideosFromYouTubeRaw(hashtag, maxResults = COMMUNITY_MAX_RES
 
 async function loadCommunityVideos(topicKey, options = {}){
     const { force = false, maxResults = COMMUNITY_MAX_RESULTS } = options;
-    if(!getYouTubeApiKey()) return false; // no API key -> do not override manual lists
+    if(!getYouTubeApiKey()) return false; // sem chave de API -> nao sobrescrever listas manuais
     if(COMMUNITY_FETCH_LOCKS[topicKey]) return COMMUNITY_FETCH_LOCKS[topicKey];
 
     const promise = (async ()=>{
@@ -2467,7 +2467,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             const topic = COMMUNITY_FEED_TOPICS[topicKey];
             if(!topic) return false;
 
-            // If quota is suspended globally, do not attempt network fetches — use persistent/cache/local fallback
+            // Se a cota estiver suspensa globalmente, nao tentar fetches de rede; usar alternativa persistente/cache/local
             if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
                 console.warn('Skipping YouTube fetch for', topicKey, 'because quota is suspended until', new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString());
                 COMMUNITY_LAST_FETCH_ERROR[topicKey] = { message: 'YouTube API quota exceeded; using cached/local items', resumeAt: new Date(LAST_YT_QUOTA_EXCEEDED_UNTIL).toISOString(), quota: true };
@@ -2478,11 +2478,11 @@ async function loadCommunityVideos(topicKey, options = {}){
                     if(cached){ topic.items = cached; return false; }
                     const fallback = getCommunityTopicItems(topic).slice(0, COMMUNITY_MAX_DISPLAY);
                     if(fallback && fallback.length){ topic.items = fallback; setCachedCommunityItems(topicKey, topic.items); }
-                }catch(e){ /* ignore fallback failure */ }
+                }catch(e){ /* ignorar falha da alternativa */ }
                 return false;
             }
 
-            // If not forced, allow cache (short or persistent) to short-circuit
+            // Se nao for forcado, permitir que o cache (curto ou persistente) encerre cedo
             if(!force){
                 const cached = getCachedCommunityItems(topicKey);
                 if(cached) { topic.items = cached; return false; }
@@ -2493,7 +2493,7 @@ async function loadCommunityVideos(topicKey, options = {}){
             const raw = await fetchVideosFromYouTubeRaw(topic.hashtag, maxResults);
             if(!raw || !raw.length) {
                 console.info('No videos returned from YouTube for', topic.hashtag);
-                // Record per-topic error for UI feedback (grab last recorded error if any)
+                // Registrar erro por topico para feedback da UI (usar ultimo erro registrado, se houver)
                 const lastErrCopy = LAST_YT_API_ERROR ? { ...LAST_YT_API_ERROR } : { message: 'No results' };
                 if(Date.now() < LAST_YT_QUOTA_EXCEEDED_UNTIL){
                     lastErrCopy.quota = true;
@@ -2501,7 +2501,7 @@ async function loadCommunityVideos(topicKey, options = {}){
                 }
                 COMMUNITY_LAST_FETCH_ERROR[topicKey] = lastErrCopy;
 
-                // Fallback: prefer persistent cache, then static topic items (local list + metadata)
+                // Alternativa: preferir cache persistente, depois itens estaticos do topico (lista local + metadados)
                 try{
                     const persistentCached = getPersistentCachedCommunityItems(topicKey);
                     if(persistentCached && persistentCached.length){
@@ -2514,15 +2514,15 @@ async function loadCommunityVideos(topicKey, options = {}){
                             setCachedCommunityItems(topicKey, topic.items);
                         }
                     }
-                }catch(e){ /* ignore fallback failure */ }
+                }catch(e){ /* ignorar falha da alternativa */ }
 
                 return false;
             }
 
-            // clear any previous per-topic fetch error if we have results
+            // Limpar qualquer erro anterior de fetch do topico se houver resultados
             delete COMMUNITY_LAST_FETCH_ERROR[topicKey];
 
-            // Map required fields
+            // Mapear campos obrigatorios
             const mapped = raw.map(r => ({
                 id: r.id,
                 title: r.snippet.title || '',
@@ -2534,10 +2534,10 @@ async function loadCommunityVideos(topicKey, options = {}){
                 thumbnailUrl: r.snippet.thumbnails?.high?.url || getCommunityVideoThumbnailUrl(r.id)
             }));
 
-            // Sort by publishedAt desc
+            // Ordenar por publishedAt desc
             mapped.sort((a,b)=> new Date(b.publishedAt) - new Date(a.publishedAt));
 
-            // Prioritize items that explicitly contain the hashtag in title/description
+            // Priorizar itens que contem explicitamente a hashtag no titulo/descricao
             const needle = (topic.hashtag || '').replace(/^#/, '').toLowerCase();
             const matched = mapped.filter(v => {
                 const t = (v.title || '').toLowerCase();
@@ -2545,8 +2545,8 @@ async function loadCommunityVideos(topicKey, options = {}){
                 return (t.includes(needle) || d.includes(needle) || t.includes('#'+needle) || d.includes('#'+needle));
             });
 
-            // If there are explicit matches (title/description contains hashtag), show only those.
-            // Otherwise fall back to the mapped results returned by the API.
+            // Se houver matches explicitos (titulo/descricao contem a hashtag), mostrar apenas esses.
+            // Caso contrario, usar os resultados mapeados retornados pela API.
             let finalCandidates;
             if(matched.length){
                 finalCandidates = matched.slice(0, COMMUNITY_MAX_DISPLAY);
@@ -2556,7 +2556,7 @@ async function loadCommunityVideos(topicKey, options = {}){
 
             const final = finalCandidates.map(v=>({ id:v.id, title:v.title, channelName:v.channelName, channelUrl:v.channelUrl, publishedAt:v.publishedAt, thumbnailUrl:v.thumbnailUrl, description:v.description }));
 
-            // Debug logs (preserve useful output)
+            // Logs de depuracao (preservar saida util)
             try{
                 console.groupCollapsed(`Community loader: ${topicKey} ${topic.hashtag}`);
                 console.log('fetched_raw_count:', mapped.length);
@@ -2566,7 +2566,7 @@ async function loadCommunityVideos(topicKey, options = {}){
                 console.groupEnd();
             }catch(e){}
 
-            // Debug logs
+            // Logs de depuracao
             try{
                 console.groupCollapsed(`Community loader: ${topicKey} ${topic.hashtag}`);
                 console.log('fetched_raw_count:', mapped.length);
@@ -2582,7 +2582,7 @@ async function loadCommunityVideos(topicKey, options = {}){
 
             topic.items = final;
             setCachedCommunityItems(topicKey, topic.items);
-            // Persist last-successful fetch to longer-lived cache so recent videos remain available
+            // Persistir ultimo fetch bem-sucedido em cache mais longo para manter videos recentes disponiveis
             try{ setPersistentCachedCommunityItems(topicKey, topic.items); }catch(e){}
             setCommunityDataSourceState('live', Date.now(), { fallbackUpdatedAtToNow: true });
             return !same;
@@ -2597,7 +2597,7 @@ async function loadCommunityVideos(topicKey, options = {}){
 
 function startCommunityAutoRefresh(hour = 10, minute = 30){
     try{ stopCommunityAutoRefresh(); }catch(e){}
-    // Schedule a daily refresh at the given hour:minute (local time)
+    // Agendar uma atualizacao diaria no horario informado (hora:minuto local)
     try{ scheduleDailyCommunityRefresh(hour, minute); }catch(e){ console.error('Failed to schedule daily community refresh', e); }
 }
 function stopCommunityAutoRefresh(){
@@ -2607,12 +2607,12 @@ function stopCommunityAutoRefresh(){
     NEXT_DAILY_COMMUNITY_REFRESH_AT = null;
 }
 
-// Expose helper for debugging from console
+// Expor auxiliar para depuracao pelo console
 window.loadCommunityVideos = loadCommunityVideos;
 window.startCommunityAutoRefresh = startCommunityAutoRefresh;
 window.stopCommunityAutoRefresh = stopCommunityAutoRefresh;
 
-// Debug helper to inspect recent fetch errors, locks and cached items from console
+// Funcao auxiliar de depuracao para inspecionar erros recentes de fetch, locks e itens em cache pelo console
 window.getCommunityDebug = function(){
     try{
         return {
@@ -2799,16 +2799,16 @@ function openSiteYouTubeModal(options = {}){
     const { modal, content, closeBtn, title, note, player } = ensureSiteYouTubeModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
 
-    // Destroy any previous player instance if present
+    // Destruir qualquer instancia anterior do player, se existir
     if(siteYouTubeModalState?.playerInstance && typeof siteYouTubeModalState.playerInstance.destroy === 'function'){
         try{ siteYouTubeModalState.playerInstance.destroy(); }catch(e){}
         siteYouTubeModalState.playerInstance = null;
     }
 
-    // Clear player region
+    // Limpar regiao do player
     player.replaceChildren();
 
-    // Try to use the YouTube IFrame API to set playback quality; fallback to plain iframe
+    // Tentar usar a YouTube IFrame API para definir a qualidade; alternativa com iframe simples
     ensureYouTubeAPI().then(() => {
         const containerId = 'site-youtube-player';
         const existing = player.querySelector(`#${containerId}`);
@@ -2847,7 +2847,7 @@ function openSiteYouTubeModal(options = {}){
                 }
             });
         }catch(err){
-            // fallback to iframe if construction fails
+            // Alternativa com iframe se a construcao falhar
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
             iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
@@ -2859,7 +2859,7 @@ function openSiteYouTubeModal(options = {}){
             siteYouTubeModalState.playerInstance = null;
         }
     }).catch(() => {
-        // Fallback: insert iframe
+        // Alternativa: inserir iframe
         const iframe = document.createElement('iframe');
         iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1`;
         iframe.title = options.title ? `Vídeo do YouTube: ${options.title}` : 'Player de vídeo do YouTube';
@@ -2914,7 +2914,7 @@ function closeSiteYouTubeModal(options = {}){
     if(modal.getAttribute('data-open') !== 'true' && !player.childElementCount) return;
     const closeContext = siteYouTubeModalState.closeContext;
 
-    // Destroy YT player instance if present
+    // Destruir instancia do player YT, se existir
     if(siteYouTubeModalState?.playerInstance && typeof siteYouTubeModalState.playerInstance.destroy === 'function'){
         try{ siteYouTubeModalState.playerInstance.destroy(); }catch(e){}
         siteYouTubeModalState.playerInstance = null;
@@ -2963,7 +2963,7 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-// --- Site stream modal (Twitch) -------------------------------------------------
+// --- Modal de transmissao do site (Twitch) -------------------------------------
 let siteStreamModalState = null;
 let siteStreamModalPreviousOverflow = '';
 let siteStreamModalLastFocus = null;
@@ -3029,7 +3029,7 @@ function openSiteStreamModal(options = {}){
     const { modal, content, closeBtn, title, player } = ensureSiteStreamModal();
     const wasOpen = modal.getAttribute('data-open') === 'true';
 
-    // Clear previous player
+    // Limpar player anterior
     player.replaceChildren();
 
     const parentDomain = location.hostname || 'localhost';
@@ -3065,7 +3065,7 @@ function closeSiteStreamModal(options = {}){
     const { modal, player } = siteStreamModalState;
     if(modal.getAttribute('data-open') !== 'true' && !player.childElementCount) return;
 
-    // remove iframe/player
+    // Remover iframe/player
     player.replaceChildren();
     modal.setAttribute('data-open', 'false');
     modal.setAttribute('aria-hidden', 'true');
@@ -3402,7 +3402,7 @@ function activateSidebarTarget(button){
         window.setBossMode(requestedBossMode);
     }
 
-    // Ensure the URL reflects the newly opened target when navigation happens via the sidebar
+    // Garantir que a URL reflita o destino aberto quando a navegacao acontece pela sidebar
     try{
         if(typeof updateUrl === 'function') updateUrl();
     }catch(e){}
@@ -4099,13 +4099,13 @@ function setCommunityTopic(topicKey, options = {}){
     }
 
     renderCommunityFeedPanel();
-    // Refresh this topic on entry only when the current dataset is stale.
+    // Atualizar este topico ao entrar apenas quando o dataset atual estiver desatualizado.
     try{
         refreshCommunityTopicOnEntry(activeCommunityTopicKey).then(changed=>{
             if(changed) renderCommunityFeedPanel();
         }).catch(console.error);
     }catch(e){}
-    // start periodic refresh
+    // Iniciar atualizacao periodica
     try{ startCommunityAutoRefresh(); }catch(e){}
 
     if(!skipStorage){
@@ -4439,8 +4439,8 @@ const MANIACS_LOCATION_ENTRIES = Object.freeze([
     MANIACS_LOCATION_FUCHSIA,
     MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF
 ]);
-// Targets that should NOT render the compact location button inside the pokemon media
-// Instead the location image below the "Local" kicker will open the modal.
+// Alvos que NAO devem renderizar o botao compacto de local dentro da midia do Pokemon
+// Em vez disso, a imagem de local abaixo do kicker "Local" abre o modal.
 const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','dedenne','ribombee','hawlucha','cramorant']);
 const MANIACS_ESSENCE_ENTRIES = Object.freeze([
     { target: 'Orbeetle', hunt: 'Porygon' },
@@ -4607,7 +4607,7 @@ const strings = {
         elementItems: 'itens do elemento',
         charItems: 'itens característicos',
         stoneItems: 'pedras do elemento',
-        /* catch calculator */
+        /* calculadora de captura */
         catchTitle: 'Calculadora de Captura',
         catchEyebrow: '',
         catchDescription: '',
@@ -4654,7 +4654,7 @@ const strings = {
         catchLogSpentLabel: 'Gasto total',
         catchRemainingTitle: 'Ainda faltam',
         catchAchievedTitle: 'Status da média',
-        /* additional catch and calculator text */
+        /* texto adicional de captura e calculadora */
         ballElemental: 'Pokébola Elemental',
         ballStory: 'Pokébola Story',
         ballUltra: 'Pokébola Ultra',
@@ -4672,7 +4672,7 @@ const strings = {
         materialsForRangeLabel: 'Materiais para fabricar',
         roundedProductionLabel: 'Produção ajustada',
         shiningStonesLabel: 'Shining Stones',
-        /* new messages for log parsing */
+        /* novas mensagens para leitura de log */
         avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
         overAvg: 'Você passou da média por {over} {ball}.',
         encouragement: 'Continue assim, você está no caminho certo!',
@@ -5003,14 +5003,14 @@ function updateTextContent(){
     if(searchInput){
         searchInput.placeholder = 'Buscar tipo...';
     }
-    // fossil labels need explicit refresh
+    // Rotulos dos fosseis precisam de atualizacao explicita
     document.querySelectorAll('.fossil-label').forEach(span=>{
         const type = span.previousElementSibling?.dataset.type;
         if(type && strings[lang] && strings[lang][type.toLowerCase()]){
             span.textContent = strings[lang][type.toLowerCase()];
         }
     });
-    // alt text on fossil images also localized
+    // Texto alt das imagens de fosseis tambem localizado
     document.querySelectorAll('.fossil-img').forEach(img=>{
         const type = img.dataset.type;
         if(type){
@@ -5047,7 +5047,7 @@ function updateTextContent(){
         if(r.value === 'normal') r.nextSibling.textContent = t('normal');
         if(r.value === 'shiny') r.nextSibling.textContent = t('shiny');
     });
-    // translate selects & notes in catch calculator
+    // Traduzir selects e notas na calculadora de captura
     const ballSelectEl = document.getElementById('ball-select');
     if(ballSelectEl){
         const elOpt = ballSelectEl.querySelector('option[value="elemental"]');
@@ -5080,7 +5080,7 @@ function updateTextContent(){
     if(logInput) logInput.placeholder = t('logPlaceholder');
     const catchNoteEl = document.querySelector('.catch-note');
     if(catchNoteEl) catchNoteEl.textContent = t('catchNote');
-    // update calculator info paragraphs
+    // Atualizar paragrafos informativos da calculadora
     if(contentCalc){
         const calcInfo = contentCalc.querySelector('.calc-info');
         if(calcInfo){
@@ -5093,7 +5093,7 @@ function updateTextContent(){
         const shinyLabel = contentCalc.querySelector('label[for="shiny-plates"]');
         if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
     }
-    // translate range select options
+    // Traduzir opcoes do select de faixa
     if(rangeSelect){
         const map = {
             '50-100': '50 ao 100',
@@ -5106,7 +5106,7 @@ function updateTextContent(){
             if(opt) opt.textContent = map[val];
         });
     }
-    // catch UI labels
+    // Rotulos da UI de captura
     const ballLabel = document.querySelector('label[for="ball-select"]');
     if(ballLabel) ballLabel.textContent = t('ballChoiceLabel');
     const lvlLabel = document.querySelector('label[for="level-select"]');
@@ -5150,7 +5150,7 @@ function updateTextContent(){
     const catchSelectionPromptHintEl = document.getElementById('catch-selection-prompt-hint');
     if(catchSelectionPromptHintEl) catchSelectionPromptHintEl.textContent = t('catchSelectionPromptHint');
     // Substitui o rótulo 'Alvo' acima do campo Nome pelo texto destacado do prompt (mantém destaque)
-    try { applyCatchTopLabelHighlight(); } catch(e) { /* ignore */ }
+    try { applyCatchTopLabelHighlight(); } catch(e) { /* ignorar */ }
     const catchLogTitleEl = document.getElementById('catch-log-title');
     if(catchLogTitleEl) catchLogTitleEl.textContent = t('catchLogTitle');
     const catchLogHintEl = document.getElementById('catch-log-hint');
@@ -5207,8 +5207,8 @@ function updateTextContent(){
         resetBtn.setAttribute('aria-label', t('resetLabel'));
         resetBtn.title = t('resetLabel');
     }
-    // fossils-specific reset button
-    // Delegated fallback: ensure Reset works even if the direct handler wasn't attached
+    // Botao de redefinicao especifico de fosseis
+    // Alternativa delegada: garantir que a redefinicao funcione mesmo se o manipulador direto nao foi anexado
     if(false && !window._fossilResetDelegationAttached){
         document.addEventListener('click', (ev)=>{
             const btn = ev.target && ev.target.closest && ev.target.closest('#fossil-reset-btn');
@@ -5216,13 +5216,13 @@ function updateTextContent(){
             try{
                 showFossils();
             }catch(e){
-                // ignore — we'll perform a hard reset below to be robust
+                // Ignorar; faremos uma redefinicao completa abaixo para ser robusto
             }
             fossilHardReset();
         }, true);
         window._fossilResetDelegationAttached = true;
     }
-    // translate icon alt texts on calculator page
+    // Traduzir textos alt dos icones na pagina da calculadora
     const plateIcon = document.getElementById('icon-plate');
     if(plateIcon) plateIcon.alt = t('platesLabel');
     const shinyIcon = document.getElementById('icon-shiny');
@@ -5231,17 +5231,17 @@ function updateTextContent(){
     if(drinkIcon) drinkIcon.alt = t('elementItems');
     const coinIcon = document.getElementById('icon-coin');
     if(coinIcon) coinIcon.alt = t('goldCoinsLabel');
-    // if calculator is visible, recompute any dynamic output so the language updates
+    // Se a calculadora estiver visivel, recalcular saidas dinamicas para atualizar o idioma
     if(contentCalc && !contentCalc.hidden){
         updateRangeResults();
         updateCommon();
         updateShiny();
     }
-    // if a fossil result is currently shown, redraw it so strings are in correct language
+    // Se um resultado de fossil estiver visivel, redesenhar para usar textos no idioma correto
     if(lastFossilPair && fossilResultDiv && fossilResultDiv.innerHTML.trim() !== ''){
         fossilShowResult(lastFossilPair);
     }
-    // refresh any previously generated calculator results so text matches language
+    // Atualizar resultados de calculadora gerados anteriormente para alinhar o texto ao idioma
     const catchResultEl = document.getElementById('catch-result');
     const localCalcCatch = document.getElementById('calc-catch-btn');
     if(localCalcCatch && catchResultEl && catchResultEl.innerHTML.trim() !== ''){
@@ -5268,8 +5268,8 @@ function renderCommunityFeed(){
 }
 
 function renderCommunityFeedPanel(){
-    // Community data is loaded by `showCommunity` / `setCommunityTopic`.
-    // This function only renders current `COMMUNITY_FEED_TOPICS` state.
+    // Dados da comunidade sao carregados por `showCommunity` / `setCommunityTopic`.
+    // Esta funcao apenas renderiza o estado atual de `COMMUNITY_FEED_TOPICS`.
     const frame = document.getElementById('community-video-frame');
     const titleEl = document.getElementById('community-featured-title');
     const linkEl = document.getElementById('community-video-link');
@@ -5314,7 +5314,7 @@ function renderCommunityFeedPanel(){
         topicHighlightsEl.replaceChildren(highlightsFragment);
     }
 
-    // Show community data source / last loaded (debug info)
+    // Mostrar fonte dos dados da comunidade / ultimo carregamento (info de depuracao)
     try{
         const existingMeta = document.getElementById('community-data-meta');
         const src = window.COMMUNITY_LOADED_SOURCE || localStorage.getItem('COMMUNITY_LOADED_SOURCE') || 'local';
@@ -5338,13 +5338,13 @@ function renderCommunityFeedPanel(){
                 listEl.parentElement.insertBefore(meta, listEl);
             }
         }
-    }catch(e){/* ignore meta render errors */}
+    }catch(e){/* ignorar erros de renderizacao dos metadados */}
 
-    // If the last fetch failed for this topic, show a small warning above the list
+    // Se o ultimo fetch falhou para este topico, mostrar um aviso pequeno acima da lista
     const lastErr = COMMUNITY_LAST_FETCH_ERROR[activeCommunityTopicKey];
     const existingWarning = document.getElementById('community-fetch-warning');
     if(lastErr){
-        // Prefer a sanitized user-facing message for quota-related failures
+        // Preferir uma mensagem segura ao usuario para falhas relacionadas a cota
         let msg = lastErr && lastErr.message ? lastErr.message : 'Falha ao obter dados do YouTube.';
         if(lastErr.quota){
             msg = 'Cota da API do YouTube excedida';
@@ -5520,7 +5520,7 @@ function showFossils(){
         tabFossilsBtn.setAttribute('aria-selected','true');
     }
     setVisiblePanel(contentFossils);
-    // clear previous catch output
+    // Limpar saida anterior de captura
     const catchRes = document.getElementById('catch-result');
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
@@ -5618,10 +5618,10 @@ function createManiacPokemonMedia(name, options = {}){
     image.loading = 'lazy';
     image.decoding = 'async';
 
-    // Resolve initial src. If the returned path is a root-level `pokemons/<file>.png`
-    // (no generation folder), attempt to probe generation folders automatically
-    // before falling back to the placeholder. This avoids 404s when the
-    // shared catalog/generation map isn't available at first render.
+    // Resolver src inicial. Se o caminho retornado for `pokemons/<file>.png` na raiz
+    // (sem pasta de geracao), tentar sondar pastas de geracao automaticamente
+    // antes de cair para o placeholder. Isso evita 404 quando o
+    // catalogo/mapa de geracoes compartilhado ainda nao esta disponivel na primeira renderizacao.
     const initialSrc = getManiacPokemonImageSource(name) || POKEMON_IMAGE_PLACEHOLDER;
     const simplePokemonsFileMatch = /^pokemons\/([^\/]+\.(?:png|jpg|jpeg|gif|webp))$/i;
     const m = String(initialSrc || '').trim().match(simplePokemonsFileMatch);
@@ -5636,7 +5636,7 @@ function createManiacPokemonMedia(name, options = {}){
                 seen.add(Number(pokemonCatalogGenerationMap[key]));
             }
         }catch(e){}
-        // append remaining generations in a reasonable order
+        // Adicionar geracoes restantes em uma ordem razoavel
         [6,7,8,9,5,4,3,2,1].forEach(g => { if(!seen.has(g)) candidateGens.push(g); });
 
         let tryIndex = 0;
@@ -5649,7 +5649,7 @@ function createManiacPokemonMedia(name, options = {}){
             image.onerror = tryNext;
             image.src = `pokemons/${gen}gen/${fileName}`;
         };
-        // start probing
+        // Iniciar sondagem
         tryNext();
     } else {
         image.src = initialSrc;
@@ -5769,13 +5769,13 @@ function createManiacLocationMedia(location){
     image.decoding = 'async';
     figure.appendChild(image);
 
-    // place the kicker as an overlay inside the figure so it does not affect vertical flow
+    // Colocar o kicker como overlay dentro da figure para nao afetar o fluxo vertical
     const kicker = document.createElement('span');
     kicker.className = 'maniacs-card__kicker maniacs-card__kicker--overlay';
     kicker.textContent = 'Local';
     figure.appendChild(kicker);
 
-    // Make the location image clickable to open the modal (keyboard accessible)
+    // Tornar a imagem de local clicavel para abrir o modal (acessivel por teclado)
     try{
         figure.setAttribute('role', 'button');
         figure.setAttribute('tabindex', '0');
@@ -5790,7 +5790,7 @@ function createManiacLocationMedia(location){
                 openManiacsLocationModal(location);
             }
         });
-    }catch(e){/* ignore if DOM APIs unavailable */}
+    }catch(e){/* ignorar se APIs do DOM estiverem indisponiveis */}
 
     const caption = document.createElement('figcaption');
     caption.className = 'maniacs-card__caption';
@@ -5807,7 +5807,7 @@ function createManiacStoneCard(entry){
 
     const body = document.createElement('div');
     body.className = 'maniacs-card__body';
-    // For some targets we prefer the location image to open the modal
+    // Para alguns alvos, preferimos que a imagem de local abra o modal
     const targetKey = String(entry.target || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
     const showLocationBtn = !MANIACS_INLINE_LOCATION_TARGETS.has(targetKey);
     body.append(
@@ -5939,8 +5939,8 @@ function initializeManiacsPage(){
     maniacsPageInitialized = true;
     renderManiacsPage();
 
-    // Ensure shared generation map is loaded and re-render so image paths
-    // that depend on generation resolution are corrected (avoids pokemons/<name>.png 404s)
+    // Garantir que o mapa de geracoes compartilhado carregue e rerenderizar para que caminhos
+    // de imagem dependentes da resolucao de geracao sejam corrigidos (evita 404 em pokemons/<name>.png)
     try{
         loadSharedPokemonGenerationMap().then(() => {
             try{ renderManiacsPage(); }catch(e){}
@@ -6246,7 +6246,7 @@ function getTypeDisplayName(type){
     return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
-// Color map for types (used to tint UI elements)
+// Mapa de cores dos tipos (usado para tingir elementos da UI)
 const TYPE_UI_COLORS = Object.freeze({
     normal: '#A8A77A', fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
     grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28', poison: '#A33EA1',
@@ -6348,7 +6348,7 @@ function renderTypeInfoEmptyState(message){
         </div>
     `;
 }
-// catch calculator data
+// Dados da calculadora de captura
 const catchBallOrder = ['ultra', 'story', 'elemental', 'safari'];
 const catchBallRequirementAliases = Object.freeze(
     Object.values(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, ball) => {
@@ -6387,8 +6387,8 @@ const CATCH_NORMAL_PRICE_VALUES = Object.freeze([
 ]);
 let catchNormalPriceOptions = [];
 let catchPriceActiveGroupKey = '';
-// counts per level differ between normal and shiny
-// for levels with multiple options we store an array of alternative requirements
+// Contagens por nivel diferem entre normal e shiny
+// Para niveis com multiplas opcoes, guardamos um array de requisitos alternativos
 const captureData = {
     normal: {
         5:  [{ultra:1}],
@@ -6416,7 +6416,7 @@ const captureData = {
 function computeRequired(lvl, variant){
     variant = variant || 'normal';
     const data = captureData[variant] || captureData['normal'];
-    // return array of options, default to a zero requirement
+    // Retornar array de opcoes; padrao para requisito zero
     return data[lvl] || [{ultra:0,story:0,elemental:0}];
 }
 function parseLog(text){
@@ -6425,7 +6425,7 @@ function parseLog(text){
     const specificElementalCounts = createEmptyCatchSpecificElementalCounts();
     const moneyMatch = text.match(/spent\s+([\d.,]+)\s+dollars/i);
     if(moneyMatch) totalCost = parseFloat(moneyMatch[1].replace(',','.'));
-    // allow multiple entries for the same ball type and sum them
+    // Permitir multiplas entradas para o mesmo tipo de ball e somar
     catchBallOrder.forEach(b=>{
         const re = new RegExp('(\\d+)\\s+'+b+'\\s+balls?', 'gi');
         let m;
@@ -6433,8 +6433,8 @@ function parseLog(text){
             counts[b] += parseInt(m[1],10);
         }
     });
-    // Some logs list specific elemental balls by name. Keep them separated so we can
-    // decide later whether they stay elemental or fall back to story for the target.
+    // Alguns logs listam balls elementais especificas por nome. Mante-las separadas para
+    // decidir depois se continuam como elemental ou caem para story para o alvo.
     CATCH_ELEMENTAL_BALL_OPTIONS.forEach(({ key, label })=>{
         const ballName = String(label || '').replace(/\s*Ball$/i, '').trim();
         if(!ballName) return;
@@ -8136,17 +8136,17 @@ function renderSelection(){
             connectionsSvg.appendChild(link);
         }
     }
-    // defensive multipliers: attacker vs currentSelection as defenders
+    // Multiplicadores defensivos: atacante vs currentSelection como defensores
     const multipliers = {};
     menuTypes.forEach(att=>{
         let m = 1;
         currentSelection.forEach(def=>{
             if(immunities[def] && immunities[def].includes(att)){
-                m *= 0;          // defender immune to this attacker
+                m *= 0;          // defensor imune a este atacante
             } else if(effectiveness[att] && effectiveness[att].includes(def)){
-                m *= 2;          // attacker strong against defender
+                m *= 2;          // atacante forte contra defensor
             } else if(resistances[def] && resistances[def].includes(att)){
-                m *= 0.5;        // defender resists attacker
+                m *= 0.5;        // defensor resiste ao atacante
             }
         });
         // Não permitir multiplicador zero — limite mínimo 0.5x
@@ -8163,7 +8163,7 @@ function renderSelection(){
     const weakCount = {};
     const resistCount = {};
     weakAgainst.forEach(t=>{ weakCount[t] = multipliers[t]; });
-    // count how many selected types each target resists
+    // Contar quantos tipos selecionados cada alvo resiste
     currentSelection.forEach(ct=>{
         menuTypes.forEach(t=>{
             if(resistances[t] && resistances[t].includes(ct)){
@@ -8172,19 +8172,19 @@ function renderSelection(){
         });
     });
 
-    // Visual state: mark types in the grid according to relation with current selection
-    // NOTE: in the types panel we consider 'effectiveness' as the visual highlight for
-    // types that are "super effective" in the current relation (attackers that hit
-    // the selection for >1x). This ensures e.g. Fairy and Ice appear as super-effective
-    // against Dragon when Dragon is selected.
+    // Estado visual: marcar tipos no grid conforme a relacao com a selecao atual
+    // NOTA: no painel de tipos, consideramos 'effectiveness' como destaque visual para
+    // tipos que sao "super efetivos" na relacao atual (atacantes que batem
+    // na selecao com >1x). Isso garante que, por exemplo, Fairy e Ice aparecam como super efetivos
+    // contra Dragon quando Dragon estiver selecionado.
     strengths.forEach(t2=>{
         const b=document.querySelector(`.type-button[data-type="${t2}"]`);
         if(b){
-            // types that the current selection is effective against: keep subtle mark
+            // Tipos contra os quais a selecao atual e efetiva: manter marca sutil
             b.classList.add('strength-from-selection');
         }
     });
-    // types that deal >1x damage to the selection (i.e. are super effective against it)
+    // Tipos que causam >1x de dano na selecao (ou seja, sao super efetivos contra ela)
     weakAgainst.forEach(t2=>{
         const b=document.querySelector(`.type-button[data-type="${t2}"]`);
         if(b){
@@ -8224,7 +8224,7 @@ function renderSelection(){
             }
         });
     }
-    // Build a richer info card with clear sections and clickable icons
+    // Montar um card de informacoes mais rico com secoes claras e icones clicaveis
     function makeIcons(list){
         return list.map(t2=>{
             const label = t2.charAt(0).toUpperCase()+t2.slice(1);
@@ -8237,7 +8237,7 @@ function renderSelection(){
         }).join('');
     }
 
-    // split strengths into 'efetivo' (count === 1) and 'super efetivo' (count > 1)
+    // Separar forcas em 'efetivo' (count === 1) e 'super efetivo' (count > 1)
     const superEffectiveTargets = strengths.filter(t2 => (strengthsCount[t2] || 0) > 1);
     const effectiveTargets = strengths.filter(t2 => (strengthsCount[t2] || 0) === 1);
 
@@ -8261,7 +8261,7 @@ function renderSelection(){
     html += `</div></div>`;
     info.innerHTML = html;
 
-    // Wire up clickable buttons inside the card
+    // Conectar botoes clicaveis dentro do card
     info.querySelectorAll('.info-type').forEach(btn=>{
         btn.style.cursor = 'pointer';
         btn.addEventListener('click', ()=> selectType(btn.dataset.type));
@@ -8342,7 +8342,7 @@ function renderSelection(){
         const btn=document.querySelector(`.type-button[data-type="${entry.type}"]`);
         if(btn && !btn.classList.contains('active') && !btn.classList.contains('effectiveness')) btn.classList.add('effective');
     });
-    // Defensive relationships are already computed earlier in this function.
+    // Relacoes defensivas ja foram calculadas antes nesta funcao.
 
     superWeakEntries.forEach(entry=>{
         const btn = document.querySelector(`.type-button[data-type="${entry.type}"]`);
@@ -8355,7 +8355,7 @@ function renderSelection(){
     resistEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('resist'); });
     immuneEntries.forEach(entry=>{ const b=document.querySelector(`.type-button[data-type="${entry.type}"]`); if(b && !b.classList.contains('active')) b.classList.add('immune'); });
 
-    // If a type is both effective (from selection) and also a threat/resist, mark as mixed
+    // Se um tipo e efetivo (pela selecao) e tambem ameaca/resistencia, marcar como misto
     const offenseTypes = [...new Set([...(superEffectiveTargets||[]).map(e=>e.type), ...(effectiveTargets||[]).map(e=>e.type)])];
     const defenseThreats = defensiveEntries.filter(e=>e.multiplier>1).map(e=>e.type);
     const overlapped = offenseTypes.filter(t=> defenseThreats.includes(t));
@@ -8493,7 +8493,7 @@ function showEffectiveness(){
         tabEffectBtn.setAttribute('aria-selected','true');
     }
     setVisiblePanel(contentEffect);
-    // clear any previous catch results/logs so they don't persist in the footer
+    // Limpar resultados/logs anteriores de captura para nao persistirem no rodape
     const catchRes = document.getElementById('catch-result');
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
@@ -8521,7 +8521,7 @@ function showCalculator(){
         tabCalcBtn.setAttribute('aria-selected','true');
     }
     setVisiblePanel(contentCalc);
-    // also clear catch calculator results/log so they don't linger
+    // Tambem limpar resultados/logs da calculadora de captura para nao ficarem sobrando
     const catchRes = document.getElementById('catch-result');
     const logRes = document.getElementById('log-result');
     if(catchRes) catchRes.innerHTML = '';
@@ -14170,7 +14170,7 @@ if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness()
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
 if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
-// Páscoa button removed — no-op
+// Botao de Pascoa removido; sem acao
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
         openHomeDestination(button.dataset.homeTarget);
@@ -14253,7 +14253,7 @@ function showSpeedsters(requestedBossMode=''){
         window.setBossMode(targetBossMode);
     }
 
-    // Ensure grid is built when opening the tab (re-render if needed)
+    // Garantir que o grid seja montado ao abrir a aba (rerenderizar se necessario)
     if(typeof renderGrid === 'function') {
         renderGrid();
         const speedsterGrid = document.getElementById('speedster-grid');
@@ -14627,8 +14627,8 @@ function loadPersistedStreamerStatusCache(){
     if(typeof window === 'undefined' || !window.localStorage) return;
 
     try {
-        // Invalidate persisted caches if Twitch credentials changed since
-        // the last time the site stored cached streamer state.
+        // Invalidar caches persistentes se as credenciais da Twitch mudaram desde
+        // a ultima vez que o site armazenou estado de streamer em cache.
         try {
             const currentFingerprint = computeTwitchCredentialsFingerprint();
             const storedFingerprint = window.localStorage.getItem(TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY);
@@ -14638,7 +14638,7 @@ function loadPersistedStreamerStatusCache(){
             }
             window.localStorage.setItem(TWITCH_CREDENTIALS_FINGERPRINT_STORAGE_KEY, currentFingerprint);
         } catch(e) {
-            // ignore fingerprint errors and continue loading cache normally
+            // Ignorar erros de fingerprint e continuar carregando o cache normalmente
         }
 
         const raw = window.localStorage.getItem(STREAMER_STATUS_CACHE_STORAGE_KEY);
@@ -16624,7 +16624,7 @@ function renderStreamers(){
                             isPstoryDrop: true
                         });
                     }
-                    // show Pstory indicator
+                    // Mostrar indicador de PStory
                     if(info.isPstoryDrop){
                         pstoryInfo.textContent = 'Esta transmitindo PStory com drops.';
                         pstoryInfo.style.color = '#5ff7a6';
@@ -16705,7 +16705,7 @@ function renderStreamers(){
             }
         });
 
-        // clicking the whole card opens the stream modal as well
+        // Clicar no card inteiro tambem abre o modal de transmissao
         card.addEventListener('click', () => {
             try{ openSiteStreamModal({ channel: name, title: displayName }); }catch(e){}
         });
@@ -16749,7 +16749,7 @@ function showStreamers(){
 startGlobalRatMonitorBootstrap();
 
 async function showCommunity(){
-    // Try to load server-provided community data (if available)
+    // Tentar carregar dados de comunidade fornecidos pelo servidor (se disponiveis)
     try{ await loadServerCommunityData(); }catch(e){}
     clearTabHighlights();
     setActiveTabTheme('community');
@@ -16778,14 +16778,14 @@ async function showCommunity(){
     }
     updateUrl();
 
-    // Refresh current topic on entry when server data is stale, while keeping the 24h cooldown.
+    // Atualizar o topico atual na entrada quando os dados do servidor estiverem desatualizados, mantendo o cooldown de 24h.
     try{
         refreshCommunityTopicOnEntry(activeCommunityTopicKey).then(changed => {
             if(changed) renderCommunityFeedPanel();
         }).catch(console.error);
     }catch(e){}
 
-    // Keep the scheduled refresh running as a backup when the page stays open.
+    // Manter a atualizacao agendada rodando como backup quando a pagina fica aberta.
     try{
         startCommunityAutoRefresh(10, 30);
     }catch(e){
@@ -16793,14 +16793,14 @@ async function showCommunity(){
     }
 }
 
-// attempt to load tab from URL query first, fallback to localStorage
+// Tentar carregar a aba primeiro pela query da URL; alternativa para localStorage
 function initTabFromUrl(){
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
     const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
     const requestedTeamFilters = getTeamFiltersFromUrl();
 
-    // Detect deep-link to a specific pokemon: /pokemon/NNN or /pokemons/mega-charizard
+    // Detectar deep-link para um Pokemon especifico: /pokemon/NNN ou /pokemons/mega-charizard
     const pathname = String(location.pathname || '');
     const requestedBossRoute = getBossRouteMatch(pathname);
     const requestedManiacsMapRoute = getManiacsMapRouteMatch(pathname);
@@ -16845,15 +16845,15 @@ function initTabFromUrl(){
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
         requestedFilters: requestedTeamFilters
     });
-    // If the URL targeted a specific pokemon route, open the pokemons tab and
-    // open the requested modal once the catalog is loaded.
+    // Se a URL apontou para uma rota especifica de Pokemon, abrir a aba pokemons e
+    // abrir o modal pedido quando o catalogo carregar.
     if(initialDeepLinkedPokemonRouteToken !== null){
         const requestedVariant = getPokemonCatalogVariantFromUrl();
         showPokemons(requestedVariant, { requestedFilters: requestedPokemonFilters });
         ensurePokemonCatalogLoaded().then(() => {
             const entry = findPokemonCatalogEntryByRouteToken(initialDeepLinkedPokemonRouteToken, requestedVariant);
             if(canOpenPokemonCatalogEntry(entry)){
-                // Ensure the base route is canonical before opening the modal
+                // Garantir que a rota base seja canonica antes de abrir o modal
                 try{
                     history.replaceState(
                         null,
@@ -16908,10 +16908,10 @@ function initTabFromUrl(){
     return showEffectiveness();
 }
 
-// Delay initTabFromUrl to ensure all scripts are fully loaded
+// Atrasar initTabFromUrl para garantir que todos os scripts carregaram
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        // Add a small delay to ensure bosses.js has initialized
+        // Adicionar um pequeno atraso para garantir que bosses.js inicializou
         setTimeout(initTabFromUrl, 100);
     });
 } else {
@@ -16927,7 +16927,7 @@ const fossilCombos = {
     'Dino,Fish': { pokemon: 'arctovish.png', dna: 'dna.gif' },
     'Drake,Fish': { pokemon: 'dracovish.png', dna: 'dna.gif' },
     'Fish,Drake': { pokemon: 'dracovish.png', dna: 'dna.gif' },
-    // new amber pairing: two ambers produce Aerodactyl
+    // Nova combinacao de amber: dois ambers produzem Aerodactyl
     'Amber,Amber': { pokemon: 'aerodactyl.png', dna: 'dna.gif' }
 };
 
@@ -16944,7 +16944,7 @@ const directFossilRevivals = {
     Sail: { pokemon: 'amaura.png', dna: 'dna.gif', dnaAmount: 50, price: '250K' }
 };
 
-// mapping from generated pokémon to which side of the hunt they appear on
+// Mapeamento do Pokemon gerado para o lado da hunt em que ele aparece
 const huntSide = {
     dracozolt: 'left',
     dracovish: 'left',
@@ -16952,7 +16952,7 @@ const huntSide = {
     arctovish: 'right',
     aerodactyl: 'right'
 };
-// drop hints mapping for single fossil click; two possible drops each
+// Mapeamento de dicas de drop para clique em fossil unico; dois drops possiveis para cada
 const dropHints = {
     Drake: ['dracozolt.png','dracovish.png'],
     Bird: ['dracozolt.png','arctozolt.png'],
@@ -17009,15 +17009,15 @@ function showDropHints(type, elem){
     if(!container) return;
     container.innerHTML = '';
     if(hints && hints.length === 2){
-        // add a descriptive line above the arrows
+        // Adicionar uma linha descritiva acima das setas
         const desc = document.createElement('div');
         desc.className = 'drop-text';
         desc.textContent = 'Pode dropar:';
         container.appendChild(desc);
-        // build two-row layout: arrows on the first row, pokemon images on the second.
+        // Montar layout de duas linhas: setas na primeira, imagens dos Pokemon na segunda.
         const arrowRow = document.createElement('div');
         arrowRow.className = 'arrow-row';
-        // if both hints refer to same pokemon, show single downward arrow
+        // Se as duas dicas apontam para o mesmo Pokemon, mostrar uma unica seta para baixo
         if(hints[0] === hints[1]){
             const downArrow = document.createElement('span');
             downArrow.className = 'arrow';
@@ -17037,7 +17037,7 @@ function showDropHints(type, elem){
         }
         const imageRow = document.createElement('div');
         imageRow.className = 'image-row';
-        // create each pokemon image with label below
+        // Criar cada imagem de Pokemon com rotulo abaixo
         const unique = hints[0] === hints[1] ? [hints[0]] : [hints[0], hints[1]];
         unique.forEach(fname=>{
             const wrapper = document.createElement('div');
@@ -17047,7 +17047,7 @@ function showDropHints(type, elem){
             img.alt = fname;
             const label = document.createElement('div');
             label.className = 'drop-name';
-            // use filename without extension as name
+            // Usar nome do arquivo sem extensao como nome
             const name = fname.split('.')[0];
             label.textContent = name.charAt(0).toUpperCase() + name.slice(1);
             wrapper.appendChild(img);
@@ -17056,14 +17056,14 @@ function showDropHints(type, elem){
         });
         container.appendChild(arrowRow);
         container.appendChild(imageRow);
-        // instead of aligning relative to the whole grid, move the container
-        // directly under the clicked fossil cell so the hints follow that item
+        // Em vez de alinhar relativo ao grid inteiro, mover o container
+        // diretamente abaixo da celula de fossil clicada para as dicas acompanharem esse item
         container.style.marginTop = '0.5rem';
         container.style.marginLeft = '';
         if(elem){
             const cell = elem.closest('.fossil-cell');
             if(cell){
-                cell.appendChild(container); // this automatically moves element in DOM
+                cell.appendChild(container); // isso move automaticamente o elemento no DOM
             }
         }
         if(useGsap){
@@ -17072,7 +17072,7 @@ function showDropHints(type, elem){
     }
 }
 
-// Return a Set of partner fossil types that combine with `type` according to `fossilCombos`
+// Retornar um Set de tipos de fossil parceiros que combinam com `type` conforme `fossilCombos`
 function getPartners(type){
     const result = new Set();
     if(!type || typeof type !== 'string') return result;
@@ -17101,7 +17101,7 @@ function restoreDropHintsContainer(){
 
 function fossilClearSelection(){
     fossilSelections.length = 0;
-    // remove any visual selection/transient classes from all fossil images
+    // Remover classes visuais de selecao/transitorias de todas as imagens de fossil
     document.querySelectorAll('.fossil-img').forEach(img=>{
         img.classList.remove('selected','active','compatible','incompatible');
         if(useGsap) gsap.to(img, {scale:1, duration:0.2});
@@ -17111,11 +17111,11 @@ function fossilClearSelection(){
     restoreDropHintsContainer();
 }
 
-// finalize selection after showing a result but keep the visual "selected" highlight
+// Finalizar selecao apos mostrar um resultado, mas manter o destaque visual "selected"
 function fossilFinalizeSelection(){
-    // clear internal selection state so user can pick a new pair
+    // Limpar estado interno de selecao para o usuario poder escolher um novo par
     fossilSelections.length = 0;
-    // remove transient visual states but keep the `selected` highlight
+    // Remover estados visuais transitorios, mas manter o destaque `selected`
     document.querySelectorAll('.fossil-img').forEach(img=>{
         img.classList.remove('active','compatible','incompatible');
         if(useGsap) gsap.to(img, {scale:1, duration:0.15});
@@ -17228,35 +17228,35 @@ function renderFossilEmptyState(){
     `;
 }
 
-// Robust reset for the fossils tab — idempotent and safe to call repeatedly
+// Redefinicao robusta para a aba de fosseis; idempotente e segura para chamar repetidamente
 function fossilHardReset(){
     try{
-        // clear internal state
+        // Limpar estado interno
         lastFossilPair = null;
         fossilSelections.length = 0;
 
-        // clear visual states on fossil images
+        // Limpar estados visuais nas imagens de fossil
         document.querySelectorAll('.fossil-img').forEach(i=>{
             i.classList.remove('selected','active','compatible','incompatible');
             if(useGsap) gsap.to(i, {scale:1, duration:0.15});
         });
 
-        // clear gallery card highlights
+        // Limpar destaques dos cards da galeria
         document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
 
-        // clear drop hints and result area
+        // Limpar dicas de drop e area de resultado
         const drop = document.getElementById('drop-hints'); if(drop) drop.innerHTML = '';
         restoreDropHintsContainer();
         if(hintEl) hintEl.textContent = '';
         renderFossilEmptyState();
 
-        // rebuild gallery only if missing to avoid flicker when already present
+        // Reconstruir galeria apenas se estiver ausente para evitar flicker quando ja existe
         const gallery = document.getElementById('pokemon-gallery');
         if(gallery && gallery.children.length === 0){
             try{ buildPokemonGallery(); }catch(e){}
         }
     }catch(e){
-        // swallow — reset should be resilient
+        // Engolir erro; a redefinicao deve ser resiliente
     }
 }
 
@@ -17273,7 +17273,7 @@ function buildPokemonGallery(){
     if(!gallery) return;
     gallery.innerHTML = '';
     const seen = new Set();
-    // use fixed order for gallery so new pokémon can be inserted precisely
+    // Usar ordem fixa na galeria para inserir novos Pokemon com precisao
     const desiredOrder = [
         'dracozolt.png',
         'dracovish.png',
@@ -17303,7 +17303,7 @@ function buildPokemonGallery(){
         seen.add(data.pokemon);
         entries.push(data.pokemon);
     });
-    // sort according to desired order; unknown items go at end alphabetically
+    // Ordenar conforme a ordem desejada; itens desconhecidos vao ao fim em ordem alfabetica
     entries.sort((a,b)=>{
         const iA = desiredOrder.indexOf(a);
         const iB = desiredOrder.indexOf(b);
@@ -17324,12 +17324,12 @@ function buildPokemonGallery(){
         card.appendChild(img);
         const label = document.createElement('div');
         const sideKey = huntSide[base];
-        // omit side label for aerodactyl as it's random
+        // Omitir rotulo de lado para Aerodactyl porque e aleatorio
         const sideText = sideKey && base !== 'aerodactyl' ? ` (${t(sideKey)})` : '';
         label.textContent = display + sideText;
         card.appendChild(label);
         card.addEventListener('click', ()=>{
-            // mark clicked gallery card as selected (persistent)
+            // Marcar card clicado da galeria como selecionado (persistente)
             document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
             card.classList.add('selected');
             showComboForPokemon(poke);
@@ -17347,7 +17347,7 @@ function buildPokemonGallery(){
 }
 
 function showComboForPokemon(pokemon){
-    // clear any drop hints when coming from gallery
+    // Limpar dicas de drop ao vir da galeria
     const drop = document.getElementById('drop-hints');
     if(drop) drop.innerHTML = '';
     const config = getFossilSelectionConfigByPokemon(pokemon);
@@ -17359,7 +17359,7 @@ function showComboForPokemon(pokemon){
     });
     highlightFossilTypes(config.fossilTypes);
 
-    // highlight the clicked gallery card (use data attribute)
+    // Destacar o card clicado da galeria (usar atributo data)
     document.querySelectorAll('.pokemon-card.selected').forEach(c=>c.classList.remove('selected'));
     const matched = document.querySelector(`.pokemon-card[data-pokemon="${pokemon}"]`);
     if(matched) matched.classList.add('selected');
@@ -17449,7 +17449,7 @@ function initializeFossilsPage(){
         }
     });
 
-    // build the footer gallery showing resulting pokémons
+    // Montar a galeria do rodape mostrando os Pokemon resultantes
     buildPokemonGallery();
 
     Array.from(document.querySelectorAll('.fossil-img')).forEach(img=>{
@@ -17470,12 +17470,12 @@ function initializeFossilsPage(){
             img.classList.add('active');
 
             if(fossilSelections.length===1){
-                // show drop hints for solo click, positioned under clicked item
+                // Mostrar dicas de drop para clique solo, posicionadas abaixo do item clicado
                 showDropHints(type, img);
                 updateFossilPairHint(type);
             }
             if(fossilSelections.length === 2){
-                // clear drop hints when forming pair
+                // Limpar dicas de drop ao formar par
                 const dropEl = document.getElementById('drop-hints');
                 if(dropEl) dropEl.innerHTML = '';
 
@@ -18083,7 +18083,7 @@ function updateCommon(){
     const elementItems = n * perPlateElement;
     const charItems = n * perPlateChar;
     const stones = n * perPlateStone;
-    // build using translations (visual only)
+    // Montar usando traducoes (apenas visual)
     const header = t('forCommonLabel').replace('{n}', `<span class="num" data-value="${n}">${n.toLocaleString()}</span>`);
     const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}×${n}), ` +
                       `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens característicos (${perPlateChar}×${n}), ` +
@@ -18320,7 +18320,7 @@ function hasBoostSelectedLevel(state){
 }
 
 function getBoostSelectionPromptText(state){
-    // If the new type selects are present, prefer guiding the user to pick a type
+    // Se os novos selects de tipo estiverem presentes, preferir orientar o usuario a escolher um tipo
     if(false && boostType1Select){
         if(!state?.type1) return 'Selecione um elemento para liberar o cálculo.';
         return '';
@@ -18542,7 +18542,7 @@ function hydrateBoostPokemonOptions(){
     hideBoostPokemonSearchResults();
     boostSelectedPokemonEntry = resolveBoostPokemonEntry(boostPokemonSearchInput.value || '');
     boostPokemonOptionsHydrated = true;
-    // populate type selects if available
+    // Popular selects de tipo, se disponiveis
     try{ hydrateBoostTypeSelects(); }catch(e){}
 }
 
@@ -18561,9 +18561,9 @@ function hydrateBoostTypeSelects(){
         boostType2Select.innerHTML = `<option value="">(Opcional) Segundo elemento</option>` + optionsHtml;
         if(prev2) boostType2Select.value = prev2;
     }
-    // render visual picker
+    // Renderizar seletor visual
     try{ renderBoostTypePicker(); }catch(e){}
-    // restore selection state from selects
+    // Restaurar estado de selecao a partir dos selects
     boostSelectedTypes = [];
     const s1 = boostType1Select?.value || '';
     const s2 = boostType2Select?.value || '';
@@ -18706,7 +18706,7 @@ function getBoostFormState(){
 }
 
 function validateBoostFormState(state){
-    // If using the new type selects, validate based on selected type(s)
+    // Se estiver usando os novos selects de tipo, validar com base nos tipos selecionados
     if(false && boostType1Select){
         if(!state.type1){
             return { valid: false, message: 'Selecione um elemento.' };
@@ -18772,7 +18772,7 @@ function renderBoostPokemonMeta(state){
         return;
     }
 
-    // If we have a full pokemon entry, render the richer preview
+    // Se houver uma entrada completa de Pokemon, renderizar o preview mais rico
     if(entry){
 
         const typeKeys = [entry.type1, entry.type2].filter(Boolean);
@@ -18886,7 +18886,7 @@ function renderBoostPokemonMeta(state){
         preview.append(header, groups);
         boostPokemonMeta.appendChild(preview);
     } else {
-        // Render a simplified preview when user selected only types (no pokemon entry)
+        // Renderizar um preview simplificado quando o usuario selecionou apenas tipos (sem entrada de Pokemon)
         const preview = document.createElement('article');
         preview.className = 'boost-selected-preview';
 
@@ -19980,7 +19980,7 @@ function updateUrl(options = {}){
         params.delete('variant');
     }
     const query = params.toString();
-    // If a pokemon details modal is open, prefer the per-pokemon deep-link path
+    // Se o modal de detalhes de Pokemon estiver aberto, preferir o caminho de deep-link do Pokemon
     let routePath = isHomeView ? getRoutePathForTab('home') : getRoutePathForTab(activeTab, getCurrentBossMode());
     if(!isHomeView && activeTab === 'effectiveness' && requestedQuickAction){
         routePath = getQuickActionRoutePath(requestedQuickAction) || routePath;
@@ -20108,7 +20108,7 @@ if(shareBtn){
     shareBtn.addEventListener('click',()=>{
         const url=location.href;
         navigator.clipboard.writeText(url).then(()=>{
-            // tooltip instead of alert
+            // Tooltip em vez de alert
             const tip=document.createElement('div');
             tip.className='share-tooltip';
             tip.textContent=t('shareSuccess');
@@ -20133,7 +20133,7 @@ if(resetBtn){
 
 if(searchInput){searchInput.addEventListener('input',()=>{createButtons(searchInput.value.trim());clearAll();});}
 
-// catch calculator listeners
+// Listeners da calculadora de captura
 const ballSelect = document.getElementById('ball-select');
 const ballImg = document.getElementById('ball-img');
 const levelSelect = document.getElementById('level-select');
@@ -20174,9 +20174,9 @@ function getSelectedCatchRequirementOptions(selectionValue, variant, chosen){
     const reqList = computeRequired(selectionValue, variant) || [];
     const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
 
-    // Prefer an option that explicitly lists the required ball (e.g., {story:390}).
-    // If found, present only that option. Otherwise, if multiple alternatives exist,
-    // fall back to the second option (Opção 2) which is considered the correct one.
+    // Preferir uma opcao que liste explicitamente a ball obrigatoria (ex: {story:390}).
+    // Se encontrar, apresentar apenas essa opcao. Caso contrario, se houver multiplas alternativas,
+    // cair para a segunda opcao (Opcao 2), considerada a correta.
     let selected = reqList;
     const explicit = reqList.find((opt) => typeof opt === 'object' && opt !== null && typeof opt[requirementBall] === 'number' && opt[requirementBall] > 0);
     if (explicit) {
@@ -20294,7 +20294,7 @@ function renderCatchLogFromState(){
     });
 }
 
-// reusable log parsing/display routine
+// Rotina reutilizavel para leitura e exibicao de log
 function processLogText(text, options = {}){
     const normalizedText = String(text || '');
     const forceReparse = Boolean(options.forceReparse);
@@ -20523,7 +20523,7 @@ document.body.classList.add('dark');
 const APP_CACHE_PREFIX = 'poke-effectiveness-';
 const TYPES_DATA_URL = new URL('types.json', document.baseURI).toString();
 
-// Service worker stays disabled by default while the project is updated manually.
+// O service worker permanece desativado por padrao enquanto o projeto e atualizado manualmente.
 const enableSW = false;
 
 async function cleanupDisabledServiceWorker(){
@@ -24236,7 +24236,7 @@ function renderPokemonCatalog(options = {}){
             card.classList.add('pokemon-entry-card--mewtwo-solo');
         }
         card.setAttribute('role', 'listitem');
-        // expose the entry id on the DOM for targeted styling
+        // Expor o id da entrada no DOM para estilos direcionados
         card.dataset.pokemonId = entry.id;
         const ariaLabelParts = [entry.name];
         if(hasRole) ariaLabelParts.push(entry.role);
@@ -24300,7 +24300,7 @@ function renderPokemonCatalog(options = {}){
         const movesetRow = document.createElement('div');
         movesetRow.className = 'pokemon-token-row';
         if(entry.moveset.length){
-            // If there are multiple moveset types, show only icons horizontally (compact)
+            // Se houver multiplos tipos de moveset, mostrar apenas icones na horizontal (compacto)
             if(entry.moveset.length > 1){
                 entry.moveset.forEach(type => movesetRow.appendChild(createPokemonTypeToken(type, { compact: true })));
                 movesetRow.classList.add('pokemon-token-row--icons');
@@ -24325,14 +24325,14 @@ function renderPokemonCatalog(options = {}){
         entry.naturalElements.forEach(type => elementsRow.appendChild(createPokemonTypeToken(type)));
         elementsBlock.append(elementsLabel, elementsRow);
 
-        // show Types on the left and Moveset on the right for a more natural reading order
+        // Mostrar Tipos a esquerda e Moveset a direita para uma ordem de leitura mais natural
         sections.append(elementsBlock, movesetBlock);
 
         const footer = document.createElement('div');
         footer.className = 'pokemon-entry-card__footer';
         footer.appendChild(createPokemonTeamBadge(entry.team, { labelOverride: entry.teamLabel }));
 
-        // 'Detalhes' label removed per UI request — card click opens details modal
+        // Rotulo 'Detalhes' removido por pedido de UI; clique no card abre o modal de detalhes
 
         card.append(header, media, sections, footer);
         card.addEventListener('click', () => {
@@ -24659,7 +24659,7 @@ function renderPokemonDetailsModal(entry){
     }
     if(pokemonDetailsTitle) pokemonDetailsTitle.textContent = entry.name;
     if(pokemonDetailsSubtitle){
-        // Leave subtitle blank — level is displayed in the right-side field
+        // Deixar subtitulo vazio; o nivel e exibido no campo do lado direito
         pokemonDetailsSubtitle.textContent = '';
     }
     if(pokemonDetailsAveragesKicker){
@@ -24723,7 +24723,7 @@ function renderPokemonDetailsModal(entry){
         const levelText = document.createElement('span');
         levelText.textContent = getPokemonEntryLevelLabel(entry);
 
-        // badges under the level text (shiny / special tags)
+        // Badges sob o texto de nivel (shiny / tags especiais)
         const badgesWrap = document.createElement('span');
         badgesWrap.className = 'pokemon-level-meta-row__badges';
         if(entry.naturalShiny){
@@ -24827,7 +24827,7 @@ function openPokemonDetailsModal(entry, options = {}){
     };
     document.addEventListener('keydown', pokemonDetailsKeyHandler);
 
-    // Manage history for deep-linking
+    // Gerenciar historico para deep-link
     const detailRoutePath = getPokemonDetailRoutePath(entry);
     if(pushState && detailRoutePath){
         try{
@@ -24845,7 +24845,7 @@ function closePokemonDetailsModal(options = {}){
     const { viaPopstate = false } = options || {};
     if(!pokemonDetailsModal) return;
 
-    // If this close is the result of history navigation, just update UI
+    // Se este fechamento e resultado de navegacao no historico, apenas atualizar a UI
     if(viaPopstate){
         pokemonDetailsModal.setAttribute('aria-hidden', 'true');
         syncBasicModalPageState();
@@ -24863,12 +24863,12 @@ function closePokemonDetailsModal(options = {}){
         return;
     }
 
-    // If we previously pushed a history entry for this modal, navigate back so the URL reverts
+    // Se inserimos antes uma entrada de historico para este modal, voltar para reverter a URL
     if(pokemonModalHistoryPushed){
         try{ history.back(); return; }catch(e){}
     }
 
-    // Fallback: close immediately without touching history
+    // Alternativa: fechar imediatamente sem tocar no historico
     pokemonDetailsModal.setAttribute('aria-hidden', 'true');
     syncBasicModalPageState();
 
@@ -24887,7 +24887,7 @@ function closePokemonDetailsModal(options = {}){
 initializeSidebarNavigation();
 initializeGlobalSearch();
 
-// Sync modal open/close with browser history (back/forward)
+// Sincronizar abertura/fechamento do modal com o historico do navegador (voltar/avancar)
 window.addEventListener('popstate', () => {
     const pathname = String(location.pathname || '');
     const detailMatch = getPokemonDetailRouteMatch(pathname);
@@ -24917,7 +24917,7 @@ window.addEventListener('popstate', () => {
             }
         }
     } else {
-        // Path no longer points to a pokemon — close modal if open
+        // Caminho nao aponta mais para um Pokemon; fechar modal se estiver aberto
         if(pokemonDetailsModal && pokemonDetailsModal.getAttribute('aria-hidden') !== 'true'){
             closePokemonDetailsModal({ viaPopstate: true });
         }
@@ -25091,13 +25091,13 @@ function syncHomeLandingFocusSummary(cards = []){
     }
 }
 
-// Build home landing main buttons from the sidebar groups and mount dropdown menus
+// Montar botoes principais da home a partir dos grupos da sidebar e criar menus dropdown
 (function initHomeLandingGroups(){
     try {
         const homeTools = document.querySelector('.home-landing__tools');
         if(!homeTools) return;
 
-        // Order to present on the landing page (must match sidebar group keys)
+        // Ordem de apresentacao na landing page (deve bater com as chaves dos grupos da sidebar)
         const preferredOrder = ['bosses','quests','systems','utilities','community'];
 
         const sidebarGroups = Array.from(document.querySelectorAll('.sidebar-group'))
@@ -25137,7 +25137,7 @@ function syncHomeLandingFocusSummary(cards = []){
 
         const ordered = preferredOrder.map(k => groupsByKey[k]).filter(Boolean);
 
-        // Replace the home tools area with one button per main group
+        // Substituir a area de ferramentas da home por um botao para cada grupo principal
         homeTools.replaceChildren();
         const nextHomeCards = [];
 
@@ -25233,7 +25233,7 @@ function syncHomeLandingFocusSummary(cards = []){
 
                 itemBtn.innerHTML = `<span class="sidebar-sublink__bullet" aria-hidden="true"></span><span>${item.label}</span>${item.badge ? `<span class="sidebar-sublink__badge" aria-hidden="true">${item.badge}</span>` : ''}`;
 
-                // initial state for entrance animation
+                // Estado inicial para animacao de entrada
                 itemBtn.style.opacity = '0';
                 itemBtn.style.transform = 'translateY(6px)';
                 itemBtn.style.transition = 'transform 220ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease';
@@ -25251,18 +25251,18 @@ function syncHomeLandingFocusSummary(cards = []){
 
             exp.appendChild(list);
 
-            // append inside the clicked card so only it expands
+            // Anexar dentro do card clicado para apenas ele expandir
             button.appendChild(exp);
 
-            // announce control relationship
+            // Anunciar relacao de controle
             try{ button.setAttribute('aria-controls', expId); }catch(e){}
 
-            // start collapsed for animation
+            // Comecar recolhido para animacao
             exp.style.maxHeight = '0px';
             exp.style.opacity = '0';
             exp.style.boxSizing = 'border-box';
 
-            // Allow layout then expand; animate items in with stagger
+            // Permitir layout e depois expandir; animar itens em cascata
             requestAnimationFrame(() => {
                 try{
                     exp.style.transition = 'max-height 240ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease';
@@ -25270,13 +25270,13 @@ function syncHomeLandingFocusSummary(cards = []){
                     exp.style.opacity = '1';
                     exp.setAttribute('aria-hidden','false');
 
-                    // animate items (stagger via transitionDelay set above)
+                    // Animar itens (cascata via transitionDelay definido acima)
                     itemButtons.forEach(b => {
                         b.style.opacity = '1';
                         b.style.transform = 'none';
                     });
 
-                    // focus first actionable item for keyboard users
+                    // Focar o primeiro item acionavel para usuarios de teclado
                     if(itemButtons.length){
                         try{ itemButtons[0].focus({preventScroll:true}); }catch(e){}
                     }
@@ -25295,7 +25295,7 @@ function syncHomeLandingFocusSummary(cards = []){
             openExpandedCard(button, group);
         }
 
-        // Close when clicking outside the expanded card
+        // Fechar ao clicar fora do card expandido
         document.addEventListener('click', (e) => {
             if(!expandedCard) return;
             const path = e.composedPath ? e.composedPath() : (e.path || []);
@@ -25308,19 +25308,19 @@ function syncHomeLandingFocusSummary(cards = []){
             closeExpandedCard();
         });
 
-        // Close on ESC and adjust on resize
+        // Fechar com ESC e ajustar no redimensionamento
         document.addEventListener('keydown', (e) => {
             if(e.key === 'Escape') closeExpandedCard();
         });
 
         window.addEventListener('resize', () => {
             if(!expandedCard || !expandedCard.el) return;
-            // adjust maxHeight to content to accommodate layout changes
+            // Ajustar maxHeight ao conteudo para acomodar mudancas de layout
             try{ expandedCard.el.style.maxHeight = expandedCard.el.scrollHeight + 'px'; }catch(e){}
         }, { passive: true });
 
     } catch (err) {
-        // gracefully ignore initialization errors
+        // Ignorar erros de inicializacao de forma tolerante
         console.error('Home landing groups init failed', err);
         syncHomeLandingFocusSummary();
     }
@@ -25473,7 +25473,7 @@ function syncHomeLandingFocusSummary(cards = []){
 })();
 // Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
-    // Helper to open modal safely
+    // Funcao auxiliar para abrir o modal com seguranca
     const openModal = (videoId) => {
         if(!videoId) return;
         if(typeof openSiteYouTubeModal === 'function'){
@@ -25483,18 +25483,18 @@ function initTrainingVideo(){
         }
     };
 
-    // Attach handlers to the wrapper so clicks on the image, badge or button all open the modal.
+    // Anexar handlers ao wrapper para que cliques na imagem, badge ou botao abram o modal.
     document.querySelectorAll('.training-video-wrapper').forEach(wrapper => {
         if(!wrapper) return;
-        // avoid double-initialization
+        // Evitar dupla inicializacao
         if(wrapper.dataset.trainingInit === '1') return;
         wrapper.dataset.trainingInit = '1';
 
-        // Make wrapper keyboard-focusable for accessibility (Enter / Space)
+        // Tornar o wrapper focavel por teclado para acessibilidade (Enter / Space)
         if(!wrapper.hasAttribute('tabindex')) wrapper.setAttribute('tabindex', '0');
 
         wrapper.addEventListener('click', (e) => {
-            // allow clicks anywhere inside the wrapper (image, badge, caption, button)
+            // Permitir cliques em qualquer lugar dentro do wrapper (imagem, badge, legenda, botao)
             const videoId = wrapper.dataset.videoId || wrapper.getAttribute('data-video-id');
             openModal(videoId);
         });
@@ -25509,4 +25509,4 @@ function initTrainingVideo(){
     });
 }
 
-// Páscoa feature removed
+// Recurso de Pascoa removido

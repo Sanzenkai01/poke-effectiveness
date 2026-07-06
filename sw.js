@@ -109,8 +109,8 @@ async function cacheFirst(request){
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
-    // Try to compute a cache name derived from the current APP_SHELL contents.
-    // This makes the cache change automatically whenever any asset in APP_SHELL changes.
+// Tentar calcular um nome de cache derivado do conteudo atual de APP_SHELL.
+// Isso faz o cache mudar automaticamente sempre que algum asset em APP_SHELL mudar.
     async function computeCacheNameFromShell(){
       try {
         const enc = new TextEncoder();
@@ -184,7 +184,7 @@ self.addEventListener('fetch', event => {
   }
 
   if(url.pathname.endsWith('/community.json') || url.pathname.endsWith('community.json')){
-    // Always try network first for community.json so scheduled updates propagate
+      // Sempre tentar a rede primeiro para community.json para propagar atualizacoes agendadas
     event.respondWith(networkFirst(request));
     return;
   }
@@ -193,7 +193,7 @@ self.addEventListener('fetch', event => {
     url.pathname.endsWith('/streamers-status.json') || url.pathname.endsWith('streamers-status.json')
     || url.pathname.endsWith('/streamer-rat-timer.json') || url.pathname.endsWith('streamer-rat-timer.json')
   ){
-    // Always try network first for generated streamer snapshots.
+      // Sempre tentar a rede primeiro para snapshots gerados de streamers.
     event.respondWith(networkFirst(request));
     return;
   }

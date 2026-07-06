@@ -3063,7 +3063,7 @@ const plannerStateCache = {
 const plannerRecommendationCache = new Map();
 let plannerState = createEmptyPlannerState();
 let plannerSubpage = 'compose';
-let plannerShowBrowser = true; // when true, show step 1 (filter browser). set false to focus composition (step 2)
+let plannerShowBrowser = true; // quando true, mostra etapa 1 (navegador de filtros). usar false para focar composicao (etapa 2)
 let plannerShareFieldVisible = false;
 let plannerShareFeedback = {
   message: '',
@@ -5345,7 +5345,7 @@ const iconBase = (() => {
   return (isBossesStandaloneAssetContext() ? '../' : '') + 'icons-type/';
 })();
 
-// Type effectiveness tables (from types.json)
+// Tabelas de efetividade de tipos (de types.json)
 const typeEffectiveness = {
   normal: [],
   fire: ['grass','ice','bug','steel'],
@@ -6982,9 +6982,9 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
   const attackTypesList = bossAttackTypes.filter(Boolean);
 
-  // Collect both raw and normalized multipliers so we can apply rules that
-  // consider the combination of boss attack types (e.g. if all attack types
-  // are resisted, treat as super inafetivo = 0.5).
+  // Coletar multiplicadores brutos e normalizados para aplicar regras que
+  // consideram a combinacao de tipos de ataque do boss (ex: se todos os tipos
+  // de ataque sao resistidos, tratar como super inafetivo = 0.5).
   const defenseMeta = attackTypesList.map((attackType) => {
     const customMultiplier = matchupOverride?.defenseByBossType?.[attackType];
     if (typeof customMultiplier === 'number') {
@@ -7014,15 +7014,15 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   let worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
   const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1;
 
-  // If every boss attack type produces a resistance (normalized <= 0.75),
-  // consider the overall interaction as "super inafetivo" (0.5). This handles
-  // cases like Mega Skarmory (steel + flying) where a Pokemon resists both
-  // attack types and should therefore be treated as more strongly resisted.
+  // Se todos os tipos de ataque do boss geram resistencia (normalizado <= 0.75),
+  // considerar a interacao geral como "super inafetivo" (0.5). Isso cobre
+  // casos como Mega Skarmory (steel + flying), em que um Pokemon resiste ambos
+  // os tipos de ataque e deve ser tratado como resistencia mais forte.
   if (defenseMultipliers.length > 1 && defenseMultipliers.every((v) => typeof v === 'number' && v <= 0.75)) {
     worstDefense = 0.5;
   }
 
-  // Use promoted offense value for scoring when set (speedster case)
+  // Usar valor de ataque promovido para pontuacao quando definido (caso speedster)
   const effectiveOffenseForScoring = (typeof _promotedOffense === 'number' ? _promotedOffense : offense);
 
   const offenseScore =
@@ -8602,7 +8602,7 @@ function renderBossModeIntro() {
     }
   }
 
-  // If viewing the Mewtwo tab, add a small "Tochas" action button into the intro area
+  // Se estiver vendo a aba Mewtwo, adicionar um pequeno botao de acao "Tochas" na area de introducao
   try {
     const existingTochasBtn = document.querySelector('.bosses-tochas-btn');
     if (catalog && String(catalog.id || '').toLowerCase() === 'mew2') {
@@ -8618,7 +8618,7 @@ function renderBossModeIntro() {
           openTochasInModal();
         });
         if (shell) {
-          // ensure shell is a positioned container for absolute placement
+          // Garantir que shell seja um container posicionado para posicionamento absoluto
           try { shell.style.position = shell.style.position || 'relative'; } catch (e) {}
           shell.appendChild(btn);
         } else {
@@ -8934,7 +8934,7 @@ function sanitizePlannerState(rawState) {
       rawEntry?.ration || rawEntry?.items?.ration
     );
 
-    // restore saved members (player selections) if present
+    // Restaurar membros salvos (selecoes de jogadores), se existirem
     nextEntry.members = [];
     if (Array.isArray(rawEntry?.members)) {
       rawEntry.members.forEach((rawMember) => {
@@ -8960,7 +8960,7 @@ function sanitizePlannerState(rawState) {
   return nextState;
 }
 
-// Compact planner state for URL to reduce payload size.
+// Compactar estado do planejador para a URL para reduzir o tamanho do payload.
 function compactPlannerStateForUrl(state) {
   const payload = sanitizePlannerState(state);
   const s = normalizePlannerSourceFilter(payload.sourceFilter) || '';
@@ -9379,7 +9379,7 @@ function encodePlannerStateToParam(state) {
   const compactFixed = encodeCompactPlannerStateToParam(payload);
   const packed = encodePackedPlannerStateToParam(payload);
 
-  // try LZ-String first (existing fast, URL-safe encoder)
+  // Tentar LZ-String primeiro (encoder existente rapido e seguro para URL)
   let lz = '';
   try {
     if (typeof LZString === 'object' && typeof LZString.compressToEncodedURIComponent === 'function') {
@@ -9389,7 +9389,7 @@ function encodePlannerStateToParam(state) {
     lz = '';
   }
 
-  // try pako (gzip) compression and base64-url encode the result
+  // Tentar compressao pako (gzip) e codificar o resultado em base64-url
   let pakoStr = '';
   try {
     if (typeof pako === 'object' && typeof pako.deflate === 'function') {
@@ -9402,7 +9402,7 @@ function encodePlannerStateToParam(state) {
     pakoStr = '';
   }
 
-  // legacy: base64 of raw JSON (kept for compatibility)
+  // Legado: base64 do JSON bruto (mantido por compatibilidade)
   let legacy = '';
   try {
     const bytes = new TextEncoder().encode(json);
@@ -9413,7 +9413,7 @@ function encodePlannerStateToParam(state) {
     legacy = '';
   }
 
-  // choose the shortest non-empty encoding (pako or lzstring or legacy)
+  // Escolher a menor codificacao nao vazia (pako, lzstring ou legado)
   const candidates = [];
   if (compactFixed) candidates.push(compactFixed);
   if (packed) candidates.push(packed);
@@ -9436,14 +9436,14 @@ function decodePlannerStateFromParam(value) {
     const compact = decodeCompactPlannerStateFromParam(normalized);
     if (compact) return compact;
   } catch (e) {
-    // fall through to previous URL formats
+    // Continuar para formatos de URL anteriores
   }
 
   try {
     const packed = decodePackedPlannerStateFromParam(normalized);
     if (packed) return packed;
   } catch (e) {
-    // fall through to previous URL formats
+    // Continuar para formatos de URL anteriores
   }
 
   try {
@@ -9451,22 +9451,22 @@ function decodePlannerStateFromParam(value) {
       const json = LZString.decompressFromEncodedURIComponent(normalized);
       if (json) {
         const parsed = JSON.parse(json);
-        // if compact format detected, expand it
+        // Se detectar formato compacto, expandir
         if (parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 's') && Object.prototype.hasOwnProperty.call(parsed, 'e')) {
           return expandPlannerStateFromUrl(parsed);
         }
         return parsed;
       }
-      // if decompression returned null/empty, fall through to legacy decode
+      // Se a descompressao retornou null/vazio, continuar para decode legado
     }
   } catch (e) {
-    // fall through to legacy decode
+    // Continuar para decode legado
   }
 
   const binary = decodePlannerBase64Url(normalized);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
 
-  // try legacy JSON first
+  // Tentar JSON legado primeiro
   try {
     const parsed = JSON.parse(new TextDecoder().decode(bytes));
     if (parsed && typeof parsed === 'object' && Object.prototype.hasOwnProperty.call(parsed, 's') && Object.prototype.hasOwnProperty.call(parsed, 'e')) {
@@ -9474,7 +9474,7 @@ function decodePlannerStateFromParam(value) {
     }
     return parsed;
   } catch (e) {
-    // not raw JSON; try pako inflate (gzip)
+    // Nao e JSON bruto; tentar pako inflate (gzip)
   }
 
   try {
@@ -9488,7 +9488,7 @@ function decodePlannerStateFromParam(value) {
       return parsed;
     }
   } catch (e) {
-    // fallthrough
+    // Continuar
   }
 
   return createEmptyPlannerState();
@@ -9891,11 +9891,11 @@ function createPlannerBossPickerCard(bossEntry, isAdded) {
 
   if (!isAdded) {
     button.addEventListener('click', () => {
-      // Focus composition (step 2) when a boss is chosen from the browser
+      // Focar composicao (etapa 2) quando um boss e escolhido no navegador
       plannerShowBrowser = false;
       plannerSubpage = 'compose';
       commitPlannerState((draft) => {
-        // Clear selections on existing entries so only the newly added boss is "active"
+        // Limpar selecoes nas entradas existentes para apenas o boss recem-adicionado ficar "ativo"
         draft.entries.forEach((e) => {
           if (e.roles) {
             roleboardRoleOrder.forEach((rk) => {
@@ -10150,7 +10150,7 @@ function createPlannerConsumableField(plannerEntry, bossEntry, kind) {
   if (suggested) {
     const hintLabel = document.createElement('span');
     hintLabel.className = 'planner-item-field__hint-label';
-    // Show a clear, contextual label for the suggested consumable
+    // Mostrar um rotulo claro e contextual para o consumivel sugerido
     hintLabel.textContent = kind === 'ration' ? 'Ration Recomendada' : 'Pokéblock Recomendada';
     hint.append(hintLabel, createPlannerConsumableToken(kind, suggested, 'suggested'));
   } else {
@@ -10168,17 +10168,17 @@ function createPlannerCompositionCard(plannerEntry) {
   const boss = bossEntry.bossRef;
   const card = document.createElement('article');
   card.className = 'planner-composition-card';
-  // Mark hoopa-sourced bosses so we can style their composition card differently
+  // Marcar bosses vindos de Hoopa para estilizar o card de composicao de forma diferente
   if (bossEntry && bossEntry.sourceKey === 'hoopa') {
     card.classList.add('planner-composition-card--hoopa');
   }
 
-  // Decide which roles we'll render for this boss (hoopa bosses only render DPS)
+  // Decidir quais papeis serao renderizados para este boss (bosses Hoopa renderizam apenas DPS)
   const rolesToRender = getPlannerRolesForBossEntry(bossEntry);
 
-  // If only DPS will be shown (either because the boss is DPS-only, or because
-  // only the DPS slot has a selected pick), add a modifier class so we can
-  // center the title/clans and optionally hide some labels.
+  // Se apenas DPS for exibido (porque o boss e somente DPS ou porque
+  // apenas o slot DPS tem uma pick selecionada), adicionar classe modificadora
+  // para centralizar titulo/clans e opcionalmente ocultar alguns rotulos.
   const onlyDpsSelected = (rolesToRender.length === 1 && rolesToRender[0] === 'dps')
     || (rolesToRender.includes('dps') && rolesToRender.every((rk) => rk === 'dps' || !getPlannerSelectedPick(plannerEntry, rk, bossEntry)));
   if (onlyDpsSelected) card.classList.add('planner-composition-card--only-dps');
@@ -10231,11 +10231,11 @@ function createPlannerCompositionCard(plannerEntry) {
   removeButton.className = 'planner-composition-card__remove';
   removeButton.textContent = 'Remover';
   removeButton.addEventListener('click', () => {
-    // ensure UI returns to step 1 (browser) when removing a boss
+    // Garantir que a UI volte para etapa 1 (navegador) ao remover um boss
     plannerShowBrowser = true;
     commitPlannerState((draft) => {
       draft.entries = draft.entries.filter((entry) => entry.bossId !== plannerEntry.bossId);
-      // clear source filter so the browser panel resets to step 1
+      // Limpar filtro de origem para o painel do navegador voltar para etapa 1
       draft.sourceFilter = '';
     }, {
       feedback: {
@@ -10263,7 +10263,7 @@ function createPlannerCompositionCard(plannerEntry) {
   );
   card.appendChild(itemsGrid);
 
-  // Add player (member) actions: allow saving current role/item selections as a member
+  // Adicionar acoes de jogador (membro): permitir salvar selecoes atuais de papel/item como membro
   const memberActions = document.createElement('div');
   memberActions.className = 'planner-member-actions';
 
@@ -10272,15 +10272,15 @@ function createPlannerCompositionCard(plannerEntry) {
   addMemberBtn.className = 'planner-hero__button planner-hero__button--ghost';
   addMemberBtn.textContent = 'Finalizar card';
 
-  // Require at least one Pokémon pick to consider a member "ready".
-  // Pokeblock / ration alone are not enough to finalize a member.
+  // Exigir pelo menos uma pick de Pokemon para considerar um membro "pronto".
+  // Pokeblock / ration sozinhos nao bastam para finalizar um membro.
   const isMemberReady = () => (
     rolesToRender.some((roleKey) => Boolean(getPlannerSelectedPick(plannerEntry, roleKey, bossEntry)))
   );
 
   addMemberBtn.disabled = !isMemberReady();
   addMemberBtn.addEventListener('click', () => {
-    // ensure UI returns to step 1 (browser) when finalizing
+    // Garantir que a UI volte para etapa 1 (navegador) ao finalizar
     plannerShowBrowser = true;
     commitPlannerState((draft) => {
       const targetEntry = draft.entries.find((entry) => entry.bossId === plannerEntry.bossId);
@@ -10300,7 +10300,7 @@ function createPlannerCompositionCard(plannerEntry) {
       targetEntry.members = targetEntry.members || [];
       targetEntry.members.push(member);
 
-      // Reset selections for the current boss only (clear steps 2/3/4), but keep the boss and any saved members
+      // Redefinir selecoes apenas do boss atual (limpar etapas 2/3/4), mas manter o boss e membros salvos
       if (targetEntry) {
         if (targetEntry.roles) {
           roleboardRoleOrder.forEach((roleKey) => {
@@ -10310,7 +10310,7 @@ function createPlannerCompositionCard(plannerEntry) {
         targetEntry.pokeblock = '';
         targetEntry.ration = '';
       }
-      // Keep the source filter cleared so the browser panel resets to step 1
+      // Manter o filtro de origem limpo para o painel do navegador voltar para etapa 1
       draft.sourceFilter = '';
     }, {
       feedback: {
@@ -10348,11 +10348,11 @@ function createPlannerCompositionCard(plannerEntry) {
     summary.appendChild(createPlannerSummaryPill('Ration', option?.shortLabel || option?.label || 'Ration'));
   }
 
-  // if summary is empty, intentionally render nothing (no placeholder text)
+  // Se o resumo estiver vazio, renderizar nada intencionalmente (sem texto placeholder)
 
   card.appendChild(summary);
 
-  // Render saved members (players)
+  // Renderizar membros salvos (jogadores)
   const memberList = document.createElement('div');
   memberList.className = 'planner-member-list';
 
@@ -10378,10 +10378,10 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
   const wrap = document.createElement('article');
   wrap.className = 'planner-ready-member-card';
 
-  // Replace the tutorial icon with consumable badges (pokeblock / ration)
+  // Substituir o icone de tutorial por badges de consumiveis (pokeblock / ration)
   const consumablesWrap = document.createElement('div');
   consumablesWrap.className = 'planner-ready-member-card__consumables';
-  // Show ration first, then pokeblock (inverted order compared to composition view)
+  // Mostrar ration primeiro, depois pokeblock (ordem invertida em relacao a composicao)
   if (member.ration) {
     const option = getPlannerConsumableOptionById('ration', member.ration);
     if (option) {
@@ -10437,7 +10437,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
   const body = document.createElement('div');
   body.className = 'planner-ready-member-card__body';
 
-  // Boss avatar (restore image element) — show boss artwork above picks
+  // Avatar do boss (restaurar elemento de imagem); mostrar arte do boss acima das picks
   const avatarWrap = document.createElement('div');
   avatarWrap.className = 'planner-ready-member-card__avatar';
   const avatarImg = document.createElement('img');
@@ -10479,7 +10479,7 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
     const nameStrong = document.createElement('strong');
     nameStrong.className = 'planner-ready-member-card__pick-name';
     nameStrong.textContent = pick.name;
-    // Add tier badge (human-friendly label) next to the pick name
+    // Adicionar badge de tier (rotulo amigavel) ao lado do nome da pick
     const tierSpan = document.createElement('span');
     tierSpan.className = 'planner-ready-member-card__pick-tier ' + `tier-${normalizeTierKey(pick.tier)}`;
     tierSpan.textContent = getTierUiLabel(pick.tier);
@@ -10491,10 +10491,10 @@ function createPlannerMemberCard(member, bossEntry, plannerEntry, memberIndex = 
 
   body.appendChild(picks);
 
-  // intentionally omitted: boss move type chip (e.g., "Ground") — removed per request
+  // Omitido intencionalmente: chip de tipo de move do boss (ex: "Ground"); removido por pedido
 
-  // Consumables are displayed in the header (badges with tooltips).
-  // The bottom copies (prominent pokeblock button / ration badge) were removed to avoid duplication.
+  // Consumiveis sao exibidos no header (badges com tooltips).
+  // As copias inferiores (botao pokeblock destacado / badge de ration) foram removidas para evitar duplicacao.
 
   wrap.appendChild(body);
 
@@ -11346,9 +11346,9 @@ function renderPlannerGrid() {
   } else {
     const selectedSourceBosses = getPlannerBossEntries().filter((entry) => entry.sourceKey === plannerState.sourceFilter);
     selectedSourceBosses.forEach((entry) => {
-      // Consider a boss "added" only when it has at least one saved member
-      // (i.e., the user clicked "Finalizar"). Entries that are merely
-      // pending (selected but not finalized) should not mark the boss as added.
+      // Considerar um boss "adicionado" apenas quando ele tem pelo menos um membro salvo
+      // (ou seja, quando o usuario clicou em "Finalizar"). Entradas apenas
+      // pendentes (selecionadas mas nao finalizadas) nao devem marcar o boss como adicionado.
       const isAdded = plannerState.entries.some((plannerEntry) => (
         plannerEntry.bossId === entry.id && Array.isArray(plannerEntry.members) && plannerEntry.members.length > 0
       ));
@@ -11378,9 +11378,9 @@ function renderPlannerGrid() {
   const compositionList = document.createElement('div');
   compositionList.className = 'planner-composition-list';
 
-  // Show only the single active composition card (the most-recent pending entry).
-  // Entries that already have saved members are considered completed and
-  // should not appear in the composition step.
+  // Mostrar apenas o unico card de composicao ativo (a entrada pendente mais recente).
+  // Entradas que ja tem membros salvos sao consideradas concluidas e
+  // nao devem aparecer na etapa de composicao.
   const pendingEntries = plannerState.entries.filter((entry) => !Array.isArray(entry.members) || entry.members.length === 0);
   if (!pendingEntries.length) {
     const empty = document.createElement('div');
@@ -11396,8 +11396,8 @@ function renderPlannerGrid() {
   composition.appendChild(compositionList);
 
   if (plannerSubpage === 'compose') {
-    // If there are entries and the UI is focused on composition, show composition only.
-    // Otherwise show the browser (step 1). This makes step 2/3/4 appear only after a boss is chosen.
+    // Se houver entradas e a UI estiver focada em composicao, mostrar apenas composicao.
+    // Caso contrario, mostrar o navegador (etapa 1). Isso faz etapas 2/3/4 aparecerem apenas apos escolher um boss.
     if (plannerState.entries.length > 0 && !plannerShowBrowser) {
       layout.append(composition);
     } else {
@@ -11564,7 +11564,7 @@ function makeHoopaBossCard(speedster) {
 
   button.append(imageWrapper, label);
 
-  // show if this boss is solo or duo on the card (opposite side of location)
+  // Mostrar se este boss e solo ou dupla no card (lado oposto ao local)
   const isDuo = speedster.duo || speedster.mode === 'duo';
   const modeBadge = document.createElement('span');
   modeBadge.className = 'speedster-mode-badge';
@@ -11630,7 +11630,7 @@ function makeHoopaBossCard(speedster) {
   locationBtn.setAttribute('aria-label', 'Ver localização');
   locationBtn.title = 'Localização';
 
-  // Show a small location marker (not a full image) to keep the card clean
+  // Mostrar um pequeno marcador de local (nao uma imagem completa) para manter o card limpo
   const marker = document.createElement('span');
   marker.className = 'speedster-location-marker';
   marker.textContent = '🗺️';
@@ -11801,9 +11801,9 @@ function createBossConsumableBadge(kind, entry) {
   badge.className = `boss-role-card__consumable-trigger boss-role-card__consumable-trigger--${kind}`;
   badge.setAttribute('aria-label', `${kindLabel}: ${normalizedEntry.label}`);
   badge.setAttribute('aria-expanded', 'false');
-  // expose external passive tooltip (not native `title`) so the tooltip panel
-  // appears outside the card. Keep `title` unset to avoid native browser tooltips
-  // which can overlap card content.
+  // Expor tooltip externo de passiva (nao `title` nativo) para o painel de tooltip
+  // aparecer fora do card. Manter `title` vazio para evitar tooltips nativos do navegador
+  // que podem sobrepor o conteudo do card.
   if (Array.isArray(normalizedEntry.tooltipItems) && normalizedEntry.tooltipItems.length) {
     badge.dataset.tooltipItems = JSON.stringify(normalizedEntry.tooltipItems);
   }
@@ -13028,7 +13028,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
             effectiveTier = classifyRecommendationTier(2.0, found._defenseWorst, { roleKey: 'dps' });
           }
         } catch (e) {
-          // fallback para o tier já calculado
+          // alternativa para o tier ja calculado
         }
 
         bestTier = pickBetterTier(bestTier, effectiveTier);
@@ -13038,7 +13038,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
 
   if (bestTier) return bestTier;
 
-  // Fallback to static dataset if not found in computed ranking.
+  // Alternativa para dataset estatico se nao for encontrado no ranking calculado.
   const staticTier = getSpeedsterTierForBoss(boss, speedsterName);
   return normalizeTierKey(staticTier);
 }
@@ -13675,10 +13675,10 @@ function openTochasInModal() {
   modalTitle.textContent = 'Tochas — Acenda todas';
   setModalSubtitleText('');
 
-  // mark modal as displaying tochas so we can apply specific chrome rules
+  // Marcar modal como exibindo Tochas para aplicar regras especificas de chrome
   try { modal.dataset.mode = 'tochas'; } catch (e) {}
 
-  // hide tier legend and corner images specifically for tochas modal
+  // Ocultar legenda de tier e imagens de canto especificamente no modal de Tochas
   try { setModalChrome({ showLegend: false, showImages: false, showLocation: false }); } catch (e) {}
 
   modalBody.innerHTML = '';
@@ -13702,7 +13702,7 @@ function openTochasInModal() {
   document.body.style.overflow = 'hidden';
   syncSharedModalOpenState();
 
-  // ensure modal content has roleboard width to give more space for the embedded page
+  // Garantir que o conteudo do modal use largura de roleboard para dar mais espaco a pagina embutida
   const modalContentEl = modal.querySelector('.speedster-modal-content');
   if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
 
@@ -13917,7 +13917,7 @@ function getBossWeaknessDisplayEntries(source) {
     return Array.from(groupMap.values());
   }
 
-  // If the boss (single source) is configured as neutral, return a neutral marker
+  // Se o boss (fonte unica) estiver configurado como neutro, retornar marcador neutro
   if (sourceEffectivenessConfig && sourceEffectivenessConfig.offenseMode === 'neutral') {
     return [{
       id: source.id || source.name || 'boss',
@@ -13954,7 +13954,7 @@ function getWeaknessesForBossEntry(entry) {
         type,
         // `multiplier` passa a ser o valor normalizado conforme a escala de ATK
         multiplier: normalized,
-        // mantemos raw para eventuais debug ou lógica futura
+        // mantemos valor bruto para eventual depuracao ou logica futura
         rawMultiplier: raw
       };
     })
@@ -14036,7 +14036,7 @@ function setModalBossWeaknesses(source, options = {}) {
   );
 
   if (!renderedEntries.length) {
-    // show neutral badge even when there are no explicit weaknesses
+    // Mostrar badge neutro mesmo quando nao ha fraquezas explicitas
     if (neutralBadge) {
       neutralBadge.hidden = !anyNeutralEntry;
       if (neutralBadge.hidden) neutralBadge.setAttribute('aria-hidden', 'true'); else neutralBadge.setAttribute('aria-hidden', 'false');
@@ -14047,7 +14047,7 @@ function setModalBossWeaknesses(source, options = {}) {
     return;
   }
 
-  // If we have actual weakness entries, hide the neutral badge.
+  // Se houver entradas reais de fraqueza, ocultar o badge neutro.
   if (neutralBadge) {
     neutralBadge.hidden = true;
     neutralBadge.setAttribute('aria-hidden', 'true');
@@ -14323,7 +14323,7 @@ function openRoleBossModal(boss, options = {}) {
   });
   setModalBossWeaknesses(boss);
 
-  // Add "Tochas" button only for Mewtwo (keep UI clean for others)
+  // Adicionar botao "Tochas" apenas para Mewtwo (manter UI limpa para os demais)
   try {
     const existingTochas = modal?.querySelector('.speedster-modal-tochas-btn');
     if (String(boss.id || '').toLowerCase() === 'mewtwo') {
@@ -14333,7 +14333,7 @@ function openRoleBossModal(boss, options = {}) {
       existingTochas.remove();
     }
   } catch (e) {
-    // fail silently to avoid breaking modal behavior
+    // Falhar silenciosamente para evitar quebrar o comportamento do modal
   }
 
   modalBody.innerHTML = '';
@@ -14430,7 +14430,7 @@ function openModal(speedster) {
   modalTitle.textContent = bossNames;
   setModalSubtitleText('');
 
-  // Add/refresh location button inside the modal header
+  // Adicionar/atualizar botao de local dentro do header do modal
   const modalHeader = modal.querySelector('.speedster-modal-header');
   if (modalHeader) {
     let modalLocationBtn = modalHeader.querySelector('.speedster-modal-location-btn');
@@ -14449,7 +14449,7 @@ function openModal(speedster) {
   const pokemonImgLeft = document.getElementById('modal-pokemon-img-left');
   const pokemonImgRight = document.getElementById('modal-pokemon-img');
 
-  // If the boss represents a duo, show both bosses in the modal images.
+  // Se o boss representa uma dupla, mostrar ambos os bosses nas imagens do modal.
   const leftImage = bosses[0]?.image || speedster.image;
   const rightImage = bosses[1]?.image || speedster.image;
   const leftAlt = bosses[0]?.name || speedster.name;
@@ -14526,16 +14526,16 @@ const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(s
 
         nameWrapper.append(tierDot, nameEl);
 
-        // Show offense/defense score as a small badge (less intrusive on the card)
+        // Mostrar pontuacao de ataque/defesa como badge pequeno (menos intrusivo no card)
         const score = document.createElement('div');
         score.className = 'speedster-reco-score';
         const atk = typeof poke._offense === 'number' ? poke._offense.toFixed(2) : '-';
         const def = typeof poke._defenseWorst === 'number' ? poke._defenseWorst.toFixed(2) : '-';
         score.textContent = `⚔️${atk}\n🛡️${def}`;
-        // Append to card so it sits in the corner without affecting layout
+        // Anexar ao card para ficar no canto sem afetar o layout
         card.appendChild(score);
 
-        // Element icon for recommended pokémon
+        // Icone de elemento para Pokemon recomendado
         if (Array.isArray(poke.types) && poke.types.length) {
           const typesContainer = document.createElement('div');
           typesContainer.className = 'type-icon-reco-corner';
@@ -14578,7 +14578,7 @@ const recommended = rankRecommendedForBoss(speedster, getAllRecommendedForClan(s
   }
 }
 
-// Dedicated boss modal renderer used by the speedsters tab.
+// Renderizador dedicado de modal de boss usado pela aba speedsters.
 function openBossModal(speedster) {
   setBossModalLayout(false);
   currentBoss = speedster;
@@ -15231,7 +15231,7 @@ if (speedsterSearchPanel) {
     closeSearchPanel();
   });
 
-  // Prevent clicks inside the panel from reaching document click handler
+  // Impedir que cliques dentro do painel cheguem ao manipulador de clique do documento
   speedsterSearchPanel.addEventListener('click', (event) => event.stopPropagation());
   speedsterSearchPanel.addEventListener('pointerdown', (event) => event.stopPropagation());
 
@@ -15323,15 +15323,15 @@ if (speedsterSearchInput) {
   });
 }
 
-// Close search panel on click outside
-// (click em qualquer lugar fora do painel fecha)
+// Fechar painel de busca ao clicar fora
+// (clique em qualquer lugar fora do painel fecha)
 document.addEventListener('click', (event) => {
   const searchPanel = document.querySelector('.speedster-search-panel');
   if (!searchPanel || searchPanel.contains(event.target)) return;
   closeSearchPanel();
 });
 
-// Close search panel with ESC também
+// Fechar painel de busca tambem com ESC
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeSearchPanel();

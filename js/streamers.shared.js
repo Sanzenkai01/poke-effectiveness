@@ -177,7 +177,7 @@
                 return Math.min(100, Math.max(0, value));
             }
         }catch(err){
-            // ignore storage failures
+            // ignorar falhas de armazenamento
         }
         return RAT_ALERT_DEFAULT_VOLUME_SLIDER;
     }
@@ -199,7 +199,7 @@
         try{
             global.localStorage?.setItem(RAT_ALERT_SOUND_STORAGE_KEY, ratAlertState.enabled ? 'on' : 'off');
         }catch(err){
-            // Ignore storage failures; the in-memory toggle still works.
+            // Ignorar falhas de armazenamento; o toggle em memoria ainda funciona.
         }
         syncRatAlertSettingsControls();
     }
@@ -209,7 +209,7 @@
         try{
             global.localStorage?.setItem(RAT_ALERT_VOLUME_STORAGE_KEY, String(ratAlertState.volumeSlider));
         }catch(err){
-            // Ignore storage failures; the in-memory value still works.
+            // Ignorar falhas de armazenamento; o valor em memoria ainda funciona.
         }
         syncRatAlertSettingsControls();
     }

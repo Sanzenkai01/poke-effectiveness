@@ -1,4 +1,4 @@
-// Quick test script to replicate defense logic from bosses.js
+// Script rapido de teste para replicar a logica de defesa de bosses.js
 const typeEffectiveness = {
   normal: [],
   fire: ['grass','ice','bug','steel'],
@@ -136,7 +136,7 @@ function computeDefenseFor(bossAttackTypes, poke, bossMoveTypes = []) {
   let worstDefense = defenseMultipliers.length ? Math.max(...defenseMultipliers) : 1;
   const bestDefense = defenseMultipliers.length ? Math.min(...defenseMultipliers) : 1;
 
-  // Prioritize explicit boss move types when provided (simulate production logic)
+// Priorizar tipos de moveset explicitos do boss quando informados (simula a logica de producao)
   if (Array.isArray(bossMoveTypes) && bossMoveTypes.length) {
     const moveMeta = defenseMeta.filter((m) => bossMoveTypes.includes(m.attackType));
     if (moveMeta.length && moveMeta.some((m) => typeof m.normalized === 'number' && m.normalized <= 0.5)) {
@@ -171,7 +171,7 @@ const p3 = computeDefenseFor(boss.types, bronzong);
 console.log('\nBronzong defenseMeta:', p3.defenseMeta);
 console.log('Bronzong defenseMultipliers:', p3.defenseMultipliers, 'worst:', p3.worstDefense);
 
-// Additional checks for Mega Tyranitar context (moveType: ground)
+// Verificacoes adicionais para o contexto de Mega Tyranitar (moveType: ground)
 const tyranitarBoss = { id: 'mega-tyranitar', types: ['rock','dark'], moveTypes: ['ground'] };
 const tyrAttackTypes = mergeLowercaseUniqueValues(tyranitarBoss.types, tyranitarBoss.moveTypes || []);
 const tBronz = computeDefenseFor(tyrAttackTypes, bronzong, tyranitarBoss.moveTypes || []);

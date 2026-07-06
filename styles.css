@@ -1,4 +1,4 @@
-/* Corrige ícone de role esticado nos cards e modais de Pokémon */
+/* Corrige ícone de papel esticado nos cartões e modais de Pokémon */
 .pokemon-role-icon {
   width: 24px;
   height: 24px;
@@ -18,14 +18,14 @@
   width: 100%;
   backdrop-filter: blur(6px);
   position: relative;
-  /* Removido position:sticky/fixed para não seguir o scroll */
+  /* Removido position:sticky/fixed para não seguir a rolagem */
 }
 
   .maniacs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 0.85rem;
-    grid-auto-rows: 1fr; /* make each row's cards stretch to equal height */
+    grid-auto-rows: 1fr; /* fazer os cartões de cada linha esticarem para altura igual */
     align-items: stretch;
     --maniacs-image-area-h: clamp(92px, 12vw, 140px);
     --maniacs-card-min-height: 280px;
@@ -48,7 +48,7 @@
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 0.55rem;
     align-items: start;
-    flex: 1 1 auto; /* allow body to grow so footer stays aligned */
+    flex: 1 1 auto; /* permitir que o corpo cresca para manter o rodape alinhado */
   }
 
   .maniacs-card__body::before {
@@ -321,7 +321,7 @@
   text-align: left;
 }
 
-/* Rotom Phone page */
+/* Pagina Rotom Phone */
 .rotom-phone-shell {
   --rotom-panel: rgba(11, 19, 31, 0.86);
   --rotom-border: rgba(255, 255, 255, 0.12);
@@ -806,7 +806,7 @@ body[data-active-tab="rotom-phone"] #content-rotom-phone {
   }
 }
 
-/* Police Operation page */
+/* Pagina Police Operation */
 .police-operation-shell {
   --police-panel: rgba(12, 18, 28, 0.88);
   --police-border: rgba(255, 255, 255, 0.12);
@@ -1110,7 +1110,7 @@ body[data-active-tab="police-operation"] #content-police-operation {
   }
 }
 
-/* Slowpoke Well page */
+/* Pagina Slowpoke Well */
 .slowpoke-well-shell {
   --slowpoke-panel: rgba(12, 20, 31, 0.86);
   --slowpoke-border: rgba(255, 255, 255, 0.12);
@@ -1639,7 +1639,7 @@ body[data-active-tab="slowpoke-well"] #content-slowpoke-well {
   }
 }
 
-/* Professions page */
+/* Pagina de profissoes */
 .professions-shell {
   --profession-panel: rgba(12, 18, 28, 0.78);
   --profession-panel-strong: rgba(18, 26, 39, 0.92);
@@ -2436,7 +2436,7 @@ body[data-active-tab="profissoes"] #page-title {
   box-shadow: 0 0 12px 2px var(--accent-yellow);
   z-index: 2;
 }
-/* Clan icon styles */
+/* Estilos dos icones de clan */
 .clan-controls {
   display: flex;
   gap: 1rem;
@@ -2530,7 +2530,7 @@ body.dark {
   color: #eee;
 }
 
-/* modern visual enhancements */
+/* Melhorias visuais modernas */
 :root {
     --accent-yellow: #ffc107;
     --accent-green: #4caf50;
@@ -2564,7 +2564,7 @@ body {
 .catch-section label { display:block; margin-bottom:0.3rem; }
 .catch-section select, .catch-section input, .catch-section textarea { width:100%; border-radius:0.5rem; padding:0.4rem; border:none; }
 
-/* highlighted result box */
+/* Caixa de resultado destacada */
 .calc-result-highlight {
     background: rgba(255,255,0,0.2);
     padding: 0.6rem;
@@ -2612,18 +2612,18 @@ input[type="text"]:focus, select:focus, input[type="number"]:focus {
     outline: none;
 }
 
-/* legend colors map to accent vars */
+/* Cores da legenda mapeadas para variaveis de destaque */
 .legend-color.selected {background: var(--accent-yellow);}
 .legend-color.strength {background: var(--accent-green);}
 .legend-color.resist {background: var(--accent-blue);}
 .legend-color.weakness {background: var(--accent-red);}
 
-/* scrollbars */
+/* Barras de rolagem */
 ::-webkit-scrollbar {width:8px;}
 ::-webkit-scrollbar-track {background: rgba(0,0,0,0.1);}
 ::-webkit-scrollbar-thumb {background: rgba(255,255,255,0.2); border-radius:4px;}
 
-/* share tooltip */
+/* Dica flutuante de compartilhamento */
 .share-tooltip {
     position: absolute;
     padding: 0.4rem 0.8rem;
@@ -2679,7 +2679,7 @@ p {
 #lang-toggle:hover,
 #share-btn:hover { transform: scale(1.2); }
 
-/* catch tab layout */
+/* Layout da aba de captura */
 .catch-section {
     margin: 0.5rem 0;
     display: flex;
@@ -2786,10 +2786,10 @@ p {
   margin: 0 auto;
 }
 
-/* Types panel specific layout overrides */
+/* Sobrescritas especificas de disposicao do painel de tipos */
 .types-card { padding: 1.25rem; max-width: none; width: 100%; margin: 0; }
 
-/* Make the interactive types grid use full available page width */
+/* Fazer a grade interativa de tipos usar toda a largura disponivel da pagina */
 .types-card .chart-container,
 .types-card .chart-container .grid,
 .types-card #chart {
@@ -2812,7 +2812,7 @@ p {
 }
 .types-search { display:flex; justify-content:center; width:100%; max-width:520px; }
 
-/* Footer layout for the types analysis panel (horizontal) */
+/* Layout do rodape para o painel de analise de tipos (horizontal) */
 .types-footer {
   display: flex;
   gap: 1rem;
@@ -2838,7 +2838,7 @@ p {
 .types-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem 2rem; /* row-gap column-gap */
+  gap: 1rem 2rem; /* espacamento entre linhas e colunas */
   align-items: start;
 }
 
@@ -2856,7 +2856,7 @@ p {
 .info .info-title { font-weight:700; margin-bottom:0.5rem; color:#fff; font-size:1.05rem; }
 .info-icon-wrapper { display:inline-flex; gap:0.5rem; align-items:center; margin-right:0.5rem; margin-bottom:0.5rem; }
 
-/* Stronger overrides for the types grid to ensure consistent card appearance */
+/* Sobrescritas mais fortes para garantir aparencia consistente dos cartões na grade de tipos */
 #chart.types-grid .type-button {
   width: 100%;
   min-height: 120px;
@@ -2874,7 +2874,7 @@ p {
 }
 #chart.types-grid .type-button .type-icon { width:48px; height:48px; margin:0; }
 #chart.types-grid .type-button .type-label { font-size:0.95rem; margin-top:0.4rem; }
-/* Selection / state overrides */
+/* Sobrescritas de selecao / estado */
 #chart.types-grid .type-button.active {
   background: linear-gradient(90deg,#ffd700,#ffcf5c);
   box-shadow: 0 6px 24px rgba(255,199,63,0.18), 0 2px 6px rgba(0,0,0,0.45);
@@ -2885,7 +2885,7 @@ p {
 #chart.types-grid .type-button.resist { box-shadow: 0 6px 20px rgba(66,165,245,0.12); }
 #chart.types-grid .type-button.immune { box-shadow: 0 6px 20px rgba(158,158,158,0.12); }
 
-/* Ensure the effectiveness/weakness/resist visuals inside the types panel are explicit */
+/* Garantir que os visuais de efetividade/fraqueza/resistencia no painel de tipos fiquem explicitos */
 #content-effectiveness #chart.types-grid .type-button.effectiveness {
   background: linear-gradient(180deg,#2b7a2b,#4caf50);
   color: #06220a;
@@ -2905,7 +2905,7 @@ p {
   color:#081018;
 }
 
-/* Info card styles for the types pane */
+/* Estilos do cartão de informacoes do painel de tipos */
 .info-card {
   padding: 1rem;
   border-radius: 12px;
@@ -2927,7 +2927,7 @@ p {
 
 
 
-/* quantity label for dna image in fossil results */
+/* Rotulo de quantidade para imagem de DNA nos resultados de fosseis */
 .dna-quantity {
   font-weight: bold;
   margin-left: 0.5rem;
@@ -3081,9 +3081,9 @@ p {
   box-shadow: 0 4px 16px var(--card-shadow);
 }
 
-/* Ensure relation classes in the effectiveness panel are clearly visible
+/* Garantir que as classes de relacao no painel de efetividade fiquem bem visiveis
    and not desaturated by the generic `neutral` rules. Placed late to
-   override earlier rules. */
+   sobrescrever regras anteriores. */
 #content-effectiveness .type-button.effectiveness,
 #content-effectiveness .type-button.effective,
 #content-effectiveness .type-button.weakness,
@@ -3705,7 +3705,7 @@ p {
   transform: scale(1.3);
 }
 
-/* Speedsters page styles */
+/* Estilos da pagina de speedsters */
 .speedster-layout {
   max-width: 1200px;
   margin: 1.2rem auto 2rem;
@@ -3927,7 +3927,7 @@ p {
   top: 0.5rem;
   right: 0.5rem;
   z-index: 10;
-  /* keep it small and non-intrusive */
+  /* manter pequeno e discreto */
   width: 34px;
   height: 34px;
 }
@@ -3941,7 +3941,7 @@ p {
   height: 34px;
 }
 
-/* keep label for screen readers but hide visually */
+/* manter rotulo para leitores de tela, mas esconder visualmente */
 .speedster-location-label {
   position: absolute;
   width: 1px;
@@ -4178,7 +4178,7 @@ p {
   opacity: 0.95;
 }
 
-/* Embedded page iframe wrapper used for showing standalone pages (e.g. tochas.html) */
+/* Envoltorio de iframe de pagina embutida usado para mostrar paginas independentes (ex: tochas.html) */
 .speedster-modal-iframe-wrap {
   width: 100%;
   display: block;
@@ -4194,7 +4194,7 @@ p {
   background: transparent;
 }
 
-/* Position the Tochas trigger on the bosses page in the top-right of the bosses shell */
+/* Posicionar o gatilho de Tochas no canto superior direito da estrutura de bosses */
 .bosses-shell {
   position: relative;
 }
@@ -4205,11 +4205,11 @@ p {
   z-index: 12;
 }
 
-/* Modal-specific Tochas button placement (near the close button) */
+/* Posicionamento do botao Tochas especifico do modal (perto do botao de fechar) */
 .speedster-modal[data-mode="tochas"] .speedster-modal-tochas-btn {
   position: absolute;
   top: 1rem;
-  right: 3.4rem; /* leave space for the close button */
+  right: 3.4rem; /* deixar espaco para o botao de fechar */
   z-index: 30;
 }
 
@@ -4371,7 +4371,7 @@ p {
   display: block;
 }
 
-/* Stream modal styles (mirror do site-youtube-modal) */
+/* Estilos do modal de transmissao (espelho do site-youtube-modal) */
 .site-stream-modal {
   position: fixed;
   inset: 0;
@@ -4389,7 +4389,7 @@ p {
 .site-stream-modal__backdrop {
   position: absolute;
   inset: 0;
-  /* Use a plain semi-opaque backdrop to avoid heavy repaints that can cause flicker */
+  /* Usar fundo semiopaco simples para evitar repinturas pesadas que podem causar piscadas */
   background: rgba(0, 0, 0, 0.75);
 }
 
@@ -4883,7 +4883,7 @@ p {
   }
 }
 
-/* make scrollbar less intrusive */
+/* tornar a barra de rolagem menos intrusiva */
 .speedster-clan-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -5760,9 +5760,9 @@ p {
   flex-wrap: wrap;
 }
 
-/* container for drop hint images appearing below a single fossil click */
+/* Contêiner para imagens de dica de drop exibidas abaixo de um clique unico em fossil */
 .drop-hints {
-  /* placed inside the fossil-cell so width 100% centers content under that cell */
+  /* posicionado dentro da fossil-cell para largura 100% centralizar conteudo sob essa celula */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -5771,7 +5771,7 @@ p {
   margin-top: 0.5rem;
 }
 
-/* description text shown above drop hints */
+/* Texto descritivo mostrado acima das dicas de drop */
 .drop-hints .drop-text {
   font-size: 0.9rem;
   color: #ffd;
@@ -5785,8 +5785,8 @@ p {
 }
 
 .drop-hints .image-row {
-  margin-top: 4px; /* separate images from arrows */
-  gap: 0.6rem; /* space between pokemon icons */
+  margin-top: 4px; /* separar imagens das setas */
+  gap: 0.6rem; /* espaco entre icones de Pokemon */
 }
 .drop-hints img {
   width: 50px;
@@ -5811,7 +5811,7 @@ p {
   margin: 0 0.8rem;
   display: inline-block;
   text-shadow: 0 0 3px rgba(0,0,0,0.7);
-  /* arrows now sit above the images; no vertical translate needed */
+  /* as setas agora ficam acima das imagens; sem translacao vertical necessaria */
 }
 
 .fossil-cell {
@@ -5946,7 +5946,7 @@ p {
   text-align: center;
 }
 
-/* persistent selected state for gallery cards */
+/* Estado selecionado persistente para cartões da galeria */
 .pokemon-card.selected {
   border: 3px solid #ffd700;
   border-radius: 8px;
@@ -5961,7 +5961,7 @@ p {
   margin-bottom: 1rem;
 }
 
-/* Hide the instruction text by default to avoid flashes on tab switch */
+/* Esconder o texto de instrucao por padrao para evitar flashes ao trocar de aba */
 #instructions {
   display: none;
 }
@@ -6058,7 +6058,7 @@ p {
 .variant-options { padding-left: 0; }
 .calc-outputs { background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
 
-/* New calculator split layout */
+/* Nova disposicao dividida da calculadora */
 .calc-card.calc-shell { max-width: 1100px; padding: 1rem 1.2rem; }
 .calc-grid--split { display: grid; grid-template-columns: 360px 1fr; gap: 1.5rem; align-items: start; }
 .calc-left .inputs-card { padding: 1rem; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015)); border: 1px solid rgba(255,255,255,0.03); }
@@ -6923,7 +6923,7 @@ p {
   text-align: center;
 }
 
-/* Visual selector for boost elements */
+/* Seletor visual para elementos de boost */
 .boost-type-picker{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(92px,1fr));
@@ -9039,7 +9039,7 @@ p {
   gap: 0.6rem;
 }
 
-/* Custom site cursor (Pikachu.cur) - applies for pointer devices, preserves text cursor on inputs */
+/* Cursor personalizado do site (Pikachu.cur) - aplica em dispositivos com ponteiro e preserva cursor de texto em campos */
 @media (pointer: fine) {
   :root {
     --site-cursor: url('Pikachu.cur') 0 0, auto;
@@ -9050,7 +9050,7 @@ p {
     --site-cursor-not-allowed: url('Pikachu.cur') 0 0, not-allowed;
     --site-cursor-default: url('Pikachu.cur') 0 0, default;
   }
-  /* Force site cursor globally; keep text cursor for editable controls */
+  /* Forcar cursor do site globalmente; manter cursor de texto em controles editaveis */
   html:not([data-cursor-mode="system"]),
   html:not([data-cursor-mode="system"]) body,
   html:not([data-cursor-mode="system"]) body * { cursor: var(--site-cursor) !important; }
@@ -9205,7 +9205,7 @@ p {
   transform: translateY(-50%) scale(1.1);
 }
 
-/* container for comments/actions above fossil grid */
+/* Contêiner para comentarios/acoes acima da grade de fosseis */
 .fossil-header {
   position: relative;
   display: flex;
@@ -9413,7 +9413,7 @@ body.modal-open .main-footer {
   pointer-events: none;
 }
 
-/* Páscoa styles removed */
+/* Estilos de Pascoa removidos */
 .modal-content {
   --modal-scroll-thumb: rgba(255,255,255,0.2);
   --modal-scroll-track: rgba(0,0,0,0.1);
@@ -9876,7 +9876,7 @@ body.modal-open .main-footer {
   background: var(--card-bg);
 }
 
-/* Recommended pokémon type icons (small but visible) */
+/* Icones de tipo dos Pokemon recomendados (pequenos, mas visiveis) */
 .speedster-reco-name-wrapper .type-icon--tiny {
   width: 10px !important;
   height: 10px !important;
@@ -9884,7 +9884,7 @@ body.modal-open .main-footer {
   min-height: 10px !important;
 }
 
-/* Boss card type icons should keep a normal readable size */
+/* Icones de tipo no cartão de boss devem manter tamanho normal legivel */
 .speedster-boss-types {
   display: flex;
   flex-wrap: wrap;
@@ -9924,7 +9924,7 @@ body.modal-open .main-footer {
   min-height: 18px;
 }
 
-/* Element icon for recommended pokémon */
+/* Icone de elemento para Pokemon recomendado */
 .type-icon-reco {
   width: 24px;
   height: 24px;
@@ -9945,7 +9945,7 @@ body.modal-open .main-footer {
   vertical-align: middle;
 }
 
-/* Visual refresh */
+/* Renovacao visual */
 :root {
   --bg-start: #06101c;
   --bg-end: #102744;
@@ -10380,7 +10380,7 @@ h2 {
   left: 16.25rem;
 }
 
-/* Páscoa button styles removed */
+/* Estilos do botao de Pascoa removidos */
 
 #respawns-btn[hidden] + #fishing-btn {
   left: 8.75rem;
@@ -10425,7 +10425,7 @@ h2 {
   transform: translateY(calc(-50% - 2px));
   background: rgba(255, 255, 255, 0.12);
 }
-/* Páscoa hover/interactive rules removed */
+/* Regras de passar o mouse/interativas de Pascoa removidas */
 
 #cursor-toggle-btn[aria-pressed="true"] {
   background: linear-gradient(135deg, rgba(255, 205, 90, 0.24), rgba(255, 168, 64, 0.16));
@@ -15171,7 +15171,7 @@ body.home-view .main-footer {
   font-size: 0.78rem;
 }
 
-/* Home dropdown used by the main landing buttons to show sidebar group children */
+/* Menu suspenso da home usado pelos botoes principais da entrada para mostrar filhos do grupo da sidebar */
 .home-dropdown {
   position: absolute;
   z-index: 1100;
@@ -15232,7 +15232,7 @@ body.home-view .main-footer {
   }
 }
 
-/* Integrated expansion panel (replaces floating dropdown) */
+/* Painel de expansao integrado (substitui menu suspenso flutuante) */
 .home-expanded-panel {
   margin-top: 0.7rem;
   grid-column: 1 / -1;
@@ -15255,7 +15255,7 @@ body.home-view .main-footer {
   padding: 0.6rem;
   border-radius: 18px;
   overflow: hidden;
-  /* make the inner block look like a card (matches .home-tool-card) */
+  /* fazer o bloco interno parecer um cartão (combina com .home-tool-card) */
   background:
     radial-gradient(circle at top right, rgba(117, 191, 255, 0.08), transparent 34%),
     linear-gradient(180deg, rgba(14, 24, 41, 0.96), rgba(8, 15, 27, 0.92));
@@ -15292,7 +15292,7 @@ body.home-view .main-footer {
   outline: none;
 }
 
-/* connector visual: a small diamond that links the clicked button with the panel */
+/* Conector visual: pequeno diamante que liga o botao clicado ao painel */
 .home-expanded-panel::before{
   content: '';
   position: absolute;
@@ -15309,14 +15309,14 @@ body.home-view .main-footer {
   z-index: 2;
 }
 
-/* show items after panel opens */
+/* mostrar itens depois que o painel abrir */
 .home-expanded-panel[aria-hidden="false"] .home-expanded-panel__item{
   opacity: 1;
   transform: translateY(0);
 }
 
 @media (max-width: 720px) {
-  /* On mobile, anchor to full width with small side padding */
+  /* No celular, ancorar em largura total com pequeno preenchimento lateral */
   .home-expanded-panel__inner {
     width: calc(100% - 24px) !important;
     margin-left: 12px !important;
@@ -15326,7 +15326,7 @@ body.home-view .main-footer {
   }
 }
 
-/* chevron on home buttons */
+/* Seta nos botoes da home */
 .home-tool-card__chev{
   position: absolute;
   right: 14px;
@@ -15341,7 +15341,7 @@ body.home-view .main-footer {
   color: #ffffff;
 }
 
-/* Inline expander inside each home tool card (minimizes layout shift) */
+/* Expansor em linha dentro de cada cartão de ferramenta da home (minimiza deslocamento da disposicao) */
 .home-tool-card__expander {
   overflow: hidden;
   max-height: 0;
@@ -15382,12 +15382,12 @@ body.home-view .main-footer {
   outline: none;
 }
 
-/* visible focus ring for keyboard users */
+/* Anel de foco visivel para usuarios de teclado */
 .home-tool-card__expander-item:focus-visible{
   box-shadow: 0 0 0 4px rgba(79,161,255,0.08);
 }
 
-/* subtle emphasis on the parent card when expanded */
+/* Enfase sutil no cartão pai quando expandido */
 .home-tool-card[aria-expanded="true"]{
   border-color: rgba(113,173,227,0.12);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 26px 64px rgba(1,8,18,0.44);
@@ -16285,14 +16285,14 @@ body.modal-open .app-shell {
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 24px 60px rgba(1, 8, 18, 0.34);
   backdrop-filter: blur(20px);
-  /* Allow the sidebar to scroll independently from the page when its
-     content is taller than the viewport. Keep the sticky positioning
-     so it stays visible while the main page scrolls. */
+  /* Permitir que a sidebar tenha rolagem independente da pagina quando seu
+     conteudo for mais alto que a viewport. Manter o posicionamento sticky
+     para ela permanecer visivel enquanto a pagina principal rola. */
   max-height: calc(100vh - 2rem);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  /* Hide native scrollbars but keep scrolling functional */
+  /* Esconder barras de rolagem nativas, mas manter a rolagem funcional */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
 }
@@ -16329,7 +16329,7 @@ body.modal-open .app-shell {
   opacity: 0.45;
 }
 
-/* Remove visible scrollbars for the sidebar (all states) */
+/* Remover barras de rolagem visiveis da sidebar (todos os estados) */
 .app-sidebar,
 body.sidebar-open .app-sidebar {
   scrollbar-width: none;
@@ -16841,7 +16841,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   line-height: 1.65;
 }
 
-/* Title row inside Pokemon hub: title left, actions (Mega) right */
+/* Linha de titulo dentro do hub Pokemon: titulo a esquerda, acoes (Mega) a direita */
 .pokemon-hub__title-row{
   display:flex;
   align-items:center;
@@ -17344,7 +17344,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   content-visibility: auto;
   contain: layout paint style;
   contain-intrinsic-size: 250px;
-  /* Fixed card size for consistent layout (increased slightly to avoid internal scroll) */
+  /* Tamanho fixo do cartão para disposicao consistente (aumentado levemente para evitar rolagem interna) */
   --pokemon-card-height: 360px;
   --pokemon-media-height: 140px;
   height: var(--pokemon-card-height);
@@ -17506,7 +17506,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   flex-shrink: 0;
 }
 
-/* Show role badges in the card header as icon-only at the top-right */
+/* Mostrar selos de papel no cabecalho do cartão apenas como icone no canto superior direito */
 .pokemon-entry-card__header .pokemon-role-badge {
   justify-self: end;
   align-self: start;
@@ -17752,7 +17752,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
     rgba(4, 10, 18, 0.9);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  /* Prevent the media from stretching the card */
+  /* Impedir que a midia estique o cartão */
   overflow: hidden;
 }
 
@@ -17799,13 +17799,13 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 .pokemon-entry-card__sections {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.58rem;
-  /* keep content visible and increase card height instead of adding scroll */
+  /* manter conteudo visivel e aumentar altura do cartão em vez de adicionar rolagem */
   min-height: 0;
   overflow: visible;
   padding-bottom: 0;
 }
 
-/* Center content inside each info block for a more harmonious look */
+/* Centralizar conteudo dentro de cada bloco de informacoes para visual mais harmonico */
 .pokemon-entry-card__sections {
   align-items: center;
 }
@@ -17818,11 +17818,11 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   justify-self: center;
 }
 
-/* Align the info blocks to the default center for Chloe's Eevee */
+/* Alinhar blocos de informacoes ao centro padrao para Chloe's Eevee */
 .pokemon-entry-card[data-pokemon-id="chloes-eevee"] .pokemon-entry-card__sections {
   align-items: center;
 }
-/* Reset previous block transform and align Moveset label and tokens with the Types column */
+/* Redefinir transform do bloco anterior e alinhar rotulo Moveset e marcadores com a coluna Tipos */
 .pokemon-entry-card[data-pokemon-id="chloes-eevee"] .pokemon-entry-card__sections .pokemon-entry-card__block:last-child {
   margin-top: 0px !important;
   transform: none !important;
@@ -17832,7 +17832,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   transform: translateY(17px) !important;
 }
 .pokemon-entry-card[data-pokemon-id="chloes-eevee"] .pokemon-entry-card__sections .pokemon-entry-card__block:last-child .pokemon-token-row {
-  /* keep icons on the right column, move them slightly up to align with Types tokens */
+  /* manter icones na coluna direita e mover levemente para cima para alinhar com marcadores de Tipos */
   transform: translateY(17px) !important;
 }
 
@@ -17875,7 +17875,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   object-fit: contain;
 }
 
-/* Mobile-specific tweak: keep Chloe's Moveset icons on the right column and nudge them up slightly */
+/* Ajuste especifico para celular: manter icones de Moveset de Chloe na coluna direita e subir levemente */
 @media (max-width: 520px) {
   .pokemon-entry-card[data-pokemon-id="chloes-eevee"] .pokemon-entry-card__sections .pokemon-entry-card__block:last-child .pokemon-entry-card__label {
     transform: none !important;
@@ -17907,7 +17907,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   text-transform: uppercase;
 }
 
-/* Center the team badge when it's the only item in the footer */
+/* Centralizar o selo de time quando ele for o unico item no rodape */
 .pokemon-entry-card__footer > .pokemon-team-badge:only-child {
   margin-left: auto;
   margin-right: auto;
@@ -18019,7 +18019,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   align-items: stretch;
 }
 
-/* Make the badges appear closer to the title (subtitle-like) */
+/* Fazer selos aparecerem mais perto do titulo (como subtitulo) */
 .pokemon-details-modal__hero .pokemon-details-modal__copy {
   gap: 0.12rem;
 }
@@ -18031,14 +18031,14 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   gap: 0.36rem;
 }
 
-/* Reduce modal title size so badges sit closer like a subtitle */
+/* Reduzir tamanho do titulo do modal para selos ficarem mais perto, como subtitulo */
 .pokemon-details-modal__copy h2 {
   font-size: 1.6rem;
   line-height: 1.05;
   margin: 0;
 }
 
-/* Ensure the copy block aligns items to the top so rows don't stretch to match the art column */
+/* Garantir que o bloco de texto alinhe itens ao topo para linhas nao esticarem com a coluna de arte */
 .pokemon-details-modal__copy {
   align-content: start;
   align-items: start;
@@ -18630,9 +18630,9 @@ button.pokemon-evolution-card:focus-visible {
   gap: 0.5rem;
 }
 
-/* Keep average groups sized to their content and anchor cards to the top.
+/* Manter grupos de medias dimensionados pelo conteudo e ancorar cartões ao topo.
    Prevents the group from stretching to match adjacent column height
-   (reduces the large empty space when there's only one ball). */
+   (reduz o espaco vazio grande quando ha apenas uma ball). */
 .pokemon-averages-grid {
   align-items: start;
 }
@@ -21603,7 +21603,7 @@ body.home-view .app-shell {
   padding: 0.75rem 0.9rem;
   border-radius: 0.95rem;
   border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.2);
-  /* Use the card background for better contrast with options */
+  /* Usar o fundo do cartão para melhor contraste com opcoes */
   background: var(--card-bg);
   color: var(--text-strong);
 }
@@ -21612,8 +21612,8 @@ body.home-view .app-shell {
   flex: 1 1 260px;
 }
 
-/* Improve contrast for Pokéblock / Ration dropdown options
-   (some browsers allow styling of <option>; helps visibility) */
+/* Melhorar contraste das opcoes do menu suspenso Pokeblock / Ration
+   (alguns navegadores permitem estilizar <option>; ajuda a visibilidade) */
 .planner-item-field__select option {
   color: var(--text-strong);
   background: rgba(8, 15, 28, 0.96);
@@ -21743,8 +21743,8 @@ body.home-view .app-shell {
   align-items: flex-start;
 }
 
-/* For composition cards, keep the title group compact and left-aligned
-   so the name, types and moveset stay near the boss image. */
+/* Para cartões de composicao, manter o grupo de titulo compacto e alinhado a esquerda
+   para nome, tipos e moveset ficarem perto da imagem do boss. */
 .planner-composition-card__title-row {
   display: flex;
   justify-content: flex-start;
@@ -21873,14 +21873,14 @@ body.home-view .app-shell {
   gap: 0.85rem;
 }
 
-/* When a composition card is for a Hoopa Portais boss, show only DPS
-   and make its slot expand to fill the available width for better layout. */
+/* Quando um cartão de composicao for de boss Hoopa Portais, mostrar apenas DPS
+   e fazer seu slot expandir para preencher a largura disponivel e melhorar o layout. */
 .planner-composition-card--hoopa .planner-composition-card__roles {
   grid-template-columns: 1fr;
 }
 
 .planner-composition-card--hoopa .planner-role-slot {
-  padding: 1.25rem; /* slightly larger padding to emphasize the single slot */
+  padding: 1.25rem; /* preenchimento levemente maior para enfatizar o espaco unico */
 }
 
 .planner-role-slot {
@@ -21914,17 +21914,17 @@ body.home-view .app-shell {
 .planner-role-slot__copy {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto; /* occupy available header space so inner text can be centered */
+  flex: 1 1 auto; /* ocupar espaco disponivel no cabecalho para centralizar o texto interno */
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
-/* Center header content while keeping the clear button anchored to the top-right */
+/* Centralizar conteudo do cabecalho mantendo o botao de limpar ancorado no canto superior direito */
 .planner-role-slot__header {
   position: relative;
-  justify-content: center; /* center the copy area horizontally */
-  align-items: center; /* center vertically */
+  justify-content: center; /* centralizar a area de texto horizontalmente */
+  align-items: center; /* centralizar verticalmente */
 }
 
 .planner-role-slot__clear {
@@ -22148,7 +22148,7 @@ body.home-view .app-shell {
   transform: translateY(-1px);
 }
 
-/* Subtabs in planner hero */
+/* Subabas no hero do planejador */
 .planner-subtabs {
   display: flex;
   gap: 0.6rem;
@@ -22171,7 +22171,7 @@ body.home-view .app-shell {
   box-shadow: 0 10px 20px rgba(var(--module-accent-rgb, 104, 215, 255), 0.08);
 }
 
-/* Ready subpage list */
+/* Lista da subpagina Prontos */
 .planner-ready-list {
   display: grid;
   gap: 0.85rem;
@@ -22192,7 +22192,7 @@ body.home-view .app-shell {
   color: var(--text-strong);
 }
 
-/* Ready member card (boss-like) */
+/* Card de membro pronto (estilo boss) */
 .planner-ready-boss-group {
   padding: 0.8rem;
   border-radius: 1rem;
@@ -22214,7 +22214,7 @@ body.home-view .app-shell {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 1.3rem 4rem 0.9rem; /* increase right padding to make room for badges */
+  padding: 1.3rem 4rem 0.9rem; /* aumentar preenchimento direito para abrir espaco para selos */
   border-radius: 1rem;
   text-align: center;
 }
@@ -22252,15 +22252,15 @@ body.home-view .app-shell {
 
 .planner-ready-member-card__consumables {
   position: absolute;
-  /* Anchor badges relative to card center and shift left of the avatar.
-     This keeps badges consistently positioned next to the boss artwork. */
+  /* Ancorar selos relativos ao centro do cartão e deslocar a esquerda do avatar.
+     Isso mantem selos posicionados de forma consistente ao lado da arte do boss. */
   left: 50%;
   top: 0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   align-items: flex-end;
-  transform: translateX(calc(-50% - 95px)); /* center -> move left by half avatar (48px) + 28px spacing (moved left 20px) */
+  transform: translateX(calc(-50% - 95px)); /* centro -> mover para esquerda por meio avatar (48px) + 28px de espaco (movido 20px a esquerda) */
 }
 
 .planner-ready-member-card__consumable {
@@ -22702,8 +22702,8 @@ body.home-view .app-shell {
   }
 }
 
-/* Compact planner layout: reduce padding, sizes and hide redundant labels
-   to make the composition/recommendation lists cleaner and more objective. */
+/* Disposicao compacta do planejador: reduzir preenchimento, tamanhos e ocultar rotulos redundantes
+   para deixar listas de composicao/recomendacao mais limpas e objetivas. */
 .planner-composition-card {
   padding: 0.6rem;
   border-radius: 0.8rem;
@@ -22754,12 +22754,12 @@ body.home-view .app-shell {
   font-size: 0.72rem;
 }
 
-/* hide the verbose labels like 'TIPOS' to make chips more compact */
+/* esconder rotulos verbosos como 'TIPOS' para deixar chips mais compactos */
 .planner-meta-chip__label {
   display: none;
 }
 
-/* Keep consumable hint labels visible so recommended items are explicit */
+/* Manter rotulos de dica de consumivel visiveis para itens recomendados ficarem explicitos */
 .planner-item-field__hint-label {
   display: inline-block;
   color: rgba(255, 255, 255, 0.62);
@@ -22808,7 +22808,7 @@ body.home-view .app-shell {
   font-size: 0.86rem;
 }
 
-/* slightly denser appearance for small screens */
+/* Aparencia levemente mais densa para telas pequenas */
 @media (max-width: 760px) {
   .planner-composition-card__image,
   .planner-recommendation-card__image {
@@ -22817,15 +22817,15 @@ body.home-view .app-shell {
   }
 }
 
-/* Prevent clan buttons and recommendation cards from stretching
-   when there are few items. Keep consistent compact sizing. */
+/* Impedir que botoes de clan e cartões de recomendacao estiquem
+   quando ha poucos itens. Manter dimensionamento compacto consistente. */
 .planner-role-slot__clans {
-  align-items: center; /* keep icons aligned */
-  justify-content: flex-start; /* don't center / stretch clan buttons */
+  align-items: center; /* manter icones alinhados */
+  justify-content: flex-start; /* nao centralizar / esticar botoes de clan */
 }
 
 .planner-clan-filter {
-  flex: 0 0 auto; /* never grow to fill remaining space */
+  flex: 0 0 auto; /* nunca crescer para preencher o espaco restante */
   max-width: 160px;
   min-width: 64px;
   height: 34px;
@@ -22841,21 +22841,21 @@ body.home-view .app-shell {
 }
 
 .planner-role-slot__list {
-  align-content: start; /* prevent grid from stretching rows */
+  align-content: start; /* impedir que a grade estique linhas */
   align-items: start;
-  grid-auto-rows: min-content; /* rows size to their content */
+  grid-auto-rows: min-content; /* linhas dimensionadas pelo conteudo */
 }
 
 .planner-recommendation-card {
-  align-self: start; /* don't stretch within grid tracks */
-  min-height: 56px; /* keep cards compact and uniform */
+  align-self: start; /* nao esticar dentro das faixas da grade */
+  min-height: 56px; /* manter cartões compactos e uniformes */
 }
 
 .planner-recommendation-card__content {
   gap: 0.4rem;
 }
 
-/* Planner-specific adjustments for global clan controls used inside planner */
+/* Ajustes especificos do planejador para controles globais de clan usados dentro dele */
 .planner-panel .clan-controls,
 .planner-shell .clan-controls {
   justify-content: flex-start;
@@ -22878,7 +22878,7 @@ body.home-view .app-shell {
   border-radius: 6px;
 }
 
-/* Planner refinement */
+/* Refinamento do planejador */
 .planner-hero {
   gap: 0.85rem;
   padding: 1rem 1.05rem;
@@ -23794,7 +23794,7 @@ body.home-view .app-shell {
   }
 }
 
-/* Types page remake */
+/* Remake da pagina de tipos */
 .legend-color.effective {
   background: #60d394;
 }
@@ -23937,13 +23937,13 @@ body.home-view .app-shell {
 
 #content-effectiveness .types-body {
   display: grid;
-  grid-template-columns: 1fr; /* single column now that info moved to footer */
+  grid-template-columns: 1fr; /* coluna unica agora que informacoes foram movidas para o rodape */
   gap: 1rem;
   align-items: start;
 }
 
 html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-panel {
-  padding: 2.0rem 1rem 1.25rem !important; /* force more top space so heading has breathing room */
+  padding: 2.0rem 1rem 1.25rem !important; /* forcar mais espaco no topo para o titulo respirar */
   border-radius: 26px;
   background:
     radial-gradient(circle at top left, rgba(104, 215, 255, 0.1), transparent 28%),
@@ -23956,7 +23956,7 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-  margin-bottom: 1.2rem; /* more space below heading */
+  margin-bottom: 1.2rem; /* mais espaco abaixo do titulo */
   padding-top: 0.2rem;
 }
 
@@ -24169,12 +24169,12 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   gap: 0.6rem;
 }
 
-/* Slightly reduce padding in info sections to keep layout compact */
+/* Reduzir levemente o preenchimento nas secoes de informacao para manter disposicao compacta */
 #content-effectiveness .info-section {
   padding: 0.8rem;
 }
 
-/* On narrower screens keep a single column */
+/* Em telas mais estreitas, manter coluna unica */
 @media (max-width: 980px) {
   #content-effectiveness .types-info-shell {
     grid-template-columns: 1fr;
@@ -24241,7 +24241,7 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   line-height: 1.55;
 }
 
-/* Highlight the types heading to make it stand out */
+/* Destacar o titulo de tipos para sobressair */
 #content-effectiveness .types-panel-heading #types-grid-heading {
   display: inline-block;
   padding: 0.45rem 0.9rem;
@@ -24253,7 +24253,7 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   letter-spacing: 0.6px;
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow: 0 8px 24px rgba(2,8,18,0.36), inset 0 1px 0 rgba(255,255,255,0.03);
-  margin-top: 0.9rem; /* push badge down from top edge */
+  margin-top: 0.9rem; /* empurrar selo para baixo a partir da borda superior */
   margin-bottom: 0.6rem;
   padding: 0.6rem 1rem;
 }
@@ -24574,7 +24574,7 @@ html body[data-active-tab="effectiveness"] #content-effectiveness .types-grid-pa
   }
 }
 
-/* Visual polish pass */
+/* Passada de polimento visual */
 body {
   font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -27331,9 +27331,9 @@ body[data-active-tab="hunt-builder"] .app-shell {
   }
 }
 
-/* Flexbox responsive structure pass
+/* Passada de estrutura responsiva com flexbox
    Keeps the current visual language while replacing brittle page-level grids
-   with wrapping flex layouts where the interface benefits from fluid sizing. */
+   com layouts flex quebraveis onde a interface se beneficia de dimensionamento fluido. */
 :root {
   --layout-page-max: 1360px;
   --layout-gap: clamp(0.75rem, 1.5vw, 1.15rem);
@@ -27981,7 +27981,7 @@ body {
   }
 }
 
-/* Flexbox follow-up fixes for components that need tighter sizing rules. */
+/* Correcoes posteriores de flexbox para componentes que precisam de regras de tamanho mais rigidas. */
 .header {
   position: relative;
 }
@@ -28997,9 +28997,9 @@ body[data-active-tab="bosses-info"] #content-bosses-info .bosses-info-shell {
   }
 }
 
-/* Global density remake
+/* Remake de densidade global
    A final visual layer that makes the site read like compact tools instead of
-   a set of heavy dashboards. Keep this block near the end of the file. */
+   um conjunto de dashboards pesados. Manter este bloco perto do fim do arquivo. */
 :root {
   --remake-bg: #050708;
   --remake-bg-soft: #080b0d;
@@ -30575,9 +30575,9 @@ body.sidebar-open .app-shell__backdrop {
   }
 }
 
-/* PStory wiki/tool visual refresh
-   Keep this as the last layer: it remaps the whole app shell without changing
-   route logic or page markup. */
+/*
+   Manter esta como a ultima camada: ela remapeia todo o shell do app sem alterar
+   logica de rotas ou markup da pagina. */
 :root {
   --ps-bg: #080b0d;
   --ps-bg-2: #0d1116;

@@ -1,14 +1,14 @@
-	// Clan icon interaction for types page
+	// Interacao dos icones de clan na pagina de tipos
 	document.addEventListener('DOMContentLoaded', function() {
 		const clanButtons = document.querySelectorAll('.clan-btn');
 		clanButtons.forEach(btn => {
 			btn.addEventListener('click', function() {
-				// Toggle active state
+				// Alternar estado ativo
 				clanButtons.forEach(b => b.classList.remove('active'));
 				this.classList.add('active');
-				// Get selected clan
+				// Obter clan selecionado
 				const clan = this.getAttribute('data-clan');
-				// Custom: show related elements (replace with your logic)
+				// Personalizado: mostrar elementos relacionados
 				highlightClanTypes(clan);
 			});
 		});
@@ -35,7 +35,7 @@
 			}
 		}
 
-		// Reset clan selection and highlights when reset button is clicked
+		// Redefinir selecao de clan e destaques quando o botao de redefinicao for clicado
 		const resetBtn = document.getElementById('reset-btn');
 		if (resetBtn) {
 			resetBtn.addEventListener('click', function() {
