@@ -5394,6 +5394,570 @@ p {
   }
 }
 
+/* 2026-07-06: lightweight site-wide visual polish */
+:root {
+  --ps-rose: #ff7a90;
+  --ps-violet: #a78bfa;
+  --ps-cyan: #69d5ff;
+  --ps-amber: #ffd166;
+  --ps-surface-raised: rgba(16, 22, 29, 0.9);
+  --ps-surface-deep: rgba(5, 8, 12, 0.76);
+  --ps-hairline: rgba(255, 255, 255, 0.08);
+  --ps-glow-green: rgba(68, 209, 157, 0.18);
+  --ps-glow-blue: rgba(105, 169, 255, 0.16);
+  --ps-glow-amber: rgba(255, 209, 102, 0.14);
+}
+
+body,
+body.dark,
+body.home-view {
+  background:
+    linear-gradient(115deg, rgba(68, 209, 157, 0.12), transparent 24%),
+    linear-gradient(245deg, rgba(105, 169, 255, 0.12), transparent 30%),
+    linear-gradient(12deg, rgba(255, 122, 144, 0.06), transparent 38%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 44px),
+    #081016;
+  background-attachment: fixed;
+}
+
+.header,
+.site-global-search,
+.app-shell,
+.home-landing__hero,
+.home-landing__focus,
+.home-landing__quick,
+.home-tool-card,
+.card.calc-card,
+.calc-card,
+.pokemon-hub,
+.team-builder-shell,
+.hunt-builder-shell,
+.boost-shell,
+.catch-card,
+.bosses-shell,
+.community-shell,
+.maniacs-shell,
+.bosses-info-shell {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 18px 44px rgba(0, 0, 0, 0.24);
+}
+
+.header,
+.site-global-search {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+    rgba(10, 15, 20, 0.9);
+}
+
+.header {
+  overflow: visible;
+}
+
+.header::before,
+.site-global-search::before,
+.app-sidebar::before,
+.card.calc-card::before,
+.calc-card::before,
+.pokemon-hub::before,
+.team-builder-shell::before,
+.hunt-builder-shell::before,
+.boost-shell::before,
+.catch-card::before,
+.bosses-shell::before,
+.community-shell::before,
+.maniacs-shell::before,
+.bosses-info-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(68, 209, 157, 0.75), rgba(105, 169, 255, 0.5), transparent);
+  opacity: 0.72;
+}
+
+.site-global-search,
+.card.calc-card,
+.calc-card,
+.pokemon-hub,
+.team-builder-shell,
+.hunt-builder-shell,
+.boost-shell,
+.catch-card,
+.bosses-shell,
+.community-shell,
+.maniacs-shell,
+.bosses-info-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.app-main > [role="tabpanel"]:not([hidden]) {
+  animation: ps-panel-in 180ms ease-out both;
+}
+
+@keyframes ps-panel-in {
+  from {
+    opacity: 0.86;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header button,
+#mobile-nav-toggle,
+.sidebar-group__toggle,
+.sidebar-sublink,
+.sidebar-quick-link,
+.home-landing__cta,
+.home-landing__quick-discord,
+.pokemon-filter-clear,
+.bosses-mode-btn,
+.catch-btn,
+.boost-btn,
+.team-builder-action,
+.hunt-builder-action,
+button[type="button"] {
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.header button:hover,
+.header button:focus-visible,
+#mobile-nav-toggle:hover,
+#mobile-nav-toggle:focus-visible {
+  border-color: rgba(105, 169, 255, 0.42);
+  background:
+    linear-gradient(180deg, rgba(105, 169, 255, 0.16), rgba(68, 209, 157, 0.08)),
+    rgba(255, 255, 255, 0.055);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+  transform: translateY(-1px);
+}
+
+.site-global-search:focus-within {
+  border-color: rgba(105, 169, 255, 0.38);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 3px rgba(105, 169, 255, 0.1),
+    0 18px 44px rgba(0, 0, 0, 0.24);
+}
+
+.app-sidebar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18%),
+    linear-gradient(135deg, rgba(68, 209, 157, 0.075), transparent 34%),
+    rgba(9, 14, 19, 0.96);
+}
+
+.sidebar-home,
+.sidebar-group,
+.sidebar-footer {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-sublink.is-active {
+  box-shadow: inset 3px 0 0 var(--ps-green);
+}
+
+.sidebar-group__icon,
+.sidebar-quick-link__icon,
+.home-tool-card__index {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.pokemon-hub__hero,
+.team-builder-hero,
+.hunt-builder-hero,
+.boost-hero,
+.catch-hero,
+.bosses-hero,
+.bosses-copy,
+.community-hero,
+.maniacs-hero,
+.bosses-info-hero,
+.types-hero,
+.home-landing__hero {
+  border-color: rgba(255, 255, 255, 0.11);
+  background:
+    linear-gradient(135deg, rgba(68, 209, 157, 0.13), transparent 42%),
+    linear-gradient(245deg, rgba(105, 169, 255, 0.12), transparent 48%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    var(--ps-surface-raised);
+}
+
+.pokemon-filter-panel,
+.times-filter-panel,
+.team-builder-panel,
+.hunt-builder-panel,
+.catch-panel,
+.community-player-panel,
+.community-list-panel,
+.bosses-info-section,
+.types-grid-panel,
+.types-card,
+.info {
+  border-color: rgba(255, 255, 255, 0.095);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.034), rgba(255, 255, 255, 0.01)),
+    var(--ps-surface-deep);
+}
+
+.pokemon-entry-card,
+.team-card,
+.team-builder-result-card,
+.team-builder-hunt-card,
+.boost-material-card,
+.speedster-card,
+.boss-role-card,
+.boss-role-pick,
+.streamer-card,
+.streamer-mini-preview__card,
+.maniacs-card,
+.bosses-info-card,
+.home-tool-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.pokemon-entry-card::after,
+.team-card::after,
+.team-builder-result-card::after,
+.team-builder-hunt-card::after,
+.boost-material-card::after,
+.speedster-card::after,
+.boss-role-card::after,
+.boss-role-pick::after,
+.streamer-card::after,
+.maniacs-card::after,
+.bosses-info-card::after,
+.home-tool-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  z-index: -1;
+  background: linear-gradient(90deg, var(--ps-green), var(--ps-blue), var(--ps-amber));
+  opacity: 0.42;
+}
+
+.home-tool-card:nth-child(2)::after,
+.pokemon-card-grid > *:nth-child(4n + 2)::after,
+.times-card-grid > *:nth-child(4n + 2)::after {
+  background: linear-gradient(90deg, var(--ps-blue), var(--ps-violet));
+}
+
+.home-tool-card:nth-child(3)::after,
+.pokemon-card-grid > *:nth-child(4n + 3)::after,
+.times-card-grid > *:nth-child(4n + 3)::after {
+  background: linear-gradient(90deg, var(--ps-amber), var(--ps-rose));
+}
+
+.home-tool-card:nth-child(4)::after,
+.pokemon-card-grid > *:nth-child(4n + 4)::after,
+.times-card-grid > *:nth-child(4n + 4)::after {
+  background: linear-gradient(90deg, var(--ps-cyan), var(--ps-green));
+}
+
+.pokemon-entry-card:hover,
+.pokemon-entry-card:focus-visible,
+.team-card:hover,
+.team-card:focus-visible,
+.team-builder-result-card:hover,
+.team-builder-hunt-card:hover,
+.boost-material-card:hover,
+.speedster-card:hover,
+.boss-role-card:hover,
+.boss-role-card:focus-visible,
+.boss-role-pick:hover,
+.streamer-card:hover,
+.streamer-mini-preview__card:hover,
+.maniacs-card:hover,
+.bosses-info-card:hover,
+.home-tool-card:hover,
+.home-tool-card:focus-visible {
+  border-color: rgba(105, 169, 255, 0.38);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    rgba(18, 26, 34, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 16px 34px rgba(0, 0, 0, 0.26);
+  transform: translateY(-2px);
+}
+
+.pokemon-entry-card__media,
+.team-card__figure,
+.team-builder-result-card__media,
+.team-builder-hunt-card__media,
+.boost-material-card__media,
+.speedster-image-wrap,
+.boss-role-card__avatar,
+.boss-role-pick-media,
+.streamer-card__avatar,
+.maniacs-card__figure,
+.bosses-info-card__figure,
+.home-landing__focus-orbit {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 45%),
+    linear-gradient(225deg, rgba(105, 169, 255, 0.1), transparent 55%),
+    rgba(5, 9, 13, 0.72);
+}
+
+.pokemon-entry-card img,
+.team-card img,
+.team-builder-result-card img,
+.team-builder-hunt-card img,
+.boost-material-card img,
+.speedster-card img,
+.boss-role-card img,
+.boss-role-pick img,
+.maniacs-card img,
+.bosses-info-card img {
+  filter: saturate(1.06) contrast(1.03);
+}
+
+.pokemon-entry-card:hover img,
+.team-card:hover img,
+.team-builder-result-card:hover img,
+.team-builder-hunt-card:hover img,
+.boost-material-card:hover img,
+.speedster-card:hover img,
+.boss-role-card:hover img,
+.boss-role-pick:hover img,
+.maniacs-card:hover img,
+.bosses-info-card:hover img {
+  filter: saturate(1.14) contrast(1.05);
+}
+
+.pokemon-role-badge,
+.pokemon-passive-badge,
+.pokemon-token,
+.team-builder-type-pill,
+.times-type-pill,
+.bosses-mode-pill,
+.boss-role-card__chip,
+.boss-role-pick-chip,
+.speedster-type-chip,
+.streamer-status,
+.streamer-live-signal,
+.streamer-rat-chip {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.pokemon-passive-badge,
+.boss-role-card__chip--type,
+.boss-role-pick-chip--move,
+.streamer-status.online,
+.streamer-live-signal[data-state="drop"] {
+  box-shadow: inset 0 0 0 1px rgba(68, 209, 157, 0.08);
+}
+
+.boss-role-pick-score,
+.speedster-reco-score {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+    rgba(3, 7, 10, 0.74);
+}
+
+.home-landing__focus-core {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+.home-landing__quick-link,
+.home-landing__quick-discord,
+.sidebar-quick-link {
+  border-color: rgba(255, 255, 255, 0.105);
+}
+
+.home-landing__quick-link:hover,
+.home-landing__quick-link:focus-visible,
+.home-landing__quick-discord:hover,
+.home-landing__quick-discord:focus-visible,
+.sidebar-quick-link:hover,
+.sidebar-quick-link:focus-visible {
+  border-color: rgba(68, 209, 157, 0.4);
+  background: linear-gradient(90deg, rgba(68, 209, 157, 0.15), rgba(105, 169, 255, 0.07));
+  transform: translateY(-1px);
+}
+
+.pokemon-details-modal__content,
+.times-details-modal__content,
+.modal-content,
+.speedster-modal-content,
+.site-youtube-modal__content,
+.site-stream-modal__content,
+.planner-edit-modal__content {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 70px rgba(0, 0, 0, 0.46);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-main > [role="tabpanel"]:not([hidden]) {
+    animation: none;
+  }
+
+  .pokemon-entry-card:hover,
+  .pokemon-entry-card:focus-visible,
+  .team-card:hover,
+  .team-card:focus-visible,
+  .team-builder-result-card:hover,
+  .team-builder-hunt-card:hover,
+  .boost-material-card:hover,
+  .speedster-card:hover,
+  .boss-role-card:hover,
+  .boss-role-card:focus-visible,
+  .boss-role-pick:hover,
+  .streamer-card:hover,
+  .streamer-mini-preview__card:hover,
+  .maniacs-card:hover,
+  .bosses-info-card:hover,
+  .home-tool-card:hover,
+  .home-tool-card:focus-visible,
+  .header button:hover,
+  .header button:focus-visible,
+  .home-landing__quick-link:hover,
+  .home-landing__quick-link:focus-visible,
+  .home-landing__quick-discord:hover,
+  .home-landing__quick-discord:focus-visible,
+  .sidebar-quick-link:hover,
+  .sidebar-quick-link:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  body,
+  body.dark,
+  body.home-view {
+    background-attachment: scroll;
+    background-size: auto;
+  }
+
+  .header,
+  .site-global-search,
+  .app-shell,
+  .card.calc-card,
+  .calc-card,
+  .pokemon-hub,
+  .team-builder-shell,
+  .hunt-builder-shell,
+  .boost-shell,
+  .catch-card,
+  .bosses-shell,
+  .community-shell,
+  .maniacs-shell,
+  .bosses-info-shell {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.045),
+      0 10px 26px rgba(0, 0, 0, 0.22);
+  }
+
+  body[data-active-tab="times"] #content-times,
+  body[data-active-tab="times"] #content-times .pokemon-hub,
+  body[data-active-tab="times"] #content-times .pokemon-hub__hero,
+  body[data-active-tab="times"] #content-times .times-filter-panel,
+  body[data-active-tab="times"] #content-times .times-card-grid,
+  body[data-active-tab="team-builder"] #content-team-builder,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-shell,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-hero,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-board,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-picker,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-slots {
+    width: min(100%, calc(100vw - 0.9rem)) !important;
+    max-width: calc(100vw - 0.9rem) !important;
+    min-width: 0 !important;
+    margin-inline: auto;
+    box-sizing: border-box;
+    overflow-x: clip;
+  }
+
+  body[data-active-tab="times"] #content-times .pokemon-filter-panel__copy,
+  body[data-active-tab="times"] #content-times .pokemon-filter-panel__copy p,
+  body[data-active-tab="times"] #content-times .pokemon-hub__lead,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-section-head,
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-drag-hint {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-drag-hint {
+    text-align: center;
+  }
+
+  body[data-active-tab="times"] #content-times .times-filter-panel h3 {
+    max-width: min(28ch, calc(100vw - 2.5rem));
+    margin-inline: auto;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  body[data-active-tab="times"] #content-times .pokemon-hub__lead,
+  body[data-active-tab="times"] #content-times .times-filter-panel .pokemon-filter-panel__copy p {
+    max-width: min(28ch, calc(100vw - 2.5rem));
+    margin-inline: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-drag-hint {
+    max-width: min(34ch, calc(100vw - 2.5rem));
+    margin-inline: auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  body[data-active-tab="times"] #content-times .times-clan-filter-row,
+  body[data-active-tab="times"] #content-times .times-tag-filter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    width: 100%;
+  }
+
+  body[data-active-tab="times"] #content-times .times-clan-filter-btn,
+  body[data-active-tab="times"] #content-times .times-tag-filter-btn {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex: none;
+    padding-inline: 0.42rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  body[data-active-tab="times"] #content-times .times-search-field,
+  body[data-active-tab="times"] #content-times .times-filter-grid {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-slot {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
 @media (max-width: 520px) {
   .speedster-modal-content--search-results .speedster-modal-header {
     padding-inline: 1rem;
