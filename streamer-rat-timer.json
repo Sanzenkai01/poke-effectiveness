@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-07T02:21:19.372Z",
+  "updatedAt": "2026-07-07T02:40:34.169Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-07T02:20:44.807Z",
-    "endedAt": "2026-07-07T02:21:19.371Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-07T02:31:04.473Z",
+    "endedAt": "2026-07-07T02:40:34.169Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "naathcarol",
       "hyoogplays",
@@ -83,20 +83,28 @@
     "observedChannels": [
       "naathcarol"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "naathcarol"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "naathcarol",
+        "messageAt": 1783392034038,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "naathcarol",
         "kind": "rattata-message",
-        "messageAt": 1783390879268,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1783392034038,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "naathcarol",
-        "kind": "escape",
-        "messageAt": 1783390879268,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1783392034038,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -147,24 +155,24 @@
   },
   "latest": {
     "channel": "naathcarol",
-    "lastMessageAt": 1783390879268,
-    "expectedNextAt": 1783392079268,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1783392034038,
+    "expectedNextAt": 1783393294038,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-07-06T23:42:34Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1783390879371,
-    "persistedAt": 1783390879371
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1783392034168,
+    "persistedAt": 1783392034168
   },
   "timers": {
     "naathcarol": {
       "channel": "naathcarol",
-      "lastMessageAt": 1783390879268,
-      "expectedNextAt": 1783392079268,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1783392034038,
+      "expectedNextAt": 1783393294038,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-07-06T23:42:34Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1783390879371,
-      "persistedAt": 1783390879371
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1783392034168,
+      "persistedAt": 1783392034168
     }
   }
 }
