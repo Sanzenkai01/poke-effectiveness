@@ -1,20 +1,20 @@
 {
-  "updatedAt": "2026-07-07T20:07:29.046Z",
+  "updatedAt": "2026-07-07T20:08:30.997Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-07T19:58:12.017Z",
-    "endedAt": "2026-07-07T20:07:29.045Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-07T20:08:28.725Z",
+    "endedAt": "2026-07-07T20:08:30.997Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "dragonslayerpiva",
+      "indypereira",
       "karlin_nara",
       "sharxera",
       "bruxonoir",
       "eaisantinho",
       "hyoogplays",
-      "indypereira",
       "teylera",
       "adivorcio",
       "afdexter",
@@ -80,34 +80,27 @@
     ],
     "pstoryDropChannels": [
       "dragonslayerpiva",
+      "indypereira",
       "karlin_nara",
       "sharxera"
     ],
     "observedChannels": [
-      "sharxera"
+      "indypereira"
     ],
-    "observedSpawnChannels": [
-      "sharxera"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "sharxera",
-        "messageAt": 1783454848905,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "sharxera",
+        "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1783454848905,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1783454910893,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
-        "channel": "sharxera",
-        "kind": "spawn",
-        "messageAt": 1783454848905,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "channel": "indypereira",
+        "kind": "escape",
+        "messageAt": 1783454910893,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -157,16 +150,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "sharxera",
-    "lastMessageAt": 1783454848905,
-    "expectedNextAt": 1783456108905,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-07-07T19:47:54Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1783454849045,
-    "persistedAt": 1783454849045
+    "channel": "indypereira",
+    "lastMessageAt": 1783454910893,
+    "expectedNextAt": 1783456110893,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-07-07T18:13:26Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1783454910997,
+    "persistedAt": 1783454910997
   },
   "timers": {
+    "indypereira": {
+      "channel": "indypereira",
+      "lastMessageAt": 1783454910893,
+      "expectedNextAt": 1783456110893,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-07-07T18:13:26Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1783454910997,
+      "persistedAt": 1783454910997
+    },
     "sharxera": {
       "channel": "sharxera",
       "lastMessageAt": 1783454848905,
@@ -175,7 +178,7 @@
       "streamStartedAt": "2026-07-07T19:47:54Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1783454849045,
-      "persistedAt": 1783454849045
+      "persistedAt": 1783454908724
     },
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
@@ -185,7 +188,7 @@
       "streamStartedAt": "2026-07-07T19:12:45Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783453707315,
-      "persistedAt": 1783454292017
+      "persistedAt": 1783454908724
     },
     "eaisantinho": {
       "channel": "eaisantinho",
@@ -195,7 +198,7 @@
       "streamStartedAt": "2026-07-07T17:36:27Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1783452430421,
-      "persistedAt": 1783454292017
+      "persistedAt": 1783454908724
     }
   }
 }
