@@ -23,6 +23,7 @@
         { name: 'sousupermeme', discord: 'https://discord.gg/xFegFmpTaP' },
         { name: 'lordjuregi', discord: 'https://discord.gg/G8wJtVBYEa' },
         { name: 'mofexxx', supportsDrops: false },
+        { name: 'armster91', supportsDrops: false },
         { name: 'reiisuperr', supportsDrops: false },
         { name: 'rpsubzero', supportsDrops: false },
         { name: 'dravokh', supportsDrops: false },
