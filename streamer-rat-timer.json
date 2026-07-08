@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-08T22:52:43.902Z",
+  "updatedAt": "2026-07-08T22:53:43.893Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-08T22:33:57.754Z",
-    "endedAt": "2026-07-08T22:52:43.902Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-08T22:53:06.281Z",
+    "endedAt": "2026-07-08T22:53:43.893Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "callmevitao_",
       "dragonslayerpiva",
@@ -87,34 +87,20 @@
     "observedChannels": [
       "sharxera"
     ],
-    "observedSpawnChannels": [
-      "sharxera"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "sharxera",
-        "messageAt": 1783551163791,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "callmevitao_",
+        "channel": "sharxera",
         "kind": "rattata-message",
-        "messageAt": 1783550048669,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @shynkszz... 💨"
+        "messageAt": 1783551223792,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "sharxera",
-        "kind": "rattata-message",
-        "messageAt": 1783551163791,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      },
-      {
-        "channel": "sharxera",
-        "kind": "spawn",
-        "messageAt": 1783551163791,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1783551223792,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -165,24 +151,24 @@
   },
   "latest": {
     "channel": "sharxera",
-    "lastMessageAt": 1783551163791,
-    "expectedNextAt": 1783552423791,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1783551223792,
+    "expectedNextAt": 1783552423792,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-07-08T20:28:49Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1783551163902,
-    "persistedAt": 1783551163902
+    "source": "github-action-chat-escape",
+    "updatedAt": 1783551223893,
+    "persistedAt": 1783551223893
   },
   "timers": {
     "sharxera": {
       "channel": "sharxera",
-      "lastMessageAt": 1783551163791,
-      "expectedNextAt": 1783552423791,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1783551223792,
+      "expectedNextAt": 1783552423792,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-07-08T20:28:49Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1783551163902,
-      "persistedAt": 1783551163902
+      "source": "github-action-chat-escape",
+      "updatedAt": 1783551223893,
+      "persistedAt": 1783551223893
     },
     "callmevitao_": {
       "channel": "callmevitao_",
@@ -192,7 +178,7 @@
       "streamStartedAt": "2026-07-08T21:46:05Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783548796676,
-      "persistedAt": 1783550037754
+      "persistedAt": 1783551186280
     }
   }
 }
