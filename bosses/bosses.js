@@ -6891,7 +6891,14 @@ function classifyRecommendationTier(offense, worstDefense, options = {}) {
   return 'ruim';
 }
 
-function classifyDefenseOnlyRecommendationTier(worstDefense) {
+function classifyDefenseOnlyRecommendationTier(worstDefense, options = {}) {
+  const normalizedRoleKey = normalizeRecommendationRoleKey(options?.roleKey);
+  const offense = typeof options?.offense === 'number' ? options.offense : null;
+
+  if (normalizedRoleKey === 'tank' && offense !== null) {
+    return classifyRecommendationTier(offense, worstDefense, { roleKey: normalizedRoleKey });
+  }
+
   if (worstDefense <= 0.5) return 'excelente';
   if (worstDefense <= 0.75) return 'muitobom';
   if (worstDefense <= 1) return 'bom';
@@ -7050,7 +7057,10 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   const tier = explicitTier && Object.prototype.hasOwnProperty.call(tierPriority, explicitTier)
     ? explicitTier
     : (rankMode === 'defense-only'
-      ? classifyDefenseOnlyRecommendationTier(worstDefense)
+      ? classifyDefenseOnlyRecommendationTier(worstDefense, {
+        offense: effectiveOffenseForScoring,
+        roleKey: options?.roleKey || poke?.recommendedRole
+      })
       : classifyRecommendationTier(effectiveOffenseForScoring, worstDefense, { roleKey: options?.roleKey || poke?.recommendedRole }));
 
   return {
