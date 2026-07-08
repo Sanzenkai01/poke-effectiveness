@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-08T20:32:08.909Z",
+  "updatedAt": "2026-07-08T20:51:10.931Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-08T20:31:34.184Z",
-    "endedAt": "2026-07-08T20:32:08.909Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-08T20:41:55.351Z",
+    "endedAt": "2026-07-08T20:51:10.931Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "dragonslayerpiva",
       "lucasnaikan",
@@ -84,22 +84,42 @@
       "sharxera"
     ],
     "observedChannels": [
-      "dragonslayerpiva"
+      "sharxera"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "sharxera"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "sharxera",
+        "messageAt": 1783543870852,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1783542728772,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1783543694104,
+        "messageText": "O Rattata se recuperou e fugiu com o seu item, @luuukita_... 💨"
       },
       {
-        "channel": "dragonslayerpiva",
-        "kind": "escape",
-        "messageAt": 1783542728772,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "lucasnaikan",
+        "kind": "rattata-message",
+        "messageAt": 1783543694104,
+        "messageText": "O Rattata se recuperou e fugiu com o seu item, @luuukita_... 💨"
+      },
+      {
+        "channel": "sharxera",
+        "kind": "rattata-message",
+        "messageAt": 1783543870852,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "sharxera",
+        "kind": "spawn",
+        "messageAt": 1783543870852,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -149,16 +169,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "dragonslayerpiva",
-    "lastMessageAt": 1783542728772,
-    "expectedNextAt": 1783543928772,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-08T20:16:11Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1783542728909,
-    "persistedAt": 1783542728909
+    "channel": "sharxera",
+    "lastMessageAt": 1783543870852,
+    "expectedNextAt": 1783545130852,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-08T20:28:49Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1783543870930,
+    "persistedAt": 1783543870930
   },
   "timers": {
+    "sharxera": {
+      "channel": "sharxera",
+      "lastMessageAt": 1783543870852,
+      "expectedNextAt": 1783545130852,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-08T20:28:49Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1783543870930,
+      "persistedAt": 1783543870930
+    },
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
       "lastMessageAt": 1783542728772,
@@ -167,7 +197,7 @@
       "streamStartedAt": "2026-07-08T20:16:11Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783542728909,
-      "persistedAt": 1783542728909
+      "persistedAt": 1783543315350
     },
     "lucasnaikan": {
       "channel": "lucasnaikan",
@@ -177,7 +207,7 @@
       "streamStartedAt": "2026-07-08T20:05:59Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1783541455002,
-      "persistedAt": 1783542694184
+      "persistedAt": 1783543315350
     }
   }
 }
