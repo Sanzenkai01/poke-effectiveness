@@ -1,18 +1,19 @@
 {
-  "updatedAt": "2026-07-08T00:30:43.778Z",
+  "updatedAt": "2026-07-08T00:31:43.773Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-08T00:11:42.189Z",
-    "endedAt": "2026-07-08T00:30:43.778Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-08T00:31:09.983Z",
+    "endedAt": "2026-07-08T00:31:43.773Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "callmevitao_",
       "gokutibia",
       "hyoogplays",
       "lucasnaikan",
       "naathcarol",
+      "santbarbernsgames",
       "sharxera",
       "adivorcio",
       "afdexter",
@@ -66,7 +67,6 @@
       "renansztv",
       "rpsubzero",
       "s4l4m4nd3rxd",
-      "santbarbernsgames",
       "serpion_sk",
       "shadolas1",
       "sousupermeme",
@@ -84,34 +84,20 @@
     "observedChannels": [
       "callmevitao_"
     ],
-    "observedSpawnChannels": [
-      "callmevitao_"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "callmevitao_",
-        "messageAt": 1783470643677,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "callmevitao_",
         "kind": "rattata-message",
-        "messageAt": 1783469510215,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @nilsonspankyu... 💨"
+        "messageAt": 1783470703680,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "callmevitao_",
-        "kind": "rattata-message",
-        "messageAt": 1783470643677,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      },
-      {
-        "channel": "callmevitao_",
-        "kind": "spawn",
-        "messageAt": 1783470643677,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1783470703680,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -162,24 +148,24 @@
   },
   "latest": {
     "channel": "callmevitao_",
-    "lastMessageAt": 1783470643677,
-    "expectedNextAt": 1783471903677,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1783470703680,
+    "expectedNextAt": 1783471903680,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-07-07T20:55:20Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1783470643777,
-    "persistedAt": 1783470643777
+    "source": "github-action-chat-escape",
+    "updatedAt": 1783470703772,
+    "persistedAt": 1783470703772
   },
   "timers": {
     "callmevitao_": {
       "channel": "callmevitao_",
-      "lastMessageAt": 1783470643677,
-      "expectedNextAt": 1783471903677,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1783470703680,
+      "expectedNextAt": 1783471903680,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-07-07T20:55:20Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1783470643777,
-      "persistedAt": 1783470643777
+      "source": "github-action-chat-escape",
+      "updatedAt": 1783470703772,
+      "persistedAt": 1783470703772
     },
     "sharxera": {
       "channel": "sharxera",
@@ -189,7 +175,7 @@
       "streamStartedAt": "2026-07-07T19:47:54Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783468271765,
-      "persistedAt": 1783469502188
+      "persistedAt": 1783470669982
     }
   }
 }
