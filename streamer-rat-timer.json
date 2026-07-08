@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-08T22:13:16.676Z",
+  "updatedAt": "2026-07-08T22:32:28.882Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-08T22:13:15.843Z",
-    "endedAt": "2026-07-08T22:13:16.676Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-08T22:23:37.428Z",
+    "endedAt": "2026-07-08T22:32:28.882Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
       "dragonslayerpiva",
@@ -15,6 +15,7 @@
       "eaisantinho",
       "especialbr",
       "hyoogplays",
+      "leomarnc",
       "adivorcio",
       "afdexter",
       "anaodapxg",
@@ -43,7 +44,6 @@
       "kingszt",
       "kiritinhu69",
       "kiwoe",
-      "leomarnc",
       "likearivergames",
       "linikerquadrado2",
       "lkagural",
@@ -85,22 +85,30 @@
       "sharxera"
     ],
     "observedChannels": [
-      "callmevitao_"
+      "sharxera"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "sharxera"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "sharxera",
+        "messageAt": 1783549948796,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "callmevitao_",
+        "channel": "sharxera",
         "kind": "rattata-message",
-        "messageAt": 1783548796597,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1783549948796,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "callmevitao_",
-        "kind": "escape",
-        "messageAt": 1783548796597,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "sharxera",
+        "kind": "spawn",
+        "messageAt": 1783549948796,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -150,16 +158,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "callmevitao_",
-    "lastMessageAt": 1783548796597,
-    "expectedNextAt": 1783549996597,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-08T21:46:05Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1783548796676,
-    "persistedAt": 1783548796676
+    "channel": "sharxera",
+    "lastMessageAt": 1783549948796,
+    "expectedNextAt": 1783551208796,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-08T20:28:49Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1783549948882,
+    "persistedAt": 1783549948882
   },
   "timers": {
+    "sharxera": {
+      "channel": "sharxera",
+      "lastMessageAt": 1783549948796,
+      "expectedNextAt": 1783551208796,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-08T20:28:49Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1783549948882,
+      "persistedAt": 1783549948882
+    },
     "callmevitao_": {
       "channel": "callmevitao_",
       "lastMessageAt": 1783548796597,
@@ -168,17 +186,7 @@
       "streamStartedAt": "2026-07-08T21:46:05Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1783548796676,
-      "persistedAt": 1783548796676
-    },
-    "sharxera": {
-      "channel": "sharxera",
-      "lastMessageAt": 1783548734022,
-      "expectedNextAt": 1783549994022,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-07-08T20:28:49Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1783548734152,
-      "persistedAt": 1783548795843
+      "persistedAt": 1783549417428
     }
   }
 }
