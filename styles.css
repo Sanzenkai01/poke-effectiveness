@@ -27589,10 +27589,12 @@ html[data-vision-mode]:not([data-vision-mode="standard"]) .speedster-boss-result
 
 .hunt-builder-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   align-items: center;
+  justify-items: center;
   padding: clamp(1rem, 2.2vw, 1.5rem);
+  text-align: center;
 }
 
 .hunt-builder-hero > div:first-child,
@@ -27634,6 +27636,8 @@ html[data-vision-mode]:not([data-vision-mode="standard"]) .speedster-boss-result
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.45rem;
+  width: min(100%, 24rem);
+  margin: 0.85rem auto 0;
   text-align: center;
 }
 
@@ -27734,6 +27738,35 @@ body[data-active-tab="hunt-builder"] #content-hunt-builder {
 
 body[data-active-tab="hunt-builder"] .app-shell {
   z-index: 4400;
+}
+
+body[data-active-tab="hunt-builder"] .hunt-builder-shell,
+body[data-active-tab="hunt-builder"] .hunt-builder-panel {
+  overflow: visible;
+}
+
+body[data-active-tab="hunt-builder"] .hunt-builder-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+body[data-active-tab="hunt-builder"] .hunt-builder-hero > div:first-child {
+  width: min(100%, 44rem);
+}
+
+body[data-active-tab="hunt-builder"] .hunt-builder-composition {
+  flex: none;
+  width: min(100%, 24rem);
+  min-width: 0;
+  margin: 0.85rem auto 0;
+  justify-content: center;
+}
+
+body[data-active-tab="hunt-builder"] .hunt-builder-search-results {
+  position: absolute;
+  margin-top: 0;
 }
 
 .hunt-builder-search-result {
