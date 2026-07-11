@@ -513,6 +513,165 @@ body[data-active-tab="rotom-phone"] #content-rotom-phone {
   background: rgba(var(--rotom-blue), 0.18);
 }
 
+.rotom-phone-search {
+  gap: 0.75rem;
+}
+
+.rotom-phone-search__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rotom-phone-search__input {
+  width: 100%;
+  min-height: 2.5rem;
+  min-width: 0;
+  padding: 0.58rem 0.74rem;
+  border: 1px solid rgba(var(--rotom-blue), 0.28);
+  border-radius: 8px;
+  background: rgba(4, 10, 18, 0.56);
+  color: #f5fbff;
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.rotom-phone-search__input::placeholder {
+  color: rgba(229, 239, 250, 0.48);
+}
+
+.rotom-phone-search__input:focus {
+  border-color: rgba(var(--rotom-blue), 0.68);
+  box-shadow: 0 0 0 3px rgba(var(--rotom-blue), 0.12);
+}
+
+.rotom-phone-search__clear {
+  min-height: 2.5rem;
+  padding: 0.48rem 0.72rem;
+  border: 1px solid rgba(var(--rotom-amber), 0.34);
+  border-radius: 8px;
+  background: rgba(var(--rotom-amber), 0.1);
+  color: #ffe9ae;
+  font-size: 0.76rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.rotom-phone-search__clear:hover,
+.rotom-phone-search__clear:focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.64);
+  background: rgba(var(--rotom-amber), 0.18);
+}
+
+.rotom-phone-search__summary {
+  min-height: 1.35rem;
+  color: var(--rotom-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.rotom-phone-search__results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.rotom-phone-search__result {
+  display: grid;
+  gap: 0.42rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 8.75rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(14, 21, 32, 0.72);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rotom-phone-search__result:hover,
+.rotom-phone-search__result:focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.42);
+  background: rgba(18, 27, 40, 0.9);
+}
+
+.rotom-phone-search__result-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rotom-phone-search__result-title {
+  display: grid;
+  gap: 0.14rem;
+  min-width: 0;
+}
+
+.rotom-phone-search__result-title strong {
+  color: #ffd44d;
+  font-size: 0.84rem;
+  line-height: 1.24;
+}
+
+.rotom-phone-search__city {
+  color: rgb(var(--rotom-blue));
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rotom-phone-search__step {
+  flex: 0 0 auto;
+  padding: 0.18rem 0.44rem;
+  border: 1px solid rgba(var(--rotom-green), 0.26);
+  border-radius: 999px;
+  background: rgba(var(--rotom-green), 0.1);
+  color: #c8ffe0;
+  font-size: 0.66rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.rotom-phone-search__description {
+  color: var(--rotom-muted);
+  font-size: 0.76rem;
+  line-height: 1.42;
+}
+
+.rotom-phone-search__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  align-items: center;
+  padding-top: 0.36rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rotom-phone-search__pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.34rem;
+  padding: 0.14rem 0.38rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(238, 246, 255, 0.82);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.rotom-phone-task.is-search-target {
+  border-color: rgba(var(--rotom-amber), 0.72);
+  box-shadow: 0 0 0 3px rgba(var(--rotom-amber), 0.12);
+}
+
 .rotom-phone-city-accordion {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -759,6 +918,10 @@ body[data-active-tab="rotom-phone"] #content-rotom-phone {
   .rotom-phone-city-accordion {
     grid-template-columns: 1fr;
   }
+
+  .rotom-phone-search__results {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -773,6 +936,10 @@ body[data-active-tab="rotom-phone"] #content-rotom-phone {
   }
 
   .rotom-phone-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rotom-phone-search__bar {
     grid-template-columns: 1fr;
   }
 

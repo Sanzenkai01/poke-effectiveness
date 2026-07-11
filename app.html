@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260709a">
+  <link rel="stylesheet" href="styles.css?v=20260711a">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -1583,6 +1583,20 @@
             <img src="rotom-phone/assets/rotom-phone-guide.gif" alt="Como abrir o Rotom Phone no jogo" loading="eager" decoding="async">
             <figcaption>O Rotom Phone fica no cliente como uma trilha de objetivos por regi&atilde;o e cidade.</figcaption>
           </figure>
+        </section>
+
+        <section class="rotom-phone-section rotom-phone-search" aria-labelledby="rotom-phone-search-title">
+          <div class="rotom-phone-section__head">
+            <span class="rotom-phone-eyebrow">Pesquisa</span>
+            <h3 id="rotom-phone-search-title">Encontrar tasks</h3>
+          </div>
+          <div class="rotom-phone-search__bar" role="search">
+            <label class="visually-hidden" for="rotom-phone-search-input">Pesquisar tasks do Rotom Phone</label>
+            <input id="rotom-phone-search-input" class="rotom-phone-search__input" type="search" placeholder="Nome de Pokemon, item, NPC, recompensa..." autocomplete="off" spellcheck="false" data-rotom-search-input>
+            <button class="rotom-phone-search__clear" type="button" data-rotom-search-clear hidden>Limpar</button>
+          </div>
+          <div class="rotom-phone-search__summary" data-rotom-search-summary>Digite pelo menos 2 caracteres para pesquisar.</div>
+          <div class="rotom-phone-search__results" data-rotom-search-results hidden></div>
         </section>
 
         <section class="rotom-phone-section" aria-labelledby="rotom-phone-kanto-title">
@@ -5611,7 +5625,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="script.js?v=20260706b" defer></script>
+    <script src="script.js?v=20260711b" defer></script>
 </body>
 </html>
 

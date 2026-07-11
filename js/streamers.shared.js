@@ -58,7 +58,7 @@
         { name: 'kaueotp', supportsDrops: false },
         { name: 'suximy' },
         { name: 'teffox4' },
-        { name: 'lucasnaikan', supportsDrops: false },
+        { name: 'lucasnaikan' },
         { name: 'orodault', supportsDrops: false },
         { name: 'leomarnc', supportsDrops: false },
         { name: 'ImFoxyy', supportsDrops: false },

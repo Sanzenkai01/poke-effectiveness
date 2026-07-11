@@ -404,10 +404,10 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260702d';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260711a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260630c';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260630a';
-const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260629a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260711a';
+const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -702,6 +702,15 @@ const POKEMON_EVOLUTION_EDGES = Object.freeze([
     ['Cubchoo', 'Beartic'],
     ['Karrablast', 'Escavalier'],
     ['Ferroseed', 'Ferrothorn'],
+    ['Solosis', 'Duosion'],
+    ['Duosion', 'Reuniclus'],
+    ['Munna', 'Musharna'],
+    ['Gothita', 'Gothorita'],
+    ['Gothorita', 'Gothitelle'],
+    ['Woobat', 'Swoobat'],
+    ['Yamask', 'Cofagrigus'],
+    ['Frillish Female', 'Jellicent Female'],
+    ['Frillish Male', 'Jellicent Male'],
     // Evolucoes da geracao 6
     ['Chespin', 'Quilladin'],
     ['Quilladin', 'Chesnaught'],
@@ -13912,6 +13921,10 @@ function initializeRotomPhoneChecklist(){
     const stepStorageKey = 'pokeEffectiveness.rotomPhone.taskSteps';
     const checklist = contentRotomPhone.querySelector('[data-rotom-checklist]');
     const resetButton = contentRotomPhone.querySelector('[data-rotom-reset]');
+    const searchInput = contentRotomPhone.querySelector('[data-rotom-search-input]');
+    const searchClearButton = contentRotomPhone.querySelector('[data-rotom-search-clear]');
+    const searchSummary = contentRotomPhone.querySelector('[data-rotom-search-summary]');
+    const searchResults = contentRotomPhone.querySelector('[data-rotom-search-results]');
     if(!checklist) return;
     const steppedTasks = {
         'primeiros-passos-combate': [
@@ -13928,6 +13941,153 @@ function initializeRotomPhoneChecklist(){
             '4 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Spearow.',
             '5 Etapa: Colete informa\u00e7\u00f5es dos seguintes pok\u00e9mon utilizando a Pok\u00e9dex: Caterpie.'
         ]
+    };
+    let searchEntries = [];
+    let searchHighlightTimeout = 0;
+
+    const normalizeSearchValue = (value) => normalizePokemonSearchText(value).replace(/[^a-z0-9]+/g, ' ').trim();
+    const getTrimmedText = (element) => String(element?.textContent || '').replace(/\s+/g, ' ').trim();
+
+    const getRotomPhoneTaskById = (taskId) => (
+        Array.from(checklist.querySelectorAll('[data-rotom-task]'))
+            .find(taskButton => taskButton.getAttribute('data-rotom-task') === taskId) || null
+    );
+
+    const buildSearchEntries = () => {
+        searchEntries = [];
+        checklist.querySelectorAll('[data-rotom-city]').forEach((cityPanel, cityIndex) => {
+            const cityName = getTrimmedText(cityPanel.querySelector('.rotom-phone-city-panel__title strong'));
+            cityPanel.querySelectorAll('[data-rotom-task]').forEach((taskButton, taskIndex) => {
+                const taskId = taskButton.getAttribute('data-rotom-task') || '';
+                const title = getTrimmedText(taskButton.querySelector('.rotom-phone-task__title-row strong'));
+                const baseDescription = getTrimmedText(taskButton.querySelector('.rotom-phone-task__description'));
+                const level = getTrimmedText(taskButton.querySelector('.rotom-phone-task__level'));
+                const rewards = getTrimmedText(taskButton.querySelector('.rotom-phone-task__rewards'))
+                    .replace(/^Recompensas:\s*/i, '');
+                const steps = steppedTasks[taskId] || [baseDescription];
+                steps.forEach((stepText, stepIndex) => {
+                    const entry = {
+                        taskId,
+                        title,
+                        cityName,
+                        level,
+                        rewards,
+                        stepText,
+                        stepIndex,
+                        stepTotal: steps.length,
+                        order: (cityIndex * 1000) + (taskIndex * 10) + stepIndex
+                    };
+                    entry.searchKey = normalizeSearchValue([
+                        cityName,
+                        title,
+                        level,
+                        rewards,
+                        stepText
+                    ].join(' '));
+                    searchEntries.push(entry);
+                });
+            });
+        });
+    };
+
+    const createSearchResultCard = (entry) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'rotom-phone-search__result';
+        button.dataset.rotomSearchTask = entry.taskId;
+
+        const head = document.createElement('span');
+        head.className = 'rotom-phone-search__result-head';
+
+        const titleWrap = document.createElement('span');
+        titleWrap.className = 'rotom-phone-search__result-title';
+
+        const city = document.createElement('span');
+        city.className = 'rotom-phone-search__city';
+        city.textContent = entry.cityName || 'Cidade';
+
+        const title = document.createElement('strong');
+        title.textContent = entry.title || 'Task';
+        titleWrap.append(city, title);
+
+        const step = document.createElement('span');
+        step.className = 'rotom-phone-search__step';
+        step.textContent = entry.stepTotal > 1 ? `Etapa ${entry.stepIndex + 1}/${entry.stepTotal}` : 'Etapa 1/1';
+        head.append(titleWrap, step);
+
+        const description = document.createElement('span');
+        description.className = 'rotom-phone-search__description';
+        description.textContent = entry.stepText || '';
+
+        const meta = document.createElement('span');
+        meta.className = 'rotom-phone-search__meta';
+
+        if(entry.level){
+            const level = document.createElement('span');
+            level.className = 'rotom-phone-search__pill';
+            level.textContent = entry.level;
+            meta.appendChild(level);
+        }
+
+        if(entry.rewards){
+            const rewards = document.createElement('span');
+            rewards.className = 'rotom-phone-search__pill';
+            rewards.textContent = `Recompensas: ${entry.rewards}`;
+            meta.appendChild(rewards);
+        }
+
+        button.append(head, description, meta);
+        return button;
+    };
+
+    const renderSearchResults = () => {
+        if(!searchInput || !searchSummary || !searchResults) return;
+        const rawQuery = String(searchInput.value || '').trim();
+        const normalizedQuery = normalizeSearchValue(rawQuery);
+        if(searchClearButton) searchClearButton.hidden = !rawQuery;
+        searchResults.replaceChildren();
+
+        if(normalizedQuery.length < 2){
+            searchSummary.textContent = 'Digite pelo menos 2 caracteres para pesquisar.';
+            searchResults.hidden = true;
+            return;
+        }
+
+        const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+        const matches = searchEntries
+            .filter(entry => tokens.every(token => entry.searchKey.includes(token)))
+            .sort((left, right) => left.order - right.order);
+
+        if(!matches.length){
+            searchSummary.textContent = `Nenhuma task encontrada para "${rawQuery}".`;
+            searchResults.hidden = true;
+            return;
+        }
+
+        searchSummary.textContent = `${matches.length} ocorrencia${matches.length === 1 ? '' : 's'} encontrada${matches.length === 1 ? '' : 's'} para "${rawQuery}".`;
+        const fragment = document.createDocumentFragment();
+        matches.forEach(entry => fragment.appendChild(createSearchResultCard(entry)));
+        searchResults.appendChild(fragment);
+        searchResults.hidden = false;
+    };
+
+    const focusSearchResultTask = (taskId) => {
+        const taskButton = getRotomPhoneTaskById(taskId);
+        if(!taskButton) return;
+        const cityPanel = taskButton.closest('[data-rotom-city]');
+        if(cityPanel instanceof HTMLDetailsElement){
+            cityPanel.open = true;
+        }
+        window.clearTimeout(searchHighlightTimeout);
+        checklist.querySelectorAll('.is-search-target').forEach(element => {
+            element.classList.remove('is-search-target');
+        });
+        taskButton.classList.add('is-search-target');
+        taskButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        taskButton.focus({ preventScroll: true });
+        searchHighlightTimeout = window.setTimeout(() => {
+            taskButton.classList.remove('is-search-target');
+        }, 2400);
     };
 
     const readCompleted = () => {
@@ -14033,7 +14193,29 @@ function initializeRotomPhoneChecklist(){
         });
     }
 
+    if(searchInput){
+        buildSearchEntries();
+        searchInput.addEventListener('input', renderSearchResults);
+    }
+
+    if(searchClearButton){
+        searchClearButton.addEventListener('click', () => {
+            if(searchInput) searchInput.value = '';
+            renderSearchResults();
+            searchInput?.focus();
+        });
+    }
+
+    if(searchResults){
+        searchResults.addEventListener('click', (event) => {
+            const resultButton = event.target.closest('[data-rotom-search-task]');
+            if(!resultButton || !searchResults.contains(resultButton)) return;
+            focusSearchResultTask(resultButton.getAttribute('data-rotom-search-task') || '');
+        });
+    }
+
     applyCompletedState();
+    renderSearchResults();
     rotomPhoneChecklistInitialized = true;
 }
 
