@@ -792,8 +792,6 @@ const modalSubtitle = document.getElementById('modal-subtitle');
 const modalBody = document.getElementById('modal-body');
 const modalClan = document.getElementById('modal-clan');
 const closeBtn = modal ? modal.querySelector('.speedster-modal-close') : null;
-let activeSpeedsterContextName = null;
-let knownSpeedsterNames = null;
 const mainQuestNonSpeedsterNameKeys = Object.freeze(new Set([
   'gorgingcramorant',
   'lombre',
@@ -815,41 +813,9 @@ function setModalSubtitleText(text = '') {
   modalSubtitle.hidden = !normalizedText;
 }
 
-function refreshKnownSpeedsterNames() {
-  try {
-    const names = new Set();
-    const addName = (entry) => {
-      const name = String(typeof entry === 'string' ? entry : entry?.name || '').trim().toLowerCase();
-      if (name) names.add(name);
-    };
-
-    getActiveBossesData().forEach((boss) => {
-      Object.entries(boss?.clans || {}).forEach(([clanKey, clanData]) => {
-        if (clanData?.roles) {
-          roleboardRoleOrder.forEach((roleKey) => {
-            getFixedRecommendationRolePicks(boss, clanKey, roleKey).forEach(addName);
-          });
-          return;
-        }
-
-        getRecommendationGroupsForClan(boss, clanData).forEach((group) => {
-          (group?.recommended || []).forEach(addName);
-        });
-      });
-    });
-
-    bossSearchCatalogEntries.forEach(addName);
-    knownSpeedsterNames = names;
-  } catch (e) {
-    knownSpeedsterNames = new Set();
-  }
-  return knownSpeedsterNames;
-}
-
 function invalidateBossSearchCaches() {
   bossSearchRecommendedCache.clear();
   bossSearchAvailableCache.clear();
-  knownSpeedsterNames = null;
 }
 
 function setBossModalLayout(isRoleboard = false) {
@@ -6424,6 +6390,11 @@ function getAllRecommendedForClan(boss, clanData) {
 
 const pokemonBossUsageCatalogIds = Object.freeze(['hoopa', 'champion', 'horizons', 'mew2']);
 const pokemonBossUsageClanOrder = Object.freeze(['instinct', 'mystic', 'valor']);
+const pokemonBossUsageRoleByCatalogRole = Object.freeze({
+  speedster: 'dps',
+  defender: 'tank',
+  supporter: 'support'
+});
 const pokemonBossUsageShortLabels = Object.freeze({
   hoopa: 'Hoopa',
   champion: 'Champion',
@@ -6431,8 +6402,14 @@ const pokemonBossUsageShortLabels = Object.freeze({
   horizons: 'Horizons'
 });
 
-function getPokemonBossUsageMatchKeys(pokemonName) {
-  const rawName = String(pokemonName || '').trim();
+function getPokemonBossUsageSubjectName(subject) {
+  return typeof subject === 'object' && subject !== null
+    ? String(subject.name || '').trim()
+    : String(subject || '').trim();
+}
+
+function getPokemonBossUsageMatchKeys(subject) {
+  const rawName = getPokemonBossUsageSubjectName(subject);
   const keys = new Set();
   const addKey = (value) => {
     const key = getRecommendationNameKey(value);
@@ -6456,6 +6433,78 @@ function isRecommendationPickUsedByPokemon(pick, matchKeys) {
   }
 
   return false;
+}
+
+function getPokemonBossUsageRoleKeyForSubject(subject) {
+  if (!subject || typeof subject !== 'object') return '';
+
+  const rawRoleKey = String(subject.roleKey || subject.role || '').trim().toLowerCase();
+  return pokemonBossUsageRoleByCatalogRole[rawRoleKey]
+    || (roleboardRoleOrder.includes(rawRoleKey) ? rawRoleKey : '');
+}
+
+function getPokemonBossUsageClanKeyForSubject(subject) {
+  if (!subject || typeof subject !== 'object') return '';
+
+  return normalizePlannerClanKey(subject.team || subject.clan || subject.clanKey || '');
+}
+
+function getPokemonBossUsageSubjectTypes(subject) {
+  return mergeLowercaseUniqueValues(
+    Array.isArray(subject?.types) ? subject.types : [],
+    Array.isArray(subject?.naturalElements) ? subject.naturalElements : [],
+    [subject?.type1, subject?.type2]
+  );
+}
+
+function buildPokemonBossUsagePickFromSubject(subject) {
+  if (!subject || typeof subject !== 'object') return null;
+
+  const normalizedSubject = {
+    ...subject,
+    role: subject.roleKey || subject.role,
+    passiveSuperEffectiveTypes: mergeLowercaseUniqueValues(
+      subject.passiveSuperEffectiveTypes,
+      subject.shinyPassiveSuperEffectiveTypes
+    )
+  };
+  const catalogPick = createBossSearchEntryFromCatalogPokemon(normalizedSubject);
+  if (catalogPick) {
+    return catalogPick;
+  }
+
+  const name = getPokemonBossUsageSubjectName(subject);
+  if (!name) return null;
+
+  return createRolePick(
+    name,
+    getPokemonBossUsageSubjectTypes(subject),
+    Array.isArray(subject.moveset) && subject.moveset.length
+      ? subject.moveset
+      : (subject.moveType || subject._moveType || null),
+    {
+      image: String(subject.image || '').trim() || resolveRolePickImage(name),
+      passiveSuperEffectiveTypes: mergeLowercaseUniqueValues(
+        subject.passiveSuperEffectiveTypes,
+        subject.shinyPassiveSuperEffectiveTypes
+      ),
+      immunities: mergeLowercaseUniqueValues(subject.immunities),
+      defenseByBossType: mergeLowercaseNumericMap(subject.defenseByBossType),
+      defenseDamageFactorByBossType: mergeLowercaseNumericMap(subject.defenseDamageFactorByBossType)
+    }
+  );
+}
+
+function isPokemonBossUsageTierEligible(pick) {
+  return getRecommendationTierPriority(pick?.tier) <= tierPriority.bom;
+}
+
+function scorePokemonBossUsagePickForBoss(bossRef, pick, roleKey) {
+  const scored = scoreRecommendationForBoss(bossRef, cloneRolePickConfig(pick), { roleKey });
+  if (roleKey === 'dps' && !(typeof scored?._offense === 'number' && scored._offense > 1)) {
+    return null;
+  }
+  return scored;
 }
 
 function getPokemonBossUsageCatalogOrder(mode) {
@@ -6632,11 +6681,16 @@ function createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, op
       : '',
     tier,
     tierLabel: tierLabels[tier] || tierLabels.seminformacao,
+    offenseScore: typeof pick?._offense === 'number' ? pick._offense : null,
+    defenseScore: typeof pick?._defenseWorst === 'number' ? pick._defenseWorst : null,
+    overallScore: typeof pick?._score === 'number' ? pick._score : null,
     pickName: pick?.name || ''
   };
 }
 
 function addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, pick, options = {}) {
+  if (!isPokemonBossUsageTierEligible(pick)) return;
+
   const record = createPokemonBossUsageRecord(catalog, boss, clanKey, clanData, pick, options);
   if (!record) return;
 
@@ -6644,13 +6698,19 @@ function addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanDat
     record.mode,
     record.bossSlug,
     record.clanKey,
-    record.roleKey,
     getRecommendationNameKey(record.groupTitle),
     getRecommendationNameKey(record.pickName)
   ].join('|');
-  if (seen.has(recordKey)) return;
+  if (seen.has(recordKey)) {
+    const existingIndex = seen.get(recordKey);
+    const existingRecord = usages[existingIndex];
+    if (existingRecord && !existingRecord.roleKey && record.roleKey) {
+      usages[existingIndex] = record;
+    }
+    return;
+  }
 
-  seen.add(recordKey);
+  seen.set(recordKey, usages.length);
   usages.push(record);
 }
 
@@ -6683,12 +6743,39 @@ function collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey
   });
 }
 
-function getPokemonBossUsages(pokemonName) {
-  const matchKeys = getPokemonBossUsageMatchKeys(pokemonName);
+function collectPokemonBossUsagesFromCatalogSubject(usages, seen, catalog, boss, clanKey, clanData, subject) {
+  const roleKey = getPokemonBossUsageRoleKeyForSubject(subject);
+  const subjectClanKey = getPokemonBossUsageClanKeyForSubject(subject);
+  const basePick = buildPokemonBossUsagePickFromSubject(subject);
+  if (!roleKey || !basePick) return;
+  if (subjectClanKey && subjectClanKey !== normalizePlannerClanKey(clanKey)) return;
+
+  if (clanData?.roles) {
+    const scored = scorePokemonBossUsagePickForBoss(boss, basePick, roleKey);
+    addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, scored, { roleKey });
+    return;
+  }
+
+  const groups = getRecommendationGroupsForClan(boss, clanData);
+  const hasMultipleGroups = groups.length > 1;
+  groups.forEach((group) => {
+    if (group?.boss?.comingSoon) return;
+
+    const scored = scorePokemonBossUsagePickForBoss(group.boss, basePick, roleKey);
+    addPokemonBossUsageRecord(usages, seen, catalog, boss, clanKey, clanData, scored, {
+      bossImage: group.bossImage || boss.image,
+      groupTitle: hasMultipleGroups ? group.title : '',
+      roleKey
+    });
+  });
+}
+
+function getPokemonBossUsages(subject) {
+  const matchKeys = getPokemonBossUsageMatchKeys(subject);
   if (!matchKeys.size) return [];
 
   const usages = [];
-  const seen = new Set();
+  const seen = new Map();
 
   pokemonBossUsageCatalogIds.forEach((catalogId) => {
     const catalog = bossCatalogs[catalogId];
@@ -6701,10 +6788,13 @@ function getPokemonBossUsages(pokemonName) {
 
         if (clanData.roles) {
           collectPokemonBossUsagesFromRoleboard(usages, seen, catalog, boss, clanKey, clanData, matchKeys);
-          return;
+        } else {
+          collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey, clanData, matchKeys);
         }
 
-        collectPokemonBossUsagesFromGroups(usages, seen, catalog, boss, clanKey, clanData, matchKeys);
+        if (typeof subject === 'object' && subject !== null) {
+          collectPokemonBossUsagesFromCatalogSubject(usages, seen, catalog, boss, clanKey, clanData, subject);
+        }
       });
     });
   });
@@ -6869,6 +6959,7 @@ function classifyRecommendationTier(offense, worstDefense, options = {}) {
     // Efetivo
     if (worstDefense <= 0.5) return 'muitobom';
     if (worstDefense <= 0.75) return 'bom';
+    if (normalizedRoleKey === 'dps' && worstDefense <= 1) return 'bom';
     if (worstDefense <= 1) return 'aceitavel';
     return 'ruim';
   }
@@ -6951,41 +7042,6 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   // Normalizamos o valor de ATK para a nova escala (1.0 / 1.5 / 2.0) e garantimos teto de 2.0
   const offense = normalizeOffenseValue(offenseRaw);
 
-  // Regra especial: quando estivermos avaliando recomendações no contexto de um "speedster"
-  // (objetos construídos por `getRecommendedSpeedsters` possuem `bossEntries`), e o Pokémon
-  // sendo avaliado for o próprio speedster, promover ATK 1.5 -> 2.0.
-  try {
-    const isSpeedsterContext = Boolean(boss && Array.isArray(boss.bossEntries));
-    const nameLower = String(poke.name || '').toLowerCase();
-    const isSamePokemon = (isSpeedsterContext && String(boss.name || '').toLowerCase() === nameLower)
-      || (activeSpeedsterContextName && String(activeSpeedsterContextName).toLowerCase() === nameLower);
-
-    // Detectar se o próprio Pokémon avaliado é um speedster (presente no mapa de speedsters)
-    if (knownSpeedsterNames === null) refreshKnownSpeedsterNames();
-    const isPokeSpeedster = (Array.isArray(poke?.bossEntries) && poke.bossEntries.length) || knownSpeedsterNames.has(nameLower);
-
-    // Promover 1.5 -> 2.0 quando o Pokémon for um speedster ou estivermos no contexto do próprio speedster
-    if ((isSamePokemon || isPokeSpeedster) && offense === 1.5) {
-      // Aplicar promoção antes de qualquer clamp final/score
-      // (respeita o teto global de 2.0)
-      // Usamos uma cópia local para evitar modificar offenseRaw
-      // e garantir que o valor apresentado e usado em scoring seja 2.0
-      // quando o speedster é efetivo.
-      // eslint-disable-next-line no-param-reassign
-      // (não queremos reatribuir poke._offense aqui ainda porque _offense
-      // é atribuído mais abaixo; apenas ajustamos a variável usada.)
-      // eslint-disable-next-line prefer-const
-      var _promotedOffense = 2.0;
-      // substituir o valor de `offense` usado a seguir nas pontuações
-      // (reinserimos no escopo por nome 'offense' para continuidade)
-      // nota: não usamos `let offense = ...` para manter compatibilidade
-      // com código existente; em JS, reassigning const isn't allowed, então
-      // iremos shadowar via novo bloco abaixo ao calcular offenseScore.
-    }
-  } catch (e) {
-    /* ignore */
-  }
-
   const pokeTypes = Array.isArray(poke.types) ? poke.types : [];
   const attackTypesList = bossAttackTypes.filter(Boolean);
 
@@ -7029,8 +7085,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     worstDefense = 0.5;
   }
 
-  // Usar valor de ataque promovido para pontuacao quando definido (caso speedster)
-  const effectiveOffenseForScoring = (typeof _promotedOffense === 'number' ? _promotedOffense : offense);
+  const effectiveOffenseForScoring = offense;
 
   const offenseScore =
     effectiveOffenseForScoring === 0 ? 0 :
@@ -7066,8 +7121,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
   return {
     ...poke,
     _score: combined,
-    // Reportar o valor promovido para o contexto speedster quando aplicável
-    _offense: (typeof _promotedOffense === 'number' ? _promotedOffense : offense),
+    _offense: offense,
     _defenseWorst: worstDefense,
     _defenseBest: bestDefense,
     _scoreWeights: scoreWeights,
@@ -8062,7 +8116,6 @@ function hideBossModalUi() {
   currentBoss = null;
   activeBossSearchResult = null;
   setBossModalLayout(false);
-  activeSpeedsterContextName = null;
 
   const content = modal?.querySelector('.speedster-modal-content');
   if (modal) {
@@ -13028,20 +13081,7 @@ function getComputedSpeedsterTierInBoss(boss, speedsterOrName) {
       const ranked = rankRecommendedForBoss(group.boss, group.recommended, { roleKey: 'dps' });
       const found = ranked.find((poke) => String(poke.name || '').toLowerCase() === lower);
       if (found) {
-        // Regra especial: speedsters que causam Efetivo (1.5) viram Super Efetivo (2.0).
-        // Aplicar apenas na computação de tiers para speedsters.
-        let effectiveTier = normalizeTierKey(found.tier);
-        try {
-          const isSpeedsterMatch = String(found.name || '').toLowerCase() === lower;
-          const offenseVal = typeof found._offense === 'number' ? found._offense : null;
-          if (isSpeedsterMatch && offenseVal === 1.5) {
-            effectiveTier = classifyRecommendationTier(2.0, found._defenseWorst, { roleKey: 'dps' });
-          }
-        } catch (e) {
-          // alternativa para o tier ja calculado
-        }
-
-        bestTier = pickBetterTier(bestTier, effectiveTier);
+        bestTier = pickBetterTier(bestTier, found.tier);
       }
     });
   }
@@ -13228,8 +13268,6 @@ function openSpeedsterBossesModal(speedster, options = {}) {
   setBossModalLayout(false);
   currentBoss = null;
   activeBossSearchResult = speedster;
-  // marcar contexto ativo para que o sistema saiba qual speedster foi aberto
-  activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
   const bosses = getBossesForSpeedster(speedster);
   const bossResults = bosses
     .map((boss) => ({
@@ -14744,11 +14782,6 @@ function openBossModalV2(speedster, options = {}) {
   }
 
   setBossModalLayout(false);
-  // Se abrimos o modal diretamente a partir de um card de speedster,
-  // marcar contexto ativo para aplicar promoção de speedster (1.5 -> 2.0)
-  if (Array.isArray(speedster?.bossEntries)) {
-    activeSpeedsterContextName = String(speedster?.name || '').toLowerCase();
-  }
   currentBoss = speedster;
   activeBossSearchResult = null;
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];

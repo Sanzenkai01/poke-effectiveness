@@ -330,7 +330,7 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260702b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260712c';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -24613,6 +24613,39 @@ function ensurePokemonBossUsageDataReady(){
     });
 }
 
+function createPokemonBossUsageSubject(entry){
+    if(!entry || typeof entry !== 'object') return entry;
+
+    const passiveTypes = new Set([
+        ...(Array.isArray(entry.passiveSuperEffectiveTypes) ? entry.passiveSuperEffectiveTypes : []),
+        ...(Array.isArray(entry.shinyPassiveSuperEffectiveTypes) ? entry.shinyPassiveSuperEffectiveTypes : [])
+    ].map(normalizePokemonTypeKey).filter(Boolean));
+
+    if(typeof getTimesOffensivePassiveMeta === 'function'){
+        const offensivePassiveMeta = getTimesOffensivePassiveMeta(entry, 'all');
+        (offensivePassiveMeta.types || []).forEach(type => {
+            const normalizedType = normalizePokemonTypeKey(type);
+            if(normalizedType) passiveTypes.add(normalizedType);
+        });
+
+        if(offensivePassiveMeta.all){
+            (menuTypes.length ? menuTypes : Object.keys(effectiveness)).forEach(type => {
+                const normalizedType = normalizePokemonTypeKey(type);
+                if(normalizedType) passiveTypes.add(normalizedType);
+            });
+        }
+    }
+
+    return {
+        ...entry,
+        passiveSuperEffectiveTypes: Array.from(passiveTypes)
+    };
+}
+
+function shouldShowPokemonBossUsageEmptyState(entry){
+    return ['speedster', 'defender', 'supporter'].includes(String(entry?.roleKey || '').trim().toLowerCase());
+}
+
 function openPokemonBossUsageLink(usage){
     if(!usage || !usage.mode || !usage.bossSlug){
         return;
@@ -24640,6 +24673,12 @@ function openPokemonBossUsageLink(usage){
         .catch((error) => {
             console.error('Nao foi possivel carregar o modal de boss indicado pelo Pokemon.', error);
         });
+}
+
+function formatPokemonBossUsageScoreValue(value){
+    return typeof value === 'number' && Number.isFinite(value)
+        ? value.toFixed(2)
+        : '-';
 }
 
 function createPokemonBossUsageCard(usage){
@@ -24679,7 +24718,21 @@ function createPokemonBossUsageCard(usage){
     ].filter(Boolean);
     meta.textContent = metaParts.join(' - ');
 
-    body.append(title, meta);
+    const score = document.createElement('span');
+    score.className = 'pokemon-boss-usage-card__score';
+    score.title = 'ATK e DEF calculados contra este boss.';
+
+    const atk = document.createElement('span');
+    atk.className = 'pokemon-boss-usage-card__score-item pokemon-boss-usage-card__score-item--atk';
+    atk.textContent = `ATK ${formatPokemonBossUsageScoreValue(usage?.offenseScore)}`;
+
+    const def = document.createElement('span');
+    def.className = 'pokemon-boss-usage-card__score-item pokemon-boss-usage-card__score-item--def';
+    def.textContent = `DEF ${formatPokemonBossUsageScoreValue(usage?.defenseScore)}`;
+
+    score.append(atk, def);
+
+    body.append(title, meta, score);
     card.append(media, body);
     card.addEventListener('click', (event) => {
         event.preventDefault();
@@ -24749,9 +24802,18 @@ function renderPokemonBossUsageSection(entry){
             if(renderToken !== pokemonBossUsageRenderToken || activePokemonCatalogEntry !== entry) return;
 
             const usages = typeof window.getPokemonBossUsages === 'function'
-                ? window.getPokemonBossUsages(entry.name)
+                ? window.getPokemonBossUsages(createPokemonBossUsageSubject(entry))
                 : [];
             if(!Array.isArray(usages) || !usages.length){
+                if(shouldShowPokemonBossUsageEmptyState(entry)){
+                    const summary = document.createElement('p');
+                    summary.className = 'pokemon-boss-usage__summary';
+                    summary.textContent = 'Nenhum uso bom ou maior em boss foi encontrado.';
+                    pokemonDetailsBossUsage.replaceChildren(summary);
+                    pokemonDetailsBossUsageSection.hidden = false;
+                    return;
+                }
+
                 resetPokemonBossUsageSection();
                 return;
             }

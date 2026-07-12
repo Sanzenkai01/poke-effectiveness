@@ -19606,7 +19606,7 @@ button.pokemon-evolution-card:focus-visible {
 
 .pokemon-boss-usage-card__body {
   display: grid;
-  gap: 0.04rem;
+  gap: 0.08rem;
   min-width: 0;
   text-align: center;
 }
@@ -19627,6 +19627,37 @@ button.pokemon-evolution-card:focus-visible {
   line-height: 1.18;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.pokemon-boss-usage-card__score {
+  display: inline-flex;
+  justify-content: center;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.pokemon-boss-usage-card__score-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.1rem 0.24rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(237, 246, 255, 0.84);
+  font-size: 0.56rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pokemon-boss-usage-card__score-item--atk {
+  color: #ffb45e;
+}
+
+.pokemon-boss-usage-card__score-item--def {
+  color: #77d7ff;
 }
 
 .pokemon-details-grid {
