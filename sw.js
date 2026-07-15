@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v849`;
+let CACHE_NAME = `${CACHE_PREFIX}v852`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -23,6 +23,7 @@ const APP_SHELL = [
   new URL('./rotom-phone/index.html', self.registration.scope).toString(),
   new URL('./police-operation/index.html', self.registration.scope).toString(),
   new URL('./slowpoke-well/index.html', self.registration.scope).toString(),
+  new URL('./fusao-de-held/index.html', self.registration.scope).toString(),
   new URL('./profissoes/index.html', self.registration.scope).toString(),
   new URL('./catch/index.html', self.registration.scope).toString(),
   new URL('./streamers/index.html', self.registration.scope).toString(),
@@ -42,8 +43,8 @@ const APP_SHELL = [
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260712a', self.registration.scope).toString(),
-  new URL('./script.js?v=20260712c', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260715b', self.registration.scope).toString(),
+  new URL('./script.js?v=20260715b', self.registration.scope).toString(),
   new URL('./hunt-builder/hunt_symbol.png?v=20260627a', self.registration.scope).toString(),
   new URL('./pokemons/pokemons.json?v=20260711b', self.registration.scope).toString(),
   new URL('./pokemons/mega-pokemons.json?v=20260630c', self.registration.scope).toString(),
@@ -55,6 +56,13 @@ const APP_SHELL = [
   new URL('./route-loader.js?v=20260624a', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
   new URL('./bosses/bosses.js?v=20260712c', self.registration.scope).toString(),
+  new URL('./helds/amuletcoin.png', self.registration.scope).toString(),
+  new URL('./helds/choiceband.png', self.registration.scope).toString(),
+  new URL('./helds/assaultvest.png', self.registration.scope).toString(),
+  new URL('./helds/choicescarf.png', self.registration.scope).toString(),
+  new URL('./helds/choicespecs.png', self.registration.scope).toString(),
+  new URL('./helds/lifeorb.png', self.registration.scope).toString(),
+  new URL('./helds/Held-Button.png', self.registration.scope).toString(),
   new URL('./times/teams.json?v=20260629a', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString()

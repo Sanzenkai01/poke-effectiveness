@@ -120,6 +120,15 @@ const routes = [
     ]
   },
   {
+    path: '/fusao-de-held',
+    label: 'fusao-de-held',
+    checks: [
+      { pattern: /data-active-tab="fusao-de-held"/i, description: 'fusao de held active tab' },
+      { pattern: /id="content-fusao-de-held"/i, description: 'fusao de held panel' },
+      { pattern: /id="held-fusion-cost-title"/i, description: 'fusao de held costs section' }
+    ]
+  },
+  {
     path: '/profissoes',
     label: 'profissoes',
     checks: [

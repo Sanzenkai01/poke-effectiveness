@@ -145,12 +145,13 @@ const contentHuntBuilder = document.getElementById('content-hunt-builder');
 const contentRotomPhone = document.getElementById('content-rotom-phone');
 const contentPoliceOperation = document.getElementById('content-police-operation');
 const contentSlowpokeWell = document.getElementById('content-slowpoke-well');
+const contentHeldFusion = document.getElementById('content-fusao-de-held');
 const contentProfessions = document.getElementById('content-profissoes');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentPoliceOperation, contentSlowpokeWell, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentPoliceOperation, contentSlowpokeWell, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -378,6 +379,10 @@ const APP_ROUTE_ALIASES = {
     police: { path: '/police-operation', tab: 'police-operation' },
     'slowpoke-well': { path: '/slowpoke-well', tab: 'slowpoke-well' },
     slowpokewell: { path: '/slowpoke-well', tab: 'slowpoke-well' },
+    'fusao-de-held': { path: '/fusao-de-held', tab: 'fusao-de-held' },
+    fusaodeheld: { path: '/fusao-de-held', tab: 'fusao-de-held' },
+    'held-fusion': { path: '/fusao-de-held', tab: 'fusao-de-held' },
+    heldfusion: { path: '/fusao-de-held', tab: 'fusao-de-held' },
     profissoes: { path: '/profissoes', tab: 'profissoes' },
     professions: { path: '/profissoes', tab: 'profissoes' },
     catch: { path: '/catch', tab: 'catch' },
@@ -3214,6 +3219,7 @@ function getActiveSiteTarget(){
     if(contentRotomPhone && !contentRotomPhone.hidden) return 'rotom-phone';
     if(contentPoliceOperation && !contentPoliceOperation.hidden) return 'police-operation';
     if(contentSlowpokeWell && !contentSlowpokeWell.hidden) return 'slowpoke-well';
+    if(contentHeldFusion && !contentHeldFusion.hidden) return 'fusao-de-held';
     if(contentProfessions && !contentProfessions.hidden) return 'profissoes';
     if(contentManiacs && !contentManiacs.hidden) return 'maniacs';
     if(contentBossesInfo && !contentBossesInfo.hidden) return 'bosses-info';
@@ -3397,6 +3403,7 @@ function activateSidebarTarget(button){
         'rotom-phone': showRotomPhone,
         'police-operation': showPoliceOperation,
         'slowpoke-well': showSlowpokeWell,
+        'fusao-de-held': showHeldFusion,
         profissoes: showProfessions,
         catch: showCatch,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
@@ -3541,6 +3548,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:rotom-phone', kind: 'route', target: 'rotom-phone', title: 'Rotom Phone', category: 'Quest', description: 'Tasks de Kanto por cidade para progresso e Liga Pokemon', icon: 'RP', tags: ['rotom', 'phone', 'kanto', 'tasks', 'liga', 'quest'] },
         { id: 'route:police-operation', kind: 'route', target: 'police-operation', title: 'Police Operation', category: 'Quest', description: 'Investigacoes semanais da Officer Jenny contra a Equipe Rocket', icon: 'PO', tags: ['police', 'operation', 'jenny', 'rocket', 'tokens', 'held ticket', 'quest'] },
         { id: 'route:slowpoke-well', kind: 'route', target: 'slowpoke-well', title: 'Slowpoke Well', category: 'Quest', description: 'Quest semanal, requisitos, caminho e recompensas', icon: 'SW', tags: ['slowpoke', 'well', 'quest', 'expedicoes', 'timer ball', 'kurt'] },
+        { id: 'route:fusao-de-held', kind: 'route', target: 'fusao-de-held', title: 'Fusao de Held', category: 'Sistema', description: 'Upgrade de Helds Primarios com materiais de fusao, moedas especiais, custos e chances', icon: 'HF', tags: ['held', 'fusion', 'fusao', 'upgrade', 'amulet coin', 'choice band', 'assault vest', 'life orb', 'moeda especial'] },
         { id: 'route:profissoes', kind: 'route', target: 'profissoes', title: 'Profissoes', category: 'Sistema', description: 'Guias de profissoes como Designer, Breeder, Photographer, Researcher, crafts e ranks', icon: 'PR', tags: ['designer', 'breeder', 'photographer', 'researcher', 'craft', 'pokeblock', 'ration', 'pokepedia', 'berry', 'battle item', 'camera upgrade', 'vitamin', 'pokeball', 'machine', 'outfit', 'addon'] },
         { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
@@ -5506,6 +5514,7 @@ function openHomeDestination(target){
         'rotom-phone': showRotomPhone,
         'police-operation': showPoliceOperation,
         'slowpoke-well': showSlowpokeWell,
+        'fusao-de-held': showHeldFusion,
         profissoes: showProfessions,
         catch: showCatch,
         bosses: () => showSpeedsters('hoopa'),
@@ -14302,6 +14311,253 @@ function showSlowpokeWell(){
     updateUrl();
 }
 
+const HELD_FUSION_HELDS = [
+    { key: 'choiceband', name: 'Choice Band', file: 'helds/choiceband.png', effect: 'Dano', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'choicespecs', name: 'Choice Specs', file: 'helds/choicespecs.png', effect: 'Chance crit.', values: [8, 10, 12, 14, 16, 20, 24] },
+    { key: 'assaultvest', name: 'Assault Vest', file: 'helds/assaultvest.png', effect: 'Defesa', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'lifeorb', name: 'Life Orb', file: 'helds/lifeorb.png', effect: 'Vida', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'choicescarf', name: 'Choice Scarf', file: 'helds/choicescarf.png', effect: 'Defesa critica', values: [8, 10, 12, 14, 16, 20, 24] },
+    { key: 'amuletcoin', name: 'Amulet Coin', file: 'helds/amuletcoin.png', effect: 'Chance de item', values: [5, 20, 35, 50, 65, 80, 100] }
+];
+
+const HELD_FUSION_STEPS = {
+    1: { cost: 10000, costLabel: '10.000 (10K)', baseChance: 5, boosterChance: 90, coins: 1 },
+    2: { cost: 25000, costLabel: '25.000 (25K)', baseChance: 8, boosterChance: 84, coins: 2 },
+    3: { cost: 50000, costLabel: '50.000 (50K)', baseChance: 10, boosterChance: 80, coins: 3 },
+    4: { cost: 200000, costLabel: '200.000 (200K)', baseChance: 15, boosterChance: 70, coins: 9 },
+    5: { cost: 500000, costLabel: '500.000 (500K)', baseChance: 25, boosterChance: 50, coins: 45 },
+    6: { cost: 1000000, costLabel: '1.000.000 (1KK)', baseChance: 30, boosterChance: 40, coins: 90 }
+};
+
+const HELD_FUSION_AMULET_OVERRIDES = {
+    5: { cost: 5000000, costLabel: '5.000.000 (5KK)', baseChance: null, boosterChance: null, coins: 150 },
+    6: { cost: 10000000, costLabel: '10.000.000 (10KK)', baseChance: 2, boosterChance: 96, coins: 900 }
+};
+
+let heldFusionSimulatorInitialized = false;
+
+function getHeldFusionHeld(key){
+    return HELD_FUSION_HELDS.find(held => held.key === key) || HELD_FUSION_HELDS[0];
+}
+
+function getHeldFusionStep(heldKey, tier){
+    const numericTier = Number(tier) || 1;
+    if(heldKey === 'amuletcoin' && HELD_FUSION_AMULET_OVERRIDES[numericTier]){
+        return HELD_FUSION_AMULET_OVERRIDES[numericTier];
+    }
+    return HELD_FUSION_STEPS[numericTier] || HELD_FUSION_STEPS[1];
+}
+
+function setHeldFusionSlot(slot, held, tierLabel = ''){
+    if(!slot) return;
+    const img = slot.querySelector('img');
+    const label = slot.querySelector('span');
+    if(held){
+        if(img){
+            img.src = held.file;
+            img.alt = held.name;
+            img.hidden = false;
+        }
+        if(label) label.textContent = tierLabel;
+        slot.classList.add('is-filled');
+    } else {
+        if(img){
+            img.removeAttribute('src');
+            img.alt = '';
+            img.hidden = true;
+        }
+        if(label) label.textContent = '';
+        slot.classList.remove('is-filled');
+    }
+}
+
+function formatHeldFusionMoney(step){
+    return step?.costLabel ? `$${step.costLabel}` : '$0';
+}
+
+function getHeldFusionEffectText(held, tier){
+    const current = held.values[tier - 1];
+    const next = held.values[tier] || current;
+    return `${held.effect}: T${tier} ${current}% -> T${tier + 1} ${next}%`;
+}
+
+function getHeldFusionResultEffectText(held, tier){
+    const current = held.values[tier - 1];
+    const next = held.values[tier] || current;
+    const effect = String(held.effect || '').toLowerCase();
+    return {
+        current: `T${tier} ${current}% de ${effect}`,
+        next: `T${tier + 1} ${next}% de ${effect}`
+    };
+}
+
+function calculateHeldFusionState(){
+    const sourceSelect = document.getElementById('held-fusion-sim-source');
+    const tierSelect = document.getElementById('held-fusion-sim-tier');
+    const materialOneSelect = document.getElementById('held-fusion-sim-material-1');
+    const materialTwoSelect = document.getElementById('held-fusion-sim-material-2');
+    const boosterInput = document.getElementById('held-fusion-sim-booster');
+    const source = getHeldFusionHeld(sourceSelect?.value);
+    const tier = Number(tierSelect?.value) || 1;
+    const step = getHeldFusionStep(source.key, tier);
+    const materialKeys = [materialOneSelect?.value || '', materialTwoSelect?.value || ''].filter(Boolean);
+    const invalidMaterials = source.key === 'amuletcoin'
+        ? materialKeys.filter(key => key !== 'amuletcoin')
+        : [];
+    const validMaterials = source.key === 'amuletcoin'
+        ? materialKeys.filter(key => key === 'amuletcoin')
+        : materialKeys;
+    const materialCount = validMaterials.length;
+    const usesBooster = Boolean(boosterInput?.checked);
+    const hasKnownChance = typeof step.baseChance === 'number';
+    const chance = hasKnownChance
+        ? Math.min(100, (step.baseChance * materialCount) + (usesBooster ? step.boosterChance : 0))
+        : null;
+    const canFuse = materialCount > 0 && invalidMaterials.length === 0 && hasKnownChance;
+    return { source, tier, step, materialKeys, invalidMaterials, validMaterials, materialCount, usesBooster, chance, canFuse, hasKnownChance };
+}
+
+function renderHeldFusionSimulator(resultText = ''){
+    const state = calculateHeldFusionState();
+    const sourceSlot = document.getElementById('held-fusion-source-slot');
+    const materialOneSlot = document.getElementById('held-fusion-material-slot-1');
+    const materialTwoSlot = document.getElementById('held-fusion-material-slot-2');
+    const previewSlot = document.getElementById('held-fusion-preview-slot');
+    const boosterSlot = document.getElementById('held-fusion-booster-slot');
+    const costEl = document.getElementById('held-fusion-sim-cost');
+    const chanceEl = document.getElementById('held-fusion-sim-chance');
+    const coinsEl = document.getElementById('held-fusion-sim-coins');
+    const effectEl = document.getElementById('held-fusion-sim-effect');
+    const messageEl = document.getElementById('held-fusion-sim-message');
+    const resultEl = document.getElementById('held-fusion-sim-result');
+    const fuseBtn = document.getElementById('held-fusion-sim-fuse');
+
+    setHeldFusionSlot(sourceSlot, state.source, `T${state.tier}`);
+    setHeldFusionSlot(materialOneSlot, state.materialKeys[0] ? getHeldFusionHeld(state.materialKeys[0]) : null, state.materialKeys[0] ? `T${state.tier}` : '');
+    setHeldFusionSlot(materialTwoSlot, state.materialKeys[1] ? getHeldFusionHeld(state.materialKeys[1]) : null, state.materialKeys[1] ? `T${state.tier}` : '');
+    setHeldFusionSlot(previewSlot, state.source, `T${state.tier + 1}`);
+
+    if(boosterSlot){
+        boosterSlot.classList.toggle('is-filled', state.usesBooster);
+        const boosterLabel = boosterSlot.querySelector('span');
+        if(boosterLabel) boosterLabel.textContent = state.usesBooster ? 'Moeda' : '';
+    }
+
+    if(costEl) costEl.textContent = formatHeldFusionMoney(state.step);
+    if(chanceEl) chanceEl.textContent = state.chance === null ? 'Nao informada' : `${state.chance}%`;
+    if(coinsEl) coinsEl.textContent = state.usesBooster ? `${state.step.coins} Moeda${state.step.coins === 1 ? '' : 's'}` : '0';
+    if(effectEl) effectEl.textContent = getHeldFusionEffectText(state.source, state.tier);
+
+    let message = 'Adicione um ou dois Helds de descarte.';
+    if(state.invalidMaterials.length){
+        message = 'Amulet Coin so aceita outros Amulet Coin como descarte.';
+    } else if(!state.hasKnownChance){
+        message = 'A chance de Amulet Coin T5 -> T6 nao foi informada; confira no jogo antes de tentar.';
+    } else if(state.materialCount){
+        const boosterText = state.usesBooster ? ` com bonus de ${state.step.boosterChance}% da Moeda Especial` : '';
+        message = `${state.materialCount} material(is): +${state.step.baseChance}% por held${boosterText}.`;
+    }
+    if(messageEl) messageEl.textContent = message;
+    if(resultEl && resultText) resultEl.textContent = resultText;
+    if(fuseBtn) fuseBtn.disabled = !state.canFuse;
+
+    return state;
+}
+
+function populateHeldFusionSelect(select, includeEmpty = false){
+    if(!select) return;
+    const currentValue = select.value;
+    select.replaceChildren();
+    if(includeEmpty){
+        const empty = document.createElement('option');
+        empty.value = '';
+        empty.textContent = 'Vazio';
+        select.appendChild(empty);
+    }
+    HELD_FUSION_HELDS.forEach((held) => {
+        const option = document.createElement('option');
+        option.value = held.key;
+        option.textContent = held.name;
+        select.appendChild(option);
+    });
+    if(currentValue && Array.from(select.options).some(option => option.value === currentValue)){
+        select.value = currentValue;
+    }
+}
+
+function initializeHeldFusionSimulator(){
+    if(heldFusionSimulatorInitialized) return;
+    const sourceSelect = document.getElementById('held-fusion-sim-source');
+    const tierSelect = document.getElementById('held-fusion-sim-tier');
+    const materialOneSelect = document.getElementById('held-fusion-sim-material-1');
+    const materialTwoSelect = document.getElementById('held-fusion-sim-material-2');
+    const boosterInput = document.getElementById('held-fusion-sim-booster');
+    const fuseBtn = document.getElementById('held-fusion-sim-fuse');
+    const resetBtn = document.getElementById('held-fusion-sim-reset');
+    if(!sourceSelect || !tierSelect || !materialOneSelect || !materialTwoSelect) return;
+
+    populateHeldFusionSelect(sourceSelect);
+    populateHeldFusionSelect(materialOneSelect, true);
+    populateHeldFusionSelect(materialTwoSelect, true);
+    tierSelect.replaceChildren();
+    for(let tier = 1; tier <= 6; tier += 1){
+        const option = document.createElement('option');
+        option.value = String(tier);
+        option.textContent = `T${tier} -> T${tier + 1}`;
+        tierSelect.appendChild(option);
+    }
+
+    sourceSelect.value = 'choiceband';
+    tierSelect.value = '5';
+    materialOneSelect.value = 'choiceband';
+    materialTwoSelect.value = '';
+
+    [sourceSelect, tierSelect, materialOneSelect, materialTwoSelect, boosterInput].forEach((control) => {
+        control?.addEventListener('change', () => renderHeldFusionSimulator('Resultado: aguardando simulacao.'));
+    });
+
+    fuseBtn?.addEventListener('click', () => {
+        const state = renderHeldFusionSimulator();
+        if(!state.canFuse) return;
+        const success = Math.random() * 100 < state.chance;
+        const effectText = getHeldFusionResultEffectText(state.source, state.tier);
+        const resultText = success
+            ? `Resultado: sucesso. ${state.source.name} sobe de ${effectText.current} para ${effectText.next}; materiais e taxa foram consumidos.`
+            : `Resultado: falha. ${state.source.name} permanece em ${effectText.current}; materiais e taxa foram consumidos.`;
+        renderHeldFusionSimulator(resultText);
+    });
+
+    resetBtn?.addEventListener('click', () => {
+        sourceSelect.value = 'choiceband';
+        tierSelect.value = '5';
+        materialOneSelect.value = '';
+        materialTwoSelect.value = '';
+        if(boosterInput) boosterInput.checked = false;
+        renderHeldFusionSimulator('Resultado: aguardando simulacao.');
+    });
+
+    heldFusionSimulatorInitialized = true;
+    renderHeldFusionSimulator('Resultado: aguardando simulacao.');
+}
+
+function showHeldFusion(){
+    initializeHeldFusionSimulator();
+    clearTabHighlights();
+    setActiveTabTheme('fusao-de-held');
+    setVisiblePanel(contentHeldFusion);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Fusao de Held';
+    updateBrowserTitle();
+    if(useGsap && contentHeldFusion){
+        gsap.from(contentHeldFusion, { opacity: 0, y: -10, duration: 0.4 });
+        gsap.from(contentHeldFusion.querySelectorAll('.held-fusion-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+    }
+    updateUrl();
+}
+
 function showProfessions(){
     initializeProfessionsPage();
     clearTabHighlights();
@@ -17022,6 +17278,7 @@ function initTabFromUrl(){
     if(resolvedTab==='rotom-phone') return showRotomPhone();
     if(resolvedTab==='police-operation') return showPoliceOperation();
     if(resolvedTab==='slowpoke-well') return showSlowpokeWell();
+    if(resolvedTab==='fusao-de-held') return showHeldFusion();
     if(resolvedTab==='profissoes') return showProfessions();
     if(resolvedTab==='times') return showTimes({
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
@@ -17080,6 +17337,7 @@ function initTabFromUrl(){
     if(saved==='rotom-phone') return showRotomPhone();
     if(saved==='police-operation') return showPoliceOperation();
     if(saved==='slowpoke-well') return showSlowpokeWell();
+    if(saved==='fusao-de-held') return showHeldFusion();
     if(saved==='profissoes') return showProfessions();
     if(saved==='pokemons') return showPokemons();
     if(saved==='catch') return showCatch();
@@ -20069,6 +20327,7 @@ function updateUrl(options = {}){
                       (contentRotomPhone && !contentRotomPhone.hidden) ? 'rotom-phone' :
                       (contentPoliceOperation && !contentPoliceOperation.hidden) ? 'police-operation' :
                       (contentSlowpokeWell && !contentSlowpokeWell.hidden) ? 'slowpoke-well' :
+                      (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
                       (contentBossesInfo && !contentBossesInfo.hidden) ? 'bosses-info' :
