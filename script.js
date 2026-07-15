@@ -14420,9 +14420,29 @@ function calculateHeldFusionState(){
     const materialCount = validMaterials.length;
     const usesBooster = Boolean(boosterInput?.checked);
     const hasKnownChance = typeof step.baseChance === 'number';
-    const chance = hasKnownChance
-        ? Math.min(100, (step.baseChance * materialCount) + (usesBooster ? step.boosterChance : 0))
-        : null;
+    
+    let chance = null;
+    if(hasKnownChance){
+        // Sem helds não pode fazer fusão, mesmo com moeda especial
+        if(materialCount === 0 && usesBooster){
+            chance = 0;
+        } else if(source.key === 'amuletcoin'){
+            // Lógica especial para Amulet Coin
+            if(materialCount === 0){
+                chance = 0; // Sem moeda e sem helds
+            } else if(usesBooster){
+                // Com moeda: 36% com 1 amulet, aumenta até 100% com 2 amulets
+                chance = Math.min(100, 36 + ((materialCount - 1) * 64));
+            } else {
+                // Sem moeda: 96% com 2 amulets
+                chance = materialCount === 2 ? 96 : (step.baseChance * materialCount);
+            }
+        } else {
+            // Lógica normal para outros helds
+            chance = Math.min(100, (step.baseChance * materialCount) + (usesBooster ? step.boosterChance : 0));
+        }
+    }
+    
     const canFuse = materialCount > 0 && invalidMaterials.length === 0 && hasKnownChance;
     return { source, tier, step, materialKeys, invalidMaterials, validMaterials, materialCount, usesBooster, chance, canFuse, hasKnownChance };
 }
@@ -14504,6 +14524,7 @@ function initializeHeldFusionSimulator(){
     const boosterInput = document.getElementById('held-fusion-sim-booster');
     const fuseBtn = document.getElementById('held-fusion-sim-fuse');
     const resetBtn = document.getElementById('held-fusion-sim-reset');
+    const closeBtn = document.querySelector('.held-fusion-sim__close');
     if(!sourceSelect || !tierSelect || !materialOneSelect || !materialTwoSelect) return;
 
     populateHeldFusionSelect(sourceSelect);
@@ -14537,14 +14558,17 @@ function initializeHeldFusionSimulator(){
         renderHeldFusionSimulator(resultText);
     });
 
-    resetBtn?.addEventListener('click', () => {
+    const resetHeldFusion = () => {
         sourceSelect.value = 'choiceband';
         tierSelect.value = '5';
         materialOneSelect.value = '';
         materialTwoSelect.value = '';
         if(boosterInput) boosterInput.checked = false;
         renderHeldFusionSimulator('Resultado: aguardando simulacao.');
-    });
+    };
+
+    resetBtn?.addEventListener('click', resetHeldFusion);
+    closeBtn?.addEventListener('click', resetHeldFusion);
 
     heldFusionSimulatorInitialized = true;
     renderHeldFusionSimulator('Resultado: aguardando simulacao.');
