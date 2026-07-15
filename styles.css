@@ -32942,10 +32942,11 @@ body.home-view main {
 
 .held-fusion-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  grid-template-columns: 1fr;
   gap: 1.6rem;
   align-items: center;
-  min-height: 360px;
+  justify-items: center;
+  min-height: auto;
   padding: 2rem;
   border-radius: 24px;
   overflow: hidden;
@@ -32955,6 +32956,9 @@ body.home-view main {
   display: grid;
   gap: 1rem;
   min-width: 0;
+  text-align: center;
+  align-items: center;
+  justify-items: center;
 }
 
 .held-fusion-eyebrow {
@@ -32982,10 +32986,12 @@ body.home-view main {
   line-height: 1.08;
   overflow-wrap: anywhere;
   text-wrap: balance;
+  max-width: 100%;
 }
 
 .held-fusion-hero h2 {
   font-size: 4rem;
+  width: 100%;
 }
 
 .held-fusion-hero p,
@@ -33068,8 +33074,16 @@ body.home-view main {
 }
 
 .held-fusion-section__head {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 0.52rem;
+  text-align: center;
+}
+
+.held-fusion-section__head .held-fusion-eyebrow {
+  margin-inline: auto;
+  align-self: center;
 }
 
 .held-fusion-section__head h3 {
@@ -33257,6 +33271,51 @@ body.home-view main {
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.held-fusion-sim__slot:hover {
+  border-color: rgba(250, 204, 21, 0.34);
+  background: rgba(250, 204, 21, 0.08);
+}
+
+.held-fusion-sim__slot:hover::after {
+  content: attr(data-held-info);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: pre-line;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 0.65rem 0.85rem;
+  background: linear-gradient(180deg, rgba(28, 24, 15, 0.98), rgba(13, 15, 23, 0.98));
+  border: 1px solid rgba(250, 204, 21, 0.32);
+  border-radius: 6px;
+  color: #fef3c7;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.48);
+}
+
+.held-fusion-sim__slot:hover::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(250, 204, 21, 0.32);
+  z-index: 1001;
+  pointer-events: none;
 }
 
 .held-fusion-sim__slot img {

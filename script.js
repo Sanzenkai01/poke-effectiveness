@@ -14312,12 +14312,12 @@ function showSlowpokeWell(){
 }
 
 const HELD_FUSION_HELDS = [
-    { key: 'choiceband', name: 'Choice Band', file: 'helds/choiceband.png', effect: 'Dano', values: [2, 4, 6, 9, 12, 16, 20] },
-    { key: 'choicespecs', name: 'Choice Specs', file: 'helds/choicespecs.png', effect: 'Chance crit.', values: [8, 10, 12, 14, 16, 20, 24] },
-    { key: 'assaultvest', name: 'Assault Vest', file: 'helds/assaultvest.png', effect: 'Defesa', values: [2, 4, 6, 9, 12, 16, 20] },
-    { key: 'lifeorb', name: 'Life Orb', file: 'helds/lifeorb.png', effect: 'Vida', values: [2, 4, 6, 9, 12, 16, 20] },
-    { key: 'choicescarf', name: 'Choice Scarf', file: 'helds/choicescarf.png', effect: 'Defesa critica', values: [8, 10, 12, 14, 16, 20, 24] },
-    { key: 'amuletcoin', name: 'Amulet Coin', file: 'helds/amuletcoin.png', effect: 'Chance de item', values: [5, 20, 35, 50, 65, 80, 100] }
+    { key: 'choiceband', name: 'Choice Band', file: 'helds/choiceband.png', effect: 'Dano', description: 'Aumenta o dano em', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'choicespecs', name: 'Choice Specs', file: 'helds/choicespecs.png', effect: 'Chance crit.', description: 'Aumenta chance de crítico em', values: [8, 10, 12, 14, 16, 20, 24] },
+    { key: 'assaultvest', name: 'Assault Vest', file: 'helds/assaultvest.png', effect: 'Defesa', description: 'Aumenta a defesa do Pokémon em', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'lifeorb', name: 'Life Orb', file: 'helds/lifeorb.png', effect: 'Vida', description: 'Aumenta a vida do Pokémon em', values: [2, 4, 6, 9, 12, 16, 20] },
+    { key: 'choicescarf', name: 'Choice Scarf', file: 'helds/choicescarf.png', effect: 'Defesa critica', description: 'Aumenta a chance de defesa crítica em', values: [8, 10, 12, 14, 16, 20, 24] },
+    { key: 'amuletcoin', name: 'Amulet Coin', file: 'helds/amuletcoin.png', effect: 'Chance de item', description: 'Aumenta a chance de conseguir um drop bônus em', values: [5, 20, 35, 50, 65, 80, 100] }
 ];
 
 const HELD_FUSION_STEPS = {
@@ -14360,6 +14360,15 @@ function setHeldFusionSlot(slot, held, tierLabel = ''){
         }
         if(label) label.textContent = tierLabel;
         slot.classList.add('is-filled');
+        
+        // Criar informação detalhada do held
+        const tier = tierLabel.match(/\d+/) ? parseInt(tierLabel.match(/\d+/)[0]) : 0;
+        const tierIndex = Math.max(0, tier - 1);
+        const value = held.values && held.values[tierIndex] ? held.values[tierIndex] : '-';
+        const description = held.description ? `${held.description} ${value}%.` : '';
+        const fullInfo = `${held.name} ${tierLabel}\n${description}`;
+        
+        slot.setAttribute('data-held-info', fullInfo);
     } else {
         if(img){
             img.removeAttribute('src');
@@ -14368,6 +14377,7 @@ function setHeldFusionSlot(slot, held, tierLabel = ''){
         }
         if(label) label.textContent = '';
         slot.classList.remove('is-filled');
+        slot.removeAttribute('data-held-info');
     }
 }
 
