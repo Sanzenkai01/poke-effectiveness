@@ -14330,7 +14330,7 @@ const HELD_FUSION_STEPS = {
 };
 
 const HELD_FUSION_AMULET_OVERRIDES = {
-    5: { cost: 5000000, costLabel: '5.000.000 (5KK)', baseChance: null, boosterChance: null, coins: 150 },
+    5: { cost: 5000000, costLabel: '5.000.000 (5KK)', baseChance: 23, boosterChance: 36, coins: 150 },
     6: { cost: 10000000, costLabel: '10.000.000 (10KK)', baseChance: 2, boosterChance: 96, coins: 900 }
 };
 
@@ -14411,12 +14411,7 @@ function calculateHeldFusionState(){
     const tier = Number(tierSelect?.value) || 1;
     const step = getHeldFusionStep(source.key, tier);
     const materialKeys = [materialOneSelect?.value || '', materialTwoSelect?.value || ''].filter(Boolean);
-    const invalidMaterials = source.key === 'amuletcoin'
-        ? materialKeys.filter(key => key !== 'amuletcoin')
-        : [];
-    const validMaterials = source.key === 'amuletcoin'
-        ? materialKeys.filter(key => key === 'amuletcoin')
-        : materialKeys;
+    const validMaterials = materialKeys;
     const materialCount = validMaterials.length;
     const usesBooster = Boolean(boosterInput?.checked);
     const hasKnownChance = typeof step.baseChance === 'number';
@@ -14424,18 +14419,17 @@ function calculateHeldFusionState(){
     let chance = null;
     if(hasKnownChance){
         // Sem helds não pode fazer fusão, mesmo com moeda especial
-        if(materialCount === 0 && usesBooster){
+        if(materialCount === 0){
             chance = 0;
         } else if(source.key === 'amuletcoin'){
             // Lógica especial para Amulet Coin
-            if(materialCount === 0){
-                chance = 0; // Sem moeda e sem helds
-            } else if(usesBooster){
-                // Com moeda: 36% com 1 amulet, aumenta até 100% com 2 amulets
-                chance = Math.min(100, 36 + ((materialCount - 1) * 64));
+            if(usesBooster){
+                // Com moeda: 36% + 30% por cada held + 2% por cada Amulet coin
+                const amuletMaterialCount = materialKeys.filter(key => key === 'amuletcoin').length;
+                chance = Math.min(100, 36 + (materialCount * 30) + (amuletMaterialCount * 2));
             } else {
-                // Sem moeda: 96% com 2 amulets
-                chance = materialCount === 2 ? 96 : (step.baseChance * materialCount);
+                // Sem moeda: 23% por cada held (qualquer tipo)
+                chance = Math.min(100, 23 * materialCount);
             }
         } else {
             // Lógica normal para outros helds
@@ -14443,8 +14437,8 @@ function calculateHeldFusionState(){
         }
     }
     
-    const canFuse = materialCount > 0 && invalidMaterials.length === 0 && hasKnownChance;
-    return { source, tier, step, materialKeys, invalidMaterials, validMaterials, materialCount, usesBooster, chance, canFuse, hasKnownChance };
+    const canFuse = materialCount > 0 && hasKnownChance;
+    return { source, tier, step, materialKeys, validMaterials, materialCount, usesBooster, chance, canFuse, hasKnownChance };
 }
 
 function renderHeldFusionSimulator(resultText = ''){
@@ -14479,9 +14473,7 @@ function renderHeldFusionSimulator(resultText = ''){
     if(effectEl) effectEl.textContent = getHeldFusionEffectText(state.source, state.tier);
 
     let message = 'Adicione um ou dois Helds de descarte.';
-    if(state.invalidMaterials.length){
-        message = 'Amulet Coin so aceita outros Amulet Coin como descarte.';
-    } else if(!state.hasKnownChance){
+    if(!state.hasKnownChance){
         message = 'A chance de Amulet Coin T5 -> T6 nao foi informada; confira no jogo antes de tentar.';
     } else if(state.materialCount){
         const boosterText = state.usesBooster ? ` com bonus de ${state.step.boosterChance}% da Moeda Especial` : '';
