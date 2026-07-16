@@ -1,15 +1,14 @@
 {
-  "updatedAt": "2026-07-16T21:59:37.725Z",
+  "updatedAt": "2026-07-16T22:00:52.144Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-16T21:50:22.252Z",
-    "endedAt": "2026-07-16T21:59:37.725Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-16T22:00:41.539Z",
+    "endedAt": "2026-07-16T22:00:52.143Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "karlin_nara",
-      "lucasnaikan",
       "sharxera",
       "bruxonoir",
       "eaisantinho",
@@ -49,6 +48,7 @@
       "linikerquadrado2",
       "lkagural",
       "lordjuregi",
+      "lucasnaikan",
       "manoblaze",
       "mataradz8",
       "mofexxx",
@@ -80,34 +80,25 @@
     ],
     "pstoryDropChannels": [
       "karlin_nara",
-      "lucasnaikan",
       "sharxera"
     ],
     "observedChannels": [
-      "sharxera"
+      "karlin_nara"
     ],
-    "observedSpawnChannels": [
-      "sharxera"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "sharxera",
-        "messageAt": 1784239177631,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "sharxera",
+        "channel": "karlin_nara",
         "kind": "rattata-message",
-        "messageAt": 1784239177631,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1784239252046,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
-        "channel": "sharxera",
-        "kind": "spawn",
-        "messageAt": 1784239177631,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "channel": "karlin_nara",
+        "kind": "escape",
+        "messageAt": 1784239252046,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -157,16 +148,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "sharxera",
-    "lastMessageAt": 1784239177631,
-    "expectedNextAt": 1784240437631,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-07-16T21:42:29Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1784239177725,
-    "persistedAt": 1784239177725
+    "channel": "karlin_nara",
+    "lastMessageAt": 1784239252046,
+    "expectedNextAt": 1784240452046,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-07-16T15:46:23Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1784239252143,
+    "persistedAt": 1784239252143
   },
   "timers": {
+    "karlin_nara": {
+      "channel": "karlin_nara",
+      "lastMessageAt": 1784239252046,
+      "expectedNextAt": 1784240452046,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-07-16T15:46:23Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1784239252143,
+      "persistedAt": 1784239252143
+    },
     "sharxera": {
       "channel": "sharxera",
       "lastMessageAt": 1784239177631,
@@ -175,17 +176,7 @@
       "streamStartedAt": "2026-07-16T21:42:29Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1784239177725,
-      "persistedAt": 1784239177725
-    },
-    "karlin_nara": {
-      "channel": "karlin_nara",
-      "lastMessageAt": 1784238035923,
-      "expectedNextAt": 1784239235923,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-07-16T15:46:23Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784238036033,
-      "persistedAt": 1784238622252
+      "persistedAt": 1784239241539
     }
   }
 }
