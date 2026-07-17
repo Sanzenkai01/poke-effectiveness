@@ -1,19 +1,19 @@
 {
-  "updatedAt": "2026-07-17T03:42:47.251Z",
+  "updatedAt": "2026-07-17T03:43:47.243Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-17T03:23:33.213Z",
-    "endedAt": "2026-07-17T03:42:47.251Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-17T03:43:11.380Z",
+    "endedAt": "2026-07-17T03:43:47.243Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
-      "adivorcio",
       "naathcarol",
       "ogordonha",
       "hyoogplays",
       "itscaim",
       "sharxera",
+      "adivorcio",
       "afdexter",
       "anaodapxg",
       "armster91",
@@ -79,47 +79,26 @@
       "zenithstory_gaming"
     ],
     "pstoryDropChannels": [
-      "adivorcio",
       "naathcarol",
       "ogordonha"
     ],
     "observedChannels": [
       "ogordonha"
     ],
-    "observedSpawnChannels": [
-      "ogordonha"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "ogordonha",
-        "messageAt": 1784259767117,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "ogordonha",
         "kind": "rattata-message",
-        "messageAt": 1784258637019,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @reenegado212... 💨"
-      },
-      {
-        "channel": "naathcarol",
-        "kind": "rattata-message",
-        "messageAt": 1784258637019,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @reenegado212... 💨"
+        "messageAt": 1784259827118,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "ogordonha",
-        "kind": "rattata-message",
-        "messageAt": 1784259767117,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      },
-      {
-        "channel": "ogordonha",
-        "kind": "spawn",
-        "messageAt": 1784259767117,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1784259827118,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -170,34 +149,24 @@
   },
   "latest": {
     "channel": "ogordonha",
-    "lastMessageAt": 1784259767117,
-    "expectedNextAt": 1784261027117,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1784259827118,
+    "expectedNextAt": 1784261027118,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-07-17T02:47:53Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1784259767251,
-    "persistedAt": 1784259767251
+    "source": "github-action-chat-escape",
+    "updatedAt": 1784259827243,
+    "persistedAt": 1784259827243
   },
   "timers": {
     "ogordonha": {
       "channel": "ogordonha",
-      "lastMessageAt": 1784259767117,
-      "expectedNextAt": 1784261027117,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-07-17T02:47:53Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1784259767251,
-      "persistedAt": 1784259767251
-    },
-    "indypereira": {
-      "channel": "indypereira",
-      "lastMessageAt": 1784256177188,
-      "expectedNextAt": 1784257377188,
+      "lastMessageAt": 1784259827118,
+      "expectedNextAt": 1784261027118,
       "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-07-16T23:53:05Z",
+      "streamStartedAt": "2026-07-17T02:47:53Z",
       "source": "github-action-chat-escape",
-      "updatedAt": 1784256177307,
-      "persistedAt": 1784258613212
+      "updatedAt": 1784259827243,
+      "persistedAt": 1784259827243
     }
   }
 }
