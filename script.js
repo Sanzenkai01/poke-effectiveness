@@ -331,7 +331,7 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260712c';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260718d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -409,8 +409,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260711b';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260630c';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260718e';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260718e';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260711a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
@@ -915,7 +915,6 @@ const TEAM_BUILDER_BLOCKED_MEGA_NAMES = Object.freeze([
     'Mega Delphox',
     'Mega Greninja',
     'Mega Hawlucha',
-    'Mega Barbaracle',
     'Mega Eelektross',
     'Mega Excadrill',
     'Mega Feraligatr',
@@ -1078,6 +1077,7 @@ const TEAM_BUILDER_EEVEE_EVOLUTION_KEYS = Object.freeze([
 ]);
 const TEAM_BUILDER_NORMAL_EEVEE_EVOLUTION_KEYS = Object.freeze(['espeon', 'umbreon']);
 const TEAM_BUILDER_EXPLICITLY_ALLOWED_NAMES = Object.freeze([
+    'Applin',
     'Appletun',
     "Ash's Pikachu",
     'Cinderace',
@@ -1087,6 +1087,7 @@ const TEAM_BUILDER_EXPLICITLY_ALLOWED_NAMES = Object.freeze([
     'Ditto',
     'Doublade',
     'Flapple',
+    'Hydrapple',
     "Misty's Psyduck",
     'Minior Meteor',
     'Rillaboom',
@@ -1789,7 +1790,7 @@ function loadDeferredScript(src, globalCheck){
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
-        script.defer = true;
+        script.async = false;
         script.addEventListener('load', () => {
             script.dataset.loaded = 'true';
             resolve();
@@ -4447,7 +4448,8 @@ const MANIACS_STONE_ENTRIES = Object.freeze([
     { target: 'Dedenne', location: MANIACS_LOCATION_VERMILLION },
     { target: 'Ribombee', location: MANIACS_LOCATION_FUCHSIA },
     { target: 'Hawlucha', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF },
-    { target: 'Cramorant', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF }
+    { target: 'Cramorant', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF },
+    { target: 'Gorging Cramorant', location: MANIACS_LOCATION_CERULEAN_OLD_SHORE_WARF }
 ]);
 const MANIACS_LOCATION_ENTRIES = Object.freeze([
     MANIACS_LOCATION_CELADON,
@@ -4458,7 +4460,7 @@ const MANIACS_LOCATION_ENTRIES = Object.freeze([
 ]);
 // Alvos que NAO devem renderizar o botao compacto de local dentro da midia do Pokemon
 // Em vez disso, a imagem de local abaixo do kicker "Local" abre o modal.
-const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','dedenne','ribombee','hawlucha','cramorant']);
+const MANIACS_INLINE_LOCATION_TARGETS = new Set(['orthworm','scraggy','toxapex','scolipede','bouffalant','garbodor','dachsbun','dedenne','ribombee','hawlucha','cramorant','gorgingcramorant']);
 const MANIACS_ESSENCE_ENTRIES = Object.freeze([
     { target: 'Orbeetle', hunt: 'Porygon' },
     { target: 'Trevenant', hunt: 'Grimmsnarl' },
@@ -14330,7 +14332,7 @@ const HELD_FUSION_STEPS = {
 };
 
 const HELD_FUSION_AMULET_OVERRIDES = {
-    5: { cost: 5000000, costLabel: '5.000.000 (5KK)', baseChance: 23, boosterChance: 36, coins: 150 },
+    5: { cost: 5000000, costLabel: '5.000.000 (5KK)', baseChance: 23, matchingMaterialBonus: 2, boosterChance: 36, coins: 150 },
     6: { cost: 10000000, costLabel: '10.000.000 (10KK)', baseChance: 2, boosterChance: 96, coins: 900 }
 };
 
@@ -14346,6 +14348,18 @@ function getHeldFusionStep(heldKey, tier){
         return HELD_FUSION_AMULET_OVERRIDES[numericTier];
     }
     return HELD_FUSION_STEPS[numericTier] || HELD_FUSION_STEPS[1];
+}
+
+function getHeldFusionMaterialChance(sourceKey, step, materialKey){
+    const baseChance = step.baseChance;
+    const isMatchingAmuletCoin = sourceKey === 'amuletcoin' && materialKey === 'amuletcoin';
+    return baseChance + (isMatchingAmuletCoin ? (step.matchingMaterialBonus || 0) : 0);
+}
+
+function getHeldFusionMaterialOptions(sourceKey){
+    return sourceKey === 'amuletcoin'
+        ? HELD_FUSION_HELDS.filter(held => held.key === 'amuletcoin')
+        : HELD_FUSION_HELDS;
 }
 
 function setHeldFusionSlot(slot, held, tierLabel = ''){
@@ -14411,8 +14425,11 @@ function calculateHeldFusionState(){
     const tier = Number(tierSelect?.value) || 1;
     const step = getHeldFusionStep(source.key, tier);
     const materialKeys = [materialOneSelect?.value || '', materialTwoSelect?.value || ''].filter(Boolean);
-    const validMaterials = materialKeys;
+    const validMaterials = source.key === 'amuletcoin'
+        ? materialKeys.filter(key => key === 'amuletcoin')
+        : materialKeys;
     const materialCount = validMaterials.length;
+    const amuletMaterialCount = validMaterials.filter(key => key === 'amuletcoin').length;
     const usesBooster = Boolean(boosterInput?.checked);
     const hasKnownChance = typeof step.baseChance === 'number';
     
@@ -14422,15 +14439,17 @@ function calculateHeldFusionState(){
         if(materialCount === 0){
             chance = 0;
         } else if(source.key === 'amuletcoin'){
-            // Lógica especial para Amulet Coin
-            if(usesBooster){
-                // Com moeda: 36% + 30% por cada held + 2% por cada Amulet coin
-                const amuletMaterialCount = materialKeys.filter(key => key === 'amuletcoin').length;
-                chance = Math.min(100, 36 + (materialCount * 30) + (amuletMaterialCount * 2));
-            } else {
-                // Sem moeda: 23% por cada held (qualquer tipo)
-                chance = Math.min(100, 23 * materialCount);
-            }
+            // O Amulet Coin aceita qualquer Held primário. Em toda a sua
+            // progressão, somente outro Amulet Coin como descarte recebe os
+            // +2 pontos percentuais extras; os demais usam a chance-base.
+            const materialChance = validMaterials.reduce(
+                (total, materialKey) => total + getHeldFusionMaterialChance(source.key, step, materialKey),
+                0
+            );
+            chance = Math.min(
+                100,
+                materialChance + (usesBooster ? step.boosterChance : 0)
+            );
         } else {
             // Lógica normal para outros helds
             chance = Math.min(100, (step.baseChance * materialCount) + (usesBooster ? step.boosterChance : 0));
@@ -14438,7 +14457,7 @@ function calculateHeldFusionState(){
     }
     
     const canFuse = materialCount > 0 && hasKnownChance;
-    return { source, tier, step, materialKeys, validMaterials, materialCount, usesBooster, chance, canFuse, hasKnownChance };
+    return { source, tier, step, materialKeys, validMaterials, materialCount, amuletMaterialCount, usesBooster, chance, canFuse, hasKnownChance };
 }
 
 function renderHeldFusionSimulator(resultText = ''){
@@ -14475,9 +14494,14 @@ function renderHeldFusionSimulator(resultText = ''){
     let message = 'Adicione um ou dois Helds de descarte.';
     if(!state.hasKnownChance){
         message = 'A chance de Amulet Coin T5 -> T6 nao foi informada; confira no jogo antes de tentar.';
+    } else if(state.materialKeys.length && !state.materialCount){
+        message = 'Amulet Coin só aceita outro Amulet Coin como material de fusão.';
     } else if(state.materialCount){
         const boosterText = state.usesBooster ? ` com bonus de ${state.step.boosterChance}% da Moeda Especial` : '';
-        message = `${state.materialCount} material(is): +${state.step.baseChance}% por held${boosterText}.`;
+        const matchingMaterialBonus = state.source.key === 'amuletcoin' && state.step.matchingMaterialBonus
+            ? ` +${state.step.matchingMaterialBonus}% por Amulet Coin de descarte`
+            : '';
+        message = `${state.materialCount} material(is): +${state.step.baseChance}% por held${matchingMaterialBonus}${boosterText}.`;
     }
     if(messageEl) messageEl.textContent = message;
     if(resultEl && resultText) resultEl.textContent = resultText;
@@ -14486,7 +14510,7 @@ function renderHeldFusionSimulator(resultText = ''){
     return state;
 }
 
-function populateHeldFusionSelect(select, includeEmpty = false){
+function populateHeldFusionSelect(select, includeEmpty = false, heldOptions = HELD_FUSION_HELDS){
     if(!select) return;
     const currentValue = select.value;
     select.replaceChildren();
@@ -14496,7 +14520,7 @@ function populateHeldFusionSelect(select, includeEmpty = false){
         empty.textContent = 'Vazio';
         select.appendChild(empty);
     }
-    HELD_FUSION_HELDS.forEach((held) => {
+    heldOptions.forEach((held) => {
         const option = document.createElement('option');
         option.value = held.key;
         option.textContent = held.name;
@@ -14505,6 +14529,12 @@ function populateHeldFusionSelect(select, includeEmpty = false){
     if(currentValue && Array.from(select.options).some(option => option.value === currentValue)){
         select.value = currentValue;
     }
+}
+
+function syncHeldFusionMaterialSelects(sourceSelect, materialOneSelect, materialTwoSelect){
+    const materialOptions = getHeldFusionMaterialOptions(sourceSelect?.value);
+    populateHeldFusionSelect(materialOneSelect, true, materialOptions);
+    populateHeldFusionSelect(materialTwoSelect, true, materialOptions);
 }
 
 function initializeHeldFusionSimulator(){
@@ -14520,8 +14550,7 @@ function initializeHeldFusionSimulator(){
     if(!sourceSelect || !tierSelect || !materialOneSelect || !materialTwoSelect) return;
 
     populateHeldFusionSelect(sourceSelect);
-    populateHeldFusionSelect(materialOneSelect, true);
-    populateHeldFusionSelect(materialTwoSelect, true);
+    syncHeldFusionMaterialSelects(sourceSelect, materialOneSelect, materialTwoSelect);
     tierSelect.replaceChildren();
     for(let tier = 1; tier <= 6; tier += 1){
         const option = document.createElement('option');
@@ -14531,11 +14560,15 @@ function initializeHeldFusionSimulator(){
     }
 
     sourceSelect.value = 'choiceband';
-    tierSelect.value = '5';
-    materialOneSelect.value = 'choiceband';
+    tierSelect.value = '1';
+    materialOneSelect.value = '';
     materialTwoSelect.value = '';
 
-    [sourceSelect, tierSelect, materialOneSelect, materialTwoSelect, boosterInput].forEach((control) => {
+    sourceSelect.addEventListener('change', () => {
+        syncHeldFusionMaterialSelects(sourceSelect, materialOneSelect, materialTwoSelect);
+        renderHeldFusionSimulator('Resultado: aguardando simulacao.');
+    });
+    [tierSelect, materialOneSelect, materialTwoSelect, boosterInput].forEach((control) => {
         control?.addEventListener('change', () => renderHeldFusionSimulator('Resultado: aguardando simulacao.'));
     });
 
@@ -14552,7 +14585,7 @@ function initializeHeldFusionSimulator(){
 
     const resetHeldFusion = () => {
         sourceSelect.value = 'choiceband';
-        tierSelect.value = '5';
+        tierSelect.value = '1';
         materialOneSelect.value = '';
         materialTwoSelect.value = '';
         if(boosterInput) boosterInput.checked = false;

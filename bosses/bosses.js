@@ -1726,7 +1726,6 @@ const championPathBosses = createManualRoleboardBosses([
         tank: [
           createRolePick('Onix', ['rock', 'ground'], 'rock'),
           createRolePick('Shuckle', ['bug', 'rock'], 'rock'),
-          createRolePick('Magcargo', ['fire', 'rock'], 'rock'),
           createRolePick('Shieldon', ['rock', 'steel'], 'rock'),
           createRolePick('Bastiodon', ['rock', 'steel'], 'steel'),
           createRolePick('Probopass', ['rock', 'steel'], 'rock'),
@@ -2129,103 +2128,6 @@ const horizonsGoldGigalithBosses = createManualRoleboardBosses([
   encounterNote: 'Boss em trio entre a primeira e a segunda parte do Gold.'
 });
 
-const horizonsSilverBosses = createManualRoleboardBosses([
-  {
-    id: 'horizons-silver-mega-alakazam',
-    name: 'Mega Alakazam',
-    image: 'pokemons/megas/mega-alakazam.png',
-    types: ['psychic'],
-    moveType: 'psychic',
-    description: 'Boss duo do Horizons Silver. As criaturas do caminho ainda serao adicionadas.',
-    cardTags: ['Silver'],
-    comingSoon: true,
-    clans: {
-      instinct: {
-        dps: [
-          createRolePick('Alakazam', ['psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Claydol', ['ground', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Wynaut', ['psychic'], 'psychic', { tier: 'seminformacao' })
-        ]
-      },
-      mystic: {
-        dps: [
-          createRolePick('Mega Starmie', ['water', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Bronzong', ['steel', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Smoochum', ['ice', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ]
-      },
-      valor: {
-        dps: [
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Bouffalant', ['normal'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Chansey', ['normal'], 'psychic', { tier: 'seminformacao' })
-        ]
-      }
-    }
-  },
-  {
-    id: 'horizons-silver-mega-gengar',
-    name: 'Mega Gengar',
-    image: 'pokemons/megas/mega-gengar.png',
-    types: ['ghost', 'poison'],
-    moveType: 'ghost',
-    description: 'Boss duo do Horizons Silver. As criaturas do caminho ainda serao adicionadas.',
-    cardTags: ['Silver'],
-    comingSoon: true,
-    clans: {
-      instinct: {
-        dps: [
-          createRolePick('Alakazam', ['psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Claydol', ['ground', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Wynaut', ['psychic'], 'psychic', { tier: 'seminformacao' })
-        ]
-      },
-      mystic: {
-        dps: [
-          createRolePick('Mega Starmie', ['water', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Bronzong', ['steel', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Smoochum', ['ice', 'psychic'], 'psychic', { tier: 'seminformacao' })
-        ]
-      },
-      valor: {
-        dps: [
-          createRolePick('Mega Gardevoir', ['psychic', 'fairy'], 'psychic', { tier: 'seminformacao' })
-        ],
-        tank: [
-          createRolePick('Bouffalant', ['normal'], 'psychic', { tier: 'seminformacao' })
-        ],
-        support: [
-          createRolePick('Chansey', ['normal'], 'psychic', { tier: 'seminformacao' })
-        ]
-      }
-    }
-  }
-], {
-  id: 'horizons',
-  encounterLabel: 'Horizons Silver',
-  encounterNote: 'Bosses do Horizons Silver em breve.'
-});
-
 const horizonsBronzeRunsData = [
   {
     id: 'bronze-normal-a',
@@ -2240,6 +2142,104 @@ const horizonsBronzeRunsData = [
   }
 ];
 
+const horizonsSilverBosses = createManualRoleboardBosses([
+  {
+    id: 'horizons-silver-boss-room-1',
+    name: 'Jellicent Male',
+    image: 'pokemons/5gen/jellicent.png',
+    types: ['water', 'ghost'],
+    moveType: 'ghost',
+    description: 'Depois de derrotar o boss, saia da Boss Room, vá para o portal de baixo na direita evitando as armadilhas, depois para o portal de baixo, depois para o último da sala, na esquerda.\nRecomendado 2 DPS.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Shiftry', ['grass', 'dark'], 'dark'),
+          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass')
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
+        ],
+        support: [
+          createRolePick('Kadabra', ['psychic'], 'psychic')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Banette', ['ghost'], 'ghost'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Dusclops', ['ghost'], 'ghost')
+        ],
+        support: [
+          createRolePick('Misdreavus', ['ghost'], 'ghost')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Raticate', ['normal'], 'dark'),
+          createRolePick('Pyroar Female', ['fire', 'normal'], 'grass')
+        ],
+        tank: [
+          createRolePick('Sableye', ['dark', 'ghost'], 'ghost'),
+          createRolePick('Miltank', ['normal'], 'ground')
+        ],
+        support: [
+          createRolePick('Porygon2', ['normal'], 'electric')
+        ]
+      }
+    }
+  },
+  {
+    id: 'horizons-silver-boss-room-2',
+    name: 'Mega Gengar',
+    image: 'pokemons/megas/mega-gengar.png',
+    types: ['ghost', 'poison'],
+    moveType: 'ghost',
+    description: 'Recomendado 1 Tank e 1 DPS (Mecanica de Imortal).\nDerrote os totens para gerar curas dentro da arena.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Mega Excadrill', ['ground', 'steel'], 'ground'),
+          createRolePick('Shiftry', ['grass', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
+        ],
+        support: [
+          createRolePick('Kadabra', ['psychic'], 'psychic')
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Banette', ['ghost'], 'ghost'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Dusclops', ['ghost'], 'ghost')
+        ],
+        support: [
+          createRolePick('Misdreavus', ['ghost'], 'ghost')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Bouffalant', ['normal'], 'ground'),
+          createRolePick('Raticate', ['normal'], 'dark'),
+        ],
+        tank: [createRolePick('Miltank', ['normal'], 'ground')],
+        support: [
+          createRolePick('Chansey', ['normal'], 'psychic')
+        ]
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Silver - Boss Rooms',
+  encounterNote: 'Boss rooms do Horizons Silver com recomendações por clan e função.'
+});
+
 const horizonsSilverRunsData = [
   {
     id: 'silver-normal-a',
@@ -2247,23 +2247,150 @@ const horizonsSilverRunsData = [
     difficulty: 'normal',
     side: 'a',
     title: 'Normal - Lado A',
-    eyebrow: 'Duo - Em breve',
-    summary: 'Categoria duo do Horizons. Criaturas ainda em definicao; bosses conhecidos: Mega Alakazam e Mega Gengar.',
+    eyebrow: 'Duo - Configurado',
+    summary: 'Categoria duo do Horizons com armadilhas, lures e boss rooms detalhadas para o Lado A.',
     pathSections: [
       {
-        id: 'silver-em-breve',
-        title: 'Criaturas',
-        subtitle: 'Em breve',
+        id: 'armadilhas',
+        title: 'Armadilhas',
+        subtitle: 'Dusknoir: dano vermelho no chão, em vários SQM específicos.\nHaunter 1: fica na escada como armadilha, dano em 1 SQM específico.\nHaunter 2: segurando um espelho, dano reto.',
         mobs: [
-          { name: 'Alakazam', image: 'pokemons/1gen/alakazam.png', types: ['psychic'] }
+          { name: 'Dusknoir', image: '/horizons/armadilha-dusknoir.png', types: ['ghost'] },
+          { name: 'Haunter 1', image: '/horizons/haunter-trap.png', types: ['ghost', 'poison'] },
+          { name: 'Haunter 2', image: '/horizons/haunter-espelho.png', types: ['ghost', 'poison'] }
         ],
-        effectiveTypes: ['psychic'],
-        superEffectiveTypes: []
-      }
-    ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-1',
+        title: 'Lure 1',
+        subtitle: 'Entre no portal à esquerda.',
+        mobs: [
+          { name: 'Gastly', image: 'pokemons/1gen/gastly.png', types: ['ghost', 'poison'] },
+          { name: 'Haunter', image: 'pokemons/1gen/haunter.png', types: ['ghost', 'poison'] },
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-2',
+        title: 'Lure 2',
+        subtitle: 'Suba a escada, tome cuidado com o Haunter na frente dela.\nEntre no TP, passe pelas armadilhas do Dusknoir e entre no TP novamente.',
+        mobs: [
+          { name: 'Phantump', image: 'pokemons/6gen/phantump.png', types: ['ghost', 'grass'] },
+          { name: 'Pumpkaboo', image: 'pokemons/6gen/pumpkaboo.png', types: ['ghost', 'grass'] },
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-3',
+        title: 'Lure 3',
+        subtitle: 'Mate o lure e entre no portal ao norte.',
+        mobs: [
+          { name: 'Phantump', image: 'pokemons/6gen/phantump.png', types: ['ghost', 'grass'] },
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] },
+          { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] },
+          { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
+          { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-4',
+        title: 'Lure 4',
+        subtitle: 'Suba a escada, tome cuidado com o Haunter logo após a subida.',
+        mobs: [
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] },
+          { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
+          { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] },
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-5',
+        title: 'Lure 5',
+        subtitle: 'Passe pelas armadilhas do Dusknoir.\nUse Fly com Metagross e entre no portal à esquerda.\nEvitando as armadilhas do Dusknoir pegue o portal à esquerda, suba a escada e elimine o lure, cuidado com o Haunter do espelho.\nEntre no portal da esquerda, passe as armadilhas do Dusknoir e entre no portal da direita.\nSuba a escada com cuidado nas armadilhas do Haunter.',
+        mobs: [
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-6',
+        title: 'Lure 6',
+        subtitle: 'Mate o lure.\nEntre no último portal da sala à esquerda e depois no da direita, cuidando as armadilhas do Dusknoir.',
+        mobs: [
+          { name: 'Gastly', image: 'pokemons/1gen/gastly.png', types: ['ghost', 'poison'] },
+          { name: 'Haunter', image: 'pokemons/1gen/haunter.png', types: ['ghost', 'poison'] },
+          { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-7',
+        title: 'Lure 7',
+        subtitle: 'Siga para o portal da esquerda.\nDepois vá para o portal do sul, tomando cuidado com as armadilhas do Dusknoir.',
+        mobs: [
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] },
+          { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] },
+          { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
+          { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-8-terreo',
+        title: 'Lure 8 Terreo',
+        subtitle: 'Mate os Pokémon, tomando cuidado com as armadilhas do Haunter Espelho.',
+        mobs: [
+          { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
+          { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+      {
+        id: 'lure-8-mais-1',
+        title: 'Lure 8 +1',
+        subtitle: 'Após matar todos os Pokémon e entrar no portal do Terreo, passe pelas armadilhas do Dusknoir e entre no portal da esquerda.\nSuba a escada e entre no portal da esquerda novamente.\nDepois entre no portal da direita.\nApós subir a escada, entre no portal da esquerda no fundo da sala e, por último, no portal de cima.',
+        mobs: [
+          { name: 'Phantump', image: 'pokemons/6gen/phantump.png', types: ['ghost', 'grass'] },
+          { name: 'Pumpkaboo', image: 'pokemons/6gen/pumpkaboo.png', types: ['ghost', 'grass'] },
+          { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] },
+          { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] }
+        ],
+        effectiveTypes: ['ghost', 'psychic'],
+        superEffectiveTypes: ['ghost']
+      },
+    ] ,
     bosses: horizonsSilverBosses
   }
 ];
+
+const horizonsSilverNormalRun = horizonsSilverRunsData.find((run) => run?.id === 'silver-normal-a');
+if (horizonsSilverNormalRun) {
+  horizonsSilverRunsData.push({
+    ...horizonsSilverNormalRun,
+    id: 'silver-medio-a',
+    difficulty: 'medio',
+    title: 'Medio - Lado A'
+  });
+}
 
 const horizonsRunsData = [
   {
@@ -2379,13 +2506,6 @@ horizonsGoldGigalithBosses.forEach((boss) => {
   }
 });
 
-horizonsSilverBosses.forEach((boss) => {
-  if (boss && typeof boss === 'object') {
-    boss.horizonsCategory = 'silver';
-    boss.horizonsCategoryLabel = 'Silver';
-  }
-});
-
 const horizonsCategoriesData = Object.freeze({
   bronze: {
     id: 'bronze',
@@ -2403,10 +2523,10 @@ const horizonsCategoriesData = Object.freeze({
     label: 'Silver',
     eyebrow: 'Duo',
     title: 'Silver',
-    summary: 'Categoria duo do Horizons. Criaturas ainda em definicao; bosses conhecidos: Mega Alakazam e Mega Gengar.',
-    status: 'Em breve',
+    summary: 'Categoria duo do Horizons com a rota do Lado A já detalhada.',
+    status: '',
     pathSections: [],
-    bosses: horizonsSilverBosses,
+    bosses: [],
     runs: horizonsSilverRunsData
   },
   gold: {
@@ -2976,7 +3096,7 @@ const bossCatalogs = {
     introLines: [
       'Escolha a categoria para liberar as rotas, sugestoes de tipos e bosses finais.'
     ],
-    data: [...horizonsMediumSideABosses, ...horizonsGoldGigalithBosses, ...horizonsSilverBosses],
+    data: [...horizonsMediumSideABosses, ...horizonsGoldGigalithBosses],
     categories: horizonsCategoriesData,
     runs: horizonsRunsData
   }
@@ -3554,6 +3674,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
   mystic: Object.freeze({
     dps: Object.freeze([
       createFixedRecommendationDefinition("Banette", 'ghost', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Gengar", 'ghost', 'dps', 'mystic'),
       createFixedRecommendationDefinition("BlastoiseTwo", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Dachsbun", 'fairy', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Dewgong", 'water', 'dps', 'mystic'),
@@ -4917,6 +5038,11 @@ function getRecommendationPassiveInfoSignature(passiveInfo) {
 function mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRef) {
   if (!basePick || !shinyPick || !bossRef) return;
 
+  applyCatalogMoveTypesToRecommendation(basePick);
+  applyCatalogMoveTypesToRecommendation(shinyPick);
+  applyImplicitRecommendationEnhancements(basePick);
+  applyImplicitRecommendationEnhancements(shinyPick);
+
   const shinyPassiveInfo = getRecommendationPassiveInfo(shinyPick);
   const shinyPassiveSignature = getRecommendationPassiveInfoSignature(shinyPassiveInfo);
 
@@ -5031,6 +5157,19 @@ function mergeShinyRecommendationVariantsAcrossBossCatalogs() {
             mergeShinyRecommendationVariantsInList(clanData.roles?.[roleKey], boss, seedConfigs);
           });
         }
+      });
+    });
+  });
+}
+
+function mergeShinyRecommendationVariantsForRoleboardBosses(bosses = [], seedConfigs = buildFixedRecommendationSeedConfigs()) {
+  (Array.isArray(bosses) ? bosses : []).forEach((boss) => {
+    Object.values(boss?.clans || {}).forEach((clanData) => {
+      roleboardRoleOrder.forEach((roleKey) => {
+        const picks = clanData?.roles?.[roleKey];
+        if (!Array.isArray(picks) || !picks.length) return;
+        ensureMirroredRecommendationVariantsInList(picks);
+        mergeShinyRecommendationVariantsInList(picks, boss, seedConfigs);
       });
     });
   });
@@ -6258,8 +6397,14 @@ function getFixedRecommendationRolePicks(boss, clanKey, roleKey) {
   const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
   if (!boss || !normalizedClanKey || !roleboardRoleOrder.includes(normalizedRoleKey)) return [];
 
-  return dedupeRecommendedPicksByName(
-    collectRawRecommendationPicksForBoss(boss).filter((pick) => {
+  const clanData = boss.clans?.[normalizedClanKey];
+  const explicitRolePicks = Array.isArray(clanData?.roles?.[normalizedRoleKey])
+    ? clanData.roles[normalizedRoleKey]
+    : null;
+
+  const rawPicks = explicitRolePicks !== null
+    ? explicitRolePicks
+    : collectRawRecommendationPicksForBoss(boss).filter((pick) => {
       if (!isBossRecommendationLevelEligible(pick)) return false;
 
       const registryEntry = getFixedRecommendationEntry(pick);
@@ -6270,6 +6415,17 @@ function getFixedRecommendationRolePicks(boss, clanKey, roleKey) {
 
       applyFixedRecommendationMetadata(pick, registryEntry);
       return registryEntry.clan === normalizedClanKey && registryEntry.role === normalizedRoleKey;
+    });
+
+  return dedupeRecommendedPicksByName(
+    (rawPicks || []).map((pick) => {
+      const registryEntry = getFixedRecommendationEntry(pick);
+      if (registryEntry) {
+        applyFixedRecommendationMetadata(pick, registryEntry);
+      } else if (explicitRolePicks !== null) {
+        warnRecommendationWithoutRegistry(boss, pick);
+      }
+      return pick;
     })
   );
 }
@@ -6626,14 +6782,16 @@ function filterHorizonsVisibleRolePicks(picks = [], context = {}) {
     return withoutRuim;
   }
 
-  if (withoutRuim.length <= 1) {
-    return withoutRuim;
-  }
+  const bomOrBetter = withoutRuim
+    .filter((pick) => getRecommendationTierPriority(pick?.tier) <= tierPriority.bom);
 
-  const withoutAceitavel = withoutRuim
-    .filter((pick) => normalizeTierKey(pick?.tier) !== 'aceitavel');
+  if (bomOrBetter.length) return bomOrBetter;
 
-  return withoutAceitavel.length ? withoutAceitavel : withoutRuim.slice(0, 1);
+  // Em um papel defensivo, um pick aceitavel ainda e preferivel a deixar a
+  // composicao sem tank/suporte quando a luta exige esse papel.
+  return String(context?.roleKey || '').trim().toLowerCase() === 'dps'
+    ? []
+    : withoutRuim.slice(0, 1);
 }
 
 function getVisibleRolePicksForBoss(catalogOrMode, boss, clanKey, roleKey) {
@@ -7142,6 +7300,92 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
       if (b._score !== a._score) return b._score - a._score;
       return a.name.localeCompare(b.name);
     });
+}
+
+function AutomaticBossBestPicks(bossRef, options = {}) {
+  const boss = Array.isArray(bossRef) ? { types: bossRef } : bossRef;
+  if (!boss || typeof boss !== 'object') return [];
+
+  const requestedClan = normalizePlannerClanKey(options?.clanKey);
+  const requestedRole = normalizeRecommendationRoleKey(options?.roleKey);
+  const clanKeys = requestedClan ? [requestedClan] : plannerClanOrder;
+  const roleKeys = requestedRole ? [requestedRole] : roleboardRoleOrder;
+  const limit = Math.max(1, Number.parseInt(options?.limit, 10) || 3);
+  const minimumTier = normalizeTierKey(options?.minimumTier || 'bom');
+  const maximumPriority = getRecommendationMaximumPriority(minimumTier);
+  const includeAcceptableDefenders = options?.includeAcceptableDefenders !== false;
+  const includeShinyVariants = options?.includeShinyVariants !== false;
+  const seedConfigs = options?.seedConfigs && typeof options.seedConfigs === 'object'
+    ? options.seedConfigs
+    : buildFixedRecommendationSeedConfigs();
+  const results = {};
+
+  const getBestCandidateScore = (entry, roleKey) => {
+    const basePick = createFixedRecommendationPickFromRegistryEntry(entry, seedConfigs);
+    if (!basePick || !isBossRecommendationLevelEligible(basePick)) return null;
+
+    let shinyScore = null;
+    if (includeShinyVariants) {
+      const shinyPick = createMirroredRecommendationVariant(basePick);
+      if (shinyPick && isBossRecommendationLevelEligible(shinyPick)) {
+        mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, boss);
+        shinyScore = scoreRecommendationForBoss(boss, cloneRolePickConfig(shinyPick), { roleKey });
+      }
+    }
+
+    const baseScore = scoreRecommendationForBoss(boss, basePick, { roleKey });
+    const bestScore = shinyScore && (
+      getRecommendationTierPriority(shinyScore.tier) < getRecommendationTierPriority(baseScore.tier)
+      || (
+        getRecommendationTierPriority(shinyScore.tier) === getRecommendationTierPriority(baseScore.tier)
+        && shinyScore._score > baseScore._score
+      )
+    ) ? shinyScore : baseScore;
+
+    if (roleKey === 'dps' && bestScore._offense <= 1) return null;
+
+    const mayUseAcceptable = roleKey !== 'dps' && includeAcceptableDefenders;
+    if (
+      getRecommendationTierPriority(bestScore.tier) > maximumPriority
+      && !(mayUseAcceptable && normalizeTierKey(bestScore.tier) === 'aceitavel')
+    ) {
+      return null;
+    }
+
+    return {
+      ...baseScore,
+      _automaticBestTier: bestScore.tier,
+      _automaticBestScore: bestScore._score,
+      _automaticBestVariant: shinyScore && bestScore === shinyScore ? shinyScore.name : baseScore.name
+    };
+  };
+
+  clanKeys.forEach((clanKey) => {
+    results[clanKey] = {};
+    roleKeys.forEach((roleKey) => {
+      const pool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
+      results[clanKey][roleKey] = pool
+        .map((entry) => getBestCandidateScore(entry, roleKey))
+        .filter(Boolean)
+        .sort((left, right) => {
+          const leftPriority = getRecommendationTierPriority(left._automaticBestTier || left.tier);
+          const rightPriority = getRecommendationTierPriority(right._automaticBestTier || right.tier);
+          if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+          if (right._automaticBestScore !== left._automaticBestScore) {
+            return right._automaticBestScore - left._automaticBestScore;
+          }
+          const leftPassive = Number(hasRecommendationShinyPassiveVariant(left) || getRecommendationPassiveInfo(left)?.text);
+          const rightPassive = Number(hasRecommendationShinyPassiveVariant(right) || getRecommendationPassiveInfo(right)?.text);
+          if (rightPassive !== leftPassive) return rightPassive - leftPassive;
+          return String(left.name || '').localeCompare(String(right.name || ''));
+        })
+        .slice(0, limit);
+    });
+  });
+
+  if (requestedClan && requestedRole) return results[requestedClan][requestedRole];
+  if (requestedClan) return results[requestedClan];
+  return results;
 }
 
 function synchronizeRecommendationTiers() {
@@ -7943,6 +8187,7 @@ Object.entries(mew2RequestedInstinctDpsByBoss).forEach(([bossId, picks]) => {
 removeRuimRecommendationsAndBackfillMissingBosses();
 synchronizeRecommendationTiers();
 mergeShinyRecommendationVariantsAcrossBossCatalogs();
+mergeShinyRecommendationVariantsForRoleboardBosses(horizonsSilverBosses);
 removeRuimRecommendationsAndBackfillMissingBosses();
 filterMegaAbsolZBossGroupsToFairyMoveset();
 synchronizeRecommendationTiers();
@@ -8223,6 +8468,9 @@ function createHoopaPortalTickerElement() {
 function closeMainQuestPuzzleZoom() {
   const zoom = document.querySelector('.mainquest-puzzle-zoom');
   if (zoom) zoom.remove();
+  if (!document.querySelector('.modal[aria-hidden="false"]') && !document.querySelector('.speedster-modal[data-open="true"]')) {
+    document.body.classList.remove('modal-open');
+  }
 }
 
 function openMainQuestPuzzleZoom(imageData) {
@@ -11956,6 +12204,13 @@ function makeRoleBossCard(boss) {
   title.textContent = boss.name;
   title.title = boss.name;
 
+  const descriptionText = typeof boss.description === 'string' ? boss.description.trim() : '';
+  const description = descriptionText ? document.createElement('p') : null;
+  if (description) {
+    description.className = 'boss-role-card__description';
+    description.textContent = descriptionText;
+  }
+
   // Badge será inserido no botão (não diretamente no título) para evitar sobrescritas
 
   const avatar = createRoleBossAvatar(boss);
@@ -11971,6 +12226,9 @@ function makeRoleBossCard(boss) {
   });
 
   button.append(title, avatar);
+  if (description) {
+    button.appendChild(description);
+  }
   if (chips.childElementCount > 0) {
     button.appendChild(chips);
   }
@@ -12155,7 +12413,11 @@ function createHorizonsTypeChip(type, tone = '') {
   return chip;
 }
 
-function createHorizonsMobCard(mob) {
+function formatHorizonsSubtitle(text = '') {
+  return String(text).replace(/\n/g, '<br>');
+}
+
+function createHorizonsMobCard(mob, options = {}) {
   const card = document.createElement('article');
   card.className = 'horizons-mob-card';
 
@@ -12167,17 +12429,31 @@ function createHorizonsMobCard(mob) {
   image.src = resolveBossAssetSrc(mob.image || '');
   image.alt = mob.name || 'Mob';
   image.loading = 'lazy';
+  if (options.clickToZoom) {
+    image.style.cursor = 'pointer';
+    image.title = 'Clique para ampliar';
+    image.addEventListener('click', () => {
+      openMainQuestPuzzleZoom({
+        src: resolveBossAssetSrc(mob.image || ''),
+        label: mob.name || 'Imagem ampliada'
+      });
+    });
+  }
   imageWrap.appendChild(image);
 
   const name = document.createElement('strong');
   name.className = 'horizons-mob-card__name';
   name.textContent = mob.name || 'Mob';
 
-  const types = document.createElement('div');
-  types.className = 'horizons-mob-card__types';
-  (mob.types || []).forEach((type) => types.appendChild(createHorizonsTypeChip(type)));
+  const hideTypes = Boolean(options.hideTypes);
+  if (!hideTypes) {
+    const types = document.createElement('div');
+    types.className = 'horizons-mob-card__types';
+    (mob.types || []).forEach((type) => types.appendChild(createHorizonsTypeChip(type)));
+    card.appendChild(types);
+  }
 
-  card.append(imageWrap, name, types);
+  card.append(imageWrap, name);
   return card;
 }
 
@@ -12201,7 +12477,7 @@ function createHorizonsPathSection(sectionData) {
 
   const subtitle = document.createElement('p');
   subtitle.className = 'horizons-section-header__subtitle';
-  subtitle.textContent = sectionData.subtitle || '';
+  subtitle.innerHTML = formatHorizonsSubtitle(sectionData.subtitle || '');
 
   copy.append(eyebrow, title);
   if (subtitle.textContent) copy.appendChild(subtitle);
@@ -12210,30 +12486,35 @@ function createHorizonsPathSection(sectionData) {
 
   const mobGrid = document.createElement('div');
   mobGrid.className = 'horizons-mob-grid';
-  (sectionData.mobs || []).forEach((mob) => mobGrid.appendChild(createHorizonsMobCard(mob)));
+  const isSilverCategory = getHorizonsCategory()?.id === 'silver';
+  const hideTypes = Boolean(sectionData?.hideTypes) || (isSilverCategory && sectionData?.id === 'armadilhas');
+  const clickToZoom = isSilverCategory && sectionData?.id === 'armadilhas';
+  (sectionData.mobs || []).forEach((mob) => mobGrid.appendChild(createHorizonsMobCard(mob, { hideTypes, clickToZoom })));
   section.appendChild(mobGrid);
 
-  const suggestions = document.createElement('div');
-  suggestions.className = 'horizons-type-suggestions';
+  if (!hideTypes) {
+    const suggestions = document.createElement('div');
+    suggestions.className = 'horizons-type-suggestions';
 
-  const effective = document.createElement('div');
-  effective.className = 'horizons-type-suggestions__group';
-  const effectiveLabel = document.createElement('span');
-  effectiveLabel.className = 'horizons-type-suggestions__label';
-  effectiveLabel.textContent = 'Efetivos';
-  effective.appendChild(effectiveLabel);
-  (sectionData.effectiveTypes || []).forEach((type) => effective.appendChild(createHorizonsTypeChip(type, 'effective')));
+    const effective = document.createElement('div');
+    effective.className = 'horizons-type-suggestions__group';
+    const effectiveLabel = document.createElement('span');
+    effectiveLabel.className = 'horizons-type-suggestions__label';
+    effectiveLabel.textContent = 'Efetivos';
+    effective.appendChild(effectiveLabel);
+    (sectionData.effectiveTypes || []).forEach((type) => effective.appendChild(createHorizonsTypeChip(type, 'effective')));
 
-  const superEffective = document.createElement('div');
-  superEffective.className = 'horizons-type-suggestions__group';
-  const superLabel = document.createElement('span');
-  superLabel.className = 'horizons-type-suggestions__label';
-  superLabel.textContent = 'Super-efetivos';
-  superEffective.appendChild(superLabel);
-  (sectionData.superEffectiveTypes || []).forEach((type) => superEffective.appendChild(createHorizonsTypeChip(type, 'super')));
+    const superEffective = document.createElement('div');
+    superEffective.className = 'horizons-type-suggestions__group';
+    const superLabel = document.createElement('span');
+    superLabel.className = 'horizons-type-suggestions__label';
+    superLabel.textContent = 'Super-efetivos';
+    superEffective.appendChild(superLabel);
+    (sectionData.superEffectiveTypes || []).forEach((type) => superEffective.appendChild(createHorizonsTypeChip(type, 'super')));
 
-  suggestions.append(effective, superEffective);
-  section.appendChild(suggestions);
+    suggestions.append(effective, superEffective);
+    section.appendChild(suggestions);
+  }
 
   return section;
 }
@@ -12363,9 +12644,10 @@ function renderHorizonsCategoryGrid() {
           wrap.appendChild(createHorizonsBossesSection(sectionData.bossesAfter, sectionData.bossesAfterOptions || {}));
         }
       });
+      const isSilverCategory = activeCategory?.id === 'silver';
       if (Array.isArray(run.bosses) && run.bosses.length) {
         wrap.appendChild(createHorizonsBossesSection(run.bosses));
-      } else {
+      } else if (!isSilverCategory) {
         const empty = document.createElement('div');
         empty.className = 'speedster-clan-empty';
         empty.textContent = 'Informacoes em breve.';
@@ -12377,9 +12659,9 @@ function renderHorizonsCategoryGrid() {
     (activeCategory.pathSections || []).forEach((sectionData) => {
       wrap.appendChild(createHorizonsPathSection(sectionData));
     });
-    if (Array.isArray(activeCategory.bosses) && activeCategory.bosses.length) {
+    if (activeCategory.id !== 'silver' && Array.isArray(activeCategory.bosses) && activeCategory.bosses.length) {
       wrap.appendChild(createHorizonsBossesSection(activeCategory.bosses));
-    } else {
+    } else if (activeCategory.id !== 'silver') {
       const empty = document.createElement('div');
       empty.className = 'speedster-clan-empty';
       empty.textContent = 'Informacoes em breve.';

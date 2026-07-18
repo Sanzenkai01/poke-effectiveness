@@ -338,6 +338,19 @@
 
 body[data-active-tab="rotom-phone"] #content-rotom-phone {
   width: min(100%, 1240px);
+}
+
+.boss-role-card__description {
+  margin: 0.5rem 0 0;
+  color: #d8e9ff;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  opacity: 0.88;
+  max-height: 4.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
   margin: -0.25rem auto 0;
   padding: clamp(0.8rem, 2vw, 1.35rem);
   border: 1px solid rgba(var(--rotom-blue), 0.14);
@@ -13085,6 +13098,24 @@ textarea:focus {
   font: inherit;
   font-size: 0.82rem;
   font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.horizons-selector:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+.horizons-selector__hint {
+  padding: 0.12rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .horizons-selector--category {
@@ -13222,8 +13253,9 @@ textarea:focus {
 .horizons-mob-card {
   display: grid;
   grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-rows: auto auto;
   gap: 0.65rem;
-  align-items: center;
+  align-items: start;
   padding: 0.72rem;
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -13252,6 +13284,13 @@ textarea:focus {
   color: #f8fbff;
   font-size: 0.9rem;
   line-height: 1.2;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.horizons-mob-card__types {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .horizons-mob-card__types,
