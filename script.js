@@ -14319,6 +14319,7 @@ const HELD_FUSION_HELDS = [
     { key: 'assaultvest', name: 'Assault Vest', file: 'helds/assaultvest.png', effect: 'Defesa', description: 'Aumenta a defesa do Pokémon em', values: [2, 4, 6, 9, 12, 16, 20] },
     { key: 'lifeorb', name: 'Life Orb', file: 'helds/lifeorb.png', effect: 'Vida', description: 'Aumenta a vida do Pokémon em', values: [2, 4, 6, 9, 12, 16, 20] },
     { key: 'choicescarf', name: 'Choice Scarf', file: 'helds/choicescarf.png', effect: 'Defesa critica', description: 'Aumenta a chance de defesa crítica em', values: [8, 10, 12, 14, 16, 20, 24] },
+    { key: 'luckyegg', name: 'Lucky Egg', file: 'helds/luckyegg.png', effect: 'Experiência bônus', description: 'Aumenta a experiência ganha em', values: [10, 15, 20, 25, 30, 35, 40] },
     { key: 'amuletcoin', name: 'Amulet Coin', file: 'helds/amuletcoin.png', effect: 'Chance de item', description: 'Aumenta a chance de conseguir um drop bônus em', values: [5, 20, 35, 50, 65, 80, 100] }
 ];
 

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v868`;
+let CACHE_NAME = `${CACHE_PREFIX}v869`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -44,7 +44,7 @@ const APP_SHELL = [
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
   new URL('./styles.css?v=20260715b', self.registration.scope).toString(),
-  new URL('./script.js?v=20260718o', self.registration.scope).toString(),
+  new URL('./script.js?v=20260718p', self.registration.scope).toString(),
   new URL('./hunt-builder/hunt_symbol.png?v=20260627a', self.registration.scope).toString(),
   new URL('./pokemons/pokemons.json?v=20260718e', self.registration.scope).toString(),
   new URL('./pokemons/mega-pokemons.json?v=20260718e', self.registration.scope).toString(),
@@ -62,6 +62,7 @@ const APP_SHELL = [
   new URL('./helds/choicescarf.png', self.registration.scope).toString(),
   new URL('./helds/choicespecs.png', self.registration.scope).toString(),
   new URL('./helds/lifeorb.png', self.registration.scope).toString(),
+  new URL('./helds/luckyegg.png', self.registration.scope).toString(),
   new URL('./helds/Held-Button.png', self.registration.scope).toString(),
   new URL('./times/teams.json?v=20260629a', self.registration.scope).toString(),
   new URL('./types.json', self.registration.scope).toString(),
