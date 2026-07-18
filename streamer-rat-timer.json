@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-07-18T22:34:05.151Z",
+  "updatedAt": "2026-07-18T22:35:45.901Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-18T22:10:04.539Z",
-    "endedAt": "2026-07-18T22:34:05.151Z",
-    "reason": "timeout",
+    "startedAt": "2026-07-18T22:34:28.973Z",
+    "endedAt": "2026-07-18T22:35:45.901Z",
+    "reason": "rat-found",
     "candidateChannels": [
-      "bruxonoir",
+      "dragonslayerpiva",
       "eaisantinho",
       "hyoogplays",
       "leomarnc",
@@ -18,16 +18,17 @@
       "anaodapxg",
       "armster91",
       "brunoxiis1",
+      "bruxonoir",
       "cabelo14",
       "cafeina54",
       "callmevitao_",
       "catarktv",
       "corbelari",
       "corujashady",
-      "dragonslayerpiva",
       "dravokh",
       "eddiegomes",
       "engrafff",
+      "enriqfmz",
       "espantacorvos",
       "especialbr",
       "fernandoalcatraz",
@@ -70,6 +71,7 @@
       "shadolas1",
       "sharxera",
       "sousupermeme",
+      "square_pantts",
       "strackzera",
       "suximy",
       "teffox4",
@@ -78,11 +80,36 @@
       "xxryuutox",
       "zenithstory_gaming"
     ],
-    "pstoryDropChannels": [],
-    "observedChannels": [],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [],
+    "pstoryDropChannels": [
+      "dragonslayerpiva"
+    ],
+    "observedChannels": [
+      "dragonslayerpiva"
+    ],
+    "observedSpawnChannels": [
+      "dragonslayerpiva"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "dragonslayerpiva",
+        "messageAt": 1784414145753,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "dragonslayerpiva",
+        "kind": "rattata-message",
+        "messageAt": 1784414145753,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "dragonslayerpiva",
+        "kind": "spawn",
+        "messageAt": 1784414145753,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -130,25 +157,25 @@
     "error": ""
   },
   "latest": {
-    "channel": "karlin_nara",
-    "lastMessageAt": 1784410561741,
-    "expectedNextAt": 1784411761741,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-18T16:06:57Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1784410561855,
-    "persistedAt": 1784412604539
+    "channel": "dragonslayerpiva",
+    "lastMessageAt": 1784414145753,
+    "expectedNextAt": 1784415405753,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-18T22:31:06Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1784414145900,
+    "persistedAt": 1784414145900
   },
   "timers": {
-    "karlin_nara": {
-      "channel": "karlin_nara",
-      "lastMessageAt": 1784410561741,
-      "expectedNextAt": 1784411761741,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-07-18T16:06:57Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784410561855,
-      "persistedAt": 1784412604539
+    "dragonslayerpiva": {
+      "channel": "dragonslayerpiva",
+      "lastMessageAt": 1784414145753,
+      "expectedNextAt": 1784415405753,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-18T22:31:06Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1784414145900,
+      "persistedAt": 1784414145900
     }
   }
 }
