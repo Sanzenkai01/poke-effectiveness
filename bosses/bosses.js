@@ -1182,6 +1182,9 @@ function createRoleboardBosses(entries, catalogMeta) {
     pokeblock: cloneBossConsumableConfig(entry.pokeblock || entry.pokebloc),
     ration: cloneBossConsumableConfig(entry.ration),
     disableAutoPokeblock: Boolean(entry.disableAutoPokeblock),
+    automaticRoleLimits: entry.automaticRoleLimits && typeof entry.automaticRoleLimits === 'object'
+      ? { ...entry.automaticRoleLimits }
+      : null,
     emblem: entry.emblem || bossInitials(entry.name),
     clans: {
       instinct: {
@@ -7302,6 +7305,91 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
     });
 }
 
+function getAutomaticBossRoleLimits(boss, roleKeys, options = {}) {
+  const fallbackLimit = Math.max(1, Number.parseInt(options?.limit, 10) || 3);
+  const explicitLimits = options?.roleLimits && typeof options.roleLimits === 'object'
+    ? options.roleLimits
+    : (boss?.automaticRoleLimits && typeof boss.automaticRoleLimits === 'object'
+      ? boss.automaticRoleLimits
+      : null);
+
+  return roleKeys.reduce((limits, roleKey) => {
+    const configuredLimit = Number.parseInt(explicitLimits?.[roleKey], 10);
+    limits[roleKey] = Number.isFinite(configuredLimit)
+      ? Math.max(0, configuredLimit)
+      : fallbackLimit;
+    return limits;
+  }, {});
+}
+
+function getAutomaticBossPassivePriority(pick) {
+  const passiveInfo = getRecommendationPassiveInfo(pick);
+  const passiveItems = getRecommendationPassiveInfoItems(passiveInfo);
+  return {
+    hasPassive: passiveItems.length ? 1 : 0,
+    itemCount: passiveItems.length,
+    isShiny: isShinyRecommendationVariant(pick) ? 1 : 0
+  };
+}
+
+function compareAutomaticBossPicks(left, right, roleKey) {
+  const leftPriority = getRecommendationTierPriority(left?.tier);
+  const rightPriority = getRecommendationTierPriority(right?.tier);
+  if (leftPriority !== rightPriority) return leftPriority - rightPriority;
+
+  if (right?._score !== left?._score) return right._score - left._score;
+
+  if (roleKey === 'dps' && right?._offense !== left?._offense) {
+    return right._offense - left._offense;
+  }
+
+  if (roleKey !== 'dps' && left?._defenseWorst !== right?._defenseWorst) {
+    return left._defenseWorst - right._defenseWorst;
+  }
+
+  const leftPassive = getAutomaticBossPassivePriority(left);
+  const rightPassive = getAutomaticBossPassivePriority(right);
+  if (rightPassive.hasPassive !== leftPassive.hasPassive) return rightPassive.hasPassive - leftPassive.hasPassive;
+  if (rightPassive.itemCount !== leftPassive.itemCount) return rightPassive.itemCount - leftPassive.itemCount;
+  if (rightPassive.isShiny !== leftPassive.isShiny) return rightPassive.isShiny - leftPassive.isShiny;
+
+  return String(left?.name || '').localeCompare(String(right?.name || ''));
+}
+
+function isAutomaticBossPickEligible(pick, roleKey, maximumPriority, includeAcceptableDefenders) {
+  if (!pick || !isBossRecommendationLevelEligible(pick)) return false;
+  if (roleKey === 'dps' && (!(typeof pick._offense === 'number') || pick._offense <= 1)) return false;
+
+  const tierPriorityValue = getRecommendationTierPriority(pick.tier);
+  if (tierPriorityValue <= maximumPriority) return true;
+
+  return Boolean(
+    includeAcceptableDefenders
+    && roleKey !== 'dps'
+    && normalizeTierKey(pick.tier) === 'aceitavel'
+  );
+}
+
+function createAutomaticBossCandidateVariants(entry, boss, roleKey, seedConfigs, includeShinyVariants) {
+  const basePick = createFixedRecommendationPickFromRegistryEntry(entry, seedConfigs);
+  if (!basePick) return [];
+
+  const variants = [basePick];
+  if (includeShinyVariants) {
+    const shinyPick = createMirroredRecommendationVariant(basePick);
+    if (shinyPick) variants.push(shinyPick);
+  }
+
+  return variants.map((pick) => {
+    const candidate = cloneRolePickConfig(pick);
+    delete candidate._hasShinyVariant;
+    delete candidate._shinyVariantPassiveInfo;
+    delete candidate._shinyVariantTier;
+    delete candidate._shinyVariantComparison;
+    return scoreRecommendationForBoss(boss, candidate, { roleKey });
+  });
+}
+
 function AutomaticBossBestPicks(bossRef, options = {}) {
   const boss = Array.isArray(bossRef) ? { types: bossRef } : bossRef;
   if (!boss || typeof boss !== 'object') return [];
@@ -7310,76 +7398,47 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
   const requestedRole = normalizeRecommendationRoleKey(options?.roleKey);
   const clanKeys = requestedClan ? [requestedClan] : plannerClanOrder;
   const roleKeys = requestedRole ? [requestedRole] : roleboardRoleOrder;
-  const limit = Math.max(1, Number.parseInt(options?.limit, 10) || 3);
+  const roleLimits = getAutomaticBossRoleLimits(boss, roleKeys, options);
   const minimumTier = normalizeTierKey(options?.minimumTier || 'bom');
   const maximumPriority = getRecommendationMaximumPriority(minimumTier);
-  const includeAcceptableDefenders = options?.includeAcceptableDefenders !== false;
+  const includeAcceptableDefenders = options?.includeAcceptableDefenders === true;
   const includeShinyVariants = options?.includeShinyVariants !== false;
   const seedConfigs = options?.seedConfigs && typeof options.seedConfigs === 'object'
     ? options.seedConfigs
     : buildFixedRecommendationSeedConfigs();
   const results = {};
 
-  const getBestCandidateScore = (entry, roleKey) => {
-    const basePick = createFixedRecommendationPickFromRegistryEntry(entry, seedConfigs);
-    if (!basePick || !isBossRecommendationLevelEligible(basePick)) return null;
-
-    let shinyScore = null;
-    if (includeShinyVariants) {
-      const shinyPick = createMirroredRecommendationVariant(basePick);
-      if (shinyPick && isBossRecommendationLevelEligible(shinyPick)) {
-        mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, boss);
-        shinyScore = scoreRecommendationForBoss(boss, cloneRolePickConfig(shinyPick), { roleKey });
-      }
-    }
-
-    const baseScore = scoreRecommendationForBoss(boss, basePick, { roleKey });
-    const bestScore = shinyScore && (
-      getRecommendationTierPriority(shinyScore.tier) < getRecommendationTierPriority(baseScore.tier)
-      || (
-        getRecommendationTierPriority(shinyScore.tier) === getRecommendationTierPriority(baseScore.tier)
-        && shinyScore._score > baseScore._score
-      )
-    ) ? shinyScore : baseScore;
-
-    if (roleKey === 'dps' && bestScore._offense <= 1) return null;
-
-    const mayUseAcceptable = roleKey !== 'dps' && includeAcceptableDefenders;
-    if (
-      getRecommendationTierPriority(bestScore.tier) > maximumPriority
-      && !(mayUseAcceptable && normalizeTierKey(bestScore.tier) === 'aceitavel')
-    ) {
-      return null;
-    }
-
-    return {
-      ...baseScore,
-      _automaticBestTier: bestScore.tier,
-      _automaticBestScore: bestScore._score,
-      _automaticBestVariant: shinyScore && bestScore === shinyScore ? shinyScore.name : baseScore.name
-    };
-  };
-
   clanKeys.forEach((clanKey) => {
     results[clanKey] = {};
+
     roleKeys.forEach((roleKey) => {
       const pool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
-      results[clanKey][roleKey] = pool
-        .map((entry) => getBestCandidateScore(entry, roleKey))
-        .filter(Boolean)
-        .sort((left, right) => {
-          const leftPriority = getRecommendationTierPriority(left._automaticBestTier || left.tier);
-          const rightPriority = getRecommendationTierPriority(right._automaticBestTier || right.tier);
-          if (leftPriority !== rightPriority) return leftPriority - rightPriority;
-          if (right._automaticBestScore !== left._automaticBestScore) {
-            return right._automaticBestScore - left._automaticBestScore;
-          }
-          const leftPassive = Number(hasRecommendationShinyPassiveVariant(left) || getRecommendationPassiveInfo(left)?.text);
-          const rightPassive = Number(hasRecommendationShinyPassiveVariant(right) || getRecommendationPassiveInfo(right)?.text);
-          if (rightPassive !== leftPassive) return rightPassive - leftPassive;
-          return String(left.name || '').localeCompare(String(right.name || ''));
-        })
-        .slice(0, limit);
+      const bestByPokemon = new Map();
+
+      pool.forEach((entry) => {
+        createAutomaticBossCandidateVariants(entry, boss, roleKey, seedConfigs, includeShinyVariants)
+          .filter((pick) => isAutomaticBossPickEligible(pick, roleKey, maximumPriority, includeAcceptableDefenders))
+          .forEach((pick) => {
+            const baseKey = getRecommendationVariantBaseKey(pick);
+            if (!baseKey) return;
+
+            const currentBest = bestByPokemon.get(baseKey);
+            if (!currentBest || compareAutomaticBossPicks(pick, currentBest, roleKey) < 0) {
+              bestByPokemon.set(baseKey, pick);
+            }
+          });
+      });
+
+      results[clanKey][roleKey] = Array.from(bestByPokemon.values())
+        .sort((left, right) => compareAutomaticBossPicks(left, right, roleKey))
+        .slice(0, roleLimits[roleKey])
+        .map((pick) => ({
+          ...pick,
+          _automaticBestTier: pick.tier,
+          _automaticBestScore: pick._score,
+          _automaticBestVariant: pick.name,
+          _automaticPassivePriority: getAutomaticBossPassivePriority(pick)
+        }));
     });
   });
 
