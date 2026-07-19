@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-19T15:27:48.238Z",
+  "updatedAt": "2026-07-19T15:47:03.378Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-19T15:27:34.628Z",
-    "endedAt": "2026-07-19T15:27:48.238Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-19T15:37:50.813Z",
+    "endedAt": "2026-07-19T15:47:03.378Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "lucasnaikan",
       "hyoogplays",
@@ -86,20 +86,28 @@
     "observedChannels": [
       "lucasnaikan"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "lucasnaikan"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "lucasnaikan",
+        "messageAt": 1784476023271,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "lucasnaikan",
         "kind": "rattata-message",
-        "messageAt": 1784474868142,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1784476023271,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "lucasnaikan",
-        "kind": "escape",
-        "messageAt": 1784474868142,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1784476023271,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -150,24 +158,24 @@
   },
   "latest": {
     "channel": "lucasnaikan",
-    "lastMessageAt": 1784474868142,
-    "expectedNextAt": 1784476068142,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1784476023271,
+    "expectedNextAt": 1784477283271,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-07-19T12:00:59Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1784474868237,
-    "persistedAt": 1784474868237
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1784476023377,
+    "persistedAt": 1784476023377
   },
   "timers": {
     "lucasnaikan": {
       "channel": "lucasnaikan",
-      "lastMessageAt": 1784474868142,
-      "expectedNextAt": 1784476068142,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1784476023271,
+      "expectedNextAt": 1784477283271,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-07-19T12:00:59Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784474868237,
-      "persistedAt": 1784474868237
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1784476023377,
+      "persistedAt": 1784476023377
     }
   }
 }
