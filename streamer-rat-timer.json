@@ -1,20 +1,19 @@
 {
-  "updatedAt": "2026-07-19T00:17:51.747Z",
+  "updatedAt": "2026-07-19T00:37:07.033Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-19T00:17:39.185Z",
-    "endedAt": "2026-07-19T00:17:51.747Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-19T00:27:59.528Z",
+    "endedAt": "2026-07-19T00:37:07.033Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "dragonslayerpiva",
       "eaisantinho",
       "indypereira",
       "hyoogplays",
-      "itscaim",
-      "leomarnc",
       "ogordonha",
+      "teffox4",
       "adivorcio",
       "afdexter",
       "anaodapxg",
@@ -38,12 +37,14 @@
       "gordallink",
       "guixprox",
       "imfoxyy",
+      "itscaim",
       "kaminarifoxy",
       "karlin_nara",
       "kaueotp",
       "kingszt",
       "kiritinhu69",
       "kiwoe",
+      "leomarnc",
       "likearivergames",
       "linikerquadrado2",
       "lkagural",
@@ -74,7 +75,6 @@
       "square_pantts",
       "strackzera",
       "suximy",
-      "teffox4",
       "teylera",
       "xvidrinho",
       "xxryuutox",
@@ -88,20 +88,28 @@
     "observedChannels": [
       "indypereira"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "indypereira"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "indypereira",
+        "messageAt": 1784421426946,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1784420271639,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1784421426946,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "indypereira",
-        "kind": "escape",
-        "messageAt": 1784420271639,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1784421426946,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -152,34 +160,24 @@
   },
   "latest": {
     "channel": "indypereira",
-    "lastMessageAt": 1784420271639,
-    "expectedNextAt": 1784421471639,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1784421426946,
+    "expectedNextAt": 1784422686946,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-07-18T23:49:07Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1784420271747,
-    "persistedAt": 1784420271747
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1784421427032,
+    "persistedAt": 1784421427032
   },
   "timers": {
     "indypereira": {
       "channel": "indypereira",
-      "lastMessageAt": 1784420271639,
-      "expectedNextAt": 1784421471639,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-07-18T23:49:07Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784420271747,
-      "persistedAt": 1784420271747
-    },
-    "dragonslayerpiva": {
-      "channel": "dragonslayerpiva",
-      "lastMessageAt": 1784417791845,
-      "expectedNextAt": 1784419051845,
+      "lastMessageAt": 1784421426946,
+      "expectedNextAt": 1784422686946,
       "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-07-18T22:31:06Z",
+      "streamStartedAt": "2026-07-18T23:49:07Z",
       "source": "github-action-chat-spawn",
-      "updatedAt": 1784417791962,
-      "persistedAt": 1784420259185
+      "updatedAt": 1784421427032,
+      "persistedAt": 1784421427032
     }
   }
 }
