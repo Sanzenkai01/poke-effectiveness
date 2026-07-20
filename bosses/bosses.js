@@ -2345,7 +2345,7 @@ const horizonsSilverRunsData = [
       {
         id: 'lure-7',
         title: 'Lure 7',
-        subtitle: 'Siga para o portal da esquerda.\nDepois vá para o portal do sul, tomando cuidado com as armadilhas do Dusknoir.',
+        subtitle: 'Siga para o primeiro portal da esquerda no meio.\nDepois vá para o portal do sul, tomando cuidado com as armadilhas do Dusknoir.',
         mobs: [
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
           { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] },
