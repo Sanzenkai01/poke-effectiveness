@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-21T20:09:59.510Z",
+  "updatedAt": "2026-07-21T20:29:15.410Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-21T20:09:52.187Z",
-    "endedAt": "2026-07-21T20:09:59.510Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-21T20:20:10.981Z",
+    "endedAt": "2026-07-21T20:29:15.410Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "eaisantinho",
       "especialbr",
@@ -86,20 +86,28 @@
     "observedChannels": [
       "eaisantinho"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "eaisantinho"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "eaisantinho",
+        "messageAt": 1784665755300,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "eaisantinho",
         "kind": "rattata-message",
-        "messageAt": 1784664599439,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1784665755300,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "eaisantinho",
-        "kind": "escape",
-        "messageAt": 1784664599439,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1784665755300,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -150,24 +158,24 @@
   },
   "latest": {
     "channel": "eaisantinho",
-    "lastMessageAt": 1784664599439,
-    "expectedNextAt": 1784665799439,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1784665755300,
+    "expectedNextAt": 1784667015300,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-07-21T19:37:24Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1784664599509,
-    "persistedAt": 1784664599509
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1784665755410,
+    "persistedAt": 1784665755410
   },
   "timers": {
     "eaisantinho": {
       "channel": "eaisantinho",
-      "lastMessageAt": 1784664599439,
-      "expectedNextAt": 1784665799439,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1784665755300,
+      "expectedNextAt": 1784667015300,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-07-21T19:37:24Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784664599509,
-      "persistedAt": 1784664599509
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1784665755410,
+      "persistedAt": 1784665755410
     }
   }
 }
