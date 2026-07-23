@@ -1953,6 +1953,8 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
           createRolePick('BlastoiseTwo', ['water'], 'water'),
           createRolePick('Lombre', ['water', 'grass'], 'grass'),
           createRolePick('Mega Gyarados', ['water', 'dark'], 'water'),
+          createRolePick('Hawlucha', ['fighting', 'flying'], 'fighting'),
+          createRolePick('Mega Hawlucha', ['fighting', 'flying'], 'fighting'),
           createRolePick('Mega Lucario', ['fighting', 'steel'], 'fighting'),
           createRolePick('Mega Skarmory', ['steel', 'flying'], 'steel')
         ],
@@ -2152,6 +2154,7 @@ const horizonsSilverBosses = createManualRoleboardBosses([
     image: 'pokemons/5gen/jellicent.png',
     types: ['water', 'ghost'],
     moveType: 'ghost',
+    expandCardDescription: true,
     description: 'Depois de derrotar o boss, saia da Boss Room, vá para o portal de baixo na direita evitando as armadilhas, depois para o portal de baixo, depois para o último da sala, na esquerda.\nRecomendado 2 DPS.',
     clans: {
       instinct: {
@@ -5653,7 +5656,11 @@ function replaceRecommendationMoveTypeDescription(description, moveTypes = []) {
 function getCatalogMoveTypesForRecommendation(poke) {
   const nameKey = getRecommendationNameKey(poke);
   if (!nameKey) return [];
-  return normalizeMoveTypeValues(bossRecommendationCatalogMoveTypesByNameKey[nameKey]);
+  const variantBaseKey = getRecommendationVariantBaseKey(poke);
+  return normalizeMoveTypeValues(
+    bossRecommendationCatalogMoveTypesByNameKey[nameKey]
+    || bossRecommendationCatalogMoveTypesByNameKey[variantBaseKey]
+  );
 }
 
 function applyCatalogMoveTypesToRecommendation(poke) {
@@ -12268,6 +12275,9 @@ function makeRoleBossCard(boss) {
   if (description) {
     description.className = 'boss-role-card__description';
     description.textContent = descriptionText;
+    if (boss.expandCardDescription) {
+      description.classList.add('boss-role-card__description--expanded');
+    }
   }
 
   // Badge será inserido no botão (não diretamente no título) para evitar sobrescritas

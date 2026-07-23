@@ -351,6 +351,13 @@ body[data-active-tab="rotom-phone"] #content-rotom-phone {
   text-overflow: ellipsis;
 }
 
+.boss-role-card__description--expanded {
+  max-height: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-line;
+}
+
   margin: -0.25rem auto 0;
   padding: clamp(0.8rem, 2vw, 1.35rem);
   border: 1px solid rgba(var(--rotom-blue), 0.14);
@@ -13243,6 +13250,13 @@ textarea:focus {
 
 .horizons-boss-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.horizons-boss-grid .boss-role-card__description {
+  max-height: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-line;
 }
 
 .horizons-bosses-section--compact .horizons-boss-grid {
@@ -29919,6 +29933,9 @@ body[data-active-tab="boost"] #boost-silver-results .boost-material-card__footer
 
 .maniacs-card__footer {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
   justify-content: center;
   padding-top: 0.15rem;
   border-top: 1px solid rgba(150, 179, 208, 0.12);
@@ -29926,6 +29943,7 @@ body[data-active-tab="boost"] #boost-silver-results .boost-material-card__footer
 
 .maniacs-card__cost {
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   gap: 0.45rem;
   color: #e9f8ff;
@@ -29949,6 +29967,57 @@ body[data-active-tab="boost"] #boost-silver-results .boost-material-card__footer
   height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
+}
+
+.maniacs-card__attempt-counter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(117, 213, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(117, 213, 255, 0.055);
+}
+
+.maniacs-card__attempt-label {
+  min-width: 0;
+  color: #e9f8ff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.maniacs-card__attempt-controls {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.maniacs-card__attempt-controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(117, 213, 255, 0.28);
+  border-radius: 7px;
+  background: rgba(117, 213, 255, 0.1);
+  color: #f7fbff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.maniacs-card__attempt-controls button:hover:not(:disabled) {
+  border-color: rgba(117, 213, 255, 0.58);
+  background: rgba(117, 213, 255, 0.18);
+}
+
+.maniacs-card__attempt-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 
 .bosses-info-shell {
@@ -33223,6 +33292,12 @@ body.home-view main {
   accent-color: #facc15;
 }
 
+.held-fusion-sim__booster img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .held-fusion-sim__modal {
   min-width: 0;
   padding: 1.25rem;
@@ -33393,6 +33468,12 @@ body.home-view main {
   margin: 0 auto;
 }
 
+.held-fusion-sim__slot--booster > img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
 .held-fusion-sim__slot--booster.is-filled {
   border-color: rgba(250, 204, 21, 0.58);
   background:
@@ -33480,6 +33561,18 @@ body.home-view main {
 
 .held-fusion-sim__stats strong {
   color: #ffffff;
+}
+
+.held-fusion-sim__coin-stat > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.held-fusion-sim__coin-stat img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .held-fusion-sim__message {

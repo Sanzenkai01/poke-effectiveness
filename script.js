@@ -331,7 +331,7 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260718e';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260723d';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -409,7 +409,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260718e';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260723e';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260718e';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260711a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
@@ -1215,8 +1215,12 @@ const TEAM_BUILDER_HUNT_IMAGE_OVERRIDES = Object.freeze({
     toxtricity: 'pokemons/8gen/toxtricity-amped.png'
 });
 const TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES = new Set([
-    'armarougeceruledge'
+    'armarouge ceruledge'
 ]);
+
+function isTeamBuilderExcludedHuntName(name){
+    return TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES.has(normalizePokemonSearchText(name));
+}
 const TEAM_BUILDER_SLOT_CONFIGS = Object.freeze([
     { id: 'tank-ar', label: 'Defender/AR', requirement: '', kind: 'tank' },
     { id: 'dps-1', label: 'DPS 1', requirement: '', kind: 'dps' },
@@ -4343,6 +4347,8 @@ const BOSSES_INFO_ENTRIES = Object.freeze([
 const MANIACS_ACE_ESSENCE_IMAGE = 'maniacs/ace-essence.gif';
 const MANIACS_STONE_COST = 100;
 const MANIACS_ESSENCE_COST = 100;
+const MANIACS_ATTEMPT_LIMIT = 50;
+const MANIACS_ATTEMPT_STORAGE_KEY = 'poke-maniacs-attempt-counts-v1';
 const MANIACS_LOCATION_CELADON = Object.freeze({
     image: 'maniacs/celadon.png',
     title: 'Celadon',
@@ -5774,6 +5780,86 @@ function createManiacCostRow(options = {}){
     return row;
 }
 
+function getManiacAttemptCounts(){
+    try{
+        const storedCounts = JSON.parse(localStorage.getItem(MANIACS_ATTEMPT_STORAGE_KEY) || '{}');
+        return storedCounts && typeof storedCounts === 'object' && !Array.isArray(storedCounts)
+            ? storedCounts
+            : {};
+    }catch(e){
+        return {};
+    }
+}
+
+function getManiacAttemptCount(name){
+    const key = getManiacPokemonRegistryKey(name);
+    const count = Number(getManiacAttemptCounts()[key] || 0);
+    if(!Number.isFinite(count)) return 0;
+    return Math.max(0, Math.min(MANIACS_ATTEMPT_LIMIT, Math.trunc(count)));
+}
+
+function setManiacAttemptCount(name, value){
+    const key = getManiacPokemonRegistryKey(name);
+    if(!key) return 0;
+    const nextCount = Math.max(0, Math.min(MANIACS_ATTEMPT_LIMIT, Math.trunc(Number(value) || 0)));
+    const storedCounts = getManiacAttemptCounts();
+    if(nextCount){
+        storedCounts[key] = nextCount;
+    } else {
+        delete storedCounts[key];
+    }
+    try{
+        localStorage.setItem(MANIACS_ATTEMPT_STORAGE_KEY, JSON.stringify(storedCounts));
+    }catch(e){}
+    return nextCount;
+}
+
+function createManiacAttemptCounter(name){
+    const counter = document.createElement('div');
+    counter.className = 'maniacs-card__attempt-counter';
+
+    const label = document.createElement('span');
+    label.className = 'maniacs-card__attempt-label';
+    label.setAttribute('aria-live', 'polite');
+
+    const controls = document.createElement('div');
+    controls.className = 'maniacs-card__attempt-controls';
+
+    const decreaseButton = document.createElement('button');
+    decreaseButton.type = 'button';
+    decreaseButton.textContent = '\u2212';
+    decreaseButton.title = 'Remover uma tentativa';
+    decreaseButton.setAttribute('aria-label', `Remover uma tentativa de ${name}`);
+
+    const increaseButton = document.createElement('button');
+    increaseButton.type = 'button';
+    increaseButton.textContent = '+';
+    increaseButton.title = `Adicionar tentativa (maximo ${MANIACS_ATTEMPT_LIMIT})`;
+    increaseButton.setAttribute('aria-label', `Adicionar uma tentativa de ${name}`);
+
+    let count = getManiacAttemptCount(name);
+    const renderCount = () => {
+        label.textContent = `${name}: ${count}x Tentativas`;
+        decreaseButton.disabled = count <= 0;
+        increaseButton.disabled = count >= MANIACS_ATTEMPT_LIMIT;
+        counter.dataset.count = String(count);
+    };
+
+    decreaseButton.addEventListener('click', () => {
+        count = setManiacAttemptCount(name, count - 1);
+        renderCount();
+    });
+    increaseButton.addEventListener('click', () => {
+        count = setManiacAttemptCount(name, count + 1);
+        renderCount();
+    });
+
+    controls.append(decreaseButton, increaseButton);
+    counter.append(label, controls);
+    renderCount();
+    return counter;
+}
+
 function createManiacLocationMedia(location){
     const media = document.createElement('div');
     media.className = 'maniacs-card__hunt';
@@ -5838,11 +5924,14 @@ function createManiacStoneCard(entry){
     const stoneMeta = getManiacStoneMetaForTarget(entry.target);
     const footer = document.createElement('footer');
     footer.className = 'maniacs-card__footer';
-    footer.appendChild(createManiacCostRow({
+    footer.append(
+        createManiacCostRow({
         quantity: MANIACS_STONE_COST,
         imageSrc: stoneMeta.image,
         label: stoneMeta.name
-    }));
+        }),
+        createManiacAttemptCounter(entry.target)
+    );
 
     card.append(body, footer);
     return card;
@@ -5862,11 +5951,14 @@ function createManiacEssenceCard(entry){
 
     const footer = document.createElement('footer');
     footer.className = 'maniacs-card__footer';
-    footer.appendChild(createManiacCostRow({
+    footer.append(
+        createManiacCostRow({
         quantity: MANIACS_ESSENCE_COST,
         imageSrc: MANIACS_ACE_ESSENCE_IMAGE,
         label: 'Ace Essence'
-    }));
+        }),
+        createManiacAttemptCounter(entry.target)
+    );
 
     card.append(body, footer);
     return card;
@@ -12192,9 +12284,11 @@ function getTeamBuilderShareTokenForEntry(entry){
 }
 
 function getTeamBuilderShareValue(){
-    if(!isTeamBuilderComplete()) return '';
     const tokens = TEAM_BUILDER_SLOT_CONFIGS.map(slot => getTeamBuilderShareTokenForEntry(teamBuilderSelections[slot.id]));
-    if(tokens.some(token => !token)) return '';
+    if(tokens.every(token => !token)) return '';
+    if(tokens.some(token => !token)){
+        return tokens.map(token => encodeURIComponent(token || '')).join('--');
+    }
     return tokens.map(encodeURIComponent).join('');
 }
 
@@ -12237,7 +12331,7 @@ function parseTeamBuilderShareTokens(shareValue){
     const rawValue = String(shareValue || '').trim();
     if(!rawValue) return [];
     if(rawValue.includes('--')){
-        return rawValue.split('--').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
+        return rawValue.split('--').map(token => decodeURIComponent(token || '').trim());
     }
     if(rawValue.includes('.')){
         return rawValue.split('.').map(token => decodeURIComponent(token || '').trim()).filter(Boolean);
@@ -12257,6 +12351,7 @@ function applyTeamBuilderShareValue(rawValue){
     let selectedMegaKey = '';
     for(let index = 0; index < TEAM_BUILDER_SLOT_CONFIGS.length; index += 1){
         const slot = TEAM_BUILDER_SLOT_CONFIGS[index];
+        if(!tokens[index]) continue;
         const entry = findTeamBuilderPokemonCatalogEntryByToken(tokens[index], slot);
         if(!entry || !teamBuilderEntryMatchesSlot(entry, slot) || !teamBuilderEntryMeetsLevelRequirement(entry)) return false;
         const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
@@ -12274,8 +12369,10 @@ function applyTeamBuilderShareValue(rawValue){
     }
 
     teamBuilderSelections = nextSelections;
-    teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS[0]?.id || '';
-    teamBuilderHuntsVisible = true;
+    teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS.find(slot => !nextSelections[slot.id])?.id
+        || TEAM_BUILDER_SLOT_CONFIGS[0]?.id
+        || '';
+    teamBuilderHuntsVisible = isTeamBuilderComplete();
     teamBuilderHuntsLoading = false;
     teamBuilderFilters = {
         search: '',
@@ -12584,7 +12681,7 @@ function getTeamBuilderKnownHuntCandidates(){
             const huntName = String(huntObject?.name || hunt || '').trim();
             if(!huntName) return;
             const key = normalizePokemonSearchText(huntName);
-            if(TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES.has(key)) return;
+            if(isTeamBuilderExcludedHuntName(huntName)) return;
             const existing = huntCandidates.get(key);
             if(existing){
                 existing.sourceTeams.push(team);
@@ -12609,6 +12706,7 @@ function getTeamBuilderKnownHuntCandidates(){
         });
     });
     Object.keys(TEAM_BUILDER_HUNT_META_OVERRIDES || {}).forEach(key => {
+        if(isTeamBuilderExcludedHuntName(key)) return;
         if(key === 'tsaarena' && huntCandidates.has('tsareena')) return;
         if(key === 'salamance' && huntCandidates.has('salamence')) return;
         if(!huntCandidates.has(key)){
@@ -14483,6 +14581,8 @@ function renderHeldFusionSimulator(resultText = ''){
 
     if(boosterSlot){
         boosterSlot.classList.toggle('is-filled', state.usesBooster);
+        const boosterImage = boosterSlot.querySelector('img');
+        if(boosterImage) boosterImage.hidden = !state.usesBooster;
         const boosterLabel = boosterSlot.querySelector('span');
         if(boosterLabel) boosterLabel.textContent = state.usesBooster ? 'Moeda' : '';
     }
@@ -19593,6 +19693,7 @@ function usesBoostAncientBronzeStone(state){
 function usesBoostBraveBronzeStone(state){
     const entry = state?.pokemonEntry;
     if(!entry) return false;
+    if(usesBoostAncientBronzeStone(state)) return false;
     const normalizedName = normalizePokemonSearchText(entry.name || state?.pokemonName || '');
     const normalizedPriceLabel = normalizePokemonSearchText(entry.priceLabel || '');
     return entry.roleKey === 'striker'

@@ -26,7 +26,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260715b">
+  <link rel="stylesheet" href="styles.css?v=20260723e">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -4228,6 +4228,7 @@
               </label>
               <label class="held-fusion-sim__booster">
                 <input id="held-fusion-sim-booster" type="checkbox">
+                <img src="fusao-de-held/held_coin.png" alt="" loading="lazy" decoding="async">
                 <span>Usar Moeda Especial</span>
               </label>
             </div>
@@ -4273,6 +4274,7 @@
               <div class="held-fusion-sim__booster-slot">
                 <span>Booster:</span>
                 <div id="held-fusion-booster-slot" class="held-fusion-sim__slot held-fusion-sim__slot--booster">
+                  <img src="fusao-de-held/held_coin.png" alt="Moeda Especial" hidden>
                   <span></span>
                 </div>
               </div>
@@ -4282,7 +4284,7 @@
                 <div class="held-fusion-sim__stats">
                   <p><strong>Fusion cost:</strong> <span id="held-fusion-sim-cost">$0</span></p>
                   <p><strong>Chance:</strong> <span id="held-fusion-sim-chance">0%</span></p>
-                  <p><strong>Moedas:</strong> <span id="held-fusion-sim-coins">0</span></p>
+                  <p class="held-fusion-sim__coin-stat"><strong>Moedas:</strong> <span><img src="fusao-de-held/held_coin.png" alt="" loading="lazy" decoding="async"><span id="held-fusion-sim-coins">0</span></span></p>
                   <p><strong>B&ocirc;nus:</strong> <span id="held-fusion-sim-effect">-</span></p>
                 </div>
                 <p id="held-fusion-sim-message" class="held-fusion-sim__message">Adicione um ou dois Helds de descarte.</p>
@@ -5893,7 +5895,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v870 - 2026
+        Build v884 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -5920,7 +5922,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="script.js?v=20260718q" defer></script>
+    <script src="script.js?v=20260723k" defer></script>
 </body>
 </html>
 
