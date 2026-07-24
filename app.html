@@ -27,6 +27,7 @@
       })();
     </script>
   <link rel="stylesheet" href="styles.css?v=20260723e">
+  <link rel="stylesheet" href="mapa-interativo/mapa-interativo.css?v=20260724q">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -5882,6 +5883,68 @@
       </div>
     </div>
 
+    <div id="content-mapa-interativo" role="tabpanel" aria-label="Mapa Interativo" hidden>
+      <div class="interactive-map-shell">
+        <header class="interactive-map-header">
+          <div>
+            <span class="interactive-map-header__eyebrow">Exploração</span>
+            <h2>Mapa Interativo</h2>
+            <p>Explore andares, locais, serviços, hunts e áreas de respawn do PStory.</p>
+          </div>
+        </header>
+
+        <div class="interactive-map-layout">
+          <aside class="interactive-map-sidebar" aria-label="Filtros do mapa">
+            <div class="interactive-map-search" role="search">
+              <label class="visually-hidden" for="interactive-map-search">Pesquisar no mapa</label>
+              <input id="interactive-map-search" type="search" placeholder="Pokémon, cidade, NPC..." autocomplete="off">
+              <button id="interactive-map-search-clear" type="button" aria-label="Limpar pesquisa">×</button>
+            </div>
+            <div class="interactive-map-filter-actions">
+              <button id="interactive-map-show-all" type="button">Marcar todas</button>
+              <button id="interactive-map-hide-all" type="button">Desmarcar todas</button>
+            </div>
+            <div id="interactive-map-categories" class="interactive-map-categories"></div>
+            <div id="interactive-map-summary" class="interactive-map-sidebar__summary" aria-live="polite"></div>
+          </aside>
+
+          <section class="interactive-map-board" aria-label="Mapa do PStory">
+            <div id="interactive-map-viewport" class="interactive-map-viewport" tabindex="0">
+              <div id="interactive-map-stage" class="interactive-map-stage">
+                <img id="interactive-map-image" class="interactive-map-image" alt="" draggable="false">
+                <svg id="interactive-map-territory" class="interactive-map-territory-layer" aria-hidden="true"></svg>
+                <div id="interactive-map-labels" class="interactive-map-label-layer" aria-hidden="true"></div>
+                <div id="interactive-map-markers" class="interactive-map-marker-layer"></div>
+              </div>
+            </div>
+
+            <button id="interactive-map-share-view" class="interactive-map-view-share" type="button" title="Copiar um link desta parte do mapa">
+              <span aria-hidden="true">📌</span>
+              <span>Compartilhar visão</span>
+            </button>
+
+            <div class="interactive-map-floor-controls" aria-label="Selecionar andar">
+              <button id="interactive-map-floor-up" class="interactive-map-control" type="button" aria-label="Subir um andar">↑</button>
+              <select id="interactive-map-floor-select" class="interactive-map-floor-select" aria-label="Andar"></select>
+              <button id="interactive-map-floor-down" class="interactive-map-control" type="button" aria-label="Descer um andar">↓</button>
+              <span id="interactive-map-floor-value" hidden>0</span>
+            </div>
+
+            <div class="interactive-map-controls" aria-label="Controles do mapa">
+              <button id="interactive-map-zoom-out" class="interactive-map-control" type="button" aria-label="Diminuir zoom">−</button>
+              <button id="interactive-map-reset" class="interactive-map-control" type="button" aria-label="Centralizar mapa">
+                <span id="interactive-map-zoom-value">100%</span>
+              </button>
+              <button id="interactive-map-zoom-in" class="interactive-map-control" type="button" aria-label="Aumentar zoom">+</button>
+            </div>
+
+            <aside id="interactive-map-detail" class="interactive-map-detail" hidden></aside>
+            <div id="interactive-map-status" class="interactive-map-status" aria-live="polite">Carregando mapa...</div>
+          </section>
+        </div>
+      </div>
+    </div>
+
     <footer class="main-footer">
       <a
         class="footer-discord-link footer-discord-link-left"
@@ -5895,7 +5958,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v884 - 2026
+        Build v920 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -5922,7 +5985,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="script.js?v=20260723k" defer></script>
+    <script src="mapa-interativo/mapa-interativo.js?v=20260724za" defer></script>
+    <script src="script.js?v=20260724g" defer></script>
 </body>
 </html>
 

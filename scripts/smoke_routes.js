@@ -102,6 +102,14 @@ const routes = [
     ]
   },
   {
+    path: '/mapa-interativo',
+    label: 'mapa-interativo',
+    checks: [
+      { pattern: /id="content-mapa-interativo"/i, description: 'interactive map panel' },
+      { pattern: /id="interactive-map-viewport"/i, description: 'interactive map viewport' }
+    ]
+  },
+  {
     path: '/police-operation',
     label: 'police-operation',
     checks: [

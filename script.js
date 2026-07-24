@@ -143,6 +143,7 @@ const contentTimes = document.getElementById('content-times');
 const contentTeamBuilder = document.getElementById('content-team-builder');
 const contentHuntBuilder = document.getElementById('content-hunt-builder');
 const contentRotomPhone = document.getElementById('content-rotom-phone');
+const contentInteractiveMap = document.getElementById('content-mapa-interativo');
 const contentPoliceOperation = document.getElementById('content-police-operation');
 const contentSlowpokeWell = document.getElementById('content-slowpoke-well');
 const contentHeldFusion = document.getElementById('content-fusao-de-held');
@@ -151,7 +152,11 @@ const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentPoliceOperation, contentSlowpokeWell, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const appMainContent = document.querySelector('.app-main');
+if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
+    appMainContent.appendChild(contentInteractiveMap);
+}
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentSlowpokeWell, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -331,7 +336,7 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260723d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260723f';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -374,6 +379,8 @@ const APP_ROUTE_ALIASES = {
     'rotom-phone': { path: '/rotom-phone', tab: 'rotom-phone' },
     rotomphone: { path: '/rotom-phone', tab: 'rotom-phone' },
     rotom: { path: '/rotom-phone', tab: 'rotom-phone' },
+    'mapa-interativo': { path: '/mapa-interativo', tab: 'mapa-interativo' },
+    mapainterativo: { path: '/mapa-interativo', tab: 'mapa-interativo' },
     'police-operation': { path: '/police-operation', tab: 'police-operation' },
     policeoperation: { path: '/police-operation', tab: 'police-operation' },
     police: { path: '/police-operation', tab: 'police-operation' },
@@ -409,7 +416,7 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260723e';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260723f';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260718e';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260711a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
@@ -3222,6 +3229,7 @@ function getActiveSiteTarget(){
     if(contentTeamBuilder && !contentTeamBuilder.hidden) return 'team-builder';
     if(contentHuntBuilder && !contentHuntBuilder.hidden) return 'hunt-builder';
     if(contentRotomPhone && !contentRotomPhone.hidden) return 'rotom-phone';
+    if(contentInteractiveMap && !contentInteractiveMap.hidden) return 'mapa-interativo';
     if(contentPoliceOperation && !contentPoliceOperation.hidden) return 'police-operation';
     if(contentSlowpokeWell && !contentSlowpokeWell.hidden) return 'slowpoke-well';
     if(contentHeldFusion && !contentHeldFusion.hidden) return 'fusao-de-held';
@@ -14346,6 +14354,35 @@ function showRotomPhone(){
     updateUrl();
 }
 
+function showInteractiveMap(){
+    clearTabHighlights();
+    setActiveTabTheme('mapa-interativo');
+    setVisiblePanel(contentInteractiveMap);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Mapa Interativo';
+    updateBrowserTitle();
+    const initializeMap = typeof window.refreshInteractiveMapPage === 'function'
+        ? window.refreshInteractiveMapPage
+        : window.initInteractiveMapPage;
+    if(typeof initializeMap === 'function'){
+        initializeMap()
+            .then(() => {
+                window.setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        if(typeof window.focusInteractiveMapRoute === 'function'){
+                            window.focusInteractiveMapRoute();
+                        }
+                    });
+                }, 250);
+            })
+            .catch(error => console.error('Interactive map load failed', error));
+    }
+    updateUrl();
+}
+
 function showPoliceOperation(){
     clearTabHighlights();
     setActiveTabTheme('police-operation');
@@ -17436,6 +17473,7 @@ function initTabFromUrl(){
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
     if(resolvedTab==='rotom-phone') return showRotomPhone();
+    if(resolvedTab==='mapa-interativo') return showInteractiveMap();
     if(resolvedTab==='police-operation') return showPoliceOperation();
     if(resolvedTab==='slowpoke-well') return showSlowpokeWell();
     if(resolvedTab==='fusao-de-held') return showHeldFusion();
@@ -20486,6 +20524,7 @@ function updateUrl(options = {}){
                       (contentTeamBuilder && !contentTeamBuilder.hidden) ? 'team-builder' :
                       (contentHuntBuilder && !contentHuntBuilder.hidden) ? 'hunt-builder' :
                       (contentRotomPhone && !contentRotomPhone.hidden) ? 'rotom-phone' :
+                      (contentInteractiveMap && !contentInteractiveMap.hidden) ? 'mapa-interativo' :
                       (contentPoliceOperation && !contentPoliceOperation.hidden) ? 'police-operation' :
                       (contentSlowpokeWell && !contentSlowpokeWell.hidden) ? 'slowpoke-well' :
                       (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
@@ -20594,6 +20633,9 @@ function updateUrl(options = {}){
             } else {
                 routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
             }
+        } else if(!isHomeView && activeTab === 'mapa-interativo'){
+            const activeMapRoute = String(location.pathname || '').match(/\/mapa-interativo\/[a-z0-9][a-z0-9-]*\/?$/i);
+            routePath = activeMapRoute ? activeMapRoute[0].replace(/\/+$/, '') : getRoutePathForTab(activeTab);
         } else if(!isHomeView && activeTab === 'catch'){
             const activeCatchMatch = getCatchRouteMatch();
             routePath = catchSelectedPokemonEntry
@@ -25504,6 +25546,17 @@ function openPokemonDetailsModal(entry, options = {}){
         pokemonModalHistoryPushed = false;
     }
 }
+
+window.openPokemonDetailsModalByName = async function(name){
+    await Promise.all([
+        ensureTypesDataLoaded(),
+        ensurePokemonCatalogLoaded()
+    ]);
+    const entry = getPokemonCatalogEntryByName(name);
+    if(!entry || !canOpenPokemonCatalogEntry(entry)) return false;
+    openPokemonDetailsModal(entry, { pushState: true });
+    return true;
+};
 
 function closePokemonDetailsModal(options = {}){
     const { viaPopstate = false } = options || {};
