@@ -70,7 +70,9 @@
         { name: 'itscaim', supportsDrops: false },
         { name: 'mataradz8', supportsDrops: false },
         { name: 'square_pantts', supportsDrops: false },
-        { name: 'enriqfmz', supportsDrops: false }
+        { name: 'enriqfmz', supportsDrops: false },
+        { name: 'uguettolitz', supportsDrops: false },
+        { name: 'vivihbecker', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
