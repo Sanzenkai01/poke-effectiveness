@@ -1,20 +1,18 @@
 {
-  "updatedAt": "2026-07-25T01:15:39.640Z",
+  "updatedAt": "2026-07-25T01:34:56.039Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-25T01:15:33.712Z",
-    "endedAt": "2026-07-25T01:15:39.640Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-25T01:25:50.778Z",
+    "endedAt": "2026-07-25T01:34:56.039Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "cafeina54",
-      "callmevitao_",
       "armster91",
       "hyoogplays",
       "itscaim",
       "leomarnc",
-      "likearivergames",
       "naathcarol",
       "nazgulplayer",
       "teffox4",
@@ -24,6 +22,7 @@
       "brunoxiis1",
       "bruxonoir",
       "cabelo14",
+      "callmevitao_",
       "catarktv",
       "corbelari",
       "corujashady",
@@ -47,6 +46,7 @@
       "kingszt",
       "kiritinhu69",
       "kiwoe",
+      "likearivergames",
       "linikerquadrado2",
       "lkagural",
       "lordjuregi",
@@ -81,26 +81,33 @@
       "zenithstory_gaming"
     ],
     "pstoryDropChannels": [
-      "cafeina54",
-      "callmevitao_"
+      "cafeina54"
     ],
     "observedChannels": [
       "cafeina54"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "cafeina54"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "cafeina54",
+        "messageAt": 1784943295904,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "cafeina54",
         "kind": "rattata-message",
-        "messageAt": 1784942139535,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1784943295904,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "cafeina54",
-        "kind": "escape",
-        "messageAt": 1784942139535,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1784943295904,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -151,24 +158,24 @@
   },
   "latest": {
     "channel": "cafeina54",
-    "lastMessageAt": 1784942139535,
-    "expectedNextAt": 1784943339535,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1784943295904,
+    "expectedNextAt": 1784944555904,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-07-24T23:20:21Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1784942139639,
-    "persistedAt": 1784942139639
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1784943296039,
+    "persistedAt": 1784943296039
   },
   "timers": {
     "cafeina54": {
       "channel": "cafeina54",
-      "lastMessageAt": 1784942139535,
-      "expectedNextAt": 1784943339535,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1784943295904,
+      "expectedNextAt": 1784944555904,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-07-24T23:20:21Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1784942139639,
-      "persistedAt": 1784942139639
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1784943296039,
+      "persistedAt": 1784943296039
     },
     "callmevitao_": {
       "channel": "callmevitao_",
@@ -178,7 +185,7 @@
       "streamStartedAt": "2026-07-24T21:47:04Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1784942068388,
-      "persistedAt": 1784942133711
+      "persistedAt": 1784942750777
     }
   }
 }
