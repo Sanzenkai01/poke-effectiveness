@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-27T20:25:09.943Z",
+  "updatedAt": "2026-07-27T20:35:30.900Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-27T20:24:59.939Z",
-    "endedAt": "2026-07-27T20:25:09.943Z",
-    "reason": "validate-error",
+    "startedAt": "2026-07-27T20:35:28.373Z",
+    "endedAt": "2026-07-27T20:35:30.900Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "eaisantinho",
       "karlin_nara",
@@ -87,27 +87,92 @@
       "karlin_nara",
       "uguettolitz"
     ],
-    "observedChannels": [],
+    "observedChannels": [
+      "uguettolitz"
+    ],
     "observedSpawnChannels": [],
     "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedRatMessages": [
+      {
+        "channel": "uguettolitz",
+        "kind": "rattata-message",
+        "messageAt": 1785184530810,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      },
+      {
+        "channel": "uguettolitz",
+        "kind": "escape",
+        "messageAt": 1785184530810,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
-    "tokenLogin": "",
-    "tokenScopes": [],
-    "error": "fetch failed"
+    "tokenLogin": "selflessbot",
+    "tokenScopes": [
+      "channel:edit:commercial",
+      "channel:manage:broadcast",
+      "channel:manage:moderators",
+      "channel:manage:polls",
+      "channel:manage:predictions",
+      "channel:manage:raids",
+      "channel:manage:vips",
+      "channel:moderate",
+      "channel:read:polls",
+      "channel:read:predictions",
+      "channel:read:redemptions",
+      "chat:edit",
+      "chat:read",
+      "clips:edit",
+      "moderator:manage:announcements",
+      "moderator:manage:automod",
+      "moderator:manage:banned_users",
+      "moderator:manage:blocked_terms",
+      "moderator:manage:chat_messages",
+      "moderator:manage:chat_settings",
+      "moderator:manage:shield_mode",
+      "moderator:manage:shoutouts",
+      "moderator:manage:suspicious_users",
+      "moderator:manage:unban_requests",
+      "moderator:manage:warnings",
+      "moderator:read:chatters",
+      "moderator:read:moderators",
+      "moderator:read:suspicious_users",
+      "moderator:read:vips",
+      "user:manage:blocked_users",
+      "user:manage:chat_color",
+      "user:manage:whispers",
+      "user:read:blocked_users",
+      "user:read:chat",
+      "user:read:emotes",
+      "user:read:follows",
+      "user:read:moderated_channels",
+      "user:write:chat",
+      "whispers:read"
+    ],
+    "error": ""
   },
   "latest": {
-    "channel": "eaisantinho",
-    "lastMessageAt": 1785183310551,
-    "expectedNextAt": 1785184510551,
+    "channel": "uguettolitz",
+    "lastMessageAt": 1785184530810,
+    "expectedNextAt": 1785185730810,
     "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-27T19:26:41Z",
+    "streamStartedAt": "2026-07-27T16:38:26Z",
     "source": "github-action-chat-escape",
-    "updatedAt": 1785183310647,
-    "persistedAt": 1785183899939
+    "updatedAt": 1785184530900,
+    "persistedAt": 1785184530900
   },
   "timers": {
+    "uguettolitz": {
+      "channel": "uguettolitz",
+      "lastMessageAt": 1785184530810,
+      "expectedNextAt": 1785185730810,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-07-27T16:38:26Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1785184530900,
+      "persistedAt": 1785184530900
+    },
     "eaisantinho": {
       "channel": "eaisantinho",
       "lastMessageAt": 1785183310551,
@@ -116,7 +181,7 @@
       "streamStartedAt": "2026-07-27T19:26:41Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785183310647,
-      "persistedAt": 1785183899939
+      "persistedAt": 1785184528373
     }
   }
 }
