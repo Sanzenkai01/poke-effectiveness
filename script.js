@@ -336,7 +336,7 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260723f';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260725f';
 const QUICK_ACTION_ROUTES = Object.freeze({
     commands: { path: '/comandos' },
     'elemental-balls': { path: '/pokebolas' },
@@ -3419,6 +3419,7 @@ function activateSidebarTarget(button){
         'fusao-de-held': showHeldFusion,
         profissoes: showProfessions,
         catch: showCatch,
+        'mapa-interativo': showInteractiveMap,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
         streamers: showStreamers,
         youtube: showCommunity
@@ -5514,7 +5515,7 @@ function renderCommunityFeedPanel(){
     listEl.replaceChildren(fragment);
 }
 
-function openHomeDestination(target){
+function openHomeDestination(target, bossMode = ''){
     const targetKey = (target || '').toString().trim().toLowerCase();
     const openers = {
         effectiveness: showEffectiveness,
@@ -5533,7 +5534,7 @@ function openHomeDestination(target){
         'fusao-de-held': showHeldFusion,
         profissoes: showProfessions,
         catch: showCatch,
-        bosses: () => showSpeedsters('hoopa'),
+        bosses: () => showSpeedsters(normalizeBossModeParam(bossMode) || 'hoopa'),
         streamers: showStreamers,
         community: showCommunity,
         youtube: showCommunity
@@ -14808,7 +14809,7 @@ if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
 // Botao de Pascoa removido; sem acao
 document.querySelectorAll('[data-home-target]').forEach(button => {
     button.addEventListener('click', () => {
-        openHomeDestination(button.dataset.homeTarget);
+        openHomeDestination(button.dataset.homeTarget, button.dataset.bossMode);
     });
 });
 

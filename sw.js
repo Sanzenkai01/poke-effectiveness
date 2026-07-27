@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v920`;
+let CACHE_NAME = `${CACHE_PREFIX}v974`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
@@ -44,10 +44,11 @@ const APP_SHELL = [
   new URL('./bosses/planejador.html', self.registration.scope).toString(),
   new URL('./mouse.png', self.registration.scope).toString(),
   new URL('./mega-stone.png', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260723e', self.registration.scope).toString(),
-  new URL('./script.js?v=20260724g', self.registration.scope).toString(),
-  new URL('./mapa-interativo/mapa-interativo.css?v=20260724q', self.registration.scope).toString(),
-  new URL('./mapa-interativo/mapa-interativo.js?v=20260724za', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260727b', self.registration.scope).toString(),
+  new URL('./wiki-theme.css?v=20260725zj', self.registration.scope).toString(),
+  new URL('./script.js?v=20260725f', self.registration.scope).toString(),
+  new URL('./mapa-interativo/mapa-interativo.css?v=20260725g', self.registration.scope).toString(),
+  new URL('./mapa-interativo/mapa-interativo.js?v=20260725i', self.registration.scope).toString(),
   new URL('./mapa-interativo/data/categories.json?v=20260724a', self.registration.scope).toString(),
   new URL('./mapa-interativo/data/labels.json?v=20260724a', self.registration.scope).toString(),
   new URL('./mapa-interativo/data/markers.json?v=20260724b', self.registration.scope).toString(),
@@ -77,7 +78,7 @@ const APP_SHELL = [
   new URL('./js/visits.shared.js?v=20260618a', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260624a', self.registration.scope).toString(),
   new URL('./js/main.js', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260723f', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260725f', self.registration.scope).toString(),
   new URL('./helds/amuletcoin.png', self.registration.scope).toString(),
   new URL('./helds/choiceband.png', self.registration.scope).toString(),
   new URL('./helds/assaultvest.png', self.registration.scope).toString(),

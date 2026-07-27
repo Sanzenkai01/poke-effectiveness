@@ -73,6 +73,7 @@
         { name: 'enriqfmz', supportsDrops: false },
         { name: 'uguettolitz', supportsDrops: false },
         { name: 'vivihbecker', supportsDrops: false },
+        { name: 'jackpist0la', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

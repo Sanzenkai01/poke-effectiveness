@@ -1,0 +1,3297 @@
+/*
+ * Poke Utilities — sistema visual Wiki
+ * Esta camada substitui a linguagem visual anterior sem alterar a estrutura
+ * funcional das páginas. Regras específicas de cada ferramenta continuam
+ * no stylesheet principal.
+ */
+
+:root {
+  --wiki-bg: #101214;
+  --wiki-surface: #16191c;
+  --wiki-surface-raised: #1b1f23;
+  --wiki-surface-soft: #20252a;
+  --wiki-border: #30363d;
+  --wiki-border-soft: #252a30;
+  --wiki-text: #e6e8ea;
+  --wiki-muted: #9aa2aa;
+  --wiki-faint: #6f7780;
+  --wiki-accent: #d7b85b;
+  --wiki-accent-soft: rgba(215, 184, 91, 0.12);
+  --wiki-link: #8db9df;
+  --wiki-positive: #76b58a;
+  --wiki-danger: #d67878;
+  --wiki-sidebar: 252px;
+  --wiki-header: 58px;
+  --wiki-radius: 6px;
+  --wiki-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --wiki-reading: 1180px;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--wiki-bg);
+  scrollbar-color: #3b4249 transparent;
+  scrollbar-width: thin;
+}
+
+body,
+body.dark {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--wiki-bg) !important;
+  background-image: none !important;
+  color: var(--wiki-text);
+  font-family: var(--wiki-font) !important;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+body::before,
+body::after,
+.app-shell::before,
+.app-shell::after {
+  display: none !important;
+}
+
+* {
+  scrollbar-color: #3b4249 transparent;
+  scrollbar-width: thin;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--wiki-accent) !important;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(215, 184, 91, 0.28);
+  color: #fff;
+}
+
+a {
+  color: var(--wiki-link);
+  text-underline-offset: 0.18em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* Cabeçalho documental */
+.header {
+  position: fixed !important;
+  z-index: 1200;
+  inset: 0 0 auto 0;
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--wiki-header);
+  height: var(--wiki-header);
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: rgba(16, 18, 20, 0.96) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(12px);
+  justify-content: flex-end;
+}
+
+#commands-btn,
+#elemental-balls-btn,
+#respawns-btn,
+#fishing-btn {
+  display: none !important;
+}
+
+.header button {
+  display: inline-grid;
+  place-items: center;
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.header button:hover {
+  border-color: var(--wiki-border) !important;
+  background: var(--wiki-surface-raised) !important;
+  color: var(--wiki-text) !important;
+  transform: none !important;
+}
+
+.header-tool-icon {
+  width: 18px !important;
+  height: 18px !important;
+  filter: saturate(0.65);
+}
+
+.header-title-cluster {
+  position: absolute !important;
+  left: calc(var(--wiki-sidebar) + 24px) !important;
+  top: 50% !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  width: 210px !important;
+  min-width: 0;
+  margin: 0 !important;
+  transform: translateY(-50%) !important;
+  text-align: left !important;
+}
+
+/* Cada página já possui um título editorial próprio no conteúdo. */
+.header .header-title-cluster {
+  display: none !important;
+}
+
+.header-title-cluster h1,
+#page-title {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0 !important;
+  color: var(--wiki-text) !important;
+  font-family: var(--wiki-font) !important;
+  font-size: 0.94rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.15;
+  text-transform: none !important;
+  text-shadow: none !important;
+}
+
+.header-context {
+  grid-column: 1;
+  grid-row: 2;
+  color: var(--wiki-faint);
+  font-size: 0.68rem;
+  line-height: 1.1;
+}
+
+.header-visit-counter {
+  display: none !important;
+}
+
+.site-global-search {
+  position: fixed !important;
+  z-index: 1250;
+  top: 10px !important;
+  left: 50% !important;
+  width: min(420px, calc(100vw - var(--wiki-sidebar) - 500px)) !important;
+  min-width: 300px;
+  margin: 0 !important;
+  transform: translateX(-50%);
+}
+
+.site-global-search__input {
+  width: 100%;
+  min-height: 38px !important;
+  padding: 0.45rem 2.25rem !important;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 5px !important;
+  background: var(--wiki-surface) !important;
+  color: var(--wiki-text) !important;
+  box-shadow: none !important;
+}
+
+.site-global-search__input::placeholder {
+  color: var(--wiki-faint);
+}
+
+.site-global-search__input:focus {
+  border-color: #59636d !important;
+  background: var(--wiki-surface-raised) !important;
+}
+
+.site-global-search__results {
+  margin-top: 6px;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: var(--wiki-radius) !important;
+  background: #16191c !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.34) !important;
+}
+
+.tabs {
+  display: none !important;
+}
+
+/* Navegação estilo índice */
+.app-shell {
+  display: block !important;
+  min-height: 100vh;
+  padding: var(--wiki-header) 0 0 var(--wiki-sidebar) !important;
+  background: transparent !important;
+}
+
+.app-sidebar {
+  position: fixed !important;
+  z-index: 1100;
+  inset: var(--wiki-header) auto 0 0;
+  display: flex !important;
+  flex-direction: column;
+  width: var(--wiki-sidebar) !important;
+  min-width: var(--wiki-sidebar) !important;
+  height: calc(100vh - var(--wiki-header)) !important;
+  padding: 12px 10px 18px !important;
+  overflow: hidden auto;
+  border: 0 !important;
+  border-right: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: #131619 !important;
+  box-shadow: none !important;
+}
+
+.sidebar-home {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  margin: 0 0 10px !important;
+  padding: 6px 8px !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: left;
+}
+
+.sidebar-home:hover {
+  background: var(--wiki-surface-raised) !important;
+}
+
+.sidebar-home__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 26px !important;
+  height: 26px !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.sidebar-home__brand-logo {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.sidebar-home__copy strong {
+  color: var(--wiki-text) !important;
+  font-size: 0.85rem !important;
+  font-weight: 650 !important;
+}
+
+.sidebar-nav {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 0 !important;
+}
+
+.sidebar-group {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.sidebar-group__toggle {
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  min-height: 26px !important;
+  margin: 0 !important;
+  padding: 2px 8px !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  background: transparent !important;
+  color: var(--wiki-faint) !important;
+  box-shadow: none !important;
+  text-align: left;
+}
+
+.sidebar-group__toggle:hover {
+  color: var(--wiki-muted) !important;
+}
+
+.sidebar-group__icon {
+  display: none !important;
+}
+
+.sidebar-group__copy {
+  display: block !important;
+  min-width: 0;
+}
+
+.sidebar-group__copy strong,
+.sidebar-footer__eyebrow {
+  color: var(--wiki-faint) !important;
+  font-size: 0.67rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+
+.sidebar-group__copy > span {
+  display: none !important;
+}
+
+.sidebar-group__chevron {
+  margin-left: auto;
+  opacity: 0.5;
+  transform: scale(0.72);
+}
+
+.sidebar-submenu {
+  display: grid !important;
+  gap: 1px !important;
+  margin: 2px 0 0 !important;
+  padding: 0 !important;
+}
+
+.sidebar-submenu[hidden] {
+  display: none !important;
+}
+
+.sidebar-sublink {
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  width: 100%;
+  min-height: 30px !important;
+  margin: 0 !important;
+  padding: 4px 8px 4px 24px !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+  font-size: 0.79rem !important;
+  font-weight: 450 !important;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+}
+
+.sidebar-sublink:hover,
+.sidebar-sublink:focus-visible {
+  background: var(--wiki-surface-raised) !important;
+  color: var(--wiki-text) !important;
+  transform: none !important;
+}
+
+.sidebar-sublink.is-active,
+.sidebar-sublink[aria-current="page"] {
+  background: var(--wiki-accent-soft) !important;
+  color: #ead58f !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-sublink.is-active::before,
+.sidebar-sublink[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  inset: 7px auto 7px 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--wiki-accent);
+}
+
+.sidebar-sublink__bullet {
+  position: absolute !important;
+  left: 10px;
+  width: 3px !important;
+  height: 3px !important;
+  border: 0 !important;
+  border-radius: 50%;
+  background: #58616a !important;
+}
+
+.sidebar-sublink__badge {
+  margin-left: auto;
+  padding: 1px 5px !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  background: #272c31 !important;
+  color: #aeb5bc !important;
+  font-size: 0.57rem !important;
+  letter-spacing: 0 !important;
+}
+
+.sidebar-footer {
+  margin-top: auto !important;
+  padding: 14px 8px 0 !important;
+  border: 0 !important;
+  border-top: 1px solid var(--wiki-border-soft) !important;
+  background: transparent !important;
+}
+
+.sidebar-quick-links {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px !important;
+  margin-top: 7px;
+}
+
+.sidebar-quick-link {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px !important;
+  padding: 3px 5px !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  background: transparent !important;
+  color: var(--wiki-faint) !important;
+  box-shadow: none !important;
+  font-size: 0.66rem !important;
+}
+
+.sidebar-quick-link:hover {
+  background: var(--wiki-surface-raised) !important;
+  color: var(--wiki-text) !important;
+}
+
+.sidebar-quick-link__icon {
+  display: grid !important;
+  place-items: center;
+  width: 18px !important;
+  height: 18px !important;
+  border: 0 !important;
+  background: transparent !important;
+  filter: grayscale(0.35);
+}
+
+/* Área de leitura */
+.app-main {
+  width: 100% !important;
+  min-width: 0;
+  max-width: none !important;
+  min-height: calc(100vh - var(--wiki-header));
+  margin: 0 !important;
+  padding: 76px clamp(24px, 4vw, 64px) 72px !important;
+  background: transparent !important;
+}
+
+.app-main > [id^="content-"]:not([hidden]),
+.app-main > section:not([hidden]) {
+  width: min(100%, var(--wiki-reading)) !important;
+  max-width: var(--wiki-reading) !important;
+  margin-inline: auto !important;
+}
+
+.app-main > [id^="content-"] {
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+#content-mapa-interativo,
+.app-main > #content-mapa-interativo,
+.app-main > #content-mapa-interativo:not([hidden]) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body[data-active-tab="mapa-interativo"] .app-main {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 8px 0.15rem 8px !important;
+}
+
+#content-mapa-interativo .interactive-map-shell,
+.app-main > #content-mapa-interativo .interactive-map-shell {
+  width: 100% !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+#content-mapa-interativo .interactive-map-layout,
+.app-main > #content-mapa-interativo .interactive-map-layout {
+  grid-template-columns: 200px minmax(0, 5fr) !important;
+  gap: 0.55rem !important;
+  min-height: calc(100vh - 50px) !important;
+}
+
+#content-mapa-interativo .interactive-map-board,
+.app-main > #content-mapa-interativo .interactive-map-board {
+  width: 100% !important;
+  min-height: calc(100vh - 50px) !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+}
+
+.app-main h2,
+.app-main h3,
+.app-main h4,
+.modal h2,
+.modal h3 {
+  color: var(--wiki-text) !important;
+  font-family: var(--wiki-font) !important;
+  letter-spacing: -0.015em !important;
+  text-shadow: none !important;
+}
+
+.app-main h2 {
+  font-size: clamp(1.65rem, 3vw, 2.25rem) !important;
+  font-weight: 680 !important;
+}
+
+.app-main h3 {
+  font-size: 1.18rem !important;
+  font-weight: 650 !important;
+}
+
+.app-main p,
+.app-main li,
+.app-main dd,
+.app-main figcaption {
+  color: var(--wiki-muted);
+}
+
+/* Superfícies compartilhadas: planas, compactas e documentais */
+.app-main :where(
+  .card, .panel, .calc-card, .boost-panel, .boost-help, .catch-card,
+  .team-card, .pokemon-card, .boss-card, .content-card, .info-card,
+  .times-panel, .profession-section, .rotom-phone-section,
+  .slowpoke-well-section, .police-operation-section, .held-fusion-section,
+  .home-tool-card, .home-landing__focus, .home-landing__quick
+) {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: var(--wiki-radius) !important;
+  background: var(--wiki-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/*
+ * Neutralização da antiga camada ornamental.
+ * As cores de estados, tipos e alertas continuam intactas; apenas fundos
+ * decorativos, brilhos e sombras dos containers são removidos.
+ */
+.app-main :where(
+  section, article,
+  [class*="hero"], [class*="panel"], [class*="card"],
+  [class*="shell"], [class*="banner"], [class*="header"]
+) {
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.app-main :where(
+  [class*="hero"], [class*="panel"], [class*="section"],
+  [class*="shell"], [class*="banner"]
+) {
+  border-color: var(--wiki-border) !important;
+}
+
+.app-main :where(
+  .planner-shell, .planner-hero, .planner-section,
+  .held-fusion-shell, .held-fusion-hero, .held-fusion-section,
+  .professions-shell, .professions-hero, .profession-section,
+  .slowpoke-well-shell, .slowpoke-well-hero, .slowpoke-well-section,
+  .police-operation-shell, .police-operation-hero, .police-operation-section
+) {
+  background-color: transparent !important;
+}
+
+.app-main :where(
+  .card, .calc-card, .boost-panel, .catch-card, .team-card, .pokemon-card,
+  .boss-card, .content-card, .info-card, .home-tool-card
+):hover {
+  border-color: #48515a !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.app-main :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 4px !important;
+  background: #111417 !important;
+  color: var(--wiki-text) !important;
+  box-shadow: none !important;
+}
+
+.app-main :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  border-color: #68737d !important;
+  box-shadow: 0 0 0 2px rgba(141, 185, 223, 0.1) !important;
+}
+
+.app-main :where(button:not(.modal-close):not(.sidebar-sublink)) {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.app-main :where(table) {
+  border-collapse: collapse;
+  background: var(--wiki-surface) !important;
+}
+
+.app-main :where(th) {
+  background: var(--wiki-surface-soft) !important;
+  color: #c8cdd2 !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.app-main :where(th, td) {
+  border-color: var(--wiki-border) !important;
+}
+
+.app-main :where(hr) {
+  border: 0;
+  border-top: 1px solid var(--wiki-border);
+}
+
+/* Página inicial como portal de documentação */
+body.home-view .app-shell {
+  display: block !important;
+}
+
+body.home-view #content-home {
+  display: block !important;
+  max-width: none !important;
+  margin: var(--wiki-header) 0 0 var(--wiki-sidebar) !important;
+  padding: 52px clamp(24px, 5vw, 72px) 76px !important;
+  background: var(--wiki-bg) !important;
+}
+
+/* A rota /home também possui uma versão estática sem o shell SPA. */
+body.home-view > main {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 52px clamp(24px, 5vw, 72px) 76px !important;
+  background: var(--wiki-bg) !important;
+}
+
+body.home-view > main > .home-landing {
+  width: min(100%, var(--wiki-reading)) !important;
+  margin: 0 auto !important;
+}
+
+.home-landing__shell {
+  width: min(100%, var(--wiki-reading)) !important;
+  margin: 0 auto !important;
+}
+
+.home-landing__hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr) !important;
+  gap: 48px !important;
+  align-items: start !important;
+  min-height: 0 !important;
+  padding: 0 0 42px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.home-view .home-landing__hero {
+  min-height: 0 !important;
+  padding: 20px 0 42px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body.home-view .home-landing__copy {
+  align-items: flex-start !important;
+  padding: 28px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-align: left !important;
+}
+
+body.home-view .home-landing__lead,
+body.home-view .home-landing__supporting {
+  margin-inline: 0 !important;
+  text-align: left !important;
+}
+
+body.home-view .home-landing__actions {
+  justify-content: flex-start !important;
+}
+
+body.home-view .home-landing__focus {
+  border: 0 !important;
+  border-left: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+body.home-view .home-landing__quick {
+  border-radius: var(--wiki-radius) !important;
+  background: var(--wiki-surface) !important;
+  box-shadow: none !important;
+}
+
+body.home-view .home-tool-card {
+  border-radius: var(--wiki-radius) !important;
+  background: var(--wiki-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.home-landing__eyebrow,
+.home-landing__quick-eyebrow,
+[class$="__eyebrow"] {
+  color: var(--wiki-accent) !important;
+  font-size: 0.67rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.home-landing__title {
+  max-width: 760px;
+  margin: 10px 0 16px !important;
+  color: var(--wiki-text) !important;
+  font-family: var(--wiki-font) !important;
+  font-size: clamp(2.4rem, 6vw, 4.8rem) !important;
+  font-weight: 680 !important;
+  letter-spacing: -0.055em !important;
+  line-height: 0.98 !important;
+  text-shadow: none !important;
+}
+
+.home-landing__title span {
+  display: block;
+  color: var(--wiki-muted) !important;
+  font-weight: 420;
+}
+
+.home-landing__lead {
+  max-width: 700px;
+  color: #c0c5ca !important;
+  font-size: 1.08rem !important;
+  line-height: 1.65 !important;
+}
+
+.home-landing__supporting {
+  max-width: 700px;
+  color: var(--wiki-faint) !important;
+  font-size: 0.9rem !important;
+}
+
+.home-landing__cta {
+  min-height: 38px !important;
+  padding: 0 16px !important;
+  border: 1px solid #9b8443 !important;
+  border-radius: 4px !important;
+  background: var(--wiki-accent) !important;
+  color: #1a1811 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.home-landing__icon-link {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.home-landing__focus {
+  padding: 20px !important;
+}
+
+.home-landing__focus-orbit {
+  display: none !important;
+}
+
+.home-landing__focus-label {
+  color: var(--wiki-faint) !important;
+  font-size: 0.67rem !important;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.home-landing__focus-note strong {
+  color: var(--wiki-text) !important;
+  font-size: 0.92rem !important;
+}
+
+.home-landing__quick {
+  margin-top: 28px !important;
+  padding: 18px !important;
+}
+
+.home-landing__quick-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+}
+
+.home-landing__quick-link {
+  justify-content: flex-start !important;
+  min-height: 42px !important;
+  padding: 7px 10px !important;
+  border: 1px solid var(--wiki-border-soft) !important;
+  background: #131619 !important;
+  color: var(--wiki-muted) !important;
+  font-size: 0.76rem !important;
+}
+
+.home-landing__tools {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 28px !important;
+}
+
+.home-tool-card {
+  display: grid !important;
+  align-content: start !important;
+  min-height: 170px !important;
+  padding: 18px !important;
+  text-align: left !important;
+}
+
+body.home-view .home-tool-card {
+  border-top-color: var(--wiki-border) !important;
+}
+
+/* Ações selecionadas usam o mesmo acento da navegação Wiki. */
+.planner-stage-chip[data-state="active"],
+.planner-source-filter[data-active="true"],
+.planner-clan-filter[data-active="true"],
+.planner-subtab[data-active="true"] {
+  border-color: rgba(215, 184, 91, 0.48) !important;
+  background: var(--wiki-accent-soft) !important;
+  color: #ead58f !important;
+}
+
+.planner-stage-chip[data-state="active"] .planner-stage-chip__index {
+  border-color: rgba(215, 184, 91, 0.54) !important;
+  background: rgba(215, 184, 91, 0.18) !important;
+  color: #f0d987 !important;
+}
+
+#content-profissoes,
+#content-slowpoke-well,
+#content-police-operation,
+#content-fusao-de-held,
+#content-rotom-phone {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.home-tool-card__index {
+  color: var(--wiki-faint) !important;
+  font: 600 0.65rem/1 var(--wiki-font) !important;
+}
+
+.home-tool-card__title {
+  margin-top: 26px;
+  color: var(--wiki-text) !important;
+  font-size: 0.95rem !important;
+}
+
+.home-tool-card__desc {
+  margin-top: 8px;
+  color: var(--wiki-faint) !important;
+  font-size: 0.75rem !important;
+  line-height: 1.5;
+}
+
+/* Modais e rodapé */
+.modal {
+  backdrop-filter: blur(5px);
+}
+
+.modal-content,
+[class$="-modal__content"] {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 8px !important;
+  background: var(--wiki-surface) !important;
+  background-image: none !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48) !important;
+}
+
+.main-footer {
+  width: min(100%, var(--wiki-reading));
+  margin: 52px auto 0 !important;
+  padding: 24px 0 !important;
+  border-top: 1px solid var(--wiki-border) !important;
+  background: transparent !important;
+  color: var(--wiki-faint) !important;
+  box-shadow: none !important;
+  font-size: 0.72rem;
+}
+
+/* Menos pintura fora da viewport em páginas longas */
+.app-main > [id^="content-"] > :where(section, article, div[class$="-section"]) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 1040px) {
+  :root {
+    --wiki-sidebar: 224px;
+  }
+
+  .site-global-search {
+    width: min(360px, 32vw) !important;
+  }
+
+  .home-landing__tools {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --wiki-header: 52px;
+  }
+
+  .header {
+    height: var(--wiki-header);
+    min-height: var(--wiki-header);
+    padding-inline: 8px !important;
+  }
+
+  .header > button:not(#mobile-nav-toggle):not(#share-btn) {
+    display: none !important;
+  }
+
+  #mobile-nav-toggle {
+    position: static !important;
+    inset: auto !important;
+    display: inline-grid !important;
+    flex: 0 0 36px;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .header-title-cluster {
+    display: none !important;
+  }
+
+  .header-context,
+  .header-visit-counter {
+    display: none !important;
+  }
+
+  .site-global-search {
+    top: calc(var(--wiki-header) + 8px) !important;
+    left: 12px !important;
+    width: calc(100% - 24px) !important;
+    transform: none;
+  }
+
+  .app-shell {
+    padding: calc(var(--wiki-header) + 56px) 0 0 !important;
+  }
+
+  .app-sidebar {
+    z-index: 1300;
+    inset: var(--wiki-header) auto 0 0;
+    width: min(86vw, 290px) !important;
+    min-width: 0 !important;
+    transform: translateX(-102%);
+    transition: transform 0.18s ease !important;
+  }
+
+  body.sidebar-open .app-sidebar {
+    transform: translateX(0);
+  }
+
+  .app-main {
+    padding: 24px 14px 54px !important;
+  }
+
+  .team-card__title-wrap {
+    width: calc(100% - 12px) !important;
+    max-width: calc(100% - 12px) !important;
+    overflow-wrap: anywhere;
+  }
+
+  body.home-view #content-home {
+    margin: calc(var(--wiki-header) + 56px) 0 0 !important;
+    padding: 28px 16px 54px !important;
+  }
+
+  body.home-view > main {
+    padding: 28px 16px 54px !important;
+  }
+
+  .home-landing__hero {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+    padding-bottom: 28px !important;
+  }
+
+  body.home-view .home-landing__copy {
+    align-items: flex-start !important;
+  }
+
+  body.home-view .home-landing__focus {
+    border: 1px solid var(--wiki-border) !important;
+    border-radius: var(--wiki-radius) !important;
+  }
+
+  .home-landing__title {
+    font-size: clamp(2.25rem, 13vw, 3.4rem) !important;
+  }
+
+  .home-landing__quick-grid,
+  .home-landing__tools {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .home-tool-card {
+    min-height: 145px !important;
+  }
+}
+
+/* ==========================================================================
+   Padronizacao final de componentes da Pokedex e navegacao
+   ========================================================================== */
+
+.sidebar-home {
+  min-height: 46px !important;
+  padding: 7px 9px !important;
+  border: 1px solid #3b4249 !important;
+  border-radius: 6px !important;
+  background: #191d20 !important;
+  cursor: pointer !important;
+}
+
+.sidebar-home:hover,
+.sidebar-home:focus-visible,
+.sidebar-home.is-active {
+  border-color: rgba(215, 184, 91, 0.55) !important;
+  background: rgba(215, 184, 91, 0.1) !important;
+  outline: none !important;
+}
+
+.sidebar-home__brand-mark {
+  width: 30px !important;
+  height: 30px !important;
+  border: 1px solid rgba(215, 184, 91, 0.38) !important;
+  border-radius: 5px !important;
+  background: rgba(215, 184, 91, 0.12) !important;
+}
+
+.sidebar-home__brand-logo {
+  width: 22px !important;
+  height: 22px !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+#content-pokemons .pokemon-filter-panel {
+  gap: 18px !important;
+  padding: 22px !important;
+  border: 1px solid #3a4148 !important;
+  border-radius: 7px !important;
+  background: #15191d !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons .pokemon-filter-panel__head {
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+}
+
+#content-pokemons .pokemon-filter-panel__eyebrow {
+  color: var(--wiki-accent) !important;
+}
+
+#content-pokemons .pokemon-filter-field {
+  gap: 7px !important;
+}
+
+#content-pokemons .pokemon-filter-field > span {
+  color: #94a9bd !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase;
+}
+
+#content-pokemons :where(
+  .pokemon-filter-field input,
+  .pokemon-filter-field select,
+  .pokemon-filter-select__trigger
+) {
+  min-height: 44px !important;
+  border: 1px solid #363d44 !important;
+  border-radius: 4px !important;
+  background: #111519 !important;
+  background-image: none !important;
+  color: var(--wiki-text) !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons :where(
+  .pokemon-filter-field input,
+  .pokemon-filter-field select,
+  .pokemon-filter-select__trigger
+):hover,
+#content-pokemons :where(
+  .pokemon-filter-field input,
+  .pokemon-filter-field select,
+  .pokemon-filter-select__trigger
+):focus {
+  border-color: rgba(215, 184, 91, 0.55) !important;
+  outline: none !important;
+}
+
+#content-pokemons .pokemon-filter-clear {
+  min-height: 40px !important;
+  border: 1px solid #454d54 !important;
+  border-radius: 4px !important;
+  background: #1b2024 !important;
+  color: var(--wiki-text) !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination {
+  gap: 8px !important;
+  padding: 10px !important;
+  border: 1px solid #3a4148 !important;
+  border-radius: 7px !important;
+  background: #15191d !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination__label {
+  min-height: 42px !important;
+  padding: 11px 14px !important;
+  border: 1px solid #343b42 !important;
+  border-radius: 4px !important;
+  background: #1a1f23 !important;
+  background-image: none !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination__btn {
+  min-width: 138px !important;
+  min-height: 42px !important;
+  border: 1px solid rgba(215, 184, 91, 0.48) !important;
+  border-radius: 4px !important;
+  background: rgba(215, 184, 91, 0.12) !important;
+  background-image: none !important;
+  color: #ead58f !important;
+  box-shadow: none !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination__btn:hover:not(:disabled) {
+  background: rgba(215, 184, 91, 0.2) !important;
+  transform: none !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination__btn:disabled {
+  border-color: #30363b !important;
+  background: #171b1e !important;
+  color: #6f7880 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 820px) {
+  /* Hierarquia de card do Champion Path: imagem, placar e informacoes sem colisao. */
+  .speedster-modal-content--roleboard .speedster-reco-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 300px !important;
+    padding: 20px 16px !important;
+    text-align: center !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-image {
+    order: 1 !important;
+    flex: 0 0 auto !important;
+    width: 78px !important;
+    height: 78px !important;
+    margin: 0 auto !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-score {
+    order: 2 !important;
+    position: static !important;
+    align-self: center !important;
+    margin: 0 !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-body {
+    order: 3 !important;
+    width: 100% !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-align: center !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-name-wrapper,
+  .speedster-modal-content--roleboard .speedster-reco-chip-list,
+  .speedster-modal-content--roleboard .speedster-reco-chip-row {
+    justify-content: center !important;
+    justify-items: center !important;
+    margin-inline: auto !important;
+  }
+}
+
+body .speedster-modal-content--roleboard .speedster-reco-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-height: 300px !important;
+  padding: 20px 16px !important;
+  text-align: center !important;
+}
+
+body .speedster-modal-content--roleboard .speedster-reco-image {
+  order: 1 !important;
+  flex: 0 0 auto !important;
+  width: 78px !important;
+  height: 78px !important;
+  margin: 0 auto !important;
+}
+
+body .speedster-modal-content--roleboard .speedster-reco-score {
+  order: 2 !important;
+  position: static !important;
+  align-self: center !important;
+  margin: 0 !important;
+}
+
+body .speedster-modal-content--roleboard .speedster-reco-body {
+  order: 3 !important;
+  width: 100% !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+}
+
+body .speedster-modal-content--roleboard .speedster-reco-name-wrapper,
+body .speedster-modal-content--roleboard .speedster-reco-chip-list,
+body .speedster-modal-content--roleboard .speedster-reco-chip-row {
+  justify-content: center !important;
+  justify-items: center !important;
+  margin-inline: auto !important;
+}
+
+/* Reserva altura real para a arte, inclusive em formas largas como VenusaurTwo. */
+body .pokemon-details-modal__hero {
+  grid-template-columns: 200px minmax(0, 1fr) !important;
+  min-height: 190px !important;
+  overflow: hidden !important;
+}
+
+body .pokemon-details-modal__art {
+  align-self: stretch !important;
+  width: 200px !important;
+  height: 154px !important;
+  min-height: 154px !important;
+  padding: 12px !important;
+  overflow: hidden !important;
+}
+
+body .pokemon-details-modal__image {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 168px !important;
+  max-height: 130px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+@media (max-width: 760px) {
+  body .pokemon-details-modal__hero {
+    grid-template-columns: 1fr !important;
+    min-height: 0 !important;
+  }
+
+  body .pokemon-details-modal__art {
+    width: 100% !important;
+    height: 180px !important;
+    min-height: 180px !important;
+  }
+
+  body .pokemon-details-modal__image {
+    max-width: 190px !important;
+    max-height: 150px !important;
+  }
+}
+
+/* O card de recomendacao segue a composicao vertical do Champion Path em todas as telas. */
+.speedster-modal-content--roleboard .speedster-reco-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-height: 300px !important;
+  padding: 20px 16px !important;
+  text-align: center !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-image {
+  order: 1 !important;
+  flex: 0 0 auto !important;
+  width: 78px !important;
+  height: 78px !important;
+  margin: 0 auto !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-score {
+  order: 2 !important;
+  position: static !important;
+  align-self: center !important;
+  margin: 0 !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-body {
+  order: 3 !important;
+  width: 100% !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-name-wrapper,
+.speedster-modal-content--roleboard .speedster-reco-chip-list,
+.speedster-modal-content--roleboard .speedster-reco-chip-row {
+  justify-content: center !important;
+  justify-items: center !important;
+  margin-inline: auto !important;
+}
+
+/* Resultados da busca nao podem herdar o tamanho quadrado dos botoes do header. */
+.header .site-global-search__results {
+  grid-auto-flow: row !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+}
+
+.header .site-global-search__result {
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 11px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 56px !important;
+  padding: 8px 10px !important;
+  text-align: left !important;
+}
+
+.header .site-global-search__media {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+}
+
+.header .site-global-search__copy {
+  display: grid !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.header .site-global-search__title,
+.header .site-global-search__meta,
+.header .site-global-search__tags {
+  display: block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.wiki-topbar__status {
+  display: inline-flex !important;
+  justify-content: flex-start !important;
+  width: max-content !important;
+  column-gap: 6px !important;
+}
+
+.wiki-topbar__status::before {
+  margin: 0 !important;
+}
+
+.wiki-topbar__status .site-global-search__rat,
+.wiki-topbar__status .streamer-rat-chip {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  width: max-content !important;
+  max-width: 230px !important;
+  margin: 0 !important;
+}
+
+body .header .site-global-search__result {
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  justify-content: stretch !important;
+  justify-items: stretch !important;
+  column-gap: 10px !important;
+}
+
+body .header .site-global-search__media {
+  justify-self: start !important;
+  margin: 0 !important;
+}
+
+body .header .site-global-search__copy {
+  justify-self: stretch !important;
+  align-self: center !important;
+  width: 100% !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+body .header .site-global-search__title,
+body .header .site-global-search__meta,
+body .header .site-global-search__tags {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.wiki-topbar__status {
+  max-width: none !important;
+  padding-inline: 11px !important;
+  overflow: visible !important;
+}
+
+.wiki-topbar__status .site-global-search__rat,
+.wiki-topbar__status .streamer-rat-chip {
+  width: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.wiki-topbar__status .streamer-rat-chip {
+  padding-inline: 1px !important;
+}
+
+/* ==========================================================================
+   Revisao estrutural solicitada
+   ========================================================================== */
+
+/* O masthead ocupa uma unica coluna: titulo, texto e acoes usam o mesmo eixo. */
+.wiki-home__masthead {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+  justify-items: center !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.wiki-home__masthead > div:first-child {
+  width: 100% !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+.wiki-home__masthead :where(h1, h2, p, .wiki-home__overline) {
+  width: 100%;
+  margin-inline: auto !important;
+  text-align: center !important;
+}
+
+.wiki-home__masthead-actions {
+  width: auto !important;
+  justify-self: center !important;
+}
+
+/* Lupa redesenhada dentro da caixa de 14px, sem herdar coordenadas do tema antigo. */
+.header .site-global-search__icon {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.header .site-global-search__icon::before {
+  left: 1px !important;
+  top: 1px !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-width: 1.5px !important;
+}
+
+.header .site-global-search__icon::after {
+  left: 8px !important;
+  top: 9px !important;
+  width: 6px !important;
+  height: 1.5px !important;
+}
+
+/* Cada grupo da navegacao passa a ser uma secao visual independente. */
+.sidebar-nav .sidebar-group + .sidebar-group {
+  position: relative;
+  margin-top: 13px !important;
+  padding-top: 14px !important;
+}
+
+.sidebar-nav .sidebar-group + .sidebar-group::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: #30363b;
+}
+
+/* Modal de bosses como painel comparativo, sem tres mini-janelas isoladas. */
+.speedster-modal-content.speedster-modal-content--roleboard {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  width: min(1240px, calc(100vw - 48px)) !important;
+  max-width: min(1240px, calc(100vw - 48px)) !important;
+  max-height: calc(100dvh - 48px) !important;
+  padding: 22px 24px 24px !important;
+  overflow: hidden !important;
+}
+
+.speedster-modal-content--roleboard .speedster-modal-header {
+  display: grid !important;
+  grid-template-columns: 86px minmax(0, 1fr) 86px !important;
+  gap: 24px !important;
+  align-items: center !important;
+  padding: 0 0 20px !important;
+}
+
+.speedster-modal-content--roleboard .speedster-modal-title {
+  display: grid !important;
+  justify-items: center !important;
+  gap: 10px !important;
+}
+
+.speedster-modal-content--roleboard .speedster-modal-pokemon-img {
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 auto !important;
+}
+
+.speedster-modal-content--roleboard .speedster-modal-location-btn {
+  position: absolute !important;
+  top: 156px !important;
+  right: 27px !important;
+  width: 64px !important;
+  min-width: 64px !important;
+}
+
+.speedster-modal-content--roleboard .speedster-modal-body {
+  min-height: 0 !important;
+  padding: 16px 0 0 !important;
+  overflow: auto !important;
+}
+
+.speedster-modal-content--roleboard .speedster-clan-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  min-width: 0 !important;
+}
+
+.speedster-modal-content--roleboard .speedster-clan-section {
+  min-width: 0 !important;
+  padding: 18px !important;
+  border: 0 !important;
+  border-right: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.speedster-modal-content--roleboard .speedster-clan-section:last-child {
+  border-right: 0 !important;
+}
+
+.speedster-modal-content--roleboard .speedster-clan-header {
+  min-height: 48px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--wiki-border-soft);
+}
+
+.speedster-modal-content--roleboard .speedster-clan-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  max-height: none !important;
+  padding: 14px 0 0 !important;
+  overflow: visible !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-card {
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) !important;
+  grid-template-rows: 64px auto !important;
+  gap: 8px 12px !important;
+  width: 100% !important;
+  min-height: 116px !important;
+  padding: 12px !important;
+  text-align: left !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-image {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  align-self: start !important;
+  width: 58px !important;
+  height: 58px !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-body {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  min-width: 0 !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.speedster-modal-content--roleboard .speedster-reco-score {
+  position: static !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  justify-self: center !important;
+  align-self: start !important;
+}
+
+@media (max-width: 820px) {
+  .speedster-modal-content.speedster-modal-content--roleboard {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - 20px) !important;
+    padding: 16px !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-modal-header {
+    grid-template-columns: 48px minmax(0, 1fr) 48px !important;
+    gap: 8px !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-modal-pokemon-img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-modal-location-btn {
+    position: static !important;
+    grid-column: 2 !important;
+    justify-self: center !important;
+    width: 48px !important;
+    min-width: 48px !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-clan-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-clan-section {
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--wiki-border) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-landing__quick-grid,
+  .home-landing__tools {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-tool-card {
+    min-height: 0 !important;
+  }
+}
+
+@media print {
+  .header,
+  .site-global-search,
+  .app-sidebar,
+  .app-shell__backdrop,
+  .main-footer {
+    display: none !important;
+  }
+
+  .app-shell,
+  .app-main {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+}
+
+/* ==========================================================================
+   Remake estrutural — shell Wiki v2
+   ========================================================================== */
+
+:root {
+  --ps-green: var(--wiki-accent) !important;
+  --ps-green-soft: rgba(215, 184, 91, 0.12) !important;
+  --ps-glow-green: rgba(215, 184, 91, 0.12) !important;
+  --wiki-header: 64px;
+}
+
+body[data-active-tab] {
+  --module-accent: #d7b85b !important;
+  --module-accent-rgb: 215, 184, 91 !important;
+  --module-accent-alt: #9fb4c7 !important;
+  --module-accent-alt-rgb: 159, 180, 199 !important;
+}
+
+body > .header {
+  inset: 0 !important;
+  display: grid !important;
+  grid-template-columns: var(--wiki-sidebar) minmax(220px, 460px) auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100% !important;
+  height: var(--wiki-header) !important;
+  min-height: var(--wiki-header) !important;
+  margin: 0 !important;
+  padding: 0 18px 0 0 !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  background: #111315 !important;
+  backdrop-filter: none;
+  direction: ltr !important;
+}
+
+.header #home-btn.wiki-topbar__brand {
+  position: absolute !important;
+  inset: 7px auto auto 8px !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: calc(var(--wiki-sidebar) - 16px) !important;
+  height: calc(var(--wiki-header) - 14px) !important;
+  padding: 0 12px !important;
+  border: 1px solid #3a4148 !important;
+  border-radius: 5px !important;
+  background: #181c20 !important;
+  color: var(--wiki-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+  cursor: pointer;
+  transform: none !important;
+}
+
+.header #home-btn.wiki-topbar__brand:hover {
+  border-color: rgba(215, 184, 91, 0.58) !important;
+  background: #202126 !important;
+  color: #fff !important;
+  box-shadow: inset 3px 0 0 var(--wiki-accent) !important;
+}
+
+.header #home-btn.wiki-topbar__brand::after {
+  content: "›";
+  margin-left: auto;
+  color: var(--wiki-faint);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.header #home-btn.wiki-topbar__brand:hover::after {
+  color: var(--wiki-accent);
+}
+
+.wiki-topbar__brand img {
+  width: 22px;
+  height: 22px;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.wiki-topbar__brand span {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.header #mobile-nav-toggle {
+  display: none !important;
+}
+
+.header .site-global-search {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: 2;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.header .site-global-search::before,
+.header .site-global-search::after {
+  display: none !important;
+}
+
+.header .site-global-search__input {
+  min-height: 36px !important;
+  padding: 0.4rem 0.75rem 0.4rem 2.15rem !important;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 4px !important;
+  background: #181b1e !important;
+  font-size: 0.78rem;
+}
+
+.header .site-global-search__icon {
+  position: absolute !important;
+  top: 50% !important;
+  left: 12px !important;
+  right: auto !important;
+  width: 14px !important;
+  height: 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateY(-50%) !important;
+}
+
+.header .site-global-search__results {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: min(62vh, 520px);
+}
+
+.wiki-topbar__status {
+  position: static !important;
+  grid-column: 4 !important;
+  grid-row: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  color: var(--wiki-faint);
+  font-size: 0.67rem;
+  white-space: nowrap;
+}
+
+.wiki-topbar__status-label {
+  color: var(--wiki-faint);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wiki-topbar__status .site-global-search__rat {
+  position: static !important;
+  display: block !important;
+  width: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.wiki-topbar__status .streamer-rat-chip {
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wiki-topbar__status .streamer-rat-chip {
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+  font-size: 0.67rem !important;
+}
+
+.wiki-topbar__status .streamer-rat-chip::before,
+.wiki-topbar__status .streamer-rat-chip::after,
+.wiki-topbar__status .site-global-search__rat::before,
+.wiki-topbar__status .site-global-search__rat::after {
+  display: none !important;
+}
+
+.wiki-topbar__actions {
+  position: static !important;
+  grid-column: 5 !important;
+  grid-row: 1 !important;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.wiki-topbar__actions button {
+  position: static !important;
+  inset: auto !important;
+  display: inline-grid !important;
+  transform: none !important;
+}
+
+.wiki-topbar__actions :where(img, svg) {
+  filter: grayscale(1);
+  opacity: 0.78;
+}
+
+.app-sidebar {
+  padding-top: 14px !important;
+}
+
+.app-sidebar > .sidebar-home {
+  display: none !important;
+}
+
+.app-main {
+  padding-top: 42px !important;
+}
+
+/* Boss cards contain the useful mechanical data; editorial blurbs are removed. */
+.boss-role-card__description {
+  display: none !important;
+}
+
+#content-bosses :where(section, article, div) {
+  box-shadow: none !important;
+}
+
+#content-bosses :where(
+  .bosses-copy, .bosses-hero, .boss-roleboard-intro, .boss-mode-intro,
+  .speedster-copy, .speedster-mode-copy, .speedster-grid-wrap
+) {
+  border-color: var(--wiki-border) !important;
+}
+
+#content-bosses :where(
+  .bosses-copy, .bosses-hero, .boss-roleboard-intro, .boss-mode-intro,
+  .speedster-copy, .speedster-mode-copy, .champion-path-intro
+)::before,
+#content-bosses :where(
+  .bosses-copy, .bosses-hero, .boss-roleboard-intro, .boss-mode-intro,
+  .speedster-copy, .speedster-mode-copy, .champion-path-intro
+)::after {
+  display: none !important;
+}
+
+.boss-role-card__chip--type,
+.boss-role-pick-chip--move,
+.pokemon-passive-badge,
+.streamer-status.online,
+.streamer-live-signal[data-state="drop"] {
+  border-color: rgba(215, 184, 91, 0.34) !important;
+  background: rgba(215, 184, 91, 0.09) !important;
+  color: #dfcb8c !important;
+}
+
+.boss-role-card,
+.boss-role-card__avatar,
+.boss-role-card__consumables,
+.boss-role-card__chip--wide {
+  border-color: var(--wiki-border) !important;
+  box-shadow: none !important;
+}
+
+.bosses-copy,
+.bosses-hero,
+.boss-roleboard-intro,
+.boss-mode-intro,
+.champion-path-intro {
+  border-color: var(--wiki-border) !important;
+  background: #15191c !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Home Wiki — estrutura nova
+   ========================================================================== */
+
+.home-landing > .home-landing__shell {
+  display: none !important;
+}
+
+.wiki-home {
+  width: min(100%, 1220px);
+  margin: 0 auto;
+  color: var(--wiki-text);
+}
+
+.wiki-home__masthead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 48px 0 42px;
+  border-bottom: 1px solid var(--wiki-border);
+}
+
+.wiki-home__overline,
+.wiki-home__section-head span,
+.wiki-home__aside-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--wiki-accent);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wiki-home__masthead h1,
+.wiki-home__masthead h2 {
+  margin: 0;
+  color: var(--wiki-text) !important;
+  font-size: clamp(2.4rem, 5vw, 4.6rem) !important;
+  font-weight: 680 !important;
+  letter-spacing: -0.055em !important;
+  line-height: 1 !important;
+}
+
+.wiki-home__masthead p {
+  max-width: 660px;
+  margin: 18px 0 0;
+  color: var(--wiki-muted);
+  font-size: 1rem;
+}
+
+.wiki-home__masthead-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.wiki-home :where(button, a) {
+  text-decoration: none;
+}
+
+.wiki-home__masthead-actions :where(button, a) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 4px !important;
+  background: var(--wiki-surface) !important;
+  color: var(--wiki-text) !important;
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.wiki-home__masthead-actions :where(button, a):first-child {
+  border-color: #9c8749 !important;
+  background: var(--wiki-accent) !important;
+  color: #17150f !important;
+}
+
+.wiki-home__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 48px;
+  padding-top: 38px;
+}
+
+.wiki-home__directory {
+  min-width: 0;
+}
+
+.wiki-home__section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.wiki-home__section-head h2,
+.wiki-home__section-head h3,
+.wiki-home__aside h2,
+.wiki-home__aside h3 {
+  margin: 0;
+  color: var(--wiki-text) !important;
+  font-size: 1.25rem !important;
+  font-weight: 650 !important;
+}
+
+.wiki-home__section-head p {
+  margin: 0;
+  color: var(--wiki-faint);
+  font-size: 0.75rem;
+}
+
+.wiki-home__groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--wiki-border);
+  border-left: 1px solid var(--wiki-border);
+}
+
+.wiki-home__group {
+  min-width: 0;
+  padding: 24px;
+  border: 0 !important;
+  border-right: 1px solid var(--wiki-border) !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.wiki-home__group-index {
+  color: var(--wiki-faint);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.wiki-home__group h3,
+.wiki-home__group h4 {
+  margin: 22px 0 6px;
+  color: var(--wiki-text) !important;
+  font-size: 1rem !important;
+}
+
+.wiki-home__group p {
+  min-height: 42px;
+  margin: 0 0 18px;
+  color: var(--wiki-faint);
+  font-size: 0.76rem;
+}
+
+.wiki-home__group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.wiki-home__group > div :where(button, a) {
+  min-height: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--wiki-link) !important;
+  font-size: 0.75rem;
+}
+
+.wiki-home__group > div :where(button, a)::after {
+  content: "›";
+  margin-left: 4px;
+  color: var(--wiki-faint);
+}
+
+.wiki-home__shortcuts {
+  margin-top: 38px;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.wiki-home__shortcuts > div:last-child {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--wiki-border);
+}
+
+.wiki-home__shortcuts > div:last-child > :where(button, a) {
+  display: grid;
+  gap: 3px;
+  padding: 16px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border) !important;
+  background: transparent !important;
+  color: var(--wiki-text) !important;
+  text-align: left;
+}
+
+.wiki-home__shortcuts > div:last-child > :where(button, a):nth-child(odd) {
+  border-right: 1px solid var(--wiki-border) !important;
+}
+
+.wiki-home__shortcuts strong {
+  font-size: 0.78rem;
+}
+
+.wiki-home__shortcuts span {
+  color: var(--wiki-faint);
+  font-size: 0.68rem;
+}
+
+.wiki-home__aside {
+  display: grid;
+  align-content: start;
+  gap: 28px;
+  padding-left: 24px;
+  border-left: 1px solid var(--wiki-border);
+}
+
+.wiki-home__aside section {
+  display: grid;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.wiki-home__aside h2,
+.wiki-home__aside h3 {
+  margin-bottom: 12px;
+  font-size: 0.9rem !important;
+}
+
+.wiki-home__aside :where(a, button) {
+  padding: 8px 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border-soft) !important;
+  background: transparent !important;
+  color: var(--wiki-link) !important;
+  font-size: 0.73rem;
+  text-align: left;
+}
+
+.wiki-home__aside p {
+  margin: 0 0 10px;
+  color: var(--wiki-faint);
+  font-size: 0.73rem;
+}
+
+body.home-view > main {
+  background: var(--wiki-bg) !important;
+  padding-top: 0 !important;
+}
+
+body.home-view > main > .home-landing {
+  width: min(100%, 1320px) !important;
+  padding: 0 48px 72px;
+  background: var(--wiki-bg) !important;
+  background-image: none !important;
+}
+
+@media (max-width: 900px) {
+  .wiki-topbar__status {
+    display: none;
+  }
+
+  body > .header {
+    grid-template-columns: var(--wiki-sidebar) minmax(260px, 1fr) auto auto;
+  }
+
+  .header .site-global-search {
+    grid-column: 2;
+  }
+
+  .header .header-visit-counter {
+    grid-column: 3 !important;
+  }
+
+  .wiki-topbar__actions {
+    grid-column: 4 !important;
+  }
+
+  .wiki-home__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .wiki-home__aside {
+    grid-template-columns: 1fr 1fr;
+    padding: 28px 0 0;
+    border-top: 1px solid var(--wiki-border);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --wiki-header: 104px;
+  }
+
+  body > .header {
+    grid-template-columns: 42px 1fr auto;
+    grid-template-rows: 48px 48px;
+    gap: 0 6px;
+    padding: 0 10px !important;
+  }
+
+  .header #mobile-nav-toggle {
+    position: absolute !important;
+    top: 7px !important;
+    left: 8px !important;
+    display: inline-grid !important;
+    grid-area: auto !important;
+  }
+
+  .header #home-btn.wiki-topbar__brand {
+    display: none !important;
+  }
+
+  body > .header::before {
+    content: "Poke Utilities";
+    position: absolute;
+    top: 14px;
+    left: 52px;
+    color: var(--wiki-text);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .wiki-topbar__actions {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    width: auto !important;
+    height: 34px !important;
+    grid-area: auto !important;
+  }
+
+  .wiki-topbar__actions #cursor-toggle-btn,
+  .wiki-topbar__actions #share-btn {
+    display: none !important;
+  }
+
+  .header .site-global-search {
+    position: absolute !important;
+    inset: 56px 10px auto 10px !important;
+    width: auto !important;
+    grid-area: auto !important;
+  }
+
+  .app-shell {
+    padding-top: var(--wiki-header) !important;
+  }
+
+  .app-sidebar {
+    top: var(--wiki-header) !important;
+    height: calc(100vh - var(--wiki-header)) !important;
+  }
+
+  .app-main {
+    padding-top: 24px !important;
+  }
+
+  body.home-view > main > .home-landing {
+    padding: 0 18px 52px;
+  }
+
+  .wiki-home__masthead {
+    display: grid;
+    gap: 24px;
+    padding: 36px 0 30px;
+  }
+
+  .wiki-home__masthead-actions {
+    width: 100%;
+  }
+
+  .wiki-home__masthead-actions :where(button, a) {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .wiki-home__groups,
+  .wiki-home__shortcuts > div:last-child {
+    grid-template-columns: 1fr;
+  }
+
+  .wiki-home__shortcuts > div:last-child > :where(button, a):nth-child(odd) {
+    border-right: 0 !important;
+  }
+
+  .wiki-home__aside {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Polimento de componentes e estados interativos
+   ========================================================================== */
+
+/* Timer compacto e integrado. */
+.wiki-topbar__status {
+  justify-self: end;
+  gap: 6px;
+  max-width: 270px;
+  padding: 5px 10px;
+  border: 1px solid rgba(215, 184, 91, 0.24);
+  border-radius: 999px;
+  background: rgba(215, 184, 91, 0.07);
+}
+
+.wiki-topbar__status::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  margin-right: 0;
+  border-radius: 50%;
+  background: var(--wiki-accent);
+}
+
+.wiki-topbar__status-label {
+  display: none;
+}
+
+.wiki-topbar__status .streamer-rat-chip {
+  color: #c9c3ad !important;
+}
+
+/* O ponto e o texto do timer ocupam o mesmo fluxo, sem reservas invisíveis. */
+.header .wiki-topbar__status {
+  gap: 3px !important;
+  padding: 5px 10px 5px 9px !important;
+  overflow: visible !important;
+}
+
+.header .wiki-topbar__status::before {
+  margin: 0 !important;
+}
+
+.header .wiki-topbar__status .site-global-search__rat {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: visible !important;
+  font-size: inherit !important;
+  line-height: 1 !important;
+}
+
+.header .wiki-topbar__status .streamer-rat-chip {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  clip-path: none !important;
+  font-size: 0.67rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  text-indent: 0 !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+@media (min-width: 761px) {
+  .header .wiki-topbar__status {
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    justify-self: end;
+    overflow: hidden !important;
+    box-sizing: border-box;
+  }
+
+  .header .wiki-topbar__status .site-global-search__rat {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .header .wiki-topbar__status .streamer-rat-chip {
+    display: block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1200px) {
+  .wiki-topbar__actions #cursor-toggle-btn,
+  .wiki-topbar__actions #share-btn {
+    display: none !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  body > .header {
+    grid-template-columns: var(--wiki-sidebar) minmax(180px, 1fr) auto minmax(0, 200px) auto;
+    gap: 8px;
+  }
+
+  .header .site-global-search {
+    grid-column: 2;
+  }
+
+  .header > .header-visit-counter.site-visit-counter {
+    grid-column: 3 !important;
+  }
+
+  .header .wiki-topbar__status {
+    grid-column: 4 !important;
+  }
+
+  .wiki-topbar__actions {
+    grid-column: 5 !important;
+  }
+}
+
+/* O contador permanece visível como informação permanente do cabeçalho. */
+.header > .header-visit-counter.site-visit-counter {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  width: auto !important;
+  min-width: max-content;
+  height: auto !important;
+  min-height: 34px;
+  margin: 0 !important;
+  padding: 5px 10px !important;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 5px !important;
+  background: #16191c !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.header > .header-visit-counter .header-visit-counter__badge {
+  display: grid !important;
+  flex: 0 0 7px;
+  place-items: center;
+  width: 7px !important;
+  height: 7px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.header > .header-visit-counter .header-visit-counter__badge-core {
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50%;
+  background: var(--wiki-accent) !important;
+  box-shadow: none !important;
+}
+
+.header > .header-visit-counter .site-visit-counter__values {
+  display: grid !important;
+  gap: 1px;
+  min-width: 0;
+  color: var(--wiki-muted) !important;
+  font-size: 0.62rem !important;
+  line-height: 1.18 !important;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.header > .header-visit-counter .site-visit-counter__line {
+  display: block !important;
+}
+
+.header > .header-visit-counter .site-visit-counter__number {
+  color: var(--wiki-text) !important;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --wiki-header: 140px;
+  }
+
+  .header > .header-visit-counter.site-visit-counter {
+    position: absolute !important;
+    top: 7px !important;
+    left: 50% !important;
+    z-index: 2;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    min-height: 34px;
+    padding: 4px 8px !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .header > .header-visit-counter .site-visit-counter__values {
+    font-size: 0.56rem !important;
+  }
+
+  body > .header::before {
+    display: none;
+  }
+
+  body > .header .wiki-topbar__status {
+    position: absolute !important;
+    top: 49px !important;
+    left: 50% !important;
+    display: flex !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    max-width: calc(100% - 24px);
+    transform: translateX(-50%) !important;
+  }
+
+  .header .site-global-search {
+    inset: 96px 10px auto 10px !important;
+  }
+}
+
+.header .site-global-search__icon {
+  top: 47% !important;
+}
+
+/* A Home mantém o título centralizado e separa as ações da composição textual. */
+.wiki-home__masthead {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 26px;
+  text-align: center;
+}
+
+.wiki-home__masthead > div:first-child {
+  display: grid;
+  justify-items: center;
+}
+
+.wiki-home__masthead p {
+  margin-inline: auto;
+}
+
+.wiki-home__masthead-actions {
+  justify-content: center;
+}
+
+.wiki-home__masthead-actions :where(button, a) {
+  min-height: 42px;
+  padding-inline: 18px;
+}
+
+.wiki-home__masthead-actions :where(button, a):not(:first-child) {
+  border-color: #59636c !important;
+  background: #1a1e22 !important;
+}
+
+.wiki-home__group > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.wiki-home__group > div :where(button, a) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 6px 9px !important;
+  border: 1px solid var(--wiki-border-soft) !important;
+  border-radius: 4px !important;
+  background: #15191c !important;
+  color: #a9c8e2 !important;
+  text-align: left;
+}
+
+.wiki-home__group > div :where(button, a):hover {
+  border-color: rgba(215, 184, 91, 0.38) !important;
+  background: rgba(215, 184, 91, 0.08) !important;
+  color: #ead58f !important;
+}
+
+.wiki-home__group:nth-child(5):last-child {
+  grid-column: 1 / -1;
+}
+
+.wiki-home__link-badge {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #2a2f34;
+  color: #d8dde2;
+  font-size: 0.58rem;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.wiki-home__shortcuts > div:last-child > :where(button, a) {
+  min-height: 66px;
+  padding: 14px 16px !important;
+}
+
+.wiki-home__shortcuts > div:last-child > :where(button, a):hover {
+  background: #171b1f !important;
+}
+
+/* Apenas Champion Path dispensa o texto editorial dos cards. */
+.boss-role-card__description {
+  display: block !important;
+}
+
+.bosses-shell[data-catalog-id="champion"] .boss-role-card__description,
+.boss-role-card[data-catalog="champion"] .boss-role-card__description {
+  display: none !important;
+}
+
+/* Hoopa usa uma altura previsível mesmo quando moveset e consumível variam. */
+.bosses-shell[data-catalog-id="hoopa"] .speedster-grid {
+  align-items: stretch;
+  grid-auto-rows: 390px;
+}
+
+.bosses-shell[data-catalog-id="hoopa"] .speedster-card {
+  width: 100%;
+  height: 390px;
+  min-height: 390px;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+.bosses-shell[data-catalog-id="horizons"] .speedster-card__description {
+  display: -webkit-box;
+  margin: 2px 12px 8px;
+  overflow: hidden;
+  color: var(--wiki-muted);
+  font-size: 0.77rem;
+  line-height: 1.45;
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+/* O botão continua comunicando a ação enquanto aguarda um boss no fluxo. */
+.planner-hero__button--primary,
+.planner-hero__button--primary:disabled {
+  border-color: rgba(215, 184, 91, 0.5) !important;
+  background: rgba(215, 184, 91, 0.13) !important;
+  color: #ead58f !important;
+  opacity: 1 !important;
+}
+
+.planner-hero__button--primary:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.65);
+}
+
+/* As buscas de Pokémon usam a mesma paleta documental do restante da Wiki. */
+:where(
+  .speedster-search-panel,
+  .boost-search-panel,
+  .catch-search-panel
+) {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: #15191d !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+:where(
+  .speedster-search-panel,
+  .boost-search-panel,
+  .catch-search-panel
+) .speedster-search-label {
+  color: var(--wiki-accent) !important;
+  font-size: 0.68rem !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase;
+}
+
+:where(
+  .speedster-search-panel,
+  .boost-search-panel,
+  .catch-search-panel
+) .speedster-search-input {
+  border: 1px solid #3b4249 !important;
+  border-radius: 4px !important;
+  background: #101316 !important;
+  background-image: none !important;
+  color: var(--wiki-text) !important;
+  box-shadow: none !important;
+}
+
+:where(
+  .speedster-search-panel,
+  .boost-search-panel,
+  .catch-search-panel
+) .speedster-search-input::placeholder {
+  color: var(--wiki-faint) !important;
+  opacity: 1;
+}
+
+:where(
+  .speedster-search-panel,
+  .boost-search-panel,
+  .catch-search-panel
+) .speedster-search-input:focus {
+  border-color: rgba(215, 184, 91, 0.72) !important;
+  background: #12161a !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 2px rgba(215, 184, 91, 0.12) !important;
+}
+
+/* Dropdowns e listas de busca compartilham a mesma superfície. */
+:where(
+  .speedster-search-results,
+  .hunt-builder-search-results,
+  .site-global-search__results,
+  .team-builder-search-results,
+  .pokemon-filter-results
+) {
+  padding: 6px !important;
+  border: 1px solid #3b4249 !important;
+  border-radius: 6px !important;
+  background: #14181c !important;
+  background-image: none !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.34) !important;
+}
+
+:where(
+  .speedster-search-results,
+  .hunt-builder-search-results,
+  .site-global-search__results,
+  .team-builder-search-results,
+  .pokemon-filter-results
+) :where(button, [role="option"], .site-global-search__result) {
+  position: relative;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--wiki-muted) !important;
+}
+
+/* Linhas discretas separam os Pokémons sem transformar cada resultado em um card. */
+:where(
+  .speedster-search-results,
+  .hunt-builder-search-results,
+  .site-global-search__results,
+  .team-builder-search-results,
+  .pokemon-filter-results
+) > :where(button, [role="option"], .site-global-search__result):not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: -1px;
+  left: 8px;
+  height: 1px;
+  background: var(--wiki-border);
+  pointer-events: none;
+}
+
+:where(
+  .speedster-search-results,
+  .hunt-builder-search-results,
+  .site-global-search__results,
+  .team-builder-search-results,
+  .pokemon-filter-results
+) :where(button, [role="option"], .site-global-search__result):hover,
+:where(
+  .speedster-search-results,
+  .hunt-builder-search-results,
+  .site-global-search__results,
+  .team-builder-search-results,
+  .pokemon-filter-results
+) :where([data-active="true"], [aria-selected="true"]) {
+  border-color: rgba(215, 184, 91, 0.32) !important;
+  background: rgba(215, 184, 91, 0.08) !important;
+  color: var(--wiki-text) !important;
+}
+
+/* O mapa dos bosses reutiliza o mapa interativo completo dentro do modal. */
+.location-overlay--interactive-map {
+  padding: 14px !important;
+  background: rgba(5, 7, 9, 0.86) !important;
+  backdrop-filter: blur(7px);
+}
+
+.boss-map-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1480px, calc(100vw - 28px));
+  height: min(920px, calc(100vh - 28px));
+  overflow: hidden;
+  border: 1px solid #3a4148;
+  border-radius: 8px;
+  background: #111519;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.58);
+}
+
+.boss-map-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 58px;
+  padding: 9px 12px 9px 18px;
+  border-bottom: 1px solid var(--wiki-border);
+  background: #15191d;
+}
+
+.boss-map-dialog__heading {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.boss-map-dialog__heading span {
+  color: var(--wiki-accent);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.boss-map-dialog__heading strong {
+  overflow: hidden;
+  color: var(--wiki-text);
+  font-size: 0.96rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boss-map-dialog__close {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--wiki-border);
+  border-radius: 4px;
+  background: #1b1f23;
+  color: var(--wiki-muted);
+  cursor: pointer;
+}
+
+.boss-map-dialog__close:hover {
+  border-color: rgba(215, 184, 91, 0.5);
+  color: var(--wiki-text);
+}
+
+.boss-map-dialog__body,
+.interactive-map-modal-panel,
+.interactive-map-modal-panel .interactive-map-shell {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.interactive-map-modal-panel {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.interactive-map-modal-panel .interactive-map-shell {
+  --map-panel: #15191d;
+  --map-panel-soft: #181d21;
+  --map-border: #30363d;
+  --map-accent: var(--wiki-accent);
+  gap: 0;
+}
+
+.interactive-map-modal-panel .interactive-map-header {
+  display: none;
+}
+
+.interactive-map-modal-panel .interactive-map-layout {
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1.9fr);
+  gap: 1rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.interactive-map-modal-panel .interactive-map-sidebar {
+  max-height: none;
+  border: 0;
+  border-right: 1px solid var(--wiki-border);
+  border-radius: 0;
+  background: #15191d;
+  padding: 1rem;
+}
+
+.interactive-map-modal-panel .interactive-map-board {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.location-overlay .interactive-map-modal-panel .interactive-map-image {
+  max-width: none;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.interactive-map-modal-panel .interactive-map-detail {
+  top: 4rem;
+  right: 0.8rem;
+  left: auto;
+}
+
+@media (max-width: 760px) {
+  .location-overlay--interactive-map {
+    padding: 6px !important;
+  }
+
+  .boss-map-dialog {
+    width: calc(100vw - 12px);
+    height: calc(100vh - 12px);
+  }
+
+  .interactive-map-modal-panel .interactive-map-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(150px, 32vh) minmax(0, 1fr);
+  }
+
+  .interactive-map-modal-panel .interactive-map-sidebar {
+    overflow: hidden;
+    border-right: 0;
+    border-bottom: 1px solid var(--wiki-border);
+  }
+
+  .interactive-map-modal-panel .interactive-map-board {
+    min-height: 0;
+  }
+
+  .interactive-map-modal-panel .interactive-map-detail {
+    top: 0.7rem;
+    right: auto;
+    left: 0.7rem;
+  }
+}
+
+/* Modal compartilhado de bosses. */
+.speedster-modal {
+  background: rgba(5, 7, 9, 0.82) !important;
+  backdrop-filter: blur(6px);
+}
+
+.speedster-modal-content {
+  border: 1px solid #3a4148 !important;
+  border-radius: 8px !important;
+  background: #111519 !important;
+  background-image: none !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55) !important;
+}
+
+.speedster-modal-header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--wiki-border);
+}
+
+.speedster-clan-section {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: #171b1e !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.boss-role-pick {
+  border-color: #343b42 !important;
+  border-radius: 6px !important;
+  background: #12171b !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.boss-role-pick:hover {
+  border-color: #59636d !important;
+  transform: none !important;
+}
+
+.speedster-modal-close,
+.modal-close {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 4px !important;
+  background: #1c2125 !important;
+  color: var(--wiki-muted) !important;
+  box-shadow: none !important;
+}
+
+/* Modal da Pokédex: composição documental, sem aura verde ou roxa. */
+.pokemon-details-modal__content {
+  --pokemon-detail-primary: #d7b85b !important;
+  --pokemon-detail-primary-rgb: 215, 184, 91 !important;
+  --pokemon-detail-secondary: #9fb4c7 !important;
+  --pokemon-detail-secondary-rgb: 159, 180, 199 !important;
+}
+
+.pokemon-details-modal .modal-content {
+  border: 1px solid #3a4148 !important;
+  border-radius: 8px !important;
+  background: #111519 !important;
+  background-image: none !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55) !important;
+}
+
+.pokemon-details-modal__content::after,
+.pokemon-details-modal__art::before {
+  display: none !important;
+}
+
+.pokemon-details-modal__hero {
+  display: grid !important;
+  grid-template-columns: 180px minmax(0, 1fr) !important;
+  gap: 26px !important;
+  align-items: center !important;
+  min-height: 0 !important;
+  padding: 18px !important;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: #15191d !important;
+}
+
+.pokemon-details-modal__art {
+  width: 180px !important;
+  min-height: 150px !important;
+  border-color: var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: #111519 !important;
+  background-image: none !important;
+}
+
+.pokemon-details-modal__copy {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.pokemon-details-modal__copy h2 {
+  text-align: left !important;
+}
+
+.pokemon-details-modal__section {
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: #15191d !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.pokemon-detail-card,
+.pokemon-average-card,
+.pokemon-evolution-card {
+  border-color: #343b42 !important;
+  border-radius: 5px !important;
+  background: #181d21 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 760px) {
+  .wiki-home__group > div {
+    grid-template-columns: 1fr;
+  }
+
+  .bosses-shell[data-catalog-id="hoopa"] .speedster-grid {
+    grid-auto-rows: auto;
+  }
+
+  .bosses-shell[data-catalog-id="hoopa"] .speedster-card {
+    height: 370px;
+    min-height: 370px;
+  }
+
+  .pokemon-details-modal__hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pokemon-details-modal__art {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .speedster-modal-content--roleboard .speedster-reco-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 300px !important;
+    padding: 20px 16px !important;
+    text-align: center !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-image {
+    order: 1 !important;
+    flex: 0 0 auto !important;
+    width: 78px !important;
+    height: 78px !important;
+    margin: 0 auto !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-score {
+    order: 2 !important;
+    position: static !important;
+    align-self: center !important;
+    margin: 0 !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-body {
+    order: 3 !important;
+    width: 100% !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-align: center !important;
+  }
+
+  .speedster-modal-content--roleboard .speedster-reco-name-wrapper,
+  .speedster-modal-content--roleboard .speedster-reco-chip-list,
+  .speedster-modal-content--roleboard .speedster-reco-chip-row {
+    justify-content: center !important;
+    justify-items: center !important;
+    margin-inline: auto !important;
+  }
+}

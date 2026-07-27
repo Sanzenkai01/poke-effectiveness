@@ -2265,7 +2265,7 @@ const horizonsSilverRunsData = [
           { name: 'Haunter 1', image: '/horizons/haunter-trap.png', types: ['ghost', 'poison'] },
           { name: 'Haunter 2', image: '/horizons/haunter-espelho.png', types: ['ghost', 'poison'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2277,7 +2277,7 @@ const horizonsSilverRunsData = [
           { name: 'Haunter', image: 'pokemons/1gen/haunter.png', types: ['ghost', 'poison'] },
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2290,7 +2290,7 @@ const horizonsSilverRunsData = [
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
           { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2305,7 +2305,7 @@ const horizonsSilverRunsData = [
           { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
           { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2319,7 +2319,7 @@ const horizonsSilverRunsData = [
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
           { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2330,7 +2330,7 @@ const horizonsSilverRunsData = [
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
           { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2342,7 +2342,7 @@ const horizonsSilverRunsData = [
           { name: 'Haunter', image: 'pokemons/1gen/haunter.png', types: ['ghost', 'poison'] },
           { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2356,7 +2356,7 @@ const horizonsSilverRunsData = [
           { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
           { name: 'Gengar', image: 'pokemons/1gen/gengar.png', types: ['ghost', 'poison'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
@@ -2367,20 +2367,20 @@ const horizonsSilverRunsData = [
           { name: 'Yamask', image: 'pokemons/5gen/yamask.png', types: ['ghost'] },
           { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
       {
         id: 'lure-8-mais-1',
         title: 'Lure 8 +1',
-        subtitle: 'Após matar todos os Pokémon e entrar no portal do Terreo, passe pelas armadilhas do Dusknoir e entre no portal da esquerda.\nSuba a escada e entre no portal da esquerda novamente.\nDepois entre no portal da direita.\nApós subir a escada, entre no portal da esquerda no fundo da sala e, por último, no portal de cima.',
+        subtitle: 'Após matar todos os Pokémon entre no Portal ao Sul.\nSuba a escada e entre no portal da esquerda novamente.\nPor último, no portal de cima, que antes estava Bloqueado.',
         mobs: [
           { name: 'Phantump', image: 'pokemons/6gen/phantump.png', types: ['ghost', 'grass'] },
           { name: 'Pumpkaboo', image: 'pokemons/6gen/pumpkaboo.png', types: ['ghost', 'grass'] },
           { name: 'Gourgeist', image: 'pokemons/6gen/gourgeist.png', types: ['ghost', 'grass'] },
           { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] }
         ],
-        effectiveTypes: ['ghost', 'psychic'],
+        effectiveTypes: ['ghost', 'psychic', 'dark'],
         superEffectiveTypes: ['ghost']
       },
     ] ,
@@ -15132,7 +15132,7 @@ function openBossModalV2(speedster, options = {}) {
     return;
   }
 
-  setBossModalLayout(false);
+  setBossModalLayout(true);
   currentBoss = speedster;
   activeBossSearchResult = null;
   const bosses = Array.isArray(speedster.bosses) ? speedster.bosses : [{ name: speedster.name, image: speedster.image }];
@@ -15500,10 +15500,15 @@ function closeModal(options = {}) {
 
 window.closeBossModal = closeModal;
 
+function getBossInteractiveMapQuery(boss) {
+  const bossName = String(boss?.name || '').trim();
+  return bossName.split(/\s*\+\s*/)[0].trim() || bossName;
+}
+
 function showLocationOverlay(src, options = {}) {
   const { boss = null, pushState = true } = options || {};
-  const imageSource = String(src || '').trim();
-  if (!imageSource) return false;
+  const mapPanel = document.getElementById('content-mapa-interativo');
+  if (!mapPanel || !boss) return false;
 
   const previousUrl = isLocationOverlayOpen() && locationOverlayPreviousUrl
     ? locationOverlayPreviousUrl
@@ -15515,14 +15520,44 @@ function showLocationOverlay(src, options = {}) {
   locationOverlayHistoryPushed = false;
   locationOverlayPreviousUrl = previousUrl;
   const overlay = document.createElement('div');
-  overlay.className = 'location-overlay';
+  overlay.className = 'location-overlay location-overlay--interactive-map';
   overlay.tabIndex = -1;
 
-  const img = document.createElement('img');
-  img.src = imageSource;
-  img.alt = 'Localização do chefe';
+  const dialog = document.createElement('section');
+  dialog.className = 'boss-map-dialog';
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-label', `Localização de ${boss.name || 'boss'} no mapa interativo`);
 
-  overlay.appendChild(img);
+  const header = document.createElement('header');
+  header.className = 'boss-map-dialog__header';
+  const heading = document.createElement('div');
+  heading.className = 'boss-map-dialog__heading';
+  const eyebrow = document.createElement('span');
+  eyebrow.textContent = 'Mapa interativo';
+  const title = document.createElement('strong');
+  title.textContent = boss.name || 'Localização do boss';
+  heading.append(eyebrow, title);
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'boss-map-dialog__close';
+  close.setAttribute('aria-label', 'Fechar mapa interativo');
+  close.textContent = '×';
+  close.addEventListener('click', () => closeLocationOverlay());
+  header.append(heading, close);
+
+  const body = document.createElement('div');
+  body.className = 'boss-map-dialog__body';
+  const originalParent = mapPanel.parentNode;
+  const originalNextSibling = mapPanel.nextSibling;
+  const wasHidden = mapPanel.hidden;
+  mapPanel.hidden = false;
+  mapPanel.classList.add('interactive-map-modal-panel');
+  body.appendChild(mapPanel);
+  dialog.append(header, body);
+  overlay.appendChild(dialog);
+  overlay._interactiveMapMount = { mapPanel, originalParent, originalNextSibling, wasHidden };
 
   overlay.addEventListener('click', (event) => {
     if (event.target === overlay) {
@@ -15540,10 +15575,40 @@ function showLocationOverlay(src, options = {}) {
 
   document.body.appendChild(overlay);
   overlay.focus({ preventScroll: true });
+  Promise.resolve(typeof window.initInteractiveMapPage === 'function'
+    ? window.initInteractiveMapPage()
+    : false)
+    .then(() => {
+      if (!overlay.isConnected || typeof window.focusInteractiveMapSearch !== 'function') return false;
+      return window.focusInteractiveMapSearch(getBossInteractiveMapQuery(boss), {
+        category: 'hoopa-portals',
+        zoom: 1.5,
+        image: resolveBossAssetSrc(boss.image || ''),
+        imageAlt: boss.name || ''
+      });
+    })
+    .catch((error) => {
+      console.error('Nao foi possivel abrir o boss no mapa interativo.', error);
+    });
   if (activeLocationBoss) {
     syncBossLocationRouteOnOpen(pushState);
   }
   return true;
+}
+
+function removeLocationOverlayElement(overlay) {
+  if (!overlay) return;
+  const mount = overlay._interactiveMapMount;
+  if (mount?.mapPanel && mount?.originalParent) {
+    mount.mapPanel.classList.remove('interactive-map-modal-panel');
+    mount.mapPanel.hidden = Boolean(mount.wasHidden);
+    if (mount.originalNextSibling && mount.originalNextSibling.parentNode === mount.originalParent) {
+      mount.originalParent.insertBefore(mount.mapPanel, mount.originalNextSibling);
+    } else {
+      mount.originalParent.appendChild(mount.mapPanel);
+    }
+  }
+  overlay.remove();
 }
 
 function closeLocationOverlay(options = {}) {
@@ -15572,7 +15637,7 @@ function closeLocationOverlay(options = {}) {
         locationOverlayHistoryPushed = false;
         activeLocationBoss = null;
         locationOverlayPreviousUrl = '';
-        overlayStillOpen.remove();
+        removeLocationOverlayElement(overlayStillOpen);
         if (!skipRouteRestore) {
           restoreBossRouteUrl(restoreUrl || currentUrl);
         }
@@ -15584,7 +15649,7 @@ function closeLocationOverlay(options = {}) {
   locationOverlayHistoryPushed = false;
   activeLocationBoss = null;
   locationOverlayPreviousUrl = '';
-  existing.remove();
+  removeLocationOverlayElement(existing);
   if (!skipRouteRestore) {
     restoreBossRouteUrl(restoreUrl);
   }

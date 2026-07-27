@@ -2,22 +2,22 @@
     'use strict';
 
     const FLOOR_CONFIG = [
-        { z: 0, label: '+7', w: 4992, h: 6528 },
-        { z: 1, label: '+6', w: 6208, h: 6464 },
-        { z: 2, label: '+5', w: 6208, h: 6592 },
+        { z: 0, label: '+7', w: 6592, h: 6912 },
+        { z: 1, label: '+6', w: 6592, h: 6912 },
+        { z: 2, label: '+5', w: 6720, h: 6912 },
         { z: 3, label: '+4', w: 6720, h: 7296 },
         { z: 4, label: '+3', w: 6720, h: 7296 },
         { z: 5, label: '+2', w: 6720, h: 7296 },
         { z: 6, label: '+1', w: 6720, h: 7296 },
         { z: 7, label: '0', w: 6720, h: 7296 },
-        { z: 8, label: '-1', w: 6656, h: 6656 },
-        { z: 9, label: '-2', w: 4992, h: 6464 },
-        { z: 10, label: '-3', w: 4992, h: 6400 },
-        { z: 11, label: '-4', w: 4992, h: 6400 },
-        { z: 12, label: '-5', w: 4992, h: 6400 },
-        { z: 13, label: '-6', w: 4992, h: 6400 },
-        { z: 14, label: '-7', w: 4992, h: 6400 },
-        { z: 15, label: '-8', w: 4992, h: 6400 }
+        { z: 8, label: '-1', w: 6656, h: 6912 },
+        { z: 9, label: '-2', w: 6592, h: 6912 },
+        { z: 10, label: '-3', w: 6592, h: 6912 },
+        { z: 11, label: '-4', w: 6592, h: 6912 },
+        { z: 12, label: '-5', w: 6592, h: 6912 },
+        { z: 13, label: '-6', w: 6592, h: 6912 },
+        { z: 14, label: '-7', w: 6592, h: 6912 },
+        { z: 15, label: '-8', w: 6592, h: 6912 }
     ];
     const DATA_URLS = {
         categories: 'mapa-interativo/data/categories.json?v=20260724a',
@@ -49,6 +49,25 @@
     const MAX_ZOOM = 3;
     const SHARE_GRID_SIZE = 32;
     const SHARED_VIEW_ZOOM = 0.65;
+    const HOOPA_PORTAL_META = {
+        staraptor: { image: 'pokemons/megas/megastaraptor.png?v=20260725a' },
+        victreebel: { image: 'pokemons/megas/megavictreebel.png' },
+        malamar: { image: 'pokemons/megas/megamalamar.png' },
+        hawlucha: { image: 'pokemons/megas/mega-hawlucha.png' },
+        starmie: { image: 'pokemons/megas/mega-starmie.png' },
+        greninja: { image: 'pokemons/megas/megagreninja.png' },
+        chesnaught: { image: 'pokemons/megas/megachesnaught.png' },
+        delphox: { image: 'pokemons/megas/megadelphox.png' },
+        scolipede: { image: 'pokemons/megas/mega-scolipede.png' },
+        meganium: { image: 'pokemons/megas/mega-meganium.png' },
+        feraligatr: { image: 'pokemons/megas/mega-feraligatr.png' },
+        clefable: { image: 'pokemons/megas/mega-clefable.png' },
+        skarmory: { image: 'pokemons/megas/mega-skarmory.png' },
+        raichu: { image: 'pokemons/1gen/mega-raichu-x.png' },
+        lucario: { image: 'pokemons/megas/mega-lucario.png' },
+        absol: { image: 'pokemons/megas/mega-absol.png' },
+        chimecho: { image: 'pokemons/megas/mega-chimeco.png' }
+    };
     const TYPE_LABELS = {
         bug: 'Bug', dark: 'Dark', dragon: 'Dragon', electric: 'Electric',
         fairy: 'Fairy', fighting: 'Fighting', fire: 'Fire', flying: 'Flying',
@@ -82,6 +101,7 @@
     let translateX = 0;
     let translateY = 0;
     let selectedMarker = null;
+    let selectedMarkerMediaOverride = null;
     let sharedPin = null;
     let placingSharedPin = false;
     let hiddenCategories = new Set();
@@ -128,6 +148,12 @@
         return marker?.category || categories.find(entry => entry.id === marker?.categoryId) || {};
     }
 
+    function getHoopaPortalMeta(marker){
+        if(getCategory(marker)?.slug !== 'hoopa-portals') return null;
+        const portalName = String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, '').trim();
+        return HOOPA_PORTAL_META[normalizePokemonName(portalName)] || null;
+    }
+
     function createCategorySymbol(category, className){
         const symbol = document.createElement('span');
         symbol.className = className;
@@ -140,13 +166,19 @@
         const details = marker?.details && typeof marker.details === 'object'
             ? Object.values(marker.details).join(' ')
             : '';
+        const categorySlug = getCategory(marker)?.slug;
+        const portalBossName = categorySlug === 'hoopa-portals'
+            ? String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, '').trim()
+            : '';
         return normalize([
             marker?.name,
             marker?.nameEn,
             marker?.nameEs,
             marker?.description,
             getCategory(marker)?.label,
-            details
+            getNearestSearchLocationLabel(marker)?.name,
+            details,
+            portalBossName ? `Mega ${portalBossName}` : ''
         ].join(' '));
     }
 
@@ -154,10 +186,28 @@
         const normalizedQuery = normalize(query);
         return markers.filter(marker => {
             const category = getCategory(marker);
-            if(hiddenCategories.has(marker.categoryId)) return false;
+            if(!normalizedQuery && hiddenCategories.has(marker.categoryId)) return false;
             if(marker.floor !== floor && !category.globalFloor) return false;
             return !normalizedQuery || getMarkerSearchText(marker).includes(normalizedQuery);
         });
+    }
+
+    function getSearchResults(){
+        const normalizedQuery = normalize(query);
+        if(!normalizedQuery) return [];
+        return markers.filter(marker => getMarkerSearchText(marker).includes(normalizedQuery));
+    }
+
+    function getSearchResultTitle(marker, locationLabel){
+        if(getCategory(marker)?.slug === 'pokecenter') return 'Pokecenter';
+        const markerName = String(marker?.name || getCategory(marker)?.label || 'Local').trim();
+        const locationName = String(locationLabel?.name || '').trim();
+        if(!locationName) return markerName;
+        return markerName.replace(new RegExp(`\\s*[-–—]\\s*${escapeRegExp(locationName)}\\s*$`, 'i'), '').trim() || markerName;
+    }
+
+    function escapeRegExp(value){
+        return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function getVisibleLabels(){
@@ -181,6 +231,15 @@
 
     function renderCategoryFilters(){
         if(!elements.categories) return;
+        const normalizedQuery = normalize(query);
+        if(elements.filterActions) elements.filterActions.hidden = Boolean(normalizedQuery);
+        elements.categories.classList.toggle('is-search-results', Boolean(normalizedQuery));
+
+        if(normalizedQuery){
+            renderSearchResults();
+            return;
+        }
+
         const fragment = document.createDocumentFragment();
         categories.filter(category => !category.comingSoon).forEach(category => {
             const label = document.createElement('label');
@@ -213,6 +272,50 @@
             label.append(input, swatch, copy);
             fragment.appendChild(label);
         });
+        elements.categories.replaceChildren(fragment);
+    }
+
+    function renderSearchResults(){
+        const results = getSearchResults();
+        const fragment = document.createDocumentFragment();
+
+        results.forEach(marker => {
+            const category = getCategory(marker);
+            const locationLabel = getNearestSearchLocationLabel(marker);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'interactive-map-search-result';
+            button.style.setProperty('--marker-color', category.color || '#65c7ff');
+
+            const swatch = document.createElement('span');
+            swatch.className = 'interactive-map-search-result__swatch';
+            swatch.appendChild(createCategorySymbol(category, 'interactive-map-search-result__symbol'));
+
+            const copy = document.createElement('span');
+            copy.className = 'interactive-map-search-result__copy';
+            const title = document.createElement('strong');
+            title.textContent = getSearchResultTitle(marker, locationLabel);
+            const location = document.createElement('span');
+            location.textContent = locationLabel?.name || `Andar ${getFloorLabel(marker.floor)}`;
+            copy.append(title, location);
+            button.append(swatch, copy);
+            button.setAttribute('aria-label', `Ir para ${title.textContent}, ${location.textContent}`);
+            button.addEventListener('click', () => {
+                if(floor !== marker.floor) setFloor(marker.floor, false);
+                selectedMarker = marker;
+                centerAt(marker.positionX, marker.positionY, 1);
+                renderSelection();
+            });
+            fragment.appendChild(button);
+        });
+
+        if(!results.length){
+            const empty = document.createElement('p');
+            empty.className = 'interactive-map-search-results__empty';
+            empty.textContent = 'Nenhuma ocorrência encontrada.';
+            fragment.appendChild(empty);
+        }
+
         elements.categories.replaceChildren(fragment);
     }
 
@@ -332,6 +435,10 @@
         button.addEventListener('click', event => {
             event.stopPropagation();
             selectedMarker = selectedMarker?.id === marker.id ? null : marker;
+            const portalMeta = selectedMarker ? getHoopaPortalMeta(selectedMarker) : null;
+            selectedMarkerMediaOverride = portalMeta?.image
+                ? { src: portalMeta.image, alt: `Mega ${String(selectedMarker.name || '').replace(/^Hoopa Portal\s*-\s*/i, '')}` }
+                : null;
             renderSelection();
         });
         return button;
@@ -400,7 +507,10 @@
         renderSharedPin();
 
         if(updateSummary && elements.summary){
-            elements.summary.textContent = `${visibleMarkers.length} marcações visíveis`;
+            const searchResultCount = normalize(query) ? getSearchResults().length : 0;
+            elements.summary.textContent = normalize(query)
+                ? `${searchResultCount} ocorrência${searchResultCount === 1 ? '' : 's'} encontrada${searchResultCount === 1 ? '' : 's'}`
+                : `${visibleMarkers.length} marcações visíveis`;
         }
     }
 
@@ -464,6 +574,18 @@
 
     function getNearestLocationLabel(marker){
         return labels.reduce((nearest, label) => {
+            const distance = Math.hypot(
+                Number(label.positionX) - Number(marker?.positionX),
+                Number(label.positionY) - Number(marker?.positionY)
+            );
+            return !nearest || distance < nearest.distance ? { label, distance } : nearest;
+        }, null)?.label || null;
+    }
+
+    function getNearestSearchLocationLabel(marker){
+        const cityLabels = labels.filter(label => normalize(label.type) !== 'region');
+        const searchLabels = cityLabels.length ? cityLabels : labels;
+        return searchLabels.reduce((nearest, label) => {
             const distance = Math.hypot(
                 Number(label.positionX) - Number(marker?.positionX),
                 Number(label.positionY) - Number(marker?.positionY)
@@ -574,6 +696,46 @@
         selectedMarker = requestedMarker;
         centerAt(requestedMarker.positionX, requestedMarker.positionY, 0.65);
         renderDetails();
+        return true;
+    }
+
+    async function focusSearchTarget(searchValue, options = {}){
+        await initialize();
+        const requestedQuery = String(searchValue || '').trim();
+        if(!requestedQuery || !elements.search) return false;
+
+        elements.search.value = requestedQuery;
+        query = requestedQuery;
+        const normalizedQuery = normalize(requestedQuery);
+        const results = getSearchResults();
+        const preferredCategory = String(options.category || '').trim();
+        const target = results.find(marker => {
+            if(preferredCategory && getCategory(marker)?.slug !== preferredCategory) return false;
+            const portalBossName = String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, '').trim();
+            return normalize(`Mega ${portalBossName}`) === normalizedQuery;
+        }) || results.find(marker => !preferredCategory || getCategory(marker)?.slug === preferredCategory)
+          || results[0];
+
+        if(!target){
+            selectedMarker = null;
+            selectedMarkerMediaOverride = null;
+            render();
+            return false;
+        }
+
+        if(floor !== target.floor) setFloor(target.floor, false);
+        selectedMarker = target;
+        selectedMarkerMediaOverride = options.image
+            ? { src: String(options.image), alt: String(options.imageAlt || requestedQuery) }
+            : null;
+        await waitForViewportLayout();
+        centerAt(target.positionX, target.positionY, Number(options.zoom) || 1.5);
+        if(window.matchMedia('(max-width: 520px)').matches){
+            const viewportRect = elements.viewport.getBoundingClientRect();
+            translateY -= viewportRect.height * 0.24;
+            updateTransform();
+        }
+        render();
         return true;
     }
 
@@ -751,12 +913,16 @@
 
         const media = document.createElement('div');
         media.className = 'interactive-map-detail__media';
-        if(selectedMarker.icon){
+        const portalMeta = getHoopaPortalMeta(selectedMarker);
+        const detailImageSource = String(selectedMarkerMediaOverride?.src || portalMeta?.image || selectedMarker.icon || '').trim();
+        if(detailImageSource){
             const image = document.createElement('img');
-            image.src = selectedMarker.icon.startsWith('/uploads/')
-                ? `https://pstory.mapdex.online${selectedMarker.icon}`
-                : selectedMarker.icon;
-            image.alt = selectedMarker.name || '';
+            image.src = detailImageSource.startsWith('/uploads/')
+                ? `https://pstory.mapdex.online${detailImageSource}`
+                : detailImageSource;
+            image.alt = selectedMarkerMediaOverride?.alt
+                || (portalMeta ? `Mega ${String(selectedMarker.name || '').replace(/^Hoopa Portal\s*-\s*/i, '')}` : selectedMarker.name)
+                || '';
             media.appendChild(image);
         }
 
@@ -873,13 +1039,20 @@
 
     function resetView(){
         const config = getFloor();
+        const palletLabel = floor === 7
+            ? labels.find(label => normalize(label.name) === 'pallet')
+            : null;
+        if(palletLabel){
+            centerAt(palletLabel.positionX, palletLabel.positionY, 1);
+            return;
+        }
         const viewportRect = elements.viewport.getBoundingClientRect();
         const fitScale = Math.min(
             Math.max(0.06, (viewportRect.width - 24) / config.w),
             Math.max(0.06, (viewportRect.height - 24) / config.h)
         );
-        const initialX = floor === 7 ? 1336 : config.w / 2;
-        const initialY = floor === 7 ? 5985 : config.h / 2;
+        const initialX = config.w / 2;
+        const initialY = config.h / 2;
         centerAt(initialX, initialY, Math.min(0.22, fitScale * 2.15));
     }
 
@@ -1073,6 +1246,7 @@
     function cacheElements(){
         Object.assign(elements, {
             categories: byId('interactive-map-categories'),
+            filterActions: document.querySelector('#content-mapa-interativo .interactive-map-filter-actions'),
             search: byId('interactive-map-search'),
             clearSearch: byId('interactive-map-search-clear'),
             showAll: byId('interactive-map-show-all'),
@@ -1154,6 +1328,7 @@
 
     window.initInteractiveMapPage = initialize;
     window.focusInteractiveMapRoute = focusRequestedMarker;
+    window.focusInteractiveMapSearch = focusSearchTarget;
     window.refreshInteractiveMapPage = function(){
         if(!initialized) return initialize();
         requestAnimationFrame(() => {

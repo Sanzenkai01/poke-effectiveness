@@ -7,9 +7,6 @@
     <title>Poke Utilities</title>
     <base href="/">
     <link rel="icon" type="image/x-icon" href="icons-type/favicon.ico">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <script>
       (function(){
         try {
@@ -26,13 +23,18 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260723e">
-  <link rel="stylesheet" href="mapa-interativo/mapa-interativo.css?v=20260724q">
+  <link rel="stylesheet" href="styles.css?v=20260727b">
+  <link rel="stylesheet" href="mapa-interativo/mapa-interativo.css?v=20260725g">
+  <link rel="stylesheet" href="wiki-theme.css?v=20260725zj">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
     <header class="header">
       <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">&#9776;</button>
+      <button id="home-btn" class="wiki-topbar__brand" aria-label="Voltar ao início" title="Início">
+        <img src="icons-type/favicon.ico" alt="" aria-hidden="true" />
+        <span>Poke Utilities</span>
+      </button>
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
       <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
         <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
@@ -41,38 +43,43 @@
       <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
       <!-- Páscoa button removed -->
       <div class="header-title-cluster">
-        <div class="header-visit-counter site-visit-counter" data-visit-counter data-visit-counter-surface="header" aria-live="polite">
-          <span class="header-visit-counter__badge" aria-hidden="true">
-            <span class="header-visit-counter__badge-core"></span>
-          </span>
-          <span class="site-visit-counter__label" hidden></span>
-          <span class="site-visit-counter__values">Carregando visitas...</span>
-        </div>
         <h1 id="page-title">Poke Utilities</h1>
+        <span class="header-context">Base de conhecimento PStory</span>
       </div>
-      <button id="vision-toggle-btn" aria-label="Filtros para daltonismo" title="Filtros para daltonismo" aria-haspopup="dialog" aria-expanded="false">
-        <svg class="header-tool-icon header-tool-icon--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="7.25" cy="12" r="3.25"></circle>
-          <circle cx="16.75" cy="12" r="3.25"></circle>
-          <path d="M10.5 12h3"></path>
-          <path d="M4 11.1 2.4 9.9"></path>
-          <path d="m20 11.1 1.6-1.2"></path>
-        </svg>
-      </button>
-      <button id="cursor-toggle-btn" aria-label="Usar cursor Pikachu" title="Usar cursor Pikachu">
-        <img class="header-tool-icon" src="mouse.png" alt="" aria-hidden="true" decoding="async" />
-      </button>
-      <button id="home-btn" aria-label="Voltar ao início" title="Início" style="font-size:1.2rem;">🏠</button>
-      <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
-      <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
+      <div id="site-global-search" class="site-global-search" role="search">
+        <label class="visually-hidden" for="site-global-search-input">Buscar no site</label>
+        <span class="site-global-search__icon" aria-hidden="true"></span>
+        <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Pesquisar guias e ferramentas" autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
+        <div id="site-global-search-results" class="site-global-search__results" role="listbox" aria-label="Resultados da busca" hidden></div>
+      </div>
+      <div class="header-visit-counter site-visit-counter" data-visit-counter data-visit-counter-surface="header" aria-live="polite">
+        <span class="header-visit-counter__badge" aria-hidden="true">
+          <span class="header-visit-counter__badge-core"></span>
+        </span>
+        <span class="site-visit-counter__label" hidden></span>
+        <span class="site-visit-counter__values">Carregando visitas...</span>
+      </div>
+      <div class="wiki-topbar__status">
+        <span class="wiki-topbar__status-label">Rattata</span>
+        <div id="site-rat-summary" class="site-global-search__rat streamer-rat-summary" aria-live="polite"></div>
+      </div>
+      <div class="wiki-topbar__actions">
+        <button id="vision-toggle-btn" aria-label="Filtros para daltonismo" title="Filtros para daltonismo" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="header-tool-icon header-tool-icon--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="7.25" cy="12" r="3.25"></circle>
+            <circle cx="16.75" cy="12" r="3.25"></circle>
+            <path d="M10.5 12h3"></path>
+            <path d="M4 11.1 2.4 9.9"></path>
+            <path d="m20 11.1 1.6-1.2"></path>
+          </svg>
+        </button>
+        <button id="cursor-toggle-btn" aria-label="Usar cursor Pikachu" title="Usar cursor Pikachu">
+          <img class="header-tool-icon" src="mouse.png" alt="" aria-hidden="true" decoding="async" />
+        </button>
+        <button id="share-btn" aria-label="Compartilhar link" title="Compartilhar" style="font-size:1.2rem;">🔗</button>
+        <button id="matrix-btn" aria-label="Mostrar tabela completa" title="Tabela" style="font-size:1.2rem;">📋</button>
+      </div>
     </header>
-    <div id="site-global-search" class="site-global-search" role="search">
-      <label class="visually-hidden" for="site-global-search-input">Buscar no site</label>
-      <span class="site-global-search__icon" aria-hidden="true"></span>
-      <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Buscar no site..." autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
-      <div id="site-rat-summary" class="site-global-search__rat streamer-rat-summary" aria-live="polite"></div>
-      <div id="site-global-search-results" class="site-global-search__results" role="listbox" aria-label="Resultados da busca" hidden></div>
-    </div>
     <nav class="tabs" role="tablist" aria-label="Seções principais">
       <button id="tab-effectiveness" class="tab active" role="tab" aria-selected="true" aria-controls="content-effectiveness">Tipos</button>
       <button id="tab-fossils" class="tab" role="tab" aria-selected="false" aria-controls="content-fossils">Fósseis</button>
@@ -84,6 +91,128 @@
     </nav>
 
     <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden>
+      <div class="wiki-home">
+        <header class="wiki-home__masthead">
+          <div>
+            <span class="wiki-home__overline">Base de conhecimento da comunidade</span>
+            <h2 id="home-wiki-title">Poke Utilities</h2>
+            <p>Guias objetivos, ferramentas e referências para consultar enquanto você joga PStory.</p>
+          </div>
+          <div class="wiki-home__masthead-actions">
+            <button type="button" data-home-target="pokemons">Abrir Pokédex</button>
+            <button type="button" data-home-target="bosses">Consultar bosses</button>
+          </div>
+        </header>
+
+        <div class="wiki-home__layout">
+          <div class="wiki-home__directory" aria-labelledby="wiki-directory-title">
+            <div class="wiki-home__section-head">
+              <div>
+                <span>Índice</span>
+                <h3 id="wiki-directory-title">Explore a Wiki</h3>
+              </div>
+              <p>Escolha uma área para começar.</p>
+            </div>
+
+            <div class="wiki-home__groups">
+              <section class="wiki-home__group">
+                <span class="wiki-home__group-index">01</span>
+                <h4>Bosses</h4>
+                <p>Recomendações, rotas e planejamento.</p>
+                <div>
+                  <button type="button" data-home-target="bosses" data-boss-mode="hoopa">Hoopa Portais</button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="champion">Champion Path</button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="special">Ranger Bosses</button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="planner">Planejador</button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="horizons">Horizons</button>
+                </div>
+              </section>
+              <section class="wiki-home__group">
+                <span class="wiki-home__group-index">02</span>
+                <h4>Quests</h4>
+                <p>Progressão, semanais e sistemas de missão.</p>
+                <div>
+                  <button type="button" data-home-target="rotom-phone">Rotom Phone <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="police-operation">Police Operation <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="mainquest">Main Quest</button>
+                  <button type="button" data-home-target="bosses" data-boss-mode="mew2">Mewtwo</button>
+                  <button type="button" data-home-target="slowpoke-well">Slowpoke Well <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                </div>
+              </section>
+              <section class="wiki-home__group">
+                <span class="wiki-home__group-index">03</span>
+                <h4>Sistemas</h4>
+                <p>Captura, composição e atividades do jogo.</p>
+                <div>
+                  <button type="button" data-home-target="catch">Catch</button>
+                  <button type="button" data-home-target="team-builder">Team Builder</button>
+                  <button type="button" data-home-target="hunt-builder">Hunt Builder</button>
+                  <button type="button" data-home-target="fusao-de-held">Fusão de Held <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="profissoes">Profissões <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="bosses-info">Bosses <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="fossils">Fósseis</button>
+                  <button type="button" data-home-target="maniacs">Maniacs</button>
+                </div>
+              </section>
+              <section class="wiki-home__group">
+                <span class="wiki-home__group-index">04</span>
+                <h4>Utilidades</h4>
+                <p>Dados rápidos para decisões durante o jogo.</p>
+                <div>
+                  <button type="button" data-home-target="effectiveness">Tipos</button>
+                  <button type="button" data-home-target="calculator">Treinamento</button>
+                  <button type="button" data-home-target="boost">Calculadora de Boost</button>
+                  <button type="button" data-home-target="pokemons">Pokémons <span class="wiki-home__link-badge">99%</span></button>
+                  <button type="button" data-home-target="mapa-interativo">Mapa Interativo <span class="wiki-home__link-badge">New &#x1F525;</span></button>
+                  <button type="button" data-home-target="times">Times</button>
+                </div>
+              </section>
+              <section class="wiki-home__group">
+                <span class="wiki-home__group-index">05</span>
+                <h4>Comunidade</h4>
+                <p>Vídeos e transmissões da comunidade.</p>
+                <div>
+                  <button type="button" data-home-target="youtube">YouTube</button>
+                  <button type="button" data-home-target="streamers">Streamers</button>
+                  <a href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">Entrar no Discord</a>
+                </div>
+              </section>
+            </div>
+
+            <section class="wiki-home__shortcuts" aria-labelledby="wiki-shortcuts-title">
+              <div class="wiki-home__section-head">
+                <div>
+                  <span>Ferramentas</span>
+                  <h3 id="wiki-shortcuts-title">Acesso direto</h3>
+                </div>
+              </div>
+              <div>
+                <button type="button" data-nav-action="commands" data-nav-url="/comandos"><strong>Comandos do jogo</strong><span>Atalhos e comandos úteis</span></button>
+                <button type="button" data-nav-action="elemental-balls" data-nav-url="/pokebolas"><strong>Pokébolas</strong><span>Tipos, receitas e usos</span></button>
+                <button type="button" data-nav-action="respawns" data-nav-url="/mapas"><strong>Mapas e respawns</strong><span>Locais e pontos de caça</span></button>
+                <button type="button" data-nav-action="fishing" data-nav-url="/pescaria"><strong>Pescaria</strong><span>Peixes, locais e progressão</span></button>
+              </div>
+            </section>
+          </div>
+
+          <aside class="wiki-home__aside">
+            <section>
+              <span class="wiki-home__aside-label">Comece aqui</span>
+              <h3>Links essenciais</h3>
+              <button type="button" data-home-target="bosses">Hoopa Portais</button>
+              <button type="button" data-home-target="pokemons">Pokémons</button>
+              <button type="button" data-home-target="team-builder">Team Builder</button>
+              <button type="button" data-home-target="catch">Catch</button>
+              <button type="button" data-home-target="streamers">Streamers</button>
+            </section>
+            <section>
+              <span class="wiki-home__aside-label">Sobre</span>
+              <p>Conteudo feito por player de Pstory para player de Pstory, nenhuma ligação com a Staff.</p>
+              <a href="https://discord.com/invite/Gn2x6F5vB6" target="_blank" rel="noopener noreferrer">Entrar no Discord</a>
+            </section>
+          </aside>
+        </div>
+      </div>
       <div class="home-landing__shell">
         <div class="home-landing__hero">
           <div class="home-landing__copy">
@@ -394,6 +523,11 @@
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
                 <span>Pokémons</span>
                 <span class="sidebar-sublink__badge" aria-hidden="true">99%</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="mapa-interativo">
+                <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
+                <span>Mapa Interativo</span>
+                <span class="sidebar-sublink__badge" aria-hidden="true">New &#x1F525;</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="times">
                 <span class="sidebar-sublink__bullet" aria-hidden="true"></span>
@@ -5894,7 +6028,7 @@
         </header>
 
         <div class="interactive-map-layout">
-          <aside class="interactive-map-sidebar" aria-label="Filtros do mapa">
+          <aside class="interactive-map-sidebar" aria-label="Pesquisa e filtros do mapa">
             <div class="interactive-map-search" role="search">
               <label class="visually-hidden" for="interactive-map-search">Pesquisar no mapa</label>
               <input id="interactive-map-search" type="search" placeholder="Pokémon, cidade, NPC..." autocomplete="off">
@@ -5985,9 +6119,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="mapa-interativo/mapa-interativo.js?v=20260724za" defer></script>
-    <script src="script.js?v=20260724g" defer></script>
+    <script src="mapa-interativo/mapa-interativo.js?v=20260725i" defer></script>
+    <script src="script.js?v=20260725f" defer></script>
 </body>
 </html>
-
 
