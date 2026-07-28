@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-07-28T19:50:38.966Z",
+  "updatedAt": "2026-07-28T20:09:52.665Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-28T19:50:29.003Z",
-    "endedAt": "2026-07-28T19:50:38.966Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-28T20:00:51.823Z",
+    "endedAt": "2026-07-28T20:09:52.665Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "eaisantinho",
       "karlin_nara",
       "uguettolitz",
       "hyoogplays",
@@ -15,6 +16,7 @@
       "ogordonha",
       "teylera",
       "vivihbecker",
+      "zenithstory_gaming",
       "adivorcio",
       "afdexter",
       "anaodapxg",
@@ -29,7 +31,6 @@
       "corujashady",
       "dragonslayerpiva",
       "dravokh",
-      "eaisantinho",
       "eddiegomes",
       "engrafff",
       "enriqfmz",
@@ -80,30 +81,38 @@
       "suximy",
       "teffox4",
       "xvidrinho",
-      "xxryuutox",
-      "zenithstory_gaming"
+      "xxryuutox"
     ],
     "pstoryDropChannels": [
+      "eaisantinho",
       "karlin_nara",
       "uguettolitz"
     ],
     "observedChannels": [
-      "karlin_nara"
+      "eaisantinho"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "eaisantinho"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "eaisantinho",
+        "messageAt": 1785269392569,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "karlin_nara",
+        "channel": "eaisantinho",
         "kind": "rattata-message",
-        "messageAt": 1785268238885,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1785269392569,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "karlin_nara",
-        "kind": "escape",
-        "messageAt": 1785268238885,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "eaisantinho",
+        "kind": "spawn",
+        "messageAt": 1785269392569,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -153,16 +162,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "karlin_nara",
-    "lastMessageAt": 1785268238885,
-    "expectedNextAt": 1785269438885,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-28T17:40:18Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1785268238966,
-    "persistedAt": 1785268238966
+    "channel": "eaisantinho",
+    "lastMessageAt": 1785269392569,
+    "expectedNextAt": 1785270652569,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-28T19:58:12Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1785269392664,
+    "persistedAt": 1785269392664
   },
   "timers": {
+    "eaisantinho": {
+      "channel": "eaisantinho",
+      "lastMessageAt": 1785269392569,
+      "expectedNextAt": 1785270652569,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-28T19:58:12Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1785269392664,
+      "persistedAt": 1785269392664
+    },
     "karlin_nara": {
       "channel": "karlin_nara",
       "lastMessageAt": 1785268238885,
@@ -171,7 +190,7 @@
       "streamStartedAt": "2026-07-28T17:40:18Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785268238966,
-      "persistedAt": 1785268238966
+      "persistedAt": 1785268851823
     },
     "gordallink": {
       "channel": "gordallink",
@@ -181,7 +200,7 @@
       "streamStartedAt": "2026-07-28T17:17:22Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785267018088,
-      "persistedAt": 1785268229003
+      "persistedAt": 1785268851823
     }
   }
 }
