@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-07-28T17:48:57.832Z",
+  "updatedAt": "2026-07-28T18:08:10.399Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-28T17:48:56.103Z",
-    "endedAt": "2026-07-28T17:48:57.832Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-07-28T17:59:24.732Z",
+    "endedAt": "2026-07-28T18:08:10.399Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "gordallink",
       "karlin_nara",
@@ -89,22 +89,30 @@
       "uguettolitz"
     ],
     "observedChannels": [
-      "karlin_nara"
+      "gordallink"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "gordallink"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "gordallink",
+        "messageAt": 1785262090301,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "karlin_nara",
+        "channel": "gordallink",
         "kind": "rattata-message",
-        "messageAt": 1785260937751,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1785262090301,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "karlin_nara",
-        "kind": "escape",
-        "messageAt": 1785260937751,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "gordallink",
+        "kind": "spawn",
+        "messageAt": 1785262090301,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -154,16 +162,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "karlin_nara",
-    "lastMessageAt": 1785260937751,
-    "expectedNextAt": 1785262137751,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-07-28T17:40:18Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1785260937831,
-    "persistedAt": 1785260937831
+    "channel": "gordallink",
+    "lastMessageAt": 1785262090301,
+    "expectedNextAt": 1785263350301,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-07-28T17:17:22Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1785262090398,
+    "persistedAt": 1785262090398
   },
   "timers": {
+    "gordallink": {
+      "channel": "gordallink",
+      "lastMessageAt": 1785262090301,
+      "expectedNextAt": 1785263350301,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-07-28T17:17:22Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1785262090398,
+      "persistedAt": 1785262090398
+    },
     "karlin_nara": {
       "channel": "karlin_nara",
       "lastMessageAt": 1785260937751,
@@ -172,27 +190,7 @@
       "streamStartedAt": "2026-07-28T17:40:18Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785260937831,
-      "persistedAt": 1785260937831
-    },
-    "gordallink": {
-      "channel": "gordallink",
-      "lastMessageAt": 1785260873450,
-      "expectedNextAt": 1785262133450,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-07-28T17:17:22Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1785260873562,
-      "persistedAt": 1785260936103
-    },
-    "uguettolitz": {
-      "channel": "uguettolitz",
-      "lastMessageAt": 1785258446113,
-      "expectedNextAt": 1785259706113,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-07-28T15:06:31Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1785258446208,
-      "persistedAt": 1785260936103
+      "persistedAt": 1785261564732
     }
   }
 }
