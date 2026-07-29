@@ -1,15 +1,14 @@
 {
-  "updatedAt": "2026-07-29T16:01:39.832Z",
+  "updatedAt": "2026-07-29T16:02:39.847Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-07-29T15:42:31.957Z",
-    "endedAt": "2026-07-29T16:01:39.832Z",
-    "reason": "rat-found",
+    "startedAt": "2026-07-29T16:02:12.888Z",
+    "endedAt": "2026-07-29T16:02:39.847Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "callmevitao_",
-      "indypereira",
       "hyoogplays",
       "imfoxyy",
       "ogordonha",
@@ -37,6 +36,7 @@
       "gokutibia",
       "gordallink",
       "guixprox",
+      "indypereira",
       "itscaim",
       "jackpist0la",
       "kaminarifoxy",
@@ -84,40 +84,25 @@
       "zenithstory_gaming"
     ],
     "pstoryDropChannels": [
-      "callmevitao_",
-      "indypereira"
+      "callmevitao_"
     ],
     "observedChannels": [
       "callmevitao_"
     ],
-    "observedSpawnChannels": [
-      "callmevitao_"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "callmevitao_",
-        "messageAt": 1785340899729,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "callmevitao_",
         "kind": "rattata-message",
-        "messageAt": 1785340331908,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @fdnn1... 💨"
+        "messageAt": 1785340959731,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "callmevitao_",
-        "kind": "rattata-message",
-        "messageAt": 1785340899729,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      },
-      {
-        "channel": "callmevitao_",
-        "kind": "spawn",
-        "messageAt": 1785340899729,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1785340959731,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -168,24 +153,24 @@
   },
   "latest": {
     "channel": "callmevitao_",
-    "lastMessageAt": 1785340899729,
-    "expectedNextAt": 1785342159729,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1785340959731,
+    "expectedNextAt": 1785342159731,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-07-29T15:16:07Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1785340899832,
-    "persistedAt": 1785340899832
+    "source": "github-action-chat-escape",
+    "updatedAt": 1785340959846,
+    "persistedAt": 1785340959846
   },
   "timers": {
     "callmevitao_": {
       "channel": "callmevitao_",
-      "lastMessageAt": 1785340899729,
-      "expectedNextAt": 1785342159729,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1785340959731,
+      "expectedNextAt": 1785342159731,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-07-29T15:16:07Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1785340899832,
-      "persistedAt": 1785340899832
+      "source": "github-action-chat-escape",
+      "updatedAt": 1785340959846,
+      "persistedAt": 1785340959846
     },
     "indypereira": {
       "channel": "indypereira",
@@ -195,7 +180,7 @@
       "streamStartedAt": "2026-07-29T11:57:12Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1785339683694,
-      "persistedAt": 1785339751957
+      "persistedAt": 1785340932888
     }
   }
 }
