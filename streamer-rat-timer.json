@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-08-01T11:11:28.246Z",
+  "updatedAt": "2026-08-01T11:12:31.278Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-01T10:47:27.469Z",
-    "endedAt": "2026-08-01T11:11:28.246Z",
-    "reason": "timeout",
+    "startedAt": "2026-08-01T11:11:57.163Z",
+    "endedAt": "2026-08-01T11:12:31.277Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "lucasnaikan",
       "ogordonha",
       "adivorcio",
       "armster91",
@@ -23,7 +24,6 @@
       "jackpist0la",
       "karlin_nara",
       "linikerquadrado2",
-      "lucasnaikan",
       "manoblaze",
       "mataradz8",
       "nazgulplayer",
@@ -34,11 +34,28 @@
       "uguettolitz",
       "vivihbecker"
     ],
-    "pstoryDropChannels": [],
-    "observedChannels": [],
+    "pstoryDropChannels": [
+      "lucasnaikan"
+    ],
+    "observedChannels": [
+      "lucasnaikan"
+    ],
     "observedSpawnChannels": [],
     "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedRatMessages": [
+      {
+        "channel": "lucasnaikan",
+        "kind": "rattata-message",
+        "messageAt": 1785582751198,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      },
+      {
+        "channel": "lucasnaikan",
+        "kind": "escape",
+        "messageAt": 1785582751198,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -85,6 +102,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "lucasnaikan",
+    "lastMessageAt": 1785582751198,
+    "expectedNextAt": 1785583951198,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-08-01T10:52:13Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1785582751277,
+    "persistedAt": 1785582751277
+  },
+  "timers": {
+    "lucasnaikan": {
+      "channel": "lucasnaikan",
+      "lastMessageAt": 1785582751198,
+      "expectedNextAt": 1785583951198,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-08-01T10:52:13Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1785582751277,
+      "persistedAt": 1785582751277
+    }
+  }
 }
