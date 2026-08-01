@@ -1202,7 +1202,7 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     honedge: { naturalElements: ['steel', 'ghost'], moveset: ['steel'] },
     hydreigon: { naturalElements: ['dark', 'dragon'], moveset: ['dragon'] },
     kingambit: { naturalElements: ['dark', 'steel'], moveset: ['steel'] },
-    'kommo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['dragon'] },
+    'kommo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['fighting'] },
     metagross: { naturalElements: ['steel', 'psychic'], moveset: ['steel'] },
     palafin: { naturalElements: ['water'], moveset: ['water'] },
     porygon: { naturalElements: ['normal'], moveset: ['normal'] },
