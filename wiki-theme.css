@@ -24,7 +24,8 @@
   --wiki-header: 58px;
   --wiki-radius: 6px;
   --wiki-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --wiki-reading: 1180px;
+  --wiki-reading: 100%;
+  --layout-page-max: 100%;
   color-scheme: dark;
 }
 
@@ -3209,7 +3210,9 @@ body.home-view > main > .home-landing {
 }
 
 .pokemon-details-modal__copy h2 {
-  text-align: left !important;
+  width: 100% !important;
+  justify-self: center !important;
+  text-align: center !important;
 }
 
 .pokemon-details-modal__section {
@@ -3293,5 +3296,39 @@ body.home-view > main > .home-landing {
     justify-content: center !important;
     justify-items: center !important;
     margin-inline: auto !important;
+  }
+}
+
+/* O conteudo acompanha toda a area util, preservando apenas o padding da pagina. */
+.app-shell,
+.app-main {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.app-shell {
+  margin-inline: 0 !important;
+}
+
+.app-main > [id^="content-"]:not([hidden]),
+.app-main > section:not([hidden]),
+.app-main > [id^="content-"]:not([hidden]) > :where(.card, .pokemon-hub, [class*="-shell"]),
+body.home-view > main > .home-landing {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+@media (min-width: 981px) {
+  .team-builder-slots,
+  .hunt-builder-team {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .team-builder-slots > *,
+  .hunt-builder-team > * {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
   }
 }

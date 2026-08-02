@@ -6609,6 +6609,16 @@ function getPokemonBossUsageRoleKeyForSubject(subject) {
     || (roleboardRoleOrder.includes(rawRoleKey) ? rawRoleKey : '');
 }
 
+function isPokemonBossUsageRoleAllowedForCatalog(catalogOrMode, roleKey) {
+  const mode = typeof catalogOrMode === 'string'
+    ? catalogOrMode
+    : catalogOrMode?.id;
+  const normalizedMode = String(mode || '').trim().toLowerCase();
+  const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
+
+  return normalizedMode !== 'hoopa' || !['tank', 'support'].includes(normalizedRoleKey);
+}
+
 function getPokemonBossUsageClanKeyForSubject(subject) {
   if (!subject || typeof subject !== 'object') return '';
 
@@ -6916,6 +6926,7 @@ function collectPokemonBossUsagesFromCatalogSubject(usages, seen, catalog, boss,
   const subjectClanKey = getPokemonBossUsageClanKeyForSubject(subject);
   const basePick = buildPokemonBossUsagePickFromSubject(subject);
   if (!roleKey || !basePick) return;
+  if (!isPokemonBossUsageRoleAllowedForCatalog(catalog, roleKey)) return;
   if (subjectClanKey && subjectClanKey !== normalizePlannerClanKey(clanKey)) return;
 
   if (clanData?.roles) {
@@ -6941,12 +6952,14 @@ function collectPokemonBossUsagesFromCatalogSubject(usages, seen, catalog, boss,
 function getPokemonBossUsages(subject) {
   const matchKeys = getPokemonBossUsageMatchKeys(subject);
   if (!matchKeys.size) return [];
+  const subjectRoleKey = getPokemonBossUsageRoleKeyForSubject(subject);
 
   const usages = [];
   const seen = new Map();
 
   pokemonBossUsageCatalogIds.forEach((catalogId) => {
     const catalog = bossCatalogs[catalogId];
+    if (!isPokemonBossUsageRoleAllowedForCatalog(catalog, subjectRoleKey)) return;
     (catalog?.data || []).forEach((boss) => {
       if (boss?.comingSoon) return;
 

@@ -9,16 +9,16 @@ const routes = [
     path: '/',
     label: 'root',
     checks: [
-      { pattern: /id="home-hero-title"/i, description: 'home hero title' },
-      { pattern: /class="dark home-view"/i, description: 'standalone home body class' }
+      { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' }
     ]
   },
   {
     path: '/home',
     label: 'home',
     checks: [
-      { pattern: /id="home-hero-title"/i, description: 'home hero title' },
-      { pattern: /class="dark home-view"/i, description: 'standalone home body class' }
+      { pattern: /data-active-tab="pokemons"/i, description: 'legacy home redirects to pokemons' },
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' }
     ]
   },
   {
@@ -64,7 +64,7 @@ const routes = [
     label: 'pokemons',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'legacy unified pokemon grid' }
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'canonical pokemon grid' }
     ]
   },
   {

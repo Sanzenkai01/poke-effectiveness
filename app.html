@@ -23,15 +23,15 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260727b">
-  <link rel="stylesheet" href="mapa-interativo/mapa-interativo.css?v=20260725g">
-  <link rel="stylesheet" href="wiki-theme.css?v=20260725zj">
+  <link rel="stylesheet" href="styles.css?v=20260801e">
+  <link rel="stylesheet" href="mapa-interativo/mapa-interativo.css?v=20260801b">
+  <link rel="stylesheet" href="wiki-theme.css?v=20260801e">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
     <header class="header">
       <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">&#9776;</button>
-      <button id="home-btn" class="wiki-topbar__brand" aria-label="Voltar ao início" title="Início">
+      <button id="home-btn" class="wiki-topbar__brand" aria-label="Abrir Pokédex" title="Pokédex">
         <img src="icons-type/favicon.ico" alt="" aria-hidden="true" />
         <span>Poke Utilities</span>
       </button>
@@ -90,7 +90,7 @@
       <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">Vídeos</button>
     </nav>
 
-    <section id="content-home" class="home-landing" aria-labelledby="home-hero-title" hidden>
+    <template id="legacy-home-template">
       <div class="wiki-home">
         <header class="wiki-home__masthead">
           <div>
@@ -326,11 +326,11 @@
           </button>
         </div>
       </div>
-    </section>
+    </template>
 
     <div class="app-shell">
       <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site">
-        <button class="sidebar-home" type="button" data-nav-target="home">
+        <button class="sidebar-home" type="button" data-nav-target="pokemons" aria-label="Abrir Pokédex">
           <span class="sidebar-home__brand-mark">
             <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async" />
           </span>
@@ -6119,8 +6119,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="mapa-interativo/mapa-interativo.js?v=20260725i" defer></script>
-    <script src="script.js?v=20260725f" defer></script>
+    <script src="mapa-interativo/mapa-interativo.js?v=20260801a" defer></script>
+    <script src="script.js?v=20260801g" defer></script>
 </body>
 </html>
 

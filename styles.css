@@ -19134,9 +19134,11 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 /* Reduzir tamanho do titulo do modal para selos ficarem mais perto, como subtitulo */
 .pokemon-details-modal__copy h2 {
+  width: 100%;
   font-size: 1.6rem;
   line-height: 1.05;
   margin: 0;
+  text-align: center;
 }
 
 /* Garantir que o bloco de texto alinhe itens ao topo para linhas nao esticarem com a coluna de arte */
@@ -20080,6 +20082,57 @@ button.pokemon-evolution-card:focus-visible {
   background: rgba(255, 74, 74, 0.24);
   color: #ffd6d6;
   outline: none;
+}
+
+.team-builder-slot__tank-toggle {
+  position: absolute;
+  top: 0.5rem;
+  right: 4rem;
+  z-index: 7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid rgba(117, 213, 255, 0.44);
+  border-radius: 50%;
+  background: rgba(117, 213, 255, 0.16);
+  color: #dcefff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+button.team-builder-slot__tank-toggle {
+  border-radius: 50%;
+}
+
+.team-builder-slot:has(> .team-builder-passive-badge) > .team-builder-slot__tank-toggle,
+.team-builder-slot:has(> .team-builder-hunts-badge) > .team-builder-slot__tank-toggle {
+  right: 5.75rem;
+}
+
+.team-builder-slot:has(> .team-builder-passive-badge):has(> .team-builder-hunts-badge) > .team-builder-slot__tank-toggle {
+  right: 7.5rem;
+}
+
+.team-builder-slot__tank-toggle:hover,
+.team-builder-slot__tank-toggle:focus-visible {
+  border-color: rgba(117, 213, 255, 0.72);
+  background: rgba(117, 213, 255, 0.24);
+  color: #ffffff;
+  outline: none;
+}
+
+.team-builder-slot__tank-toggle.is-active {
+  border-color: rgba(117, 213, 255, 0.72);
+  background: rgba(117, 213, 255, 0.24);
+  color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(117, 213, 255, 0.1);
 }
 
 .team-builder-filters {

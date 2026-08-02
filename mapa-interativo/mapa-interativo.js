@@ -2,27 +2,27 @@
     'use strict';
 
     const FLOOR_CONFIG = [
-        { z: 0, label: '+7', w: 6592, h: 6912 },
-        { z: 1, label: '+6', w: 6592, h: 6912 },
-        { z: 2, label: '+5', w: 6720, h: 6912 },
-        { z: 3, label: '+4', w: 6720, h: 7296 },
-        { z: 4, label: '+3', w: 6720, h: 7296 },
-        { z: 5, label: '+2', w: 6720, h: 7296 },
-        { z: 6, label: '+1', w: 6720, h: 7296 },
-        { z: 7, label: '0', w: 6720, h: 7296 },
-        { z: 8, label: '-1', w: 6656, h: 6912 },
-        { z: 9, label: '-2', w: 6592, h: 6912 },
-        { z: 10, label: '-3', w: 6592, h: 6912 },
-        { z: 11, label: '-4', w: 6592, h: 6912 },
-        { z: 12, label: '-5', w: 6592, h: 6912 },
-        { z: 13, label: '-6', w: 6592, h: 6912 },
-        { z: 14, label: '-7', w: 6592, h: 6912 },
-        { z: 15, label: '-8', w: 6592, h: 6912 }
+        { z: 0, label: '+7', w: 8256, h: 8000 },
+        { z: 1, label: '+6', w: 8256, h: 8000 },
+        { z: 2, label: '+5', w: 8256, h: 8000 },
+        { z: 3, label: '+4', w: 8256, h: 8000 },
+        { z: 4, label: '+3', w: 8256, h: 8000 },
+        { z: 5, label: '+2', w: 8256, h: 8000 },
+        { z: 6, label: '+1', w: 8256, h: 8000 },
+        { z: 7, label: '0', w: 8256, h: 8000 },
+        { z: 8, label: '-1', w: 8256, h: 8000 },
+        { z: 9, label: '-2', w: 8256, h: 8000 },
+        { z: 10, label: '-3', w: 8256, h: 8000 },
+        { z: 11, label: '-4', w: 8256, h: 8000 },
+        { z: 12, label: '-5', w: 8256, h: 8000 },
+        { z: 13, label: '-6', w: 8256, h: 8000 },
+        { z: 14, label: '-7', w: 8256, h: 8000 },
+        { z: 15, label: '-8', w: 8256, h: 8000 }
     ];
     const DATA_URLS = {
-        categories: 'mapa-interativo/data/categories.json?v=20260724a',
-        labels: 'mapa-interativo/data/labels.json?v=20260724a',
-        markers: 'mapa-interativo/data/markers.json?v=20260724b',
+        categories: 'mapa-interativo/data/categories.json?v=20260801a',
+        labels: 'mapa-interativo/data/labels.json?v=20260801a',
+        markers: 'mapa-interativo/data/markers.json?v=20260801a',
         pokemon: 'pokemons/pokemons.json?v=20260723f'
     };
     const MAP_POKEMON_NAME_ALIASES = {
@@ -1087,7 +1087,7 @@
         elements.viewport.classList.toggle('is-surface', config.z === 7);
         elements.floorValue.textContent = config.label;
         elements.floorSelect.value = String(config.z);
-        elements.image.src = `mapa-interativo/assets/minimap-v1.0.0_z${config.z}.png`;
+        elements.image.src = `mapa-interativo/assets/minimap-v1.0.0_z${config.z}.png?v=20260801a`;
         elements.image.width = config.w;
         elements.image.height = config.h;
         elements.image.alt = `Mapa do andar ${config.label}`;
