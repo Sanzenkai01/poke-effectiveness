@@ -821,10 +821,7 @@ function invalidateBossSearchCaches() {
 function setBossModalLayout(isRoleboard = false) {
   const content = modal?.querySelector('.speedster-modal-content');
   if (!content) return;
-  // Don't apply the roleboard layout when modal is rendered inside the SPA
-  // bosses panel (#content-bosses) because theme overrides break the layout.
-  const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-  content.classList.toggle('speedster-modal-content--roleboard', Boolean(isRoleboard) && !inBossesPanel);
+  content.classList.toggle('speedster-modal-content--roleboard', Boolean(isRoleboard));
 }
 
 const speedsterSearchInput = document.getElementById('speedster-search');
@@ -13776,11 +13773,7 @@ function openSpeedsterBossesModal(speedster, options = {}) {
   syncSharedModalOpenState();
   const modalContentEl = modal.querySelector('.speedster-modal-content');
   if (modalContentEl) {
-    // Always mark as search-results, but only enable the roleboard sizing on
-    // full pages (not when the modal lives inside the SPA bosses panel).
-    modalContentEl.classList.add('speedster-modal-content--search-results');
-    const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-    if (!inBossesPanel) modalContentEl.classList.add('speedster-modal-content--roleboard');
+    modalContentEl.classList.add('speedster-modal-content--roleboard', 'speedster-modal-content--search-results');
   }
 
   if (typeof gsap !== 'undefined') {
@@ -14123,10 +14116,7 @@ function openTochasInModal() {
 
   // Garantir que o conteudo do modal use largura de roleboard para dar mais espaco a pagina embutida
   const modalContentEl = modal.querySelector('.speedster-modal-content');
-  if (modalContentEl) {
-    const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-    if (!inBossesPanel) modalContentEl.classList.add('speedster-modal-content--roleboard');
-  }
+  if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
 
   if (typeof gsap !== 'undefined') {
     gsap.fromTo(
@@ -14733,13 +14723,6 @@ function createRolePickCard(poke) {
 function openRoleBossModal(boss, options = {}) {
   const { pushState = true, skipRouteSync = false } = options || {};
   setBossModalLayout(true);
-  // Ensure roleboard sizing class is not applied when modal lives inside the
-  // SPA bosses panel (#content-bosses) because the wiki theme forces grid.
-  try {
-    const modalContentEl = modal.querySelector('.speedster-modal-content');
-    const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-    if (modalContentEl && inBossesPanel) modalContentEl.classList.remove('speedster-modal-content--roleboard');
-  } catch (e) {}
   currentBoss = boss;
   activeBossSearchResult = null;
   modalTitle.textContent = boss.name;
@@ -14849,18 +14832,6 @@ function openRoleBossModal(boss, options = {}) {
   } else {
     syncBossModalRouteOnOpen(pushState);
   }
-  // Final guard: ensure roleboard class is not present for SPA-hosted modal
-  try {
-    const modalContentEl = modal.querySelector('.speedster-modal-content');
-    const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-    if (modalContentEl && inBossesPanel) modalContentEl.classList.remove('speedster-modal-content--roleboard');
-    if (modalContentEl && inBossesPanel) {
-      modalContentEl.style.setProperty('display', 'flex', 'important');
-      modalContentEl.style.setProperty('flex-direction', 'column', 'important');
-      modalContentEl.style.setProperty('gap', '1rem', 'important');
-      modalContentEl.style.setProperty('overflow', 'auto', 'important');
-    }
-  } catch (e) {}
 }
 
 function openModal(speedster) {
@@ -15362,20 +15333,6 @@ function openBossModalV2(speedster, options = {}) {
   renderClanSections();
 
   setBossModalOverlayParent(options?.overlayParent);
-  // Ensure roleboard layout isn't enforced for SPA-hosted modal
-  try {
-    const modalContentEl = modal.querySelector('.speedster-modal-content');
-    const inBossesPanel = Boolean(document.getElementById('content-bosses') && document.getElementById('content-bosses').contains(modal));
-    if (modalContentEl && inBossesPanel) modalContentEl.classList.remove('speedster-modal-content--roleboard');
-    if (modalContentEl && inBossesPanel) {
-      // Force inline flex layout to override wiki-theme !important rules
-      modalContentEl.style.setProperty('display', 'flex', 'important');
-      modalContentEl.style.setProperty('flex-direction', 'column', 'important');
-      modalContentEl.style.setProperty('gap', '1rem', 'important');
-      modalContentEl.style.setProperty('overflow', 'auto', 'important');
-    }
-  } catch (e) {}
-
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
