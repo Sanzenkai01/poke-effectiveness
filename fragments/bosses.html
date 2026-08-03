@@ -16,3 +16,45 @@
         </div>
         <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
       </div>
+
+      <div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+        <div class="speedster-modal-backdrop" data-close="true"></div>
+        <div class="speedster-modal-content" role="document">
+          <button class="speedster-modal-close" aria-label="Fechar">✖</button>
+          <div class="speedster-modal-header">
+            <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+            <div class="speedster-modal-title">
+              <h2 id="modal-title"></h2>
+              <p id="modal-subtitle" class="speedster-subtitle"></p>
+              <div class="tier-legend" aria-label="Legenda de cores de recomendacao" role="list">
+                <span class="tier-legend__item" data-tier="excelente" role="listitem">
+                  <span class="tier-dot tier-excelente" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Excelente</span>
+                </span>
+                <span class="tier-legend__item" data-tier="muitobom" role="listitem">
+                  <span class="tier-dot tier-muitobom" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Muito bom</span>
+                </span>
+                <span class="tier-legend__item" data-tier="bom" role="listitem">
+                  <span class="tier-dot tier-bom" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Bom</span>
+                </span>
+                <span class="tier-legend__item" data-tier="aceitavel" role="listitem">
+                  <span class="tier-dot tier-aceitavel" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Aceitavel</span>
+                </span>
+                <span class="tier-legend__item" data-tier="ruim" role="listitem">
+                  <span class="tier-dot tier-ruim" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Ruim</span>
+                </span>
+                <span class="tier-legend__item" data-tier="seminformacao" role="listitem">
+                  <span class="tier-dot tier-seminformacao" aria-hidden="true"></span>
+                  <span class="tier-legend__label">Única Opção</span>
+                </span>
+              </div>
+            </div>
+            <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+          </div>
+          <div id="modal-body" class="speedster-modal-body"></div>
+        </div>
+      </div>
