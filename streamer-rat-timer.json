@@ -1,19 +1,18 @@
 {
-  "updatedAt": "2026-08-03T00:04:00.583Z",
+  "updatedAt": "2026-08-03T00:23:16.287Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-03T00:03:24.551Z",
-    "endedAt": "2026-08-03T00:04:00.583Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-03T00:13:48.650Z",
+    "endedAt": "2026-08-03T00:23:16.287Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "cafeina54",
       "fernandoalcatraz",
       "uguettolitz",
       "itscaim",
       "mataradz8",
-      "nazgulplayer",
       "adivorcio",
       "armster91",
       "callmevitao_",
@@ -27,6 +26,7 @@
       "linikerquadrado2",
       "lucasnaikan",
       "manoblaze",
+      "nazgulplayer",
       "ogordonha",
       "okamiulv",
       "raulzerah1",
@@ -42,20 +42,40 @@
     "observedChannels": [
       "fernandoalcatraz"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [
+    "observedSpawnChannels": [
+      "fernandoalcatraz"
+    ],
+    "observedSpawns": [
       {
         "channel": "fernandoalcatraz",
+        "messageAt": 1785716596174,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "cafeina54",
         "kind": "rattata-message",
-        "messageAt": 1785715440480,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1785716419749,
+        "messageText": "O Rattata se recuperou e fugiu com o seu item, @lucaslr70... 💨"
+      },
+      {
+        "channel": "uguettolitz",
+        "kind": "rattata-message",
+        "messageAt": 1785716419749,
+        "messageText": "O Rattata se recuperou e fugiu com o seu item, @lucaslr70... 💨"
       },
       {
         "channel": "fernandoalcatraz",
-        "kind": "escape",
-        "messageAt": 1785715440480,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "rattata-message",
+        "messageAt": 1785716596174,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "fernandoalcatraz",
+        "kind": "spawn",
+        "messageAt": 1785716596174,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -106,24 +126,24 @@
   },
   "latest": {
     "channel": "fernandoalcatraz",
-    "lastMessageAt": 1785715440480,
-    "expectedNextAt": 1785716640480,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1785716596174,
+    "expectedNextAt": 1785717856174,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-08-02T21:48:23Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1785715440583,
-    "persistedAt": 1785715440583
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1785716596286,
+    "persistedAt": 1785716596286
   },
   "timers": {
     "fernandoalcatraz": {
       "channel": "fernandoalcatraz",
-      "lastMessageAt": 1785715440480,
-      "expectedNextAt": 1785716640480,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1785716596174,
+      "expectedNextAt": 1785717856174,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-08-02T21:48:23Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1785715440583,
-      "persistedAt": 1785715440583
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1785716596286,
+      "persistedAt": 1785716596286
     }
   }
 }
