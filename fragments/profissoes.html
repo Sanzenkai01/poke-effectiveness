@@ -1,0 +1,947 @@
+<div class="professions-shell">
+        <section class="professions-hero" aria-labelledby="professions-title">
+          <div class="professions-hero__copy">
+            <span class="professions-eyebrow">Sistemas</span>
+            <h2 id="professions-title">Profiss&otilde;es</h2>
+            <p>Escolha uma profiss&atilde;o para abrir o guia completo.</p>
+          </div>
+        </section>
+
+        <section id="professions-selector" class="professions-selector" aria-labelledby="professions-selector-title">
+          <div class="professions-section-head">
+            <span class="professions-eyebrow">Sele&ccedil;&atilde;o</span>
+            <h3 id="professions-selector-title">Escolha sua profiss&atilde;o</h3>
+          </div>
+          <div class="professions-choice-grid" role="list">
+            <button class="profession-choice-card" type="button" data-profession-select="designer" role="listitem">
+              <span class="profession-choice-card__media">
+                <img src="profissoes/designer/designer.png" alt="Designer" loading="lazy" decoding="async">
+              </span>
+              <span class="profession-choice-card__copy">
+                <strong>Designer</strong>
+                <span>Pok&eacute;blocks, outfits, addons e cosm&eacute;ticos.</span>
+              </span>
+            </button>
+            <button class="profession-choice-card" type="button" data-profession-select="breeder" role="listitem">
+              <span class="profession-choice-card__media">
+                <img src="profissoes/breeder/breeder.png" alt="Breeder" loading="lazy" decoding="async">
+              </span>
+              <span class="profession-choice-card__copy">
+                <strong>Breeder</strong>
+                <span>Rations, Pok&eacute;pedias, berries e itens de cultivo.</span>
+              </span>
+            </button>
+            <button class="profession-choice-card" type="button" data-profession-select="photographer" role="listitem">
+              <span class="profession-choice-card__media">
+                <img src="profissoes/photographer/photographer.png" alt="Photographer" loading="lazy" decoding="async">
+              </span>
+              <span class="profession-choice-card__copy">
+                <strong>Photographer</strong>
+                <span>Battle Items, Camera Upgrades, tickets e dungeons de Orbs.</span>
+              </span>
+            </button>
+            <button class="profession-choice-card" type="button" data-profession-select="researcher" role="listitem">
+              <span class="profession-choice-card__media">
+                <img src="profissoes/researcher/researcher.png" alt="Researcher" loading="lazy" decoding="async">
+              </span>
+              <span class="profession-choice-card__copy">
+                <strong>Researcher</strong>
+                <span>Vitamins, Pok&eacute;balls, machines compactas e samples.</span>
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <section id="profession-designer-detail" class="profession-detail" aria-labelledby="profession-designer-title" hidden>
+          <div class="profession-detail__hero">
+            <div class="profession-detail__copy">
+              <span class="professions-eyebrow">Designer</span>
+              <h3 id="profession-designer-title">Designer</h3>
+              <p>Profiss&atilde;o focada em cosm&eacute;ticos, Pok&eacute;blocks, outfits, addons, depots estilizados e Silver Star Sketch.</p>
+            </div>
+            <button class="profession-back-btn" type="button" data-profession-back>Voltar</button>
+          </div>
+
+          <div class="profession-info-grid">
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Requisitos</span>
+              <h4>Para pegar a profiss&atilde;o</h4>
+              <ul>
+                <li>Level 100.</li>
+                <li>Conta VIP.</li>
+                <li>Falar com o NPC da profiss&atilde;o para comprar o Workshop.</li>
+                <li>Ter uma casa para utilizar o Workshop.</li>
+              </ul>
+              <figure class="profession-inline-figure">
+                <img src="profissoes/designer/Designer_Workshop_House.webp" alt="Casa com workshop de Designer" loading="lazy" decoding="async">
+                <figcaption>Workshop de Designer</figcaption>
+              </figure>
+              <p class="profession-note">Se perder o Workshop para comprar outro, o custo informado &eacute; de 2kk.</p>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4>Avan&ccedil;o de rank</h4>
+              <ul>
+                <li>Rank E para D: level 20 e 10 P-Bucks.</li>
+                <li>Rank D para C: level 40 e 20 P-Bucks.</li>
+                <li>Rank C para B: level 60 e 30 P-Bucks.</li>
+              </ul>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Recursos</span>
+              <h4>Coleta por rank da mesa</h4>
+              <div class="profession-rank-table" role="table" aria-label="Quantidade de coleta por rank">
+                <div role="row"><strong role="cell">Rank B</strong><span role="cell">12-15 Points</span><span role="cell">9-12 Points+</span></div>
+                <div role="row"><strong role="cell">Rank C</strong><span role="cell">9-12 Points</span><span role="cell">3-6 Points+</span></div>
+                <div role="row"><strong role="cell">Rank D</strong><span role="cell">6-9 Points</span><span role="cell">-</span></div>
+                <div role="row"><strong role="cell">Rank E</strong><span role="cell">3-6 Points</span><span role="cell">-</span></div>
+              </div>
+              <p class="profession-note">Cinza equivale a 100% de points<br>azul equivale a 200% de points.</p>
+              <div class="profession-resource-preview" aria-label="Exemplos de recursos de Designer">
+                <figure>
+                  <img src="profissoes/designer/recurso.png" alt="Recurso comum do Designer" loading="lazy" decoding="async">
+                  <figcaption>Recurso</figcaption>
+                </figure>
+                <figure>
+                  <img src="profissoes/designer/super_recurso.webp" alt="Super recurso do Designer" loading="lazy" decoding="async">
+                  <figcaption>Super recurso</figcaption>
+                </figure>
+              </div>
+            </article>
+          </div>
+
+          <section class="profession-section" aria-labelledby="profession-designer-crafts">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Crafts</span>
+              <h4 id="profession-designer-crafts">O que Designer crafta</h4>
+            </div>
+            <div class="profession-craft-grid">
+              <figure>
+                <img src="profissoes/designer/pokeblocks.webp" alt="Pok&eacute;blocks" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;blocks</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Outfits_1.png" alt="Outfits" loading="lazy" decoding="async">
+                <figcaption>Outfits</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Outfits_2.png" alt="Outfits alternativos" loading="lazy" decoding="async">
+                <figcaption>Outfits alternativos</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/addons.png" alt="Addons" loading="lazy" decoding="async">
+                <figcaption>Addons</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Depot_1.png" alt="Depot estilizado" loading="lazy" decoding="async">
+                <figcaption>Depots estilizados</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Designer_Itens.webp" alt="Itens de Designer" loading="lazy" decoding="async">
+                <figcaption>Compacted Workshop e Item de Coleta</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-pokeblocks-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Pok&eacute;blocks</span>
+              <h4 id="profession-pokeblocks-title">Imunidade a status negativos</h4>
+              <p>Pok&eacute;blocks s&atilde;o consum&iacute;veis que concedem imunidade tempor&aacute;ria a status negativos.</p>
+              <div class="profession-token-grid" aria-label="Efeitos dos Pokeblocks">
+                <span>Red: Burn</span>
+                <span>Blue: Slow</span>
+                <span>Pink: Paralyze</span>
+                <span>Yellow: Confusion</span>
+                <span>Green: Poison</span>
+                <span>Purple: Stun</span>
+                <span>Rainbow: todos</span>
+              </div>
+              <div class="profession-fact-grid">
+                <span>Craft liberado pela Berry Blender no Rank C level 58.</span>
+                <span>Pok&eacute;block dura 60 minutos; Pok&eacute;block+ dura 180 minutos.</span>
+                <span>Para usar, &eacute; necess&aacute;rio ter Pok&eacute;block Case, craft&aacute;vel no Rank D level 40.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/designer/Berry_Blender.png" alt="Berry Blender" loading="lazy" decoding="async">
+                <figcaption>Berry Blender</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/pokeblock_Case.png" alt="Pok&eacute;block Case" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;block Case</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Pokeblock.png" alt="Lista de Pok&eacute;blocks" loading="lazy" decoding="async">
+                <figcaption>Craft de Pok&eacute;blocks</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Pokeblock_1.png" alt="Varia&ccedil;&atilde;o de Pok&eacute;block" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;block adicional</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-cosmetics-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Cosm&eacute;ticos</span>
+              <h4 id="profession-cosmetics-title">Outfits, addons e depots</h4>
+              <div class="profession-fact-grid">
+                <span>Outfits atuais usam Pok&eacute;mons Ace e bosses da Expedition como base.</span>
+                <span>O Designer crafta outfits usando itens de Hunt 300 e 400.</span>
+                <span>Addons possuem vers&otilde;es normais e shiny.</span>
+                <span>Depots estilizados aparecem nos crafts Rank C_5 e Rank C_6.</span>
+                <span>Depots tamb&eacute;m dependem de Researcher Rank C level 48.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/designer/Cosmeticos.png" alt="Cosm&eacute;ticos de Designer" loading="lazy" decoding="async">
+                <figcaption>Cosm&eacute;ticos</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Item_CraftOutfit.png" alt="Item para craft de outfit" loading="lazy" decoding="async">
+                <figcaption>Craft de outfit</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/designer/Item_CraftOutfit_Shiny.webp" alt="Item shiny para craft de outfit" loading="lazy" decoding="async">
+                <figcaption>Craft shiny</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section" aria-labelledby="profession-rank-gallery-title">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4 id="profession-rank-gallery-title">Refer&ecirc;ncia visual por rank</h4>
+            </div>
+            <div class="profession-rank-gallery">
+              <article>
+                <h5>Rank E</h5>
+                <div>
+                  <img src="profissoes/designer/Rank_E.webp" alt="Rank E" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_E_1.webp" alt="Craft Rank E 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_E_2.webp" alt="Craft Rank E 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_E_3.webp" alt="Craft Rank E 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Addons_Rank_E.png" alt="Addons Rank E" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Addons_Rank_E_1.png" alt="Addons Rank E 1" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank D</h5>
+                <div>
+                  <img src="profissoes/designer/Rank_D.webp" alt="Rank D" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D.png" alt="Rank D alternativo" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_1.webp" alt="Craft Rank D 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_1.png" alt="Craft Rank D 1 alternativo" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_2.webp" alt="Craft Rank D 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_3.webp" alt="Craft Rank D 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_4.webp" alt="Craft Rank D 4" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_2_Addons.png" alt="Addons Rank D 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_3_Addons.png" alt="Addons Rank D 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_4_Addons.png" alt="Addons Rank D 4" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_D_5_Addons.png" alt="Addons Rank D 5" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank C</h5>
+                <div>
+                  <img src="profissoes/designer/Rank_C.webp" alt="Rank C" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_1.webp" alt="Craft Rank C 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_1_Addons.png" alt="Addons Rank C 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_2.webp" alt="Craft Rank C 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_2_Addons.png" alt="Addons Rank C 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_3.png" alt="Craft Rank C 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_3_Addons.png" alt="Addons Rank C 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_3_Addons_Shinny.png" alt="Addons shiny Rank C 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_4_Addons.png" alt="Addons Rank C 4" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_4_Addons_Shinny.png" alt="Addons shiny Rank C 4" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_5.webp" alt="Craft Rank C 5" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_5_Addons.png" alt="Addons Rank C 5" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_5_Addons_Shinny.png" alt="Addons shiny Rank C 5" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_6.webp" alt="Craft Rank C 6" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_6_Addons_Shinny.png" alt="Addons shiny Rank C 6" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_7.png" alt="Craft Rank C 7" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_Addons.png" alt="Addons Rank C" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_C_Outfits.png" alt="Outfits Rank C" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank B</h5>
+                <div>
+                  <img src="profissoes/designer/Rank_B.webp" alt="Rank B" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_1.webp" alt="Craft Rank B 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_2.webp" alt="Craft Rank B 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_3.webp" alt="Craft Rank B 3" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_4.webp" alt="Craft Rank B 4" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_5.png" alt="Craft Rank B 5" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_Outfits.png" alt="Outfits especiais Rank B" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_Outfits_1.png" alt="Outfit especial Rank B 1" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_Outfits_2.png" alt="Outfit especial Rank B 2" loading="lazy" decoding="async">
+                  <img src="profissoes/designer/Rank_B_Outfits_3.png" alt="Outfit especial Rank B 3" loading="lazy" decoding="async">
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section id="profession-breeder-detail" class="profession-detail" aria-labelledby="profession-breeder-title" hidden>
+          <div class="profession-detail__hero">
+            <div class="profession-detail__copy">
+              <span class="professions-eyebrow">Breeder</span>
+              <h3 id="profession-breeder-title">Breeder</h3>
+              <p>Profiss&atilde;o focada em suporte de batalha, Pok&eacute;pedias, berries, cultivo e Rations defensivas.</p>
+            </div>
+            <button class="profession-back-btn" type="button" data-profession-back>Voltar</button>
+          </div>
+
+          <div class="profession-info-grid">
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Requisitos</span>
+              <h4>Para pegar a profiss&atilde;o</h4>
+              <ul>
+                <li>Level 100.</li>
+                <li>Conta VIP.</li>
+                <li>Falar com o NPC da profiss&atilde;o para comprar o Workshop.</li>
+                <li>Ter uma casa para utilizar o Workshop.</li>
+              </ul>
+              <figure class="profession-inline-figure">
+                <img src="profissoes/breeder/Breeder_Workshop_House.webp" alt="Casa com workshop de Breeder" loading="lazy" decoding="async">
+                <figcaption>Workshop de Breeder</figcaption>
+              </figure>
+              <p class="profession-note">Se perder o Workshop para comprar outro, o custo informado &eacute; de 2kk.</p>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4>Avan&ccedil;o de rank</h4>
+              <ul>
+                <li>Rank E para D: level 20 e 10 P-Bucks.</li>
+                <li>Rank D para C: level 40 e 20 P-Bucks.</li>
+                <li>Rank C para B: level 60 e 30 P-Bucks.</li>
+              </ul>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Recursos</span>
+              <h4>Coleta por rank da mesa</h4>
+              <div class="profession-rank-table" role="table" aria-label="Quantidade de coleta por rank">
+                <div role="row"><strong role="cell">Rank B</strong><span role="cell">12-15 Points</span><span role="cell">9-12 Points+</span></div>
+                <div role="row"><strong role="cell">Rank C</strong><span role="cell">9-12 Points</span><span role="cell">3-6 Points+</span></div>
+                <div role="row"><strong role="cell">Rank D</strong><span role="cell">6-9 Points</span><span role="cell">-</span></div>
+                <div role="row"><strong role="cell">Rank E</strong><span role="cell">3-6 Points</span><span role="cell">-</span></div>
+              </div>
+              <p class="profession-note">Cinza equivale a 100% de points<br>azul equivale a 200% de points.</p>
+              <div class="profession-resource-preview" aria-label="Exemplos de recursos de Breeder">
+                <figure>
+                  <img src="profissoes/breeder/recurso.webp" alt="Recurso comum do Breeder" loading="lazy" decoding="async">
+                  <figcaption>Recurso</figcaption>
+                </figure>
+                <figure>
+                  <img src="profissoes/breeder/super_recurso.webp" alt="Super recurso do Breeder" loading="lazy" decoding="async">
+                  <figcaption>Super recurso</figcaption>
+                </figure>
+              </div>
+            </article>
+          </div>
+
+          <section class="profession-section" aria-labelledby="profession-breeder-crafts">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Crafts</span>
+              <h4 id="profession-breeder-crafts">O que Breeder crafta</h4>
+            </div>
+            <div class="profession-craft-grid">
+              <figure>
+                <img src="profissoes/breeder/Rations.webp" alt="Rations" loading="lazy" decoding="async">
+                <figcaption>Rations</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/Pokepedia_psysiology.png" alt="Pok&eacute;pedia Physiology" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;pedia: Physiology</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/Pokepedia_anatomy.png" alt="Pok&eacute;pedia Anatomy" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;pedia: Anatomy</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/berry_pounch.png" alt="Berry Pouch" loading="lazy" decoding="async">
+                <figcaption>Berry Pouch</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/emptyvase.png" alt="Empty Vase" loading="lazy" decoding="async">
+                <figcaption>Vasos e cultivo</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-rations-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Rations</span>
+              <h4 id="profession-rations-title">Defesa elemental tempor&aacute;ria</h4>
+              <p>Rations s&atilde;o consum&iacute;veis de suporte que aumentam a defesa contra elementos espec&iacute;ficos por um bom tempo. Tamb&eacute;m existem op&ccedil;&otilde;es voltadas a dano neutro.</p>
+              <div class="profession-fact-grid">
+                <span>Cada Ration cobre um tipo de resist&ecirc;ncia defensiva.</span>
+                <span>Sitrus Ration ativa contra golpe fatal e recupera 50% da vida do Pok&eacute;mon.</span>
+                <span>O uso correto ajuda em hunts e bosses que causam muito dano de um mesmo elemento.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/breeder/Rations.webp" alt="Lista de Rations" loading="lazy" decoding="async">
+                <figcaption>Rations do Breeder</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-pokepedia-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Pok&eacute;pedias</span>
+              <h4 id="profession-pokepedia-title">Informa&ccedil;&otilde;es extras dos Pok&eacute;mons</h4>
+              <div class="profession-fact-grid">
+                <span>Pok&eacute;pedia: Physiology libera a aba para consultar drops do Pok&eacute;mon.</span>
+                <span>Pok&eacute;pedia: Anatomy permite visualizar o HP do Pok&eacute;mon selvagem.</span>
+                <span>A consulta de drops fica ligada &agrave; Pok&eacute;pedia e ajuda a planejar farm e profiss&otilde;es.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/breeder/Pokepedia_psysiology.png" alt="Pok&eacute;pedia Physiology" loading="lazy" decoding="async">
+                <figcaption>Physiology</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/Pokepedia_anatomy.png" alt="Pok&eacute;pedia Anatomy" loading="lazy" decoding="async">
+                <figcaption>Anatomy</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/drops_pokepedia.webp" alt="Drops na Pok&eacute;pedia" loading="lazy" decoding="async">
+                <figcaption>Aba de drops</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-berries-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Berries</span>
+              <h4 id="profession-berries-title">Coleta, plantio e acelera&ccedil;&atilde;o</h4>
+              <p>O ciclo de berries come&ccedil;a com a Berry Pouch, que permite coletar sementes em &aacute;rvores. Depois, o Breeder usa vasos, rega a planta e pode aplicar fertilizantes para reduzir o tempo de produ&ccedil;&atilde;o.</p>
+              <div class="profession-fact-grid">
+                <span>Berry Pouch: coleta sementes em berry trees.</span>
+                <span>Empty Vase: base para plantar e conduzir o cultivo.</span>
+                <span>Sprinklotad: etapa de rega da planta.</span>
+                <span>Fertilizantes reduzem o tempo at&eacute; a produ&ccedil;&atilde;o ficar pronta.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/breeder/berry_pounch.png" alt="Berry Pouch" loading="lazy" decoding="async">
+                <figcaption>Berry Pouch</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/berrytree.png" alt="Berry Tree" loading="lazy" decoding="async">
+                <figcaption>Berry Tree</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/emptyvase.png" alt="Empty Vase" loading="lazy" decoding="async">
+                <figcaption>Empty Vase</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/sprinklotad.png" alt="Sprinklotad" loading="lazy" decoding="async">
+                <figcaption>Sprinklotad</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/fertilizante1.png" alt="Fertilizante" loading="lazy" decoding="async">
+                <figcaption>Fertilizante</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/breeder/fertilizante2.png" alt="Fertilizante avan&ccedil;ado" loading="lazy" decoding="async">
+                <figcaption>Fertilizante</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section" aria-labelledby="profession-breeder-rank-gallery-title">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4 id="profession-breeder-rank-gallery-title">Refer&ecirc;ncia visual por rank</h4>
+            </div>
+            <div class="profession-rank-gallery">
+              <article>
+                <h5>Rank E</h5>
+                <div>
+                  <img src="profissoes/breeder/Rank_E1.webp" alt="Craft Rank E 1" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_E2.webp" alt="Craft Rank E 2" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_E3.webp" alt="Craft Rank E 3" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank D</h5>
+                <div>
+                  <img src="profissoes/breeder/Rank_D1.1.png" alt="Craft Rank D 1" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_D1.2.png" alt="Craft Rank D 1 alternativo" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_D2.png" alt="Craft Rank D 2" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank C</h5>
+                <div>
+                  <img src="profissoes/breeder/Rank_C1.webp" alt="Craft Rank C 1" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C2.webp" alt="Craft Rank C 2" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C3.png" alt="Craft Rank C 3" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C3.webp" alt="Craft Rank C 3 alternativa" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C4.webp" alt="Craft Rank C 4" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C5.webp" alt="Craft Rank C 5" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C6.webp" alt="Craft Rank C 6" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C7.webp" alt="Craft Rank C 7" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C8.png" alt="Craft Rank C 8" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C8.1.png" alt="Craft Rank C 8 alternativo" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_C9.webp" alt="Craft Rank C 9" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank B</h5>
+                <div>
+                  <img src="profissoes/breeder/Rank_B1.webp" alt="Craft Rank B 1" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_B2.webp" alt="Craft Rank B 2" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_B3.webp" alt="Craft Rank B 3" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_B4.webp" alt="Craft Rank B 4" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_B5.webp" alt="Craft Rank B 5" loading="lazy" decoding="async">
+                  <img src="profissoes/breeder/Rank_B6.webp" alt="Craft Rank B 6" loading="lazy" decoding="async">
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section id="profession-photographer-detail" class="profession-detail" aria-labelledby="profession-photographer-title" hidden>
+          <div class="profession-detail__hero">
+            <div class="profession-detail__copy">
+              <span class="professions-eyebrow">Photographer</span>
+              <h3 id="profession-photographer-title">Photographer</h3>
+              <p>Profiss&atilde;o focada em Battle Items, upgrades de c&acirc;mera, Adventure Tickets e coleta de Orbs em dungeons.</p>
+            </div>
+            <button class="profession-back-btn" type="button" data-profession-back>Voltar</button>
+          </div>
+
+          <div class="profession-info-grid">
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Requisitos</span>
+              <h4>Para pegar a profiss&atilde;o</h4>
+              <ul>
+                <li>Level 100.</li>
+                <li>Conta VIP.</li>
+                <li>Falar com o NPC da profiss&atilde;o para comprar o Workshop.</li>
+                <li>Ter uma casa para utilizar o Workshop.</li>
+              </ul>
+              <figure class="profession-inline-figure">
+                <img src="profissoes/photographer/Photographer_Workshop_House.png" alt="Casa com workshop de Photographer" loading="lazy" decoding="async">
+                <figcaption>Workshop de Photographer</figcaption>
+              </figure>
+              <p class="profession-note">Se perder o Workshop para comprar outro, o custo informado &eacute; de 2kk.</p>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4>Avan&ccedil;o de rank</h4>
+              <ul>
+                <li>Rank E para D: level 20 e 10 P-Bucks.</li>
+                <li>Rank D para C: level 40 e 20 P-Bucks.</li>
+                <li>Rank C para B: level 60 e 30 P-Bucks.</li>
+              </ul>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Recursos</span>
+              <h4>Coleta por rank da mesa</h4>
+              <div class="profession-rank-table" role="table" aria-label="Quantidade de coleta por rank">
+                <div role="row"><strong role="cell">Rank B</strong><span role="cell">12-15 Points</span><span role="cell">9-12 Points+</span></div>
+                <div role="row"><strong role="cell">Rank C</strong><span role="cell">9-12 Points</span><span role="cell">3-6 Points+</span></div>
+                <div role="row"><strong role="cell">Rank D</strong><span role="cell">6-9 Points</span><span role="cell">-</span></div>
+                <div role="row"><strong role="cell">Rank E</strong><span role="cell">3-6 Points</span><span role="cell">-</span></div>
+              </div>
+              <p class="profession-note">Cinza equivale a 100% de points<br>azul equivale a 200% de points.</p>
+              <div class="profession-resource-preview" aria-label="Exemplos de recursos de Photographer">
+                <figure>
+                  <img src="profissoes/photographer/recurso.png" alt="Recurso comum do Photographer" loading="lazy" decoding="async">
+                  <figcaption>Recurso</figcaption>
+                </figure>
+                <figure>
+                  <img src="profissoes/photographer/super_recurso.png" alt="Super recurso do Photographer" loading="lazy" decoding="async">
+                  <figcaption>Super recurso</figcaption>
+                </figure>
+              </div>
+            </article>
+          </div>
+
+          <section class="profession-section" aria-labelledby="profession-photographer-crafts">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Crafts</span>
+              <h4 id="profession-photographer-crafts">O que Photographer crafta</h4>
+            </div>
+            <div class="profession-craft-grid">
+              <figure>
+                <img src="profissoes/photographer/battle_items.webp" alt="Battle Items" loading="lazy" decoding="async">
+                <figcaption>Battle Items</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_1.png" alt="Camera Upgrade 1.0" loading="lazy" decoding="async">
+                <figcaption>Camera Upgrade 1.0</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_2.png" alt="Camera Upgrade 2.0" loading="lazy" decoding="async">
+                <figcaption>Camera Upgrade 2.0</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/Adventure_Ticket.png" alt="Adventure Ticket" loading="lazy" decoding="async">
+                <figcaption>Adventure Ticket</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-battle-items-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Battle Items</span>
+              <h4 id="profession-battle-items-title">Buffs curtos e fortes</h4>
+              <p>Battle Items s&atilde;o consum&iacute;veis de curta dura&ccedil;&atilde;o que entregam buffs poderosos ao Pok&eacute;mon.</p>
+              <div class="profession-fact-grid">
+                <span>X Attack aumenta bastante o ataque especial.</span>
+                <span>X Defense aumenta bastante a defesa.</span>
+                <span>X Speed aumenta bastante a velocidade.</span>
+                <span>Guard Spec concede boa chance de bloquear ataques.</span>
+                <span>Dire Hit concede boa chance de causar dano cr&iacute;tico.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/photographer/battle_items.webp" alt="Battle Items de Photographer" loading="lazy" decoding="async">
+                <figcaption>Battle Items</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-camera-upgrades-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Camera Upgrade</span>
+              <h4 id="profession-camera-upgrades-title">Melhorias para transmiss&atilde;o</h4>
+              <div class="profession-fact-grid">
+                <span>Camera Upgrade 1.0 mostra quantas pessoas est&atilde;o vendo a c&acirc;mera e h&aacute; quanto tempo ela est&aacute; aberta.</span>
+                <span>Camera Upgrade 2.0 mostra o time de quem est&aacute; transmitindo e permite dar look nos Pok&eacute;mons.</span>
+                <span>Os upgrades s&atilde;o progressivos e aparecem nos crafts por rank da profiss&atilde;o.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_1.png" alt="Camera Upgrade 1.0" loading="lazy" decoding="async">
+                <figcaption>Upgrade 1.0</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_1.1.png" alt="Interface da Camera Upgrade 1.0" loading="lazy" decoding="async">
+                <figcaption>Interface 1.0</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_2.png" alt="Camera Upgrade 2.0" loading="lazy" decoding="async">
+                <figcaption>Upgrade 2.0</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/camera_upgrade_2.2.png" alt="Interface da Camera Upgrade 2.0" loading="lazy" decoding="async">
+                <figcaption>Interface 2.0</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-adventure-ticket-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Adventure Ticket</span>
+              <h4 id="profession-adventure-ticket-title">Dungeon de Orbs</h4>
+              <p>Adventure Ticket permite que o Photographer entre em dungeons para coletar Orbs, usados em diversos crafts da profiss&atilde;o.</p>
+              <div class="profession-fact-grid">
+                <span>Apenas Photographers usam esse ticket.</span>
+                <span>O ticket &eacute; um item unique.</span>
+                <span>Para iniciar, fale com o NPC Photographer na &aacute;rea das profiss&otilde;es.</span>
+                <span>Dentro da dungeon h&aacute; limite de tempo; derrote Pok&eacute;mons e tire fotos para receber recompensas.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/photographer/Adventure_Ticket.png" alt="Adventure Ticket" loading="lazy" decoding="async">
+                <figcaption>Adventure Ticket</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/photographer/npc.png" alt="NPC Photographer" loading="lazy" decoding="async">
+                <figcaption>NPC Photographer</figcaption>
+              </figure>
+              <div class="slowpoke-well-video-links" aria-label="V&iacute;deo do Adventure Ticket">
+                <a href="https://youtu.be/6Aq3Gp_b0es" target="_blank" rel="noopener noreferrer">
+                  <span class="slowpoke-well-youtube-icon" aria-hidden="true"></span>
+                  Tutorial em v&iacute;deo
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section class="profession-section" aria-labelledby="profession-photographer-rank-gallery-title">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4 id="profession-photographer-rank-gallery-title">Refer&ecirc;ncia visual por rank</h4>
+            </div>
+            <div class="profession-rank-gallery">
+              <article>
+                <h5>Rank E</h5>
+                <div>
+                  <img src="profissoes/photographer/Rank_E.webp" alt="Rank E" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_E_1.webp" alt="Craft Rank E 1" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_E_2.webp" alt="Craft Rank E 2" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank D</h5>
+                <div>
+                  <img src="profissoes/photographer/Rank_D.webp" alt="Rank D" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_D_1.webp" alt="Craft Rank D 1" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_D_2.webp" alt="Craft Rank D 2" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_D_3.png" alt="Craft Rank D 3" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Camera_Rank_D.png" alt="Camera Rank D" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/ticket_Rank_D.png" alt="Ticket Rank D" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank C</h5>
+                <div>
+                  <img src="profissoes/photographer/Rank_C.webp" alt="Rank C" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_C_1.png" alt="Craft Rank C 1" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Rank_C_4.webp" alt="Craft Rank C 4" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Battle_Rank_C.png" alt="Battle Items Rank C" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/ticket_Rank_C.png" alt="Ticket Rank C" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank B</h5>
+                <div>
+                  <img src="profissoes/photographer/Rank_B.png" alt="Rank B" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/Battle_Rank_B.png" alt="Battle Items Rank B" loading="lazy" decoding="async">
+                  <img src="profissoes/photographer/ticket_Rank_B.png" alt="Ticket Rank B" loading="lazy" decoding="async">
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section id="profession-researcher-detail" class="profession-detail" aria-labelledby="profession-researcher-title" hidden>
+          <div class="profession-detail__hero">
+            <div class="profession-detail__copy">
+              <span class="professions-eyebrow">Researcher</span>
+              <h3 id="profession-researcher-title">Researcher</h3>
+              <p>Profiss&atilde;o focada em Vitamins, Pok&eacute;balls especiais, machines compactas e materiais para Silver Star.</p>
+            </div>
+            <button class="profession-back-btn" type="button" data-profession-back>Voltar</button>
+          </div>
+
+          <div class="profession-info-grid">
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Requisitos</span>
+              <h4>Para pegar a profiss&atilde;o</h4>
+              <ul>
+                <li>Level 100.</li>
+                <li>Conta VIP.</li>
+                <li>Falar com o NPC da profiss&atilde;o para comprar o Workshop.</li>
+                <li>Ter uma casa para utilizar o Workshop.</li>
+              </ul>
+              <figure class="profession-inline-figure">
+                <img src="profissoes/researcher/researcher_Workshop_House.webp" alt="Casa com workshop de Researcher" loading="lazy" decoding="async">
+                <figcaption>Workshop de Researcher</figcaption>
+              </figure>
+              <p class="profession-note">Se perder o Workshop para comprar outro, o custo informado &eacute; de 2kk.</p>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4>Avan&ccedil;o de rank</h4>
+              <ul>
+                <li>Rank E para D: level 20 e 10 P-Bucks.</li>
+                <li>Rank D para C: level 40 e 20 P-Bucks.</li>
+                <li>Rank C para B: level 60 e 30 P-Bucks.</li>
+              </ul>
+            </article>
+
+            <article class="profession-info-card">
+              <span class="professions-eyebrow">Recursos</span>
+              <h4>Coleta por rank da mesa</h4>
+              <div class="profession-rank-table" role="table" aria-label="Quantidade de coleta por rank">
+                <div role="row"><strong role="cell">Rank B</strong><span role="cell">12-15 Points</span><span role="cell">9-12 Points+</span></div>
+                <div role="row"><strong role="cell">Rank C</strong><span role="cell">9-12 Points</span><span role="cell">3-6 Points+</span></div>
+                <div role="row"><strong role="cell">Rank D</strong><span role="cell">6-9 Points</span><span role="cell">-</span></div>
+                <div role="row"><strong role="cell">Rank E</strong><span role="cell">3-6 Points</span><span role="cell">-</span></div>
+              </div>
+              <p class="profession-note">Cinza equivale a 100% de points<br>azul equivale a 200% de points.</p>
+              <div class="profession-resource-preview" aria-label="Exemplos de recursos de Researcher">
+                <figure>
+                  <img src="profissoes/researcher/recurso.png" alt="Recurso comum do Researcher" loading="lazy" decoding="async">
+                  <figcaption>Recurso</figcaption>
+                </figure>
+                <figure>
+                  <img src="profissoes/researcher/super_recurso.png" alt="Super recurso do Researcher" loading="lazy" decoding="async">
+                  <figcaption>Super recurso</figcaption>
+                </figure>
+              </div>
+            </article>
+          </div>
+
+          <section class="profession-section" aria-labelledby="profession-researcher-crafts">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Crafts</span>
+              <h4 id="profession-researcher-crafts">O que Researcher crafta</h4>
+            </div>
+            <div class="profession-craft-grid">
+              <figure>
+                <img src="profissoes/researcher/vitamins.webp" alt="Vitamins" loading="lazy" decoding="async">
+                <figcaption>Vitamins</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/Pokeballs.webp" alt="Pok&eacute;balls Blueprint" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;balls Blueprint</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/starboos_machine.png" alt="Compacted Starboost Machine" loading="lazy" decoding="async">
+                <figcaption>Starboost Machine</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/training_access_panel.png" alt="Compacted Training Access Panel" loading="lazy" decoding="async">
+                <figcaption>Training Access Panel</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/image.png" alt="Unstable Chemical Sample" loading="lazy" decoding="async">
+                <figcaption>Unstable Chemical Sample</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-vitamins-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Vitamins</span>
+              <h4 id="profession-vitamins-title">Buffs longos para o Pok&eacute;mon</h4>
+              <p>Vitamins s&atilde;o consum&iacute;veis que concedem pequenos buffs por um longo per&iacute;odo.</p>
+              <div class="profession-fact-grid">
+                <span>PP Up reduz o tempo de recarga dos ataques.</span>
+                <span>HP Up aumenta a vitalidade.</span>
+                <span>Protein aumenta o ataque especial.</span>
+                <span>Iron aumenta a defesa.</span>
+                <span>Carbos aumenta a agilidade.</span>
+                <span>Vitamins duram 24 horas e variam em for&ccedil;a entre Vitamins-, Vitamins e Vitamins+.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/researcher/vitamins.webp" alt="Vitamins" loading="lazy" decoding="async">
+                <figcaption>Vitamins</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/Proteins_-.png" alt="Vitamin inferior" loading="lazy" decoding="async">
+                <figcaption>Vitamin-</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/Proteins.png" alt="Vitamin comum" loading="lazy" decoding="async">
+                <figcaption>Vitamin</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/Proteins_.png" alt="Vitamin superior" loading="lazy" decoding="async">
+                <figcaption>Vitamin+</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-pokeballs-blueprint-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Pok&eacute;balls</span>
+              <h4 id="profession-pokeballs-blueprint-title">Blueprints especiais</h4>
+              <div class="profession-fact-grid">
+                <span>Blueprints s&atilde;o usados para craftar novas Pok&eacute;balls.</span>
+                <span>Essas Pok&eacute;balls usam Story Ball no craft.</span>
+                <span>O rate de catch informado &eacute; 1.3x.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/researcher/Pokeballs.webp" alt="Blueprints de Pok&eacute;balls" loading="lazy" decoding="async">
+                <figcaption>Pok&eacute;balls Blueprint</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section profession-section--split" aria-labelledby="profession-machines-title">
+            <div class="profession-section__copy">
+              <span class="professions-eyebrow">Compacted Machines</span>
+              <h4 id="profession-machines-title">Conte&uacute;do dentro da house</h4>
+              <div class="profession-fact-grid">
+                <span>Digital Clock funciona como cron&ocirc;metro e n&atilde;o deve ser confundido com tempo de c&acirc;mera.</span>
+                <span>Compacted Training Access Panel permite ter Training Machine na house.</span>
+                <span>Compacted Starboost Machine permite ter Boost Machine na house.</span>
+                <span>Compacted Locker permite ter um Depot simples na house.</span>
+              </div>
+            </div>
+            <div class="profession-image-stack">
+              <figure>
+                <img src="profissoes/researcher/Digital_Clock.png" alt="Digital Clock" loading="lazy" decoding="async">
+                <figcaption>Digital Clock</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/cronometro.png" alt="Cron&ocirc;metro" loading="lazy" decoding="async">
+                <figcaption>Cron&ocirc;metro</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/training_access_panel.png" alt="Training Access Panel" loading="lazy" decoding="async">
+                <figcaption>Training Machine</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/starboos_machine.png" alt="Starboost Machine" loading="lazy" decoding="async">
+                <figcaption>Boost Machine</figcaption>
+              </figure>
+              <figure>
+                <img src="profissoes/researcher/compacted_locker.png" alt="Compacted Locker" loading="lazy" decoding="async">
+                <figcaption>Compacted Locker</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="profession-section" aria-labelledby="profession-researcher-rank-gallery-title">
+            <div class="professions-section-head">
+              <span class="professions-eyebrow">Ranks</span>
+              <h4 id="profession-researcher-rank-gallery-title">Refer&ecirc;ncia visual por rank</h4>
+            </div>
+            <div class="profession-rank-gallery">
+              <article>
+                <h5>Rank E</h5>
+                <div>
+                  <img src="profissoes/researcher/Rank_E.webp" alt="Rank E" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_E_1.webp" alt="Craft Rank E 1" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_E_2.webp" alt="Craft Rank E 2" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_E_3.webp" alt="Craft Rank E 3" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank D</h5>
+                <div>
+                  <img src="profissoes/researcher/Rank_D.png" alt="Rank D" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_D_1.png" alt="Craft Rank D 1" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank C</h5>
+                <div>
+                  <img src="profissoes/researcher/Rank_C.png" alt="Rank C" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_C_1.png" alt="Craft Rank C 1" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/rank_C_2.png" alt="Craft Rank C 2" loading="lazy" decoding="async">
+                </div>
+              </article>
+              <article>
+                <h5>Rank B</h5>
+                <div>
+                  <img src="profissoes/researcher/Rank_B.png" alt="Rank B" loading="lazy" decoding="async">
+                  <img src="profissoes/researcher/Rank_B_1.png" alt="Craft Rank B 1" loading="lazy" decoding="async">
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+      </div>

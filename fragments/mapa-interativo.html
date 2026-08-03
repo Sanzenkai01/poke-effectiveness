@@ -1,0 +1,61 @@
+<div id="content-mapa-interativo" role="tabpanel" aria-label="Mapa Interativo" hidden>
+      <div class="interactive-map-shell">
+        <header class="interactive-map-header">
+          <div>
+            <span class="interactive-map-header__eyebrow">Exploração</span>
+            <h2>Mapa Interativo</h2>
+            <p>Explore andares, locais, serviços, hunts e áreas de respawn do PStory.</p>
+          </div>
+        </header>
+
+        <div class="interactive-map-layout">
+          <aside class="interactive-map-sidebar" aria-label="Pesquisa e filtros do mapa">
+            <div class="interactive-map-search" role="search">
+              <label class="visually-hidden" for="interactive-map-search">Pesquisar no mapa</label>
+              <input id="interactive-map-search" type="search" placeholder="Pokémon, cidade, NPC..." autocomplete="off">
+              <button id="interactive-map-search-clear" type="button" aria-label="Limpar pesquisa">×</button>
+            </div>
+            <div class="interactive-map-filter-actions">
+              <button id="interactive-map-show-all" type="button">Marcar todas</button>
+              <button id="interactive-map-hide-all" type="button">Desmarcar todas</button>
+            </div>
+            <div id="interactive-map-categories" class="interactive-map-categories"></div>
+            <div id="interactive-map-summary" class="interactive-map-sidebar__summary" aria-live="polite"></div>
+          </aside>
+
+          <section class="interactive-map-board" aria-label="Mapa do PStory">
+            <div id="interactive-map-viewport" class="interactive-map-viewport" tabindex="0">
+              <div id="interactive-map-stage" class="interactive-map-stage">
+                <img id="interactive-map-image" class="interactive-map-image" alt="" draggable="false">
+                <svg id="interactive-map-territory" class="interactive-map-territory-layer" aria-hidden="true"></svg>
+                <div id="interactive-map-labels" class="interactive-map-label-layer" aria-hidden="true"></div>
+                <div id="interactive-map-markers" class="interactive-map-marker-layer"></div>
+              </div>
+            </div>
+
+            <button id="interactive-map-share-view" class="interactive-map-view-share" type="button" title="Copiar um link desta parte do mapa">
+              <span aria-hidden="true">📌</span>
+              <span>Compartilhar visão</span>
+            </button>
+
+            <div class="interactive-map-floor-controls" aria-label="Selecionar andar">
+              <button id="interactive-map-floor-up" class="interactive-map-control" type="button" aria-label="Subir um andar">↑</button>
+              <select id="interactive-map-floor-select" class="interactive-map-floor-select" aria-label="Andar"></select>
+              <button id="interactive-map-floor-down" class="interactive-map-control" type="button" aria-label="Descer um andar">↓</button>
+              <span id="interactive-map-floor-value" hidden>0</span>
+            </div>
+
+            <div class="interactive-map-controls" aria-label="Controles do mapa">
+              <button id="interactive-map-zoom-out" class="interactive-map-control" type="button" aria-label="Diminuir zoom">−</button>
+              <button id="interactive-map-reset" class="interactive-map-control" type="button" aria-label="Centralizar mapa">
+                <span id="interactive-map-zoom-value">100%</span>
+              </button>
+              <button id="interactive-map-zoom-in" class="interactive-map-control" type="button" aria-label="Aumentar zoom">+</button>
+            </div>
+
+            <aside id="interactive-map-detail" class="interactive-map-detail" hidden></aside>
+            <div id="interactive-map-status" class="interactive-map-status" aria-live="polite">Carregando mapa...</div>
+          </section>
+        </div>
+      </div>
+    </div>

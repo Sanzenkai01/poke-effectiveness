@@ -1,5 +1,7 @@
 	// Interacao dos icones de clan na pagina de tipos
-	document.addEventListener('DOMContentLoaded', function() {
+	function initializeClanTypeControls() {
+		if(document.documentElement.dataset.clanTypeControlsInitialized === 'true') return;
+		document.documentElement.dataset.clanTypeControlsInitialized = 'true';
 		const clanButtons = document.querySelectorAll('.clan-btn');
 		clanButtons.forEach(btn => {
 			btn.addEventListener('click', function() {
@@ -47,4 +49,10 @@
 				});
 			});
 		}
-	});
+	}
+
+	if(document.readyState === 'loading'){
+		document.addEventListener('DOMContentLoaded', initializeClanTypeControls, { once: true });
+	} else {
+		initializeClanTypeControls();
+	}

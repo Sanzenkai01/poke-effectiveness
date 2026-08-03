@@ -1,0 +1,135 @@
+<div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden>
+      <div class="card calc-card calc-shell training-calculator">
+        <h2 class="visually-hidden">Calculadora de treinamento</h2>
+        <div class="training-calc-hero">
+          <div>
+            <p class="training-calc-kicker">Calculadora de Treino</p>
+            <h3>Planeje o treino ate o level 100</h3>
+            <p>Escolha o Pokemon, confirme o level atual e selecione se o treino sera Normal ou Shiny para calcular Coins, Plates e materiais.</p>
+          </div>
+          <button id="training-info-toggle" class="training-info-button" type="button" aria-expanded="false" aria-controls="training-info-panel">
+            <span aria-hidden="true">?</span>
+            Informacoes
+          </button>
+        </div>
+        <div id="training-info-panel" class="training-info-panel" hidden>
+          <div class="training-info-grid">
+            <article><strong>Coins</strong><span>Mostra o custo com Golden Coins, considerando sucesso garantido no treino.</span></article>
+            <article><strong>Plates (S)</strong><span>Quantidade de Plates consumidas no sucesso. A cada dezena, o custo sobe em 1.</span></article>
+            <article><strong>Plates (F)</strong><span>Estimativa de Plates consumidas em falhas caso o treino seja feito sem Golden Coin.</span></article>
+            <article><strong>Shiny</strong><span>Usa Shining Plates junto das Plates normais e calcula Shining Stones por blocos de craft.</span></article>
+          </div>
+        </div>
+        <div class="training-flow">
+          <section id="training-step-pokemon" class="training-step training-step--active" aria-labelledby="training-step-pokemon-title">
+            <div class="training-step__header">
+              <span class="training-step__index">1</span>
+              <div><h3 id="training-step-pokemon-title">Pokemon</h3><p>Busque no catalogo para carregar tipo, imagem e level inicial.</p></div>
+            </div>
+            <div class="boost-search-panel training-search-panel">
+              <div class="boost-search-panel__field">
+                <label class="speedster-search-label" for="training-pokemon-search">Nome</label>
+                <input id="training-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="training-selection-status" />
+                <div id="training-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                <div id="training-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+              </div>
+            </div>
+            <div id="training-selected-pokemon" class="training-selected-pokemon" hidden></div>
+          </section>
+          <section id="training-step-level" class="training-step training-step--locked" aria-labelledby="training-step-level-title">
+            <div class="training-step__header">
+              <span class="training-step__index">2</span>
+              <div><h3 id="training-step-level-title">Level atual</h3><p>O level do Pokemon e pre-selecionado, mas pode ser ajustado.</p></div>
+            </div>
+            <div class="training-level-control">
+              <button id="training-level-decrease" class="training-stepper-btn" type="button" aria-label="Diminuir level" disabled>-</button>
+              <label for="training-current-level"><span>Level</span><input id="training-current-level" type="number" min="5" max="99" value="5" disabled /></label>
+              <button id="training-level-increase" class="training-stepper-btn" type="button" aria-label="Aumentar level" disabled>+</button>
+            </div>
+            <div id="training-level-preview" class="training-level-preview"></div>
+          </section>
+          <section id="training-step-variant" class="training-step training-step--locked" aria-labelledby="training-step-variant-title">
+            <div class="training-step__header">
+              <span class="training-step__index">3</span>
+              <div><h3 id="training-step-variant-title">Tipo de treino</h3><p>Shiny adiciona Shining Plates junto das Plates normais.</p></div>
+            </div>
+            <div class="training-variant-toggle" role="radiogroup" aria-label="Tipo de treino">
+              <label class="training-variant-option"><input type="radio" name="training-variant" value="normal" checked disabled /><span>Normal</span></label>
+              <label class="training-variant-option"><input type="radio" name="training-variant" value="shiny" disabled /><span>Shiny</span></label>
+            </div>
+          </section>
+        </div>
+        <section id="training-results" class="training-results" aria-live="polite">
+          <div id="training-selection-status" class="training-empty-state">Selecione um Pokemon para liberar as proximas etapas.</div>
+        </section>
+        <div class="calc-grid calc-grid--split">
+          <div class="calc-left">
+            <div class="card inputs-card">
+              <div class="inputs-header">
+                <h3>Configuração</h3>
+              </div>
+              <div class="calc-section">
+                <label for="range-select">Faixa de nível <button class="info-btn" aria-label="Ajuda" data-tooltip="Escolha a faixa de nível.">?</button></label>
+                <select id="range-select">
+                  <option value="50-100">50 ao 100</option>
+                  <option value="65-100">65 ao 100</option>
+                  <option value="80-100">80 ao 100</option>
+                  <option value="95-100">95 ao 100</option>
+                </select>
+              </div>
+              <div class="calc-section variant-group">
+                <label id="pokemon-type-label">Tipo de Pokémon</label>
+                <div class="variant-options">
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="normal" checked>Normal</label>
+                  <label class="variant-label"><input type="radio" name="poke-variant" value="shiny">Shiny</label>
+                </div>
+              </div>
+
+              <div class="inputs-header">
+                <h3>Quantidade</h3>
+              </div>
+              <div class="calc-section">
+                <label for="common-plates">Plates comuns</label>
+                <input type="number" id="common-plates" min="0" value="0" />
+              </div>
+              <div class="calc-section">
+                <label for="shiny-plates">Shining plates</label>
+                <input type="number" id="shiny-plates" min="0" value="0" step="30" />
+              </div>
+            </div>
+
+            <!-- Vídeo de treinamento: fica dentro da coluna esquerda, logo abaixo do card "Configuração" -->
+            <div class="card video-card training-video-card" id="training-video-card">
+              <div class="inputs-header"><h3>Tutorial</h3></div>
+              <div class="training-video-wrapper video-wrapper" data-video-id="kTHb6gleV4E" aria-label="Vídeo de treinamento">
+                  <button type="button" class="training-video-play" aria-label="Abrir vídeo de treinamento">
+                    <img src="https://i.ytimg.com/vi/kTHb6gleV4E/hqdefault.jpg" alt="Miniatura do tutorial" loading="lazy" decoding="async">
+                  <span class="video-play-badge">▶</span>
+                  <span class="video-caption">Clique para abrir o vídeo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-right">
+            <div class="result-card main-result">
+              <div class="result-card__header">
+                <h3>Resultado Principal <button class="info-btn" aria-label="Ajuda" data-tooltip="Resumo principal dos resultados.">?</button></h3>
+              </div>
+              <div id="range-results" class="calc-results result-block"></div>
+            </div>
+
+            <div class="result-card resources-result">
+              <h4>Recursos</h4>
+              <div id="common-results" class="calc-results result-block"></div>
+              <div id="shiny-results" class="calc-results result-block"></div>
+            </div>
+          </div>
+        </div>
+
+        <details class="calc-help" aria-expanded="false">
+          <summary>Como funciona</summary>
+          <p>Shining Plates são produzidas em blocos de 30. 1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.</p>
+        </details>
+      </div>
+    </div>

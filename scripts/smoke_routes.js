@@ -128,6 +128,16 @@ const routes = [
     ]
   },
   {
+    path: '/liga-pokemon',
+    label: 'liga-pokemon',
+    checks: [
+      { pattern: /data-active-tab="liga-pokemon"/i, description: 'liga pokemon active tab' },
+      { pattern: /id="content-liga-pokemon"/i, description: 'liga pokemon panel' },
+      { pattern: /id="liga-pokemon-kanto-grid"/i, description: 'kanto capture grid' },
+      { pattern: /id="liga-pokemon-victory-title"/i, description: 'victory road section' }
+    ]
+  },
+  {
     path: '/fusao-de-held',
     label: 'fusao-de-held',
     checks: [

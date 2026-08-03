@@ -22,7 +22,9 @@
     const DATA_URLS = {
         categories: 'mapa-interativo/data/categories.json?v=20260801a',
         labels: 'mapa-interativo/data/labels.json?v=20260801a',
-        markers: 'mapa-interativo/data/markers.json?v=20260801a',
+        markers: 'mapa-interativo/data/markers.json?v=20260802e',
+        bossesInfoMarkers: 'mapa-interativo/data/bosses-info-markers.json?v=20260802b',
+        ligaPokemonMarkers: 'mapa-interativo/data/liga-pokemon-markers.json?v=20260802d',
         pokemon: 'pokemons/pokemons.json?v=20260723f'
     };
     const MAP_POKEMON_NAME_ALIASES = {
@@ -30,6 +32,7 @@
         beedril: 'beedrill',
         electabuzzz: 'electabuzz',
         burmygrass: 'burmyplant',
+        burmysand: 'burmysandy',
         wormadamgrass: 'wormadamplant',
         shellos: 'shelloswest',
         gastrodon: 'gastrodonwest'
@@ -47,8 +50,11 @@
     };
     const FILTER_STORAGE_KEY = 'poke-interactive-map-hidden-categories-v1';
     const MAX_ZOOM = 3;
-    const SHARE_GRID_SIZE = 32;
+    const SHARE_GRID_SIZE = 1;
+    const LEGACY_SHARE_GRID_SIZE = 32;
+    const PIXEL_SHARE_ROUTE_PREFIX = 'pixel';
     const SHARED_VIEW_ZOOM = 0.65;
+    const MAP_IMAGE_VERSION = '20260802a';
     const HOOPA_PORTAL_META = {
         staraptor: { image: 'pokemons/megas/megastaraptor.png?v=20260725a' },
         victreebel: { image: 'pokemons/megas/megavictreebel.png' },
@@ -85,8 +91,25 @@
         'hoopa-portals': '⛩️',
         eeveelution: '🌈',
         'dg-boss': '☠',
+        'bosses-info': '👑',
+        maniacs: '💰',
+        'liga-pokemon': '🏆',
         npc: '⚠️'
     };
+    const MANIACS_MAP_CATEGORY = Object.freeze({
+        id: 'poke-utilities-maniacs',
+        slug: 'maniacs',
+        label: 'Maniacs',
+        labelEn: 'Maniacs',
+        labelEs: 'Maniacs',
+        labelPl: 'Maniacs',
+        icon: 'GiTwoCoins',
+        image: null,
+        color: '#f59e0b',
+        comingSoon: false,
+        hasTerritory: false,
+        globalFloor: false
+    });
 
     let initialized = false;
     let loadingPromise = null;
@@ -102,6 +125,8 @@
     let translateY = 0;
     let selectedMarker = null;
     let selectedMarkerMediaOverride = null;
+    let selectedMarkerDetailsOverride = null;
+    let isolatedMarkerIds = new Set();
     let sharedPin = null;
     let placingSharedPin = false;
     let hiddenCategories = new Set();
@@ -131,6 +156,14 @@
 
     function normalizePokemonName(value){
         return normalize(value).replace(/[^a-z0-9]/g, '');
+    }
+
+    function normalizeRespawnPokemonName(value){
+        const normalizedName = normalize(String(value || '')
+            .replace(/♀/g, ' female ')
+            .replace(/♂/g, ' male '))
+            .replace(/[^a-z0-9]/g, '');
+        return MAP_POKEMON_NAME_ALIASES[normalizedName] || normalizedName;
     }
 
     function slugify(value){
@@ -183,6 +216,11 @@
     }
 
     function getVisibleMarkers(){
+        if(isolatedMarkerIds.size){
+            return Array.from(isolatedMarkerIds)
+                .map(markerId => markersById.get(markerId))
+                .filter(marker => marker && Number(marker.floor) === floor);
+        }
         const normalizedQuery = normalize(query);
         return markers.filter(marker => {
             const category = getCategory(marker);
@@ -193,6 +231,11 @@
     }
 
     function getSearchResults(){
+        if(isolatedMarkerIds.size){
+            return Array.from(isolatedMarkerIds)
+                .map(markerId => markersById.get(markerId))
+                .filter(Boolean);
+        }
         const normalizedQuery = normalize(query);
         if(!normalizedQuery) return [];
         return markers.filter(marker => getMarkerSearchText(marker).includes(normalizedQuery));
@@ -244,6 +287,7 @@
         categories.filter(category => !category.comingSoon).forEach(category => {
             const label = document.createElement('label');
             label.className = 'interactive-map-filter';
+            label.style.setProperty('--marker-color', category.color || '#65c7ff');
 
             const input = document.createElement('input');
             input.type = 'checkbox';
@@ -395,7 +439,9 @@
 
         const pokemonImages = category.slug === 'hunt'
             ? [catalogPokemon?.image || marker.icon || ''].filter(Boolean)
-            : fossilPokemon.map(entry => entry.image).filter(Boolean);
+            : category.slug === 'bosses-info'
+                ? [marker.icon || ''].filter(Boolean)
+                : fossilPokemon.map(entry => entry.image).filter(Boolean);
         if(pokemonImages.length > 1){
             const imageGrid = document.createElement('span');
             imageGrid.className = 'interactive-map-marker__image-grid';
@@ -435,6 +481,7 @@
         button.addEventListener('click', event => {
             event.stopPropagation();
             selectedMarker = selectedMarker?.id === marker.id ? null : marker;
+            if(!selectedMarker) clearRequestedMarkerRoute();
             const portalMeta = selectedMarker ? getHoopaPortalMeta(selectedMarker) : null;
             selectedMarkerMediaOverride = portalMeta?.image
                 ? { src: portalMeta.image, alt: `Mega ${String(selectedMarker.name || '').replace(/^Hoopa Portal\s*-\s*/i, '')}` }
@@ -625,19 +672,36 @@
 
     function getRequestedMarkerSlug(){
         const match = String(location.pathname || '').match(/\/mapa-interativo\/([a-z0-9][a-z0-9-]*)\/?$/i);
-        return match ? slugify(match[1]) : '';
+        const requestedFromPanel = byId('content-mapa-interativo')?.dataset?.requestedMarkerSlug || '';
+        return slugify(match?.[1] || requestedFromPanel);
+    }
+
+    function clearRequestedMarkerRoute(){
+        const panel = byId('content-mapa-interativo');
+        if(panel) panel.dataset.requestedMarkerSlug = '';
+        if(/\/mapa-interativo\/[a-z0-9][a-z0-9-]*\/?$/i.test(String(location.pathname || ''))){
+            history.replaceState(history.state, '', `/mapa-interativo${location.search}${location.hash}`);
+        }
     }
 
     function getMarkerByShareSlug(routeSlug){
         const normalizedSlug = slugify(routeSlug);
-        return normalizedSlug
-            ? markers.find(marker => getMarkerShareSlug(marker) === normalizedSlug) || null
-            : null;
+        if(!normalizedSlug) return null;
+        if(normalizedSlug.startsWith('marcador-')){
+            const requestedMarkerId = normalizedSlug.slice('marcador-'.length);
+            const markerById = markers.find(marker => slugify(marker?.id) === requestedMarkerId);
+            if(markerById) return markerById;
+        }
+        return markers.find(marker => getMarkerShareSlug(marker) === normalizedSlug) || null;
     }
 
     function getSharedViewFromUrl(){
-        const routeMatch = String(location.pathname || '').match(/\/mapa-interativo\/([\d-]+)\/?$/i);
+        const pathname = String(location.pathname || '');
+        const pixelRouteMatch = pathname.match(/\/mapa-interativo\/pixel-([\d-]+)\/?$/i);
+        const legacyRouteMatch = pathname.match(/\/mapa-interativo\/([\d-]+)\/?$/i);
+        const routeMatch = pixelRouteMatch || legacyRouteMatch;
         if(routeMatch){
+            const gridSize = pixelRouteMatch ? SHARE_GRID_SIZE : LEGACY_SHARE_GRID_SIZE;
             let coordinateX;
             let coordinateY;
             let coordinateZ;
@@ -651,13 +715,13 @@
                 if(coordinateParts[1]) sharedScale = Number(coordinateParts[1]) / 100;
             }
             const config = FLOOR_CONFIG[coordinateZ - 1];
-            const maxX = config ? Math.ceil(config.h / SHARE_GRID_SIZE) : 0;
-            const maxY = config ? Math.ceil(config.w / SHARE_GRID_SIZE) : 0;
+            const maxX = config ? Math.ceil(config.h / gridSize) : 0;
+            const maxY = config ? Math.ceil(config.w / gridSize) : 0;
             if(config && coordinateX >= 1 && coordinateX <= maxX && coordinateY >= 1 && coordinateY <= maxY && Number.isFinite(sharedScale)){
-                const topPosition = (coordinateX - 0.5) * SHARE_GRID_SIZE;
+                const topPosition = (coordinateX - 0.5) * gridSize;
                 return {
                     floor: config.z,
-                    x: (coordinateY - 0.5) * SHARE_GRID_SIZE,
+                    x: (coordinateY - 0.5) * gridSize,
                     y: config.h - topPosition,
                     scale: Math.min(MAX_ZOOM, Math.max(0.06, sharedScale)),
                     showPin: true
@@ -723,7 +787,9 @@
             return false;
         }
 
-        if(floor !== target.floor) setFloor(target.floor, false);
+        // Reaplica o andar mesmo quando ele já está selecionado para que
+        // modais abertos após uma atualização não reutilizem o PNG antigo.
+        setFloor(target.floor, false);
         selectedMarker = target;
         selectedMarkerMediaOverride = options.image
             ? { src: String(options.image), alt: String(options.imageAlt || requestedQuery) }
@@ -735,6 +801,97 @@
             translateY -= viewportRect.height * 0.24;
             updateTransform();
         }
+        render();
+        return true;
+    }
+
+    async function focusMarkerTarget(markerId, options = {}){
+        await initialize();
+        const normalizedMarkerId = String(markerId || '').trim();
+        const target = markersById.get(normalizedMarkerId) || getMarkerByShareSlug(normalizedMarkerId);
+        if(!target) return false;
+
+        isolatedMarkerIds = options.isolate === false ? new Set() : new Set([target.id]);
+        query = String(target.name || '').trim();
+        if(elements.search){
+            elements.search.value = query;
+            elements.search.disabled = Boolean(isolatedMarkerIds.size);
+        }
+        if(elements.clearSearch) elements.clearSearch.disabled = Boolean(isolatedMarkerIds.size);
+        if(floor !== target.floor) setFloor(target.floor, false);
+        selectedMarker = target;
+        selectedMarkerMediaOverride = options.image
+            ? { src: String(options.image), alt: String(options.imageAlt || target.name || '') }
+            : null;
+        selectedMarkerDetailsOverride = options.details && typeof options.details === 'object'
+            ? { ...options.details }
+            : null;
+        await waitForViewportLayout();
+        centerAt(target.positionX, target.positionY, Number(options.zoom) || 3);
+        render();
+        return true;
+    }
+
+    function getPokemonRespawnMarkers(pokemonName, pokemonDex){
+        const normalizedName = normalizeRespawnPokemonName(pokemonName);
+        const huntMarkers = markers.filter(marker => getCategory(marker)?.slug === 'hunt');
+        const nameMatches = normalizedName
+            ? huntMarkers.filter(marker => normalizeRespawnPokemonName(marker?.name) === normalizedName)
+            : [];
+        if(nameMatches.length) return nameMatches;
+
+        const normalizedDex = Number.parseInt(pokemonDex, 10);
+        if(!Number.isFinite(normalizedDex) || normalizedDex <= 0) return [];
+        return huntMarkers.filter(marker => Number.parseInt(marker?.details?.dexNumber, 10) === normalizedDex);
+    }
+
+    async function focusPokemonRespawns(pokemonName, options = {}){
+        await initialize();
+        const targets = getPokemonRespawnMarkers(pokemonName, options.dex);
+        if(!targets.length) return false;
+
+        const floorCounts = new Map();
+        targets.forEach(target => {
+            const targetFloor = Number(target.floor);
+            floorCounts.set(targetFloor, (floorCounts.get(targetFloor) || 0) + 1);
+        });
+        const targetFloor = Array.from(floorCounts.entries())
+            .sort((left, right) => right[1] - left[1] || right[0] - left[0])[0][0];
+        const visibleTargets = targets.filter(target => Number(target.floor) === targetFloor);
+        const positionX = (Math.min(...visibleTargets.map(target => Number(target.positionX)))
+            + Math.max(...visibleTargets.map(target => Number(target.positionX)))) / 2;
+        const positionY = (Math.min(...visibleTargets.map(target => Number(target.positionY)))
+            + Math.max(...visibleTargets.map(target => Number(target.positionY)))) / 2;
+
+        isolatedMarkerIds = new Set(targets.map(target => target.id));
+        query = String(pokemonName || '').trim();
+        selectedMarker = visibleTargets.find(target => Array.isArray(getMarkerTerritory(target))) || visibleTargets[0];
+        selectedMarkerMediaOverride = null;
+        selectedMarkerDetailsOverride = null;
+        if(elements.search){
+            elements.search.value = query;
+            elements.search.disabled = true;
+        }
+        if(elements.clearSearch) elements.clearSearch.disabled = true;
+        setFloor(targetFloor, false);
+        await waitForViewportLayout();
+        centerAt(positionX, positionY, Number(options.zoom) || 3);
+        render();
+        return true;
+    }
+
+    function clearMarkerIsolation(){
+        if(!isolatedMarkerIds.size) return false;
+        isolatedMarkerIds = new Set();
+        query = '';
+        selectedMarker = null;
+        selectedMarkerMediaOverride = null;
+        selectedMarkerDetailsOverride = null;
+        if(elements.search){
+            elements.search.value = '';
+            elements.search.disabled = false;
+        }
+        if(elements.clearSearch) elements.clearSearch.disabled = false;
         render();
         return true;
     }
@@ -771,10 +928,7 @@
 
     async function copySharedPinLink(position){
         const { coordinateX, coordinateY, coordinateZ } = getShareCoordinates(position);
-        const mapCoordinate = [coordinateX, coordinateY, coordinateZ].every(value => value < 10)
-            ? `${coordinateX}${coordinateY}${coordinateZ}`
-            : `${coordinateX}-${coordinateY}-${coordinateZ}`;
-        const compactCoordinate = `${mapCoordinate}-${Math.round(scale * 100)}`;
+        const compactCoordinate = `${PIXEL_SHARE_ROUTE_PREFIX}-${coordinateX}-${coordinateY}-${coordinateZ}-${Math.round(scale * 100)}`;
         const path = `/mapa-interativo/${compactCoordinate}`;
         const url = new URL(path, location.origin);
         history.pushState(null, '', path);
@@ -887,6 +1041,13 @@
     function renderDetails(){
         if(!elements.detail) return;
         if(!selectedMarker){
+            const requestedMarker = getMarkerByShareSlug(getRequestedMarkerSlug());
+            if(requestedMarker && Number(requestedMarker.floor) === floor){
+                selectedMarker = requestedMarker;
+                centerAt(requestedMarker.positionX, requestedMarker.positionY, 0.65);
+            }
+        }
+        if(!selectedMarker){
             elements.detail.hidden = true;
             elements.detail.replaceChildren();
             return;
@@ -899,6 +1060,7 @@
         close.setAttribute('aria-label', 'Fechar detalhes');
         close.addEventListener('click', () => {
             selectedMarker = null;
+            clearRequestedMarkerRoute();
             renderSelection();
         });
 
@@ -914,7 +1076,18 @@
         const media = document.createElement('div');
         media.className = 'interactive-map-detail__media';
         const portalMeta = getHoopaPortalMeta(selectedMarker);
-        const detailImageSource = String(selectedMarkerMediaOverride?.src || portalMeta?.image || selectedMarker.icon || '').trim();
+        const catalogPokemon = getSelectedMarkerPokemon();
+        const catalogPokemonImage = category.slug === 'hunt'
+            ? String(catalogPokemon?.image || '').trim()
+            : '';
+        const markerIconSource = String(selectedMarker.icon || '').trim();
+        const detailImageSource = String(
+            selectedMarkerMediaOverride?.src
+            || portalMeta?.image
+            || catalogPokemonImage
+            || markerIconSource
+            || ''
+        ).trim();
         if(detailImageSource){
             const image = document.createElement('img');
             image.src = detailImageSource.startsWith('/uploads/')
@@ -923,13 +1096,27 @@
             image.alt = selectedMarkerMediaOverride?.alt
                 || (portalMeta ? `Mega ${String(selectedMarker.name || '').replace(/^Hoopa Portal\s*-\s*/i, '')}` : selectedMarker.name)
                 || '';
+            image.addEventListener('error', () => {
+                const fallbackSource = markerIconSource.startsWith('/uploads/')
+                    ? `https://pstory.mapdex.online${markerIconSource}`
+                    : markerIconSource;
+                if(fallbackSource && image.dataset.fallback !== 'true'){
+                    image.dataset.fallback = 'true';
+                    image.src = fallbackSource;
+                    return;
+                }
+                image.remove();
+            });
             media.appendChild(image);
         }
 
         const rows = document.createElement('div');
         rows.className = 'interactive-map-detail__rows';
         appendDetailRow(rows, 'Andar', getFloor().label);
-        const details = selectedMarker.details || {};
+        const details = {
+            ...(selectedMarker.details || {}),
+            ...(selectedMarkerDetailsOverride || {})
+        };
         appendDetailRow(rows, 'Pokédex', details.dexNumber);
         appendDetailRow(rows, 'Tipo', details.types ? String(details.types).split(',').map(type => TYPE_LABELS[normalize(type)] || type).join(' / ') : '');
         const captureAverages = getPokemonCaptureAverages(getSelectedMarkerPokemon());
@@ -952,7 +1139,6 @@
 
         const actions = document.createElement('div');
         actions.className = 'interactive-map-detail__actions';
-        const catalogPokemon = getSelectedMarkerPokemon();
         if(catalogPokemon){
             const pokemonInfo = document.createElement('button');
             pokemonInfo.type = 'button';
@@ -1083,11 +1269,11 @@
         if(!config) return;
         const savedView = preserveView ? getViewportCenterPosition() : null;
         floor = config.z;
-        selectedMarker = null;
+        if(Number(selectedMarker?.floor) !== config.z) selectedMarker = null;
         elements.viewport.classList.toggle('is-surface', config.z === 7);
         elements.floorValue.textContent = config.label;
         elements.floorSelect.value = String(config.z);
-        elements.image.src = `mapa-interativo/assets/minimap-v1.0.0_z${config.z}.png?v=20260801a`;
+        elements.image.src = `mapa-interativo/assets/minimap-v1.0.0_z${config.z}.png?v=${MAP_IMAGE_VERSION}`;
         elements.image.width = config.w;
         elements.image.height = config.h;
         elements.image.alt = `Mapa do andar ${config.label}`;
@@ -1221,6 +1407,7 @@
         elements.viewport.addEventListener('click', event => {
             if(event.target === elements.viewport || event.target === elements.mapStage){
                 selectedMarker = null;
+                clearRequestedMarkerRoute();
                 renderSelection();
             }
         });
@@ -1232,10 +1419,26 @@
     async function loadData(){
         const responses = await Promise.all(Object.values(DATA_URLS).map(url => fetch(url)));
         if(responses.some(response => !response.ok)) throw new Error('Falha ao carregar os dados do mapa.');
-        const [categoryRoot, labelRoot, markerRoot, pokemonRoot] = await Promise.all(responses.map(response => response.json()));
+        const [categoryRoot, labelRoot, markerRoot, bossesInfoRoot, ligaPokemonRoot, pokemonRoot] = await Promise.all(responses.map(response => response.json()));
         categories = Array.isArray(categoryRoot.categories) ? categoryRoot.categories : [];
+        if(!categories.some(category => category.id === MANIACS_MAP_CATEGORY.id)){
+            categories.push(MANIACS_MAP_CATEGORY);
+        }
+        if(bossesInfoRoot?.category && !categories.some(category => category.id === bossesInfoRoot.category.id)){
+            categories.push(bossesInfoRoot.category);
+        }
+        if(ligaPokemonRoot?.category && !categories.some(category => category.id === ligaPokemonRoot.category.id)){
+            categories.push(ligaPokemonRoot.category);
+        }
         labels = Array.isArray(labelRoot.labels) ? labelRoot.labels : [];
         markers = Array.isArray(markerRoot.markers) ? markerRoot.markers : [];
+        markers.forEach(marker => {
+            if(!String(marker?.id || '').startsWith('poke-utilities-maniac-')) return;
+            marker.categoryId = MANIACS_MAP_CATEGORY.id;
+            marker.category = MANIACS_MAP_CATEGORY;
+        });
+        if(Array.isArray(bossesInfoRoot?.markers)) markers.push(...bossesInfoRoot.markers);
+        if(Array.isArray(ligaPokemonRoot?.markers)) markers.push(...ligaPokemonRoot.markers);
         markersById = new Map(markers.map(marker => [marker.id, marker]));
         pokemonCatalog = Array.isArray(pokemonRoot.pokemon) ? pokemonRoot.pokemon : [];
         pokemonCatalogByName = new Map(
@@ -1289,7 +1492,8 @@
             bindControls();
             initialized = true;
             elements.status.hidden = true;
-            const requestedMarker = getMarkerByShareSlug(getRequestedMarkerSlug());
+            const requestedMarkerSlug = getRequestedMarkerSlug();
+            const requestedMarker = getMarkerByShareSlug(requestedMarkerSlug);
             const sharedView = requestedMarker ? null : getSharedViewFromUrl();
             if(requestedMarker){
                 setFloor(requestedMarker.floor, false);
@@ -1329,6 +1533,9 @@
     window.initInteractiveMapPage = initialize;
     window.focusInteractiveMapRoute = focusRequestedMarker;
     window.focusInteractiveMapSearch = focusSearchTarget;
+    window.focusInteractiveMapMarker = focusMarkerTarget;
+    window.focusInteractiveMapPokemonRespawns = focusPokemonRespawns;
+    window.clearInteractiveMapIsolation = clearMarkerIsolation;
     window.refreshInteractiveMapPage = function(){
         if(!initialized) return initialize();
         requestAnimationFrame(() => {

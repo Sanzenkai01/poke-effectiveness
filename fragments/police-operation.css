@@ -1,0 +1,303 @@
+/* Pagina Police Operation */
+.police-operation-shell {
+  --police-panel: rgba(12, 18, 28, 0.88);
+  --police-border: rgba(255, 255, 255, 0.12);
+  --police-muted: rgba(230, 238, 248, 0.72);
+  --police-gold: 252, 203, 88;
+  --police-blue: 82, 180, 255;
+  --police-red: 239, 92, 92;
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  color: #f4f8ff;
+}
+
+body[data-active-tab="police-operation"] #content-police-operation {
+  width: min(100%, 1240px);
+  margin: -0.25rem auto 0;
+  padding: clamp(0.8rem, 2vw, 1.35rem);
+  border: 1px solid rgba(var(--police-blue), 0.16);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(9, 18, 31, 0.94), rgba(20, 23, 33, 0.96) 52%, rgba(35, 18, 20, 0.9)),
+    radial-gradient(circle at top right, rgba(var(--police-red), 0.12), transparent 38%);
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.28);
+}
+
+.police-operation-hero,
+.police-operation-section {
+  border: 1px solid var(--police-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(var(--police-blue), 0.08), rgba(var(--police-red), 0.07)),
+    var(--police-panel);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.police-operation-hero {
+  display: grid;
+  grid-template-columns: minmax(88px, 140px) minmax(0, 1fr) minmax(88px, 140px);
+  align-items: center;
+  gap: clamp(0.85rem, 2.2vw, 1.35rem);
+  padding: clamp(1rem, 2.6vw, 1.55rem);
+}
+
+.police-operation-hero__copy {
+  display: grid;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.police-operation-eyebrow {
+  color: rgb(var(--police-gold));
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.police-operation-hero h2,
+.police-operation-section__head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+  letter-spacing: 0;
+}
+
+.police-operation-hero h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+
+.police-operation-hero p,
+.police-operation-section__head p,
+.police-operation-step p,
+.police-operation-reward-grid p,
+.police-operation-token-board figcaption {
+  margin: 0;
+  color: var(--police-muted);
+  line-height: 1.6;
+}
+
+.police-operation-hero__badge,
+.police-operation-hero__media {
+  display: grid;
+  place-items: center;
+  min-height: 8.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(4, 10, 18, 0.38);
+}
+
+.police-operation-hero__badge img {
+  width: min(100%, 5.5rem);
+  object-fit: contain;
+  filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.34));
+}
+
+.police-operation-hero__media img {
+  width: min(100%, 4.4rem);
+  image-rendering: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.34));
+}
+
+.police-operation-section {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
+}
+
+.police-operation-section__head {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.police-operation-section__head h3 {
+  font-size: 1.14rem;
+}
+
+.police-operation-fact-grid,
+.police-operation-reward-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.police-operation-fact-grid article,
+.police-operation-reward-grid article {
+  display: grid;
+  gap: 0.34rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 11, 19, 0.42);
+}
+
+.police-operation-fact-grid span,
+.police-operation-reward-grid span {
+  color: rgb(var(--police-gold));
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.police-operation-fact-grid strong,
+.police-operation-reward-grid strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.police-operation-flow {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.police-operation-step {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.1fr);
+  gap: 0.85rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 11, 19, 0.38);
+}
+
+.police-operation-step--reverse {
+  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+}
+
+.police-operation-step figure,
+.police-operation-token-board figure {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.police-operation-step img,
+.police-operation-token-board img {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(3, 8, 14, 0.44);
+}
+
+.police-operation-step img {
+  max-height: 15rem;
+  object-fit: contain;
+}
+
+.police-operation-step div {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.police-operation-step span {
+  color: rgb(var(--police-blue));
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.police-operation-step h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.police-operation-reward-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.police-operation-reward-grid em {
+  align-self: end;
+  color: #ffe39c;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.police-operation-token-board {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(320px, 1.18fr);
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.police-operation-token-board table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 11, 19, 0.42);
+  font-size: 0.84rem;
+}
+
+.police-operation-token-board th,
+.police-operation-token-board td {
+  padding: 0.64rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(244, 248, 255, 0.86);
+  text-align: left;
+}
+
+.police-operation-token-board th {
+  color: rgb(var(--police-gold));
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.police-operation-token-board tr:last-child td {
+  border-bottom: 0;
+}
+
+.police-operation-token-board img {
+  max-height: 19rem;
+  object-fit: contain;
+}
+
+.police-operation-token-board figcaption {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .police-operation-hero,
+  .police-operation-step,
+  .police-operation-step--reverse,
+  .police-operation-token-board {
+    grid-template-columns: 1fr;
+  }
+
+  .police-operation-hero__copy {
+    order: -1;
+  }
+
+  .police-operation-fact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  body[data-active-tab="police-operation"] #content-police-operation {
+    padding: 0.75rem;
+  }
+
+  .police-operation-fact-grid,
+  .police-operation-reward-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .police-operation-step {
+    padding: 0.72rem;
+  }
+}

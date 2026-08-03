@@ -262,8 +262,9 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
 }
 
 .interactive-map-filter:hover {
-  border-color: rgba(137, 184, 220, 0.15);
-  background: rgba(255, 255, 255, 0.035);
+  border-color: color-mix(in srgb, var(--marker-color) 48%, transparent);
+  background: color-mix(in srgb, var(--marker-color) 10%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--marker-color) 68%, transparent);
 }
 
 .interactive-map-filter input {
@@ -404,16 +405,17 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   height: 32px;
   padding: 3px;
   place-items: center;
-  transform: translate(-50%, -50%);
+  /* A coordenada representa a ponta inferior do pin, não o seu centro. */
+  transform: translate(-50%, -120.710678%) rotate(-45deg);
   border: 2px solid var(--marker-color);
-  border-radius: 50% 50% 50% 10%;
+  border-radius: 50% 50% 50% 0;
   background: rgba(5, 13, 23, 0.92);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   color: #fff;
   cursor: pointer;
   pointer-events: auto;
-  rotate: -45deg;
-  transition: opacity 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+  transition: none !important;
+  animation: none !important;
 }
 
 .interactive-map-shared-pin {
@@ -470,11 +472,15 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
 
 .interactive-map-marker:hover,
 .interactive-map-marker:focus-visible {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -120.710678%) rotate(-45deg) !important;
   border-color: var(--marker-color);
   background: rgba(5, 13, 23, 0.92);
-  opacity: 0.68;
-  outline: none;
+  opacity: 1;
+}
+
+.interactive-map-marker:focus-visible {
+  outline: 2px solid var(--marker-color);
+  outline-offset: 3px;
 }
 
 .interactive-map-marker.is-selected {

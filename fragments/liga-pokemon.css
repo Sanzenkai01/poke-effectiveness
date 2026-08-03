@@ -1,0 +1,1428 @@
+/* Pagina Liga Pokemon */
+.liga-pokemon-shell {
+  --liga-panel: rgba(12, 18, 28, 0.88);
+  --liga-panel-soft: rgba(7, 13, 22, 0.58);
+  --liga-border: rgba(255, 255, 255, 0.11);
+  --liga-muted: rgba(230, 239, 249, 0.7);
+  --liga-gold: 244, 199, 75;
+  --liga-blue: 92, 190, 236;
+  --liga-red: 224, 84, 79;
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  color: #eef6ff;
+}
+
+body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
+  --liga-gold: 244, 199, 75;
+  --liga-blue: 92, 190, 236;
+  --liga-red: 224, 84, 79;
+  width: min(100%, 1300px);
+  margin: -0.25rem auto 0;
+  padding: clamp(0.8rem, 2vw, 1.35rem);
+  border: 1px solid rgba(var(--liga-gold), 0.15);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(var(--liga-blue), 0.12), transparent 30%),
+    radial-gradient(circle at 92% 8%, rgba(var(--liga-red), 0.1), transparent 28%),
+    linear-gradient(145deg, rgba(10, 20, 31, 0.94), rgba(25, 22, 27, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 46px rgba(0, 0, 0, 0.28);
+}
+
+.liga-pokemon-hero,
+.liga-pokemon-section,
+.liga-pokemon-collapsible {
+  border: 1px solid var(--liga-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(var(--liga-blue), 0.055), rgba(var(--liga-gold), 0.04)),
+    var(--liga-panel);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
+}
+
+.liga-pokemon-hero {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  text-align: center;
+}
+
+.liga-pokemon-eyebrow {
+  color: rgb(var(--liga-gold));
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-hero h2,
+.liga-pokemon-section__head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+}
+
+.liga-pokemon-hero h2 {
+  font-size: clamp(2.15rem, 5vw, 3.7rem);
+}
+
+.liga-pokemon-hero > p,
+.liga-pokemon-section__head p,
+.liga-pokemon-note,
+.liga-pokemon-kanto-toolbar p,
+.liga-pokemon-red-card p {
+  margin: 0;
+  color: var(--liga-muted);
+  line-height: 1.6;
+}
+
+.liga-pokemon-hero > p {
+  max-width: 860px;
+}
+
+.liga-pokemon-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.liga-pokemon-hero__stats span {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(4, 10, 18, 0.4);
+  color: var(--liga-muted);
+  font-size: 0.72rem;
+}
+
+.liga-pokemon-hero__stats strong {
+  color: #ffffff;
+  font-size: 0.98rem;
+}
+
+.liga-pokemon-section {
+  position: relative;
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(0.9rem, 2vw, 1.2rem);
+}
+
+.liga-pokemon-section__head {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.liga-pokemon-section__head h3 {
+  font-size: 1.18rem;
+}
+
+.liga-pokemon-section--map-location .liga-pokemon-section__head {
+  justify-items: center;
+  padding-inline: 3rem;
+  text-align: center;
+}
+
+.liga-pokemon-map-btn {
+  z-index: 3;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(var(--liga-blue), 0.42);
+  border-radius: 50%;
+  background: rgba(4, 12, 20, 0.76);
+  color: #ffffff;
+  font: inherit;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.liga-pokemon-map-btn:hover,
+.liga-pokemon-map-btn:focus-visible {
+  border-color: rgba(var(--liga-gold), 0.78);
+  background: rgba(var(--liga-gold), 0.16);
+  transform: none !important;
+  outline: 2px solid rgba(var(--liga-gold), 0.32);
+  outline-offset: 2px;
+}
+
+.liga-pokemon-section__map-btn {
+  position: absolute;
+  top: clamp(0.9rem, 2vw, 1.2rem);
+  right: clamp(0.9rem, 2vw, 1.2rem);
+}
+
+.liga-pokemon-oak {
+  border-color: rgba(var(--liga-gold), 0.3);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--liga-gold), 0.1), transparent 55%),
+    var(--liga-panel);
+}
+
+.liga-pokemon-red-visit {
+  border-color: rgba(var(--liga-red), 0.28);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--liga-red), 0.1), transparent 55%),
+    var(--liga-panel);
+}
+
+.liga-pokemon-red-visit__rewards {
+  display: grid;
+  justify-self: center;
+  gap: 0.45rem;
+  width: min(100%, 680px);
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(var(--liga-gold), 0.18);
+  text-align: center;
+}
+
+.liga-pokemon-red-visit__rewards .liga-pokemon-reward-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  text-align: left;
+}
+
+.liga-pokemon-requirements {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liga-pokemon-requirements li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 4.4rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: var(--liga-panel-soft);
+}
+
+.liga-pokemon-requirements li span,
+.liga-pokemon-boss-grid > li > span,
+.liga-pokemon-elite-grid li > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(var(--liga-gold), 0.12);
+  color: rgb(var(--liga-gold));
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.liga-pokemon-requirements strong {
+  color: #f7fbff;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.liga-pokemon-rotom {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+.liga-pokemon-rotom .liga-pokemon-section__head {
+  justify-items: center;
+  text-align: center;
+}
+
+.liga-pokemon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.7rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(var(--liga-blue), 0.38);
+  border-radius: 8px;
+  background: rgba(var(--liga-blue), 0.1);
+  color: #def6ff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.liga-pokemon-rotom .liga-pokemon-link {
+  position: absolute;
+  top: 50%;
+  right: clamp(0.9rem, 2vw, 1.2rem);
+  transform: translateY(calc(-50% - 12px));
+}
+
+.liga-pokemon-link:hover,
+.liga-pokemon-link:focus-visible {
+  border-color: rgba(var(--liga-blue), 0.72);
+  background: rgba(var(--liga-blue), 0.17);
+  outline: none;
+}
+
+.liga-pokemon-collapsible {
+  overflow: clip;
+}
+
+.liga-pokemon-collapsible summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 5rem;
+  padding: 0.9rem 7rem;
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+}
+
+.liga-pokemon-collapsible summary::-webkit-details-marker {
+  display: none;
+}
+
+.liga-pokemon-collapsible summary > span:first-child {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  gap: 0.2rem;
+}
+
+.liga-pokemon-collapsible summary small {
+  color: rgb(var(--liga-gold));
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-collapsible summary strong {
+  color: #ffffff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+  font-size: 1.08rem;
+}
+
+.liga-pokemon-collapsible summary em {
+  color: var(--liga-muted);
+  font-size: 0.76rem;
+  font-style: normal;
+}
+
+.liga-pokemon-collapsible__action::before {
+  content: 'Expandir';
+  display: inline-flex;
+  min-width: 5.2rem;
+  justify-content: center;
+  padding: 0.42rem 0.58rem;
+  border: 1px solid rgba(var(--liga-gold), 0.28);
+  border-radius: 7px;
+  background: rgba(var(--liga-gold), 0.08);
+  color: #ffe9a8;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.liga-pokemon-collapsible__action {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+}
+
+.liga-pokemon-collapsible[open] .liga-pokemon-collapsible__action::before {
+  content: 'Recolher';
+}
+
+.liga-pokemon-collapsible[open] summary {
+  border-bottom: 1px solid var(--liga-border);
+  background: rgba(var(--liga-gold), 0.035);
+}
+
+.liga-pokemon-collapsible__content {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+}
+
+.liga-pokemon-note {
+  padding: 0.72rem 0.82rem;
+  border-left: 3px solid rgba(var(--liga-gold), 0.72);
+  background: rgba(var(--liga-gold), 0.055);
+}
+
+.liga-pokemon-note--warning {
+  border-left-color: rgba(var(--liga-red), 0.78);
+  background: rgba(var(--liga-red), 0.065);
+}
+
+.liga-pokemon-gym-video {
+  display: grid;
+  grid-template-columns: 2.65rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.62rem 0.78rem;
+  border: 1px solid rgba(255, 73, 73, 0.28);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(255, 44, 44, 0.09), rgba(255, 255, 255, 0.025));
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.liga-pokemon-gym-video:hover,
+.liga-pokemon-gym-video:focus-visible {
+  border-color: rgba(255, 84, 84, 0.62);
+  background: linear-gradient(135deg, rgba(255, 44, 44, 0.16), rgba(255, 255, 255, 0.04));
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+  outline: none;
+}
+
+.liga-pokemon-gym-video > img {
+  width: 2.65rem;
+  height: 2.65rem;
+  object-fit: contain;
+}
+
+.liga-pokemon-gym-video > span {
+  display: grid;
+  gap: 0.08rem;
+  min-width: 0;
+}
+
+.liga-pokemon-gym-video small {
+  color: rgb(var(--liga-gold));
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-gym-video strong {
+  color: #f7fbff;
+  font-size: 0.82rem;
+}
+
+.liga-pokemon-gym-video > b {
+  color: rgba(245, 250, 255, 0.72);
+  font-size: 0.68rem;
+}
+
+.liga-pokemon-gym-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.liga-pokemon-gym-card {
+  position: relative;
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: var(--liga-panel-soft);
+}
+
+.liga-pokemon-gym-card__map-btn {
+  position: absolute;
+  top: 0.58rem;
+  right: 0.58rem;
+}
+
+.liga-pokemon-gym-card__head {
+  display: grid;
+  gap: 0.12rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.liga-pokemon-gym-card__trainer {
+  width: 72px;
+  height: 72px;
+  margin: 0.2rem auto 0.12rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.28));
+}
+
+.liga-pokemon-gym-card__head span,
+.liga-pokemon-gym-card__block span {
+  color: rgb(var(--liga-gold));
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-gym-card__head strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.liga-pokemon-gym-card__head small,
+.liga-pokemon-gym-card__block p {
+  color: var(--liga-muted);
+  font-size: 0.72rem;
+}
+
+.liga-pokemon-gym-card__block {
+  display: grid;
+  gap: 0.22rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.liga-pokemon-gym-card__block p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.liga-pokemon-gym-card__block--team {
+  gap: 0.55rem;
+}
+
+.liga-pokemon-gym-team {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.38rem;
+}
+
+.liga-pokemon-gym-pokemon {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.18rem;
+  min-width: 0;
+  padding: 0.38rem 0.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: center;
+}
+
+.liga-pokemon-gym-pokemon.is-boss {
+  border-color: rgba(var(--liga-gold), 0.5);
+  background: linear-gradient(145deg, rgba(var(--liga-gold), 0.13), rgba(255, 255, 255, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(var(--liga-gold), 0.08);
+}
+
+.liga-pokemon-gym-pokemon img {
+  width: 3.3rem;
+  height: 3.3rem;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.32));
+}
+
+.liga-pokemon-gym-pokemon strong {
+  overflow: hidden;
+  width: 100%;
+  color: #edf6ff;
+  font-size: 0.6rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liga-pokemon-boss-emblem,
+.liga-pokemon-gym-pokemon .liga-pokemon-boss-emblem,
+.liga-pokemon-elite-pokemon .liga-pokemon-boss-emblem {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.28rem;
+  z-index: 1;
+  width: 1.22rem;
+  height: 1.22rem;
+  padding: 0.16rem;
+  border: 1px solid rgba(var(--liga-gold), 0.42);
+  border-radius: 50%;
+  background: rgba(var(--liga-gold), 0.16);
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(var(--liga-gold), 0.45));
+}
+
+.liga-pokemon-gym-pokemon__weaknesses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.16rem;
+  width: 100%;
+  margin-top: 0.12rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.liga-pokemon-gym-pokemon__weaknesses small {
+  flex: 0 0 100%;
+  color: rgba(232, 241, 250, 0.58);
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-gym-card__block .liga-pokemon-gym-pokemon__weaknesses span {
+  display: grid;
+  width: 1.18rem;
+  height: 1.18rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.045);
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.liga-pokemon-gym-pokemon__weaknesses img {
+  width: 0.82rem;
+  height: 0.82rem;
+  object-fit: contain;
+  filter: none;
+}
+
+.liga-pokemon-kanto-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.liga-pokemon-kanto-toolbar button {
+  flex: 0 0 auto;
+  min-height: 2.3rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(var(--liga-red), 0.35);
+  border-radius: 7px;
+  background: rgba(var(--liga-red), 0.08);
+  color: #ffdada;
+  font-size: 0.7rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.liga-pokemon-kanto-progress {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.liga-pokemon-kanto-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgb(var(--liga-blue)), rgb(var(--liga-gold)));
+  transition: width 0.22s ease;
+}
+
+.liga-pokemon-kanto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 0.55rem;
+}
+
+.liga-pokemon-kanto-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  min-height: 7.6rem;
+  padding: 0.55rem 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(4, 10, 18, 0.46);
+  color: #edf6ff;
+  cursor: pointer;
+}
+
+.liga-pokemon-kanto-card:hover,
+.liga-pokemon-kanto-card:focus-visible {
+  border-color: rgba(var(--liga-blue), 0.55);
+  background: rgba(var(--liga-blue), 0.08);
+  outline: none;
+}
+
+.liga-pokemon-kanto-card.is-captured {
+  border-color: rgba(var(--liga-gold), 0.55);
+  background: rgba(var(--liga-gold), 0.095);
+}
+
+.liga-pokemon-kanto-card.is-captured::after {
+  content: '\2713';
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(var(--liga-gold));
+  color: #171208;
+  font-size: 0.72rem;
+  font-weight: 1000;
+}
+
+.liga-pokemon-kanto-card img {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.35));
+}
+
+.liga-pokemon-kanto-card strong {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liga-pokemon-kanto-card small {
+  color: var(--liga-muted);
+  font-size: 0.62rem;
+}
+
+.liga-pokemon-tips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.65rem;
+}
+
+.liga-pokemon-tips p {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(var(--liga-blue), 0.16);
+  border-radius: 8px;
+  background: rgba(var(--liga-blue), 0.055);
+  color: var(--liga-muted);
+}
+
+.liga-pokemon-tips strong {
+  color: #ffffff;
+}
+
+.liga-pokemon-boss-grid,
+.liga-pokemon-elite-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liga-pokemon-boss-grid > li,
+.liga-pokemon-elite-grid li {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: var(--liga-panel-soft);
+  text-align: center;
+}
+
+.liga-pokemon-boss-grid strong,
+.liga-pokemon-elite-grid strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.liga-pokemon-weaknesses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.liga-pokemon-boss-image,
+.liga-pokemon-trainer-image {
+  width: 7rem;
+  height: 7rem;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.38));
+}
+
+.liga-pokemon-trainer-image {
+  image-rendering: pixelated;
+}
+
+.liga-pokemon-weaknesses span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.28rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #eaf4ff;
+  font-size: 0.63rem;
+  font-weight: 800;
+}
+
+.liga-pokemon-weaknesses img {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+}
+
+.liga-pokemon-boss-mechanic {
+  display: grid;
+  align-self: stretch;
+  gap: 0.35rem;
+  width: 100%;
+  margin-top: 0.15rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(var(--liga-gold), 0.2);
+  text-align: left;
+}
+
+.liga-pokemon-boss-mechanic > span {
+  color: rgb(var(--liga-gold));
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-boss-mechanic p {
+  margin: 0;
+  color: var(--liga-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.liga-pokemon-elite-grid small {
+  color: var(--liga-muted);
+  font-size: 0.7rem;
+}
+
+.liga-pokemon-elite-team {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.38rem;
+  width: 100%;
+}
+
+.liga-pokemon-elite-pokemon {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.18rem;
+  min-width: 0;
+  padding: 0.38rem 0.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: center;
+}
+
+.liga-pokemon-elite-pokemon.is-boss {
+  border-color: rgba(var(--liga-gold), 0.5);
+  background: linear-gradient(145deg, rgba(var(--liga-gold), 0.13), rgba(255, 255, 255, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(var(--liga-gold), 0.08);
+}
+
+.liga-pokemon-elite-pokemon img {
+  width: 3.3rem;
+  height: 3.3rem;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.32));
+}
+
+.liga-pokemon-elite-grid .liga-pokemon-elite-pokemon strong {
+  overflow: hidden;
+  width: 100%;
+  font-size: 0.6rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.liga-pokemon-elite-mechanic {
+  display: grid;
+  gap: 0.3rem;
+  width: 100%;
+  margin-top: 0.15rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(var(--liga-gold), 0.2);
+  text-align: center;
+}
+
+.liga-pokemon-elite-mechanic > span {
+  color: rgb(var(--liga-gold));
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-elite-mechanic > p {
+  margin: 0;
+  color: var(--liga-muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.liga-pokemon-red-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid rgba(var(--liga-red), 0.25);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(var(--liga-red), 0.12), rgba(5, 10, 18, 0.5));
+  text-align: center;
+}
+
+.liga-pokemon-red-card > span {
+  color: rgb(var(--liga-red));
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-red-card > strong {
+  color: #ffffff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+  font-size: 1.55rem;
+}
+
+.liga-pokemon-trainer-image--red {
+  width: 8rem;
+  height: 8rem;
+}
+
+.liga-pokemon-red-team {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  width: 100%;
+  margin-top: 0.55rem;
+}
+
+.liga-pokemon-red-pokemon {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(var(--liga-red), 0.18);
+  border-radius: 8px;
+  background: rgba(5, 10, 18, 0.42);
+}
+
+.liga-pokemon-red-pokemon > img {
+  width: 6.5rem;
+  height: 6.5rem;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.38));
+}
+
+.liga-pokemon-red-pokemon > strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.liga-pokemon-red-pokemon > span {
+  width: 100%;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(var(--liga-red), 0.18);
+  color: rgb(var(--liga-gold));
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-red-pokemon > p {
+  margin: 0;
+  color: var(--liga-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.liga-pokemon-rewards {
+  gap: 1rem;
+}
+
+.liga-pokemon-oak-gift {
+  overflow: hidden;
+  border-color: rgba(var(--liga-gold), 0.34);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(var(--liga-gold), 0.13), transparent 34%),
+    radial-gradient(circle at 88% 85%, rgba(var(--liga-blue), 0.1), transparent 38%),
+    var(--liga-panel);
+}
+
+.liga-pokemon-oak-gift .liga-pokemon-section__head {
+  justify-items: center;
+  text-align: center;
+}
+
+.liga-pokemon-oak-gift__flow {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.35fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.liga-pokemon-oak-gift__item,
+.liga-pokemon-oak-gift__exchange {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 9px;
+  background: rgba(4, 10, 17, 0.54);
+}
+
+.liga-pokemon-oak-gift__item {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.liga-pokemon-oak-gift__item strong,
+.liga-pokemon-mega-choice strong {
+  color: #f8fbff;
+  font-size: 0.78rem;
+}
+
+.liga-pokemon-oak-gift__item small,
+.liga-pokemon-oak-gift__note {
+  color: var(--liga-muted);
+  font-size: 0.65rem;
+}
+
+.liga-pokemon-oak-gift__symbol {
+  display: grid;
+  width: 3.6rem;
+  height: 3.6rem;
+  place-items: center;
+  border: 1px solid rgba(var(--liga-gold), 0.42);
+  border-radius: 14px;
+  background: rgba(var(--liga-gold), 0.12);
+  font-size: 2rem;
+  box-shadow: 0 0 22px rgba(var(--liga-gold), 0.1);
+}
+
+.liga-pokemon-oak-gift__arrow {
+  color: rgb(var(--liga-gold));
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.liga-pokemon-oak-gift__exchange {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.liga-pokemon-oak-gift__exchange > span {
+  color: rgb(var(--liga-gold));
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-mega-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.liga-pokemon-mega-choice {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.55rem;
+  border: 1px solid rgba(var(--liga-blue), 0.18);
+  border-radius: 8px;
+  background: rgba(var(--liga-blue), 0.045);
+  text-align: center;
+}
+
+.liga-pokemon-mega-choice > div {
+  position: relative;
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+}
+
+.liga-pokemon-mega-choice > div > img:first-child {
+  width: 3.8rem;
+  height: 3.8rem;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.32));
+}
+
+.liga-pokemon-mega-choice .liga-pokemon-mega-choice__stone {
+  position: absolute;
+  right: -0.18rem;
+  bottom: -0.08rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0.12rem;
+  border: 1px solid rgba(var(--liga-gold), 0.4);
+  border-radius: 50%;
+  background: rgba(5, 11, 19, 0.9);
+  object-fit: contain;
+}
+
+.liga-pokemon-oak-gift__note {
+  margin: 0;
+  text-align: center;
+}
+
+.liga-pokemon-reward-groups {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.4fr);
+  gap: 0.8rem;
+}
+
+.liga-pokemon-reward-group,
+.liga-pokemon-badges {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid rgba(var(--liga-gold), 0.18);
+  border-radius: 9px;
+  background: rgba(5, 11, 19, 0.48);
+}
+
+.liga-pokemon-reward-group--elite {
+  border-color: rgba(var(--liga-red), 0.22);
+  background: linear-gradient(145deg, rgba(var(--liga-red), 0.07), rgba(5, 11, 19, 0.48));
+}
+
+.liga-pokemon-reward-group__eyebrow {
+  color: rgb(var(--liga-gold));
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.liga-pokemon-reward-group h4,
+.liga-pokemon-badges h4 {
+  margin: 0.2rem 0 0.75rem;
+  color: #ffffff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+  font-size: 1.15rem;
+}
+
+.liga-pokemon-reward-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liga-pokemon-reward-list--elite {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.liga-pokemon-reward-list li {
+  display: grid;
+  grid-template-columns: 2.65rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.52rem;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.liga-pokemon-reward-symbol,
+.liga-pokemon-reward-image {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border: 1px solid rgba(var(--liga-blue), 0.22);
+  border-radius: 10px;
+  background: rgba(var(--liga-blue), 0.08);
+  font-size: 1.35rem;
+}
+
+.liga-pokemon-reward-symbol--rare {
+  border-color: rgba(181, 111, 255, 0.45);
+  background: rgba(130, 68, 194, 0.16);
+}
+
+.liga-pokemon-reward-symbol--legendary {
+  border-color: rgba(var(--liga-gold), 0.55);
+  background: rgba(var(--liga-gold), 0.16);
+  box-shadow: 0 0 16px rgba(var(--liga-gold), 0.12);
+}
+
+.liga-pokemon-reward-image img {
+  width: 2.15rem;
+  height: 2.15rem;
+  object-fit: contain;
+}
+
+.liga-pokemon-reward-list li div {
+  display: grid;
+  min-width: 0;
+  gap: 0.12rem;
+}
+
+.liga-pokemon-reward-list strong {
+  color: #f6fbff;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.liga-pokemon-reward-list small {
+  color: var(--liga-muted);
+  font-size: 0.62rem;
+}
+
+.liga-pokemon-reward-list b {
+  padding: 0.2rem 0.38rem;
+  border-radius: 999px;
+  background: rgba(var(--liga-gold), 0.13);
+  color: rgb(var(--liga-gold));
+  font-size: 0.65rem;
+}
+
+.liga-pokemon-reward-preview {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  margin: 0.8rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.liga-pokemon-reward-preview img {
+  width: min(100%, 430px);
+  max-height: 245px;
+  border: 1px solid rgba(var(--liga-gold), 0.2);
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.liga-pokemon-reward-preview figcaption {
+  color: var(--liga-muted);
+  font-size: 0.62rem;
+}
+
+.liga-pokemon-badges {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.liga-pokemon-badges__head {
+  text-align: center;
+}
+
+.liga-pokemon-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.liga-pokemon-badge-card {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 0.22rem;
+  min-width: 0;
+  padding: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: center;
+}
+
+.liga-pokemon-badge-card img {
+  width: 3.2rem;
+  height: 3.2rem;
+  margin-bottom: 0.05rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.liga-pokemon-badge-card span {
+  color: rgb(var(--liga-gold));
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.liga-pokemon-badge-card strong {
+  color: #f4f9ff;
+  font-size: 0.7rem;
+}
+
+.liga-pokemon-badge-card p,
+.liga-pokemon-badge-note,
+.liga-pokemon-trophy-note p {
+  margin: 0;
+  color: var(--liga-muted);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.liga-pokemon-badge-note {
+  padding: 0.7rem;
+  border-left: 3px solid rgba(var(--liga-blue), 0.72);
+  border-radius: 6px;
+  background: rgba(var(--liga-blue), 0.065);
+}
+
+.liga-pokemon-badge-note strong {
+  color: #f5fbff;
+}
+
+.liga-pokemon-trophy-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(var(--liga-gold), 0.28);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(var(--liga-gold), 0.11), rgba(255, 255, 255, 0.02));
+}
+
+.liga-pokemon-trophy-note > span {
+  font-size: 2rem;
+}
+
+.liga-pokemon-trophy-note strong {
+  display: block;
+  margin-bottom: 0.12rem;
+  color: rgb(var(--liga-gold));
+}
+
+@media (max-width: 1400px) {
+  .liga-pokemon-rotom .liga-pokemon-link {
+    position: static;
+    justify-self: center;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .liga-pokemon-hero__stats,
+  .liga-pokemon-requirements,
+  .liga-pokemon-gym-grid,
+  .liga-pokemon-boss-grid,
+  .liga-pokemon-elite-grid,
+  .liga-pokemon-red-team,
+  .liga-pokemon-badge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .liga-pokemon-reward-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .liga-pokemon-oak-gift__flow {
+    grid-template-columns: 1fr;
+  }
+
+  .liga-pokemon-oak-gift__arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+
+}
+
+@media (max-width: 560px) {
+  body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
+    padding: 0.75rem;
+  }
+
+  .liga-pokemon-hero__stats,
+  .liga-pokemon-requirements,
+  .liga-pokemon-gym-grid,
+  .liga-pokemon-tips,
+  .liga-pokemon-boss-grid,
+  .liga-pokemon-elite-grid,
+  .liga-pokemon-red-team,
+  .liga-pokemon-badge-grid,
+  .liga-pokemon-reward-list--elite,
+  .liga-pokemon-rotom {
+    grid-template-columns: 1fr;
+  }
+
+  .liga-pokemon-collapsible summary {
+    align-items: center;
+    padding: 0.9rem 1rem;
+    flex-direction: column;
+  }
+
+  .liga-pokemon-collapsible__action {
+    position: static;
+    transform: none;
+  }
+
+  .liga-pokemon-collapsible summary em {
+    display: none;
+  }
+
+  .liga-pokemon-kanto-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .liga-pokemon-kanto-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .liga-pokemon-mega-choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .liga-pokemon-red-visit__rewards .liga-pokemon-reward-list {
+    grid-template-columns: 1fr;
+  }
+
+  .liga-pokemon-gym-video {
+    grid-template-columns: 2.65rem minmax(0, 1fr);
+  }
+
+  .liga-pokemon-gym-video > b {
+    display: none;
+  }
+}

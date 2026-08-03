@@ -1,0 +1,150 @@
+<div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
+      <div class="card calc-card catch-card">
+        <div class="catch-hero">
+          <p id="catch-description" class="visually-hidden">Calculadora de captura com estimativa por alvo, variante e pokebola.</p>
+          <div class="catch-hero__preview" aria-live="polite">
+            <span id="catch-selected-ball-label" class="catch-hero__preview-label">Pokébola selecionada</span>
+            <div class="catch-ball-preview">
+              <img id="ball-img" class="catch-ball-preview__image" src="balls/elemental.png" alt="Pokébola Elemental" loading="lazy" decoding="async">
+              <div class="catch-ball-preview__copy">
+                <strong id="ball-preview-name">Pokébola Elemental</strong>
+                <span id="ball-preview-price">$330 cada</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="catch-dashboard">
+          <section class="catch-panel catch-panel--primary catch-panel--estimator" aria-labelledby="catch-calc-title">
+            <div class="catch-panel__header">
+              <span class="catch-panel__eyebrow">Estimativa</span>
+              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de pokébolas</h3>
+              <p id="catch-calc-hint" class="catch-panel__hint">Escolha o alvo e a variante para liberar a estimativa.</p>
+            </div>
+
+            <div class="catch-section catch-field catch-field--full catch-target-picker">
+              <span class="catch-variant-group__label catch-target-picker__title"><strong>Escolha o Alvo</strong></span>
+              <div class="boost-search-panel catch-search-panel">
+                <div class="boost-search-panel__field">
+                  <label class="speedster-search-label" for="catch-pokemon-search">Nome</label>
+                  <input id="catch-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="catch-selection-prompt" />
+                  <div id="catch-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                  <div id="catch-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+                </div>
+              </div>
+              <div id="catch-pokemon-meta" class="boost-pokemon-meta catch-pokemon-meta" aria-live="polite"></div>
+            </div>
+
+            <div class="catch-section catch-variant-group" role="radiogroup" aria-labelledby="catch-variant-label">
+              <span id="catch-variant-label" class="catch-variant-group__label">Variante</span>
+              <div class="catch-variant-options">
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant-legacy" value="normal">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Normal</strong>
+                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Usa os dados cadastrados do alvo.</span>
+                  </span>
+                </label>
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant-legacy" value="shiny">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Shiny</strong>
+                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Calcula pelo nivel do alvo.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div id="catch-selection-prompt" class="catch-selection-prompt" aria-live="polite">
+              <span id="catch-selection-prompt-hint">Depois disso, a p&aacute;gina usa pre&ccedil;o, n&iacute;vel e tipos cadastrados automaticamente.</span>
+            </div>
+
+            <div id="catch-config-shell" class="catch-config-shell" hidden>
+              <div class="catch-form-grid">
+              <div class="catch-section catch-field catch-ball-choice-field">
+                <label for="ball-select">Escolha a pokébola:</label>
+                <select id="ball-select">
+                  <option value="ultra">Pokébola Ultra</option>
+                  <option value="safari">Pokébola Safari</option>
+                  <option value="story">Pokébola Story</option>
+                  <option value="elemental">Pokébola Elemental</option>
+                </select>
+              </div>
+              <div id="catch-level-field" class="catch-section catch-field" hidden>
+                <label for="level-select">Nível do pokémon:</label>
+                <select id="level-select">
+                  <option value="5">Lvl 5</option>
+                  <option value="20">Lvl 20</option>
+                  <option value="30">Lvl 30</option>
+                  <option value="50">Lvl 50</option>
+                  <option value="65">Lvl 65</option>
+                  <option value="80">Lvl 80</option>
+                  <option value="95">Lvl 95</option>
+                  <option value="pre">Pré Ace</option>
+                  <option value="ace">Ace</option>
+                </select>
+              </div>
+              <div id="catch-price-field" class="catch-section catch-field catch-field--full" hidden>
+                <label for="catch-price-select">Pre&ccedil;o do pok&eacute;mon:</label>
+                <div id="catch-price-picker" class="catch-price-picker">
+                  <select id="catch-price-select" class="catch-price-picker__native">
+                    <option value="">Selecione o pre&ccedil;o</option>
+                  </select>
+                  <div id="catch-price-picker-ui" class="catch-price-picker__ui" aria-hidden="true"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="catch-legacy-variant-group" class="catch-section catch-variant-group" hidden aria-hidden="true">
+              <span id="catch-variant-label-hidden" class="catch-variant-group__label">Tipo de captura</span>
+              <div class="catch-variant-options">
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="normal">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Normal</strong>
+                    <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrão de captura.</span>
+                  </span>
+                </label>
+                <label class="catch-variant-card">
+                  <input type="radio" name="catch-variant" value="shiny">
+                  <span class="catch-variant-card__body">
+                    <strong class="catch-variant-card__title">Shiny</strong>
+                    <span id="catch-variant-shiny-hint" class="catch-variant-card__hint">Mostra a média para capturas shiny.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="catch-section catch-actions">
+              <button id="calc-catch-btn" class="catch-action-button">Calcular estimativa</button>
+              <p class="catch-note">Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.</p>
+            </div>
+
+            <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <div class="catch-secondary-grid">
+            <section id="catch-log-panel" class="catch-panel catch-panel--focus catch-panel--log" aria-labelledby="catch-log-title" hidden>
+              <div class="catch-panel__header">
+                <span class="catch-panel__eyebrow">Log</span>
+                <h3 id="catch-log-title" class="catch-panel__title">Analise o histórico de pokébolas</h3>
+                <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.</p>
+              </div>
+
+              <div class="catch-section catch-field catch-field--full">
+                <label for="log-input">Log de pokébolas usadas:</label>
+                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (inclua a despesa)."></textarea>
+              </div>
+
+              <div class="catch-section catch-actions">
+                <button id="parse-log" class="catch-action-button catch-action-button--ghost">Processar log</button>
+              </div>
+
+              <div id="log-result" class="calc-info catch-result-area" aria-live="polite"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+

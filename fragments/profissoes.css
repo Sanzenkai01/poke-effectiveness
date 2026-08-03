@@ -1,0 +1,713 @@
+/* Pagina de profissoes */
+.professions-shell {
+  --profession-panel: rgba(12, 18, 28, 0.78);
+  --profession-panel-strong: rgba(18, 26, 39, 0.92);
+  --profession-border: rgba(255, 255, 255, 0.11);
+  --profession-text-muted: rgba(235, 242, 255, 0.72);
+  --profession-aqua: 82, 203, 194;
+  --profession-gold: 244, 191, 88;
+  --profession-rose: 231, 116, 149;
+  width: 100%;
+  max-width: 1180px;
+  min-width: min(100%, 760px);
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  color: #eef5ff;
+}
+
+body[data-active-tab="profissoes"] #content-profissoes {
+  width: min(100%, 1240px);
+  min-width: min(100%, 820px);
+  margin: -0.25rem auto 0;
+  padding: clamp(0.8rem, 2vw, 1.35rem);
+  border: 1px solid rgba(82, 203, 194, 0.12);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(6, 35, 44, 0.84) 0%, rgba(11, 24, 36, 0.94) 43%, rgba(28, 20, 36, 0.9) 100%),
+    linear-gradient(180deg, rgba(244, 191, 88, 0.05), rgba(82, 203, 194, 0.04));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 46px rgba(0, 0, 0, 0.28);
+}
+
+.professions-hero,
+.professions-selector,
+.profession-detail__hero,
+.profession-info-card,
+.profession-section,
+.profession-rank-gallery article {
+  border: 1px solid var(--profession-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(var(--profession-aqua), 0.1), rgba(var(--profession-rose), 0.06)),
+    var(--profession-panel);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.professions-hero {
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 2.4vw, 1.6rem);
+  text-align: center;
+}
+
+.professions-hero__copy,
+.profession-detail__copy,
+.profession-section__copy,
+.professions-section-head {
+  min-width: 0;
+}
+
+.professions-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.5rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid rgba(var(--profession-aqua), 0.32);
+  border-radius: 999px;
+  color: rgb(var(--profession-aqua));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.professions-hero h2,
+.profession-detail__copy h3,
+.professions-section-head h3,
+.profession-section h4,
+.profession-info-card h4,
+.profession-rank-gallery h5 {
+  margin: 0.35rem 0 0;
+  color: #ffffff;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.professions-hero h2 {
+  font-size: clamp(2rem, 5vw, 4.2rem);
+}
+
+.professions-hero p,
+.profession-detail__copy p,
+.profession-section p,
+.profession-section li,
+.profession-info-card li,
+.profession-note,
+.profession-choice-card__copy span {
+  color: var(--profession-text-muted);
+  line-height: 1.55;
+}
+
+.professions-hero__summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  max-width: 25rem;
+}
+
+.professions-hero__summary span,
+.profession-token-grid span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(var(--profession-gold), 0.24);
+  border-radius: 999px;
+  background: rgba(var(--profession-gold), 0.1);
+  color: #fff2cf;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.professions-selector,
+.profession-section {
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.professions-section-head {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  justify-items: center;
+}
+
+.professions-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.profession-choice-card {
+  position: relative;
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+  width: 100%;
+  min-height: 23rem;
+  padding: 1rem;
+  border: 1px solid rgba(var(--profession-aqua), 0.22);
+  border-radius: 8px;
+  background: rgba(8, 13, 21, 0.72);
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.profession-choice-card:hover,
+.profession-choice-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(var(--profession-aqua), 0.55);
+  background: rgba(15, 24, 36, 0.9);
+  outline: none;
+}
+
+.profession-choice-card:disabled {
+  cursor: default;
+}
+
+.profession-choice-card--soon {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(8, 13, 21, 0.5);
+}
+
+.profession-choice-card--soon .profession-choice-card__media,
+.profession-choice-card--soon .profession-choice-card__copy {
+  opacity: 0.68;
+}
+
+.profession-choice-card--soon:hover,
+.profession-choice-card--soon:focus-visible {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(8, 13, 21, 0.5);
+}
+
+.profession-choice-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid rgba(var(--profession-gold), 0.36);
+  border-radius: 999px;
+  background: rgba(var(--profession-gold), 0.14);
+  color: #fff2cf;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.profession-choice-card__media {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.profession-choice-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.28));
+}
+
+.profession-choice-card__copy {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.profession-choice-card__copy strong {
+  color: #ffffff;
+  font-size: 1.35rem;
+}
+
+.profession-detail {
+  display: grid;
+  gap: 1rem;
+}
+
+.profession-detail[hidden] {
+  display: none;
+}
+
+.profession-back-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #eef5ff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profession-back-btn:hover,
+.profession-back-btn:focus-visible {
+  border-color: rgba(var(--profession-aqua), 0.55);
+  background: rgba(var(--profession-aqua), 0.14);
+  outline: none;
+}
+
+.profession-detail__hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 2.4vw, 1.5rem);
+  min-height: 11rem;
+  text-align: center;
+}
+
+.profession-detail__copy {
+  width: min(48rem, calc(100% - 8rem));
+  display: grid;
+  justify-items: center;
+}
+
+.profession-detail__copy h3 {
+  font-size: clamp(2rem, 4.6vw, 3.5rem);
+}
+
+.profession-inline-figure,
+.profession-craft-grid figure,
+.profession-image-stack figure {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  margin: 0;
+}
+
+.profession-inline-figure img,
+.profession-craft-grid img,
+.profession-image-stack img,
+.profession-rank-gallery img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.profession-inline-figure {
+  margin-top: 0.8rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 9, 15, 0.38);
+}
+
+.profession-inline-figure img {
+  width: min(100%, 12rem);
+  max-height: 7.5rem;
+  object-fit: contain;
+}
+
+.profession-inline-figure figcaption,
+.profession-craft-grid figcaption,
+.profession-image-stack figcaption {
+  color: var(--profession-text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.profession-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.profession-info-card {
+  padding: 1rem;
+}
+
+.profession-info-card ul,
+.profession-section ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.profession-info-card ul {
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.profession-info-card li {
+  display: grid;
+  grid-template-columns: 0.45rem 1fr;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.profession-info-card li::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-top: 0.58rem;
+  border-radius: 50%;
+  background: rgb(var(--profession-aqua));
+  box-shadow: 0 0 0 3px rgba(var(--profession-aqua), 0.12);
+}
+
+.profession-note {
+  margin: 0.8rem 0 0;
+  padding: 0.7rem;
+  border-left: 3px solid rgb(var(--profession-gold));
+  border-radius: 6px;
+  background: rgba(var(--profession-gold), 0.08);
+}
+
+.profession-resource-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+  margin-top: 0.7rem;
+}
+
+.profession-resource-preview figure {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  min-width: 5.5rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(var(--profession-aqua), 0.18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.profession-resource-preview img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.profession-resource-preview figcaption {
+  color: var(--profession-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.profession-rank-table {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.profession-rank-table div {
+  display: grid;
+  grid-template-columns: 5rem 1fr 1fr;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.55rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.profession-rank-table strong {
+  color: #ffffff;
+}
+
+.profession-rank-table span {
+  color: var(--profession-text-muted);
+  font-size: 0.88rem;
+}
+
+.profession-craft-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.profession-craft-grid figure {
+  min-height: 12rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 9, 15, 0.44);
+}
+
+.profession-craft-grid img {
+  width: 100%;
+  max-height: 9rem;
+  object-fit: contain;
+}
+
+.profession-section--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(260px, 0.88fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.profession-section__copy {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.profession-token-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0.2rem 0 0.35rem;
+}
+
+.profession-token-grid span:nth-child(1) { border-color: rgba(239, 98, 98, 0.38); background: rgba(239, 98, 98, 0.13); color: #ffd6d6; }
+.profession-token-grid span:nth-child(2) { border-color: rgba(95, 165, 255, 0.42); background: rgba(95, 165, 255, 0.13); color: #d7e8ff; }
+.profession-token-grid span:nth-child(3) { border-color: rgba(248, 133, 190, 0.42); background: rgba(248, 133, 190, 0.13); color: #ffd9ec; }
+.profession-token-grid span:nth-child(4) { border-color: rgba(244, 210, 86, 0.42); background: rgba(244, 210, 86, 0.13); color: #fff0b5; }
+.profession-token-grid span:nth-child(5) { border-color: rgba(98, 213, 130, 0.42); background: rgba(98, 213, 130, 0.13); color: #d8ffe1; }
+.profession-token-grid span:nth-child(6) { border-color: rgba(184, 132, 255, 0.42); background: rgba(184, 132, 255, 0.13); color: #eadcff; }
+.profession-token-grid span:nth-child(7) { border-color: rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+
+.profession-image-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profession-image-stack figure {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 9, 15, 0.44);
+}
+
+.profession-image-stack img {
+  max-height: 18rem;
+  object-fit: contain;
+}
+
+.profession-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.profession-fact-grid > span {
+  display: grid;
+  align-items: center;
+  min-height: 3.1rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(4, 9, 16, 0.36);
+  color: var(--profession-text-muted);
+  line-height: 1.35;
+  text-align: center;
+}
+
+#content-profissoes img:not(#profession-image-modal-image):not(.profession-choice-card img) {
+  cursor: zoom-in;
+}
+
+#content-profissoes img:not(#profession-image-modal-image):not(.profession-choice-card img):hover {
+  filter: brightness(1.08);
+}
+
+.profession-image-modal .modal-content {
+  width: min(1040px, 94vw);
+}
+
+.profession-image-modal__viewport {
+  position: relative;
+}
+
+.profession-image-modal__nav {
+  position: sticky;
+  top: 50%;
+  z-index: 3;
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(9, 15, 26, 0.86);
+  color: #f5fbff;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.34);
+  transform: translateY(-50%);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+}
+
+.profession-image-modal__nav::before {
+  content: "";
+  width: 0.72rem;
+  height: 0.72rem;
+  border-top: 3px solid currentColor;
+  border-left: 3px solid currentColor;
+}
+
+.profession-image-modal__nav--prev {
+  float: left;
+  margin-left: 0.15rem;
+}
+
+.profession-image-modal__nav--prev::before {
+  transform: rotate(-45deg) translate(1px, 1px);
+}
+
+.profession-image-modal__nav--next {
+  float: right;
+  margin-right: 0.15rem;
+}
+
+.profession-image-modal__nav--next::before {
+  transform: rotate(135deg) translate(1px, 1px);
+}
+
+.profession-image-modal__nav:hover,
+.profession-image-modal__nav:focus-visible {
+  transform: translateY(-50%) scale(1.04);
+  border-color: rgba(130, 203, 255, 0.42);
+  background:
+    linear-gradient(180deg, rgba(126, 209, 255, 0.2), rgba(255, 171, 96, 0.08)),
+    rgba(13, 22, 37, 0.94);
+  outline: none;
+}
+
+.profession-image-modal__nav[hidden] {
+  display: none;
+}
+
+.profession-rank-gallery {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.profession-rank-gallery article {
+  padding: 0.9rem;
+  background:
+    linear-gradient(135deg, rgba(var(--profession-gold), 0.08), rgba(var(--profession-aqua), 0.06)),
+    var(--profession-panel-strong);
+}
+
+.profession-rank-gallery h5 {
+  font-size: 1rem;
+}
+
+.profession-rank-gallery article > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.profession-rank-gallery img {
+  width: 100%;
+  max-height: 13rem;
+  object-fit: contain;
+  padding: 0.45rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body[data-active-tab="profissoes"] .header-title-cluster {
+  max-width: min(100%, 56rem);
+}
+
+body[data-active-tab="profissoes"] #page-title {
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  .professions-hero,
+  .profession-detail__hero,
+  .profession-section--split,
+  .profession-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .professions-hero__summary {
+    justify-content: flex-start;
+  }
+
+  .profession-craft-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .professions-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 280px));
+  }
+
+  .profession-fact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .professions-shell {
+    width: min(100% - 14px, 1180px);
+  }
+
+  .professions-hero,
+  .professions-selector,
+  .profession-detail__hero,
+  .profession-info-card,
+  .profession-section {
+    padding: 0.85rem;
+  }
+
+  .profession-craft-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .professions-choice-grid {
+    grid-template-columns: minmax(0, 280px);
+  }
+
+  .profession-choice-card {
+    min-height: 18rem;
+  }
+
+  .profession-choice-card__media {
+    min-height: 0;
+  }
+
+  .profession-detail__copy {
+    width: 100%;
+    padding-top: 2.8rem;
+  }
+
+  .profession-back-btn {
+    top: 0.7rem;
+    right: 0.7rem;
+  }
+
+  .profession-rank-table div {
+    grid-template-columns: 1fr;
+  }
+}

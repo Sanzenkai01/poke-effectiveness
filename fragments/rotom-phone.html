@@ -1,0 +1,2309 @@
+<div class="rotom-phone-shell">
+        <section class="rotom-phone-hero" aria-labelledby="rotom-phone-title">
+          <div class="rotom-phone-hero__media rotom-phone-hero__media--left" aria-hidden="true">
+            <img src="rotom-phone/assets/rotom.webp" alt="" loading="eager" decoding="async">
+          </div>
+          <div class="rotom-phone-hero__copy">
+            <span class="rotom-phone-eyebrow">Quests</span>
+            <h2 id="rotom-phone-title">Rotom Phone</h2>
+            <p>Roteiro de tasks usado como base de progresso em Kanto. A regi&atilde;o tem 10 cidades, 151 tasks e serve como prepara&ccedil;&atilde;o para liberar a Liga Pok&eacute;mon.</p>
+          </div>
+          <div class="rotom-phone-hero__media" aria-hidden="true">
+            <img src="rotom-phone/assets/rotom.webp" alt="" loading="eager" decoding="async">
+          </div>
+        </section>
+
+        <section class="rotom-phone-section rotom-phone-overview" aria-labelledby="rotom-phone-overview-title">
+          <div class="rotom-phone-section__head">
+            <span class="rotom-phone-eyebrow">Kanto</span>
+            <h3 id="rotom-phone-overview-title">Conte&uacute;do principal do Rotom Phone</h3>
+            <p>O foco aqui &eacute; a aba Kanto: cidades, volume de tasks e o que voc&ecirc; vai resolver em cada uma. Johto e Orre aparecem como futuras regi&otilde;es na fonte, mas ainda n&atilde;o s&atilde;o o ponto &uacute;til do guia.</p>
+          </div>
+          <div class="rotom-phone-summary-grid" aria-label="Resumo de Kanto">
+            <article>
+              <strong>10</strong>
+              <span>cidades</span>
+            </article>
+            <article>
+              <strong>151</strong>
+              <span>tasks</span>
+            </article>
+            <article>
+              <strong>Liga</strong>
+              <span>pr&eacute;-requisito</span>
+            </article>
+          </div>
+          <figure class="rotom-phone-guide">
+            <img src="rotom-phone/assets/rotom-phone-guide.gif" alt="Como abrir o Rotom Phone no jogo" loading="eager" decoding="async">
+            <figcaption>O Rotom Phone fica no cliente como uma trilha de objetivos por regi&atilde;o e cidade.</figcaption>
+          </figure>
+        </section>
+
+        <section class="rotom-phone-section rotom-phone-search" aria-labelledby="rotom-phone-search-title">
+          <div class="rotom-phone-section__head">
+            <span class="rotom-phone-eyebrow">Pesquisa</span>
+            <h3 id="rotom-phone-search-title">Encontrar tasks</h3>
+          </div>
+          <div class="rotom-phone-search__bar" role="search">
+            <label class="visually-hidden" for="rotom-phone-search-input">Pesquisar tasks do Rotom Phone</label>
+            <input id="rotom-phone-search-input" class="rotom-phone-search__input" type="search" placeholder="Nome de Pokemon, item, NPC, recompensa..." autocomplete="off" spellcheck="false" data-rotom-search-input>
+            <button class="rotom-phone-search__clear" type="button" data-rotom-search-clear hidden>Limpar</button>
+          </div>
+          <div class="rotom-phone-search__summary" data-rotom-search-summary>Digite pelo menos 2 caracteres para pesquisar.</div>
+          <div class="rotom-phone-search__results" data-rotom-search-results hidden></div>
+        </section>
+
+        <section class="rotom-phone-section" aria-labelledby="rotom-phone-kanto-title">
+          <div class="rotom-phone-section__head">
+            <span class="rotom-phone-eyebrow">Kanto</span>
+            <h3 id="rotom-phone-kanto-title">Cidades e tasks</h3>
+            <p>Clique em uma cidade para abrir as tasks. Cada miss&atilde;o pode ser marcada como conclu&iacute;da e fica salva neste navegador.</p>
+            <button class="rotom-phone-reset" type="button" data-rotom-reset>Limpar progresso</button>
+          </div>
+          <div class="rotom-phone-city-accordion" data-rotom-checklist>
+            <details class="rotom-phone-city-panel" data-rotom-city="pallet">
+              <summary>
+                <img src="rotom-phone/assets/pallet.png" alt="Cidade de Pallet" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Pallet</strong>
+                  <span>19 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>19 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="escolhendo-pokemon-inicial" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Escolhendo seu pok&#233;mon inicial</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Visite o Professor Oak e escolha seu primeiro Pok&#233;mon para iniciar sua jornada.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="soltando-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Soltando seu Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">D&#234; as boas-vindas ao seu novo Pok&#233;mon!</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Medicine</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="conhecendo-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Conhecendo seu Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Colete informa&#231;&#245;es importantes do seu Pok&#233;mon!</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Small Potion</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="movimentando-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Movimentando o seu Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Mova o seu Pok&#233;mon!</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Chocolat Bar</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="primeiros-passos-combate" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Primeiros passos no combate</strong>
+                      <span class="rotom-phone-task__count">1/5</span>
+                    </span>
+                    <span class="rotom-phone-task__description">1 Etapa: Derrote 10 Pidgey.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Revive</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="curando-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Curando seu Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Restaure a vida do seu Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Great Potion | 5x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-oddish" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando um Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Capture um Oddish.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Great Potion | 5x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-cut" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Retorne &#224; floresta e utilize a habilidade Cut para abrir caminho.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Medicine</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-geodude" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando um Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Capture um Geodude.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Medicine | 5x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-rock-smash" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Volte &#224; caverna ao norte de Pallet e utilize a habilidade Rock Smash.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Chocolat Bar</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="coletando-info-pidgey" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Coletando Informa&#231;&#245;es</strong>
+                      <span class="rotom-phone-task__count">1/5</span>
+                    </span>
+                    <span class="rotom-phone-task__description">1 Etapa: Colete informa&#231;&#245;es dos seguintes pok&#233;mon utilizando a Pok&#233;dex: Pidgey.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Super Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-headbutt" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ao encontrar uma &#225;rvore balan&#231;ando, use Order com um Pok&#233;mon que possua a habilidade Headbutt para derrub&#225;-la e revelar o que est&#225; escondido.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-poliwag-pesca" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando um Pok&#233;mon na pesca</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Utilize a pesca para capturar um Poliwag.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-surf" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Utilize a habilidade Surf.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Medicine</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="objetivo-jornada-lv20" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Objetivo de Jornada</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Alcance o n&#237;vel 20 para seguir evoluindo na sua aventura.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Great Potion | 25x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-pidgey" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando um Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Capture um Pidgey.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 20x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="evoluindo-pidgey" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Evoluindo um Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Evolua um Pidgey.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Ultra Ball</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-fly" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Utilize a habilidade Fly.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 15x Medicine</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="sistema-centro-pokemon-viridian" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Se Familiarizando com Sistemas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Durante sua jornada, ser&#225; essencial contar com o apoio dos moradores locais. Visite a Enfermeira Joy no Centro Pok&#233;mon de Viridian.</span>
+                    <span class="rotom-phone-task__meta">
+
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Great Potion</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="viridian">
+              <summary>
+                <img src="rotom-phone/assets/viridian.png" alt="Cidade de Viridian" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Viridian</strong>
+                  <span>16 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>16 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="mankey-para-sadie" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Mankey para Sadie</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sadie deseja ser uma treinadora Pok&#233;mon especializada no tipo Lutador. Ela est&#225; &#224; procura de algu&#233;m que possa lhe entregar um Mankey.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> Cleffa | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="piquenique-na-floresta" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Piquenique na Floresta</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Cindy deseja fazer um piquenique na Viridian Forest. Ela est&#225; &#224; procura de algu&#233;m que a ajude a se livrar de alguns insetos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 10</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball | 5x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="mankeys-arruaceiros" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Mankeys Arruaceiros</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Officer Nina est&#225; &#224; procura de algu&#233;m que possa ajud&#225;-la a expulsar os Mankeys arruaceiros da cidade.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 20x Devoted Token | 10x Revive | 30x Ultra Ball | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="exercito-metapod" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ex&#233;rcito Metapod</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Robby est&#225; tentando criar um ex&#233;rcito de Metapods e precisa evoluir seus Caterpies.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 8x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-viridian-forest" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Viridian Forest</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Foss &#233; um Bug Catcher que est&#225; &#224; procura de algu&#233;m que possa ajud&#225;-lo em sua pesquisa.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="antidotos-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ant&#237;dotos Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Uma Nurse assistente precisa de suprimentos para fabricar ant&#237;dotos Pok&#233;mon. Ela est&#225; &#224; procura de algu&#233;m que possa ajud&#225;-la.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 100x Medicine | 100x Ultra Potion | 1x Full Heal | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="butterfree-para-tommy" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Butterfree para Tommy</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Tommy deseja se tornar um Bug Catcher e est&#225; &#224; procura de algu&#233;m que possa capturar uma Butterfree para ele.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Cocoon Stone | 5x Bug Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="liberando-o-caminho" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Liberando o Caminho</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Christie precisa chegar at&#233; Pewter, mas est&#225; com medo das Beedrills no caminho.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Cocoon Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="iscas-para-a-pescaria" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Iscas para a Pescaria</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Cody est&#225; tentando pescar no lago da floresta, por&#233;m n&#227;o possui as iscas adequadas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Water Stone | 20x French Fries | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="o-pokemon-eletrico" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O Pok&#233;mon El&#233;trico</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Carl est&#225; tentando encontrar um Pikachu na floresta de Viridian. Ele est&#225; &#224; procura de algu&#233;m que possa ajud&#225;-lo.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Thunder Stone | 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-envenenado" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pok&#233;mon Envenenado</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">O Pok&#233;mon de Minah foi envenenado e ela precisa de ajuda para cur&#225;-lo.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 1x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="investigacao-na-floresta" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Investiga&#231;&#227;o na Floresta</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Johnson &#233; um oficial da pol&#237;cia local de Viridian e est&#225; investigando o caso de ataque de Primeapes.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Punch Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="perdida-entre-primeapes" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Perdida entre Primeapes</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Joline se perdeu no territ&#243;rio dos Primeapes e precisa de algu&#233;m que derrote alguns Primeape para ajud&#225;-la.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Punch Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-insetos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando Insetos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Vance &#233; um Bug Catcher especialista nos insetos de Viridian. Ele quer propor um desafio.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Cocoon Stone | 2x Random Plate Box | 1x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="o-inseto-mais-forte" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O Inseto Mais Forte</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Doug &#233; um Bug Catcher experiente e est&#225; &#224; procura de um treinador que seja corajoso para aceitar seu desafio.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Cocoon Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-viridian-forest" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Viridian Forest</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Rico jura ter visto alguns Pok&#233;mon Shiny na floresta de Viridian. Ele est&#225; &#224; procura de algu&#233;m que encontre esses Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="pewter">
+              <summary>
+                <img src="rotom-phone/assets/pewter.png" alt="Cidade de Pewter" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Pewter</strong>
+                  <span>14 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>14 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-mt-moon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa no Mt. Moon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Juan est&#225; pesquisando sobre os Clefable e Moon Stones. Ele precisa de ajuda para coletar algumas provas da presen&#231;a delas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 1x Random Plate Box | 50x DNA Sample | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="passagem-cerulean" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Passagem para Cerulean</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Hannah est&#225; tentando atravessar o Mt. Moon para chegar at&#233; Cerulean e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Rock Stone | 30x Ultra Potion | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treinadora-pedra" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treinadora de Pedra</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sophie est&#225; tentando encontrar um Onix para come&#231;ar sua jornada como treinadora de Pok&#233;mon do tipo Pedra e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Rock Stone | 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-mt-moon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Mt. Moon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Nicolas &#233; um explorador investigando os mist&#233;rios do Mt. Moon e precisa de ajuda para coletar informa&#231;&#245;es sobre os Pok&#233;mon que vivem na caverna.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="aguas-pewter" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>&#193;guas de Pewter</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Harrison est&#225; pesquisando sobre os Pok&#233;mon aqu&#225;ticos da regi&#227;o de Pewter e precisa de ajuda para coletar informa&#231;&#245;es sobre eles.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Water Stone | 50x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="grande-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Um Grande Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Erick est&#225; &#224; procura de um treinador corajoso que teste suas habilidades contra os Snorlax da caverna.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Random Plate Box | 2x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="ajudando-fazendeira" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ajudando a Fazendeira</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Magnolia est&#225; &#224; procura dos Tauros que vivem pr&#243;ximos a Pewter.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Random Plate Box | 25x Hamburger | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-mt-moon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino no Mt. Moon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sally est&#225; tentando treinar seu Bulbasaur no Mt. Moon e os Golbats est&#227;o atrapalhando.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Venom Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cantora-desafinada" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Uma Cantora Desafinada</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Lina deseja se tornar uma grande cantora e para isso precisa de Microphones.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Fairy Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="presente-namorada" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Presente para Namorada</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Francis precisa de ajuda para presentear sua namorada com um Jigglypuff.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Fairy Stone | 5x Fairy Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-geologica" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Geol&#243;gica</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ivan est&#225; pesquisando sobre as rochas da regi&#227;o de Pewter e precisa de ajuda para coletar informa&#231;&#245;es sobre elas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="duro-como-pedra" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Duro como Pedra</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Russell est&#225; desafiando treinadores a derrotarem Gravelers.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Rock Stone | 5x Rock Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-da-lua" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O Pok&#233;mon da Lua</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Melissa deseja capturar uma Clefable, mas ainda &#233; muito fraca para fazer isso sozinha.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Fairy Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-mt-moon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Mt. Moon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Melvin &#233; um ca&#231;ador de Pok&#233;mon Shiny e est&#225; &#224; procura deles no Mt. Moon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="cerulean">
+              <summary>
+                <img src="rotom-phone/assets/cerulean.png" alt="Cidade de Cerulean" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Cerulean</strong>
+                  <span>16 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>16 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="magnemitismo" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Magnemitismo</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Gus est&#225; fazendo manuten&#231;&#227;o na Power Plant e precisa de ajuda para coletar os parafusos que foram levados pelos Magnemite e Magneton.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Metal Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="evitando-explosoes" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Evitando Explos&#245;es</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Victor est&#225; fazendo manuten&#231;&#227;o na Power Plant e precisa de ajuda para lidar com os Voltorbs e Electrodes.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Thunder Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="evolucao-magnetica" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Evolu&#231;&#227;o Magn&#233;tica</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Nolan est&#225; procurando por pistas de como evoluir um Magnemite.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 10x Metal Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-eletrico" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino El&#233;trico</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Tim quer propor um treino com Pikachu e Raichu pr&#243;ximo &#224; Power Plant.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Random Plate Box | 10x Thunder Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-electabuzz" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando Electabuzz</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Mike est&#225; &#224; procura de um treinador que tenha capturado um Electabuzz.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 10x Thunder Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-power-plant" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Power Plant</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Miguel est&#225; &#224; procura de Pok&#233;mon Shiny na Power Plant e seus arredores.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-power-plant" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Power Plant</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Adam precisa de informa&#231;&#245;es sobre os Pok&#233;mon el&#233;tricos da Power Plant.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-estelar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino Estelar</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Skyler quer propor um treino com Staryu e Starmie na Blue Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="blue-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Blue Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Cyan deseja propor um desafio especial na Blue Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 100</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Water Stone | 5x Random Plate Box | 3x Rare Candy | 10x Ditto Card | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="capturando-lapras" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Capturando Lapras</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Dana ouviu rumores sobre Lapras habitarem Blue Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Ice Stone | 10x Water Stone | 3x Random Plate Box | 2x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="fortalecendo-comercio" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Fortalecendo o Com&#233;rcio</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Alphonse est&#225; procurando por algu&#233;m que possa ajud&#225;-lo a conseguir alguns itens para ajudar o seu com&#233;rcio.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-blue-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Blue Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Rodney est&#225; ca&#231;ando Pok&#233;mon Shiny na Blue Island e tem um desafio.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-blue-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Blue Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Levi est&#225; procurando por informa&#231;&#245;es sobre os Pok&#233;mon da Blue Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-plume-peaks" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino em Plume Peaks</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ted encontrou Pidgeottos selvagens e est&#225; &#224; procura de algu&#233;m que possa derrot&#225;-los.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 30x Empty Ultra Ball | 10x Revive | 30x Great Potion | 1x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pidgeots-plume-peaks" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pidgeots em Plume Peaks</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Perry &#233; um Birdkeeper e quer propor um treino com Pidgeots.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-aquario" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pok&#233;mon para o Aqu&#225;rio</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Alicia est&#225; &#224; procura de uma atra&#231;&#227;o para o aqu&#225;rio de Cerulean.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Water Stone | 3x Random Plate Box | 1x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="saffron">
+              <summary>
+                <img src="rotom-phone/assets/saffron.png" alt="Cidade de Saffron" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Saffron</strong>
+                  <span>14 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>14 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="ossos-growlithe" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ossos para Growlithe</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Alex precisa de ossos para seu Growlithe.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 8x Earth Stone | 40x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="novelos-la" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Os Novelos de L&#227;</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Vanessa est&#225; procurando por Wool Balls para fazer roupas para seus netos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 8x Heart Stone | 40x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="desafio-pescador" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Desafio do Pescador</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Caio est&#225; procurando por um treinador que seja capaz de derrotar alguns Psyduck e Golduck.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-mirage-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino em Mirage Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Humberto precisa que um treinador v&#225; at&#233; Mirage Island e derrote alguns Pok&#233;mon ps&#237;quicos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Enigma Stone | 100x Ultra Ball | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="marowaks-furiosos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Marowaks Furiosos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Emilio deseja realizar alguns estudos na caverna de Marowak e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Earth Stone | 10x Ground Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="itens-psiquicos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Itens Ps&#237;quicos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Byron foi derrotado por Sabrina e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Enigma Stone | 50x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="gatinho-estimacao" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Gatinho de Estima&#231;&#227;o</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sara sonha em ter um Meowth como seu Pok&#233;mon de estima&#231;&#227;o.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball | 5x Revive | 3x Heart Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treinamento-dojo" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treinamento no Dojo</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Daisuke est&#225; &#224; procura de um treinador que possa provar seu valor derrotando Pok&#233;mon lutadores no Dojo.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Punch Stone | 10x Fighting Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treinamento-dojo-2" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treinamento no Dojo 2</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Takao quer demonstrar o verdadeiro potencial de Machamp.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Punch Stone | 10x Fighting Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="lar-cubone" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Lar para Cubone</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Peter est&#225; &#224; procura de algu&#233;m que possa ajud&#225;-lo a dar um novo lar para um Cubone.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 10x Revive | 1x Earth Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="passos-sabrina" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Os Passos de Sabrina</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ana sonha em ser uma treinadora de Pok&#233;mon ps&#237;quicos como Sabrina e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 10</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball | 20x Revive | 1x Enigma Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-mirage-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Mirage Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Edgar est&#225; &#224; procura de algu&#233;m que possa ca&#231;ar alguns Pok&#233;mon Shiny ps&#237;quicos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-saffron" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Saffron</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Tyrone precisa de ajuda para obter informa&#231;&#245;es sobre o comportamento de alguns Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="bando-persian" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O Bando de Persian</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ronaldo precisa de um treinador que o ajude a conter os Persian selvagens.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Heart Stone | 50x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="celadon">
+              <summary>
+                <img src="rotom-phone/assets/celadon.png" alt="Cidade de Celadon" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Celadon</strong>
+                  <span>15 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>15 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="ave-veloz" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Uma Ave Veloz</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Theo &#233; um Birdkeeper fascinado pelo Pok&#233;mon Dodrio. Ele tem um desafio a propor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="doduo-passear" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Doduo para Passear</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">William deseja se locomover com mais velocidade pela grande cidade de Celadon e precisa de um Pok&#233;mon para isso.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Feather Stone | 5x Flying Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="suprimentos-pollen-shop" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Suprimentos para o Poll&#233;n Shop</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Brianna &#233; uma florista de Celadon e precisa de alguns suprimentos para a loja.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Leaf Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="vinhas-azuis" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Vinhas Azuis</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Naomi est&#225; &#224; procura de algu&#233;m que colete Blue Vines para ela.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 30x Revive | 5x Leaf Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-coqueiro" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pok&#233;mon Coqueiro</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Parker precisa que um treinador v&#225; at&#233; Mirage Island e derrote alguns Exeggutor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Leaf Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="green-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Green Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Pear est&#225; &#224; procura de um treinador que aceite seu desafio na Green Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 100</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Leaf Stone | 5x Random Plate Box | 3x Rare Candy | 10x Ditto Card | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="flor-venenosa" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Flor Venenosa</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Violeta est&#225; &#224; procura de algu&#233;m que a entregue uma Vileplume.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Leaf Stone | 5x Grass Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-estridente" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Um Pok&#233;mon Estridente</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Luca tem uma admira&#231;&#227;o pelo Pok&#233;mon Victreebel. Ele tem um desafio a propor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Leaf Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-green-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Green Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Vincent est&#225; &#224; procura de Pok&#233;mon Shiny na Green Island.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-green-island" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Green Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Franklin &#233; um floricultor de Celadon e precisa de ajuda com seus estudos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="apenas-lanchinho" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Apenas um Lanchinho</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sidney est&#225; perdido no Shopping de Celadon e com fome.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 1x Random Plate Box | 25x Ultra Potion | 50x Ultra Ball | 50x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="itens-eletronicos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Itens Eletr&#244;nicos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Mitch trabalha na loja de eletr&#244;nicos do Shopping e precisa de alguns materiais.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 5x Metal Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="uma-aposta" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Uma Aposta</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Jordan est&#225; confiante de que conseguir&#225; ganhar no Meowthzinho.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="acessorios-fashion" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Acess&#243;rios Fashion</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Celeste est&#225; &#224; procura de algu&#233;m que a ajude com itens para sua produ&#231;&#227;o de roupas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Random Plate Box | 2x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="passagem-celadon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Passagem para Celadon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Michael precisa de ajuda contra Gloom e Weepinbell no caminho para Celadon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 20x Revive | 40x Ultra Ball | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="lavender">
+              <summary>
+                <img src="rotom-phone/assets/lavender.png" alt="Cidade de Lavender" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Lavender</strong>
+                  <span>15 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>15 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="medo-fantasmas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Medo de Fantasmas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Junim veio at&#233; Lavender para treinar e precisa de ajuda para enfrentar os Pok&#233;mon fantasma.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 10</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball | 50x Revive | 2x Ghost Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="haunters-brincalhoes" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Haunters Brincalh&#245;es</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Stephanie quer zelar por seu falecido Growlithe e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Ghost Stone | 30x Revive | 50x Ultra Potion | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="explorando-rock-tunnel" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Explorando o Rock Tunnel</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Otto deseja escalar o Rock Tunnel e precisa de ajuda para lidar com alguns Graveler e Rhyhorn.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 20x Revive | 5x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pedras-rock-tunnel" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pedras no Rock Tunnel</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Lucas precisa de ajuda para coletar alguns itens para sua cole&#231;&#227;o.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 10x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="material-escavacao" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Material para Escava&#231;&#227;o</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ryan est&#225; &#224; procura de alguns itens para continuar com seu trabalho de escava&#231;&#227;o.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 10x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-assustador" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pok&#233;mon Assustador</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Melanie &#233; uma Hex Maniac obcecada pelo Pok&#233;mon Gengar. Ela tem um desafio a propor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Random Plate Box | 1x Rare Candy | 10x Ghost Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="perdido-rock-tunnel" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Perdido no Rock Tunnel</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Kevyn teve seus Pok&#233;mon derrotados e precisa de ajuda para sair do Rock Tunnel.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Random Plate Box | 1x Rare Candy | 10x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="desafio-pescador-roger" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Desafio do Pescador</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Roger &#233; um pescador veterano e tem um desafio de pesca para propor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Water Stone | 100x Ultra Ball | 1x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="historia-pescador" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Hist&#243;ria de Pescador</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">George precisa de ajuda para comprovar sua hist&#243;ria de pescador.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 10x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="mergulhador-profissional" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Mergulhador Profissional</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Oscar est&#225; &#224; procura de um treinador que seja corajoso para mergulhar nas &#225;guas de Lavender.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Random Plate Box | 1x Rare Candy | 10x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-rock-tunnel" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Rock Tunnel</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Clayton est&#225; &#224; procura de um treinador que consiga encontrar Pok&#233;mon Shiny no Rock Tunnel.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-mansao-assombrada" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Mans&#227;o Assombrada</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Tobias &#233; um ca&#231;ador de fantasmas e est&#225; &#224; procura de Pok&#233;mon Shiny em Lavender.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-lavender" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Lavender Town</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Shaun precisa de ajuda para registrar informa&#231;&#245;es sobre as esp&#233;cies de Pok&#233;mon de Lavender.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-diving-spot" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Diving Spot</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Juliana est&#225; &#224; procura de um treinador que conhe&#231;a alguns Pok&#233;mon aqu&#225;ticos de Kanto.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-rock-tunnel" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino no Rock Tunnel</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Hitoshi &#233; um lutador especializado em Pok&#233;mon do tipo Fighting &#224; procura de treinadores que desejam treinar no Rock Tunnel.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="vermilion">
+              <summary>
+                <img src="rotom-phone/assets/vermilion.png" alt="Cidade de Vermilion" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Vermilion</strong>
+                  <span>14 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>14 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="garras-escavar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Garras de Escavar</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ben est&#225; escavando t&#250;neis e precisa de alguns materiais.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="poli-evolucao" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Poli Evolu&#231;&#227;o</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Phil deseja evoluir o seu Poliwag e precisa de ajuda para entender sua evolu&#231;&#227;o.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Punch Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="tunel-diglett" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O T&#250;nel dos Diglett</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Roy est&#225; tentando ir de Vermilion at&#233; Viridian pelo t&#250;nel dos Diglett e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Earth Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="penas-vermelhas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Penas Vermelhas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Jose quer avaliar as penas vermelhas dos Fearow nas montanhas de Vermilion.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="reconstruindo-lar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Reconstruindo o Lar</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Um Machop est&#225; trabalhando para reconstruir uma casa. Ele parece precisar de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Punch Stone | 1x Random Plate Box | 50x Medicine | 30x Ultra Potion | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cauda-slowpoke" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Cauda de Slowpoke</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Finn &#233; obcecado por Slowpoke e quer coletar algumas de suas caudas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Water Stone | 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-vermilion" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Vermilion City</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Simon acabou de chegar em Vermilion e precisa de informa&#231;&#245;es sobre os Pok&#233;mon locais.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pescador-iniciante" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pescador Iniciante</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Elliot tem um desafio de pesca para iniciantes.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Water Stone | 5x Water Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="fraqueza-lt-surge" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Fraqueza de Lt. Surge</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Albert est&#225; se preparando para enfrentar o Gin&#225;sio de Vermilion e precisa de um Sandslash.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Earth Stone | 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-vermilion" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Vermilion City</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Milton &#233; um ca&#231;ador de Shiny e est&#225; &#224; procura desses Pok&#233;mon em Vermilion.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="suprimentos-vermilion" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Suprimentos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Koby est&#225; preparando uma viagem para o mar e precisa de suprimentos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 100x Ultra Ball | 25x Revive | 1x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="policatch" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Policatch</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Poliwhirl &#233; o Pok&#233;mon favorito de Isabel e ela precisa de ajuda para captur&#225;-lo.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Water Stone | 5x Water Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesca-seaking" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesca da Seaking</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Hank tem um desafio de pesca para um treinador confiante.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Water Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="diglett-lily" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Diglett para Lily</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Lily sempre sonhou em ser uma treinadora Pok&#233;mon e precisa de um Diglett para come&#231;ar sua jornada.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 10</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Ultra Ball | 10x Revive | 30x Medicine | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="fuchsia">
+              <summary>
+                <img src="rotom-phone/assets/fuchsia.png" alt="Cidade de Fuchsia" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Cidade de Fuchsia</strong>
+                  <span>13 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>13 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="farfetchd-montanhas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Farfetch&#39;d nas Montanhas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Benny &#233; um Birdkeeper admirador de Farfetch&#39;d e tem um desafio para propor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treinando-ponytas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treinando com as Ponytas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Shelley &#233; dona do Rancho em Fuchsia e precisa que algu&#233;m treine suas Ponytas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Heart Stone | 1x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="dieta-rapidash" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Dieta de Rapidash</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Damian precisa de ajuda para alimentar suas Rapidash no rancho de Fuchsia.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Fire Stone | 50x Ultra Ball | 25x Revive | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="casal-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Casal Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Kylie &#233; apaixonada pelo casal de Pok&#233;mon Nidorino e Nidorina.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Venom Stone | 5x Poison Plate | 3x Earth Stone | 5x Ground Plate | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="antenas-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Antenas Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Trevor veio at&#233; Fuchsia para capturar Venonat e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 20x Revive | 25x Medicine | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treino-venomoth" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treino com Venomoth</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Edwin est&#225; se preparando para desafiar Koga e tem uma sugest&#227;o para se tornar mais forte.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Venom Stone | 50x Medicine | 30x Ultra Potion | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="materiais-acampamento" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Materiais para o Acampamento</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ethan precisa de alguns Farfetch&#39;d Sticks para seu acampamento.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Feather Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-fuchsia" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Fuchsia City</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Justus precisa de informa&#231;&#245;es sobre os Pok&#233;mon de Fuchsia City.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="gases-venenosos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Gases Venenosos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Marlon precisa de alguns Venom Flute deixados por Weezing.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Venom Stone | 50x Medicine | 50x Ultra Ball | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="perdido-floresta" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Perdido na Floresta</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Petey acabou perdido no p&#226;ntano de Fuchsia entre os Weezing e precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Venom Stone | 100x Ultra Ball | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="problema-arboks" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Problema com Arboks</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Jeff trabalha na guarda de Fuchsia e est&#225; com problemas com Arboks e Ekans.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Venom Stone | 200x Medicine | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-fuchsia" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Fuchsia City</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ramiro &#233; um shiny hunter e est&#225; em Fuchsia &#224; procura de Pok&#233;mon Shiny.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="entrevista-pokemon" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Entrevista Pok&#233;mon</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Roxy e Oly s&#227;o jornalistas Pok&#233;mon e est&#227;o em Fuchsia &#224; procura de algu&#233;m que tenha enfrentado Nidoking e Nidoqueen selvagens.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 5x Earth Stone | 5x Venom Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+
+            <details class="rotom-phone-city-panel" data-rotom-city="cinnabar">
+              <summary>
+                <img src="rotom-phone/assets/cinnabar.png" alt="Ilha de Cinnabar" loading="eager" decoding="async">
+                <span class="rotom-phone-city-panel__title">
+                  <strong>Ilha de Cinnabar</strong>
+                  <span>15 tasks</span>
+                </span>
+                <span class="rotom-phone-city-panel__progress" data-rotom-city-progress>15 restantes</span>
+              </summary>
+              <div class="rotom-phone-task-list">
+                <button class="rotom-phone-task" type="button" data-rotom-task="vulpix-selphy" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Vulpix para Selphy</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Selphy &#233; apaixonada por Vulpix e est&#225; &#224; procura de algu&#233;m que possa lhe dar um.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 20</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 25x Revive | 50x Medicine | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="treinamento-fogo" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Treinamento de Fogo</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Blaze est&#225; &#224; procura de Fire Plates para treinar seus Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 5x Fire Stone | 100x Medicine | 100x Ultra Potion | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="acidente-mansao" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Acidente na Mans&#227;o</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Humphrey estava na mans&#227;o Cinnabar at&#233; que o acidente ocorreu.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Venom Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="calor-cavernas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Calor nas Cavernas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Sebastian est&#225; tentando capturar um Magmar nas cavernas de Cinnabar, mas precisa de ajuda com o calor.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 25x Revive | 1x Fire Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="primeiro-pokemon-ken" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>O Primeiro Pok&#233;mon de Ken</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Ken sonha em ser um treinador de Pok&#233;mon de fogo como seu irm&#227;o e precisa do seu primeiro Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 30</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 50x Ultra Ball | 25x Revive | 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="controlando-chamas" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Controlando as Chamas</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Elizandra precisa de ajuda para controlar as chamas das Rapidash em Cinnabar.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 1x Rare Candy | 10x Fire Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="cacada-shiny-cinnabar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ca&#231;ada Shiny: Cinnabar Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Josh &#233; um shiny hunter e precisa de ajuda em sua ca&#231;ada shiny.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 120</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Random Plate Box | 25x Ditto Card | 5x Rare Candy | 1x Shiny Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pokemon-veloz" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pok&#233;mon Veloz</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Marc &#233; um competidor de corridas e est&#225; &#224; procura de um Pok&#233;mon veloz para competir.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 10x Fire Stone | 2x Random Plate Box | 1x Rare Candy | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="rattata-ferido" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Rattata Ferido</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">O Rattata de Joe est&#225; ferido e ele precisa de ajuda.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 10</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 1x Fire Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="lareiras-cinnabar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Lareiras de Cinnabar</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Gordon est&#225; ajudando os moradores de Cinnabar a manterem suas lareiras acesas.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 80</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Fire Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="pesquisa-pokemon-cinnabar" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Pesquisa Pok&#233;mon: Cinnabar Island</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Murray &#233; um cientista que est&#225; estudando os Pok&#233;mon.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="ciencia-fosseis" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Ci&#234;ncia de F&#243;sseis</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Frederick est&#225; &#224; procura de amostras de DNA de f&#243;sseis.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 50</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Rock Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="casaco-netos" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Casaco para os Netos</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Dulcie est&#225; &#224; procura de materiais para produzir casacos para seus netos.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 95</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 2x Random Plate Box | 5x Fire Stone | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="falsos-dragoes" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Falsos Drag&#245;es</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Drake &#233; um especialista em Pok&#233;mon do tipo Drag&#227;o e est&#225; estudando as caracter&#237;sticas do Pok&#233;mon Charizard.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 100</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 25x Fire Stone | 5x Random Plate Box | 3x Rare Candy | 10x Ditto Card | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+                <button class="rotom-phone-task" type="button" data-rotom-task="parceiro-police-officer" aria-pressed="false">
+                  <span class="rotom-phone-task__check" aria-hidden="true"></span>
+                  <span class="rotom-phone-task__body">
+                    <span class="rotom-phone-task__title-row">
+                      <strong>Parceiro para Police Officer</strong>
+                      <span class="rotom-phone-task__count">1/1</span>
+                    </span>
+                    <span class="rotom-phone-task__description">Um novo recruta da pol&#237;cia est&#225; &#224; procura de um parceiro Pok&#233;mon para ajudar em seu trabalho.</span>
+                    <span class="rotom-phone-task__meta">
+                      <span class="rotom-phone-task__level">Lv. 65</span>
+                      <span class="rotom-phone-task__rewards"><span>Recompensas:</span> 3x Fire Stone | 5x Fire Plate | 50x Devoted Token | Experi&#234;ncia</span>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </details>
+          </div>
+        </section>
+      </div>

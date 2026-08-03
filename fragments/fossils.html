@@ -1,0 +1,42 @@
+<div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden>
+      <div class="card calc-card">
+        <h2 class="visually-hidden">Consulta de fósseis</h2>
+        <p id="fossil-instructions"></p>
+        <div class="fossil-flow" aria-label="Como usar a combinação de fósseis">
+          <span class="fossil-flow__step"><strong>1.</strong> Escolha um f&oacute;ssil</span>
+          <span class="fossil-flow__step"><strong>2.</strong> Se combinar, escolha o segundo</span>
+          <span class="fossil-flow__step"><strong>3.</strong> Veja o resultado</span>
+        </div>
+        <div class="fossil-header">
+            <button id="fossil-location-btn" class="fossil-location-btn" type="button" aria-label="Abrir local da troca de fósseis no Mapa Interativo" title="Abrir no Mapa Interativo">
+              <span class="fossil-location-btn__thumb" aria-hidden="true">&#128506;</span>
+              <span class="fossil-location-btn__label">Local da troca</span>
+            </button>
+            <button id="fossil-reset-btn" class="reset-button" aria-label="Resetar fósseis" title="Resetar fósseis">🔄</button>
+        </div>
+        <div id="fossil-hint" class="calc-info"></div>
+        <div id="fossil-grid" class="grid">
+          <div class="fossil-cell"><img class="fossil-img" data-type="Drake" src="fosseis/Bag_Fossilized_Drake_Sprite.png" alt="Fóssil Drake" loading="lazy" decoding="async"><span class="fossil-label">Drake</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Bird" src="fosseis/Bag_Fossilized_Bird_Sprite.png" alt="Fóssil Bird" loading="lazy" decoding="async"><span class="fossil-label">Bird</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Dino" src="fosseis/Bag_Fossilized_Dino_Sprite.png" alt="Fóssil Dino" loading="lazy" decoding="async"><span class="fossil-label">Dino</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Fish" src="fosseis/Bag_Fossilized_Fish_Sprite.png" alt="Fóssil Fish" loading="lazy" decoding="async"><span class="fossil-label">Fish</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Amber" src="fosseis/old_amber.png" alt="Fóssil Amber" loading="lazy" decoding="async"><span class="fossil-label">Amber</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Helix" src="fosseis/Bag_Helix_Fossil_Sprite.png" alt="Helix Fossil" loading="lazy" decoding="async"><span class="fossil-label">Helix</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Dome" src="fosseis/Bag_Dome_Fossil_Sprite.png" alt="Dome Fossil" loading="lazy" decoding="async"><span class="fossil-label">Dome</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Root" src="fosseis/Bag_Root_Fossil_Sprite.png" alt="Root Fossil" loading="lazy" decoding="async"><span class="fossil-label">Root</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Claw" src="fosseis/Bag_Claw_Fossil_Sprite.png" alt="Claw Fossil" loading="lazy" decoding="async"><span class="fossil-label">Claw</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Skull" src="fosseis/Bag_Skull_Fossil_Sprite.png" alt="Skull Fossil" loading="lazy" decoding="async"><span class="fossil-label">Skull</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Armor" src="fosseis/Bag_Armor_Fossil_Sprite.png" alt="Armor Fossil" loading="lazy" decoding="async"><span class="fossil-label">Armor</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Cover" src="fosseis/Bag_Cover_Fossil_Sprite.png" alt="Cover Fossil" loading="lazy" decoding="async"><span class="fossil-label">Cover</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Plume" src="fosseis/Bag_Plume_Fossil_Sprite.png" alt="Plume Fossil" loading="lazy" decoding="async"><span class="fossil-label">Plume</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Jaw" src="fosseis/Bag_Jaw_Fossil_Sprite.png" alt="Jaw Fossil" loading="lazy" decoding="async"><span class="fossil-label">Jaw</span></div>
+          <div class="fossil-cell"><img class="fossil-img" data-type="Sail" src="fosseis/Bag_Sail_Fossil_Sprite.png" alt="Sail Fossil" loading="lazy" decoding="async"><span class="fossil-label">Sail</span></div>
+        </div>
+        <!-- area for drop hint icons shown after clicking one fossil -->
+        <div id="drop-hints" class="drop-hints" aria-live="polite"></div>
+        <div id="result" class="calc-results" style="margin-top:1rem;"></div>
+        <div id="gallery-title" class="calc-info" style="margin-top:1rem;"></div>
+        <div id="pokemon-gallery" class="pokemon-gallery calc-info"></div>
+        <p id="gallery-cost" class="fossil-cost"></p>
+      </div>
+    </div>

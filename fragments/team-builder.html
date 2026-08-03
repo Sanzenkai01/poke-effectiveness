@@ -1,0 +1,68 @@
+    <div id="content-team-builder" role="tabpanel" aria-label="Team Builder" hidden>
+      <div class="team-builder-shell">
+        <section class="team-builder-hero" aria-labelledby="team-builder-title">
+          <div class="team-builder-hero__copy">
+            <span class="team-builder-eyebrow">Sistemas</span>
+            <h2 id="team-builder-title">Team Builder</h2>
+          </div>
+          <div class="team-builder-summary" aria-live="polite">
+            <span id="team-builder-filled-count">0/6</span>
+            <strong>Slots preenchidos</strong>
+          </div>
+        </section>
+
+        <section class="team-builder-board" aria-labelledby="team-builder-board-title">
+          <div class="team-builder-section-head">
+            <span class="team-builder-eyebrow">Composi&ccedil;&atilde;o</span>
+            <h3 id="team-builder-board-title">Slots do time</h3>
+          </div>
+          <p class="team-builder-drag-hint">Arraste DPS e Finisher preenchidos para trocar as posi&ccedil;&otilde;es entre eles.</p>
+          <div id="team-builder-slots" class="team-builder-slots" role="list" aria-label="Slots do time"></div>
+        </section>
+
+        <section id="team-builder-picker" class="team-builder-picker" aria-labelledby="team-builder-picker-title">
+          <div class="team-builder-section-head">
+            <span id="team-builder-active-slot-label" class="team-builder-eyebrow">Sele&ccedil;&atilde;o</span>
+            <h3 id="team-builder-picker-title">Escolha um Pok&eacute;mon</h3>
+          </div>
+
+          <div class="team-builder-filters" aria-label="Filtros do Team Builder">
+            <div class="team-builder-filters__head">
+              <span class="team-builder-eyebrow">Filtros</span>
+            </div>
+            <div class="team-builder-filters__main">
+              <label class="team-builder-filter-field team-builder-filter-field--search" for="team-builder-search">
+                <span>Nome</span>
+                <input id="team-builder-search" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar Pok&eacute;mon" />
+              </label>
+              <div id="team-builder-sub-function-filter-field" class="team-builder-filter-field">
+                <span>Sub-fun&ccedil;&atilde;o</span>
+                <div id="team-builder-sub-function-filter-row" class="team-builder-filter-button-row" role="group" aria-label="Filtro de sub-fun&ccedil;&atilde;o"></div>
+              </div>
+            </div>
+            <div class="team-builder-filter-field team-builder-filter-field--types">
+              <div class="team-builder-filter-field team-builder-filter-field--clan">
+                <span>Cl&atilde;</span>
+              <div id="team-builder-clan-filter-row" class="team-builder-filter-button-row" role="group" aria-label="Filtro de cl&atilde;"></div>
+              </div>
+              <div class="team-builder-filter-field__head">
+                <span>Moveset</span>
+              </div>
+              <div id="team-builder-type-filter-row" class="team-builder-filter-button-row team-builder-filter-button-row--types" role="group" aria-label="Filtro de moveset"></div>
+            </div>
+          </div>
+
+          <p id="team-builder-status" class="team-builder-status" aria-live="polite">Carregando cat&aacute;logo...</p>
+          <div id="team-builder-results" class="team-builder-results" role="list" aria-label="Pok&eacute;mons dispon&iacute;veis"></div>
+        </section>
+
+        <section id="team-builder-complete" class="team-builder-complete" aria-labelledby="team-builder-complete-title" hidden>
+          <div class="team-builder-section-head">
+            <span class="team-builder-eyebrow">Recomenda&ccedil;&atilde;o</span>
+            <h3 id="team-builder-complete-title">Time completo</h3>
+          </div>
+          <p>As hunts s&atilde;o apenas recomenda&ccedil;&otilde;es automaticas com base na sua composi&ccedil;&atilde;o, tenha certeza de checar antes de fazer algo.</p>
+          <div id="team-builder-hunts" class="team-builder-hunts" aria-live="polite" hidden></div>
+        </section>
+      </div>
+    </div>

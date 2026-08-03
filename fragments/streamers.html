@@ -1,0 +1,21 @@
+<div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden>
+      <div class="card calc-card">
+        <div class="streamer-section-header">
+          <h2>Transmissões da comunidade</h2>
+          <p>Acompanhe o status dos canais da comunidade e abra a transmissão no Twitch.</p>
+        </div>
+        <div id="streamer-status-info" class="streamer-status-info" aria-live="polite"></div>
+        <section id="streamer-filters" class="streamer-filters" aria-label="Filtros de transmissões">
+            <fieldset class="streamer-filters__group">
+              <legend class="streamer-filters__legend visually-hidden">Filtrar transmissões</legend>
+              <label><input id="filter-all" type="checkbox" checked>Mostrar todas</label>
+              <label><input id="filter-drops" type="checkbox">Com drops</label>
+              <label><input id="filter-online" type="checkbox">Online</label>
+              <label><input id="filter-pack" type="checkbox">Com pack</label>
+              <label><input id="filter-pstory" type="checkbox">PStory</label>
+            </fieldset>
+            <div id="streamer-rat-summary" class="streamer-rat-summary" aria-live="polite"></div>
+        </section>
+        <div id="streamer-grid" class="streamer-grid" role="list" aria-label="Lista de canais da comunidade"></div>
+      </div>
+    </div>

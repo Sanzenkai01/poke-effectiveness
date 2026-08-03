@@ -1,0 +1,123 @@
+    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden>
+      <div class="card calc-card pokemon-hub">
+        <div class="pokemon-hub__hero">
+          <div class="pokemon-hub__copy">
+            <p class="pokemon-hub__eyebrow">Utilidades</p>
+            <div class="pokemon-hub__title-row">
+              <h2>Pokédex</h2>
+            </div>
+            <p class="pokemon-hub__lead">Cards com leitura rápida de moveset, elementos naturais, time e médias de captura.</p>
+          </div>
+        </div>
+
+        <section class="pokemon-filter-panel" aria-labelledby="pokemon-filters-title">
+          <div class="pokemon-filter-panel__head">
+            <div class="pokemon-filter-panel__copy">
+              <span class="pokemon-filter-panel__eyebrow">Busca avançada</span>
+              <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
+              <p>Combine nome, role, cl&atilde;, n&iacute;vel, gera&ccedil;&atilde;o, tags, tipos e moveset para refinar os cards sem sair da p&aacute;gina.</p>
+            </div>
+          </div>
+
+          <div class="pokemon-filter-grid">
+            <label class="pokemon-filter-field pokemon-filter-field--search" for="pokemon-filter-name">
+              <span>Nome do Pokémon</span>
+              <input id="pokemon-filter-name" type="search" placeholder="Ex.: Bulbasaur" autocomplete="off" />
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-clan">
+              <span>Clã</span>
+              <select id="pokemon-filter-clan">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-role">
+              <span>Role</span>
+              <select id="pokemon-filter-role">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-moveset">
+              <span>Moveset</span>
+              <select id="pokemon-filter-moveset">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-level">
+              <span>Nível</span>
+              <select id="pokemon-filter-level">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type1">
+              <span>Tipo 1</span>
+              <select id="pokemon-filter-type1">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-type2">
+              <span>Tipo 2</span>
+              <select id="pokemon-filter-type2">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-generation">
+              <span>Gera&ccedil;&atilde;o</span>
+              <select id="pokemon-filter-generation">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-tag">
+              <span>Tag especial</span>
+              <select id="pokemon-filter-tag">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-sub-function">
+              <span>Sub-fun&ccedil;&atilde;o</span>
+              <select id="pokemon-filter-sub-function">
+                <option value="">Todas</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="pokemon-filter-actions">
+            <button id="pokemon-filter-clear" type="button" class="pokemon-filter-clear">Limpar filtros</button>
+          </div>
+
+          <div id="pokemon-filter-share-links" class="pokemon-filter-share-links" hidden></div>
+        </section>
+
+        <div class="pokemon-hub__status-row">
+          <p id="pokemon-catalog-status" class="pokemon-hub__status" aria-live="polite">Carregando catálogo...</p>
+        </div>
+        <div id="pokemon-catalog-pagination" class="pokemon-catalog-pagination" hidden>
+          <button id="pokemon-catalog-prev-page" type="button" class="pokemon-catalog-pagination__btn" aria-label="Pagina anterior">
+            &lt; Anterior
+          </button>
+          <p id="pokemon-catalog-page-indicator" class="pokemon-catalog-pagination__label" aria-live="polite">Pagina 1 de 1</p>
+          <button id="pokemon-catalog-next-page" type="button" class="pokemon-catalog-pagination__btn" aria-label="Proxima pagina">
+            Proxima &gt;
+          </button>
+        </div>
+
+        <div id="pokemon-card-grid" class="pokemon-card-grid" role="list" aria-label="Lista de pokémons"></div>
+        <div id="pokemon-catalog-pagination-bottom" class="pokemon-catalog-pagination pokemon-catalog-pagination--bottom" hidden>
+          <button id="pokemon-catalog-prev-page-bottom" type="button" class="pokemon-catalog-pagination__btn" aria-label="Pagina anterior">
+            &lt; Anterior
+          </button>
+          <p id="pokemon-catalog-page-indicator-bottom" class="pokemon-catalog-pagination__label" aria-live="polite">Pagina 1 de 1</p>
+          <button id="pokemon-catalog-next-page-bottom" type="button" class="pokemon-catalog-pagination__btn" aria-label="Proxima pagina">
+            Proxima &gt;
+          </button>
+        </div>
+      </div>
+    </div>

@@ -3332,3 +3332,298 @@ body.home-view > main > .home-landing {
     max-width: none !important;
   }
 }
+
+/* Icones contextuais dos atalhos de pagina da sidebar. */
+.sidebar-icon-sprite {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.sidebar-sublink {
+  gap: 8px !important;
+  padding-left: 8px !important;
+}
+
+.sidebar-sublink__icon {
+  flex: 0 0 15px !important;
+  width: 15px !important;
+  height: 15px !important;
+  color: #74818c;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+  transition: color 140ms ease, opacity 140ms ease;
+}
+
+.sidebar-sublink:hover .sidebar-sublink__icon,
+.sidebar-sublink:focus-visible .sidebar-sublink__icon {
+  color: #b7c3cc;
+  opacity: 1;
+}
+
+.sidebar-sublink.is-active .sidebar-sublink__icon,
+.sidebar-sublink[aria-current="page"] .sidebar-sublink__icon {
+  color: #ead58f;
+  opacity: 1;
+}
+
+/* Hover colorido por categoria, mantendo o peso visual compacto. */
+.sidebar-group[data-sidebar-group="bosses"] {
+  --sidebar-hover-rgb: 239, 106, 106;
+  --sidebar-hover-text: #ffb4b4;
+}
+
+.sidebar-group[data-sidebar-group="quests"] {
+  --sidebar-hover-rgb: 246, 196, 83;
+  --sidebar-hover-text: #ffe29a;
+}
+
+.sidebar-group[data-sidebar-group="systems"] {
+  --sidebar-hover-rgb: 94, 211, 193;
+  --sidebar-hover-text: #a9eee3;
+}
+
+.sidebar-group[data-sidebar-group="utilities"] {
+  --sidebar-hover-rgb: 104, 190, 255;
+  --sidebar-hover-text: #b5e1ff;
+}
+
+.sidebar-group[data-sidebar-group="community"] {
+  --sidebar-hover-rgb: 184, 132, 255;
+  --sidebar-hover-text: #d8b9ff;
+}
+
+.sidebar-group__toggle,
+.sidebar-sublink,
+.sidebar-quick-link {
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease !important;
+}
+
+.sidebar-group__toggle:hover,
+.sidebar-group__toggle:focus-visible {
+  color: var(--sidebar-hover-text) !important;
+  background: rgba(var(--sidebar-hover-rgb), 0.065) !important;
+}
+
+.sidebar-group__toggle:hover .sidebar-group__copy strong,
+.sidebar-group__toggle:focus-visible .sidebar-group__copy strong {
+  color: var(--sidebar-hover-text) !important;
+}
+
+.sidebar-sublink:not(.is-active):not([aria-current="page"]):hover,
+.sidebar-sublink:not(.is-active):not([aria-current="page"]):focus-visible {
+  color: var(--sidebar-hover-text) !important;
+  background: rgba(var(--sidebar-hover-rgb), 0.11) !important;
+  box-shadow: inset 2px 0 0 rgba(var(--sidebar-hover-rgb), 0.72) !important;
+}
+
+.sidebar-sublink:not(.is-active):not([aria-current="page"]):hover .sidebar-sublink__icon,
+.sidebar-sublink:not(.is-active):not([aria-current="page"]):focus-visible .sidebar-sublink__icon {
+  color: var(--sidebar-hover-text) !important;
+  opacity: 1;
+}
+
+.sidebar-quick-link:hover,
+.sidebar-quick-link:focus-visible {
+  color: #b5e1ff !important;
+  background: rgba(104, 190, 255, 0.1) !important;
+  box-shadow: inset 2px 0 0 rgba(104, 190, 255, 0.62) !important;
+}
+
+/* Hovers semanticos compartilhados entre os modulos interativos. */
+#content-pokemons .pokemon-entry-card,
+.team-builder-result-card,
+.team-builder-hunt-card,
+.rotom-phone-city-panel summary,
+.rotom-phone-task,
+.liga-pokemon-collapsible summary,
+.liga-pokemon-gym-card,
+.liga-pokemon-kanto-card,
+.boss-role-pick,
+.speedster-reco-card,
+.speedster-boss-result-card,
+.site-global-search__result {
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease !important;
+}
+
+#content-pokemons .pokemon-entry-card:hover,
+#content-pokemons .pokemon-entry-card:focus-visible {
+  border-color: rgba(var(--type-color-rgb, 104, 215, 255), 0.58) !important;
+  background:
+    radial-gradient(circle at top right, rgba(var(--type-color-rgb, 104, 215, 255), 0.15), transparent 48%),
+    var(--wiki-surface) !important;
+  box-shadow:
+    inset 3px 0 0 rgba(var(--type-color-rgb, 104, 215, 255), 0.76),
+    0 12px 28px rgba(var(--type-color-rgb, 104, 215, 255), 0.12) !important;
+}
+
+#content-pokemons .pokemon-entry-card:hover .pokemon-entry-card__title,
+#content-pokemons .pokemon-entry-card:focus-visible .pokemon-entry-card__title {
+  color: var(--type-color, #9eeaff) !important;
+}
+
+#content-pokemons .pokemon-catalog-pagination__btn:hover:not(:disabled),
+#content-pokemons .pokemon-catalog-pagination__btn:focus-visible:not(:disabled) {
+  border-color: rgba(104, 190, 255, 0.56) !important;
+  color: #b5e1ff !important;
+  background: rgba(104, 190, 255, 0.1) !important;
+  box-shadow: inset 0 -2px 0 rgba(104, 190, 255, 0.56) !important;
+}
+
+.team-builder-result-card[data-slot-kind="tank"] {
+  --builder-hover-rgb: 78, 169, 255;
+  --builder-hover-color: #a9d8ff;
+}
+
+.team-builder-result-card[data-slot-kind="dps"] {
+  --builder-hover-rgb: 239, 106, 106;
+  --builder-hover-color: #ffb4b4;
+}
+
+.team-builder-result-card[data-slot-kind="finisher"] {
+  --builder-hover-rgb: 184, 132, 255;
+  --builder-hover-color: #d8b9ff;
+}
+
+.team-builder-result-card:hover,
+.team-builder-result-card:focus-visible {
+  border-color: rgba(var(--builder-hover-rgb, 104, 190, 255), 0.56) !important;
+  background:
+    radial-gradient(circle at top right, rgba(var(--builder-hover-rgb, 104, 190, 255), 0.14), transparent 52%),
+    rgba(12, 20, 26, 0.96) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--builder-hover-rgb, 104, 190, 255), 0.72) !important;
+}
+
+.team-builder-result-card:hover .team-builder-result-card__body > strong,
+.team-builder-result-card:focus-visible .team-builder-result-card__body > strong {
+  color: var(--builder-hover-color, #b5e1ff) !important;
+}
+
+.team-builder-hunt-card:hover,
+.team-builder-hunt-card:focus-within {
+  border-color: rgba(246, 196, 83, 0.54) !important;
+  background:
+    radial-gradient(circle at top right, rgba(246, 196, 83, 0.13), transparent 50%),
+    rgba(12, 20, 26, 0.96) !important;
+  box-shadow: inset 3px 0 0 rgba(246, 196, 83, 0.7) !important;
+}
+
+.rotom-phone-city-panel:not(:has(.rotom-phone-city-panel__progress.is-complete)) summary:hover,
+.rotom-phone-city-panel:not(:has(.rotom-phone-city-panel__progress.is-complete)) summary:focus-visible {
+  color: #ffe29a !important;
+  background: rgba(var(--rotom-amber), 0.09) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--rotom-amber), 0.68) !important;
+}
+
+.rotom-phone-city-panel:has(.rotom-phone-city-panel__progress.is-complete) summary:hover,
+.rotom-phone-city-panel:has(.rotom-phone-city-panel__progress.is-complete) summary:focus-visible {
+  color: #aaffc5 !important;
+  background: rgba(var(--rotom-green), 0.09) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--rotom-green), 0.68) !important;
+}
+
+.rotom-phone-task:not(.is-complete):hover,
+.rotom-phone-task:not(.is-complete):focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.52) !important;
+  background: rgba(var(--rotom-amber), 0.085) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--rotom-amber), 0.62) !important;
+}
+
+.rotom-phone-task.is-complete:hover,
+.rotom-phone-task.is-complete:focus-visible {
+  opacity: 0.82;
+  border-color: rgba(var(--rotom-green), 0.5) !important;
+  background: rgba(var(--rotom-green), 0.085) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--rotom-green), 0.62) !important;
+}
+
+.liga-pokemon-collapsible summary:hover,
+.liga-pokemon-collapsible summary:focus-visible {
+  color: #ffe29a !important;
+  background: rgba(var(--liga-gold), 0.08) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--liga-gold), 0.66) !important;
+}
+
+.liga-pokemon-gym-card:hover,
+.liga-pokemon-gym-card:focus-within {
+  border-color: rgba(var(--type-color-rgb, 246, 196, 83), 0.55) !important;
+  background:
+    radial-gradient(circle at top center, rgba(var(--type-color-rgb, 246, 196, 83), 0.14), transparent 54%),
+    var(--liga-panel-soft) !important;
+  box-shadow: inset 0 3px 0 rgba(var(--type-color-rgb, 246, 196, 83), 0.68) !important;
+}
+
+.liga-pokemon-gym-card:hover .liga-pokemon-gym-card__trainer {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.liga-pokemon-kanto-card:not(.is-captured):hover,
+.liga-pokemon-kanto-card:not(.is-captured):focus-visible {
+  border-color: rgba(var(--liga-blue), 0.55) !important;
+  background: rgba(var(--liga-blue), 0.09) !important;
+  box-shadow: inset 0 -3px 0 rgba(var(--liga-blue), 0.64) !important;
+}
+
+.liga-pokemon-kanto-card.is-captured:hover,
+.liga-pokemon-kanto-card.is-captured:focus-visible {
+  border-color: rgba(80, 215, 145, 0.58) !important;
+  background: rgba(80, 215, 145, 0.1) !important;
+  box-shadow: inset 0 -3px 0 rgba(80, 215, 145, 0.68) !important;
+}
+
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="excelente"] { --semantic-tier-rgb: 142, 68, 173; }
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="muitobom"] { --semantic-tier-rgb: 46, 204, 113; }
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="bom"] { --semantic-tier-rgb: 33, 150, 243; }
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="aceitavel"] { --semantic-tier-rgb: 255, 152, 0; }
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="ruim"] { --semantic-tier-rgb: 244, 67, 54; }
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card)[data-tier="seminformacao"] { --semantic-tier-rgb: 158, 158, 158; }
+
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card):hover,
+:where(.boss-role-pick, .speedster-reco-card, .speedster-boss-result-card):focus-visible {
+  border-color: rgba(var(--semantic-tier-rgb, 104, 190, 255), 0.58) !important;
+  background:
+    radial-gradient(circle at top right, rgba(var(--semantic-tier-rgb, 104, 190, 255), 0.14), transparent 52%),
+    rgba(10, 17, 23, 0.96) !important;
+  box-shadow:
+    inset 3px 0 0 rgba(var(--semantic-tier-rgb, 104, 190, 255), 0.72),
+    0 10px 24px rgba(var(--semantic-tier-rgb, 104, 190, 255), 0.1) !important;
+}
+
+.site-global-search__result[data-search-kind="pokemon"],
+.site-global-search__result[data-search-kind="type"] {
+  --search-hover-rgb: var(--type-color-rgb, 104, 190, 255);
+}
+
+.site-global-search__result[data-search-tone="bosses"] { --search-hover-rgb: 239, 106, 106; }
+.site-global-search__result[data-search-tone="quests"] { --search-hover-rgb: 246, 196, 83; }
+.site-global-search__result[data-search-tone="systems"] { --search-hover-rgb: 94, 211, 193; }
+.site-global-search__result[data-search-tone="utilities"] { --search-hover-rgb: 104, 190, 255; }
+.site-global-search__result[data-search-tone="community"] { --search-hover-rgb: 184, 132, 255; }
+.site-global-search__result[data-search-tone="quick"] { --search-hover-rgb: 246, 196, 83; }
+.site-global-search__result[data-search-kind="team"] { --search-hover-rgb: 78, 169, 255; }
+.site-global-search__result[data-search-kind="boss"] { --search-hover-rgb: 239, 106, 106; }
+.site-global-search__result[data-search-kind="streamer"],
+.site-global-search__result[data-search-kind="external"] { --search-hover-rgb: 184, 132, 255; }
+
+.site-global-search__result:hover,
+.site-global-search__result:focus-visible,
+.site-global-search__result[data-active="true"] {
+  border-color: rgba(var(--search-hover-rgb, 104, 190, 255), 0.5) !important;
+  background: rgba(var(--search-hover-rgb, 104, 190, 255), 0.1) !important;
+  box-shadow: inset 3px 0 0 rgba(var(--search-hover-rgb, 104, 190, 255), 0.68) !important;
+}

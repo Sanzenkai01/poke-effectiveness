@@ -2153,7 +2153,7 @@ const horizonsSilverBosses = createManualRoleboardBosses([
     name: 'Jellicent Male',
     image: 'pokemons/5gen/jellicent.png',
     types: ['water', 'ghost'],
-    moveType: 'ghost',
+    moveType: 'poison',
     expandCardDescription: true,
     description: 'Depois de derrotar o boss, saia da Boss Room, vá para o portal de baixo na direita evitando as armadilhas, depois para o portal de baixo, depois para o último da sala, na esquerda.\nRecomendado 2 DPS.',
     clans: {
@@ -2201,7 +2201,7 @@ const horizonsSilverBosses = createManualRoleboardBosses([
     name: 'Mega Gengar',
     image: 'pokemons/megas/mega-gengar.png',
     types: ['ghost', 'poison'],
-    moveType: 'ghost',
+    moveType: 'dark',
     description: 'Recomendado 1 Tank e 1 DPS (Mecanica de Imortal).\nDerrote os totens para gerar curas dentro da arena.',
     clans: {
       instinct: {
@@ -15519,9 +15519,17 @@ function getBossInteractiveMapQuery(boss) {
 }
 
 function showLocationOverlay(src, options = {}) {
-  const { boss = null, pushState = true } = options || {};
+  const { boss = null, pushState = true, mapReady = false } = options || {};
   const mapPanel = document.getElementById('content-mapa-interativo');
   if (!mapPanel || !boss) return false;
+  if (!mapReady && typeof window.ensureInteractiveMapPanelReady === 'function') {
+    window.ensureInteractiveMapPanelReady()
+      .then(() => showLocationOverlay(src, { ...options, mapReady: true }))
+      .catch((error) => {
+        console.error('Nao foi possivel carregar o mapa interativo.', error);
+      });
+    return true;
+  }
 
   const previousUrl = isLocationOverlayOpen() && locationOverlayPreviousUrl
     ? locationOverlayPreviousUrl

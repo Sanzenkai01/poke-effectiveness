@@ -1,0 +1,289 @@
+<div class="held-fusion-shell">
+        <section class="held-fusion-hero" aria-labelledby="held-fusion-title">
+          <div class="held-fusion-hero__copy">
+            <span class="held-fusion-eyebrow">Sistemas</span>
+            <h2 id="held-fusion-title">Fus&atilde;o de Held</h2>
+            <p>Aprimore Helds Prim&aacute;rios sacrificando itens do mesmo tier. A chance muda em tempo real conforme voc&ecirc; adiciona materiais e Moedas Especiais.</p>
+            <div class="held-fusion-hero__stats" aria-label="Resumo da fus&atilde;o de Held">
+              <span><strong>1-2</strong> Helds de descarte</span>
+              <span><strong>Mesmo tier</strong> obrigat&oacute;rio</span>
+              <span><strong>Item seguro</strong> se falhar</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="held-fusion-section held-fusion-simulator" aria-labelledby="held-fusion-simulator-title">
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Simulador</span>
+            <h3 id="held-fusion-simulator-title">Teste a fus&atilde;o antes de tentar</h3>
+            <p>Monte a tentativa com held principal, tier, materiais de descarte e Moeda Especial para ver custo, chance, preview e um resultado simulado.</p>
+          </div>
+
+          <div class="held-fusion-sim">
+            <div class="held-fusion-sim__controls" aria-label="Controles do simulador de fus&atilde;o">
+              <label>
+                <span>Held principal</span>
+                <select id="held-fusion-sim-source"></select>
+              </label>
+              <label>
+                <span>Tier atual</span>
+                <select id="held-fusion-sim-tier"></select>
+              </label>
+              <label>
+                <span>Descarte 1</span>
+                <select id="held-fusion-sim-material-1"></select>
+              </label>
+              <label>
+                <span>Descarte 2</span>
+                <select id="held-fusion-sim-material-2"></select>
+              </label>
+              <label class="held-fusion-sim__booster">
+                <input id="held-fusion-sim-booster" type="checkbox">
+                <img src="fusao-de-held/held_coin.png" alt="" loading="lazy" decoding="async">
+                <span>Usar Moeda Especial</span>
+              </label>
+            </div>
+
+            <div class="held-fusion-sim__modal" aria-live="polite">
+              <div class="held-fusion-sim__titlebar">
+                <h4>Held Fusion</h4>
+                <button type="button" class="held-fusion-sim__close" aria-label="Bot&atilde;o visual de fechar">×</button>
+              </div>
+
+              <div class="held-fusion-sim__slots" aria-label="Slots simulados de fus&atilde;o">
+                <div class="held-fusion-sim__slot-group">
+                  <strong>Source Held</strong>
+                  <div id="held-fusion-source-slot" class="held-fusion-sim__slot">
+                    <img alt="" hidden>
+                    <span></span>
+                  </div>
+                </div>
+                <span class="held-fusion-sim__operator">+</span>
+                <div class="held-fusion-sim__slot-group held-fusion-sim__slot-group--materials">
+                  <strong>Discard Material <small>(Helds)</small></strong>
+                  <div class="held-fusion-sim__material-slots">
+                    <div id="held-fusion-material-slot-1" class="held-fusion-sim__slot">
+                      <img alt="" hidden>
+                      <span></span>
+                    </div>
+                    <div id="held-fusion-material-slot-2" class="held-fusion-sim__slot">
+                      <img alt="" hidden>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+                <span class="held-fusion-sim__operator">»</span>
+                <div class="held-fusion-sim__slot-group">
+                  <strong>Preview</strong>
+                  <div id="held-fusion-preview-slot" class="held-fusion-sim__slot held-fusion-sim__slot--preview">
+                    <img alt="" hidden>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="held-fusion-sim__booster-slot">
+                <span>Booster:</span>
+                <div id="held-fusion-booster-slot" class="held-fusion-sim__slot held-fusion-sim__slot--booster">
+                  <img src="fusao-de-held/held_coin.png" alt="Moeda Especial" hidden>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="held-fusion-sim__info">
+                <h5>Additional Information <span aria-hidden="true">?</span></h5>
+                <div class="held-fusion-sim__stats">
+                  <p><strong>Fusion cost:</strong> <span id="held-fusion-sim-cost">$0</span></p>
+                  <p><strong>Chance:</strong> <span id="held-fusion-sim-chance">0%</span></p>
+                  <p class="held-fusion-sim__coin-stat"><strong>Moedas:</strong> <span><img src="fusao-de-held/held_coin.png" alt="" loading="lazy" decoding="async"><span id="held-fusion-sim-coins">0</span></span></p>
+                  <p><strong>B&ocirc;nus:</strong> <span id="held-fusion-sim-effect">-</span></p>
+                </div>
+                <p id="held-fusion-sim-message" class="held-fusion-sim__message">Adicione um ou dois Helds de descarte.</p>
+                <div id="held-fusion-sim-result" class="held-fusion-sim__result" role="status">Resultado: aguardando simula&ccedil;&atilde;o.</div>
+                <div class="held-fusion-sim__actions">
+                  <button id="held-fusion-sim-fuse" type="button">Fuse</button>
+                  <button id="held-fusion-sim-reset" type="button">Limpar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="held-fusion-section held-fusion-section--eligible" aria-labelledby="held-fusion-eligible-title">
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Helds eleg&iacute;veis</span>
+            <h3 id="held-fusion-eligible-title">Prim&aacute;rios que entram no sistema</h3>
+            <p>Swift Feather e Eject Button ficam fora: n&atilde;o podem ser aprimorados nem usados como descarte por serem helds secund&aacute;rios.</p>
+          </div>
+          <div class="held-fusion-held-grid" role="list">
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/amuletcoin.png" alt="" loading="lazy" decoding="async">
+              <strong>Amulet Coin</strong>
+              <span>Possui regra especial.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/choiceband.png" alt="" loading="lazy" decoding="async">
+              <strong>Choice Band</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/assaultvest.png" alt="" loading="lazy" decoding="async">
+              <strong>Assault Vest</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/choicescarf.png" alt="" loading="lazy" decoding="async">
+              <strong>Choice Scarf</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/choicespecs.png" alt="" loading="lazy" decoding="async">
+              <strong>Choice Specs</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/lifeorb.png" alt="" loading="lazy" decoding="async">
+              <strong>Life Orb</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+            <article class="held-fusion-held-card" role="listitem">
+              <img src="helds/luckyegg.png" alt="" loading="lazy" decoding="async">
+              <strong>Lucky Egg</strong>
+              <span>Held prim&aacute;rio.</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="held-fusion-section" aria-labelledby="held-fusion-rules-title">
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Funcionamento</span>
+            <h3 id="held-fusion-rules-title">Como preparar a tentativa</h3>
+          </div>
+          <div class="held-fusion-system-layout">
+            <figure class="held-fusion-system-preview">
+              <img src="helds/held_upgrade_system.gif?v=20260715a" alt="Interface do sistema de upgrade de Helds mostrando o slot principal, materiais de fus&atilde;o, moeda especial e chance de sucesso" loading="lazy" decoding="async">
+              <figcaption>Interface do upgrade: held principal, at&eacute; dois materiais, moeda especial e chance final no mesmo painel.</figcaption>
+            </figure>
+            <div class="held-fusion-rule-grid">
+              <article>
+                <span class="held-fusion-rule-grid__step">01</span>
+                <h4>Slot de Aprimoramento</h4>
+                <p>Escolha o held principal no simulador para conferir o pr&oacute;ximo tier, o custo e o efeito antes da tentativa.</p>
+              </article>
+              <article>
+                <span class="held-fusion-rule-grid__step">02</span>
+                <h4>Material de Fus&atilde;o</h4>
+                <p>Insira 1 ou 2 helds de descarte do mesmo tier do item principal. Quanto mais materiais, maior a chance final.</p>
+              </article>
+              <article>
+                <span class="held-fusion-rule-grid__step">03</span>
+                <h4>Aprimorador</h4>
+                <p>A Moeda Especial adiciona o b&ocirc;nus extra da tabela. A chance de sucesso &eacute; atualizada em tempo real.</p>
+              </article>
+              <article>
+                <span class="held-fusion-rule-grid__step">04</span>
+                <h4>Falha segura</h4>
+                <p>Se falhar, o held principal continua com voc&ecirc; no mesmo tier. A taxa em dinheiro e os helds de descarte sempre s&atilde;o consumidos.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="held-fusion-section" aria-labelledby="held-fusion-cost-title">
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Custos e chances</span>
+            <h3 id="held-fusion-cost-title">Tabela dos Helds Prim&aacute;rios</h3>
+            <p>Cada held de descarte adiciona a chance base indicada. Com dois materiais, some a chance de ambos antes de aplicar o b&ocirc;nus da Moeda Especial.</p>
+          </div>
+          <div class="held-fusion-table-wrap">
+            <table class="held-fusion-table">
+              <thead>
+                <tr>
+                  <th scope="col">Evolu&ccedil;&atilde;o de tier</th>
+                  <th scope="col">Custo da tentativa</th>
+                  <th scope="col">Chance base por held</th>
+                  <th scope="col">B&ocirc;nus da moeda</th>
+                  <th scope="col">Moedas necess&aacute;rias</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">T1 &rarr; T2</th>
+                  <td data-label="Custo">10.000 <span>(10K)</span></td>
+                  <td data-label="Chance base">+5%</td>
+                  <td data-label="B&ocirc;nus">+90%</td>
+                  <td data-label="Moedas">1 Moeda</td>
+                </tr>
+                <tr>
+                  <th scope="row">T2 &rarr; T3</th>
+                  <td data-label="Custo">25.000 <span>(25K)</span></td>
+                  <td data-label="Chance base">+8%</td>
+                  <td data-label="B&ocirc;nus">+84%</td>
+                  <td data-label="Moedas">2 Moedas</td>
+                </tr>
+                <tr>
+                  <th scope="row">T3 &rarr; T4</th>
+                  <td data-label="Custo">50.000 <span>(50K)</span></td>
+                  <td data-label="Chance base">+10%</td>
+                  <td data-label="B&ocirc;nus">+80%</td>
+                  <td data-label="Moedas">3 Moedas</td>
+                </tr>
+                <tr>
+                  <th scope="row">T4 &rarr; T5</th>
+                  <td data-label="Custo">200.000 <span>(200K)</span></td>
+                  <td data-label="Chance base">+15%</td>
+                  <td data-label="B&ocirc;nus">+70%</td>
+                  <td data-label="Moedas">9 Moedas</td>
+                </tr>
+                <tr>
+                  <th scope="row">T5 &rarr; T6</th>
+                  <td data-label="Custo">500.000 <span>(500K)</span></td>
+                  <td data-label="Chance base">+25%</td>
+                  <td data-label="B&ocirc;nus">+50%</td>
+                  <td data-label="Moedas">45 Moedas</td>
+                </tr>
+                <tr>
+                  <th scope="row">T6 &rarr; T7</th>
+                  <td data-label="Custo">1.000.000 <span>(1KK)</span></td>
+                  <td data-label="Chance base">+30%</td>
+                  <td data-label="B&ocirc;nus">+40%</td>
+                  <td data-label="Moedas">90 Moedas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="held-fusion-section held-fusion-amulet" aria-labelledby="held-fusion-amulet-title">
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Regra especial</span>
+            <h3 id="held-fusion-amulet-title">Amulet Coin</h3>
+            <p>Ao aprimorar Amulet Coin, a regra vale em todos os tiers, de T1 &rarr; T2 at&eacute; T6 &rarr; T7: somente outro Amulet Coin pode ser usado como material de fus&atilde;o.</p>
+          </div>
+          <div class="held-fusion-amulet__layout">
+            <div class="held-fusion-amulet__icon" aria-hidden="true">
+              <img src="helds/amuletcoin.png" alt="">
+            </div>
+            <div class="held-fusion-amulet__cards">
+              <article>
+                <h4>T5 &rarr; T6</h4>
+                <dl>
+                  <div><dt>Custo da tentativa</dt><dd>5.000.000 (5KK)</dd></div>
+                  <div><dt>Moedas necess&aacute;rias</dt><dd>150 Moedas</dd></div>
+                  <div><dt>Chance base</dt><dd>+23% por Amulet Coin de descarte</dd></div>
+                  <div><dt>Chance por material</dt><dd>25% por Amulet Coin</dd></div>
+                </dl>
+              </article>
+              <article>
+                <h4>T6 &rarr; T7</h4>
+                <dl>
+                  <div><dt>Custo da tentativa</dt><dd>10.000.000 (10KK)</dd></div>
+                  <div><dt>Chance base</dt><dd>+2% por Amulet Coin de descarte</dd></div>
+                  <div><dt>B&ocirc;nus da moeda</dt><dd>+96% de chance de sucesso</dd></div>
+                  <div><dt>Moedas necess&aacute;rias</dt><dd>900 Moedas</dd></div>
+                </dl>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>

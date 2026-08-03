@@ -1,0 +1,666 @@
+/* Pagina Rotom Phone */
+.rotom-phone-shell {
+  --rotom-panel: rgba(11, 19, 31, 0.86);
+  --rotom-border: rgba(255, 255, 255, 0.12);
+  --rotom-muted: rgba(229, 239, 250, 0.72);
+  --rotom-blue: 92, 204, 255;
+  --rotom-green: 80, 215, 145;
+  --rotom-red: 239, 91, 91;
+  --rotom-amber: 245, 190, 85;
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  color: #eef6ff;
+}
+
+body[data-active-tab="rotom-phone"] #content-rotom-phone {
+  width: min(100%, 1240px);
+}
+
+.boss-role-card__description {
+  margin: 0.5rem 0 0;
+  color: #d8e9ff;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  opacity: 0.88;
+  max-height: 4.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boss-role-card__description--expanded {
+  max-height: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-line;
+}
+
+.rotom-phone-hero,
+.rotom-phone-section {
+  border: 1px solid var(--rotom-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(var(--rotom-blue), 0.08), rgba(var(--rotom-green), 0.07)),
+    var(--rotom-panel);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.rotom-phone-hero {
+  display: grid;
+  grid-template-columns: minmax(110px, 180px) minmax(0, 1fr) minmax(110px, 180px);
+  align-items: center;
+  gap: clamp(0.8rem, 2.4vw, 1.4rem);
+  padding: clamp(1rem, 2.6vw, 1.6rem);
+}
+
+.rotom-phone-hero__copy {
+  display: grid;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.rotom-phone-eyebrow {
+  color: rgb(var(--rotom-blue));
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rotom-phone-hero h2,
+.rotom-phone-section__head h3 {
+  margin: 0;
+  color: #fbfdff;
+  font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+  letter-spacing: 0;
+}
+
+.rotom-phone-hero h2 {
+  font-size: clamp(2rem, 4vw, 3.35rem);
+}
+
+.rotom-phone-hero p,
+.rotom-phone-section__head p,
+.rotom-phone-guide figcaption {
+  margin: 0;
+  color: var(--rotom-muted);
+  line-height: 1.62;
+}
+
+.rotom-phone-hero__media {
+  display: grid;
+  place-items: center;
+  min-height: 10rem;
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(var(--rotom-blue), 0.15), rgba(var(--rotom-green), 0.09)),
+    rgba(4, 10, 18, 0.36);
+}
+
+.rotom-phone-hero__media img {
+  width: min(100%, 7.8rem);
+  object-fit: contain;
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.34));
+}
+
+.rotom-phone-hero__media--left img {
+  transform: scaleX(-1);
+}
+
+.rotom-phone-section {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
+}
+
+.rotom-phone-section__head {
+  display: grid;
+  gap: 0.3rem;
+  align-items: start;
+}
+
+.rotom-phone-section__head h3 {
+  font-size: 1.14rem;
+}
+
+.rotom-phone-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.rotom-phone-summary-grid article {
+  display: grid;
+  gap: 0.18rem;
+  justify-items: center;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 11, 19, 0.42);
+  text-align: center;
+}
+
+.rotom-phone-summary-grid strong {
+  color: #ffffff;
+  font-size: clamp(1.25rem, 2.7vw, 1.8rem);
+  line-height: 1;
+}
+
+.rotom-phone-summary-grid span {
+  color: rgb(var(--rotom-blue));
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rotom-phone-guide {
+  display: grid;
+  gap: 0.45rem;
+  justify-self: center;
+  width: min(100%, 780px);
+  margin: 0;
+}
+
+.rotom-phone-guide img {
+  width: 100%;
+  max-height: 24rem;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(3, 8, 14, 0.44);
+}
+
+.rotom-phone-guide figcaption {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.rotom-phone-reset {
+  justify-self: end;
+  min-height: 2rem;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(var(--rotom-blue), 0.3);
+  border-radius: 8px;
+  background: rgba(var(--rotom-blue), 0.1);
+  color: #dff7ff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.rotom-phone-reset:hover,
+.rotom-phone-reset:focus-visible {
+  border-color: rgba(var(--rotom-blue), 0.58);
+  background: rgba(var(--rotom-blue), 0.18);
+}
+
+.rotom-phone-search {
+  gap: 0.75rem;
+}
+
+.rotom-phone-search__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rotom-phone-search__input {
+  width: 100%;
+  min-height: 2.5rem;
+  min-width: 0;
+  padding: 0.58rem 0.74rem;
+  border: 1px solid rgba(var(--rotom-blue), 0.28);
+  border-radius: 8px;
+  background: rgba(4, 10, 18, 0.56);
+  color: #f5fbff;
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.rotom-phone-search__input::placeholder {
+  color: rgba(229, 239, 250, 0.48);
+}
+
+.rotom-phone-search__input:focus {
+  border-color: rgba(var(--rotom-blue), 0.68);
+  box-shadow: 0 0 0 3px rgba(var(--rotom-blue), 0.12);
+}
+
+.rotom-phone-search__clear {
+  min-height: 2.5rem;
+  padding: 0.48rem 0.72rem;
+  border: 1px solid rgba(var(--rotom-amber), 0.34);
+  border-radius: 8px;
+  background: rgba(var(--rotom-amber), 0.1);
+  color: #ffe9ae;
+  font-size: 0.76rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.rotom-phone-search__clear:hover,
+.rotom-phone-search__clear:focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.64);
+  background: rgba(var(--rotom-amber), 0.18);
+}
+
+.rotom-phone-search__summary {
+  min-height: 1.35rem;
+  color: var(--rotom-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.rotom-phone-search__results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.rotom-phone-search__result {
+  display: grid;
+  gap: 0.42rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 8.75rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(14, 21, 32, 0.72);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rotom-phone-search__result:hover,
+.rotom-phone-search__result:focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.42);
+  background: rgba(18, 27, 40, 0.9);
+}
+
+.rotom-phone-search__result-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rotom-phone-search__result-title {
+  display: grid;
+  gap: 0.14rem;
+  min-width: 0;
+}
+
+.rotom-phone-search__result-title strong {
+  color: #ffd44d;
+  font-size: 0.84rem;
+  line-height: 1.24;
+}
+
+.rotom-phone-search__city {
+  color: rgb(var(--rotom-blue));
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rotom-phone-search__step {
+  flex: 0 0 auto;
+  padding: 0.18rem 0.44rem;
+  border: 1px solid rgba(var(--rotom-green), 0.26);
+  border-radius: 999px;
+  background: rgba(var(--rotom-green), 0.1);
+  color: #c8ffe0;
+  font-size: 0.66rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.rotom-phone-search__description {
+  color: var(--rotom-muted);
+  font-size: 0.76rem;
+  line-height: 1.42;
+}
+
+.rotom-phone-search__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  align-items: center;
+  padding-top: 0.36rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rotom-phone-search__pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.34rem;
+  padding: 0.14rem 0.38rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(238, 246, 255, 0.82);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.rotom-phone-task.is-search-target {
+  border-color: rgba(var(--rotom-amber), 0.72);
+  box-shadow: 0 0 0 3px rgba(var(--rotom-amber), 0.12);
+}
+
+.rotom-phone-city-accordion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.rotom-phone-city-panel {
+  min-width: 0;
+  overflow: clip;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(5, 11, 19, 0.38);
+}
+
+.rotom-phone-city-panel[open] {
+  order: -1;
+  grid-column: 1 / -1;
+  border-color: rgba(var(--rotom-blue), 0.28);
+  background: rgba(5, 13, 23, 0.58);
+}
+
+.rotom-phone-city-panel summary {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.58rem;
+  min-height: 4rem;
+  padding: 0.5rem 2rem 0.5rem 0.58rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rotom-phone-city-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.rotom-phone-city-panel summary::after {
+  content: "";
+  position: absolute;
+  right: 0.85rem;
+  width: 0.62rem;
+  height: 0.62rem;
+  border-right: 2px solid rgba(238, 246, 255, 0.72);
+  border-bottom: 2px solid rgba(238, 246, 255, 0.72);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.rotom-phone-city-panel[open] summary::after {
+  transform: rotate(225deg);
+}
+
+.rotom-phone-city-panel summary:focus-visible {
+  outline: 2px solid rgba(var(--rotom-blue), 0.65);
+  outline-offset: -4px;
+}
+
+.rotom-phone-city-panel summary > img {
+  width: 3.4rem;
+  height: 2.68rem;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(3, 8, 14, 0.44);
+}
+
+.rotom-phone-city-panel__title {
+  display: grid;
+  min-width: 0;
+  gap: 0.14rem;
+}
+
+.rotom-phone-city-panel__title strong {
+  color: #ffffff;
+  font-size: 0.88rem;
+  line-height: 1.18;
+}
+
+.rotom-phone-city-panel__title span {
+  color: var(--rotom-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.rotom-phone-city-panel__progress {
+  justify-self: end;
+  padding: 0.24rem 0.54rem;
+  border: 1px solid rgba(var(--rotom-red), 0.34);
+  border-radius: 999px;
+  background: rgba(var(--rotom-red), 0.11);
+  color: #ffbaba;
+  font-size: 0.66rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.rotom-phone-city-panel__progress.is-complete {
+  border-color: rgba(var(--rotom-green), 0.34);
+  background: rgba(var(--rotom-green), 0.11);
+  color: #c8ffe0;
+}
+
+.rotom-phone-task-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.75rem;
+}
+
+.rotom-phone-task {
+  display: grid;
+  grid-template-columns: 1.08rem minmax(0, 1fr);
+  gap: 0.52rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(14, 21, 32, 0.72);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+}
+
+.rotom-phone-task:hover,
+.rotom-phone-task:focus-visible {
+  border-color: rgba(var(--rotom-amber), 0.42);
+  background: rgba(18, 27, 40, 0.9);
+}
+
+.rotom-phone-task.is-complete {
+  opacity: 0.58;
+}
+
+.rotom-phone-task.is-complete .rotom-phone-task__title-row strong,
+.rotom-phone-task.is-complete .rotom-phone-task__description {
+  text-decoration: line-through;
+}
+
+.rotom-phone-task__check {
+  display: inline-grid;
+  place-items: center;
+  width: 0.98rem;
+  height: 0.98rem;
+  margin-top: 0.1rem;
+  border: 2px solid rgba(174, 190, 207, 0.78);
+  border-radius: 50%;
+}
+
+.rotom-phone-task.is-complete .rotom-phone-task__check {
+  border-color: rgba(var(--rotom-green), 0.9);
+  background: rgba(var(--rotom-green), 0.18);
+}
+
+.rotom-phone-task.is-complete .rotom-phone-task__check::before {
+  content: "";
+  width: 0.32rem;
+  height: 0.54rem;
+  border-right: 2px solid #7dffae;
+  border-bottom: 2px solid #7dffae;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.rotom-phone-task__body,
+.rotom-phone-task__title-row,
+.rotom-phone-task__meta {
+  display: flex;
+  min-width: 0;
+}
+
+.rotom-phone-task__body {
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.rotom-phone-task__title-row {
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.rotom-phone-task__title-row strong {
+  color: #ffd44d;
+  font-size: 0.82rem;
+  line-height: 1.24;
+}
+
+.rotom-phone-task__count,
+.rotom-phone-task__level {
+  flex: 0 0 auto;
+  color: rgba(238, 246, 255, 0.76);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.rotom-phone-task__description {
+  color: var(--rotom-muted);
+  font-size: 0.76rem;
+  line-height: 1.38;
+}
+
+.rotom-phone-task__meta {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.32rem;
+  padding-top: 0.34rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rotom-phone-task__level,
+.rotom-phone-task__rewards {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.34rem;
+  padding: 0.14rem 0.38rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(238, 246, 255, 0.82);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.rotom-phone-task__rewards span {
+  margin-right: 0.25rem;
+  color: rgba(238, 246, 255, 0.56);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .rotom-phone-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .rotom-phone-hero__copy {
+    order: -1;
+  }
+
+  .rotom-phone-hero__media {
+    min-height: 8.5rem;
+  }
+
+  .rotom-phone-city-accordion {
+    grid-template-columns: 1fr;
+  }
+
+  .rotom-phone-search__results {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .rotom-phone-task-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  body[data-active-tab="rotom-phone"] #content-rotom-phone {
+    padding: 0.75rem;
+  }
+
+  .rotom-phone-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rotom-phone-search__bar {
+    grid-template-columns: 1fr;
+  }
+
+  .rotom-phone-city-panel summary {
+    grid-template-columns: 3.1rem minmax(0, 1fr);
+    gap: 0.55rem;
+    min-height: 4.05rem;
+    padding: 0.5rem 1.9rem 0.5rem 0.55rem;
+  }
+
+  .rotom-phone-city-panel summary::after {
+    right: 0.72rem;
+  }
+
+  .rotom-phone-city-panel summary > img {
+    width: 3.1rem;
+    height: 2.55rem;
+  }
+
+  .rotom-phone-city-panel__progress {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .rotom-phone-task {
+    padding: 0.62rem;
+  }
+
+  .rotom-phone-task__title-row {
+    flex-wrap: wrap;
+  }
+}

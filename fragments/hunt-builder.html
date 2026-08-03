@@ -1,0 +1,72 @@
+    <div id="content-hunt-builder" role="tabpanel" aria-label="Hunt Builder" hidden>
+      <div class="hunt-builder-shell">
+        <section class="hunt-builder-hero" aria-labelledby="hunt-builder-title">
+          <div>
+            <span class="hunt-builder-eyebrow">Sistemas</span>
+            <h2 id="hunt-builder-title">Hunt Builder</h2>
+            <p>Escolha a hunt, filtre o time pelo cl&atilde; e selecione os tipos vantajosos.</p>
+            <div class="hunt-builder-composition" aria-label="Composi&ccedil;&atilde;o gerada">
+              <strong>1 AR</strong>
+              <strong>4 DPS/Stun</strong>
+              <strong>1 Finisher</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="hunt-builder-panel" aria-labelledby="hunt-builder-target-title">
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">1</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Alvo</span>
+              <h3 id="hunt-builder-target-title">Qual Pok&eacute;mon voc&ecirc; quer ca&ccedil;ar?</h3>
+            </div>
+            <button id="hunt-builder-clear" class="hunt-builder-action hunt-builder-action--clear" type="button">Limpar</button>
+          </div>
+          <div class="hunt-builder-search">
+            <label for="hunt-builder-search">Nome do Pok&eacute;mon</label>
+            <input id="hunt-builder-search" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar hunt..." aria-controls="hunt-builder-search-results" aria-expanded="false" />
+            <div id="hunt-builder-search-results" class="hunt-builder-search-results" role="listbox" hidden></div>
+          </div>
+          <div id="hunt-builder-target" class="hunt-builder-target" hidden aria-live="polite"></div>
+        </section>
+
+        <section id="hunt-builder-clan-panel" class="hunt-builder-panel" aria-labelledby="hunt-builder-clan-title" hidden>
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">2</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Cl&atilde;</span>
+              <h3 id="hunt-builder-clan-title">Escolha o cl&atilde; do time</h3>
+            </div>
+          </div>
+          <div id="hunt-builder-clan-options" class="hunt-builder-option-grid hunt-builder-option-grid--clans" role="group" aria-label="Escolha de cl&atilde;"></div>
+        </section>
+
+        <section id="hunt-builder-types-panel" class="hunt-builder-panel" aria-labelledby="hunt-builder-types-title" hidden>
+          <div class="hunt-builder-section-head">
+            <span class="hunt-builder-step">3</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Vantagem</span>
+              <h3 id="hunt-builder-types-title">Escolha um ou mais tipos</h3>
+              <p>As op&ccedil;&otilde;es abaixo s&atilde;o as fraquezas da hunt selecionada.</p>
+            </div>
+          </div>
+          <div id="hunt-builder-type-options" class="hunt-builder-option-grid hunt-builder-option-grid--types" role="group" aria-label="Tipos com vantagem"></div>
+        </section>
+
+        <section id="hunt-builder-result-panel" class="hunt-builder-panel hunt-builder-result-panel" aria-labelledby="hunt-builder-result-title" hidden>
+          <div class="hunt-builder-section-head hunt-builder-section-head--result">
+            <span class="hunt-builder-step">4</span>
+            <div>
+              <span class="hunt-builder-eyebrow">Time sugerido</span>
+              <h3 id="hunt-builder-result-title">Composi&ccedil;&atilde;o para a hunt</h3>
+            </div>
+            <div class="hunt-builder-result-actions">
+              <button id="hunt-builder-regenerate" class="hunt-builder-action" type="button">&#128260; Gerar Novamente</button>
+              <button id="hunt-builder-move-team" class="hunt-builder-action hunt-builder-action--primary" type="button">Mover para o Team Builder</button>
+            </div>
+          </div>
+          <p id="hunt-builder-status" class="hunt-builder-status" aria-live="polite"></p>
+          <div id="hunt-builder-team" class="hunt-builder-team" role="list" aria-label="Time sugerido"></div>
+        </section>
+      </div>
+    </div>

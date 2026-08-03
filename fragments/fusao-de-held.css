@@ -1,0 +1,989 @@
+/* Pagina Fusao de Held */
+.held-fusion-shell {
+  box-sizing: border-box;
+  display: grid;
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.4rem;
+}
+
+.held-fusion-shell *,
+.held-fusion-shell *::before,
+.held-fusion-shell *::after {
+  box-sizing: border-box;
+}
+
+.held-fusion-hero,
+.held-fusion-section {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(7, 12, 23, 0.86)),
+    rgba(8, 13, 24, 0.9);
+  box-shadow: 0 24px 48px rgba(2, 8, 18, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.held-fusion-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+  align-items: center;
+  justify-items: center;
+  min-height: auto;
+  padding: 2rem;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.held-fusion-hero__copy {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+}
+
+.held-fusion-eyebrow {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.24rem 0.64rem;
+  border-radius: 999px;
+  border: 1px solid rgba(250, 204, 21, 0.28);
+  background: rgba(250, 204, 21, 0.1);
+  color: #fde68a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.held-fusion-hero h2,
+.held-fusion-section__head h3 {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #f8fafc;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  max-width: 100%;
+}
+
+.held-fusion-hero h2 {
+  font-size: 4rem;
+  width: 100%;
+}
+
+.held-fusion-hero p,
+.held-fusion-section__head p,
+.held-fusion-rule-grid p,
+.held-fusion-held-card span,
+.held-fusion-amulet dd {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.78);
+  line-height: 1.62;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.held-fusion-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.held-fusion-hero__stats span {
+  display: inline-grid;
+  gap: 0.16rem;
+  min-width: 136px;
+  padding: 0.74rem 0.86rem;
+  border-radius: 14px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(8, 14, 25, 0.72);
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.82rem;
+}
+
+.held-fusion-hero__stats strong {
+  color: #f8fafc;
+  font-size: 1.02rem;
+}
+
+.held-fusion-hero__device {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+}
+
+.held-fusion-hero__core {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  gap: 0.45rem;
+  width: 148px;
+  aspect-ratio: 1;
+  border-radius: 22px;
+  border: 1px solid rgba(250, 204, 21, 0.34);
+  background:
+    linear-gradient(180deg, rgba(250, 204, 21, 0.18), rgba(239, 68, 68, 0.1)),
+    rgba(10, 15, 28, 0.92);
+  box-shadow: 0 24px 38px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.held-fusion-hero__core img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.held-fusion-hero__core span {
+  color: #fef3c7;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.held-fusion-section {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.45rem;
+  border-radius: 20px;
+}
+
+.held-fusion-section__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.52rem;
+  text-align: center;
+}
+
+.held-fusion-section__head .held-fusion-eyebrow {
+  margin-inline: auto;
+  align-self: center;
+}
+
+.held-fusion-section__head h3 {
+  font-size: 1.85rem;
+}
+
+.held-fusion-held-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.held-fusion-held-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.48rem;
+  min-width: 0;
+  padding: 0.9rem 0.7rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(8, 14, 25, 0.72);
+  text-align: center;
+}
+
+.held-fusion-held-card img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.held-fusion-held-card strong {
+  color: #f8fafc;
+  line-height: 1.18;
+}
+
+.held-fusion-held-card span {
+  font-size: 0.78rem;
+}
+
+.held-fusion-sim {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.held-fusion-sim__controls {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-sim__controls label {
+  display: grid;
+  gap: 0.32rem;
+  min-width: 0;
+}
+
+.held-fusion-sim__controls label > span {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.75rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.held-fusion-sim__controls select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.88);
+  color: #f8fafc;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.65rem;
+}
+
+.held-fusion-sim__booster {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: center;
+  gap: 0.55rem !important;
+  min-height: 42px;
+  padding: 0.5rem 0.58rem;
+  border-radius: 12px;
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  background: rgba(250, 204, 21, 0.08);
+}
+
+.held-fusion-sim__booster input {
+  width: 18px;
+  height: 18px;
+  accent-color: #facc15;
+}
+
+.held-fusion-sim__booster img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.held-fusion-sim__modal {
+  min-width: 0;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1f1f1f;
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.28);
+}
+
+.held-fusion-sim__titlebar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+}
+
+.held-fusion-sim__titlebar h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.held-fusion-sim__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: #ef2f2f;
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: default;
+}
+
+.held-fusion-sim__slots {
+  display: grid;
+  grid-template-columns: minmax(86px, 1fr) auto minmax(150px, 1.35fr) auto minmax(86px, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1.15rem;
+}
+
+.held-fusion-sim__slot-group {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.held-fusion-sim__slot-group strong {
+  color: #f5f5f5;
+  font-size: 0.9rem;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.held-fusion-sim__slot-group small {
+  display: block;
+  font: inherit;
+}
+
+.held-fusion-sim__material-slots {
+  display: flex;
+  justify-content: center;
+  gap: 0.72rem;
+}
+
+.held-fusion-sim__operator {
+  color: #f5f5f5;
+  font-weight: 900;
+  text-align: center;
+}
+
+.held-fusion-sim__slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.held-fusion-sim__slot:hover {
+  border-color: rgba(250, 204, 21, 0.34);
+  background: rgba(250, 204, 21, 0.08);
+}
+
+.held-fusion-sim__slot:hover::after {
+  content: attr(data-held-info);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: pre-line;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 0.65rem 0.85rem;
+  background: linear-gradient(180deg, rgba(28, 24, 15, 0.98), rgba(13, 15, 23, 0.98));
+  border: 1px solid rgba(250, 204, 21, 0.32);
+  border-radius: 6px;
+  color: #fef3c7;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.48);
+}
+
+.held-fusion-sim__slot:hover::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(250, 204, 21, 0.32);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.held-fusion-sim__slot img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.held-fusion-sim__slot > span {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 18px;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: #ef2f2f;
+  color: #ffffff;
+  font-size: 0.64rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.held-fusion-sim__slot.is-filled > span {
+  display: inline-flex;
+}
+
+.held-fusion-sim__slot--preview > span {
+  background: #0ea5e9;
+}
+
+.held-fusion-sim__slot--booster {
+  margin: 0 auto;
+}
+
+.held-fusion-sim__slot--booster > img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.held-fusion-sim__slot--booster.is-filled {
+  border-color: rgba(250, 204, 21, 0.58);
+  background:
+    radial-gradient(circle, rgba(250, 204, 21, 0.34), rgba(250, 204, 21, 0.1) 46%, transparent 70%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.held-fusion-sim__slot--booster > span {
+  position: static;
+  display: block;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  background: transparent;
+  color: #fef3c7;
+  font-size: 0.64rem;
+}
+
+.held-fusion-sim__booster-slot {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.held-fusion-sim__booster-slot > span {
+  color: #f5f5f5;
+  font-size: 1.08rem;
+}
+
+.held-fusion-sim__info {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.held-fusion-sim__info h5 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.25rem, 2.6vw, 1.9rem);
+}
+
+.held-fusion-sim__info h5 span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #dfe88f;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.held-fusion-sim__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.held-fusion-sim__stats p,
+.held-fusion-sim__message,
+.held-fusion-sim__result {
+  margin: 0;
+  color: rgba(245, 245, 245, 0.82);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.held-fusion-sim__stats p {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.held-fusion-sim__stats strong {
+  color: #ffffff;
+}
+
+.held-fusion-sim__coin-stat > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  gap: 0.35rem;
+}
+
+.held-fusion-sim__coin-stat img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.held-fusion-sim__message {
+  color: rgba(245, 245, 245, 0.74);
+}
+
+.held-fusion-sim__result {
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(2, 6, 14, 0.34);
+}
+
+.held-fusion-sim__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.held-fusion-sim__actions button {
+  min-width: 128px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  font-weight: 900;
+}
+
+.held-fusion-sim__actions button:first-child {
+  background: #e7e5db;
+  color: #6b7280;
+}
+
+.held-fusion-sim__actions button:first-child:not(:disabled) {
+  background: #facc15;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.held-fusion-sim__actions button:first-child:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.held-fusion-sim__actions button:last-child {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f5f5f5;
+}
+
+.held-fusion-system-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.held-fusion-system-preview {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  min-width: 0;
+  margin: 0;
+  padding: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-system-preview img {
+  display: block;
+  width: 100%;
+  max-height: 430px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.72);
+}
+
+.held-fusion-system-preview figcaption {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.held-fusion-rule-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.held-fusion-rule-grid article {
+  min-width: 0;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-rule-grid__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(14, 165, 233, 0.16);
+  color: #bae6fd;
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+.held-fusion-rule-grid h4,
+.held-fusion-amulet h4 {
+  margin: 0.7rem 0 0.38rem;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.held-fusion-table-wrap {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.held-fusion-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  background: rgba(5, 10, 19, 0.72);
+}
+
+.held-fusion-table th,
+.held-fusion-table td {
+  padding: 1rem 0.85rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  border-right: 1px solid rgba(148, 163, 184, 0.12);
+  color: #f8fafc;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.held-fusion-table th:last-child,
+.held-fusion-table td:last-child {
+  border-right: 0;
+}
+
+.held-fusion-table thead th {
+  background: rgba(15, 23, 42, 0.9);
+  color: #fef3c7;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.held-fusion-table tbody th {
+  color: #fef08a;
+  font-size: 1.08rem;
+  white-space: nowrap;
+}
+
+.held-fusion-table td {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.held-fusion-table td span {
+  color: rgba(226, 232, 240, 0.64);
+  font-weight: 700;
+}
+
+.held-fusion-table tbody tr:last-child th,
+.held-fusion-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.held-fusion-amulet__layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.held-fusion-amulet__icon {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(250, 204, 21, 0.28);
+  background:
+    linear-gradient(180deg, rgba(250, 204, 21, 0.16), rgba(8, 14, 25, 0.72)),
+    rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-amulet__icon img {
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+}
+
+.held-fusion-amulet__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.held-fusion-amulet__cards article {
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(250, 204, 21, 0.18);
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-amulet dl {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.held-fusion-amulet dl div {
+  display: grid;
+  gap: 0.12rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.held-fusion-amulet dt {
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.held-fusion-amulet dd {
+  font-weight: 800;
+}
+
+@media (max-width: 980px) {
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-shell,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-hero,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-section {
+    width: min(100%, calc(100vw - 3rem)) !important;
+    max-width: calc(100vw - 3rem) !important;
+    min-width: 0 !important;
+    margin-inline: auto;
+    overflow-x: clip;
+  }
+
+  .held-fusion-hero,
+  .held-fusion-sim,
+  .held-fusion-system-layout,
+  .held-fusion-amulet__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .held-fusion-shell {
+    padding: 1rem;
+  }
+
+  .held-fusion-hero {
+    gap: 1rem;
+    padding: 1.35rem;
+  }
+
+  .held-fusion-hero h2 {
+    font-size: 2.55rem;
+  }
+
+  .held-fusion-section {
+    padding: 1.2rem;
+  }
+
+  .held-fusion-section__head h3 {
+    font-size: 1.55rem;
+  }
+
+  .held-fusion-held-grid,
+  .held-fusion-rule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .held-fusion-sim__controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .held-fusion-sim__booster {
+    grid-column: 1 / -1;
+  }
+
+  .held-fusion-sim__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .held-fusion-hero__device {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-shell,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-hero,
+  body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-section {
+    width: min(100%, 320px) !important;
+    max-width: 320px !important;
+    margin-inline: 0 auto !important;
+  }
+
+  .held-fusion-shell {
+    padding: 0.75rem;
+  }
+
+  .held-fusion-hero {
+    min-height: 0;
+    padding: 1.1rem;
+  }
+
+  .held-fusion-hero h2 {
+    font-size: 2rem;
+  }
+
+  .held-fusion-section {
+    padding: 1rem;
+  }
+
+  .held-fusion-section__head h3 {
+    font-size: 1.35rem;
+  }
+
+  .held-fusion-hero p,
+  .held-fusion-section__head p {
+    font-size: 0.95rem;
+  }
+
+  .held-fusion-hero__stats,
+  .held-fusion-hero__stats span {
+    width: 100%;
+  }
+
+  .held-fusion-hero__device {
+    display: none;
+  }
+
+  .held-fusion-held-grid,
+  .held-fusion-rule-grid,
+  .held-fusion-amulet__cards {
+    grid-template-columns: 1fr;
+  }
+
+  .held-fusion-sim__controls,
+  .held-fusion-sim__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .held-fusion-sim__modal {
+    padding: 0.9rem;
+  }
+
+  .held-fusion-sim__slots {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .held-fusion-sim__operator {
+    transform: rotate(90deg);
+  }
+
+  .held-fusion-sim__material-slots {
+    gap: 0.55rem;
+  }
+
+  .held-fusion-sim__actions button {
+    width: 100%;
+  }
+
+  .held-fusion-system-preview {
+    padding: 0.65rem;
+  }
+
+  .held-fusion-system-preview img {
+    max-height: 260px;
+  }
+
+  .held-fusion-table {
+    min-width: 0;
+  }
+
+  .held-fusion-table thead {
+    display: none;
+  }
+
+  .held-fusion-table,
+  .held-fusion-table tbody,
+  .held-fusion-table tr,
+  .held-fusion-table th,
+  .held-fusion-table td {
+    display: block;
+  }
+
+  .held-fusion-table tr {
+    padding: 0.85rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+
+  .held-fusion-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .held-fusion-table th,
+  .held-fusion-table td {
+    padding: 0.42rem 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .held-fusion-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .held-fusion-table td::before {
+    content: attr(data-label);
+    color: rgba(226, 232, 240, 0.62);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}

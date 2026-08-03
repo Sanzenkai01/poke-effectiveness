@@ -1,0 +1,187 @@
+<div id="content-boost" role="tabpanel" aria-label="Calculadora de Boost" hidden>
+      <div class="card calc-card boost-shell">
+        <div class="boost-hero">
+          <div class="boost-hero__copy">
+            <p class="boost-hero__eyebrow">Utilidades</p>
+            <h2 id="boost-heading">Calculadora de Boost</h2>
+            <p class="boost-hero__description">Escolha o alvo e veja os materiais.</p>
+          </div>
+          <aside id="boost-hero-summary" class="boost-hero__summary" aria-live="polite" hidden>
+            <span class="boost-hero__summary-kicker">Resumo do alvo</span>
+            <strong id="boost-summary-target">Bronze 0 • Silver 0</strong>
+            <span id="boost-summary-flags">Comum • 0 tipos</span>
+          </aside>
+        </div>
+
+        <div id="boost-layout" class="boost-layout">
+          <section class="boost-panel boost-panel--form" aria-labelledby="boost-config-title">
+            <div class="boost-panel__header">
+              <span class="boost-panel__eyebrow">Etapa 1</span>
+              <h3 id="boost-config-title">Escolha o alvo</h3>
+            </div>
+
+            <div class="boost-fieldset">
+              <span class="boost-fieldset__legend">Busca</span>
+              <div class="boost-search-panel">
+                <div class="boost-search-panel__field">
+                  <label class="speedster-search-label" for="boost-pokemon-search">Nome</label>
+                  <input id="boost-pokemon-search" class="speedster-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Carregando catalogo..." aria-describedby="boost-selection-prompt" />
+                  <div id="boost-pokemon-results" class="speedster-search-results" role="listbox" hidden></div>
+                  <div id="boost-pokemon-no-results" class="speedster-search-no-results" hidden>Nenhum resultado encontrado.</div>
+                  <div id="boost-type-picker" class="boost-type-picker" role="listbox" aria-label="Selecionar elemento" aria-multiselectable="true" hidden></div>
+
+                  <!-- hidden selects kept for form-state compatibility -->
+                  <label class="visually-hidden" for="boost-type1-select">Tipo 1</label>
+                  <select id="boost-type1-select" hidden>
+                    <option value="">Carregando tipos...</option>
+                  </select>
+
+                  <label class="visually-hidden" for="boost-type2-select">Tipo 2</label>
+                  <select id="boost-type2-select" hidden>
+                    <option value="">(Opcional) Segundo elemento</option>
+                  </select>
+                </div>
+                <p id="boost-selection-prompt" class="boost-selection-prompt">Selecione um resultado para liberar o calculo.</p>
+                <div id="boost-pokemon-meta" class="boost-pokemon-meta" aria-live="polite"></div>
+              </div>
+            </div>
+
+            <div id="boost-config-controls" class="boost-config-controls" hidden>
+              <div class="boost-fieldset">
+                <span class="boost-fieldset__legend">Shiny</span>
+                <div class="boost-choice-grid boost-choice-grid--compact" role="radiogroup" aria-label="Pokémon shiny">
+                  <label class="boost-choice-card">
+                    <input type="radio" name="boost-shiny" value="no" checked />
+                    <span class="boost-choice-card__body">
+                      <strong>Normal</strong>
+                      <small>Sem Bronze Star</small>
+                    </span>
+                  </label>
+                  <label class="boost-choice-card">
+                    <input type="radio" name="boost-shiny" value="yes" />
+                    <span class="boost-choice-card__body">
+                      <strong>Shiny</strong>
+                      <small>Inclui Bronze Star</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="boost-form-grid boost-form-grid--levels">
+                <label class="boost-field" for="boost-bronze-current-level">
+                  <span>Bronze atual</span>
+                  <select id="boost-bronze-current-level">
+                    <option value="0" selected>Bronze 0</option>
+                    <option value="1">Bronze 1</option>
+                    <option value="2">Bronze 2</option>
+                    <option value="3">Bronze 3</option>
+                    <option value="4">Bronze 4</option>
+                    <option value="5">Bronze 5</option>
+                  </select>
+                </label>
+
+                <label class="boost-field" for="boost-bronze-level">
+                  <span>Bronze alvo</span>
+                  <select id="boost-bronze-level">
+                    <option value="0" selected>Bronze 0</option>
+                    <option value="1">Bronze 1</option>
+                    <option value="2">Bronze 2</option>
+                    <option value="3">Bronze 3</option>
+                    <option value="4">Bronze 4</option>
+                    <option value="5">Bronze 5</option>
+                  </select>
+                </label>
+
+                <label class="boost-field" for="boost-silver-current-level">
+                  <span>Silver atual</span>
+                  <select id="boost-silver-current-level">
+                    <option value="0" selected>Silver 0</option>
+                    <option value="1">Silver 1</option>
+                    <option value="2">Silver 2</option>
+                    <option value="3">Silver 3</option>
+                    <option value="4">Silver 4</option>
+                    <option value="5">Silver 5</option>
+                  </select>
+                </label>
+
+                <label class="boost-field" for="boost-silver-level">
+                  <span>Silver alvo</span>
+                  <select id="boost-silver-level">
+                    <option value="0" selected>Silver 0</option>
+                    <option value="1">Silver 1</option>
+                    <option value="2">Silver 2</option>
+                    <option value="3">Silver 3</option>
+                    <option value="4">Silver 4</option>
+                    <option value="5">Silver 5</option>
+                  </select>
+                </label>
+              </div>
+
+              <p id="boost-silver-note" class="boost-inline-note" hidden></p>
+              <div id="boost-form-message" class="boost-message" hidden aria-live="polite"></div>
+
+              <div class="boost-actions">
+                <button id="boost-reset-btn" class="catch-action-button catch-action-button--ghost" type="button">Limpar</button>
+              </div>
+            </div>
+          </section>
+
+          <div id="boost-results-shell" class="boost-results" hidden>
+            <section class="boost-panel boost-panel--summary boost-panel--wide" aria-labelledby="boost-summary-title">
+              <div class="boost-panel__header">
+                <span class="boost-panel__eyebrow">Resumo</span>
+                <h3 id="boost-summary-title">Visao geral</h3>
+              </div>
+              <div id="boost-overview-cards" class="boost-overview-cards" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-bronze-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Bronze</span>
+                  <h3 id="boost-bronze-title">Boost Bronze</h3>
+                </div>
+              </div>
+              <div id="boost-bronze-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel" aria-labelledby="boost-silver-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Silver</span>
+                  <h3 id="boost-silver-title">Boost Silver</h3>
+                </div>
+              </div>
+              <div id="boost-silver-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel boost-panel--wide" aria-labelledby="boost-star-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Craft</span>
+                  <h3 id="boost-star-title">Craft das Stars</h3>
+                  <p class="boost-section-note">Apenas o craft do nivel escolhido.</p>
+                </div>
+              </div>
+              <div id="boost-star-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section class="boost-panel boost-panel--total boost-panel--wide" aria-labelledby="boost-total-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Total</span>
+                  <h3 id="boost-total-title">Total de materiais</h3>
+                  <p class="boost-section-note">Soma de todos os boosts ate o nivel escolhido.</p>
+                </div>
+              </div>
+              <div id="boost-total-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+          </div>
+        </div>
+
+        <details id="boost-help-panel" class="calc-help boost-help" aria-expanded="false" hidden>
+          <summary>Como o calculo separa custos</summary>
+          <p>Boost Bronze e Silver mostram custo direto. O craft das Stars aparece separado.</p>
+        </details>
+      </div>
+    </div>

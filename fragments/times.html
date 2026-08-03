@@ -1,0 +1,56 @@
+<div id="content-times" role="tabpanel" aria-label="Times" hidden>
+      <div class="card calc-card pokemon-hub times-hub">
+        <div class="pokemon-hub__hero times-hub__hero">
+          <div class="pokemon-hub__copy times-hub__copy">
+            <p class="pokemon-hub__eyebrow">Utilidades</p>
+            <div class="pokemon-hub__title-row">
+              <h2>Times</h2>
+            </div>
+            <p class="pokemon-hub__lead">Consulte composi&ccedil;&otilde;es por cl&atilde;, elemento e Pok&eacute;mons.</p>
+          </div>
+        </div>
+
+        <section class="pokemon-filter-panel times-filter-panel" aria-labelledby="times-filters-title">
+          <div class="pokemon-filter-panel__head">
+            <div class="pokemon-filter-panel__copy">
+              <span class="pokemon-filter-panel__eyebrow">Busca manual</span>
+              <h3 id="times-filters-title">Filtre os times por cl&atilde;, tag e busca combinada</h3>
+              <p>Pesquise por cl&atilde;, elemento, tag, Pok&eacute;mon ou hunt. Exemplos: <strong>frontal, mystic</strong> ou <strong>instinct, dragon</strong>.</p>
+            </div>
+          </div>
+
+          <div class="times-clan-filter-row" role="group" aria-label="Filtrar times por cl&atilde;">
+            <button type="button" class="times-clan-filter-btn is-active" data-times-clan-filter="all" aria-pressed="true">Todos</button>
+            <button type="button" class="times-clan-filter-btn" data-times-clan-filter="instinct" aria-pressed="false">Instinct</button>
+            <button type="button" class="times-clan-filter-btn" data-times-clan-filter="valor" aria-pressed="false">Valor</button>
+            <button type="button" class="times-clan-filter-btn" data-times-clan-filter="mystic" aria-pressed="false">Mystic</button>
+          </div>
+
+          <div id="times-tag-filter-row" class="times-tag-filter-row" role="group" aria-label="Filtrar times por tag" hidden></div>
+
+          <div class="pokemon-filter-grid times-filter-grid">
+            <label class="pokemon-filter-field pokemon-filter-field--search times-search-field" for="times-search-input">
+              <span>Buscar times</span>
+              <input id="times-search-input" type="search" placeholder="Ex.: mystic, fire ou gardevoir" autocomplete="off" />
+            </label>
+          </div>
+        </section>
+
+        <div class="pokemon-hub__status-row times-hub__status-row">
+          <p id="times-status" class="pokemon-hub__status" aria-live="polite">Carregando times...</p>
+        </div>
+
+        <div class="times-team-builder-cta">
+          <button type="button" class="times-team-builder-cta__button" data-nav-target="team-builder">
+            Montar meu time
+          </button>
+        </div>
+
+        <div id="times-card-grid" class="times-card-grid" role="list" aria-label="Lista de times cadastrados"></div>
+
+        <div id="times-empty-state" class="times-empty-state" hidden aria-live="polite">
+          <strong id="times-empty-title">Nenhum time encontrado.</strong>
+          <p id="times-empty-text">Tente ajustar o cl&atilde; ativo ou os termos da busca.</p>
+        </div>
+      </div>
+    </div>
