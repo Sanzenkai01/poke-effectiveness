@@ -1642,6 +1642,24 @@ body .header .site-global-search__tags {
   border: 0 !important;
   border-right: 1px solid var(--wiki-border) !important;
   border-radius: 0 !important;
+
+/* When the bosses panel is open inside the SPA, the modal is hosted
+   inside #content-bosses. The theme's roleboard rules (which force grid)
+   break the modal when embedded. Prefer flex layout for the SPA panel. */
+body[data-active-tab="bosses"] .speedster-modal-content.speedster-modal-content--roleboard {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+  overflow: auto !important;
+  grid-template-rows: none !important;
+}
+body[data-active-tab="bosses"] .speedster-modal-content--roleboard .speedster-modal-header {
+  display: flex !important;
+  grid-template-columns: none !important;
+  gap: 1rem !important;
+  align-items: center !important;
+  padding: 0 0 0 !important;
+}
   background: transparent !important;
 }
 

@@ -22,6 +22,44 @@
         <div class="speedster-modal-content" role="document">
           <button class="speedster-modal-close" aria-label="Fechar">✖</button>
           <div class="speedster-modal-header">
+            <style>
+              /* Override wiki-theme roleboard grid for bosses panel modal */
+              #content-bosses .speedster-modal-content.speedster-modal-content--roleboard {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+                overflow: auto !important;
+              }
+            </style>
+            <script>
+              (function(){
+                const modalContentSelector = '#speedster-modal .speedster-modal-content';
+                function applyFix(el){
+                  if(!el) return;
+                  el.style.setProperty('display','flex','important');
+                  el.style.setProperty('flex-direction','column','important');
+                  el.style.setProperty('gap','1rem','important');
+                  el.style.setProperty('overflow','auto','important');
+                }
+                // Initial fix if element exists
+                applyFix(document.querySelector(modalContentSelector));
+                // Observe for class changes on modal content
+                const modal = document.getElementById('speedster-modal');
+                if(modal){
+                  const observer = new MutationObserver((mutations)=>{
+                    for(const m of mutations){
+                      if(m.type==='childList'){
+                        const el = document.querySelector(modalContentSelector);
+                        if(el) applyFix(el);
+                      } else if(m.type==='attributes' && m.target && m.target.matches && m.target.matches('.speedster-modal-content')){
+                        applyFix(m.target);
+                      }
+                    }
+                  });
+                  observer.observe(modal, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+                }
+              })();
+            </script>
             <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
             <div class="speedster-modal-title">
               <h2 id="modal-title"></h2>
