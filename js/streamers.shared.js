@@ -27,6 +27,7 @@
         { name: 'raulzerah1', supportsDrops: false },
         { name: 'sruni1', supportsDrops: false },
         { name: 'playerclt', supportsDrops: false },
+        { name: 'thigaartus', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
