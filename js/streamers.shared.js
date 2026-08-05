@@ -26,6 +26,7 @@
         { name: 'jackpist0la', supportsDrops: false },
         { name: 'raulzerah1', supportsDrops: false },
         { name: 'sruni1', supportsDrops: false },
+        { name: 'playerclt', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
