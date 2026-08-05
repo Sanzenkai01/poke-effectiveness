@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-05T01:15:04.149Z",
+  "updatedAt": "2026-08-05T01:34:13.911Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-05T01:14:57.766Z",
-    "endedAt": "2026-08-05T01:15:04.149Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-05T01:25:16.031Z",
+    "endedAt": "2026-08-05T01:34:13.911Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "adivorcio",
       "sousupermeme",
@@ -40,22 +40,36 @@
       "sousupermeme"
     ],
     "observedChannels": [
-      "sousupermeme"
+      "indypereira"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "indypereira"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "indypereira",
+        "messageAt": 1785893653765,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "sousupermeme",
+        "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1785892504042,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1785893514716,
+        "messageText": "O Rattata se recuperou e fugiu com o seu item, @cafeina54... 💨"
       },
       {
-        "channel": "sousupermeme",
-        "kind": "escape",
-        "messageAt": 1785892504042,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "indypereira",
+        "kind": "rattata-message",
+        "messageAt": 1785893653765,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "indypereira",
+        "kind": "spawn",
+        "messageAt": 1785893653765,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -105,16 +119,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "sousupermeme",
-    "lastMessageAt": 1785892504042,
-    "expectedNextAt": 1785893704042,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-08-04T21:45:22Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1785892504149,
-    "persistedAt": 1785892504149
+    "channel": "indypereira",
+    "lastMessageAt": 1785893653765,
+    "expectedNextAt": 1785894913765,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-08-04T21:32:44Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1785893653910,
+    "persistedAt": 1785893653910
   },
   "timers": {
+    "indypereira": {
+      "channel": "indypereira",
+      "lastMessageAt": 1785893653765,
+      "expectedNextAt": 1785894913765,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-08-04T21:32:44Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1785893653910,
+      "persistedAt": 1785893653910
+    },
     "sousupermeme": {
       "channel": "sousupermeme",
       "lastMessageAt": 1785892504042,
@@ -123,17 +147,7 @@
       "streamStartedAt": "2026-08-04T21:45:22Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785892504149,
-      "persistedAt": 1785892504149
-    },
-    "indypereira": {
-      "channel": "indypereira",
-      "lastMessageAt": 1785892437955,
-      "expectedNextAt": 1785893697955,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-08-04T21:32:44Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1785892438074,
-      "persistedAt": 1785892497765
+      "persistedAt": 1785893116030
     }
   }
 }
