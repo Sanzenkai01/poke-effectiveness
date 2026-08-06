@@ -1,17 +1,16 @@
 {
-  "updatedAt": "2026-08-06T02:23:14.599Z",
+  "updatedAt": "2026-08-06T02:24:14.593Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-06T02:04:31.039Z",
-    "endedAt": "2026-08-06T02:23:14.599Z",
-    "reason": "rat-found",
+    "startedAt": "2026-08-06T02:23:41.005Z",
+    "endedAt": "2026-08-06T02:24:14.593Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "dragonslayerpiva",
       "uguettolitz",
       "callmevitao_",
-      "itscaim",
       "sharxera",
       "sousupermeme",
       "thigaartus",
@@ -23,6 +22,7 @@
       "fernandoalcatraz",
       "gordallink",
       "indypereira",
+      "itscaim",
       "jackpist0la",
       "karlin_nara",
       "linikerquadrado2",
@@ -44,28 +44,20 @@
     "observedChannels": [
       "dragonslayerpiva"
     ],
-    "observedSpawnChannels": [
-      "dragonslayerpiva"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "dragonslayerpiva",
-        "messageAt": 1785982994492,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1785982994492,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1785983054493,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "dragonslayerpiva",
-        "kind": "spawn",
-        "messageAt": 1785982994492,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1785983054493,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -116,24 +108,24 @@
   },
   "latest": {
     "channel": "dragonslayerpiva",
-    "lastMessageAt": 1785982994492,
-    "expectedNextAt": 1785984254492,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1785983054493,
+    "expectedNextAt": 1785984254493,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-08-06T00:39:57Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1785982994599,
-    "persistedAt": 1785982994599
+    "source": "github-action-chat-escape",
+    "updatedAt": 1785983054592,
+    "persistedAt": 1785983054592
   },
   "timers": {
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
-      "lastMessageAt": 1785982994492,
-      "expectedNextAt": 1785984254492,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1785983054493,
+      "expectedNextAt": 1785984254493,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-08-06T00:39:57Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1785982994599,
-      "persistedAt": 1785982994599
+      "source": "github-action-chat-escape",
+      "updatedAt": 1785983054592,
+      "persistedAt": 1785983054592
     },
     "uguettolitz": {
       "channel": "uguettolitz",
@@ -143,7 +135,7 @@
       "streamStartedAt": "2026-08-05T22:47:45Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1785980624767,
-      "persistedAt": 1785981871039
+      "persistedAt": 1785983021004
     },
     "sousupermeme": {
       "channel": "sousupermeme",
@@ -153,7 +145,7 @@
       "streamStartedAt": "2026-08-05T23:15:43Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1785980560360,
-      "persistedAt": 1785981871039
+      "persistedAt": 1785983021004
     }
   }
 }
