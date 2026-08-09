@@ -30157,3 +30157,28 @@ body.home-view main {
 .panel-fragment-loading.is-error {
     color: #ff8f8f;
 }
+
+/* Mantem listas de busca internas no fluxo da pagina. Assim, resultados
+   extensos aumentam a altura do painel e nunca disputam espaco com o footer. */
+.app-main .boost-search-panel .speedster-search-results,
+.app-main .boost-search-panel .speedster-search-no-results,
+.app-main .bosses-shell .speedster-search-panel--inline .speedster-search-results,
+.app-main .bosses-shell .speedster-search-panel--inline .speedster-search-no-results {
+  position: static;
+  inset: auto;
+  width: 100%;
+  margin: 0.6rem 0 0;
+  z-index: auto;
+}
+
+/* Garante que nenhum overlay pertencente ao painel ativo seja coberto pelo
+   footer compartilhado, inclusive em paginas com buscas proprias. */
+.app-main > [role="tabpanel"]:not([hidden]) {
+  position: relative;
+  z-index: 2;
+}
+
+.app-main > .main-footer {
+  position: relative;
+  z-index: 0;
+}

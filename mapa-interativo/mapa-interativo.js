@@ -22,10 +22,11 @@
     const DATA_URLS = {
         categories: 'mapa-interativo/data/categories.json?v=20260801a',
         labels: 'mapa-interativo/data/labels.json?v=20260801a',
-        markers: 'mapa-interativo/data/markers.json?v=20260802e',
+        markers: 'mapa-interativo/data/markers.json?v=20260808a',
         bossesInfoMarkers: 'mapa-interativo/data/bosses-info-markers.json?v=20260802b',
         ligaPokemonMarkers: 'mapa-interativo/data/liga-pokemon-markers.json?v=20260802d',
-        pokemon: 'pokemons/pokemons.json?v=20260723f'
+        rangerBossesMarkers: 'mapa-interativo/data/ranger-bosses-markers.json?v=20260808a',
+        pokemon: 'pokemons/pokemons.json?v=20260808b'
     };
     const MAP_POKEMON_NAME_ALIASES = {
         buttefree: 'butterfree',
@@ -94,6 +95,7 @@
         'bosses-info': '👑',
         maniacs: '💰',
         'liga-pokemon': '🏆',
+        'ranger-bosses': '👹',
         npc: '⚠️'
     };
     const MANIACS_MAP_CATEGORY = Object.freeze({
@@ -1419,7 +1421,7 @@
     async function loadData(){
         const responses = await Promise.all(Object.values(DATA_URLS).map(url => fetch(url)));
         if(responses.some(response => !response.ok)) throw new Error('Falha ao carregar os dados do mapa.');
-        const [categoryRoot, labelRoot, markerRoot, bossesInfoRoot, ligaPokemonRoot, pokemonRoot] = await Promise.all(responses.map(response => response.json()));
+        const [categoryRoot, labelRoot, markerRoot, bossesInfoRoot, ligaPokemonRoot, rangerBossesRoot, pokemonRoot] = await Promise.all(responses.map(response => response.json()));
         categories = Array.isArray(categoryRoot.categories) ? categoryRoot.categories : [];
         if(!categories.some(category => category.id === MANIACS_MAP_CATEGORY.id)){
             categories.push(MANIACS_MAP_CATEGORY);
@@ -1430,6 +1432,9 @@
         if(ligaPokemonRoot?.category && !categories.some(category => category.id === ligaPokemonRoot.category.id)){
             categories.push(ligaPokemonRoot.category);
         }
+        if(rangerBossesRoot?.category && !categories.some(category => category.id === rangerBossesRoot.category.id)){
+            categories.push(rangerBossesRoot.category);
+        }
         labels = Array.isArray(labelRoot.labels) ? labelRoot.labels : [];
         markers = Array.isArray(markerRoot.markers) ? markerRoot.markers : [];
         markers.forEach(marker => {
@@ -1439,6 +1444,7 @@
         });
         if(Array.isArray(bossesInfoRoot?.markers)) markers.push(...bossesInfoRoot.markers);
         if(Array.isArray(ligaPokemonRoot?.markers)) markers.push(...ligaPokemonRoot.markers);
+        if(Array.isArray(rangerBossesRoot?.markers)) markers.push(...rangerBossesRoot.markers);
         markersById = new Map(markers.map(marker => [marker.id, marker]));
         pokemonCatalog = Array.isArray(pokemonRoot.pokemon) ? pokemonRoot.pokemon : [];
         pokemonCatalogByName = new Map(

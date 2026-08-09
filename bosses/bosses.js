@@ -2154,13 +2154,16 @@ const horizonsSilverBosses = createManualRoleboardBosses([
     image: 'pokemons/5gen/jellicent.png',
     types: ['water', 'ghost'],
     moveType: 'poison',
+    effectiveness: {
+      attackTypes: ['ghost', 'poison']
+    },
     expandCardDescription: true,
-    description: 'Depois de derrotar o boss, saia da Boss Room, vá para o portal de baixo na direita evitando as armadilhas, depois para o portal de baixo, depois para o último da sala, na esquerda.\nRecomendado 2 DPS.',
+    description: 'Dica: Ataque basico Ghost e Habilidades Poison.\nDepois de derrotar o boss, saia da Boss Room, vá para o portal de baixo na direita evitando as armadilhas, depois para o portal de baixo, depois para o último da sala, na esquerda.\nRecomendado 2 DPS.',
     clans: {
       instinct: {
         dps: [
-          createRolePick('Shiftry', ['grass', 'dark'], 'dark'),
-          createRolePick('Mega Sceptile', ['grass', 'dragon'], 'grass')
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Pikachu', ['electric'], 'electric')
         ],
         tank: [
           createRolePick('Claydol', ['ground', 'psychic'], 'ground')
@@ -2202,7 +2205,10 @@ const horizonsSilverBosses = createManualRoleboardBosses([
     image: 'pokemons/megas/mega-gengar.png',
     types: ['ghost', 'poison'],
     moveType: 'dark',
-    description: 'Recomendado 1 Tank e 1 DPS (Mecanica de Imortal).\nDerrote os totens para gerar curas dentro da arena.',
+    effectiveness: {
+      attackTypes: ['dark', 'ghost']
+    },
+    description: 'Dica: Ataque basico Dark e Habilidades Ghost.\nRecomendado 1 Tank e 1 DPS (Mecanica de Imortal).\nDerrote os totens para gerar curas dentro da arena.',
     clans: {
       instinct: {
         dps: [
@@ -2210,22 +2216,22 @@ const horizonsSilverBosses = createManualRoleboardBosses([
           createRolePick('Shiftry', ['grass', 'dark'], 'dark')
         ],
         tank: [
-          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
+          createRolePick('Hippowdon Female', ['ground'], 'ground')
         ],
         support: [
-          createRolePick('Kadabra', ['psychic'], 'psychic')
+          createRolePick('Pachirisu', ['electric'], 'electric')
         ]
       },
       mystic: {
         dps: [
-          createRolePick('Banette', ['ghost'], 'ghost'),
-          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark'),
+          createRolePick('Orthworm', ['steel'], 'ground')
         ],
         tank: [
-          createRolePick('Dusclops', ['ghost'], 'ghost')
+          createRolePick('Carracosta', ['water', 'rock'], 'rock')
         ],
         support: [
-          createRolePick('Misdreavus', ['ghost'], 'ghost')
+          createRolePick('Corsola', ['water', 'rock'], 'rock')
         ]
       },
       valor: {
@@ -2736,6 +2742,8 @@ const specialBossesData = [
     id: 'zoroark',
     name: 'Zoroark',
     image: 'zoroark.png',
+    mapMarkerId: 'poke-utilities-ranger-boss-zoroark',
+    mapZoom: 2.67,
     description: 'Boss Dark com moveset Dark. Lista limitada a speedsters tier Bom ou maior.',
     types: ['dark'],
     moveType: 'dark',
@@ -2776,6 +2784,8 @@ const specialBossesData = [
     name: 'Hydrapple',
     image: 'hydrapple.png',
     tutorialUrl: 'https://youtu.be/NSYv7_G2AGM',
+    mapMarkerId: 'poke-utilities-ranger-boss-hydrapple',
+    mapZoom: 3,
     description: 'Boss Grass / Dragon com moveset Dragon. Lista limitada a speedsters tier Bom ou maior.',
     types: ['grass', 'dragon'],
     moveType: 'dragon',
@@ -2825,6 +2835,8 @@ const specialBossesData = [
     id: 'aegislash',
     name: 'Aegislash',
     image: 'aegislash.png',
+    mapMarkerId: 'poke-utilities-ranger-boss-aegislash',
+    mapZoom: 1.58,
     description: 'Boss Steel / Ghost com moveset Steel. Lista limitada a speedsters tier Bom ou maior.',
     types: ['steel', 'ghost'],
     moveType: 'steel',
@@ -15432,30 +15444,6 @@ function closeBossTutorialModal(options = {}) {
     return false;
   }
 
-  if (bossTutorialHistoryPushed) {
-    const expectedUrl = bossTutorialPreviousUrl;
-    const currentUrl = getBossCurrentRelativeUrl();
-    try {
-      history.back();
-      window.setTimeout(() => {
-        const modalStillOpen = isBossTutorialModalOpen();
-        if (!modalStillOpen) {
-          if (expectedUrl && getBossCurrentRelativeUrl() !== expectedUrl) {
-            restoreBossRouteUrl(expectedUrl);
-          }
-          return;
-        }
-        if (getBossCurrentRelativeUrl() === expectedUrl) {
-          window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore: true });
-          return;
-        }
-        window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore: true });
-        restoreBossRouteUrl(expectedUrl || currentUrl);
-      }, 350);
-      return true;
-    } catch (error) {}
-  }
-
   window.closeSiteYouTubeModal({ skipFocusRestore, skipRouteRestore });
   return true;
 }
@@ -15468,22 +15456,6 @@ function closeModal(options = {}) {
     bossModalHistoryPushed = false;
     hideBossModalUi();
     return;
-  }
-
-  if (!skipHistory && bossModalHistoryPushed) {
-    const currentPath = String(location?.pathname || '');
-    try {
-      history.back();
-      window.setTimeout(() => {
-        if (String(location?.pathname || '') !== currentPath || !isBossModalOpen()) return;
-        bossModalHistoryPushed = false;
-        hideBossModalUi();
-        if (typeof updateUrl === 'function') {
-          try { updateUrl(); } catch (error) {}
-        }
-      }, 350);
-      return;
-    } catch (error) {}
   }
 
   bossModalHistoryPushed = false;
@@ -15600,12 +15572,22 @@ function showLocationOverlay(src, options = {}) {
     ? window.initInteractiveMapPage()
     : false)
     .then(() => {
-      if (!overlay.isConnected || typeof window.focusInteractiveMapSearch !== 'function') return false;
-      return window.focusInteractiveMapSearch(getBossInteractiveMapQuery(boss), {
-        category: 'hoopa-portals',
-        zoom: 1.5,
+      if (!overlay.isConnected) return false;
+      const mapOptions = {
+        zoom: Number.isFinite(Number(boss.mapZoom)) ? Number(boss.mapZoom) : 1.5,
         image: resolveBossAssetSrc(boss.image || ''),
         imageAlt: boss.name || ''
+      };
+      if (boss.mapMarkerId && typeof window.focusInteractiveMapMarker === 'function') {
+        return window.focusInteractiveMapMarker(boss.mapMarkerId, {
+          ...mapOptions,
+          isolate: true
+        });
+      }
+      if (typeof window.focusInteractiveMapSearch !== 'function') return false;
+      return window.focusInteractiveMapSearch(getBossInteractiveMapQuery(boss), {
+        ...mapOptions,
+        category: 'hoopa-portals'
       });
     })
     .catch((error) => {
@@ -15633,7 +15615,7 @@ function removeLocationOverlayElement(overlay) {
 }
 
 function closeLocationOverlay(options = {}) {
-  const { skipHistory = false, skipRouteRestore = false } = options || {};
+  const { skipRouteRestore = false } = options || {};
   const existing = document.querySelector('.location-overlay');
   if (!existing) {
     activeLocationBoss = null;
@@ -15643,30 +15625,6 @@ function closeLocationOverlay(options = {}) {
   }
 
   const restoreUrl = locationOverlayPreviousUrl;
-  if (!skipHistory && locationOverlayHistoryPushed) {
-    const currentUrl = getBossCurrentRelativeUrl();
-    try {
-      history.back();
-      window.setTimeout(() => {
-        const overlayStillOpen = document.querySelector('.location-overlay');
-        if (!overlayStillOpen) {
-          if (restoreUrl && getBossCurrentRelativeUrl() !== restoreUrl) {
-            restoreBossRouteUrl(restoreUrl);
-          }
-          return;
-        }
-        locationOverlayHistoryPushed = false;
-        activeLocationBoss = null;
-        locationOverlayPreviousUrl = '';
-        removeLocationOverlayElement(overlayStillOpen);
-        if (!skipRouteRestore) {
-          restoreBossRouteUrl(restoreUrl || currentUrl);
-        }
-      }, 350);
-      return true;
-    } catch (error) {}
-  }
-
   locationOverlayHistoryPushed = false;
   activeLocationBoss = null;
   locationOverlayPreviousUrl = '';

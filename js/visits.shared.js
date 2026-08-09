@@ -2,11 +2,10 @@
     const mounts = Array.from(document.querySelectorAll('[data-visit-counter]'));
     if(!mounts.length) return;
 
-    const API_BASE_URL = 'https://api.counterapi.dev/v1';
-    const API_PROXY_BUILDERS = Object.freeze({
-        codetabs: (upstreamUrl) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(upstreamUrl)}&cb=${Date.now()}`
-    });
+    const API_BASE_URL = 'https://counterapi.com/api';
     const API_NAMESPACE = 'poke-utilities-traffic-20260520c';
+    const API_ACTION = 'visit';
+    const LEGACY_TOTAL_START_NUMBER = 20872;
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
     const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v4';
@@ -25,7 +24,6 @@
 
     let activeSyncPromise = null;
     let lastCompletedSyncAt = 0;
-    let preferredCounterTransport = 'direct';
     let portaledTooltipSurface = null;
     let portaledTooltipMount = null;
     let portaledTooltipHideTimer = 0;
@@ -284,22 +282,15 @@
     function buildCounterUrl(counterKey, action = 'get'){
         const encodedNamespace = encodeURIComponent(API_NAMESPACE);
         const encodedKey = encodeURIComponent(counterKey);
-        const suffix = action === 'up' ? '/up/' : '/';
-        return `${API_BASE_URL}/${encodedNamespace}/${encodedKey}${suffix}`;
-    }
-
-    function buildCounterProxyUrl(transport, counterKey, action = 'get'){
-        const upstreamUrl = buildCounterUrl(counterKey, action);
-        const buildProxyUrl = API_PROXY_BUILDERS[transport];
-        if(typeof buildProxyUrl !== 'function'){
-            throw new Error(`unknown counter transport (${transport})`);
+        const params = new URLSearchParams();
+        if(counterKey === TOTAL_COUNTER_KEY){
+            params.set('startNumber', String(LEGACY_TOTAL_START_NUMBER));
         }
-        return buildProxyUrl(upstreamUrl);
-    }
-
-    function isMissingCounterPayload(response, payload){
-        return response.status === 400
-            && String(payload?.message || '').trim().toLowerCase() === 'record not found';
+        if(action !== 'up'){
+            params.set('readOnly', 'true');
+        }
+        params.set('cb', Date.now().toString(36));
+        return `${API_BASE_URL}/${encodedNamespace}/${encodeURIComponent(API_ACTION)}/${encodedKey}?${params}`;
     }
 
     async function requestCounterFromUrl(url, action = 'get'){
@@ -318,39 +309,16 @@
             });
             const payload = await response.json();
             if(!response.ok){
-                if(action === 'get' && isMissingCounterPayload(response, payload)){
-                    return 0;
-                }
                 throw new Error(`counter request failed (${response.status})`);
             }
-            return Number(payload?.count || payload?.value || payload?.data?.count || 0);
+            return Number(payload?.value || payload?.count || payload?.data?.count || 0);
         }finally{
             window.clearTimeout(timeoutId);
         }
     }
 
     async function requestCounter(counterKey, action = 'get'){
-        const fallbackTransports = ['direct', 'codetabs'];
-        const transports = [
-            preferredCounterTransport,
-            ...fallbackTransports.filter((transport) => transport !== preferredCounterTransport)
-        ];
-        let lastError = null;
-
-        for(const transport of transports){
-            const requestUrl = transport === 'direct'
-                ? buildCounterUrl(counterKey, action)
-                : buildCounterProxyUrl(transport, counterKey, action);
-            try{
-                const count = await requestCounterFromUrl(requestUrl, action);
-                preferredCounterTransport = transport;
-                return count;
-            }catch(error){
-                lastError = error;
-            }
-        }
-
-        throw lastError || new Error('counter request failed');
+        return requestCounterFromUrl(buildCounterUrl(counterKey, action), action);
     }
 
     async function requestCounterIncrement(counterKey){
@@ -360,13 +328,18 @@
         }, COUNTER_REQUEST_TIMEOUT_MS);
 
         try{
-            await fetch(buildCounterUrl(counterKey, 'up'), {
+            const response = await fetch(buildCounterUrl(counterKey, 'up'), {
                 cache: 'no-store',
                 credentials: 'omit',
-                mode: 'no-cors',
+                mode: 'cors',
                 redirect: 'follow',
                 signal: controller.signal
             });
+            const payload = await response.json();
+            if(!response.ok){
+                throw new Error(`counter increment failed (${response.status})`);
+            }
+            return Number(payload?.value || payload?.count || payload?.data?.count || 0);
         }finally{
             window.clearTimeout(timeoutId);
         }
@@ -381,9 +354,9 @@
         }
 
         try{
-            await requestCounterIncrement(counterKey);
+            const count = await requestCounterIncrement(counterKey);
             return {
-                count: await requestCounter(counterKey, 'get'),
+                count,
                 incremented: true
             };
         }catch(error){
@@ -591,7 +564,11 @@
             lastCompletedSyncAt = Date.now();
 
             try{
-                const normalized = await fetchNormalizedCounts(todayStamp);
+                const fetched = await fetchNormalizedCounts(todayStamp);
+                const normalized = normalizeCounts(
+                    Math.max(fetched.daily, cached?.daily || 0),
+                    Math.max(fetched.total, cached?.total || 0)
+                );
                 persistSnapshot(todayStamp, normalized.total, normalized.daily);
                 renderCounter('ready', (surface) => formatValues(normalized.daily, normalized.total, surface));
                 return normalized;

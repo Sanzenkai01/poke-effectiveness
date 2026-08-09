@@ -1,15 +1,16 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v1061`;
+let CACHE_NAME = `${CACHE_PREFIX}v1069`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
   new URL('./app.html', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260802i', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260808j', self.registration.scope).toString(),
   new URL('./wiki-theme.css?v=20260802b', self.registration.scope).toString(),
-  new URL('./script.js?v=20260802bg', self.registration.scope).toString(),
+  new URL('./script.js?v=20260808f', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20260808c', self.registration.scope).toString(),
   new URL('./js/utf8-guard.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260707b', self.registration.scope).toString(),
-  new URL('./js/visits.shared.js?v=20260618a', self.registration.scope).toString(),
+  new URL('./js/visits.shared.js?v=20260808b', self.registration.scope).toString(),
   new URL('./route-loader.js?v=20260802l', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString(),
   new URL('./icons-type/favicon.ico', self.registration.scope).toString()
@@ -23,8 +24,12 @@ function canCache(response){
 
 async function cacheResponse(request, response){
   if(!canCache(response)) return response;
-  const cache = await caches.open(CACHE_NAME);
-  await cache.put(request, response.clone());
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(request, response.clone());
+  } catch (error) {
+    console.warn('Nao foi possivel atualizar o cache; usando a resposta da rede.', error);
+  }
   return response;
 }
 
@@ -157,6 +162,7 @@ self.addEventListener('fetch', event => {
     url.pathname.endsWith('/pokemons/pokemons.json')
     || url.pathname.endsWith('/pokemons/mega-pokemons.json')
     || url.pathname.endsWith('/pokemons/generations.json')
+    || url.pathname.endsWith('/pokemons/pokedex.json')
   ){
     event.respondWith(networkFirst(request));
     return;

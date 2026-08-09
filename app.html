@@ -23,7 +23,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260802i">
+  <link rel="stylesheet" href="styles.css?v=20260808j">
   <link rel="stylesheet" href="wiki-theme.css?v=20260802b">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -581,16 +581,48 @@
     </div>
 
     
-<div class="modal pokemon-details-modal" id="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal-content pokemon-details-modal__content" role="document">
-    <button class="modal-close" aria-label="Fechar">✖</button>
-    <h2 id="modal-title">Boss</h2>
-    <div id="modal-body"></div>
+<div id="speedster-modal" class="speedster-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Detalhes do Boss">
+  <div class="speedster-modal-backdrop" data-close="true"></div>
+  <div class="speedster-modal-content" role="document">
+    <button class="speedster-modal-close" type="button" aria-label="Fechar">&#10006;</button>
+    <div class="speedster-modal-header">
+      <img id="modal-pokemon-img-left" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+      <div class="speedster-modal-title">
+        <h2 id="modal-title">Boss</h2>
+        <p id="modal-subtitle" class="speedster-subtitle"></p>
+        <div class="tier-legend" aria-label="Legenda de cores de recomendacao" role="list">
+          <span class="tier-legend__item" data-tier="excelente" role="listitem"><span class="tier-dot tier-excelente" aria-hidden="true"></span><span class="tier-legend__label">Excelente</span></span>
+          <span class="tier-legend__item" data-tier="muitobom" role="listitem"><span class="tier-dot tier-muitobom" aria-hidden="true"></span><span class="tier-legend__label">Muito bom</span></span>
+          <span class="tier-legend__item" data-tier="bom" role="listitem"><span class="tier-dot tier-bom" aria-hidden="true"></span><span class="tier-legend__label">Bom</span></span>
+          <span class="tier-legend__item" data-tier="aceitavel" role="listitem"><span class="tier-dot tier-aceitavel" aria-hidden="true"></span><span class="tier-legend__label">Aceitavel</span></span>
+          <span class="tier-legend__item" data-tier="ruim" role="listitem"><span class="tier-dot tier-ruim" aria-hidden="true"></span><span class="tier-legend__label">Ruim</span></span>
+          <span class="tier-legend__item" data-tier="seminformacao" role="listitem"><span class="tier-dot tier-seminformacao" aria-hidden="true"></span><span class="tier-legend__label">Unica Opcao</span></span>
+        </div>
+      </div>
+      <img id="modal-pokemon-img" class="speedster-modal-pokemon-img" src="" alt="" aria-hidden="true" />
+    </div>
+    <div id="modal-body" class="speedster-modal-body"></div>
   </div>
 </div>
 
-<div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden data-panel-fragment="bosses" data-panel-fragment-styles="none">
-      <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
+<div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
+      <div class="card calc-card bosses-shell">
+        <div class="bosses-header">
+          <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
+            <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
+            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
+            <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
+            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokémon ainda não foi adicionado.</div>
+          </aside>
+        </div>
+        <div class="bosses-hero">
+          <div class="bosses-copy">
+            <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
+            <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
+          </div>
+        </div>
+        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
+      </div>
     </div>
 
     <div class="modal image-modal profession-image-modal" id="profession-image-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="profession-image-modal-title">
@@ -797,8 +829,8 @@
     </div>
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
-    <script src="js/visits.shared.js?v=20260618a" defer></script>
-    <script src="script.js?v=20260802bg" defer></script>
+    <script src="js/visits.shared.js?v=20260808b" defer></script>
+    <script src="script.js?v=20260808f" defer></script>
+    <script src="bosses/bosses.js?v=20260808c" defer></script>
 </body>
 </html>
-

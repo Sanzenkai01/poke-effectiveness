@@ -175,7 +175,7 @@ const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
 const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggle]');
-const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
+const boundSidebarActionButtons = new WeakSet();
 const siteGlobalSearch = document.getElementById('site-global-search');
 const siteGlobalSearchInput = document.getElementById('site-global-search-input');
 const siteGlobalSearchResults = document.getElementById('site-global-search-results');
@@ -334,12 +334,14 @@ let activeTeamEntry = null;
 let timesDetailsLastFocus = null;
 let timesDetailsKeyHandler = null;
 let teamModalHistoryPushed = false;
+let teamModalRestoreUrl = '';
 // Se a pagina foi carregada diretamente com um deep-link para um Pokemon
 // (ex: /pokemon/001 ou /pokemons/mega-charizard), isso guarda o
 // token de rota pedido ate o catalogo carregar.
 let initialDeepLinkedPokemonRouteToken = null;
 // Rastreia se criamos uma entrada de historico para o modal aberto do Pokemon.
 let pokemonModalHistoryPushed = false;
+let pokemonModalRestoreUrl = '';
 let globalSearchInitialized = false;
 let globalSearchHydrated = false;
 let globalSearchHydrationPromise = null;
@@ -349,10 +351,10 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260802a';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260808c';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260802y';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260808c';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260802f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20260802ah';
@@ -475,9 +477,9 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260801b';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260808b';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260718e';
-const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260711a';
+const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
@@ -1260,9 +1262,11 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     hariyama: { naturalElements: ['fighting'], moveset: ['fighting'] },
     honedge: { naturalElements: ['steel', 'ghost'], moveset: ['steel'] },
     hydreigon: { naturalElements: ['dark', 'dragon'], moveset: ['dragon'] },
+    impidimp: { naturalElements: ['dark', 'fairy'], moveset: ['fairy'] },
     kingambit: { naturalElements: ['dark', 'steel'], moveset: ['steel'] },
     'kommo-o': { naturalElements: ['dragon', 'fighting'], moveset: ['fighting'] },
     metagross: { naturalElements: ['steel', 'psychic'], moveset: ['steel'] },
+    morgrem: { naturalElements: ['dark', 'fairy'], moveset: ['fairy'] },
     palafin: { naturalElements: ['water'], moveset: ['water'] },
     porygon: { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon z': { naturalElements: ['normal'], moveset: ['normal'] },
@@ -1850,11 +1854,36 @@ function loadDeferredScript(src, globalCheck){
     if(existing){
         if(existing.dataset.loaded === 'true') return Promise.resolve();
         return new Promise((resolve, reject) => {
-            existing.addEventListener('load', () => {
+            let settled = false;
+            let pollTimer = 0;
+            let timeoutTimer = 0;
+            const cleanup = () => {
+                if(pollTimer) window.clearInterval(pollTimer);
+                if(timeoutTimer) window.clearTimeout(timeoutTimer);
+            };
+            const resolveLoaded = () => {
+                if(settled) return;
+                settled = true;
+                cleanup();
                 existing.dataset.loaded = 'true';
                 resolve();
-            }, { once: true });
-            existing.addEventListener('error', () => reject(new Error(`Falha ao carregar ${src}`)), { once: true });
+            };
+            const rejectLoad = () => {
+                if(settled) return;
+                settled = true;
+                cleanup();
+                reject(new Error(`Falha ao carregar ${src}`));
+            };
+            const checkGlobal = () => {
+                try{
+                    if(typeof globalCheck === 'function' && globalCheck()) resolveLoaded();
+                }catch(error){}
+            };
+            existing.addEventListener('load', resolveLoaded, { once: true });
+            existing.addEventListener('error', rejectLoad, { once: true });
+            pollTimer = window.setInterval(checkGlobal, 100);
+            timeoutTimer = window.setTimeout(rejectLoad, 15000);
+            checkGlobal();
         });
     }
 
@@ -3502,6 +3531,19 @@ function activateSidebarTarget(button){
     setSidebarOpen(false);
 }
 
+function bindSidebarActionButtons(root = document){
+    const buttons = root && typeof root.querySelectorAll === 'function'
+        ? root.querySelectorAll('[data-nav-target], [data-nav-action]')
+        : [];
+    buttons.forEach((button) => {
+        if(boundSidebarActionButtons.has(button)) return;
+        boundSidebarActionButtons.add(button);
+        button.addEventListener('click', () => {
+            activateSidebarTarget(button);
+        });
+    });
+}
+
 function initializeSidebarNavigation(){
     if(sidebarNavigationInitialized) return;
     sidebarNavigationInitialized = true;
@@ -3523,11 +3565,7 @@ function initializeSidebarNavigation(){
         });
     });
 
-    sidebarActionButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            activateSidebarTarget(button);
-        });
-    });
+    bindSidebarActionButtons(document);
 
     if(mobileNavToggle){
         mobileNavToggle.addEventListener('click', () => {
@@ -7391,9 +7429,7 @@ function applyCatchPokemonSearchSelection(entry){
 function hydrateCatchPokemonOptions(){
     if(!catchPokemonSearchInput) return;
     const entries = refreshCatchPokemonSearchStore();
-    catchPokemonSearchInput.placeholder = entries.length
-        ? 'Digite para buscar'
-        : 'Catalogo indisponivel no momento';
+    catchPokemonSearchInput.placeholder = 'Digite para buscar';
     catchSelectedPokemonEntry = resolveCatchPokemonEntry(catchPokemonSearchInput.value || '');
     syncCatchTargetTypesFromPokemon(catchSelectedPokemonEntry);
     syncCatchVariantOptionAvailability();
@@ -10592,9 +10628,34 @@ function renderTeamDetailsModal(entry){
     }
 }
 
+function getTeamModalRestoreFallbackUrl(){
+    const params = syncTeamFilterParams(new URLSearchParams(), teamFilters);
+    const query = params.toString();
+    return `/times${query ? `?${query}` : ''}`;
+}
+
+function hideTeamDetailsModalUi(){
+    if(!timesDetailsModal) return;
+    timesDetailsModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+
+    if(timesDetailsKeyHandler){
+        document.removeEventListener('keydown', timesDetailsKeyHandler);
+        timesDetailsKeyHandler = null;
+    }
+
+    if(timesDetailsLastFocus instanceof HTMLElement && timesDetailsLastFocus.isConnected){
+        try { timesDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
+    }
+
+    timesDetailsLastFocus = null;
+    activeTeamEntry = null;
+}
+
 function openTeamDetailsModal(entry, options = {}){
     const { pushState = true } = options || {};
     if(!timesDetailsModal || !entry) return;
+    const previousUrl = getCurrentHistoryUrl();
 
     renderTeamDetailsModal(entry);
     timesDetailsLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -10617,6 +10678,9 @@ function openTeamDetailsModal(entry, options = {}){
     const detailRoutePath = getTeamDetailRoutePath(entry);
     if(pushState && detailRoutePath){
         try{
+            teamModalRestoreUrl = getTeamRouteMatch(location.pathname)
+                ? getTeamModalRestoreFallbackUrl()
+                : previousUrl;
             const params = syncTeamFilterParams(new URLSearchParams(location.search), teamFilters);
             const query = params.toString();
             const detailUrl = detailRoutePath + (query ? `?${query}` : '');
@@ -10624,9 +10688,11 @@ function openTeamDetailsModal(entry, options = {}){
             teamModalHistoryPushed = true;
         }catch(error){
             teamModalHistoryPushed = false;
+            teamModalRestoreUrl = getTeamModalRestoreFallbackUrl();
         }
     } else {
         teamModalHistoryPushed = false;
+        teamModalRestoreUrl = getTeamModalRestoreFallbackUrl();
     }
 }
 
@@ -10635,45 +10701,22 @@ function closeTeamDetailsModal(options = {}){
     if(!timesDetailsModal) return;
 
     if(viaPopstate){
-        timesDetailsModal.setAttribute('aria-hidden', 'true');
-        syncBasicModalPageState();
-
-        if(timesDetailsKeyHandler){
-            document.removeEventListener('keydown', timesDetailsKeyHandler);
-            timesDetailsKeyHandler = null;
-        }
-
-        if(timesDetailsLastFocus instanceof HTMLElement && timesDetailsLastFocus.isConnected){
-            try { timesDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
-        }
-
-        timesDetailsLastFocus = null;
-        activeTeamEntry = null;
+        hideTeamDetailsModalUi();
         teamModalHistoryPushed = false;
+        teamModalRestoreUrl = '';
         return;
     }
 
-    if(teamModalHistoryPushed){
-        try{ history.back(); return; }catch(error){}
-    }
-
-    timesDetailsModal.setAttribute('aria-hidden', 'true');
-    syncBasicModalPageState();
-
-    if(timesDetailsKeyHandler){
-        document.removeEventListener('keydown', timesDetailsKeyHandler);
-        timesDetailsKeyHandler = null;
-    }
-
-    if(timesDetailsLastFocus instanceof HTMLElement && timesDetailsLastFocus.isConnected){
-        try { timesDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
-    }
-
-    timesDetailsLastFocus = null;
-    activeTeamEntry = null;
+    const restoreUrl = teamModalRestoreUrl || getTeamModalRestoreFallbackUrl();
+    hideTeamDetailsModalUi();
     teamModalHistoryPushed = false;
+    teamModalRestoreUrl = '';
     if(getTeamRouteMatch()){
-        updateUrl({ historyMode: 'replace' });
+        try{
+            history.replaceState({ tab: 'times' }, '', restoreUrl);
+        }catch(error){
+            updateUrl({ historyMode: 'replace' });
+        }
     }
 }
 
@@ -13028,6 +13071,7 @@ function ensurePanelFragmentLoaded(panel){
             }
             panel.dataset.panelLoaded = 'true';
             panel.removeAttribute('aria-busy');
+            bindSidebarActionButtons(panel);
             return panel;
         })
         .catch(error => {
@@ -15856,6 +15900,21 @@ const playStreamerRatAlertSound = typeof sharedStreamerCatalog.playStreamerRatAl
 const triggerStreamerRatAlert = typeof sharedStreamerCatalog.triggerStreamerRatAlert === 'function'
     ? sharedStreamerCatalog.triggerStreamerRatAlert
     : playStreamerRatAlertSound;
+function setStreamerRatSummaryText(element, message, color = ''){
+    if(!element) return;
+    const fullMessage = String(message || '').trim();
+    element.textContent = fullMessage;
+    if(color) element.style.color = color;
+    if(fullMessage){
+        element.title = fullMessage;
+        element.setAttribute('aria-label', fullMessage);
+        if(!element.hasAttribute('tabindex')) element.tabIndex = 0;
+    } else {
+        element.removeAttribute('title');
+        element.removeAttribute('aria-label');
+        element.removeAttribute('tabindex');
+    }
+}
 function renderStaticRatSummary(containerEl, message, color = '#b6c2cf'){
     if(!containerEl) return;
 
@@ -15865,8 +15924,7 @@ function renderStaticRatSummary(containerEl, message, color = '#b6c2cf'){
     const summaryEl = document.createElement('div');
     summaryEl.className = 'streamer-rat-chip';
     summaryEl.style.display = 'inline-flex';
-    summaryEl.style.color = color;
-    summaryEl.textContent = message;
+    setStreamerRatSummaryText(summaryEl, message, color);
     containerEl.appendChild(summaryEl);
 }
 
@@ -17391,8 +17449,7 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
                 triggerStreamerRatAlert({ alertKey });
             }
 
-            timerEl.textContent = `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`;
-            timerEl.style.color = '#dff8ff';
+            setStreamerRatSummaryText(timerEl, `Próximo Rattata em ${formatStreamerRatCountdown(msUntilNext)}.`, '#dff8ff');
             return;
         }
 
@@ -17400,28 +17457,23 @@ function mountStreamerRatSummary(timerEl, monitorInfo){
         const monitorStatus = streamerRatChatMonitor.getStatus();
         if(monitorStatus.state === 'unavailable'){
             if(monitorStatus.reason === 'token-missing'){
-                timerEl.textContent = 'Sincronizando timer do Rattata pelo workflow...';
-                timerEl.style.color = '#d8f3ff';
+                setStreamerRatSummaryText(timerEl, 'Sincronizando timer do Rattata pelo workflow...', '#d8f3ff');
                 return;
             }
-            timerEl.textContent = monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.';
-            timerEl.style.color = '#b6c2cf';
+            setStreamerRatSummaryText(timerEl, monitorStatus.message || 'Timer do Rattata indisponível no chat da Twitch.', '#b6c2cf');
             return;
         }
 
         if(monitorStatus.state === 'error'){
-            timerEl.textContent = monitorStatus.message || 'Erro ao conectar no chat para localizar o Rattata.';
-            timerEl.style.color = '#ffb366';
+            setStreamerRatSummaryText(timerEl, monitorStatus.message || 'Erro ao conectar no chat para localizar o Rattata.', '#ffb366');
             return;
         }
         if(monitorStatus.state === 'connecting'){
-            timerEl.textContent = 'Conectando ao chat da Twitch...';
-            timerEl.style.color = '#9fdcff';
+            setStreamerRatSummaryText(timerEl, 'Conectando ao chat da Twitch...', '#9fdcff');
             return;
         }
 
-        timerEl.textContent = 'Aguardando o próximo alerta do Rattata...';
-        timerEl.style.color = '#d8f3ff';
+        setStreamerRatSummaryText(timerEl, 'Aguardando o próximo alerta do Rattata...', '#d8f3ff');
     };
 
     const unsubscribe = subscribeStreamerRatTimer(monitorInfo.name, render);
@@ -20514,7 +20566,7 @@ function usesBoostBraveBronzeStone(state){
     const normalizedName = normalizePokemonSearchText(entry.name || state?.pokemonName || '');
     const normalizedPriceLabel = normalizePokemonSearchText(entry.priceLabel || '');
     return entry.roleKey === 'striker'
-        || normalizedPriceLabel === 'poke rush'
+        || normalizedPriceLabel.endsWith('rush')
         || normalizedName.includes('alolan');
 }
 
@@ -21821,7 +21873,7 @@ function initializeCatchPage(){
                 applyCatchUrlState({ updateHistory: true });
             })
             .catch(() => {
-                if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+                if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Digite para buscar';
             });
         syncCatchSelectionUi();
         updateBallPreview();
@@ -21871,7 +21923,7 @@ function initializeCatchPage(){
             applyCatchUrlState({ updateHistory: true });
         })
         .catch(() => {
-            if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Catalogo indisponivel no momento';
+            if(catchPokemonSearchInput) catchPokemonSearchInput.placeholder = 'Digite para buscar';
             syncCatchSelectionUi();
         });
 
@@ -22637,19 +22689,22 @@ function ensureBossesPageReady(){
     if(bossesPageLoadPromise) return bossesPageLoadPromise;
 
     renderBossesDeferredState('Carregando catálogo de bosses...');
-    bossesPageLoadPromise = ensurePokemonCatalogLoaded()
+    ensurePokemonCatalogLoaded()
         .catch(error => {
             console.warn('Pokemon catalog unavailable before bosses load', error);
-            return false;
-        })
-        .then(() => Promise.all([
-            loadDeferredScript(DEFERRED_LZ_STRING_SCRIPT_SRC, () => typeof window.LZString === 'object'),
-            loadDeferredScript(DEFERRED_PAKO_SCRIPT_SRC, () => typeof window.pako === 'object')
-        ]))
-        .then(() => loadDeferredScript(
+        });
+    Promise.allSettled([
+        loadDeferredScript(DEFERRED_LZ_STRING_SCRIPT_SRC, () => typeof window.LZString === 'object'),
+        loadDeferredScript(DEFERRED_PAKO_SCRIPT_SRC, () => typeof window.pako === 'object')
+    ]).then((results) => {
+        if(results.some(result => result.status === 'rejected')){
+            console.warn('Compactadores opcionais indisponiveis; Bosses continuara sem compressao de links.');
+        }
+    });
+    bossesPageLoadPromise = loadDeferredScript(
             DEFERRED_BOSSES_SCRIPT_SRC,
             () => typeof window.setBossMode === 'function' && typeof renderGrid === 'function'
-        ))
+        )
         .then(() => {
             if(typeof window.setBossMode !== 'function' || typeof renderGrid !== 'function'){
                 throw new Error('bosses.js carregou sem inicializar a página de bosses corretamente.');
@@ -22794,12 +22849,22 @@ function getPokemonCatalogJsonList(data){
 }
 
 function fetchPokemonCatalogJson(url){
+    const parseResponse = (response) => {
+        if(!response.ok){
+            throw new Error(`Falha ao carregar ${url} (${response.status})`);
+        }
+        return response.json();
+    };
     return fetch(url, { cache: 'no-store' })
-        .then(response => {
-            if(!response.ok){
-                throw new Error(`Falha ao carregar ${url} (${response.status})`);
-            }
-            return response.json();
+        .then(parseResponse)
+        .catch((firstError) => {
+            const retryUrl = new URL(url, document.baseURI);
+            retryUrl.searchParams.set('_retry', Date.now().toString(36));
+            return fetch(retryUrl.href, { cache: 'reload' })
+                .then(parseResponse)
+                .catch(() => {
+                    throw firstError;
+                });
         });
 }
 
@@ -23471,7 +23536,6 @@ function replacePokemonDetailsModalRoute(entry){
 
     try{
         history.replaceState({ tab: 'pokemons', pokemonRouteToken: routeToken }, '', detailRoutePath);
-        pokemonModalHistoryPushed = true;
     }catch(error){}
 }
 
@@ -25569,7 +25633,10 @@ function renderPokemonCatalog(options = {}){
 function loadPokemonCatalog(){
     return Promise.all([
         fetchPokemonCatalogJson(POKEMON_CATALOG_URL),
-        fetchPokemonCatalogJson(POKEMON_MEGA_CATALOG_URL),
+        fetchPokemonCatalogJson(POKEMON_MEGA_CATALOG_URL).catch(error => {
+            console.warn('Catalogo Mega indisponivel; carregando catalogo principal.', error);
+            return { pokemon: [] };
+        }),
         loadSharedPokemonGenerationMap(),
         loadSharedPokemonPokedexMap()
     ])
@@ -26079,9 +26146,33 @@ function renderPokemonDetailsModal(entry){
         }
     }
 }
+function getPokemonModalRestoreFallbackUrl(){
+    return buildPokemonCatalogFilterUrl(pokemonCatalogFilters, {
+        variant: getCurrentPokemonCatalogVariant(),
+        page: pokemonCatalogCurrentPage
+    });
+}
+
+function hidePokemonDetailsModalUi(){
+    if(!pokemonDetailsModal) return;
+    pokemonDetailsModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+
+    if(pokemonDetailsKeyHandler){
+        document.removeEventListener('keydown', pokemonDetailsKeyHandler);
+        pokemonDetailsKeyHandler = null;
+    }
+
+    if(pokemonDetailsLastFocus instanceof HTMLElement && pokemonDetailsLastFocus.isConnected){
+        try { pokemonDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
+    }
+    pokemonDetailsLastFocus = null;
+}
+
 function openPokemonDetailsModal(entry, options = {}){
     const { pushState = true } = options || {};
     if(!pokemonDetailsModal || !canOpenPokemonCatalogEntry(entry)) return;
+    const previousUrl = getCurrentHistoryUrl();
 
     renderPokemonDetailsModal(entry);
     pokemonDetailsLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -26105,13 +26196,18 @@ function openPokemonDetailsModal(entry, options = {}){
     const detailRoutePath = getPokemonDetailRoutePath(entry);
     if(pushState && detailRoutePath){
         try{
+            pokemonModalRestoreUrl = getPokemonDetailRouteMatch(location.pathname)
+                ? getPokemonModalRestoreFallbackUrl()
+                : previousUrl;
             history.pushState({ tab: 'pokemons', pokemonRouteToken: getPokemonDetailRouteToken(entry) }, '', detailRoutePath);
             pokemonModalHistoryPushed = true;
         }catch(e){
             pokemonModalHistoryPushed = false;
+            pokemonModalRestoreUrl = getPokemonModalRestoreFallbackUrl();
         }
     } else {
         pokemonModalHistoryPushed = false;
+        pokemonModalRestoreUrl = getPokemonModalRestoreFallbackUrl();
     }
 }
 
@@ -26132,41 +26228,23 @@ function closePokemonDetailsModal(options = {}){
 
     // Se este fechamento e resultado de navegacao no historico, apenas atualizar a UI
     if(viaPopstate){
-        pokemonDetailsModal.setAttribute('aria-hidden', 'true');
-        syncBasicModalPageState();
-
-        if(pokemonDetailsKeyHandler){
-            document.removeEventListener('keydown', pokemonDetailsKeyHandler);
-            pokemonDetailsKeyHandler = null;
-        }
-
-        if(pokemonDetailsLastFocus instanceof HTMLElement && pokemonDetailsLastFocus.isConnected){
-            try { pokemonDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
-        }
-        pokemonDetailsLastFocus = null;
+        hidePokemonDetailsModalUi();
         pokemonModalHistoryPushed = false;
+        pokemonModalRestoreUrl = '';
         return;
     }
 
-    // Se inserimos antes uma entrada de historico para este modal, voltar para reverter a URL
-    if(pokemonModalHistoryPushed){
-        try{ history.back(); return; }catch(e){}
-    }
-
-    // Alternativa: fechar imediatamente sem tocar no historico
-    pokemonDetailsModal.setAttribute('aria-hidden', 'true');
-    syncBasicModalPageState();
-
-    if(pokemonDetailsKeyHandler){
-        document.removeEventListener('keydown', pokemonDetailsKeyHandler);
-        pokemonDetailsKeyHandler = null;
-    }
-
-    if(pokemonDetailsLastFocus instanceof HTMLElement && pokemonDetailsLastFocus.isConnected){
-        try { pokemonDetailsLastFocus.focus({ preventScroll: true }); } catch(error) {}
-    }
-    pokemonDetailsLastFocus = null;
+    const restoreUrl = pokemonModalRestoreUrl || getPokemonModalRestoreFallbackUrl();
+    hidePokemonDetailsModalUi();
     pokemonModalHistoryPushed = false;
+    pokemonModalRestoreUrl = '';
+    if(getPokemonDetailRouteMatch(location.pathname)){
+        try{
+            history.replaceState({ tab: 'pokemons' }, '', restoreUrl);
+        }catch(error){
+            updateUrl({ historyMode: 'replace' });
+        }
+    }
 }
 
 initializeSidebarNavigation();
