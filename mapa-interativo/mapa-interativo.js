@@ -22,7 +22,7 @@
     const DATA_URLS = {
         categories: 'mapa-interativo/data/categories.json?v=20260801a',
         labels: 'mapa-interativo/data/labels.json?v=20260801a',
-        markers: 'mapa-interativo/data/markers.json?v=20260808a',
+        markers: 'mapa-interativo/data/markers.json?v=20260809b',
         bossesInfoMarkers: 'mapa-interativo/data/bosses-info-markers.json?v=20260802b',
         ligaPokemonMarkers: 'mapa-interativo/data/liga-pokemon-markers.json?v=20260802d',
         rangerBossesMarkers: 'mapa-interativo/data/ranger-bosses-markers.json?v=20260808a',
@@ -132,11 +132,14 @@
     let sharedPin = null;
     let placingSharedPin = false;
     let hiddenCategories = new Set();
+    let activeCategoryListId = '';
     let query = '';
     let dragging = false;
     let dragStart = null;
     let detailDragging = false;
     let detailDragStart = null;
+    let categoryPopupDragging = false;
+    let categoryPopupDragStart = null;
     let transformFrame = 0;
     let dragPreviewFrame = 0;
     const markerNodeCache = new Map();
@@ -274,8 +277,191 @@
         }catch(error){}
     }
 
+    function getEnabledCategories(){
+        return categories.filter(category => !category.comingSoon && !hiddenCategories.has(category.id));
+    }
+
+    function hideFilterTooltip(){
+        if(!elements.filterTooltip) return;
+        elements.filterTooltip.hidden = true;
+        elements.filterTooltip.removeAttribute('data-side');
+    }
+
+    function showFilterTooltip(filter, nameElement, category){
+        if(!elements.filterTooltip || !elements.filterTooltipLabel || !filter || !nameElement) return;
+        if(nameElement.scrollWidth <= nameElement.clientWidth + 1){
+            hideFilterTooltip();
+            return;
+        }
+
+        elements.filterTooltipLabel.textContent = nameElement.textContent || '';
+        elements.filterTooltip.style.setProperty('--marker-color', category?.color || '#65c7ff');
+        elements.filterTooltip.hidden = false;
+
+        const filterRect = filter.getBoundingClientRect();
+        const tooltipRect = elements.filterTooltip.getBoundingClientRect();
+        const viewportGap = 8;
+        const anchorGap = 11;
+        let side = 'right';
+        let left = filterRect.right + anchorGap;
+        if(left + tooltipRect.width > window.innerWidth - viewportGap){
+            side = 'left';
+            left = filterRect.left - tooltipRect.width - anchorGap;
+        }
+        left = Math.min(
+            window.innerWidth - tooltipRect.width - viewportGap,
+            Math.max(viewportGap, left)
+        );
+        const top = Math.min(
+            window.innerHeight - tooltipRect.height - viewportGap,
+            Math.max(viewportGap, filterRect.top + ((filterRect.height - tooltipRect.height) / 2))
+        );
+        elements.filterTooltip.dataset.side = side;
+        elements.filterTooltip.style.left = `${left}px`;
+        elements.filterTooltip.style.top = `${top}px`;
+    }
+
+    function resetCategoryListPopupPosition(){
+        if(!elements.categoryPopup) return;
+        elements.categoryPopup.style.removeProperty('top');
+        elements.categoryPopup.style.removeProperty('right');
+        elements.categoryPopup.style.removeProperty('bottom');
+        elements.categoryPopup.style.removeProperty('left');
+        elements.categoryPopup.style.removeProperty('width');
+    }
+
+    function setActiveCategoryListId(nextCategoryId = ''){
+        const normalizedCategoryId = String(nextCategoryId || '');
+        if(activeCategoryListId !== normalizedCategoryId) resetCategoryListPopupPosition();
+        activeCategoryListId = normalizedCategoryId;
+    }
+
+    function syncCategoryListPopupWithFilters(){
+        const enabledCategories = getEnabledCategories();
+        setActiveCategoryListId(enabledCategories.length === 1 ? enabledCategories[0].id : '');
+    }
+
+    function getCategoryListMarkerTitle(marker, category){
+        const markerName = String(marker?.name || category?.label || 'Local').trim();
+        if(category?.slug !== 'pokecenter') return markerName;
+        const locationName = markerName.split(/\s*[-–—]\s*/).slice(1).join(' - ').trim();
+        return locationName ? `Pokecenter - ${locationName}` : 'Pokecenter';
+    }
+
+    function getCategoryListMarkers(category){
+        return markers
+            .filter(marker => marker.categoryId === category.id)
+            .sort((left, right) => {
+                const titleComparison = getCategoryListMarkerTitle(left, category)
+                    .localeCompare(getCategoryListMarkerTitle(right, category), 'pt-BR');
+                return titleComparison || Number(left.floor) - Number(right.floor);
+            });
+    }
+
+    function renderCategoryListPopup(){
+        if(!elements.categoryPopup) return;
+        const category = categories.find(entry => entry.id === activeCategoryListId);
+        if(!category || normalize(query) || isolatedMarkerIds.size){
+            elements.categoryPopup.hidden = true;
+            elements.categoryPopup.replaceChildren();
+            return;
+        }
+
+        const categoryMarkers = getCategoryListMarkers(category);
+        const header = document.createElement('header');
+        header.className = 'interactive-map-category-popup__header';
+
+        const headingCopy = document.createElement('div');
+        headingCopy.className = 'interactive-map-category-popup__heading-copy';
+        const eyebrow = document.createElement('span');
+        eyebrow.className = 'interactive-map-category-popup__eyebrow';
+        eyebrow.textContent = 'Filtro único ativo';
+        const titleRow = document.createElement('div');
+        titleRow.className = 'interactive-map-category-popup__title-row';
+        const title = document.createElement('h3');
+        title.id = 'interactive-map-category-popup-title';
+        title.textContent = category.label || category.slug || 'Marcações';
+        const count = document.createElement('span');
+        count.className = 'interactive-map-category-popup__count';
+        count.textContent = String(categoryMarkers.length);
+        count.setAttribute('aria-label', `${categoryMarkers.length} marcações`);
+        titleRow.append(title, count);
+        headingCopy.append(eyebrow, titleRow);
+
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'interactive-map-category-popup__close';
+        close.setAttribute('aria-label', 'Fechar lista de marcações');
+        close.textContent = '×';
+        close.addEventListener('click', () => {
+            setActiveCategoryListId('');
+            renderCategoryListPopup();
+        });
+        header.append(headingCopy, close);
+
+        const intro = document.createElement('p');
+        intro.className = 'interactive-map-category-popup__intro';
+        intro.textContent = categoryMarkers.length
+            ? 'Selecione um local para ir direto à marcação no mapa.'
+            : 'Ainda não há marcações cadastradas nesta categoria.';
+
+        const list = document.createElement('div');
+        list.className = 'interactive-map-category-popup__list';
+
+        const duplicateCounts = new Map();
+        categoryMarkers.forEach(marker => {
+            const duplicateKey = `${getCategoryListMarkerTitle(marker, category)}:${marker.floor}`;
+            duplicateCounts.set(duplicateKey, (duplicateCounts.get(duplicateKey) || 0) + 1);
+        });
+        const duplicateOccurrences = new Map();
+
+        categoryMarkers.forEach(marker => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = 'interactive-map-category-popup__item';
+            item.style.setProperty('--marker-color', category.color || '#65c7ff');
+
+            const swatch = document.createElement('span');
+            swatch.className = 'interactive-map-category-popup__swatch';
+            swatch.appendChild(createCategorySymbol(category, 'interactive-map-category-popup__symbol'));
+
+            const copy = document.createElement('span');
+            copy.className = 'interactive-map-category-popup__copy';
+            const markerTitle = document.createElement('strong');
+            markerTitle.textContent = getCategoryListMarkerTitle(marker, category);
+            const floorLabel = document.createElement('span');
+            const duplicateKey = `${markerTitle.textContent}:${marker.floor}`;
+            const occurrence = (duplicateOccurrences.get(duplicateKey) || 0) + 1;
+            duplicateOccurrences.set(duplicateKey, occurrence);
+            const duplicateSuffix = duplicateCounts.get(duplicateKey) > 1 ? ` · Ponto ${occurrence}` : '';
+            floorLabel.textContent = `Andar ${getFloorLabel(marker.floor)}${duplicateSuffix}`;
+            copy.append(markerTitle, floorLabel);
+
+            const arrow = document.createElement('span');
+            arrow.className = 'interactive-map-category-popup__arrow';
+            arrow.setAttribute('aria-hidden', 'true');
+            arrow.textContent = '→';
+            item.append(swatch, copy, arrow);
+            item.setAttribute('aria-label', `Ir para ${markerTitle.textContent}, andar ${getFloorLabel(marker.floor)}`);
+            item.addEventListener('click', () => {
+                selectedMarker = marker;
+                selectedMarkerMediaOverride = null;
+                selectedMarkerDetailsOverride = null;
+                if(floor !== marker.floor) setFloor(marker.floor, false);
+                centerAt(marker.positionX, marker.positionY, 1);
+                renderSelection();
+            });
+            list.appendChild(item);
+        });
+
+        elements.categoryPopup.style.setProperty('--marker-color', category.color || '#65c7ff');
+        elements.categoryPopup.replaceChildren(header, intro, list);
+        elements.categoryPopup.hidden = false;
+    }
+
     function renderCategoryFilters(){
         if(!elements.categories) return;
+        hideFilterTooltip();
         const normalizedQuery = normalize(query);
         if(elements.filterActions) elements.filterActions.hidden = Boolean(normalizedQuery);
         elements.categories.classList.toggle('is-search-results', Boolean(normalizedQuery));
@@ -300,6 +486,7 @@
                 else hiddenCategories.add(category.id);
                 saveHiddenCategories();
                 selectedMarker = null;
+                syncCategoryListPopupWithFilters();
                 render();
             });
 
@@ -316,6 +503,10 @@
             count.textContent = `${markers.filter(marker => marker.categoryId === category.id).length} marcações`;
             copy.append(name, count);
             label.append(input, swatch, copy);
+            label.addEventListener('pointerenter', () => showFilterTooltip(label, name, category));
+            label.addEventListener('pointerleave', hideFilterTooltip);
+            label.addEventListener('focusin', () => showFilterTooltip(label, name, category));
+            label.addEventListener('focusout', hideFilterTooltip);
             fragment.appendChild(label);
         });
         elements.categories.replaceChildren(fragment);
@@ -902,11 +1093,20 @@
         const path = `/mapa-interativo/${getMarkerShareSlug(marker)}`;
         history.pushState(null, '', path);
         const url = new URL(path, location.origin).href;
+        await copyTextToClipboard(url);
+        button.textContent = 'Link copiado';
+        window.setTimeout(() => {
+            if(button.isConnected) button.textContent = 'Criar Link';
+        }, 1800);
+    }
+
+    async function copyTextToClipboard(value){
+        const text = String(value || '');
         try{
-            await navigator.clipboard.writeText(url);
+            await navigator.clipboard.writeText(text);
         }catch(error){
             const field = document.createElement('textarea');
-            field.value = url;
+            field.value = text;
             field.style.position = 'fixed';
             field.style.opacity = '0';
             document.body.appendChild(field);
@@ -914,10 +1114,13 @@
             document.execCommand('copy');
             field.remove();
         }
-        button.textContent = 'Link copiado';
-        window.setTimeout(() => {
-            if(button.isConnected) button.textContent = 'Criar Link';
-        }, 1800);
+    }
+
+    function showSharedLinkResult(url){
+        if(!elements.shareResult || !elements.shareResultUrl) return;
+        elements.shareResultUrl.value = String(url || '');
+        elements.shareResult.hidden = false;
+        requestAnimationFrame(() => elements.shareResultUrl.scrollLeft = 0);
     }
 
     function getShareCoordinates(position){
@@ -934,28 +1137,16 @@
         const path = `/mapa-interativo/${compactCoordinate}`;
         const url = new URL(path, location.origin);
         history.pushState(null, '', path);
-        try{
-            await navigator.clipboard.writeText(url.href);
-        }catch(error){
-            const field = document.createElement('textarea');
-            field.value = url.href;
-            field.style.position = 'fixed';
-            field.style.opacity = '0';
-            document.body.appendChild(field);
-            field.select();
-            document.execCommand('copy');
-            field.remove();
-        }
+        await copyTextToClipboard(url.href);
+        showSharedLinkResult(url.href);
         const label = elements.shareView.querySelector('span:last-child');
-        if(label) label.textContent = 'Link copiado';
+        if(label) label.textContent = 'Compartilhar visão';
         elements.shareView.classList.remove('is-placing');
-        window.setTimeout(() => {
-            if(label?.isConnected) label.textContent = 'Compartilhar visão';
-        }, 1800);
     }
 
     function toggleSharedPinPlacement(){
         placingSharedPin = !placingSharedPin;
+        if(placingSharedPin && elements.shareResult) elements.shareResult.hidden = true;
         elements.viewport.classList.toggle('is-placing-pin', placingSharedPin);
         elements.shareView.classList.toggle('is-placing', placingSharedPin);
         const label = elements.shareView.querySelector('span:last-child');
@@ -1292,6 +1483,7 @@
         renderMarkers();
         renderTerritory();
         renderDetails();
+        renderCategoryListPopup();
     }
 
     function renderSelection(){
@@ -1315,11 +1507,13 @@
         });
         elements.showAll.addEventListener('click', () => {
             hiddenCategories.clear();
+            setActiveCategoryListId('');
             saveHiddenCategories();
             render();
         });
         elements.hideAll.addEventListener('click', () => {
             hiddenCategories = new Set(categories.filter(category => !category.comingSoon).map(category => category.id));
+            setActiveCategoryListId('');
             saveHiddenCategories();
             selectedMarker = null;
             render();
@@ -1331,6 +1525,20 @@
         elements.floorDown.addEventListener('click', () => setFloor(floor + 1));
         elements.floorSelect.addEventListener('change', () => setFloor(elements.floorSelect.value));
         elements.shareView.addEventListener('click', toggleSharedPinPlacement);
+        elements.shareResultClose.addEventListener('click', () => {
+            elements.shareResult.hidden = true;
+        });
+        elements.shareResultCopy.addEventListener('click', async () => {
+            const url = elements.shareResultUrl.value;
+            if(!url) return;
+            await copyTextToClipboard(url);
+            elements.shareResultCopy.textContent = 'Copiado';
+            window.setTimeout(() => {
+                if(elements.shareResultCopy?.isConnected) elements.shareResultCopy.textContent = 'Copiar novamente';
+            }, 1400);
+        });
+        elements.shareResultUrl.addEventListener('click', () => elements.shareResultUrl.select());
+        elements.categories.addEventListener('scroll', hideFilterTooltip, { passive: true });
         elements.viewport.addEventListener('wheel', event => {
             event.preventDefault();
             setZoom(scale * (event.deltaY < 0 ? 1.14 : 0.88), event.clientX, event.clientY);
@@ -1406,6 +1614,43 @@
         };
         elements.detail.addEventListener('pointerup', stopDetailDrag);
         elements.detail.addEventListener('pointercancel', stopDetailDrag);
+        elements.categoryPopup.addEventListener('pointerdown', event => {
+            if(event.button !== 0 || !event.target.closest('.interactive-map-category-popup__header') || event.target.closest('button')) return;
+            const viewportRect = elements.viewport.getBoundingClientRect();
+            const popupRect = elements.categoryPopup.getBoundingClientRect();
+            categoryPopupDragging = true;
+            categoryPopupDragStart = {
+                pointerX: event.clientX,
+                pointerY: event.clientY,
+                left: popupRect.left - viewportRect.left,
+                top: popupRect.top - viewportRect.top
+            };
+            elements.categoryPopup.style.width = `${popupRect.width}px`;
+            elements.categoryPopup.style.left = `${categoryPopupDragStart.left}px`;
+            elements.categoryPopup.style.top = `${categoryPopupDragStart.top}px`;
+            elements.categoryPopup.style.right = 'auto';
+            elements.categoryPopup.style.bottom = 'auto';
+            elements.categoryPopup.classList.add('is-dragging');
+            elements.categoryPopup.setPointerCapture(event.pointerId);
+            event.preventDefault();
+        });
+        elements.categoryPopup.addEventListener('pointermove', event => {
+            if(!categoryPopupDragging || !categoryPopupDragStart) return;
+            const edgeGap = 8;
+            const maxLeft = Math.max(edgeGap, elements.viewport.clientWidth - elements.categoryPopup.offsetWidth - edgeGap);
+            const maxTop = Math.max(edgeGap, elements.viewport.clientHeight - elements.categoryPopup.offsetHeight - edgeGap);
+            const nextLeft = Math.min(maxLeft, Math.max(edgeGap, categoryPopupDragStart.left + event.clientX - categoryPopupDragStart.pointerX));
+            const nextTop = Math.min(maxTop, Math.max(edgeGap, categoryPopupDragStart.top + event.clientY - categoryPopupDragStart.pointerY));
+            elements.categoryPopup.style.left = `${nextLeft}px`;
+            elements.categoryPopup.style.top = `${nextTop}px`;
+        });
+        const stopCategoryPopupDrag = () => {
+            categoryPopupDragging = false;
+            categoryPopupDragStart = null;
+            elements.categoryPopup.classList.remove('is-dragging');
+        };
+        elements.categoryPopup.addEventListener('pointerup', stopCategoryPopupDrag);
+        elements.categoryPopup.addEventListener('pointercancel', stopCategoryPopupDrag);
         elements.viewport.addEventListener('click', event => {
             if(event.target === elements.viewport || event.target === elements.mapStage){
                 selectedMarker = null;
@@ -1414,8 +1659,13 @@
             }
         });
         window.addEventListener('resize', () => {
-            if(!byId('content-mapa-interativo')?.hidden) resetView();
+            hideFilterTooltip();
+            if(!byId('content-mapa-interativo')?.hidden){
+                resetCategoryListPopupPosition();
+                resetView();
+            }
         });
+        window.addEventListener('scroll', hideFilterTooltip, { passive: true });
     }
 
     async function loadData(){
@@ -1466,6 +1716,9 @@
             markers: byId('interactive-map-markers'),
             labels: byId('interactive-map-labels'),
             territory: byId('interactive-map-territory'),
+            categoryPopup: byId('interactive-map-category-popup'),
+            filterTooltip: byId('interactive-map-filter-tooltip'),
+            filterTooltipLabel: byId('interactive-map-filter-tooltip-label'),
             detail: byId('interactive-map-detail'),
             summary: byId('interactive-map-summary'),
             zoomIn: byId('interactive-map-zoom-in'),
@@ -1477,6 +1730,10 @@
             floorValue: byId('interactive-map-floor-value'),
             floorSelect: byId('interactive-map-floor-select'),
             shareView: byId('interactive-map-share-view'),
+            shareResult: byId('interactive-map-share-result'),
+            shareResultClose: byId('interactive-map-share-result-close'),
+            shareResultUrl: byId('interactive-map-share-result-url'),
+            shareResultCopy: byId('interactive-map-share-result-copy'),
             status: byId('interactive-map-status')
         });
     }
@@ -1487,6 +1744,9 @@
         loadingPromise = (async () => {
             cacheElements();
             if(!elements.viewport) return;
+            if(elements.filterTooltip?.parentElement !== document.body){
+                document.body.appendChild(elements.filterTooltip);
+            }
             readHiddenCategories();
             await loadData();
             FLOOR_CONFIG.forEach(config => {

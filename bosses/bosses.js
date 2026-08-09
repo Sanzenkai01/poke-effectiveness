@@ -745,9 +745,9 @@ const hoopaPortalsData = [
     image: 'mega-chimeco.png',
     tutorialUrl: 'https://www.youtube.com/watch?v=kUKD74wWauQ',
     locationImage: 'localizações/chimecho.png',
-    description: 'Boss Psychic e Steel com moveset Psychic. Priorize speedsters Dark, Ghost e picks com passiva contra Steel.',
+    description: 'Boss Psychic e Steel com moveset Steel. Priorize speedsters Dark, Ghost e picks com passiva contra Steel.',
     types: ['psychic','steel'],
-    moveType: 'psychic',
+    moveType: 'steel',
     clans: {
       instinct: {
         label: 'Instinct',

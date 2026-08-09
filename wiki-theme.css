@@ -3627,3 +3627,400 @@ body.home-view > main > .home-landing {
   background: rgba(var(--search-hover-rgb, 104, 190, 255), 0.1) !important;
   box-shadow: inset 3px 0 0 rgba(var(--search-hover-rgb, 104, 190, 255), 0.68) !important;
 }
+
+/* ========================================================================== */
+/* Paleta neutra compartilhada                                                */
+/* A Pokédex define o tom visual; cores fortes ficam reservadas à semântica. */
+/* ========================================================================== */
+
+:root {
+  --wiki-accent: #aeb6bd !important;
+  --wiki-accent-soft: rgba(174, 182, 189, 0.12) !important;
+  --wiki-link: #bdc5cc !important;
+  --ps-green: #aeb6bd !important;
+  --ps-blue: #aeb6bd !important;
+  --ps-gold: #c2c8cd !important;
+  --ps-green-soft: rgba(174, 182, 189, 0.12) !important;
+  --ps-blue-soft: rgba(174, 182, 189, 0.1) !important;
+  --ps-gold-soft: rgba(194, 200, 205, 0.11) !important;
+  --ps-glow-green: rgba(174, 182, 189, 0.1) !important;
+  --ps-glow-blue: rgba(174, 182, 189, 0.1) !important;
+  --remake-accent: #aeb6bd !important;
+  --remake-accent-soft: rgba(174, 182, 189, 0.12) !important;
+}
+
+body[data-active-tab],
+body[data-initial-boss-mode] {
+  --module-accent: #aeb6bd !important;
+  --module-accent-rgb: 174, 182, 189 !important;
+  --module-accent-alt: #c8ced3 !important;
+  --module-accent-alt-rgb: 200, 206, 211 !important;
+}
+
+[id^="tab-"] {
+  --tab-accent: #aeb6bd !important;
+  --tab-accent-strong: #d0d5d9 !important;
+  --tab-accent-rgb: 174, 182, 189 !important;
+}
+
+::selection {
+  color: #fff;
+  background: rgba(174, 182, 189, 0.28);
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--wiki-accent);
+}
+
+.app-main :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  border-color: #737d86 !important;
+  box-shadow: 0 0 0 2px rgba(174, 182, 189, 0.13) !important;
+}
+
+.header #home-btn.wiki-topbar__brand:hover,
+.header button:hover,
+.header button:focus-visible {
+  border-color: rgba(174, 182, 189, 0.52) !important;
+  color: var(--wiki-text) !important;
+  background: rgba(174, 182, 189, 0.1) !important;
+  box-shadow: inset 3px 0 0 rgba(174, 182, 189, 0.62) !important;
+}
+
+.planner-stage-chip[data-state="active"],
+.planner-source-filter[data-active="true"],
+.planner-clan-filter[data-active="true"],
+.planner-subtab[data-active="true"] {
+  border-color: rgba(174, 182, 189, 0.48) !important;
+  color: #e2e6e9 !important;
+  background: rgba(174, 182, 189, 0.12) !important;
+}
+
+.planner-stage-chip[data-state="active"] .planner-stage-chip__index {
+  border-color: rgba(174, 182, 189, 0.54) !important;
+  color: #f0f2f4 !important;
+  background: rgba(174, 182, 189, 0.18) !important;
+}
+
+.sidebar-sublink,
+.site-global-search__result {
+  --sidebar-hover-rgb: 174, 182, 189 !important;
+  --sidebar-hover-text: #e4e8eb !important;
+  --search-hover-rgb: 174, 182, 189 !important;
+}
+
+.sidebar-quick-link:hover,
+.sidebar-quick-link:focus-visible,
+#content-pokemons .pokemon-catalog-pagination__btn:hover:not(:disabled),
+#content-pokemons .pokemon-catalog-pagination__btn:focus-visible:not(:disabled) {
+  border-color: rgba(174, 182, 189, 0.5) !important;
+  color: #e2e6e9 !important;
+  background: rgba(174, 182, 189, 0.1) !important;
+  box-shadow: inset 2px 0 0 rgba(174, 182, 189, 0.62) !important;
+}
+
+.site-global-search__result:hover,
+.site-global-search__result:focus-visible,
+.site-global-search__result[data-active="true"] {
+  border-color: rgba(174, 182, 189, 0.48) !important;
+  background: rgba(174, 182, 189, 0.1) !important;
+  box-shadow: inset 3px 0 0 rgba(174, 182, 189, 0.64) !important;
+}
+
+/* Controles de navegação e ações comuns não recebem uma cor por página. */
+.app-main :where(
+  .catch-action-button,
+  .fossil-location-btn,
+  .hunt-builder-action,
+  .interactive-map-control,
+  .interactive-map-view-share,
+  .liga-pokemon-map-btn,
+  .liga-pokemon-section__map-btn,
+  .pokemon-filter-clear,
+  .profession-back-btn,
+  .profession-choice-card,
+  .reset-button,
+  .rotom-phone-reset,
+  .rotom-phone-search__clear,
+  .slowpoke-well-map-link,
+  .times-team-builder-cta__button,
+  .training-info-button,
+  .training-stepper-btn
+) {
+  border-color: var(--wiki-border) !important;
+  color: var(--wiki-text) !important;
+  background: #1b2024 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.app-main :where(
+  .catch-action-button,
+  .fossil-location-btn,
+  .hunt-builder-action,
+  .interactive-map-control,
+  .interactive-map-view-share,
+  .liga-pokemon-map-btn,
+  .liga-pokemon-section__map-btn,
+  .pokemon-filter-clear,
+  .profession-back-btn,
+  .profession-choice-card,
+  .reset-button,
+  .rotom-phone-reset,
+  .rotom-phone-search__clear,
+  .slowpoke-well-map-link,
+  .times-team-builder-cta__button,
+  .training-info-button,
+  .training-stepper-btn
+):hover,
+.app-main :where(
+  .catch-action-button,
+  .fossil-location-btn,
+  .hunt-builder-action,
+  .interactive-map-control,
+  .interactive-map-view-share,
+  .liga-pokemon-map-btn,
+  .liga-pokemon-section__map-btn,
+  .pokemon-filter-clear,
+  .profession-back-btn,
+  .profession-choice-card,
+  .reset-button,
+  .rotom-phone-reset,
+  .rotom-phone-search__clear,
+  .slowpoke-well-map-link,
+  .times-team-builder-cta__button,
+  .training-info-button,
+  .training-stepper-btn
+):focus-visible {
+  border-color: #65717b !important;
+  color: #fff !important;
+  background: #252b30 !important;
+  box-shadow: inset 3px 0 0 #aeb6bd !important;
+}
+
+/* Módulos antigos ainda expõem canais cromáticos próprios. */
+.liga-pokemon-shell,
+body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
+  --liga-gold: 174, 182, 189 !important;
+  --liga-blue: 159, 169, 178 !important;
+}
+
+.police-operation-shell,
+body[data-active-tab="police-operation"] #content-police-operation {
+  --police-gold: 184, 191, 197 !important;
+  --police-blue: 159, 169, 178 !important;
+}
+
+.professions-shell,
+body[data-active-tab="profissoes"] #content-profissoes {
+  --profession-aqua: 159, 169, 178 !important;
+  --profession-gold: 184, 191, 197 !important;
+  --profession-rose: 174, 182, 189 !important;
+}
+
+.rotom-phone-shell,
+body[data-active-tab="rotom-phone"] #content-rotom-phone {
+  --rotom-blue: 159, 169, 178 !important;
+}
+
+.slowpoke-well-shell,
+body[data-active-tab="slowpoke-well"] #content-slowpoke-well {
+  --slowpoke-cyan: 159, 169, 178 !important;
+  --slowpoke-pink: 184, 191, 197 !important;
+  --slowpoke-leaf: 174, 182, 189 !important;
+}
+
+.interactive-map-shell {
+  --map-accent: #aeb6bd !important;
+}
+
+body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
+  background-image: none !important;
+}
+
+body[data-active-tab="bosses"] .bosses-shell,
+body[data-initial-boss-mode] .bosses-shell {
+  border-color: var(--wiki-border) !important;
+  background: var(--wiki-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-active-tab="bosses"] .bosses-shell :where(.bosses-hero, .bosses-copy, .speedster-search-panel),
+body[data-initial-boss-mode] .bosses-shell :where(.bosses-hero, .bosses-copy, .speedster-search-panel) {
+  border-color: var(--wiki-border) !important;
+  background: var(--wiki-surface-raised) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+body[data-active-tab="bosses"] .bosses-shell .bosses-hero,
+body[data-initial-boss-mode] .bosses-shell .bosses-hero,
+#content-bosses .bosses-hero {
+  background: #111416 !important;
+  background-image: none !important;
+}
+
+/* ========================================================================== */
+/* Superficies aninhadas: conserva a secao e elimina apenas a caixa repetida. */
+/* ========================================================================== */
+
+body[data-active-tab="bosses"] .bosses-shell .bosses-copy,
+body[data-initial-boss-mode] .bosses-shell .bosses-copy,
+#content-bosses .bosses-copy,
+.catch-hero__copy,
+#content-effectiveness .types-hero__copy,
+#content-effectiveness .search-wrapper,
+.team-builder-picker .team-builder-filters,
+.catch-panel .catch-field:not(.catch-variant-group),
+.boost-search-panel,
+.catch-search-panel {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+body[data-active-tab="bosses"] .bosses-shell .bosses-copy,
+body[data-initial-boss-mode] .bosses-shell .bosses-copy,
+#content-bosses .bosses-copy,
+.catch-hero__copy,
+#content-effectiveness .types-hero__copy {
+  padding: 0.4rem 0 !important;
+}
+
+#content-effectiveness .search-wrapper,
+.team-builder-picker .team-builder-filters,
+.catch-panel .catch-field:not(.catch-variant-group),
+.boost-search-panel,
+.catch-search-panel {
+  padding: 0 !important;
+}
+
+/* A busca de chefes funciona melhor como um unico painel compacto e centrado. */
+.bosses-shell .speedster-search-panel.speedster-search-panel--inline {
+  width: min(100%, 520px);
+  max-width: 520px;
+  padding: 0.85rem 1rem 1rem !important;
+  border: 1px solid var(--wiki-border) !important;
+  border-radius: 6px !important;
+  background: var(--wiki-surface-raised) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.bosses-shell .speedster-search-panel--inline .speedster-search-label {
+  display: block;
+  text-align: center;
+}
+
+/* Tooltips globais seguem a paleta grafite da Wiki, sem o azul legado. */
+.header-visit-counter .site-visit-counter__hover,
+.site-visit-counter__hover--portal,
+.streamer-rat-tooltip {
+  border: 1px solid #394047 !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #171b1f, #101316) !important;
+  background-image: linear-gradient(180deg, #171b1f, #101316) !important;
+  color: #b8c0c7 !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38) !important;
+}
+
+.site-visit-counter__hover::before {
+  border-color: #394047 !important;
+  background: #171b1f !important;
+}
+
+.site-visit-counter__hover-title,
+.streamer-rat-tooltip__title {
+  color: #f1f3f4 !important;
+}
+
+.site-visit-counter__hover-text,
+.streamer-rat-tooltip__detail {
+  color: #aeb6bd !important;
+}
+
+.site-visit-counter__hover-started,
+.streamer-rat-tooltip__status {
+  color: #d8dde1 !important;
+}
+
+.streamer-rat-tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1500;
+  display: grid;
+  gap: 0.38rem;
+  width: min(19rem, calc(100vw - 1.5rem));
+  max-width: min(19rem, calc(100vw - 1.5rem));
+  padding: 0.78rem 0.88rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-0.35rem);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.streamer-rat-tooltip[hidden] {
+  display: none !important;
+}
+
+.streamer-rat-tooltip[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.streamer-rat-tooltip::before {
+  content: "";
+  position: absolute;
+  left: var(--streamer-rat-tooltip-arrow-left, 50%);
+  width: 0.68rem;
+  height: 0.68rem;
+  background: #171b1f;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.streamer-rat-tooltip[data-placement="bottom"]::before {
+  top: -0.38rem;
+  border-left: 1px solid #394047;
+  border-top: 1px solid #394047;
+}
+
+.streamer-rat-tooltip[data-placement="top"]::before {
+  bottom: -0.38rem;
+  border-right: 1px solid #394047;
+  border-bottom: 1px solid #394047;
+}
+
+.streamer-rat-tooltip__title,
+.streamer-rat-tooltip__status,
+.streamer-rat-tooltip__detail {
+  display: block;
+}
+
+.streamer-rat-tooltip__title {
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.streamer-rat-tooltip__status {
+  padding-bottom: 0.38rem;
+  border-bottom: 1px solid #2b3137;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.streamer-rat-tooltip__detail {
+  font-size: 0.69rem;
+}
+
+/* Tipos, clãs, tiers, alertas, erros e estados concluídos mantêm suas cores. */

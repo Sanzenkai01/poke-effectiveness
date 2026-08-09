@@ -53,9 +53,28 @@
               <button id="interactive-map-zoom-in" class="interactive-map-control" type="button" aria-label="Aumentar zoom">+</button>
             </div>
 
+            <aside id="interactive-map-share-result" class="interactive-map-share-result" aria-live="polite" hidden>
+              <div class="interactive-map-share-result__header">
+                <div>
+                  <span class="interactive-map-share-result__eyebrow">Link gerado</span>
+                  <strong>Copiado para a área de transferência</strong>
+                </div>
+                <button id="interactive-map-share-result-close" class="interactive-map-share-result__close" type="button" aria-label="Fechar link compartilhado">×</button>
+              </div>
+              <div class="interactive-map-share-result__field">
+                <input id="interactive-map-share-result-url" type="text" readonly aria-label="Link compartilhado gerado">
+                <button id="interactive-map-share-result-copy" type="button">Copiar novamente</button>
+              </div>
+            </aside>
+
+            <aside id="interactive-map-category-popup" class="interactive-map-category-popup" aria-labelledby="interactive-map-category-popup-title" hidden></aside>
             <aside id="interactive-map-detail" class="interactive-map-detail" hidden></aside>
             <div id="interactive-map-status" class="interactive-map-status" aria-live="polite">Carregando mapa...</div>
           </section>
         </div>
+      </div>
+      <div id="interactive-map-filter-tooltip" class="interactive-map-filter-tooltip" role="tooltip" hidden>
+        <span>Filtro do mapa</span>
+        <strong id="interactive-map-filter-tooltip-label"></strong>
       </div>
     </div>

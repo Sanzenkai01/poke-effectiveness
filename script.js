@@ -351,13 +351,13 @@ let globalSearchRenderTimer = 0;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260808c';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260808d';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260808c';
-const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260802f';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260809e';
+const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260809e';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260802ah';
+const PANEL_FRAGMENT_VERSION = '20260809e';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -478,7 +478,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260808b';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260718e';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260808a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
@@ -15900,19 +15900,205 @@ const playStreamerRatAlertSound = typeof sharedStreamerCatalog.playStreamerRatAl
 const triggerStreamerRatAlert = typeof sharedStreamerCatalog.triggerStreamerRatAlert === 'function'
     ? sharedStreamerCatalog.triggerStreamerRatAlert
     : playStreamerRatAlertSound;
+let streamerRatTooltipSurface = null;
+let streamerRatTooltipActiveTrigger = null;
+let streamerRatTooltipHideTimer = 0;
+let streamerRatTooltipGlobalListenersBound = false;
+
+function ensureStreamerRatTooltipSurface(){
+    if(streamerRatTooltipSurface?.isConnected) return streamerRatTooltipSurface;
+
+    const tooltip = document.createElement('div');
+    tooltip.id = 'streamer-rat-tooltip';
+    tooltip.className = 'streamer-rat-tooltip';
+    tooltip.hidden = true;
+    tooltip.dataset.open = 'false';
+    tooltip.dataset.placement = 'bottom';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(tooltip);
+    streamerRatTooltipSurface = tooltip;
+    return tooltip;
+}
+
+function clearStreamerRatTooltipHideTimer(){
+    if(!streamerRatTooltipHideTimer) return;
+    window.clearTimeout(streamerRatTooltipHideTimer);
+    streamerRatTooltipHideTimer = 0;
+}
+
+function renderStreamerRatTooltipContent(trigger){
+    const tooltip = ensureStreamerRatTooltipSurface();
+    const title = document.createElement('strong');
+    const status = document.createElement('span');
+    const detail = document.createElement('span');
+
+    title.className = 'streamer-rat-tooltip__title';
+    title.textContent = 'Timer do Rattata';
+    status.className = 'streamer-rat-tooltip__status';
+    status.textContent = String(trigger?.dataset?.ratTooltipMessage || trigger?.textContent || '').trim();
+    detail.className = 'streamer-rat-tooltip__detail';
+    detail.textContent = 'Estimativa sincronizada com os alertas do Rattata. A contagem pode ser consultada mesmo quando o texto do topo estiver cortado.';
+    tooltip.replaceChildren(title, status, detail);
+}
+
+function positionStreamerRatTooltip(){
+    const trigger = streamerRatTooltipActiveTrigger;
+    const tooltip = streamerRatTooltipSurface;
+    if(!(trigger instanceof HTMLElement) || !(tooltip instanceof HTMLElement) || !trigger.isConnected){
+        hideStreamerRatTooltip();
+        return;
+    }
+
+    tooltip.hidden = false;
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.left = '0px';
+    tooltip.style.top = '0px';
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportMargin = 12;
+    const gap = 12;
+    const availableBelow = window.innerHeight - triggerRect.bottom;
+    const availableAbove = triggerRect.top;
+    const placeBelow = availableBelow >= tooltipRect.height + gap || availableBelow >= availableAbove;
+    const maxLeft = Math.max(viewportMargin, window.innerWidth - tooltipRect.width - viewportMargin);
+    const left = Math.min(
+        Math.max(triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2), viewportMargin),
+        maxLeft
+    );
+    const preferredTop = placeBelow
+        ? triggerRect.bottom + gap
+        : triggerRect.top - tooltipRect.height - gap;
+    const maxTop = Math.max(viewportMargin, window.innerHeight - tooltipRect.height - viewportMargin);
+    const top = Math.min(Math.max(preferredTop, viewportMargin), maxTop);
+    const anchorX = triggerRect.left + (triggerRect.width / 2);
+    const arrowLeft = Math.min(
+        Math.max(anchorX - left, 18),
+        Math.max(18, tooltipRect.width - 18)
+    );
+
+    tooltip.dataset.placement = placeBelow ? 'bottom' : 'top';
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+    tooltip.style.setProperty('--streamer-rat-tooltip-arrow-left', `${Math.round(arrowLeft)}px`);
+    tooltip.style.visibility = '';
+}
+
+function showStreamerRatTooltip(trigger){
+    if(!(trigger instanceof HTMLElement) || !trigger.isConnected) return;
+
+    clearStreamerRatTooltipHideTimer();
+    if(streamerRatTooltipActiveTrigger && streamerRatTooltipActiveTrigger !== trigger){
+        streamerRatTooltipActiveTrigger.setAttribute('aria-expanded', 'false');
+        streamerRatTooltipActiveTrigger.removeAttribute('aria-describedby');
+    }
+    streamerRatTooltipActiveTrigger = trigger;
+
+    const tooltip = ensureStreamerRatTooltipSurface();
+    renderStreamerRatTooltipContent(trigger);
+    tooltip.hidden = false;
+    tooltip.dataset.open = 'false';
+    tooltip.setAttribute('aria-hidden', 'false');
+    trigger.setAttribute('aria-expanded', 'true');
+    trigger.setAttribute('aria-describedby', tooltip.id);
+    positionStreamerRatTooltip();
+
+    window.requestAnimationFrame(() => {
+        if(streamerRatTooltipActiveTrigger === trigger){
+            tooltip.dataset.open = 'true';
+        }
+    });
+}
+
+function hideStreamerRatTooltip(trigger = null){
+    if(trigger && streamerRatTooltipActiveTrigger && streamerRatTooltipActiveTrigger !== trigger) return;
+
+    clearStreamerRatTooltipHideTimer();
+    const activeTrigger = streamerRatTooltipActiveTrigger;
+    streamerRatTooltipActiveTrigger = null;
+    if(activeTrigger instanceof HTMLElement){
+        activeTrigger.setAttribute('aria-expanded', 'false');
+        activeTrigger.removeAttribute('aria-describedby');
+    }
+    if(!(streamerRatTooltipSurface instanceof HTMLElement)) return;
+
+    streamerRatTooltipSurface.dataset.open = 'false';
+    streamerRatTooltipSurface.setAttribute('aria-hidden', 'true');
+    streamerRatTooltipHideTimer = window.setTimeout(() => {
+        if(streamerRatTooltipSurface?.dataset.open === 'true') return;
+        streamerRatTooltipSurface.hidden = true;
+    }, 160);
+}
+
+function scheduleStreamerRatTooltipHide(trigger){
+    clearStreamerRatTooltipHideTimer();
+    streamerRatTooltipHideTimer = window.setTimeout(() => hideStreamerRatTooltip(trigger), 120);
+}
+
+function bindStreamerRatTooltipGlobalListeners(){
+    if(streamerRatTooltipGlobalListenersBound) return;
+    streamerRatTooltipGlobalListenersBound = true;
+
+    window.addEventListener('resize', positionStreamerRatTooltip);
+    window.addEventListener('scroll', positionStreamerRatTooltip, true);
+    document.addEventListener('pointerdown', (event) => {
+        const target = event.target;
+        if(
+            streamerRatTooltipActiveTrigger
+            && target instanceof Node
+            && !streamerRatTooltipActiveTrigger.contains(target)
+            && !(streamerRatTooltipSurface instanceof HTMLElement && streamerRatTooltipSurface.contains(target))
+        ){
+            hideStreamerRatTooltip();
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if(event.key === 'Escape') hideStreamerRatTooltip();
+    });
+}
+
+function bindStreamerRatTooltip(trigger){
+    if(!(trigger instanceof HTMLElement) || trigger.dataset.ratTooltipBound === 'true') return;
+    trigger.dataset.ratTooltipBound = 'true';
+    trigger.setAttribute('aria-expanded', 'false');
+    bindStreamerRatTooltipGlobalListeners();
+
+    trigger.addEventListener('mouseenter', () => showStreamerRatTooltip(trigger));
+    trigger.addEventListener('mouseleave', () => scheduleStreamerRatTooltipHide(trigger));
+    trigger.addEventListener('focus', () => showStreamerRatTooltip(trigger));
+    trigger.addEventListener('blur', () => scheduleStreamerRatTooltipHide(trigger));
+    trigger.addEventListener('click', () => {
+        const touchLayout = window.matchMedia?.('(hover: none)').matches;
+        if(touchLayout && streamerRatTooltipActiveTrigger === trigger && streamerRatTooltipSurface?.dataset.open === 'true'){
+            hideStreamerRatTooltip(trigger);
+            return;
+        }
+        showStreamerRatTooltip(trigger);
+    });
+}
+
 function setStreamerRatSummaryText(element, message, color = ''){
     if(!element) return;
     const fullMessage = String(message || '').trim();
     element.textContent = fullMessage;
     if(color) element.style.color = color;
     if(fullMessage){
-        element.title = fullMessage;
+        element.removeAttribute('title');
+        element.dataset.ratTooltipMessage = fullMessage;
         element.setAttribute('aria-label', fullMessage);
         if(!element.hasAttribute('tabindex')) element.tabIndex = 0;
+        bindStreamerRatTooltip(element);
+        if(streamerRatTooltipActiveTrigger === element){
+            renderStreamerRatTooltipContent(element);
+            positionStreamerRatTooltip();
+        }
     } else {
         element.removeAttribute('title');
+        delete element.dataset.ratTooltipMessage;
         element.removeAttribute('aria-label');
         element.removeAttribute('tabindex');
+        hideStreamerRatTooltip(element);
     }
 }
 function renderStaticRatSummary(containerEl, message, color = '#b6c2cf'){
@@ -19671,8 +19857,31 @@ function normalizeBoostLevel(value){
     return Math.max(0, Math.min(5, parsed));
 }
 
+function mergeBoostMorpekoEntries(entries){
+    const morpekoFormNames = new Set(['full-belly morpeko', 'hangry morpeko']);
+    const morpekoEntries = entries.filter(entry => morpekoFormNames.has(normalizePokemonSearchText(entry?.name)));
+    if(!morpekoEntries.length) return entries;
+
+    const baseEntry = morpekoEntries.find(entry => normalizePokemonSearchText(entry.name) === 'full-belly morpeko')
+        || morpekoEntries[0];
+    const mergedMovesets = Array.from(new Set(
+        morpekoEntries.flatMap(entry => Array.isArray(entry.moveset) ? entry.moveset : [])
+    ));
+    const mergedMorpeko = {
+        ...baseEntry,
+        id: 'boost-morpeko',
+        name: 'Morpeko',
+        searchName: 'morpeko',
+        moveset: mergedMovesets
+    };
+
+    return entries
+        .filter(entry => !morpekoFormNames.has(normalizePokemonSearchText(entry?.name)))
+        .concat(mergedMorpeko);
+}
+
 function getBoostAvailablePokemonEntries(){
-    const combinedEntries = (Array.isArray(pokemonCatalogEntriesByVariant.default)
+    const combinedEntries = mergeBoostMorpekoEntries((Array.isArray(pokemonCatalogEntriesByVariant.default)
         ? pokemonCatalogEntriesByVariant.default
         : []
     ).filter(entry => (
@@ -19684,7 +19893,7 @@ function getBoostAvailablePokemonEntries(){
             !getPokemonEntrySpecialTags(entry).includes('pack')
             || normalizePokemonSearchText(entry.name) === 'ditto'
         )
-    ));
+    )));
 
     const seen = new Set();
     return combinedEntries
