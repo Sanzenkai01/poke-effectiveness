@@ -15938,7 +15938,7 @@ function renderStreamerRatTooltipContent(trigger){
     status.className = 'streamer-rat-tooltip__status';
     status.textContent = String(trigger?.dataset?.ratTooltipMessage || trigger?.textContent || '').trim();
     detail.className = 'streamer-rat-tooltip__detail';
-    detail.textContent = 'Estimativa sincronizada com os alertas do Rattata. A contagem pode ser consultada mesmo quando o texto do topo estiver cortado.';
+    detail.textContent = 'Estimativa sincronizada com os alertas do Rattata.';
     tooltip.replaceChildren(title, status, detail);
 }
 
@@ -26643,7 +26643,8 @@ window.addEventListener('popstate', () => {
 
     syncSidebarNavigationState();
 });
-
+
+
 // Inicializador do vídeo de treinamento — abre modal de vídeo do site (estilo Hoopa tutorials)
 function initTrainingVideo(){
     // Funcao auxiliar para abrir o modal com seguranca
