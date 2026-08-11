@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-11T21:00:37.926Z",
+  "updatedAt": "2026-08-11T21:25:44.556Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-11T21:00:18.910Z",
-    "endedAt": "2026-08-11T21:00:37.925Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-11T21:10:39.292Z",
+    "endedAt": "2026-08-11T21:25:44.556Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "dragonslayerpiva",
       "eaisantinho",
@@ -44,22 +44,30 @@
       "uguettolitz"
     ],
     "observedChannels": [
-      "eaisantinho"
+      "callmevitao_"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "callmevitao_"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "callmevitao_",
+        "messageAt": 1786483544442,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "eaisantinho",
+        "channel": "callmevitao_",
         "kind": "rattata-message",
-        "messageAt": 1786482037835,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1786483544442,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "eaisantinho",
-        "kind": "escape",
-        "messageAt": 1786482037835,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "callmevitao_",
+        "kind": "spawn",
+        "messageAt": 1786483544442,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -109,16 +117,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "eaisantinho",
-    "lastMessageAt": 1786482037835,
-    "expectedNextAt": 1786483237835,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-08-11T20:38:11Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1786482037925,
-    "persistedAt": 1786482037925
+    "channel": "callmevitao_",
+    "lastMessageAt": 1786483544442,
+    "expectedNextAt": 1786484804442,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1786483544555,
+    "persistedAt": 1786483544555
   },
   "timers": {
+    "callmevitao_": {
+      "channel": "callmevitao_",
+      "lastMessageAt": 1786483544442,
+      "expectedNextAt": 1786484804442,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1786483544555,
+      "persistedAt": 1786483544555
+    },
     "eaisantinho": {
       "channel": "eaisantinho",
       "lastMessageAt": 1786482037835,
@@ -127,7 +145,7 @@
       "streamStartedAt": "2026-08-11T20:38:11Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1786482037925,
-      "persistedAt": 1786482037925
+      "persistedAt": 1786482639292
     },
     "karlin_nara": {
       "channel": "karlin_nara",
@@ -137,17 +155,7 @@
       "streamStartedAt": "2026-08-11T16:04:45Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1786480765792,
-      "persistedAt": 1786482018909
-    },
-    "uguettolitz": {
-      "channel": "uguettolitz",
-      "lastMessageAt": 1786479611080,
-      "expectedNextAt": 1786480811080,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-08-11T15:31:25Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1786479611389,
-      "persistedAt": 1786482018909
+      "persistedAt": 1786482639292
     }
   }
 }
