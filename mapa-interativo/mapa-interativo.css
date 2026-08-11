@@ -642,12 +642,22 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   gap: 0.35rem;
 }
 
-.interactive-map-view-share {
+.interactive-map-share-tools {
   position: absolute;
   top: 0.7rem;
   left: 0.7rem;
   z-index: 34;
+  display: flex;
+  width: min(680px, calc(100% - 11rem));
+  min-width: 0;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.interactive-map-view-share {
+  position: static;
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 0.4rem;
   min-height: 2.35rem;
@@ -681,101 +691,62 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
 }
 
 .interactive-map-share-result {
-  position: absolute;
-  left: 0.7rem;
-  bottom: 0.7rem;
-  z-index: 35;
-  width: min(560px, calc(100% - 10rem));
-  padding: 0.8rem;
+  display: grid;
+  min-width: 0;
+  height: 2.35rem;
+  flex: 1 1 320px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.3rem 0.25rem 0.55rem;
   overflow: hidden;
-  border: 1px solid rgba(92, 224, 164, 0.48);
-  border-radius: 13px;
-  background:
-    radial-gradient(circle at 10% -30%, rgba(92, 224, 164, 0.2), transparent 45%),
-    rgba(6, 17, 25, 0.97);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.46);
-  color: #edfdf6;
-  backdrop-filter: blur(16px);
+  border: 1px solid rgba(154, 174, 190, 0.34);
+  border-radius: 9px;
+  background: rgba(10, 17, 24, 0.96);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  color: #edf4f8;
+  backdrop-filter: blur(12px);
 }
 
 .interactive-map-share-result[hidden] {
   display: none;
 }
 
-.interactive-map-share-result__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-bottom: 0.65rem;
-}
-
-.interactive-map-share-result__header > div {
-  display: grid;
-  gap: 0.1rem;
-}
-
-.interactive-map-share-result__eyebrow {
-  color: #74e4ae;
-  font-size: 0.61rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.interactive-map-share-result__header strong {
-  color: #effbf5;
-  font-size: 0.77rem;
+.interactive-map-share-result__icon {
+  color: #aeb6bd;
+  font-size: 0.78rem;
+  line-height: 1;
 }
 
 .interactive-map-share-result__close {
   display: grid;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 1.65rem;
+  height: 1.65rem;
   flex: 0 0 auto;
   padding: 0;
   place-items: center;
-  border: 1px solid rgba(160, 224, 195, 0.2);
+  border: 1px solid rgba(174, 182, 189, 0.22);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(237, 253, 246, 0.76);
+  color: rgba(237, 244, 248, 0.76);
   font-size: 1rem;
   cursor: pointer;
 }
 
-.interactive-map-share-result__field {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.5rem;
-}
-
-.interactive-map-share-result__field input {
+.interactive-map-share-result input {
   min-width: 0;
-  height: 2.35rem;
-  padding: 0 0.7rem;
-  border: 1px solid rgba(122, 199, 164, 0.24);
-  border-radius: 8px;
-  background: rgba(1, 8, 13, 0.72);
-  color: rgba(226, 247, 237, 0.82);
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(226, 235, 241, 0.84);
   font-size: 0.7rem;
   outline: none;
 }
 
-.interactive-map-share-result__field input:focus {
-  border-color: rgba(92, 224, 164, 0.68);
-  box-shadow: 0 0 0 3px rgba(92, 224, 164, 0.1);
-}
-
-.interactive-map-share-result__field button {
-  min-height: 2.35rem;
-  padding: 0 0.8rem;
-  border: 1px solid rgba(92, 224, 164, 0.38);
-  border-radius: 8px;
-  background: rgba(92, 224, 164, 0.1);
-  color: #eafff4;
-  font-size: 0.68rem;
-  font-weight: 850;
-  cursor: pointer;
+.interactive-map-share-result input:focus {
+  box-shadow: 0 0 0 2px rgba(174, 182, 189, 0.18);
 }
 
 .interactive-map-category-popup {
@@ -1183,15 +1154,8 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
     max-height: calc(100% - 8.2rem);
   }
 
-  .interactive-map-share-result {
-    right: 0.7rem;
-    bottom: 3.75rem;
-    left: 0.7rem;
-    width: auto;
-  }
-
-  .interactive-map-share-result__field {
-    grid-template-columns: 1fr;
+  .interactive-map-share-tools {
+    width: calc(100% - 10.5rem);
   }
 
   .interactive-map-view-share span:last-child {

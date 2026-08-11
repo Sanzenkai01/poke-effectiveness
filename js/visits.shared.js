@@ -81,7 +81,7 @@
     }
 
     function getCounterHoverText(){
-        return 'Cada navegador soma no maximo 1 acesso unico por 24h. Os acessos totais acumulam a soma de todos esses acessos unicos.';
+        return 'Cada navegador contabiliza no máximo 1 acesso único a cada 24 horas.';
     }
 
     function getCounterTooltipText(){
@@ -380,11 +380,9 @@
     function formatValues(dailyCount, totalCount, surface = ''){
         const normalized = normalizeCounts(dailyCount, totalCount);
         const safeDaily = normalized.daily;
-        const safeTotal = normalized.total;
         const startedLabel = getCounterStartedLabel();
-        const dailyDescription = safeDaily === 1 ? 'acesso unico hoje' : 'acessos unicos hoje';
-        const totalDescription = safeTotal === 1 ? 'acesso total' : 'acessos totais';
-        const counterHtml = `<span class="site-visit-counter__line"><span class="site-visit-counter__number">${safeDaily.toLocaleString('pt-BR')}</span> ${dailyDescription}</span><span class="site-visit-counter__line site-visit-counter__line--secondary"><span class="site-visit-counter__number">${safeTotal.toLocaleString('pt-BR')}</span> ${totalDescription}</span>`;
+        const dailyDescription = 'acessos únicos hoje';
+        const counterHtml = `<span class="site-visit-counter__line"><span class="site-visit-counter__number">${safeDaily.toLocaleString('pt-BR')}</span><span class="site-visit-counter__description">${dailyDescription}</span></span>`;
         const hoverHtml = getCounterTooltipMode(surface) === 'inline'
             ? buildCounterHoverHtml()
             : '';
@@ -392,7 +390,7 @@
         return {
             html: `${counterHtml}${hoverHtml}`,
             tooltipText: getCounterTooltipText(),
-            ariaLabel: `${safeDaily.toLocaleString('pt-BR')} ${dailyDescription}. ${safeTotal.toLocaleString('pt-BR')} ${totalDescription}. Contando desde o dia ${startedLabel}.`
+            ariaLabel: `${safeDaily.toLocaleString('pt-BR')} ${dailyDescription}. Contando desde o dia ${startedLabel}.`
         };
     }
 

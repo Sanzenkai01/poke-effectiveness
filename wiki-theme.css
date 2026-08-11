@@ -4023,4 +4023,60 @@ body[data-initial-boss-mode] .bosses-shell .bosses-copy,
   font-size: 0.69rem;
 }
 
+/* Restaura somente os textos que usavam o amarelo documental original. */
+:root {
+  --wiki-text-accent: #d7b85b;
+}
+
+.home-landing__eyebrow,
+.home-landing__quick-eyebrow,
+[class$="__eyebrow"],
+#content-pokemons .pokemon-filter-panel__eyebrow,
+.header #home-btn.wiki-topbar__brand:hover::after,
+.wiki-home__overline,
+.wiki-home__section-head span,
+.wiki-home__aside-label,
+:where(.speedster-search-panel, .boost-search-panel, .catch-search-panel) .speedster-search-label,
+.boss-map-dialog__heading span {
+  color: var(--wiki-text-accent) !important;
+}
+
+/* Modos sem busca nao reservam um espaco vazio depois do cabecalho. */
+.bosses-shell[data-search-enabled="false"] .bosses-header {
+  display: none !important;
+}
+
+/* O contador exibe somente o total diario, centralizado em duas linhas. */
+.header > .header-visit-counter .site-visit-counter__values {
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+.header > .header-visit-counter .site-visit-counter__line {
+  display: grid !important;
+  justify-items: center;
+  gap: 0.08rem;
+  text-align: center;
+}
+
+.header > .header-visit-counter .site-visit-counter__number,
+.header > .header-visit-counter .site-visit-counter__description {
+  display: block;
+}
+
+.header > .header-visit-counter .site-visit-counter__number {
+  font-size: 0.8rem !important;
+  line-height: 1;
+}
+
+.header > .header-visit-counter .site-visit-counter__description {
+  color: var(--wiki-muted);
+  font-size: 0.58rem;
+  line-height: 1.15;
+}
+
+.header > .header-visit-counter .site-visit-counter__line--secondary {
+  display: none !important;
+}
+
 /* Tipos, clãs, tiers, alertas, erros e estados concluídos mantêm suas cores. */

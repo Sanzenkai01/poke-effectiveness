@@ -10,7 +10,8 @@ const routes = [
     label: 'root',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' }
+      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' },
+      { pattern: /data-global-search-ready="true"/i, description: 'global search initialized' }
     ]
   },
   {
@@ -197,6 +198,17 @@ const routes = [
     checks: [
       { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
       { pattern: /data-boss-mode="hoopa"/i, description: 'hoopa boss mode' }
+    ]
+  },
+  {
+    path: '/hoopa/mega-absol',
+    label: 'hoopa-mega-absol',
+    checks: [
+      { pattern: /id="speedster-modal"[^>]*aria-hidden="false"|aria-hidden="false"[^>]*id="speedster-modal"/i, description: 'mega absol modal open' },
+      { pattern: /Picks para Mega Absol/i, description: 'mega absol recommendation target' },
+      { pattern: /speedster-reco-name[^>]*>Dedenne</i, description: 'instinct speedster recommendation' },
+      { pattern: /speedster-reco-name[^>]*>Dachsbun</i, description: 'mystic speedster recommendation' },
+      { pattern: /speedster-reco-name[^>]*>Ribombee</i, description: 'valor speedster recommendation' }
     ]
   },
   {

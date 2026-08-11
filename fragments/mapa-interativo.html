@@ -33,10 +33,18 @@
               </div>
             </div>
 
-            <button id="interactive-map-share-view" class="interactive-map-view-share" type="button" title="Copiar um link desta parte do mapa">
-              <span aria-hidden="true">📌</span>
-              <span>Compartilhar visão</span>
-            </button>
+            <div class="interactive-map-share-tools">
+              <button id="interactive-map-share-view" class="interactive-map-view-share" type="button" title="Copiar um link desta parte do mapa">
+                <span aria-hidden="true">📌</span>
+                <span>Compartilhar visão</span>
+              </button>
+
+              <aside id="interactive-map-share-result" class="interactive-map-share-result" aria-live="polite" hidden>
+                <span class="interactive-map-share-result__icon" aria-hidden="true">🔗</span>
+                <input id="interactive-map-share-result-url" type="text" readonly aria-label="Link compartilhado gerado">
+                <button id="interactive-map-share-result-close" class="interactive-map-share-result__close" type="button" aria-label="Ocultar link compartilhado">×</button>
+              </aside>
+            </div>
 
             <div class="interactive-map-floor-controls" aria-label="Selecionar andar">
               <button id="interactive-map-floor-up" class="interactive-map-control" type="button" aria-label="Subir um andar">↑</button>
@@ -52,20 +60,6 @@
               </button>
               <button id="interactive-map-zoom-in" class="interactive-map-control" type="button" aria-label="Aumentar zoom">+</button>
             </div>
-
-            <aside id="interactive-map-share-result" class="interactive-map-share-result" aria-live="polite" hidden>
-              <div class="interactive-map-share-result__header">
-                <div>
-                  <span class="interactive-map-share-result__eyebrow">Link gerado</span>
-                  <strong>Copiado para a área de transferência</strong>
-                </div>
-                <button id="interactive-map-share-result-close" class="interactive-map-share-result__close" type="button" aria-label="Fechar link compartilhado">×</button>
-              </div>
-              <div class="interactive-map-share-result__field">
-                <input id="interactive-map-share-result-url" type="text" readonly aria-label="Link compartilhado gerado">
-                <button id="interactive-map-share-result-copy" type="button">Copiar novamente</button>
-              </div>
-            </aside>
 
             <aside id="interactive-map-category-popup" class="interactive-map-category-popup" aria-labelledby="interactive-map-category-popup-title" hidden></aside>
             <aside id="interactive-map-detail" class="interactive-map-detail" hidden></aside>

@@ -8,9 +8,6 @@ function clearTabHighlights() {
     });
 }
 
-const INITIAL_INTERACTIVE_MAP_MARKER_SLUG = String(location.pathname || '')
-    .match(/\/mapa-interativo\/([a-z0-9][a-z0-9-]*)\/?$/i)?.[1] || '';
-
 function setActiveTabTheme(tabName) {
     if (document.body) {
         document.body.dataset.activeTab = tabName;
@@ -175,6 +172,7 @@ const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
 const sidebarGroupToggles = document.querySelectorAll('[data-sidebar-group-toggle]');
+const sidebarActionButtons = document.querySelectorAll('[data-nav-target], [data-nav-action]');
 const boundSidebarActionButtons = new WeakSet();
 const siteGlobalSearch = document.getElementById('site-global-search');
 const siteGlobalSearchInput = document.getElementById('site-global-search-input');
@@ -348,16 +346,17 @@ let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
+const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260808d';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260811e';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260809e';
-const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260809e';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260811e';
+const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260811e';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260809e';
+const PANEL_FRAGMENT_VERSION = '20260811e';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -477,7 +476,8 @@ const APP_ROUTE_ALIASES = {
     planner: { path: '/planejador', tab: 'bosses', bossMode: 'planner' },
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260808b';
+let initialRouteApplied = false;
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260811a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260808a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
@@ -3595,7 +3595,7 @@ function initializeSidebarNavigation(){
 
     window.addEventListener('bossmodechange', () => {
         syncSidebarNavigationState();
-        if(!getRequestedBossSlugFromPath()){
+        if(initialRouteApplied && !getRequestedBossSlugFromPath()){
             updateUrl();
         }
     });
@@ -3838,12 +3838,22 @@ function ensureGlobalSearchHydrated(){
     if(globalSearchHydrated) return Promise.resolve(globalSearchEntries);
     if(globalSearchHydrationPromise) return globalSearchHydrationPromise;
 
-    globalSearchHydrationPromise = Promise.allSettled([
-        ensureTypesDataLoaded(),
-        ensurePokemonCatalogLoaded(),
-        ensureTeamsCatalogLoaded(),
-        ensureBossesPageReady()
-    ]).then(() => {
+    const sourceLoaders = [
+        () => ensureTypesDataLoaded(),
+        () => ensurePokemonCatalogLoaded(),
+        () => ensureTeamsCatalogLoaded(),
+        () => ensureBossesPageReady()
+    ];
+    const loadWithTimeout = (loader) => Promise.race([
+        Promise.resolve().then(loader),
+        new Promise((resolve) => {
+            window.setTimeout(resolve, GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS);
+        })
+    ]);
+
+    globalSearchHydrationPromise = Promise.allSettled(
+        sourceLoaders.map(loadWithTimeout)
+    ).then(() => {
         setGlobalSearchEntries([
             ...getGlobalSearchStaticEntries(),
             ...buildGlobalSearchTypeEntries(),
@@ -4139,9 +4149,9 @@ function getVisibleGlobalSearchEntries(){
 function initializeGlobalSearch(){
     if(globalSearchInitialized || !siteGlobalSearch || !siteGlobalSearchInput || !siteGlobalSearchResults) return;
     globalSearchInitialized = true;
+    siteGlobalSearch.dataset.globalSearchReady = 'true';
     setGlobalSearchEntries([
-        ...getGlobalSearchStaticEntries(),
-        ...buildGlobalSearchStreamerEntries()
+        ...getGlobalSearchStaticEntries()
     ]);
 
     siteGlobalSearchInput.addEventListener('input', () => {
@@ -4161,6 +4171,11 @@ function initializeGlobalSearch(){
         if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length >= 2){
             renderGlobalSearchResults();
         }
+    });
+
+    siteGlobalSearchInput.addEventListener('search', () => {
+        globalSearchActiveIndex = -1;
+        renderGlobalSearchResults();
     });
 
     siteGlobalSearchInput.addEventListener('keydown', (event) => {
@@ -4194,7 +4209,13 @@ function initializeGlobalSearch(){
         if(siteGlobalSearch.contains(event.target)) return;
         hideGlobalSearchResults();
     });
+
+    window.setTimeout(() => {
+        ensureGlobalSearchHydrated().catch(console.error);
+    }, 0);
 }
+
+initializeGlobalSearch();
 
 function resolveCommunityTopicKey(topicKey){
     return COMMUNITY_FEED_TOPICS[topicKey] ? topicKey : 'all';
@@ -14895,7 +14916,7 @@ function showInteractiveMap(){
         return;
     }
     const requestedMarkerRoute = String(location.pathname || '').match(/\/mapa-interativo\/([a-z0-9][a-z0-9-]*)\/?$/i);
-    const requestedMarkerSlug = requestedMarkerRoute?.[1] || INITIAL_INTERACTIVE_MAP_MARKER_SLUG;
+    const requestedMarkerSlug = requestedMarkerRoute?.[1] || '';
     const requestedMarkerPath = requestedMarkerSlug ? `/mapa-interativo/${requestedMarkerSlug}` : '';
     if(contentInteractiveMap){
         contentInteractiveMap.dataset.requestedMarkerSlug = requestedMarkerSlug;
@@ -14915,6 +14936,12 @@ function showInteractiveMap(){
             : window.initInteractiveMapPage;
         if(typeof initializeMap !== 'function') throw new Error('Inicializador do mapa indisponivel.');
         return initializeMap()
+            .then(() => {
+                if(typeof window.resetInteractiveMapSession === 'function'){
+                    return window.resetInteractiveMapSession();
+                }
+                return undefined;
+            })
             .then(() => {
                 if(requestedMarkerPath && location.pathname !== requestedMarkerPath){
                     history.replaceState(history.state, '', `${requestedMarkerPath}${location.search}${location.hash}`);
@@ -18414,6 +18441,7 @@ async function showCommunity(){
 
 // Tentar carregar a aba primeiro pela query da URL; alternativa para localStorage
 function initTabFromUrl(){
+    initialRouteApplied = true;
     const params = new URLSearchParams(location.search);
     const pathRouteInfo = getRouteInfoFromPathname();
     const requestedPokemonFilters = getPokemonCatalogFiltersFromUrl();
@@ -26457,7 +26485,6 @@ function closePokemonDetailsModal(options = {}){
 }
 
 initializeSidebarNavigation();
-initializeGlobalSearch();
 
 // Sincronizar abertura/fechamento do modal com o historico do navegador (voltar/avancar)
 window.addEventListener('popstate', () => {

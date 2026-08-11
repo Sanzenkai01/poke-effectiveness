@@ -10986,6 +10986,37 @@ textarea:focus {
   text-align: center;
 }
 
+.horizons-overview__tutorial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.4rem;
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.055);
+  color: #f5f7fa;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.horizons-overview__tutorial:hover,
+.horizons-overview__tutorial:focus-visible {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.horizons-overview__tutorial img {
+  width: 1.35rem;
+  height: 1.35rem;
+  object-fit: contain;
+}
+
 .horizons-overview__title,
 .horizons-section-header__title {
   margin: 0;

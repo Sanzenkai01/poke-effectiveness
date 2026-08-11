@@ -668,10 +668,10 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], description: 'Tipo move: Bug.' },
-              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+              { name: 'Lurantis', image: 'lurantis.png', tier: 'excelente', types: ['grass'], moveType: 'bug', description: 'Tipo move: Bug.' },
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], moveType: 'fighting', description: 'Tipo move: Fighting.' }
             ]
           },
           {
@@ -680,8 +680,8 @@ const hoopaPortalsData = [
             bossTypes: ['dark'],
             bossImmunities: ['bug', 'fighting'],
             recommended: [
-              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -694,8 +694,8 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' },
-              { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], description: 'Tipo move: Fighting.' }
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Hawlucha', image: 'hawlucha.png', tier: 'excelente', types: ['fighting','flying'], moveType: 'fighting', description: 'Tipo move: Fighting.' }
             ]
           },
           {
@@ -704,7 +704,7 @@ const hoopaPortalsData = [
             bossTypes: ['dark'],
             bossImmunities: ['bug', 'fighting'],
             recommended: [
-              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Dachsbun', image: 'dachsbun.png', tier: 'excelente', types: ['fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -717,10 +717,10 @@ const hoopaPortalsData = [
             bossId: 'mega-absol',
             bossTypes: ['dark'],
             recommended: [
-              { name: 'Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-              { name: 'Shiny Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], description: 'Tipo move: Bug.' },
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
-              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], moveType: 'bug', description: 'Tipo move: Bug.' },
+              { name: 'Shiny Scyther', image: 'scyther.png', tier: 'excelente', types: ['bug','flying'], moveType: 'bug', description: 'Tipo move: Bug.' },
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' }
             ]
           },
           {
@@ -729,8 +729,8 @@ const hoopaPortalsData = [
             bossTypes: ['dark'],
             bossImmunities: ['bug', 'fighting'],
             recommended: [
-              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], description: 'Tipo move: Fairy.' },
-              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], description: 'Tipo move: Fairy.' }
+              { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'excelente', types: ['dark'], moveType: 'fairy', description: 'Tipo move: Fairy.' },
+              { name: 'Ribombee', image: 'Ribombee.png', tier: 'excelente', types: ['bug','fairy'], moveType: 'fairy', description: 'Tipo move: Fairy.' }
             ]
           }
         ]
@@ -2537,6 +2537,7 @@ const horizonsCategoriesData = Object.freeze({
     title: 'Silver',
     summary: 'Categoria duo do Horizons com a rota do Lado A já detalhada.',
     status: '',
+    tutorialUrl: 'https://youtu.be/AUYAvSpnFvo',
     pathSections: [],
     bosses: [],
     runs: horizonsSilverRunsData
@@ -12628,6 +12629,26 @@ function createHorizonsOverview(data, fallbackTitle = 'Horizons') {
   summary.className = 'horizons-overview__summary';
   summary.textContent = data?.summary || '';
   overviewCopy.append(eyebrow, title, summary);
+  if (data?.tutorialUrl) {
+    const tutorialButton = document.createElement('button');
+    tutorialButton.type = 'button';
+    tutorialButton.className = 'horizons-overview__tutorial';
+    const tutorialIcon = document.createElement('img');
+    tutorialIcon.src = resolveBossAssetSrc('youtube.png');
+    tutorialIcon.alt = '';
+    tutorialIcon.setAttribute('aria-hidden', 'true');
+    const tutorialLabel = document.createElement('span');
+    tutorialLabel.textContent = 'Ver tutorial';
+    tutorialButton.append(tutorialIcon, tutorialLabel);
+    tutorialButton.addEventListener('click', () => {
+      if (typeof window.openSiteYouTubeModal === 'function') {
+        window.openSiteYouTubeModal({ url: data.tutorialUrl, title: `Tutorial ${data?.title || fallbackTitle}` });
+        return;
+      }
+      window.open(data.tutorialUrl, '_blank', 'noopener,noreferrer');
+    });
+    overviewCopy.appendChild(tutorialButton);
+  }
   overview.appendChild(overviewCopy);
   return overview;
 }
@@ -12731,7 +12752,10 @@ function renderHorizonsCategoryGrid() {
     );
 
     if (run) {
-      wrap.appendChild(createHorizonsOverview(run, 'Rota'));
+      wrap.appendChild(createHorizonsOverview({
+        ...run,
+        tutorialUrl: activeCategory.tutorialUrl || run.tutorialUrl
+      }, 'Rota'));
       (run.pathSections || []).forEach((sectionData) => {
         wrap.appendChild(createHorizonsPathSection(sectionData));
         if (Array.isArray(sectionData.bossesAfter) && sectionData.bossesAfter.length) {

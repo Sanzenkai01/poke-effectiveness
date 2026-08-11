@@ -49,7 +49,7 @@
         pre: 1231,
         ace: 4000
     };
-    const FILTER_STORAGE_KEY = 'poke-interactive-map-hidden-categories-v1';
+    const LEGACY_FILTER_STORAGE_KEY = 'poke-interactive-map-hidden-categories-v1';
     const MAX_ZOOM = 3;
     const SHARE_GRID_SIZE = 1;
     const LEGACY_SHARE_GRID_SIZE = 32;
@@ -142,6 +142,8 @@
     let categoryPopupDragStart = null;
     let transformFrame = 0;
     let dragPreviewFrame = 0;
+    let viewportResizeFrame = 0;
+    let viewportSize = { width: 0, height: 0 };
     const markerNodeCache = new Map();
     const labelNodeCache = new Map();
 
@@ -262,18 +264,9 @@
         return labels.filter(label => label.floor === floor);
     }
 
-    function readHiddenCategories(){
+    function clearStoredMapFilters(){
         try{
-            const stored = JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '[]');
-            hiddenCategories = new Set(Array.isArray(stored) ? stored : []);
-        }catch(error){
-            hiddenCategories = new Set();
-        }
-    }
-
-    function saveHiddenCategories(){
-        try{
-            localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(Array.from(hiddenCategories)));
+            localStorage.removeItem(LEGACY_FILTER_STORAGE_KEY);
         }catch(error){}
     }
 
@@ -484,7 +477,6 @@
             input.addEventListener('change', () => {
                 if(input.checked) hiddenCategories.delete(category.id);
                 else hiddenCategories.add(category.id);
-                saveHiddenCategories();
                 selectedMarker = null;
                 syncCategoryListPopupWithFilters();
                 render();
@@ -1445,6 +1437,34 @@
         };
     }
 
+    function rememberViewportSize(){
+        const rect = elements.viewport?.getBoundingClientRect();
+        if(!rect || rect.width <= 0 || rect.height <= 0) return;
+        viewportSize = { width: rect.width, height: rect.height };
+    }
+
+    function preserveViewportAfterResize(){
+        viewportResizeFrame = 0;
+        if(!elements.viewport || byId('content-mapa-interativo')?.hidden) return;
+        const rect = elements.viewport.getBoundingClientRect();
+        if(rect.width <= 0 || rect.height <= 0) return;
+        if(viewportSize.width <= 0 || viewportSize.height <= 0){
+            viewportSize = { width: rect.width, height: rect.height };
+            return;
+        }
+        if(Math.abs(rect.width - viewportSize.width) < 0.5 && Math.abs(rect.height - viewportSize.height) < 0.5) return;
+        const config = getFloor();
+        const centerX = ((viewportSize.width / 2) - translateX) / scale;
+        const centerY = config.h - (((viewportSize.height / 2) - translateY) / scale);
+        viewportSize = { width: rect.width, height: rect.height };
+        centerAt(centerX, centerY, scale);
+    }
+
+    function scheduleViewportResizePreservation(){
+        if(viewportResizeFrame) cancelAnimationFrame(viewportResizeFrame);
+        viewportResizeFrame = requestAnimationFrame(preserveViewportAfterResize);
+    }
+
     function setZoom(nextScale, anchorX, anchorY){
         const rect = elements.viewport.getBoundingClientRect();
         const localX = Number.isFinite(anchorX) ? anchorX - rect.left : rect.width / 2;
@@ -1508,13 +1528,11 @@
         elements.showAll.addEventListener('click', () => {
             hiddenCategories.clear();
             setActiveCategoryListId('');
-            saveHiddenCategories();
             render();
         });
         elements.hideAll.addEventListener('click', () => {
             hiddenCategories = new Set(categories.filter(category => !category.comingSoon).map(category => category.id));
             setActiveCategoryListId('');
-            saveHiddenCategories();
             selectedMarker = null;
             render();
         });
@@ -1527,15 +1545,6 @@
         elements.shareView.addEventListener('click', toggleSharedPinPlacement);
         elements.shareResultClose.addEventListener('click', () => {
             elements.shareResult.hidden = true;
-        });
-        elements.shareResultCopy.addEventListener('click', async () => {
-            const url = elements.shareResultUrl.value;
-            if(!url) return;
-            await copyTextToClipboard(url);
-            elements.shareResultCopy.textContent = 'Copiado';
-            window.setTimeout(() => {
-                if(elements.shareResultCopy?.isConnected) elements.shareResultCopy.textContent = 'Copiar novamente';
-            }, 1400);
         });
         elements.shareResultUrl.addEventListener('click', () => elements.shareResultUrl.select());
         elements.categories.addEventListener('scroll', hideFilterTooltip, { passive: true });
@@ -1662,9 +1671,13 @@
             hideFilterTooltip();
             if(!byId('content-mapa-interativo')?.hidden){
                 resetCategoryListPopupPosition();
-                resetView();
+                scheduleViewportResizePreservation();
             }
         });
+        if(typeof ResizeObserver === 'function'){
+            const viewportResizeObserver = new ResizeObserver(scheduleViewportResizePreservation);
+            viewportResizeObserver.observe(elements.viewport);
+        }
         window.addEventListener('scroll', hideFilterTooltip, { passive: true });
     }
 
@@ -1733,7 +1746,6 @@
             shareResult: byId('interactive-map-share-result'),
             shareResultClose: byId('interactive-map-share-result-close'),
             shareResultUrl: byId('interactive-map-share-result-url'),
-            shareResultCopy: byId('interactive-map-share-result-copy'),
             status: byId('interactive-map-status')
         });
     }
@@ -1747,7 +1759,8 @@
             if(elements.filterTooltip?.parentElement !== document.body){
                 document.body.appendChild(elements.filterTooltip);
             }
-            readHiddenCategories();
+            clearStoredMapFilters();
+            hiddenCategories.clear();
             await loadData();
             FLOOR_CONFIG.forEach(config => {
                 const option = document.createElement('option');
@@ -1758,6 +1771,7 @@
             bindControls();
             initialized = true;
             elements.status.hidden = true;
+            rememberViewportSize();
             const requestedMarkerSlug = getRequestedMarkerSlug();
             const requestedMarker = getMarkerByShareSlug(requestedMarkerSlug);
             const sharedView = requestedMarker ? null : getSharedViewFromUrl();
@@ -1802,6 +1816,36 @@
     window.focusInteractiveMapMarker = focusMarkerTarget;
     window.focusInteractiveMapPokemonRespawns = focusPokemonRespawns;
     window.clearInteractiveMapIsolation = clearMarkerIsolation;
+    window.resetInteractiveMapSession = function(){
+        if(!initialized) return Promise.resolve();
+        hiddenCategories.clear();
+        isolatedMarkerIds.clear();
+        activeCategoryListId = '';
+        query = '';
+        selectedMarker = null;
+        selectedMarkerMediaOverride = null;
+        selectedMarkerDetailsOverride = null;
+        sharedPin = null;
+        placingSharedPin = false;
+        if(elements.search){
+            elements.search.value = '';
+            elements.search.disabled = false;
+        }
+        if(elements.clearSearch) elements.clearSearch.disabled = false;
+        if(elements.shareResult) elements.shareResult.hidden = true;
+        if(elements.viewport) elements.viewport.classList.remove('is-placing-pin');
+        if(elements.shareView){
+            elements.shareView.classList.remove('is-placing');
+            const label = elements.shareView.querySelector('span:last-child');
+            if(label) label.textContent = 'Compartilhar visão';
+        }
+        hideFilterTooltip();
+        resetCategoryListPopupPosition();
+        rememberViewportSize();
+        setFloor(7, false);
+        render();
+        return Promise.resolve();
+    };
     window.refreshInteractiveMapPage = function(){
         if(!initialized) return initialize();
         requestAnimationFrame(() => {
