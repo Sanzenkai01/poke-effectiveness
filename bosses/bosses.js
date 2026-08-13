@@ -4164,6 +4164,26 @@ function getImplicitRecommendationProfile(poke) {
     };
   }
 
+  if (nameKey === 'magcargo') {
+    return {
+      defenseDamageFactorByBossType: {
+        ice: 0.5
+      },
+      passiveName: 'Magma Armor',
+      passiveDescription: 'O Pokémon sofre menos dano de ataques do tipo Ice (0.5x).'
+    };
+  }
+
+  if (nameKey === 'marowak') {
+    return {
+      defenseDamageFactorByBossType: {
+        fire: 0.5
+      },
+      passiveName: 'Rock Head',
+      passiveDescription: 'O Pokémon sofre menos dano de ataques do tipo Fire (0.5x).'
+    };
+  }
+
   if (nameKey === 'serperior' || nameKey === 'rosasserperior') {
     return {
       passiveSuperEffectiveTypes: ['dragon'],
