@@ -148,6 +148,17 @@ const routes = [
     ]
   },
   {
+    path: '/helds',
+    label: 'helds',
+    checks: [
+      { pattern: /data-active-tab="helds"/i, description: 'helds active tab' },
+      { pattern: /id="content-helds"/i, description: 'helds panel' },
+      { pattern: /id="primary-helds-title"/i, description: 'primary helds section' },
+      { pattern: /id="gems-title"/i, description: 'gems section' },
+      { pattern: /id="boss-consumables-title"/i, description: 'boss consumables section' }
+    ]
+  },
+  {
     path: '/profissoes',
     label: 'profissoes',
     checks: [

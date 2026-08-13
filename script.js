@@ -142,6 +142,7 @@ const contentHome = document.getElementById('content-home');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentManiacs = document.getElementById('content-maniacs');
+const contentHelds = document.getElementById('content-helds');
 let maniacsStonesGrid = document.getElementById('maniacs-stones-grid');
 let maniacsEssenceGrid = document.getElementById('maniacs-essence-grid');
 const contentBossesInfo = document.getElementById('content-bosses-info');
@@ -167,7 +168,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -356,7 +357,7 @@ const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260812b';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260811e';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260811e';
+const PANEL_FRAGMENT_VERSION = '20260813b';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -420,6 +421,8 @@ const APP_ROUTE_ALIASES = {
     fossils: { path: '/fossils', tab: 'fossils' },
     fosseis: { path: '/fossils', tab: 'fossils' },
     maniacs: { path: '/maniacs', tab: 'maniacs' },
+    helds: { path: '/helds', tab: 'helds' },
+    held: { path: '/helds', tab: 'helds' },
     'bosses-info': { path: '/bosses-info', tab: 'bosses-info' },
     bossesinfo: { path: '/bosses-info', tab: 'bosses-info' },
     'boss-locations': { path: '/bosses-info', tab: 'bosses-info' },
@@ -3324,6 +3327,7 @@ function getActiveSiteTarget(){
     if(contentLigaPokemon && !contentLigaPokemon.hidden) return 'liga-pokemon';
     if(contentHeldFusion && !contentHeldFusion.hidden) return 'fusao-de-held';
     if(contentProfessions && !contentProfessions.hidden) return 'profissoes';
+    if(contentHelds && !contentHelds.hidden) return 'helds';
     if(contentManiacs && !contentManiacs.hidden) return 'maniacs';
     if(contentBossesInfo && !contentBossesInfo.hidden) return 'bosses-info';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
@@ -3495,6 +3499,7 @@ function activateSidebarTarget(button){
         effectiveness: showEffectiveness,
         fossils: showFossils,
         maniacs: showManiacs,
+        helds: showHelds,
         'bosses-info': showBossesInfo,
         calculator: showCalculator,
         boost: showBoostCalculator,
@@ -3657,6 +3662,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:effectiveness', kind: 'route', target: 'effectiveness', title: 'Tipos', category: 'Ferramenta', description: 'Efetividade, fraquezas e resistencias', icon: 'TY', tags: ['type', 'elemento', 'fraqueza'] },
         { id: 'route:fossils', kind: 'route', target: 'fossils', title: 'Fosseis', category: 'Sistema', description: 'Combinacoes e revivals de fosseis', icon: 'FO', tags: ['fossil', 'dna'] },
         { id: 'route:maniacs', kind: 'route', target: 'maniacs', title: 'Maniacs', category: 'Sistema', description: 'Trocas com Maniacs por stones ou Ace Essence', icon: 'MN', tags: ['maniac', 'stone', 'ace essence', 'troca'] },
+        { id: 'route:helds', kind: 'route', target: 'helds', title: 'Helds', category: 'Sistema', description: 'Helds primarios e secundarios, Gems, Rainbow Pokeblock e Rations', icon: 'HD', tags: ['held', 'gem', 'ration', 'rainbow pokeblock', 'amulet coin', 'choice band'] },
         { id: 'route:bosses-info', kind: 'route', target: 'bosses-info', title: 'Bosses', category: 'Sistema', description: 'Localizacoes dos bosses e stones de entrada', icon: 'BO', tags: ['boss', 'localizacao', 'stone', 'hunt', 'mapa'] },
         { id: 'route:calculator', kind: 'route', target: 'calculator', title: 'Treinamento', category: 'Calculadora', description: 'Plates, custos e treino', icon: 'TR', tags: ['calculadora', 'plate'] },
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
@@ -6180,6 +6186,25 @@ function showManiacs(options = {}){
         gsap.from(contentManiacs, { opacity: 0, y: -10, duration: 0.4 });
         gsap.from(contentManiacs.querySelectorAll('.maniacs-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.05 });
     }
+}
+
+function showHelds(){
+    clearTabHighlights();
+    setActiveTabTheme('helds');
+    setVisiblePanel(contentHelds);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Helds';
+    updateBrowserTitle();
+    ensurePanelFragmentLoaded(contentHelds).then(() => {
+        if(useGsap && contentHelds && !contentHelds.hidden){
+            gsap.from(contentHelds, { opacity: 0, y: -10, duration: 0.4 });
+            gsap.from(contentHelds.querySelectorAll('.helds-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+        }
+    }).catch(error => console.error('Helds load failed', error));
+    updateUrl();
 }
 
 function getBossesInfoStoneMetaForType(type){
@@ -18481,6 +18506,7 @@ function initTabFromUrl(){
     if(resolvedTab==='maniacs') return showManiacs({
         requestedLocationSlug: requestedManiacsMapRoute?.locationSlug || ''
     });
+    if(resolvedTab==='helds') return showHelds();
     if(resolvedTab==='bosses-info') return showBossesInfo();
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
@@ -18541,6 +18567,7 @@ function initTabFromUrl(){
     if(saved==='boost') return showBoostCalculator();
     if(saved==='fossils') return showFossils();
     if(saved==='maniacs') return showManiacs();
+    if(saved==='helds') return showHelds();
     if(saved==='bosses-info') return showBossesInfo();
     if(saved==='times') return showTimes();
     if(saved==='team-builder') return showTeamBuilder();
@@ -21598,6 +21625,7 @@ function updateUrl(options = {}){
                       (contentLigaPokemon && !contentLigaPokemon.hidden) ? 'liga-pokemon' :
                       (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
+                      (contentHelds && !contentHelds.hidden) ? 'helds' :
                       (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
                       (contentBossesInfo && !contentBossesInfo.hidden) ? 'bosses-info' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :

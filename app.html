@@ -166,7 +166,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260812a">
+  <link rel="stylesheet" href="styles.css?v=20260813a">
   <link rel="stylesheet" href="wiki-theme.css?v=20260811b">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -473,6 +473,10 @@
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-coins"></use></svg>
                 <span>Maniacs</span>
               </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="helds">
+                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-link"></use></svg>
+                <span>Helds</span>
+              </button>
             </div>
           </section>
 
@@ -722,6 +726,10 @@
     </div>
 
     <div id="content-maniacs" role="tabpanel" aria-label="Maniacs" hidden data-panel-fragment="maniacs" data-panel-fragment-styles="none">
+      <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
+    </div>
+
+    <div id="content-helds" role="tabpanel" aria-label="Helds" hidden data-panel-fragment="helds">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
@@ -1027,7 +1035,7 @@
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260811a" defer></script>
-    <script src="script.js?v=20260812b" defer></script>
+    <script src="script.js?v=20260813b" defer></script>
     <script src="bosses/bosses.js?v=20260812c" defer></script>
 </body>
 </html>

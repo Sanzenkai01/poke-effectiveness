@@ -11,7 +11,7 @@ const browserPath = process.env.SMOKE_BROWSER
 const defaultRoutes = [
   'home', 'tipos', 'fossils', 'treinamento', 'boost', 'pokemon', 'pokemons',
   'times', 'team-builder', 'hunt-builder', 'rotom-phone', 'mapa-interativo',
-  'police-operation', 'slowpoke-well', 'fusao-de-held', 'profissoes',
+  'police-operation', 'slowpoke-well', 'fusao-de-held', 'helds', 'profissoes',
   'bosses-info', 'catch', 'streamers', 'youtube', 'hoopa', 'champion',
   'mewtwo', 'ranger-bosses', 'main-quest', 'planejador', 'horizons'
 ];
