@@ -22,11 +22,11 @@
     const DATA_URLS = {
         categories: 'mapa-interativo/data/categories.json?v=20260801a',
         labels: 'mapa-interativo/data/labels.json?v=20260801a',
-        markers: 'mapa-interativo/data/markers.json?v=20260809b',
+        markers: 'mapa-interativo/data/markers.json?v=20260812a',
         bossesInfoMarkers: 'mapa-interativo/data/bosses-info-markers.json?v=20260802b',
         ligaPokemonMarkers: 'mapa-interativo/data/liga-pokemon-markers.json?v=20260802d',
         rangerBossesMarkers: 'mapa-interativo/data/ranger-bosses-markers.json?v=20260808a',
-        pokemon: 'pokemons/pokemons.json?v=20260808b'
+        pokemon: 'pokemons/pokemons.json?v=20260812a'
     };
     const MAP_POKEMON_NAME_ALIASES = {
         buttefree: 'butterfree',
@@ -73,8 +73,61 @@
         raichu: { image: 'pokemons/1gen/mega-raichu-x.png' },
         lucario: { image: 'pokemons/megas/mega-lucario.png' },
         absol: { image: 'pokemons/megas/mega-absol.png' },
-        chimecho: { image: 'pokemons/megas/mega-chimeco.png' }
+        chimecho: { image: 'pokemons/megas/mega-chimeco.png' },
+        megaglalimegafroslass: { image: 'pokemons/megas/mega-glalie.png' }
     };
+    const LOCAL_HOOPA_PORTAL_MARKERS = Object.freeze([
+        {
+            id: 'poke-utilities-hoopa-portal-mega-glalie-froslass',
+            name: 'Hoopa Portal - Mega Glalie + Mega Froslass',
+            categoryId: '7de32d5b-3595-4e56-8a4e-6987bd17419d',
+            positionX: 861.5,
+            positionY: 6910.5,
+            floor: 4,
+            description: null,
+            details: null,
+            territory: null,
+            linkedMarkerId: null
+        }
+    ]);
+    const LOCAL_SCOUT_CLUB_MARKERS = Object.freeze([
+        {
+            id: 'poke-utilities-scout-ranger-eevee-lover',
+            name: 'Scout Ranger e Eevee Lover',
+            categoryId: '4d9f676d-a01b-46ee-af62-fca845b2ace0',
+            positionX: 514.5,
+            positionY: 6427.5,
+            floor: 7,
+            description: null,
+            details: null,
+            territory: null,
+            linkedMarkerId: null
+        },
+        {
+            id: 'poke-utilities-scout-ranger-1901',
+            name: 'Scout Ranger',
+            categoryId: '4d9f676d-a01b-46ee-af62-fca845b2ace0',
+            positionX: 1900.5,
+            positionY: 7830.5,
+            floor: 7,
+            description: null,
+            details: null,
+            territory: null,
+            linkedMarkerId: null
+        },
+        {
+            id: 'poke-utilities-scout-ranger-1841',
+            name: 'Scout Ranger',
+            categoryId: '4d9f676d-a01b-46ee-af62-fca845b2ace0',
+            positionX: 1840.5,
+            positionY: 7563.5,
+            floor: 7,
+            description: null,
+            details: null,
+            territory: null,
+            linkedMarkerId: null
+        }
+    ]);
     const TYPE_LABELS = {
         bug: 'Bug', dark: 'Dark', dragon: 'Dragon', electric: 'Electric',
         fairy: 'Fairy', fighting: 'Fighting', fire: 'Fire', flying: 'Flying',
@@ -1700,6 +1753,16 @@
         }
         labels = Array.isArray(labelRoot.labels) ? labelRoot.labels : [];
         markers = Array.isArray(markerRoot.markers) ? markerRoot.markers : [];
+        LOCAL_HOOPA_PORTAL_MARKERS.forEach(marker => {
+            if(!markers.some(existingMarker => existingMarker.id === marker.id)){
+                markers.push({ ...marker });
+            }
+        });
+        LOCAL_SCOUT_CLUB_MARKERS.forEach(marker => {
+            if(!markers.some(existingMarker => existingMarker.id === marker.id)){
+                markers.push({ ...marker });
+            }
+        });
         markers.forEach(marker => {
             if(!String(marker?.id || '').startsWith('poke-utilities-maniac-')) return;
             marker.categoryId = MANIACS_MAP_CATEGORY.id;

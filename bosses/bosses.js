@@ -644,6 +644,50 @@ const hoopaPortalsData = [
     }
   },
   {
+    id: 'mega-glalie-froslass',
+    name: 'Mega Glalie + Mega Froslass',
+    clan: 'mystic',
+    clanLabel: 'Mystic',
+    image: 'pokemons/megas/mega-glalie.png',
+    tutorialUrl: 'https://youtu.be/I8K0u6E4_70',
+    mapMarkerId: 'poke-utilities-hoopa-portal-mega-glalie-froslass',
+    mapZoom: 3,
+    description: 'Dupla Mega Glalie (Ice) e Mega Froslass (Ice/Ghost).',
+    types: ['ice', 'ghost'],
+    moveType: 'ice',
+    duo: true,
+    bosses: [
+      { name: 'Mega Glalie', image: 'pokemons/megas/mega-glalie.png' },
+      { name: 'Mega Froslass', image: 'pokemons/megas/mega-froslass.png' }
+    ],
+    clans: {
+      instinct: {
+        label: 'Instinct',
+        recommended: [
+          { name: 'Excadrill', image: 'excadrill.png', tier: 'bom', types: ['ground', 'steel'], moveType: 'steel', description: 'Tipo move: Steel.' },
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'bom', types: ['electric', 'fighting'], moveType: 'fighting', description: 'Tipo move: Fighting.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
+        ]
+      },
+      mystic: {
+        label: 'Mystic',
+        recommended: [
+          { name: 'Mega Lucario', image: 'mega-lucario.png', tier: 'bom', types: ['fighting', 'steel'], moveType: 'fighting', description: 'Tipo move: Fighting.' },
+          { name: 'Relicanth', image: 'pokemons/3gen/relicanth.png', tier: 'bom', types: ['water', 'rock'], moveType: 'rock', description: 'Tipo move: Rock.' }
+        ]
+      },
+      valor: {
+        label: 'Valor',
+        recommended: [
+          { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'bom', types: ['dark', 'fire'], moveType: 'dark', description: 'Tipo move: Dark.' },
+          { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'bom', types: ['dark'], moveType: 'dark', description: 'Tipo move: Dark.' },
+          { name: 'Delphox', image: 'pokemons/6gen/delphox.png', tier: 'bom', tierLocked: true, types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' },
+          { name: 'Mega Delphox', image: 'pokemons/megas/megadelphox.png', tier: 'bom', tierLocked: true, types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' }
+        ]
+      }
+    }
+  },
+  {
     id: 'mega-absol',
     name: 'Mega Absol + Mega Absol Z',
     clan: 'valor',
@@ -3661,6 +3705,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Pikachu", 'electric', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Rosa's Serperior", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Serperior", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Salazzle", 'poison', 'dps', 'instinct', { moveType: 'fire' }),
       createFixedRecommendationDefinition("Seviper", 'poison', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Shiftry", 'grass', 'dps', 'instinct'),
       createFixedRecommendationDefinition("VenusaurTwo", 'grass', 'dps', 'instinct')
@@ -3715,6 +3760,7 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Melony's Frosmoth", 'ice', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Orthworm", 'steel', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Qwilfish", 'water', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Relicanth", 'water', 'dps', 'mystic', { moveType: 'rock' }),
       createFixedRecommendationDefinition("Seaking", 'water', 'dps', 'mystic')
     ]),
     tank: Object.freeze([

@@ -350,10 +350,10 @@ const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260811e';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260812c';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260811e';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260812b';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260811e';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20260811e';
@@ -477,8 +477,8 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260811a';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260808a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260812a';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
 const TIMES_CATALOG_URL = 'times/teams.json?v=20260629a';
