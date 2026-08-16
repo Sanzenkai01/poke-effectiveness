@@ -4,17 +4,19 @@
           <div class="team-builder-hero__copy">
             <span class="team-builder-eyebrow">Sistemas</span>
             <h2 id="team-builder-title">Team Builder</h2>
+            <div class="team-builder-summary" aria-live="polite" style="display:grid; gap:0.1rem; justify-items:center; align-content:center; width:min(18rem, 100%); max-width:min(18rem, 100%); min-width:0; padding:0.55rem 0.8rem; border:1px solid rgba(117, 213, 255, 0.2); border-radius:8px; background:rgba(117, 213, 255, 0.05); text-align:center; margin:0 auto;">
+              <span id="team-builder-filled-count" style="display:block; text-align:center;">0/6</span>
+              <strong style="display:block; text-align:center;">Slots preenchidos</strong>
+            </div>
           </div>
-          <div class="team-builder-summary" aria-live="polite">
-            <span id="team-builder-filled-count">0/6</span>
-            <strong>Slots preenchidos</strong>
-          </div>
+          <div aria-hidden="true"></div>
         </section>
 
         <section class="team-builder-board" aria-labelledby="team-builder-board-title">
-          <div class="team-builder-section-head">
+          <div class="team-builder-section-head" style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.45rem; width:100%; max-width:100%; min-width:0; text-align:center;">
             <span class="team-builder-eyebrow">Composi&ccedil;&atilde;o</span>
             <h3 id="team-builder-board-title">Slots do time</h3>
+            <button id="team-builder-clear" class="team-builder-action team-builder-action--clear" type="button" style="display:inline-flex; width:fit-content; max-width:fit-content; min-width:0; flex:0 0 auto; margin-left:0; align-self:center;">Limpar time</button>
           </div>
           <p class="team-builder-drag-hint">Arraste DPS e Finisher preenchidos para trocar as posi&ccedil;&otilde;es entre eles.</p>
           <div id="team-builder-slots" class="team-builder-slots" role="list" aria-label="Slots do time"></div>

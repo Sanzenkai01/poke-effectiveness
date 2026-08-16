@@ -4180,6 +4180,14 @@ button[type="button"] {
     overflow-wrap: anywhere;
   }
 
+  body[data-active-tab="team-builder"] #content-team-builder .team-builder-section-head {
+    display: flex !important;
+    width: fit-content !important;
+    max-width: fit-content !important;
+    min-width: 0 !important;
+    justify-content: flex-end !important;
+  }
+
   body[data-active-tab="team-builder"] #content-team-builder .team-builder-drag-hint {
     text-align: center;
   }
@@ -16779,15 +16787,49 @@ button.pokemon-evolution-card:focus-visible {
 
 .team-builder-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+  grid-template-columns: 1fr;
   gap: 1rem;
   align-items: center;
+  justify-items: center;
   padding: clamp(1rem, 2.2vw, 1.5rem);
 }
 
 .team-builder-hero__copy {
   display: grid;
   gap: 0.4rem;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+}
+
+.team-builder-summary {
+  display: grid;
+  gap: 0.1rem;
+  justify-items: center;
+  align-content: center;
+  width: min(18rem, 100%);
+  max-width: min(18rem, 100%);
+  min-width: 0;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(117, 213, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(117, 213, 255, 0.05);
+  text-align: center;
+}
+
+.team-builder-summary span {
+  color: #ffffff;
+  font-size: clamp(1.2rem, 2vw, 2rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.team-builder-summary strong {
+  color: #aebfd4;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
 }
 
 .team-builder-eyebrow {
@@ -16817,29 +16859,6 @@ button.pokemon-evolution-card:focus-visible {
   line-height: 1.6;
 }
 
-.team-builder-summary {
-  display: grid;
-  gap: 0.18rem;
-  justify-items: end;
-  padding: 0.8rem;
-  border: 1px solid rgba(117, 213, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(117, 213, 255, 0.08);
-}
-
-.team-builder-summary span {
-  color: #ffffff;
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.team-builder-summary strong {
-  color: #aebfd4;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-}
-
 .team-builder-board,
 .team-builder-picker,
 .team-builder-complete {
@@ -16849,12 +16868,33 @@ button.pokemon-evolution-card:focus-visible {
 }
 
 .team-builder-section-head {
-  display: grid;
-  gap: 0.2rem;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  text-align: center;
 }
 
 .team-builder-section-head h3 {
+  flex: none;
+  margin: 0;
   font-size: 1.08rem;
+  text-align: center;
+}
+
+.team-builder-action--clear {
+  display: inline-flex !important;
+  width: fit-content !important;
+  max-width: fit-content !important;
+  min-width: 0 !important;
+  align-self: center;
+  margin-left: 0;
+  flex: 0 0 auto;
+  justify-content: center;
 }
 
 .team-builder-drag-hint {
@@ -25177,6 +25217,7 @@ body[data-active-tab="hunt-builder"] .hunt-builder-search-results {
   gap: 0.5rem;
 }
 
+.team-builder-action,
 .hunt-builder-action {
   min-height: 2.5rem;
   padding: 0.55rem 0.8rem;
@@ -25188,15 +25229,13 @@ body[data-active-tab="hunt-builder"] .hunt-builder-search-results {
   cursor: pointer;
 }
 
-.hunt-builder-action--primary {
-  border-color: rgba(92, 224, 154, 0.42);
-  background: rgba(92, 224, 154, 0.12);
-}
-
+.team-builder-action--clear,
 .hunt-builder-action--clear {
   justify-self: end;
 }
 
+.team-builder-action:hover,
+.team-builder-action:focus-visible,
 .hunt-builder-action:hover,
 .hunt-builder-action:focus-visible {
   border-color: rgba(117, 213, 255, 0.72);
@@ -25204,6 +25243,7 @@ body[data-active-tab="hunt-builder"] .hunt-builder-search-results {
   outline: none;
 }
 
+.team-builder-action:disabled,
 .hunt-builder-action:disabled {
   cursor: not-allowed;
   opacity: 0.5;

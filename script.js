@@ -220,6 +220,7 @@ let teamBuilderSlots = document.getElementById('team-builder-slots');
 let teamBuilderFilledCount = document.getElementById('team-builder-filled-count');
 let teamBuilderActiveSlotLabel = document.getElementById('team-builder-active-slot-label');
 let teamBuilderSearchInput = document.getElementById('team-builder-search');
+let teamBuilderClearBtn = document.getElementById('team-builder-clear');
 let teamBuilderClanFilterRow = document.getElementById('team-builder-clan-filter-row');
 let teamBuilderSubFunctionFilterField = document.getElementById('team-builder-sub-function-filter-field');
 let teamBuilderSubFunctionFilterRow = document.getElementById('team-builder-sub-function-filter-row');
@@ -4358,7 +4359,8 @@ const BOOST_TYPE_STONE_META = Object.freeze({
     ice: { name: 'Ice Stone', image: 'calculadora/ice_stone.png' },
     poison: { name: 'Venom Stone', image: 'calculadora/venom_stone.gif' },
     water: { name: 'Water Stone', image: 'calculadora/water_stone.gif' },
-    fairy: { name: 'Fairy Stone', image: 'calculadora/fairy_stone.gif' }
+    fairy: { name: 'Fairy Stone', image: 'calculadora/fairy_stone.gif' },
+    fighting: { name: 'Punch Stone', image: 'calculadora/punch_stone.png' }
 });
 const BOOST_NAMED_STONE_META = Object.freeze({
     'Fire Stone': { image: 'calculadora/fire_stone.gif' },
@@ -8994,6 +8996,7 @@ function refreshTeamBuilderDomReferences(){
     teamBuilderFilledCount = document.getElementById('team-builder-filled-count');
     teamBuilderActiveSlotLabel = document.getElementById('team-builder-active-slot-label');
     teamBuilderSearchInput = document.getElementById('team-builder-search');
+    teamBuilderClearBtn = document.getElementById('team-builder-clear');
     teamBuilderClanFilterRow = document.getElementById('team-builder-clan-filter-row');
     teamBuilderSubFunctionFilterField = document.getElementById('team-builder-sub-function-filter-field');
     teamBuilderSubFunctionFilterRow = document.getElementById('team-builder-sub-function-filter-row');
@@ -13576,6 +13579,25 @@ function initializeTeamBuilderPage(){
                 search: teamBuilderSearchInput.value || ''
             };
             scheduleTeamBuilderSearchRender();
+        });
+    }
+
+    if(teamBuilderClearBtn){
+        teamBuilderClearBtn.addEventListener('click', () => {
+            teamBuilderSelections = {};
+            teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS[0]?.id || '';
+            teamBuilderIgnoreTankForHunts = false;
+            teamBuilderHuntsVisible = false;
+            teamBuilderHuntsLoading = false;
+            teamBuilderFilters = {
+                search: '',
+                clan: 'all',
+                subFunctions: [],
+                roles: [],
+                type: 'all'
+            };
+            if(teamBuilderSearchInput) teamBuilderSearchInput.value = '';
+            renderTeamBuilder();
         });
     }
     teamBuilderInitialized = true;
@@ -20838,6 +20860,11 @@ function usesBoostBraveBronzeStone(state){
     if(usesBoostAncientBronzeStone(state)) return false;
     const normalizedName = normalizePokemonSearchText(entry.name || state?.pokemonName || '');
     const normalizedPriceLabel = normalizePokemonSearchText(entry.priceLabel || '');
+    
+    // Excecoes: esses pokemons usam suas stones de tipo em vez de Brave Stone
+    const braveStoneExceptions = ['sawk', 'ferrothorn', 'escavalier'];
+    if(braveStoneExceptions.includes(normalizedName)) return false;
+    
     return entry.roleKey === 'striker'
         || normalizedPriceLabel.endsWith('rush')
         || normalizedName.includes('alolan');

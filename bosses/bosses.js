@@ -70,7 +70,8 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: "Alakazam", image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Psíquico forte e rápido.' }
+          { name: "Alakazam", image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Psíquico forte e rápido.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -285,7 +286,8 @@ const hoopaPortalsData = [
           { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
           { name: 'Mega Gardevoir', image: 'mega-gardevoir.png', tier: 'excelente', types: ['psychic','fairy'], description: 'Tipo move: Fairy.' },
           { name: 'Dedenne', image: 'dedenne.png', tier: 'excelente', types: ['electric','fairy'], description: 'Tipo move: Fairy.' },
-          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' }
+          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -370,7 +372,8 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Alakazam', image: 'alakazam.png', tier: 'excelente', types: ['psychic'], description: 'Tipo move: Psychic.' },
-          { name: 'Marowak', image: 'marowak.png', types: ['ground'], description: 'Tipo move: Ground.', matchupOverrides: { 'mega-scolipede': { defenseByBossType: { poison: 0.5 } } } }
+          { name: 'Marowak', image: 'marowak.png', types: ['ground'], description: 'Tipo move: Ground.', matchupOverrides: { 'mega-scolipede': { defenseByBossType: { poison: 0.5 } } } },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -409,7 +412,8 @@ const hoopaPortalsData = [
       instinct: {
         label: 'Instinct',
         recommended: [
-          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' }
+          { name: 'Seviper', image: 'seviper.png', tier: 'excelente', types: ['poison'], description: 'Tipo move: Poison.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -542,7 +546,8 @@ const hoopaPortalsData = [
             passiveName: 'Mold Breaker',
             passiveDescription: 'O Pokemon ignora completamente as defesas do Pokemon adversario quebrando os moldes de sua resistencia. Excadrill causa dano super efetivo ao tipo STEEL.',
             passiveSuperEffectiveTypes: ['steel']
-          }
+          },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -623,7 +628,8 @@ const hoopaPortalsData = [
         label: 'Instinct',
         recommended: [
           { name: 'Marowak', image: 'marowak.png', tier: 'excelente', types: ['ground'], description: 'Tipo move: Ground.' },
-          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' }
+          { name: 'Mega Raichu X', image: 'mega-raichu-x.png', tier: 'excelente', types: ['electric','fighting'], description: 'Tipo move: Fighting.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -681,8 +687,8 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Mega Houndoom', image: 'mega-houndoom.png', tier: 'bom', types: ['dark', 'fire'], moveType: 'dark', description: 'Tipo move: Dark.' },
           { name: 'Mega Absol Z', image: 'mega-absol-z.png', tier: 'bom', types: ['dark'], moveType: 'dark', description: 'Tipo move: Dark.' },
-          { name: 'Delphox', image: 'pokemons/6gen/delphox.png', tier: 'bom', tierLocked: true, types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' },
-          { name: 'Mega Delphox', image: 'pokemons/megas/megadelphox.png', tier: 'bom', tierLocked: true, types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' }
+          { name: 'Delphox', image: 'pokemons/6gen/delphox.png', tier: 'bom', types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' },
+          { name: 'Mega Delphox', image: 'pokemons/megas/megadelphox.png', tier: 'bom', types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       }
     }
@@ -798,7 +804,10 @@ const hoopaPortalsData = [
         recommended: [
           { name: 'Excadrill', image: 'excadrill.png', tier: 'excelente', types: ['ground','steel'], description: 'Tipo move: Steel. Passiva: dano super efetivo em Steel.', passiveSuperEffectiveTypes: ['steel'] },
           { name: 'Shiftry', image: 'shiftry.png', tier: 'excelente', types: ['grass','dark'], description: 'Tipo move: Dark.' },
-          { name: 'Lurantis', image: 'lurantis.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Bug.' }
+          { name: 'Lurantis', image: 'lurantis.png', tier: 'bom', types: ['grass'], description: 'Tipo move: Bug.' },
+          { name: 'Salazzle', image: 'pokemons/7gen/salazzle.png', tier: 'bom', types: ['poison', 'fire'], moveType: 'fire', description: 'Tipo move: Fire.' },
+          { name: 'Delphox', image: 'pokemons/6gen/delphox.png', tier: 'bom', types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' },
+          { name: 'Mega Delphox', image: 'pokemons/megas/megadelphox.png', tier: 'bom', types: ['fire', 'psychic'], moveType: 'fire', description: 'Tipo move: Fire.' }
         ]
       },
       mystic: {
@@ -7935,7 +7944,8 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: "Rosa's Serperior", types: ['grass'], moveTypes: ['grass'], clan: 'instinct' },
   { name: 'Excadrill', types: ['ground', 'steel'], moveTypes: ['steel'], clan: 'instinct', extra: { passiveSuperEffectiveTypes: ['steel'] } },
   { name: 'Mega Excadrill', types: ['ground', 'steel'], moveTypes: ['ground'], clan: 'instinct', requireEffectiveOffense: true },
-  { name: 'Bouffalant', types: ['normal'], moveTypes: ['ground'], clan: 'valor' }
+  { name: 'Bouffalant', types: ['normal'], moveTypes: ['ground'], clan: 'valor' },
+  { name: 'Salazzle', types: ['poison', 'fire'], moveTypes: ['fire'], clan: 'instinct', tier: 'bom' }
 ]);
 
 function createBestCatalogSpeedsterPick(config, bossRef) {
