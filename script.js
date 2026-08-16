@@ -3512,7 +3512,7 @@ function activateSidebarTarget(button){
         'slowpoke-well': showSlowpokeWell,
         'liga-pokemon': showLigaPokemon,
         'fusao-de-held': showHeldFusion,
-        profissoes: showProfessions,
+        profissoes: () => showProfessions({ resetToSelector: true }),
         catch: showCatch,
         'mapa-interativo': showInteractiveMap,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
@@ -3528,9 +3528,12 @@ function activateSidebarTarget(button){
     }
 
     // Garantir que a URL reflita o destino aberto quando a navegacao acontece pela sidebar
-    try{
-        if(typeof updateUrl === 'function') updateUrl();
-    }catch(e){}
+    // Não chamar updateUrl para profissoes, pois já é chamado dentro de showProfessions
+    if(target !== 'profissoes'){
+        try{
+            if(typeof updateUrl === 'function') updateUrl();
+        }catch(e){}
+    }
 
     syncSidebarNavigationState();
     setSidebarOpen(false);
@@ -15650,7 +15653,7 @@ function showHeldFusion(){
     updateUrl();
 }
 
-function showProfessions(){
+function showProfessions(options = {}){
     clearTabHighlights();
     setActiveTabTheme('profissoes');
     setVisiblePanel(contentProfessions);
@@ -15662,12 +15665,18 @@ function showProfessions(){
     updateBrowserTitle();
     ensurePanelFragmentLoaded(contentProfessions).then(() => {
         initializeProfessionsPage();
-        setProfessionDetailView(normalizeProfessionRouteKey(location.hash), { updateUrl: false });
+        // Se resetToSelector for true (vem da sidebar), não restaura profissão anterior
+        if(options.resetToSelector){
+            setProfessionDetailView('', { updateUrl: false });
+        } else {
+            setProfessionDetailView(normalizeProfessionRouteKey(location.hash), { updateUrl: false });
+        }
         if(useGsap && contentProfessions && !contentProfessions.hidden){
             gsap.from(contentProfessions, { opacity: 0, y: -10, duration: 0.4 });
         }
+        // Atualizar URL após setProfessionDetailView ser executado
+        updateUrl({ historyMode: options.resetToSelector ? 'replace' : 'push' });
     }).catch(error => console.error('Professions load failed', error));
-    updateUrl();
 }
 
 function showHuntBuilder(){
