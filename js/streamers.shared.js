@@ -14,7 +14,6 @@
         { name: 'gordallink' },
         { name: 'karlin_nara' },
         { name: 'dragonslayerpiva' },
-        { name: 'lucasnaikan' },
         { name: 'armster91', supportsDrops: false },
         { name: 'linikerquadrado2', supportsDrops: false },
         { name: 'nazgulplayer', supportsDrops: false },
