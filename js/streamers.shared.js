@@ -2,9 +2,9 @@
     const registrySeed = [
         { name: 'adivorcio', hasPack: true, discord: 'https://discord.gg/CH5veEAA4k' },
         { name: 'indypereira', hasPack: true },
-        { name: 'sharxera', hasPack: true, discord: 'https://discord.gg/UhCmU4Jmkh' },
+        { name: 'sharxera', discord: 'https://discord.gg/UhCmU4Jmkh' },
         { name: 'callmevitao_', hasPack: true, discord: 'https://discord.gg/HzY9sMpaSV' },
-        { name: 'ogordonha', hasPack: true, discord: 'https://discord.gg/rHaVQUaPDD' },
+        { name: 'ogordonha', discord: 'https://discord.gg/rHaVQUaPDD' },
         { name: 'OKAMIulv', discord: 'https://discord.gg/NJCJn7anYQ' },
         { name: 'eaisantinho', discord: 'https://discord.gg/GAwMgTMEmf' },
         { name: 'FernandoAlcatraz', discord: 'https://discord.gg/5hjyzM6' },
@@ -27,6 +27,7 @@
         { name: 'sruni1', supportsDrops: false },
         { name: 'playerclt', supportsDrops: false },
         { name: 'thigaartus', supportsDrops: false },
+        { name: 'lordjuregi', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
