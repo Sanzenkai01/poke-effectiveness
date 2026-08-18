@@ -524,15 +524,13 @@ body[data-active-tab="mapa-interativo"] .app-main {
   padding: 0 !important;
 }
 
-#content-mapa-interativo .interactive-map-layout,
-.app-main > #content-mapa-interativo .interactive-map-layout {
+.app-main > #content-mapa-interativo:not(.interactive-map-modal-panel) .interactive-map-layout {
   grid-template-columns: 200px minmax(0, 5fr) !important;
   gap: 0.55rem !important;
   min-height: calc(100vh - 50px) !important;
 }
 
-#content-mapa-interativo .interactive-map-board,
-.app-main > #content-mapa-interativo .interactive-map-board {
+.app-main > #content-mapa-interativo:not(.interactive-map-modal-panel) .interactive-map-board {
   width: 100% !important;
   min-height: calc(100vh - 50px) !important;
   border-radius: 16px !important;
@@ -1152,9 +1150,13 @@ body.home-view .home-tool-card {
   text-transform: uppercase;
 }
 
+#content-pokemons .pokemon-filter-native-select,
+.pokemon-filter-native-select {
+  display: none !important;
+}
+
 #content-pokemons :where(
   .pokemon-filter-field input,
-  .pokemon-filter-field select,
   .pokemon-filter-select__trigger
 ) {
   min-height: 44px !important;
@@ -2997,6 +2999,14 @@ body.home-view > main > .home-landing {
   white-space: nowrap;
 }
 
+.boss-map-dialog__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.boss-map-dialog__fullscreen,
 .boss-map-dialog__close {
   display: grid;
   flex: 0 0 36px;
@@ -3008,12 +3018,37 @@ body.home-view > main > .home-landing {
   border-radius: 4px;
   background: #1b1f23;
   color: var(--wiki-muted);
+  font-size: 1.05rem;
+  line-height: 1;
   cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.boss-map-dialog__fullscreen:hover {
+  border-color: rgba(98, 213, 255, 0.6);
+  color: #62d5ff;
+  background: rgba(98, 213, 255, 0.1);
 }
 
 .boss-map-dialog__close:hover {
-  border-color: rgba(215, 184, 91, 0.5);
-  color: var(--wiki-text);
+  border-color: rgba(255, 100, 100, 0.6);
+  color: #ff8888;
+  background: rgba(255, 80, 80, 0.1);
+}
+
+.location-overlay.is-fullscreen,
+.location-overlay:has(.boss-map-dialog.is-fullscreen) {
+  padding: 0 !important;
+}
+
+.boss-map-dialog.is-fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .boss-map-dialog__body,
@@ -3041,30 +3076,44 @@ body.home-view > main > .home-landing {
 }
 
 .interactive-map-modal-panel .interactive-map-header {
-  display: none;
+  display: none !important;
 }
 
 .interactive-map-modal-panel .interactive-map-layout {
-  grid-template-columns: minmax(280px, 320px) minmax(0, 1.9fr);
-  gap: 1rem;
-  height: 100%;
-  min-height: 0;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1.9fr) !important;
+  gap: 1rem !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
 }
 
 .interactive-map-modal-panel .interactive-map-sidebar {
-  max-height: none;
-  border: 0;
-  border-right: 1px solid var(--wiki-border);
-  border-radius: 0;
-  background: #15191d;
-  padding: 1rem;
+  height: 100% !important;
+  max-height: none !important;
+  border: 0 !important;
+  border-right: 1px solid var(--wiki-border) !important;
+  border-radius: 0 !important;
+  background: #15191d !important;
+  padding: 1rem !important;
 }
 
 .interactive-map-modal-panel .interactive-map-board {
-  height: 100%;
-  min-height: 0;
-  border: 0;
-  border-radius: 0;
+  position: relative !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+.interactive-map-modal-panel .interactive-map-controls {
+  position: absolute !important;
+  right: 0.75rem !important;
+  bottom: 0.75rem !important;
+  z-index: 25 !important;
 }
 
 .location-overlay .interactive-map-modal-panel .interactive-map-image {
@@ -4080,3 +4129,58 @@ body[data-initial-boss-mode] .bosses-shell .bosses-copy,
 }
 
 /* Tipos, clãs, tiers, alertas, erros e estados concluídos mantêm suas cores. */
+
+/* ──────────────────────────────────────────────────────────
+   Modo tela-cheia da página /mapa-interativo
+   Esconde header, sidebar e rodapé para o mapa ocupar 100vw × 100vh
+   ────────────────────────────────────────────────────────── */
+body.interactive-map-page-fullscreen .header,
+body.interactive-map-page-fullscreen .app-sidebar,
+body.interactive-map-page-fullscreen .main-footer,
+body.interactive-map-page-fullscreen .app-shell > .app-main > *:not(#content-mapa-interativo) {
+  display: none !important;
+}
+
+body.interactive-map-page-fullscreen .app-shell {
+  padding: 0 !important;
+}
+
+body.interactive-map-page-fullscreen #content-mapa-interativo {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99998 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: #080b0d !important;
+}
+
+body.interactive-map-page-fullscreen #content-mapa-interativo .interactive-map-shell {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #080b0d !important;
+}
+
+body.interactive-map-page-fullscreen #content-mapa-interativo .interactive-map-header {
+  display: none !important;
+}
+
+body.interactive-map-page-fullscreen #content-mapa-interativo .interactive-map-layout {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  min-height: 0 !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+

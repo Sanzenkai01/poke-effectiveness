@@ -355,10 +355,10 @@ let activeProfessionKey = '';
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260812c';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260812b';
-const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260811e';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260818b';
+const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260813b';
+const PANEL_FRAGMENT_VERSION = '20260817b';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -386,7 +386,7 @@ function showPokemonRespawnMapFeedback(pokemonName){
     feedback.className = 'pokemon-respawn-map-feedback';
     feedback.dataset.pokemonRespawnFeedback = 'true';
     feedback.setAttribute('role', 'status');
-    feedback.textContent = `Nenhum respawn de ${pokemonName} foi encontrado no mapa interativo.`;
+    feedback.textContent = `Nenhum respawn ou localização de ${pokemonName} foi encontrado no mapa interativo.`;
     document.body.appendChild(feedback);
     window.setTimeout(() => feedback.remove(), 3600);
 }
@@ -6287,13 +6287,38 @@ async function openInteractiveMapMarkerModal(entry, trigger){
     title.textContent = entry.name;
     heading.append(eyebrow, title);
 
+    const actions = document.createElement('div');
+    actions.className = 'boss-map-dialog__actions';
+
+    const fullscreenBtn = document.createElement('button');
+    fullscreenBtn.type = 'button';
+    fullscreenBtn.className = 'boss-map-dialog__fullscreen';
+    fullscreenBtn.setAttribute('aria-label', 'Alternar tela cheia');
+    fullscreenBtn.title = 'Alternar tela cheia';
+    fullscreenBtn.innerHTML = '⛶';
+    fullscreenBtn.addEventListener('click', () => {
+        const isFull = dialog.classList.toggle('is-fullscreen');
+        overlay.classList.toggle('is-fullscreen', isFull);
+        fullscreenBtn.innerHTML = isFull ? '🗗' : '⛶';
+        fullscreenBtn.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+        fullscreenBtn.setAttribute('aria-label', isFull ? 'Restaurar tamanho' : 'Tela cheia');
+        const mapFsBtn = mapPanel.querySelector('#interactive-map-fullscreen');
+        if(mapFsBtn){
+            mapFsBtn.innerHTML = isFull ? '🗗' : '⛶';
+            mapFsBtn.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+        }
+        window.dispatchEvent(new Event('resize'));
+    });
+
     const close = document.createElement('button');
     close.type = 'button';
     close.className = 'boss-map-dialog__close';
     close.setAttribute('aria-label', 'Fechar mapa interativo');
+    close.title = 'Fechar';
     close.textContent = '×';
     close.addEventListener('click', closeInteractiveMapMarkerModal);
-    header.append(heading, close);
+    actions.append(fullscreenBtn, close);
+    header.append(heading, actions);
 
     const body = document.createElement('div');
     body.className = 'boss-map-dialog__body';
@@ -11508,7 +11533,7 @@ function showTeamBuilderPassiveTooltip(badge){
 
     const tooltip = ensureTeamBuilderPassiveTooltipSurface();
     const title = document.createElement('strong');
-    title.textContent = 'Passiva';
+    title.textContent = badge._teamBuilderPassiveTitle || 'Passiva';
     const list = document.createElement('span');
     list.className = 'team-builder-passive-tooltip__list';
     passives.forEach(passive => {
@@ -24982,11 +25007,17 @@ function createPokemonPassiveBadge(entry, options = {}){
     label.className = 'pokemon-passive-badge__label';
     label.textContent = isShiny ? 'Passiva Shiny' : 'Passiva';
 
-    const tooltip = document.createElement('span');
-    tooltip.className = 'pokemon-passive-badge__tooltip';
-    tooltip.textContent = passiveLabel;
+    badge.append(mark, label);
 
-    badge.append(mark, label, tooltip);
+    badge._teamBuilderPassives = [passiveLabel];
+    badge._teamBuilderPassiveTitle = isShiny ? 'Passiva Shiny' : 'Passiva';
+    bindTeamBuilderPassiveTooltipListeners();
+
+    badge.addEventListener('mouseenter', () => showTeamBuilderPassiveTooltip(badge));
+    badge.addEventListener('mouseleave', scheduleTeamBuilderPassiveTooltipHide);
+    badge.addEventListener('focus', () => showTeamBuilderPassiveTooltip(badge));
+    badge.addEventListener('blur', scheduleTeamBuilderPassiveTooltipHide);
+
     return badge;
 }
 

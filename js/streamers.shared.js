@@ -28,6 +28,7 @@
         { name: 'playerclt', supportsDrops: false },
         { name: 'thigaartus', supportsDrops: false },
         { name: 'lordjuregi', supportsDrops: false },
+        { name: 'Eusou_O_D', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

@@ -40,9 +40,9 @@
               </button>
 
               <aside id="interactive-map-share-result" class="interactive-map-share-result" aria-live="polite" hidden>
-                <span class="interactive-map-share-result__icon" aria-hidden="true">🔗</span>
+                <button id="interactive-map-share-result-copy" class="interactive-map-share-result__icon interactive-map-share-result__copy" type="button" aria-label="Copiar link" title="Copiar link">🔗</button>
                 <input id="interactive-map-share-result-url" type="text" readonly aria-label="Link compartilhado gerado">
-                <button id="interactive-map-share-result-close" class="interactive-map-share-result__close" type="button" aria-label="Ocultar link compartilhado">×</button>
+                <button id="interactive-map-share-result-close" class="interactive-map-share-result__close" type="button" aria-label="Ocultar link compartilhado" title="Fechar">×</button>
               </aside>
             </div>
 
@@ -59,6 +59,7 @@
                 <span id="interactive-map-zoom-value">100%</span>
               </button>
               <button id="interactive-map-zoom-in" class="interactive-map-control" type="button" aria-label="Aumentar zoom">+</button>
+              <button id="interactive-map-fullscreen" class="interactive-map-control interactive-map-fullscreen-btn" type="button" aria-label="Alternar tela cheia" title="Alternar tela cheia">⛶</button>
             </div>
 
             <aside id="interactive-map-category-popup" class="interactive-map-category-popup" aria-labelledby="interactive-map-category-popup-title" hidden></aside>

@@ -619,7 +619,7 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   bottom: 0.7rem;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   gap: 0.35rem;
 }
 
@@ -648,7 +648,7 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   left: 0.7rem;
   z-index: 34;
   display: flex;
-  width: min(700px, calc(100% - 11rem));
+  width: min(700px, calc(100% - 13rem));
   min-width: 0;
   align-items: center;
   gap: 0.45rem;
@@ -691,84 +691,146 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
 }
 
 .interactive-map-share-result {
-  display: grid;
+  display: flex;
   min-width: 0;
   height: 2.35rem;
   flex: 1 1 320px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0.3rem 0.2rem 0.55rem;
+  gap: 0.45rem;
+  padding: 0 0.45rem;
+  box-sizing: border-box;
   overflow: hidden;
-  border: 1px solid rgba(149, 170, 188, 0.24);
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(10, 15, 21, 0.98), rgba(14, 20, 27, 0.96));
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(98, 213, 255, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(8, 18, 30, 0.97) 0%, rgba(12, 24, 38, 0.96) 100%);
+  box-shadow:
+    0 0 0 1px rgba(98, 213, 255, 0.06) inset,
+    0 2px 12px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(98, 213, 255, 0.07);
   color: #edf4f8;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.interactive-map-share-result:focus-within {
+  border-color: rgba(98, 213, 255, 0.52);
+  box-shadow:
+    0 0 0 1px rgba(98, 213, 255, 0.1) inset,
+    0 2px 12px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(98, 213, 255, 0.14);
 }
 
 .interactive-map-share-result[hidden] {
   display: none;
 }
 
-.interactive-map-share-result__icon {
+.interactive-map-share-result__icon,
+.interactive-map-share-result__copy {
   display: inline-flex;
+  flex: 0 0 1.7rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  width: 1.2rem;
-  height: 1.2rem;
-  border-radius: 50%;
-  background: rgba(98, 213, 255, 0.08);
-  color: #9fe5ff;
-  font-size: 0.74rem;
+  text-align: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(98, 213, 255, 0.18), rgba(98, 213, 255, 0.08));
+  border: 1px solid rgba(98, 213, 255, 0.25);
+  color: #62d5ff;
+  font-size: 0.85rem;
   line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(98, 213, 255, 0.12);
+  transition: all 180ms ease;
+}
+
+.interactive-map-share-result__icon:hover,
+.interactive-map-share-result__copy:hover,
+.interactive-map-share-result__copy:focus-visible {
+  border-color: rgba(98, 213, 255, 0.7);
+  background: rgba(98, 213, 255, 0.25);
+  color: #ffffff;
+  outline: none;
+  transform: scale(1.04);
+}
+
+.interactive-map-share-result__copy.is-copied {
+  border-color: #55f3a0;
+  background: rgba(85, 243, 160, 0.22);
+  color: #55f3a0;
+  box-shadow: 0 0 10px rgba(85, 243, 160, 0.35);
 }
 
 .interactive-map-share-result__close {
-  display: grid;
-  width: 1.55rem;
-  height: 1.55rem;
-  flex: 0 0 auto;
+  display: inline-flex;
+  flex: 0 0 1.7rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  margin: 0;
   padding: 0;
-  place-items: center;
-  border: 1px solid rgba(174, 182, 189, 0.18);
-  border-radius: 50%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid rgba(174, 182, 189, 0.16);
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
-  color: rgba(237, 244, 248, 0.76);
-  font-size: 1rem;
-  font-weight: 700;
+  color: rgba(200, 218, 230, 0.75);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
-  transition: background 160ms ease, border-color 160ms ease;
+  transition: all 160ms ease;
 }
 
 .interactive-map-share-result__close:hover,
 .interactive-map-share-result__close:focus-visible {
-  border-color: rgba(98, 213, 255, 0.5);
-  background: rgba(98, 213, 255, 0.09);
+  border-color: rgba(255, 100, 100, 0.5);
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff8888;
   outline: none;
+  transform: scale(1.04);
 }
 
 .interactive-map-share-result input {
+  flex: 1 1 auto;
   min-width: 0;
   height: 1.7rem;
-  padding: 0 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  margin: 0;
+  padding: 0 0.55rem;
+  box-sizing: border-box;
+  display: block;
+  border: 1px solid rgba(138, 184, 220, 0.22);
   border-radius: 7px;
-  background: rgba(255, 255, 255, 0.035);
-  color: rgba(226, 235, 241, 0.9);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  background: rgba(4, 10, 18, 0.75);
+  color: rgba(210, 235, 255, 0.95);
+  font-size: 0.72rem;
+  font-weight: 500;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  letter-spacing: 0.015em;
   outline: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.7rem;
+  vertical-align: middle;
+  transition: border-color 160ms ease, background 160ms ease;
 }
 
 .interactive-map-share-result input:focus {
-  box-shadow: 0 0 0 2px rgba(98, 213, 255, 0.18);
-  border-color: rgba(98, 213, 255, 0.32);
+  border-color: rgba(98, 213, 255, 0.5);
+  background: rgba(4, 10, 18, 0.92);
+  box-shadow: 0 0 0 1px rgba(98, 213, 255, 0.2);
+}
+
+.interactive-map-share-result input::selection {
+  background: rgba(98, 213, 255, 0.25);
+  color: #eaf8ff;
 }
 
 .interactive-map-category-popup {
@@ -1156,31 +1218,107 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   }
 }
 
-@media (max-width: 520px) {
-  .interactive-map-categories {
-    grid-template-columns: 1fr;
+@media (max-width: 840px) {
+  /* Stack share-tools and floor-controls vertically to prevent overlap */
+  .interactive-map-share-tools {
+    width: calc(100% - 1.4rem);
+  }
+
+  .interactive-map-floor-controls {
+    top: calc(0.7rem + 2.35rem + 0.45rem);
   }
 
   .interactive-map-detail {
-    top: 3.75rem;
+    top: calc(0.7rem + 2.35rem + 0.45rem + 2.35rem + 0.5rem);
     bottom: auto;
     width: calc(100% - 1.4rem);
-    max-height: calc(100% - 7.5rem);
+    max-height: calc(100% - 8.5rem);
   }
 
   .interactive-map-category-popup {
-    top: 3.75rem;
+    top: calc(0.7rem + 2.35rem + 0.45rem + 2.35rem + 0.5rem);
     right: 0.7rem;
     left: 0.7rem;
     width: auto;
-    max-height: calc(100% - 8.2rem);
+    max-height: calc(100% - 9rem);
   }
+}
 
-  .interactive-map-share-tools {
-    width: calc(100% - 10.5rem);
+@media (max-width: 520px) {
+  .interactive-map-categories {
+    grid-template-columns: 1fr;
   }
 
   .interactive-map-view-share span:last-child {
     display: none;
   }
 }
+
+/* Regras quando o mapa interativo é renderizado dentro de um modal */
+.interactive-map-modal-panel,
+.interactive-map-modal-panel .interactive-map-shell,
+.interactive-map-modal-panel .interactive-map-layout,
+.interactive-map-modal-panel .interactive-map-board {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+
+.interactive-map-modal-panel .interactive-map-header {
+  display: none !important;
+}
+
+.interactive-map-modal-panel .interactive-map-layout {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.interactive-map-modal-panel .interactive-map-board {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.interactive-map-modal-panel .interactive-map-controls {
+  position: absolute !important;
+  right: 0.75rem !important;
+  bottom: 0.75rem !important;
+  z-index: 25 !important;
+}
+
+/* Modo Tela Cheia na página principal e no modal */
+.interactive-map-control.interactive-map-fullscreen-btn {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.interactive-map-shell.is-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #080b0d !important;
+}
+
+.interactive-map-shell.is-fullscreen .interactive-map-header {
+  display: none !important;
+}
+
+.interactive-map-shell.is-fullscreen .interactive-map-layout {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.interactive-map-page-fullscreen {
+  overflow: hidden !important;
+}
+
+

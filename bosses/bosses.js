@@ -2243,7 +2243,8 @@ const horizonsSilverBosses = createManualRoleboardBosses([
           createRolePick('Pyroar Female', ['fire', 'normal'], 'grass')
         ],
         tank: [
-          createRolePick('Sableye', ['dark', 'ghost'], 'ghost'),
+          createRolePick('Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
+          createRolePick('Shiny Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
           createRolePick('Miltank', ['normal'], 'ground')
         ],
         support: [
@@ -2290,9 +2291,13 @@ const horizonsSilverBosses = createManualRoleboardBosses([
       valor: {
         dps: [
           createRolePick('Bouffalant', ['normal'], 'ground'),
-          createRolePick('Raticate', ['normal'], 'dark'),
+          createRolePick('Raticate', ['normal'], 'dark')
         ],
-        tank: [createRolePick('Miltank', ['normal'], 'ground')],
+        tank: [
+          createRolePick('Miltank', ['normal'], 'ground'),
+          createRolePick('Sableye', ['dark', 'ghost'], 'dark', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
+          createRolePick('Shiny Sableye', ['dark', 'ghost'], 'dark', { tier: 'bom', note: 'Passiva: resistência a Ghost.' })
+        ],
         support: [
           createRolePick('Chansey', ['normal'], 'psychic')
         ]
@@ -2950,7 +2955,6 @@ const mainQuestBosses = createManualRoleboardBosses([
     types: ['normal', 'flying'],
     moveType: 'flying',
     cardTags: ['Solo'],
-    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
         dps: [
@@ -2979,7 +2983,6 @@ const mainQuestBosses = createManualRoleboardBosses([
     types: ['ground'],
     moveType: 'ground',
     cardTags: ['Solo'],
-    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
         dps: [
@@ -3012,7 +3015,6 @@ const mainQuestBosses = createManualRoleboardBosses([
     types: ['water'],
     moveType: 'water',
     cardTags: ['Solo'],
-    description: 'Luta 1v1 da Main Quest. Use apenas Speedsters classificados como Bom ou melhor.',
     clans: {
       instinct: {
         dps: [
@@ -3039,7 +3041,6 @@ const mainQuestBosses = createManualRoleboardBosses([
     types: ['dark', 'psychic'],
     moveType: 'psychic',
     cardTags: ['Trio'],
-    description: 'Luta 3v1 da Main Quest. Monte a composicao com Tank, Speedster e Suporte.',
     clans: {
       instinct: {
         tank: [
@@ -5180,6 +5181,51 @@ function createBaseRecommendationVariantFromShinyPick(shinyPick, seedConfigs = {
   return clonedPick;
 }
 
+function formatRecommendationDisplayName(poke) {
+  if (!poke) return '';
+  const rawName = String(poke.name || '').trim();
+  if (poke._bothVariantsRecommended && !isShinyRecommendationVariant(poke)) {
+    return `${rawName} ✨`;
+  }
+  return rawName;
+}
+
+function appendRecommendationDisplayName(nameEl, poke) {
+  if (!nameEl || !poke) return;
+  const rawName = String(poke.name || '').trim();
+  nameEl.textContent = rawName;
+
+  if (poke._bothVariantsRecommended && !isShinyRecommendationVariant(poke)) {
+    const shinyBadge = document.createElement('span');
+    shinyBadge.className = 'reco-shiny-badge';
+    shinyBadge.setAttribute('aria-label', 'Funciona Normal e Shiny');
+    shinyBadge.tabIndex = 0;
+
+    const emoji = document.createTextNode(' ✨');
+    shinyBadge.appendChild(emoji);
+
+    const popover = document.createElement('span');
+    popover.className = 'reco-shiny-badge__popover';
+    popover.setAttribute('aria-hidden', 'true');
+
+    const iconEl = document.createElement('span');
+    iconEl.className = 'reco-shiny-badge__icon';
+    iconEl.textContent = '✨';
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'reco-shiny-badge__title';
+    titleEl.textContent = 'Funciona Normal e Shiny';
+
+    const subtitleEl = document.createElement('span');
+    subtitleEl.className = 'reco-shiny-badge__subtitle';
+    subtitleEl.textContent = 'Ambas as versões são recomendadas para este boss.';
+
+    popover.append(iconEl, titleEl, subtitleEl);
+    shinyBadge.appendChild(popover);
+    nameEl.appendChild(shinyBadge);
+  }
+}
+
 function mergeShinyRecommendationVariantsInList(picks = [], bossRef, seedConfigs = {}) {
   if (!Array.isArray(picks) || !picks.length || !bossRef) return;
 
@@ -5208,23 +5254,32 @@ function mergeShinyRecommendationVariantsInList(picks = [], bossRef, seedConfigs
     const sourcePicks = Array.isArray(entry?.picks) ? entry.picks : [];
     const explicitBasePick = sourcePicks.find((pick) => !isShinyRecommendationVariant(pick));
     const shinyPicks = sourcePicks.filter((pick) => isShinyRecommendationVariant(pick));
-    const basePick = explicitBasePick || createBaseRecommendationVariantFromShinyPick(shinyPicks[0], seedConfigs);
 
-    if (!basePick) {
-      mergedPicks.push(...sourcePicks);
+    // Se ambas as versões são recomendadas, mantém a versão normal com ✨
+    if (explicitBasePick && shinyPicks.length > 0) {
+      shinyPicks.forEach((shinyPick) => {
+        mergeShinyRecommendationVariantIntoBasePick(explicitBasePick, shinyPick, bossRef);
+      });
+      explicitBasePick._bothVariantsRecommended = true;
+      mergedPicks.push(explicitBasePick);
       return;
     }
 
-    shinyPicks.forEach((shinyPick) => {
-      mergeShinyRecommendationVariantIntoBasePick(basePick, shinyPick, bossRef);
-    });
+    // Se apenas a versão shiny foi recomendada (por passiva, tipagem ou perfil exclusivo), mantém apenas a shiny
+    if (!explicitBasePick && shinyPicks.length > 0) {
+      const shinyPick = shinyPicks[0];
+      shinyPick._isShinyOnly = true;
+      mergedPicks.push(shinyPick);
+      return;
+    }
 
-    mergedPicks.push(basePick);
+    // Se apenas a versão normal foi recomendada
+    if (explicitBasePick) {
+      mergedPicks.push(explicitBasePick);
+      return;
+    }
 
-    sourcePicks.forEach((pick) => {
-      if (pick === basePick || shinyPicks.includes(pick)) return;
-      mergedPicks.push(pick);
-    });
+    mergedPicks.push(...sourcePicks);
   });
 
   picks.splice(0, picks.length, ...dedupeRecommendedPicksByName(mergedPicks));
@@ -14026,7 +14081,7 @@ function createRecommendationCard(poke, options = {}) {
 
     const nameEl = document.createElement('div');
     nameEl.className = 'speedster-reco-name';
-    nameEl.textContent = poke.name;
+    appendRecommendationDisplayName(nameEl, poke);
     nameWrapper.append(tierDot, nameEl, createTierAssistBadge(tier, 'tier-assist-badge--reco'));
 
     const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
@@ -14122,7 +14177,7 @@ function createRecommendationCard(poke, options = {}) {
 
   const nameEl = document.createElement('div');
   nameEl.className = 'speedster-reco-name';
-  nameEl.textContent = poke.name;
+  appendRecommendationDisplayName(nameEl, poke);
   nameWrapper.append(tierDot, nameEl);
 
   const score = document.createElement('div');
@@ -14694,8 +14749,8 @@ function createRolePickCard(poke) {
 
   const name = document.createElement('div');
   name.className = 'boss-role-pick-name';
-  name.textContent = poke.name;
   name.title = poke.note ? `${poke.name} - ${poke.note}` : poke.name;
+  appendRecommendationDisplayName(name, poke);
 
   nameWrap.append(tierDot, name, createTierAssistBadge(poke.tier, 'tier-assist-badge--role'));
   const passiveInfo = getRecommendationDisplayPassiveInfo(poke);
@@ -15632,13 +15687,38 @@ function showLocationOverlay(src, options = {}) {
   title.textContent = boss.name || 'Localização do boss';
   heading.append(eyebrow, title);
 
+  const actions = document.createElement('div');
+  actions.className = 'boss-map-dialog__actions';
+
+  const fullscreenBtn = document.createElement('button');
+  fullscreenBtn.type = 'button';
+  fullscreenBtn.className = 'boss-map-dialog__fullscreen';
+  fullscreenBtn.setAttribute('aria-label', 'Alternar tela cheia');
+  fullscreenBtn.title = 'Alternar tela cheia';
+  fullscreenBtn.innerHTML = '⛶';
+  fullscreenBtn.addEventListener('click', () => {
+    const isFull = dialog.classList.toggle('is-fullscreen');
+    overlay.classList.toggle('is-fullscreen', isFull);
+    fullscreenBtn.innerHTML = isFull ? '🗗' : '⛶';
+    fullscreenBtn.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+    fullscreenBtn.setAttribute('aria-label', isFull ? 'Restaurar tamanho' : 'Tela cheia');
+    const mapFsBtn = mapPanel.querySelector('#interactive-map-fullscreen');
+    if (mapFsBtn) {
+      mapFsBtn.innerHTML = isFull ? '🗗' : '⛶';
+      mapFsBtn.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+    }
+    window.dispatchEvent(new Event('resize'));
+  });
+
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'boss-map-dialog__close';
   close.setAttribute('aria-label', 'Fechar mapa interativo');
+  close.title = 'Fechar';
   close.textContent = '×';
   close.addEventListener('click', () => closeLocationOverlay());
-  header.append(heading, close);
+  actions.append(fullscreenBtn, close);
+  header.append(heading, actions);
 
   const body = document.createElement('div');
   body.className = 'boss-map-dialog__body';

@@ -1072,15 +1072,84 @@
 
     function getPokemonRespawnMarkers(pokemonName, pokemonDex){
         const normalizedName = normalizeRespawnPokemonName(pokemonName);
+        if(!normalizedName) return [];
+
+        const isMega = normalizedName.startsWith('mega') || /^mega\b/i.test(String(pokemonName || '').trim());
+        const baseName = normalizedName
+            .replace(/^shiny/i, '')
+            .replace(/^mega/i, '')
+            .replace(/x$|y$/i, '')
+            .trim();
+
+        // Mega Pokémon só podem ser obtidos via Hoopa Portal específico (ex: Mega Chesnaught -> Hoopa Portal - Chesnaught).
+        // Mega Pokémons que não têm portal (ex: Mega Gengar, Mega Alakazam, Mega Venusaur) NÃO abrem modal nem usam respawn normal.
+        if(isMega){
+            const hoopaMarkers = markers.filter(marker => getCategory(marker)?.slug === 'hoopa-portals');
+            return hoopaMarkers.filter(marker => {
+                const portalTarget = normalizePokemonName(String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, ''));
+                return portalTarget && (
+                    portalTarget === baseName ||
+                    portalTarget === normalizedName ||
+                    portalTarget.includes(baseName) ||
+                    normalizedName.includes(portalTarget)
+                );
+            });
+        }
+
+        // Para Pokémons normais (não-mega):
+        // 1. Hunt markers por nome exato
         const huntMarkers = markers.filter(marker => getCategory(marker)?.slug === 'hunt');
-        const nameMatches = normalizedName
-            ? huntMarkers.filter(marker => normalizeRespawnPokemonName(marker?.name) === normalizedName)
-            : [];
+        const nameMatches = huntMarkers.filter(marker => normalizeRespawnPokemonName(marker?.name) === normalizedName);
         if(nameMatches.length) return nameMatches;
 
+        // 2. Hunt markers por Dex Number
         const normalizedDex = Number.parseInt(pokemonDex, 10);
-        if(!Number.isFinite(normalizedDex) || normalizedDex <= 0) return [];
-        return huntMarkers.filter(marker => Number.parseInt(marker?.details?.dexNumber, 10) === normalizedDex);
+        if(Number.isFinite(normalizedDex) && normalizedDex > 0){
+            const dexMatches = huntMarkers.filter(marker => Number.parseInt(marker?.details?.dexNumber, 10) === normalizedDex);
+            if(dexMatches.length) return dexMatches;
+        }
+
+        // 3. Hoopa Portals (se o Pokémon base não tiver hunt regular mas tiver portal)
+        const hoopaMarkers = markers.filter(marker => getCategory(marker)?.slug === 'hoopa-portals');
+        const hoopaMatches = hoopaMarkers.filter(marker => {
+            const portalTarget = normalizePokemonName(String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, ''));
+            return portalTarget && (portalTarget === normalizedName || portalTarget === baseName);
+        });
+        if(hoopaMatches.length) return hoopaMatches;
+
+        // 4. Ranger Bosses (ex: Zoroark -> Ranger Boss Zoroark)
+        const rangerMarkers = markers.filter(marker => getCategory(marker)?.slug === 'ranger-bosses');
+        const rangerMatches = rangerMarkers.filter(marker => {
+            const bossTarget = normalizePokemonName(String(marker?.name || '').replace(/^Ranger Boss\s*/i, ''));
+            return bossTarget && (bossTarget === normalizedName || bossTarget === baseName);
+        });
+        if(rangerMatches.length) return rangerMatches;
+
+        // 5. Bosses Info (ex: Drapion, Honchkrow, Slaking, etc.)
+        const bossInfoMarkers = markers.filter(marker => getCategory(marker)?.slug === 'bosses-info');
+        const bossInfoMatches = bossInfoMarkers.filter(marker => {
+            const bossTarget = normalizePokemonName(String(marker?.name || '').replace(/^Boss\s*/i, ''));
+            return bossTarget && (bossTarget === normalizedName || bossTarget === baseName);
+        });
+        if(bossInfoMatches.length) return bossInfoMatches;
+
+        // 6. Fósseis (ex: Kabutops, Omastar, Tyrantrum, etc.)
+        const fossilMarkers = markers.filter(marker => getCategory(marker)?.slug === 'fosseis');
+        const fossilMatches = fossilMarkers.filter(marker => {
+            const text = normalizePokemonName(marker?.name || '');
+            return text && (text.includes(normalizedName) || (baseName && text.includes(baseName)));
+        });
+        if(fossilMatches.length) return fossilMatches;
+
+        // 7. Eeveelutions (ex: Vaporeon, Jolteon, Sylveon, etc.)
+        const eeveeMarkers = markers.filter(marker => getCategory(marker)?.slug === 'eeveelution');
+        const eeveeMatches = eeveeMarkers.filter(marker => {
+            const text = normalizePokemonName(String(marker?.name || '').replace(/^Eeveelution\s*-\s*/i, ''));
+            return text && (text === normalizedName || text === baseName);
+        });
+        if(eeveeMatches.length) return eeveeMatches;
+
+        return [];
     }
 
     async function focusPokemonRespawns(pokemonName, options = {}){
@@ -1233,10 +1302,31 @@
     }
 
     function getMarkerPokemon(marker){
-        if(getCategory(marker)?.slug !== 'hunt') return null;
-        const markerKey = normalizePokemonName(marker?.name);
-        const catalogKey = MAP_POKEMON_NAME_ALIASES[markerKey] || markerKey;
-        return pokemonCatalogByName.get(catalogKey) || null;
+        const categorySlug = getCategory(marker)?.slug;
+        if(categorySlug === 'hunt'){
+            const markerKey = normalizePokemonName(marker?.name);
+            const catalogKey = MAP_POKEMON_NAME_ALIASES[markerKey] || markerKey;
+            return pokemonCatalogByName.get(catalogKey) || null;
+        }
+        if(categorySlug === 'hoopa-portals'){
+            const portalName = String(marker?.name || '').replace(/^Hoopa Portal\s*-\s*/i, '').trim();
+            const megaKey = normalizePokemonName(`Mega ${portalName}`);
+            const baseKey = normalizePokemonName(portalName);
+            return pokemonCatalogByName.get(megaKey) || pokemonCatalogByName.get(baseKey) || null;
+        }
+        if(categorySlug === 'ranger-bosses'){
+            const bossName = String(marker?.name || '').replace(/^Ranger Boss\s*/i, '').trim();
+            return pokemonCatalogByName.get(normalizePokemonName(bossName)) || null;
+        }
+        if(categorySlug === 'bosses-info'){
+            const bossName = String(marker?.name || '').replace(/^Boss\s*/i, '').trim();
+            return pokemonCatalogByName.get(normalizePokemonName(bossName)) || null;
+        }
+        if(categorySlug === 'eeveelution'){
+            const eeveeName = String(marker?.name || '').replace(/^Eeveelution\s*-\s*/i, '').trim();
+            return pokemonCatalogByName.get(normalizePokemonName(eeveeName)) || null;
+        }
+        return null;
     }
 
     function getMarkerFossilPokemon(marker){
@@ -1599,6 +1689,58 @@
         elements.shareResultClose.addEventListener('click', () => {
             elements.shareResult.hidden = true;
         });
+        const copyHandler = async () => {
+            if(!elements.shareResultUrl?.value) return;
+            await copyTextToClipboard(elements.shareResultUrl.value);
+            elements.shareResultUrl.select();
+            const copyBtn = elements.shareResultCopy || elements.shareResult?.querySelector('.interactive-map-share-result__icon');
+            if(copyBtn){
+                copyBtn.classList.add('is-copied');
+                const prevHtml = copyBtn.innerHTML;
+                copyBtn.textContent = '✓';
+                copyBtn.setAttribute('title', 'Link copiado!');
+                window.setTimeout(() => {
+                    if(copyBtn.isConnected){
+                        copyBtn.innerHTML = prevHtml;
+                        copyBtn.classList.remove('is-copied');
+                        copyBtn.setAttribute('title', 'Copiar link');
+                    }
+                }, 1800);
+            }
+        };
+        if(elements.shareResultCopy){
+            elements.shareResultCopy.addEventListener('click', copyHandler);
+        }
+        if(elements.fullscreen){
+            elements.fullscreen.addEventListener('click', () => {
+                const modalDialog = elements.viewport.closest('.boss-map-dialog');
+                const modalOverlay = elements.viewport.closest('.location-overlay');
+                if(modalDialog){
+                    const isFull = modalDialog.classList.toggle('is-fullscreen');
+                    if(modalOverlay) modalOverlay.classList.toggle('is-fullscreen', isFull);
+                    const modalHeaderBtn = modalDialog.querySelector('.boss-map-dialog__fullscreen');
+                    if(modalHeaderBtn){
+                        modalHeaderBtn.innerHTML = isFull ? '🗗' : '⛶';
+                        modalHeaderBtn.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+                        modalHeaderBtn.setAttribute('aria-label', isFull ? 'Restaurar tamanho' : 'Tela cheia');
+                    }
+                    elements.fullscreen.innerHTML = isFull ? '🗗' : '⛶';
+                    elements.fullscreen.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+                    elements.fullscreen.setAttribute('aria-label', isFull ? 'Restaurar tamanho' : 'Tela cheia');
+                    window.dispatchEvent(new Event('resize'));
+                    return;
+                }
+                const shell = document.querySelector('.interactive-map-shell') || elements.viewport.closest('#content-mapa-interativo');
+                if(shell){
+                    const isFull = shell.classList.toggle('is-fullscreen');
+                    document.body.classList.toggle('interactive-map-page-fullscreen', isFull);
+                    elements.fullscreen.innerHTML = isFull ? '🗗' : '⛶';
+                    elements.fullscreen.title = isFull ? 'Restaurar tamanho' : 'Tela cheia';
+                    elements.fullscreen.setAttribute('aria-label', isFull ? 'Restaurar tamanho' : 'Tela cheia');
+                    window.dispatchEvent(new Event('resize'));
+                }
+            });
+        }
         elements.shareResultUrl.addEventListener('click', () => elements.shareResultUrl.select());
         elements.categories.addEventListener('scroll', hideFilterTooltip, { passive: true });
         elements.viewport.addEventListener('wheel', event => {
@@ -1808,7 +1950,9 @@
             shareView: byId('interactive-map-share-view'),
             shareResult: byId('interactive-map-share-result'),
             shareResultClose: byId('interactive-map-share-result-close'),
+            shareResultCopy: byId('interactive-map-share-result-copy'),
             shareResultUrl: byId('interactive-map-share-result-url'),
+            fullscreen: byId('interactive-map-fullscreen'),
             status: byId('interactive-map-status')
         });
     }
