@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-19T00:36:06.592Z",
+  "updatedAt": "2026-08-19T00:55:19.180Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-19T00:35:35.603Z",
-    "endedAt": "2026-08-19T00:36:06.592Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-19T00:45:56.306Z",
+    "endedAt": "2026-08-19T00:55:19.180Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "vivihbecker",
       "jackpist0la",
@@ -44,20 +44,28 @@
     "observedChannels": [
       "vivihbecker"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "vivihbecker"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "vivihbecker",
+        "messageAt": 1787100919084,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "vivihbecker",
         "kind": "rattata-message",
-        "messageAt": 1787099766466,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1787100919084,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "vivihbecker",
-        "kind": "escape",
-        "messageAt": 1787099766466,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1787100919084,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -108,24 +116,24 @@
   },
   "latest": {
     "channel": "vivihbecker",
-    "lastMessageAt": 1787099766466,
-    "expectedNextAt": 1787100966466,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1787100919084,
+    "expectedNextAt": 1787102179084,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-08-18T20:51:45Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1787099766592,
-    "persistedAt": 1787099766592
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1787100919180,
+    "persistedAt": 1787100919180
   },
   "timers": {
     "vivihbecker": {
       "channel": "vivihbecker",
-      "lastMessageAt": 1787099766466,
-      "expectedNextAt": 1787100966466,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1787100919084,
+      "expectedNextAt": 1787102179084,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-08-18T20:51:45Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1787099766592,
-      "persistedAt": 1787099766592
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1787100919180,
+      "persistedAt": 1787100919180
     }
   }
 }
