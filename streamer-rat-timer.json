@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-19T22:48:46.254Z",
+  "updatedAt": "2026-08-19T23:07:52.316Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-19T22:48:43.593Z",
-    "endedAt": "2026-08-19T22:48:46.254Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-19T22:59:04.052Z",
+    "endedAt": "2026-08-19T23:07:52.316Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
       "eaisantinho",
@@ -46,22 +46,30 @@
       "uguettolitz"
     ],
     "observedChannels": [
-      "okamiulv"
+      "sousupermeme"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "sousupermeme"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "sousupermeme",
+        "messageAt": 1787180872238,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "okamiulv",
+        "channel": "sousupermeme",
         "kind": "rattata-message",
-        "messageAt": 1787179726136,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1787180872238,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "okamiulv",
-        "kind": "escape",
-        "messageAt": 1787179726136,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "sousupermeme",
+        "kind": "spawn",
+        "messageAt": 1787180872238,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -111,16 +119,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "okamiulv",
-    "lastMessageAt": 1787179726136,
-    "expectedNextAt": 1787180926136,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-08-19T20:47:52Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1787179726253,
-    "persistedAt": 1787179726253
+    "channel": "sousupermeme",
+    "lastMessageAt": 1787180872238,
+    "expectedNextAt": 1787182132238,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-08-19T22:43:01Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1787180872315,
+    "persistedAt": 1787180872315
   },
   "timers": {
+    "sousupermeme": {
+      "channel": "sousupermeme",
+      "lastMessageAt": 1787180872238,
+      "expectedNextAt": 1787182132238,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-08-19T22:43:01Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1787180872315,
+      "persistedAt": 1787180872315
+    },
     "okamiulv": {
       "channel": "okamiulv",
       "lastMessageAt": 1787179726136,
@@ -129,17 +147,7 @@
       "streamStartedAt": "2026-08-19T20:47:52Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1787179726253,
-      "persistedAt": 1787179726253
-    },
-    "sousupermeme": {
-      "channel": "sousupermeme",
-      "lastMessageAt": 1787179663699,
-      "expectedNextAt": 1787180923699,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1787179663807,
-      "persistedAt": 1787179723592
+      "persistedAt": 1787180344052
     },
     "eaisantinho": {
       "channel": "eaisantinho",
@@ -149,7 +157,7 @@
       "streamStartedAt": "2026-08-19T20:34:24Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1787178514190,
-      "persistedAt": 1787179723592
+      "persistedAt": 1787180344052
     }
   }
 }
