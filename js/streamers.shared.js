@@ -29,6 +29,7 @@
         { name: 'thigaartus', supportsDrops: false },
         { name: 'lordjuregi', supportsDrops: false },
         { name: 'Eusou_O_D', supportsDrops: false },
+        { name: 'voltanb', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
