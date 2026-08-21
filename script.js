@@ -355,7 +355,7 @@ let activeProfessionKey = '';
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260812c';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260818b';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260821a';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20260817b';
@@ -14990,7 +14990,7 @@ function showInteractiveMap(){
             .catch(error => console.error('Interactive map panel load failed', error));
         return;
     }
-    const requestedMarkerRoute = String(location.pathname || '').match(/\/mapa-interativo\/([a-z0-9][a-z0-9-]*)\/?$/i);
+    const requestedMarkerRoute = String(location.pathname || '').match(/\/mapa-interativo\/([a-z0-9][a-z0-9-]*|[\d.]+-[\d.]+-\d+)\/?$/i);
     const requestedMarkerSlug = requestedMarkerRoute?.[1] || '';
     const requestedMarkerPath = requestedMarkerSlug ? `/mapa-interativo/${requestedMarkerSlug}` : '';
     if(contentInteractiveMap){
@@ -15012,7 +15012,7 @@ function showInteractiveMap(){
         if(typeof initializeMap !== 'function') throw new Error('Inicializador do mapa indisponivel.');
         return initializeMap()
             .then(() => {
-                if(typeof window.resetInteractiveMapSession === 'function'){
+                if(!requestedMarkerSlug && typeof window.resetInteractiveMapSession === 'function'){
                     return window.resetInteractiveMapSession();
                 }
                 return undefined;
@@ -21792,7 +21792,7 @@ function updateUrl(options = {}){
                 routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
             }
         } else if(!isHomeView && activeTab === 'mapa-interativo'){
-            const activeMapRoute = String(location.pathname || '').match(/\/mapa-interativo\/[a-z0-9][a-z0-9-]*\/?$/i);
+            const activeMapRoute = String(location.pathname || '').match(/\/mapa-interativo\/(?:[a-z0-9][a-z0-9-]*|[\d.]+-[\d.]+-\d+)\/?$/i);
             routePath = activeMapRoute ? activeMapRoute[0].replace(/\/+$/, '') : getRoutePathForTab(activeTab);
         } else if(!isHomeView && activeTab === 'catch'){
             const activeCatchMatch = getCatchRouteMatch();

@@ -54,7 +54,7 @@
     const SHARE_GRID_SIZE = 1;
     const LEGACY_SHARE_GRID_SIZE = 32;
     const PIXEL_SHARE_ROUTE_PREFIX = 'pixel';
-    const SHARED_VIEW_ZOOM = 0.65;
+    const SHARED_VIEW_ZOOM = 1.7;
     const MAP_IMAGE_VERSION = '20260802a';
     const HOOPA_PORTAL_META = {
         staraptor: { image: 'pokemons/megas/megastaraptor.png?v=20260725a' },
@@ -935,8 +935,23 @@
 
     function getSharedViewFromUrl(){
         const pathname = String(location.pathname || '');
+        const directCoordinateRouteMatch = pathname.match(/\/mapa-interativo\/([\d.]+)-([\d.]+)-(\d+)\/?$/i);
         const pixelRouteMatch = pathname.match(/\/mapa-interativo\/pixel-([\d-]+)\/?$/i);
         const legacyRouteMatch = pathname.match(/\/mapa-interativo\/([\d-]+)\/?$/i);
+        if(directCoordinateRouteMatch){
+            const [, xValue, yValue, floorValue] = directCoordinateRouteMatch;
+            const sharedView = {
+                floor: Number(floorValue),
+                x: Number(xValue),
+                y: Number(yValue),
+                scale: SHARED_VIEW_ZOOM,
+                showPin: true
+            };
+            const config = FLOOR_CONFIG.find(entry => entry.z === sharedView.floor);
+            if(config && sharedView.x >= 0 && sharedView.x <= config.w && sharedView.y >= 0 && sharedView.y <= config.h){
+                return sharedView;
+            }
+        }
         const routeMatch = pixelRouteMatch || legacyRouteMatch;
         if(routeMatch){
             const gridSize = pixelRouteMatch ? SHARE_GRID_SIZE : LEGACY_SHARE_GRID_SIZE;
@@ -1204,7 +1219,7 @@
     }
 
     async function copyMarkerLink(marker, button){
-        const path = `/mapa-interativo/${getMarkerShareSlug(marker)}`;
+        const path = `/mapa-interativo/${Number(marker.positionX)}-${Number(marker.positionY)}-${Number(marker.floor)}`;
         history.pushState(null, '', path);
         const url = new URL(path, location.origin).href;
         await copyTextToClipboard(url);
@@ -1246,9 +1261,8 @@
     }
 
     async function copySharedPinLink(position){
-        const { coordinateX, coordinateY, coordinateZ } = getShareCoordinates(position);
-        const compactCoordinate = `${PIXEL_SHARE_ROUTE_PREFIX}-${coordinateX}-${coordinateY}-${coordinateZ}-${Math.round(scale * 100)}`;
-        const path = `/mapa-interativo/${compactCoordinate}`;
+        const sharedFloor = Number.isFinite(Number(position.floor)) ? Number(position.floor) : floor;
+        const path = `/mapa-interativo/${Number(position.x)}-${Number(position.y)}-${sharedFloor}`;
         const url = new URL(path, location.origin);
         history.pushState(null, '', path);
         await copyTextToClipboard(url.href);
@@ -1285,7 +1299,8 @@
         renderSharedPin();
         copySharedPinLink({
             x: sharedPin.positionX,
-            y: sharedPin.positionY
+            y: sharedPin.positionY,
+            floor: sharedPin.floor
         });
     }
 
