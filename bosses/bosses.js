@@ -7984,6 +7984,7 @@ const catalogSpeedsterRecommendationConfigs = Object.freeze([
   { name: 'Scyther', types: ['bug', 'flying'], moveTypes: ['bug'], clan: 'valor' },
   { name: 'Tauros', types: ['normal'], moveTypes: ['electric'], clan: 'valor' },
   { name: 'Kabutops', types: ['rock', 'water'], moveTypes: ['rock'], clan: 'valor' },
+  { name: 'Relicanth', types: ['water', 'rock'], moveTypes: ['rock'], clan: 'mystic' },
   { name: 'Dragonair', types: ['dragon'], moveTypes: ['dragon'], clan: 'instinct' },
   { name: 'Qwilfish', types: ['water', 'poison'], moveTypes: ['poison'], clan: 'mystic' },
   { name: 'Heracross', types: ['bug', 'fighting'], moveTypes: ['fighting'], clan: 'valor' },
