@@ -16,9 +16,12 @@
           <div class="team-builder-section-head" style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.45rem; width:100%; max-width:100%; min-width:0; text-align:center;">
             <span class="team-builder-eyebrow">Composi&ccedil;&atilde;o</span>
             <h3 id="team-builder-board-title">Slots do time</h3>
-            <button id="team-builder-clear" class="team-builder-action team-builder-action--clear" type="button" style="display:inline-flex; width:fit-content; max-width:fit-content; min-width:0; flex:0 0 auto; margin-left:0; align-self:center;">Limpar time</button>
+            <div class="team-builder-action-row">
+              <button id="team-builder-autofill" class="team-builder-action team-builder-action--complete" type="button" disabled>Completar Time</button>
+              <button id="team-builder-clear" class="team-builder-action team-builder-action--clear" type="button">Limpar time</button>
+            </div>
           </div>
-          <p class="team-builder-drag-hint">Arraste DPS e Finisher preenchidos para trocar as posi&ccedil;&otilde;es entre eles.</p>
+          <p class="team-builder-drag-hint">Use "Completar Time" para preencher os slots vazios com Pokémon que combinam com os movesets selecionados e respeitam os filtros ativos.<br>Arraste os Pokémon dos slots DPS ou Finisher para trocar suas posições.</p>
           <div id="team-builder-slots" class="team-builder-slots" role="list" aria-label="Slots do time"></div>
         </section>
 

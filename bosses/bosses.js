@@ -2216,13 +2216,11 @@ const horizonsSilverBosses = createManualRoleboardBosses([
       instinct: {
         dps: [
           createRolePick('Mega Raichu Y', ['electric'], 'electric'),
-          createRolePick('Pikachu', ['electric'], 'electric')
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Shiftry', ['grass', 'dark'], 'dark', { tier: 'bom' })
         ],
         tank: [
-          createRolePick('Claydol', ['ground', 'psychic'], 'ground')
-        ],
-        support: [
-          createRolePick('Kadabra', ['psychic'], 'psychic')
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground', { tier: 'bom' })
         ]
       },
       mystic: {
@@ -2240,12 +2238,12 @@ const horizonsSilverBosses = createManualRoleboardBosses([
       valor: {
         dps: [
           createRolePick('Raticate', ['normal'], 'dark'),
-          createRolePick('Pyroar Female', ['fire', 'normal'], 'grass')
+          createRolePick('Pyroar Female', ['fire', 'normal'], 'grass'),
+          createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' })
         ],
         tank: [
           createRolePick('Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
-          createRolePick('Shiny Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
-          createRolePick('Miltank', ['normal'], 'ground')
+          createRolePick('Shiny Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' })
         ],
         support: [
           createRolePick('Porygon2', ['normal'], 'electric')
@@ -2270,10 +2268,7 @@ const horizonsSilverBosses = createManualRoleboardBosses([
           createRolePick('Shiftry', ['grass', 'dark'], 'dark')
         ],
         tank: [
-          createRolePick('Hippowdon Female', ['ground'], 'ground')
-        ],
-        support: [
-          createRolePick('Pachirisu', ['electric'], 'electric')
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground', { tier: 'bom' })
         ]
       },
       mystic: {
@@ -2282,7 +2277,8 @@ const horizonsSilverBosses = createManualRoleboardBosses([
           createRolePick('Orthworm', ['steel'], 'ground')
         ],
         tank: [
-          createRolePick('Carracosta', ['water', 'rock'], 'rock')
+          createRolePick('Dusclops', ['ghost'], 'ghost', { tier: 'bom' }),
+          createRolePick('Shiny Dusclops', ['ghost'], 'ghost', { tier: 'bom' })
         ],
         support: [
           createRolePick('Corsola', ['water', 'rock'], 'rock')
@@ -2291,15 +2287,13 @@ const horizonsSilverBosses = createManualRoleboardBosses([
       valor: {
         dps: [
           createRolePick('Bouffalant', ['normal'], 'ground'),
-          createRolePick('Raticate', ['normal'], 'dark')
+          createRolePick('Raticate', ['normal'], 'dark'),
+          createRolePick('Absol', ['dark'], 'dark', { tier: 'excelente' })
         ],
         tank: [
           createRolePick('Miltank', ['normal'], 'ground'),
           createRolePick('Sableye', ['dark', 'ghost'], 'dark', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
           createRolePick('Shiny Sableye', ['dark', 'ghost'], 'dark', { tier: 'bom', note: 'Passiva: resistência a Ghost.' })
-        ],
-        support: [
-          createRolePick('Chansey', ['normal'], 'psychic')
         ]
       }
     }
@@ -2460,6 +2454,93 @@ if (horizonsSilverNormalRun) {
     difficulty: 'medio',
     title: 'Medio - Lado A'
   });
+}
+
+const horizonsSilverFemaleBosses = createManualRoleboardBosses([
+  {
+    id: 'horizons-silver-boss-room-jellicent-female',
+    name: 'Jellicent Female',
+    image: 'pokemons/5gen/jellicent-female.png',
+    types: ['water', 'ghost'],
+    moveType: 'water',
+    effectiveness: {
+      attackTypes: ['ghost', 'water']
+    },
+    expandCardDescription: true,
+    description: 'Dica: Ataque basico Ghost e Habilidades Water.',
+    clans: {
+      instinct: {
+        dps: [
+          createRolePick('Mega Raichu Y', ['electric'], 'electric'),
+          createRolePick('Pikachu', ['electric'], 'electric'),
+          createRolePick('Shiftry', ['grass', 'dark'], 'dark', { tier: 'bom' })
+        ],
+        tank: [
+          createRolePick('Claydol', ['ground', 'psychic'], 'ground', { tier: 'bom' })
+        ]
+      },
+      mystic: {
+        dps: [
+          createRolePick('Banette', ['ghost'], 'ghost'),
+          createRolePick('Mega Gyarados', ['water', 'dark'], 'dark')
+        ],
+        tank: [
+          createRolePick('Dusclops', ['ghost'], 'ghost'),
+          createRolePick('Shiny Dusclops', ['ghost'], 'ghost')
+        ]
+      },
+      valor: {
+        dps: [
+          createRolePick('Raticate', ['normal'], 'dark'),
+          createRolePick('Pyroar Female', ['fire', 'normal'], 'grass'),
+          createRolePick('Absol', ['dark'], 'dark', { tier: 'bom' })
+        ],
+        tank: [
+          createRolePick('Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' }),
+          createRolePick('Shiny Sableye', ['dark', 'ghost'], 'ghost', { tier: 'bom', note: 'Passiva: resistência a Ghost.' })
+        ]
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Silver - Boss Rooms',
+  encounterNote: 'Boss rooms do Horizons Silver com recomendações por clan e função.'
+});
+
+function createHorizonsSilverHardPathSections(baseSections = []) {
+  return baseSections.map((section) => {
+    if (section?.id !== 'lure-4') return section;
+    return {
+      ...section,
+      bossesAfter: horizonsSilverFemaleBosses,
+      bossesAfterOptions: {
+        eyebrow: 'Boss',
+        title: 'Jellicent Female',
+        subtitle: 'Utilize Rock Smash na parede da esquerda à escada para chegar no Boss.',
+        compact: true
+      }
+    };
+  });
+}
+
+if (horizonsSilverNormalRun) {
+  horizonsSilverRunsData.push(
+    {
+      ...horizonsSilverNormalRun,
+      id: 'silver-dificil-a',
+      difficulty: 'dificil',
+      title: 'Dificil - Lado A',
+      pathSections: createHorizonsSilverHardPathSections(horizonsSilverNormalRun.pathSections)
+    },
+    {
+      ...horizonsSilverNormalRun,
+      id: 'silver-especialista-a',
+      difficulty: 'especialista',
+      title: 'Especialista - Lado A',
+      pathSections: createHorizonsSilverHardPathSections(horizonsSilverNormalRun.pathSections)
+    }
+  );
 }
 
 const horizonsRunsData = [
@@ -6941,6 +7022,26 @@ function filterHorizonsVisibleRolePicks(picks = [], context = {}) {
   const withoutRuim = (Array.isArray(picks) ? picks : [])
     .filter((pick) => normalizeTierKey(pick?.tier) !== 'ruim');
 
+  if (String(context?.roleKey || '').trim().toLowerCase() === 'tank') {
+    const basicAttackTypeByBossId = {
+      'horizons-silver-boss-room-1': 'ghost',
+      'horizons-silver-boss-room-jellicent-female': 'ghost',
+      'horizons-silver-boss-room-2': 'dark'
+    };
+    const basicAttackType = basicAttackTypeByBossId[String(context?.boss?.id || '').trim().toLowerCase()];
+    if (basicAttackType) {
+      const defensivePicks = withoutRuim.filter((pick) => {
+        const scored = scoreRecommendationForBoss(
+          { ...context.boss, effectiveness: { attackTypes: [basicAttackType] } },
+          cloneRolePickConfig(pick),
+          { roleKey: 'tank' }
+        );
+        return typeof scored?._defenseWorst === 'number' && scored._defenseWorst < 1;
+      });
+      return defensivePicks.length ? defensivePicks : withoutRuim.slice(0, 1);
+    }
+  }
+
   if (shouldKeepAllHorizonsNonRuimPicks(context?.boss, context?.clanKey, context?.roleKey)) {
     return withoutRuim;
   }
@@ -7323,6 +7424,13 @@ function classifyDefenseOnlyRecommendationTier(worstDefense, options = {}) {
 
 function getRecommendationScoreWeights(boss) {
   const catalogId = String(bossCatalogIdByReference.get(boss) || boss?.catalogId || '').toLowerCase();
+  const contentProfile = window.PokeRecommendationEngine?.getBossProfile?.(boss, catalogId);
+  if (contentProfile) {
+    return {
+      offense: contentProfile.offenseWeight,
+      defense: contentProfile.defenseWeight
+    };
+  }
   return catalogId === 'hoopa'
     ? { offense: 0.7, defense: 0.3 }
     : { offense: 0.6, defense: 0.4 };
@@ -7449,6 +7557,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     _defenseWorst: worstDefense,
     _defenseBest: bestDefense,
     _scoreWeights: scoreWeights,
+    _recommendationContext: window.PokeRecommendationEngine?.getBossProfile?.(boss, bossCatalogIdByReference.get(boss))?.tankRole || 'defender',
     _moveType: moveType,
     tier,
   };
@@ -8411,7 +8520,10 @@ Object.entries(mew2RequestedInstinctDpsByBoss).forEach(([bossId, picks]) => {
 removeRuimRecommendationsAndBackfillMissingBosses();
 synchronizeRecommendationTiers();
 mergeShinyRecommendationVariantsAcrossBossCatalogs();
-mergeShinyRecommendationVariantsForRoleboardBosses(horizonsSilverBosses);
+mergeShinyRecommendationVariantsForRoleboardBosses([
+  ...horizonsSilverBosses,
+  ...horizonsSilverFemaleBosses
+]);
 removeRuimRecommendationsAndBackfillMissingBosses();
 filterMegaAbsolZBossGroupsToFairyMoveset();
 synchronizeRecommendationTiers();
@@ -14950,6 +15062,7 @@ function openRoleBossModal(boss, options = {}) {
     roleGrid.className = 'boss-role-role-grid';
 
     roleboardRoleOrder.forEach((roleKey) => {
+      if (roleKey === 'support' && String(boss.encounterLabel || '').trim() === 'Horizons Silver - Boss Rooms') return;
       const picks = getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, roleKey);
       if (activeBossMode === 'mainquest' && !picks.length) return;
 
