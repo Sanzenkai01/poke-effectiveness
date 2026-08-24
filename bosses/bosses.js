@@ -2369,7 +2369,7 @@ const horizonsSilverRunsData = [
       {
         id: 'lure-4',
         title: 'Lure 4',
-        subtitle: 'Suba a escada, tome cuidado com o Haunter logo após a subida.',
+        subtitle: 'Suba a escada, tome cuidado com o Haunter logo após a subida.\nNas dificuldades Hard e Especialista, o boss Jellicent Female fica na parede à esquerda da escada, basta utilizar Rock Smash.',
         mobs: [
           { name: 'Cofagrigus', image: 'pokemons/5gen/cofagrigus.png', types: ['ghost'] },
           { name: 'Trevenant', image: 'pokemons/6gen/trevenant.png', types: ['ghost', 'grass'] },
