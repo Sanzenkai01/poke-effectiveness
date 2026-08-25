@@ -1,10 +1,10 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v1118`;
+let CACHE_NAME = `${CACHE_PREFIX}v1119`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
   new URL('./app.html', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260822a', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260825b', self.registration.scope).toString(),
   new URL('./wiki-theme.css?v=20260817c', self.registration.scope).toString(),
   new URL('./script.js?v=20260822a', self.registration.scope).toString(),
   new URL('./bosses/bosses.js?v=20260821b', self.registration.scope).toString(),

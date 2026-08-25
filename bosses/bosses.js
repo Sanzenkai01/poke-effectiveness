@@ -1979,7 +1979,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
     image: 'pokemons/7gen/alolan-golem.png',
     types: ['rock', 'electric'],
     moveType: 'electric',
-    description: 'Boss do Lado A no Medio. O moveset Electric valoriza imunidade ou resistencia eletrica.',
+    description: '',
     clans: {
       instinct: {
         dps: [
@@ -2049,7 +2049,7 @@ const horizonsMediumSideABosses = createManualRoleboardBosses([
     image: 'pokemons/7gen/stakataka.png',
     types: ['rock', 'steel'],
     moveType: 'rock',
-    description: 'Boss do Lado A no Medio. O moveset Rock favorece tanques que resistem pedra e speedsters Fighting/Ground/Water.',
+    description: '',
     clans: {
       instinct: {
         dps: [
@@ -2121,7 +2121,7 @@ const horizonsGoldGigalithBosses = createManualRoleboardBosses([
     image: 'pokemons/5gen/gigalith.png',
     types: ['rock'],
     moveType: 'rock',
-    description: 'Boss intermediario em trio do Gold no Dificil e Especialista.',
+    description: 'Quando o cristal soltar uma mensagem laranja, leve o Gigalith para perto do cristal.',
     cardTags: ['Trio'],
     clans: {
       instinct: {
@@ -2558,8 +2558,9 @@ const horizonsRunsData = [
         mobs: [
           { name: 'Minior Meteor Form', image: 'pokemons/7gen/minior-meteor.png', types: ['rock', 'flying'] },
           { name: 'Minior Core Form', image: 'pokemons/7gen/minior-core.png', types: ['rock', 'flying'] },
-          { name: 'Dwebble', image: 'pokemons/5gen/dwebble.png', types: ['bug', 'rock'] },
-          { name: 'Crustle', image: 'pokemons/5gen/crustle.png', types: ['bug', 'rock'] },
+          { name: 'Rockruff', image: 'pokemons/7gen/rockruff.png', types: ['rock'] },
+          { name: 'Boldore', image: 'pokemons/5gen/boldore.png', types: ['rock'] },
+          { name: 'Roggenrola', image: 'pokemons/5gen/roggenrola.png', types: ['rock'] },
           { name: 'Lycanroc', image: 'pokemons/7gen/lycanroc.png', types: ['rock'] }
         ],
         effectiveTypes: ['electric', 'ice', 'grass', 'fighting'],
@@ -2570,8 +2571,10 @@ const horizonsRunsData = [
         title: 'Segunda Parte',
         subtitle: 'Após o Fly',
         mobs: [
+          { name: 'Crustle', image: 'pokemons/5gen/crustle.png', types: ['bug', 'rock'] },
           { name: 'Alolan Graveler', image: 'pokemons/7gen/alolan-graveler.png', types: ['rock', 'electric'] },
-          { name: 'Alolan Geodude', image: 'pokemons/7gen/alolan-geodude.png', types: ['rock', 'electric'] }
+          { name: 'Alolan Geodude', image: 'pokemons/7gen/alolan-geodude.png', types: ['rock', 'electric'] },
+          { name: 'Dwebble', image: 'pokemons/5gen/dwebble.png', types: ['bug', 'rock'] }
         ],
         effectiveTypes: ['water', 'grass', 'fighting', 'steel'],
         superEffectiveTypes: ['ground']
@@ -2581,6 +2584,8 @@ const horizonsRunsData = [
         title: 'Terceira Parte',
         subtitle: '',
         mobs: [
+          { name: 'Minior Meteor Form', image: 'pokemons/7gen/minior-meteor.png', types: ['rock', 'flying'] },
+          { name: 'Minior Core Form', image: 'pokemons/7gen/minior-core.png', types: ['rock', 'flying'] },
           { name: 'Lycanroc Midnight Form', image: 'pokemons/7gen/midnight-lycanroc.png', types: ['rock'] },
           { name: 'Lycanroc Midday Form', image: 'pokemons/7gen/midday-lycanroc.png', types: ['rock'] },
           { name: 'Lycanroc', image: 'pokemons/7gen/lycanroc.png', types: ['rock'] },
@@ -2596,24 +2601,67 @@ const horizonsRunsData = [
   }
 ];
 
-function createHorizonsGoldPathSectionsWithGigalith(baseSections = []) {
-  return baseSections.map((section, index) => {
-    if (index !== 0) return section;
-    return {
-      ...section,
-      bossesAfter: horizonsGoldGigalithBosses,
-      bossesAfterOptions: {
-        eyebrow: 'Boss intermediario',
-        title: 'Gigalith',
-        subtitle: 'Boss em trio entre a primeira e a segunda parte.',
-        compact: true
+function createHorizonsGoldPathSectionsWithGigalith(baseSections = [], includeGigalith = false, includeBoneTrap = true) {
+  return baseSections.flatMap((section, index) => {
+    const isSecondPart = section.id === 'apos-fly';
+    const isThirdPart = section.id === 'apos-alolan-golem';
+    const nextMobs = [...(section.mobs || [])];
+
+    if ((isSecondPart || isThirdPart) && !nextMobs.some((mob) => mob.name === 'Crustle')) {
+      nextMobs.push({ name: 'Crustle', image: 'pokemons/5gen/crustle.png', types: ['bug', 'rock'] });
+    }
+
+    const nextSection = nextMobs.length === (section.mobs || []).length
+      ? section
+      : { ...section, mobs: nextMobs };
+
+    const sections = [nextSection];
+
+    if (includeGigalith && index === 0) {
+      sections[0] = {
+        ...nextSection,
+        bossesAfter: horizonsGoldGigalithBosses,
+        bossesAfterOptions: {
+          eyebrow: 'Boss intermediario',
+          title: 'Gigalith',
+          subtitle: '',
+          compact: true
+        }
+      };
+    }
+
+    if (isSecondPart) {
+      sections[0] = {
+        ...sections[0],
+        bossesAfter: horizonsMediumSideABosses.filter((boss) => boss.id === 'alolan-golem'),
+        bossesAfterOptions: {
+          eyebrow: 'Boss',
+          title: 'Alolan Golem',
+          subtitle: '',
+          compact: true
+        }
+      };
+      if (includeBoneTrap) {
+        sections.push({
+          id: 'armadilha-osso',
+          title: 'Armadilhas',
+          subtitle: 'Evite pisar no osso, pois vai invocar um rockruff',
+          hideTypes: true,
+          mobs: [
+            { name: 'Bone Trap', image: '/horizons/bone-trap.png', types: [] }
+          ]
+        });
       }
-    };
+    }
+
+    return sections;
   });
 }
 
 const horizonsGoldBaseRun = horizonsRunsData[0];
 if (horizonsGoldBaseRun) {
+  horizonsGoldBaseRun.pathSections = createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections);
+  horizonsGoldBaseRun.bosses = horizonsMediumSideABosses.filter((boss) => boss.id !== 'alolan-golem');
   horizonsRunsData.unshift({
     ...horizonsGoldBaseRun,
     id: 'normal-a',
@@ -2627,7 +2675,7 @@ if (horizonsGoldBaseRun) {
       difficulty: 'dificil',
       title: 'Dificil - Lado A',
       summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
-      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections)
+      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections, true, false)
     },
     {
       ...horizonsGoldBaseRun,
@@ -2635,7 +2683,7 @@ if (horizonsGoldBaseRun) {
       difficulty: 'especialista',
       title: 'Especialista - Lado A',
       summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
-      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections)
+      pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections, true, false)
     }
   );
 }
@@ -12797,6 +12845,9 @@ function createHorizonsMobCard(mob, options = {}) {
 function createHorizonsPathSection(sectionData) {
   const section = document.createElement('section');
   section.className = 'horizons-path-section';
+  if (sectionData?.id) {
+    section.dataset.sectionId = sectionData.id;
+  }
 
   const header = document.createElement('div');
   header.className = 'horizons-section-header';
@@ -12825,7 +12876,7 @@ function createHorizonsPathSection(sectionData) {
   mobGrid.className = 'horizons-mob-grid';
   const isSilverCategory = getHorizonsCategory()?.id === 'silver';
   const hideTypes = Boolean(sectionData?.hideTypes) || (isSilverCategory && sectionData?.id === 'armadilhas');
-  const clickToZoom = isSilverCategory && sectionData?.id === 'armadilhas';
+  const clickToZoom = sectionData?.id === 'armadilha-osso' || (isSilverCategory && sectionData?.id === 'armadilhas');
   (sectionData.mobs || []).forEach((mob) => mobGrid.appendChild(createHorizonsMobCard(mob, { hideTypes, clickToZoom })));
   section.appendChild(mobGrid);
 
@@ -12898,6 +12949,9 @@ function createHorizonsOverview(data, fallbackTitle = 'Horizons') {
 function createHorizonsBossesSection(bosses = [], options = {}) {
   const bossesSection = document.createElement('section');
   bossesSection.className = 'horizons-bosses-section';
+  if (bosses.length === 1 && bosses[0]?.id === 'stakataka') {
+    bossesSection.classList.add('horizons-bosses-section--stakataka');
+  }
   if (options.compact) {
     bossesSection.classList.add('horizons-bosses-section--compact');
   }
@@ -12914,7 +12968,7 @@ function createHorizonsBossesSection(bosses = [], options = {}) {
   bossTitle.textContent = options.title || 'Recomendacoes por cla e funcao';
   const bossSubtitle = document.createElement('p');
   bossSubtitle.className = 'horizons-section-header__subtitle';
-  bossSubtitle.textContent = options.subtitle || 'Clique em um dos Bosses para ver os Pokemons Recomendados.';
+  bossSubtitle.textContent = options.subtitle || 'Clique no Boss para ver os Pokemons Recomendados.';
   bossCopy.append(bossEyebrow, bossTitle, bossSubtitle);
   bossHeader.appendChild(bossCopy);
   bossesSection.appendChild(bossHeader);
