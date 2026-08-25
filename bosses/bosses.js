@@ -2121,7 +2121,7 @@ const horizonsGoldGigalithBosses = createManualRoleboardBosses([
     image: 'pokemons/5gen/gigalith.png',
     types: ['rock'],
     moveType: 'rock',
-    description: 'Quando o cristal soltar uma mensagem laranja, leve o Gigalith para perto do cristal.',
+    description: 'Para encontrar o boss durante o Jetpack vá para cima.\nQuando o cristal soltar uma mensagem laranja, leve o Gigalith para perto do cristal.',
     cardTags: ['Trio'],
     clans: {
       instinct: {
@@ -2554,7 +2554,7 @@ const horizonsRunsData = [
       {
         id: 'primeira-parte',
         title: 'Primeira Parte',
-        subtitle: 'Antes do Fly',
+        subtitle: 'Começo.',
         mobs: [
           { name: 'Minior Meteor Form', image: 'pokemons/7gen/minior-meteor.png', types: ['rock', 'flying'] },
           { name: 'Minior Core Form', image: 'pokemons/7gen/minior-core.png', types: ['rock', 'flying'] },
