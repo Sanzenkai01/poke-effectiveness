@@ -1273,8 +1273,6 @@ const TEAM_BUILDER_HUNT_META_OVERRIDES = Object.freeze({
     metagross: { naturalElements: ['steel', 'psychic'], moveset: ['steel'] },
     morgrem: { naturalElements: ['dark', 'fairy'], moveset: ['fairy'] },
     palafin: { naturalElements: ['water'], moveset: ['water'] },
-    porygon: { naturalElements: ['normal'], moveset: ['normal'] },
-    'porygon z': { naturalElements: ['normal'], moveset: ['normal'] },
     'porygon-z': { naturalElements: ['normal'], moveset: ['normal'] },
     salamance: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
     salamence: { naturalElements: ['dragon', 'flying'], moveset: ['fire'] },
@@ -1290,7 +1288,8 @@ const TEAM_BUILDER_HUNT_IMAGE_OVERRIDES = Object.freeze({
     toxtricity: 'pokemons/8gen/toxtricity-amped.png'
 });
 const TEAM_BUILDER_RECOMMENDED_HUNT_EXCLUDED_NAMES = new Set([
-    'armarouge/ceruledge'
+    'armarouge/ceruledge',
+    'porygon'
 ]);
 
 function isTeamBuilderExcludedHuntName(name){
@@ -13516,7 +13515,9 @@ function getTeamBuilderKnownHuntCandidates(){
         if(key === 'salamance' && huntCandidates.has('salamence')) return;
         if(!huntCandidates.has(key)){
             huntCandidates.set(key, {
-                name: key.split(' ').map(part => part ? part[0].toUpperCase() + part.slice(1) : '').join(' '),
+                name: key === 'porygon-z'
+                    ? 'Porygon-Z'
+                    : key.split(' ').map(part => part ? part[0].toUpperCase() + part.slice(1) : '').join(' '),
                 note: '',
                 image: '',
                 fallbackTypeKeys: [],

@@ -1601,7 +1601,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Mega Delphox', ['fire', 'psychic'], 'fire'),
           createRolePick('Raticate', ['normal'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
-          // Lopunny é suporte — removida de DPS
         ],
         tank: [
           createRolePick('Orbeetle', ['bug', 'psychic'], 'psychic'),
@@ -1718,7 +1717,6 @@ const championPathBosses = createManualRoleboardBosses([
           createRolePick('Gorging Cramorant', ['flying', 'water'], 'water'),
           createRolePick('Raticate', ['normal'], 'dark'),
           createRolePick('Mega Houndoom', ['dark', 'fire'], 'dark'),
-          // Lopunny é suporte — removida de DPS
         ],
         tank: [
           createRolePick('Sableye', ['dark', 'ghost'], 'ghost')
