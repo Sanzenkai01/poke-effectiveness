@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-08-25T11:09:30.365Z",
+  "updatedAt": "2026-08-25T11:28:38.874Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-25T11:08:59.668Z",
-    "endedAt": "2026-08-25T11:09:30.365Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-25T11:19:20.509Z",
+    "endedAt": "2026-08-25T11:28:38.873Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "uguettolitz",
       "playerclt",
@@ -43,22 +43,43 @@
       "uguettolitz"
     ],
     "observedChannels": [
+      "playerclt",
       "uguettolitz"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "playerclt"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "playerclt",
+        "messageAt": 1787657318652,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "uguettolitz",
+        "channel": "playerclt",
         "kind": "rattata-message",
-        "messageAt": 1787656170288,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1787657318652,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "playerclt",
+        "kind": "spawn",
+        "messageAt": 1787657318652,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "uguettolitz",
-        "kind": "escape",
-        "messageAt": 1787656170288,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "rattata-message",
+        "messageAt": 1787657318652,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "uguettolitz",
+        "kind": "spawn",
+        "messageAt": 1787657318652,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -109,24 +130,34 @@
   },
   "latest": {
     "channel": "uguettolitz",
-    "lastMessageAt": 1787656170288,
-    "expectedNextAt": 1787657370288,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1787657318652,
+    "expectedNextAt": 1787658578652,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-08-25T10:57:02Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1787656170365,
-    "persistedAt": 1787656170365
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1787657318873,
+    "persistedAt": 1787657318873
   },
   "timers": {
     "uguettolitz": {
       "channel": "uguettolitz",
-      "lastMessageAt": 1787656170288,
-      "expectedNextAt": 1787657370288,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1787657318652,
+      "expectedNextAt": 1787658578652,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-08-25T10:57:02Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1787656170365,
-      "persistedAt": 1787656170365
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1787657318873,
+      "persistedAt": 1787657318873
+    },
+    "playerclt": {
+      "channel": "playerclt",
+      "lastMessageAt": 1787657318652,
+      "expectedNextAt": 1787658578652,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-08-25T10:44:29Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1787657318873,
+      "persistedAt": 1787657318873
     }
   }
 }
