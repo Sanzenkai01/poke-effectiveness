@@ -1,15 +1,14 @@
 {
-  "updatedAt": "2026-08-26T00:58:07.002Z",
+  "updatedAt": "2026-08-26T00:59:07.006Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-26T00:39:42.552Z",
-    "endedAt": "2026-08-26T00:58:07.002Z",
-    "reason": "rat-found",
+    "startedAt": "2026-08-26T00:58:33.075Z",
+    "endedAt": "2026-08-26T00:59:07.006Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "adivorcio",
-      "okamiulv",
       "vivihbecker",
       "ogordonha",
       "sharxera",
@@ -31,6 +30,7 @@
       "manoblaze",
       "mataradz8",
       "nazgulplayer",
+      "okamiulv",
       "playerclt",
       "raulzerah1",
       "sousupermeme",
@@ -41,40 +41,25 @@
     ],
     "pstoryDropChannels": [
       "adivorcio",
-      "okamiulv",
       "vivihbecker"
     ],
     "observedChannels": [
       "vivihbecker"
     ],
-    "observedSpawnChannels": [
-      "vivihbecker"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "vivihbecker",
-        "messageAt": 1787705886883,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "vivihbecker",
         "kind": "rattata-message",
-        "messageAt": 1787705308912,
-        "messageText": "O Rattata se recuperou e fugiu com o seu item, @pyxelizado... 💨"
+        "messageAt": 1787705946882,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "vivihbecker",
-        "kind": "rattata-message",
-        "messageAt": 1787705886883,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      },
-      {
-        "channel": "vivihbecker",
-        "kind": "spawn",
-        "messageAt": 1787705886883,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1787705946882,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -125,24 +110,24 @@
   },
   "latest": {
     "channel": "vivihbecker",
-    "lastMessageAt": 1787705886883,
-    "expectedNextAt": 1787707146883,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1787705946882,
+    "expectedNextAt": 1787707146882,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-08-25T21:38:36Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1787705887001,
-    "persistedAt": 1787705887001
+    "source": "github-action-chat-escape",
+    "updatedAt": 1787705947005,
+    "persistedAt": 1787705947005
   },
   "timers": {
     "vivihbecker": {
       "channel": "vivihbecker",
-      "lastMessageAt": 1787705886883,
-      "expectedNextAt": 1787707146883,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1787705946882,
+      "expectedNextAt": 1787707146882,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-08-25T21:38:36Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1787705887001,
-      "persistedAt": 1787705887001
+      "source": "github-action-chat-escape",
+      "updatedAt": 1787705947005,
+      "persistedAt": 1787705947005
     },
     "okamiulv": {
       "channel": "okamiulv",
@@ -152,7 +137,7 @@
       "streamStartedAt": "2026-08-25T23:00:18Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1787704683333,
-      "persistedAt": 1787704782552
+      "persistedAt": 1787705913075
     }
   }
 }
