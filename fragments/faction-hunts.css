@@ -1,0 +1,106 @@
+/* Pagina Faccoes e Hunts */
+.faction-hunts-shell {
+  --faction-panel: rgba(13, 20, 30, 0.9);
+  --faction-border: rgba(255, 255, 255, 0.12);
+  --faction-muted: rgba(231, 239, 247, 0.72);
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  color: #f3f7fb;
+}
+
+body[data-active-tab="police-expeditions"] #content-faction-hunts {
+  width: min(100%, 1240px);
+  margin: -0.25rem auto 0;
+  padding: clamp(0.8rem, 2vw, 1.35rem);
+  border: 1px solid rgba(90, 205, 184, 0.2);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0a1d28, #171d2b 52%, #261d28);
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.3);
+}
+
+.faction-hunts-hero,
+.faction-hunts-section {
+  border: 1px solid var(--faction-border);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(70, 209, 183, 0.09), rgba(250, 183, 78, 0.06)), var(--faction-panel);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.faction-hunts-hero {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) 7rem;
+  align-items: center;
+  gap: 1.2rem;
+  padding: clamp(1rem, 2.6vw, 1.55rem);
+}
+
+.faction-hunts-hero > div:nth-child(2) { text-align: center; }
+.faction-hunts-hero__mark,
+.faction-hunts-hero__count {
+  display: grid;
+  place-items: center;
+  min-height: 7rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(3, 10, 17, 0.42);
+}
+.faction-hunts-hero__mark { color: #68e0c2; font-size: 4rem; font-weight: 900; }
+.faction-hunts-hero__count { align-content: center; gap: 0.25rem; color: var(--faction-muted); }
+.faction-hunts-hero__count strong { color: #ffd36b; font-size: 2rem; }
+.faction-hunts-hero__count span { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+.faction-hunts-eyebrow { color: #68e0c2; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.faction-hunts-hero h2,
+.faction-hunts-section__head h3 { margin: 0; color: #fff; font-family: 'Space Grotesk', 'Montserrat', sans-serif; letter-spacing: 0; }
+.faction-hunts-hero h2 { margin-top: 0.35rem; font-size: clamp(2rem, 4vw, 3.2rem); }
+.faction-hunts-hero p,
+.faction-hunts-section__head p { margin: 0.55rem auto 0; max-width: 60rem; color: var(--faction-muted); line-height: 1.6; }
+.faction-hunts-section { display: grid; gap: 1rem; padding: clamp(0.9rem, 2vw, 1.2rem); }
+.faction-hunts-section__head { display: grid; gap: 0.3rem; }
+.faction-hunts-section__head h3 { font-size: 1.2rem; }
+.faction-hunts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; }
+.faction-hunt-card { overflow: hidden; border: 1px solid var(--faction-border); border-top: 3px solid var(--faction-accent, #68e0c2); border-radius: 8px; background: rgba(5, 12, 20, 0.58); }
+.faction-hunt-card header { display: flex; align-items: center; gap: 0.8rem; min-height: 5.6rem; padding: 0.8rem 0.95rem; background: linear-gradient(120deg, rgba(var(--faction-rgb), 0.2), transparent); }
+.faction-hunt-card header img { width: 4.2rem; height: 4.2rem; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
+.faction-hunt-card header::after { content: ''; flex: 0 0 4.2rem; width: 4.2rem; height: 4.2rem; background: center / contain no-repeat var(--faction-logo); filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
+.faction-hunt-card header > div { flex: 1; text-align: center; }
+.faction-hunt-card header span { color: var(--faction-accent); font-size: 0.68rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+.faction-hunt-card h4 { margin: 0.2rem 0 0; color: #fff; font-size: 1.1rem; }
+.faction-hunt-card__body { display: grid; gap: 0.65rem; padding: 0.85rem 0.95rem 1rem; }
+.faction-hunt-card__label { color: var(--faction-accent); font-size: 0.68rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+.faction-hunt-card ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.faction-hunt-card ul > li:only-child { grid-column: 1 / -1; justify-self: center; width: min(100%, 15rem); }
+.faction-hunt-card li { display: grid; gap: 0.12rem; min-width: 0; padding: 0.48rem 0.55rem; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 5px; background: rgba(255, 255, 255, 0.035); }
+.faction-hunt-card li strong { color: #fff; font-size: 0.86rem; }
+.faction-hunt-pokemon-image { width: 2.7rem; height: 2.7rem; object-fit: contain; align-self: center; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); }
+.faction-hunt-card li strong { display: grid; justify-items: center; gap: 0.2rem; }
+.faction-hunt-pokemon-name { color: #fff; font-size: 0.86rem; line-height: 1.2; text-align: center; }
+.faction-hunt-card li span,
+.faction-hunt-card__body > p { color: var(--faction-muted); font-size: 0.76rem; line-height: 1.45; }
+.faction-hunt-card__body > p { margin: 0; }
+.faction-hunt-grunt-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
+.faction-hunt-grunt-pokemon { display: grid; justify-items: center; gap: 0.15rem; min-width: 0; padding: 0.35rem 0.2rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 5px; color: var(--faction-muted); font-size: 0.68rem; line-height: 1.2; text-align: center; }
+.faction-hunt-card--star { --faction-accent: #ffd05d; --faction-rgb: 255, 208, 93; --faction-logo: url('../faction-hunts/assets/Star-logo.webp'); }
+.faction-hunt-card--plasma { --faction-accent: #58e3e2; --faction-rgb: 88, 227, 226; --faction-logo: url('../faction-hunts/assets/Team_Plasma_logo.png'); }
+.faction-hunt-card--skull { --faction-accent: #c6cbd7; --faction-rgb: 198, 203, 215; --faction-logo: url('../faction-hunts/assets/Skull-Logo.webp'); }
+.faction-hunt-card--yell { --faction-accent: #f36eae; --faction-rgb: 243, 110, 174; --faction-logo: url('../faction-hunts/assets/Yell-Logo.webp'); }
+.faction-hunt-card--galactic { --faction-accent: #e5be45; --faction-rgb: 229, 190, 69; --faction-logo: url('../faction-hunts/assets/Galactic-Logo.webp'); }
+.faction-hunt-card--rocket { --faction-accent: #ff6565; --faction-rgb: 255, 101, 101; --faction-logo: url('../faction-hunts/assets/Team_Rocket_logo.png'); }
+.faction-hunt-card--aqua { --faction-accent: #5db7ff; --faction-rgb: 93, 183, 255; --faction-logo: url('../faction-hunts/assets/Team-Aqua-logo.webp'); }
+.faction-hunt-card--magma { --faction-accent: #ff825d; --faction-rgb: 255, 130, 93; --faction-logo: url('../faction-hunts/assets/Magma-logo.webp'); }
+.faction-hunt-card--macro { --faction-accent: #ec6cc3; --faction-rgb: 236, 108, 195; --faction-logo: url('../faction-hunts/assets/Logo_Macro_Cosmos.webp'); }
+.faction-hunt-card--aether { --faction-accent: #f0d99a; --faction-rgb: 240, 217, 154; --faction-logo: url('../faction-hunts/assets/Aether_foundation_logo.webp'); }
+.faction-hunt-card--flare { --faction-accent: #ff6565; --faction-rgb: 255, 101, 101; --faction-logo: url('../faction-hunts/assets/TeamFlareLogo.webp'); }
+@media (max-width: 700px) {
+  .faction-hunts-hero { grid-template-columns: 4.5rem minmax(0, 1fr); }
+  .faction-hunts-hero__count { display: none; }
+  .faction-hunts-hero__mark { min-height: 5rem; font-size: 2.8rem; }
+  .faction-hunts-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 430px) {
+  .faction-hunts-card ul, .faction-hunt-card ul { grid-template-columns: 1fr; }
+  .faction-hunts-hero { gap: 0.7rem; padding: 0.8rem; }
+  .faction-hunts-hero h2 { font-size: 1.7rem; }
+  .faction-hunt-grunt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

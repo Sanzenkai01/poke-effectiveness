@@ -156,6 +156,7 @@ const contentHuntBuilder = document.getElementById('content-hunt-builder');
 const contentRotomPhone = document.getElementById('content-rotom-phone');
 const contentInteractiveMap = document.getElementById('content-mapa-interativo');
 const contentPoliceOperation = document.getElementById('content-police-operation');
+const contentFactionHunts = document.getElementById('content-faction-hunts');
 const contentSlowpokeWell = document.getElementById('content-slowpoke-well');
 const contentLigaPokemon = document.getElementById('content-liga-pokemon');
 const contentHeldFusion = document.getElementById('content-fusao-de-held');
@@ -168,7 +169,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -353,13 +354,13 @@ const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260821b';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260826d';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260821a';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260817b';
+const PANEL_FRAGMENT_VERSION = '20260826a';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -447,6 +448,9 @@ const APP_ROUTE_ALIASES = {
     'police-operation': { path: '/police-operation', tab: 'police-operation' },
     policeoperation: { path: '/police-operation', tab: 'police-operation' },
     police: { path: '/police-operation', tab: 'police-operation' },
+    'police-expeditions': { path: '/police-expeditions', tab: 'police-expeditions' },
+    'faction-hunts': { path: '/police-expeditions', tab: 'police-expeditions' },
+    factionhunts: { path: '/police-expeditions', tab: 'police-expeditions' },
     'slowpoke-well': { path: '/slowpoke-well', tab: 'slowpoke-well' },
     slowpokewell: { path: '/slowpoke-well', tab: 'slowpoke-well' },
     'liga-pokemon': { path: '/liga-pokemon', tab: 'liga-pokemon' },
@@ -482,7 +486,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260812a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20260826a';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
@@ -3337,6 +3341,7 @@ function getActiveSiteTarget(){
     if(contentRotomPhone && !contentRotomPhone.hidden) return 'rotom-phone';
     if(contentInteractiveMap && !contentInteractiveMap.hidden) return 'mapa-interativo';
     if(contentPoliceOperation && !contentPoliceOperation.hidden) return 'police-operation';
+    if(contentFactionHunts && !contentFactionHunts.hidden) return 'police-expeditions';
     if(contentSlowpokeWell && !contentSlowpokeWell.hidden) return 'slowpoke-well';
     if(contentLigaPokemon && !contentLigaPokemon.hidden) return 'liga-pokemon';
     if(contentHeldFusion && !contentHeldFusion.hidden) return 'fusao-de-held';
@@ -3523,6 +3528,8 @@ function activateSidebarTarget(button){
         'hunt-builder': showHuntBuilder,
         'rotom-phone': showRotomPhone,
         'police-operation': showPoliceOperation,
+        'police-expeditions': showFactionHunts,
+        'faction-hunts': showFactionHunts,
         'slowpoke-well': showSlowpokeWell,
         'liga-pokemon': showLigaPokemon,
         'fusao-de-held': showHeldFusion,
@@ -3688,6 +3695,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:hunt-builder', kind: 'route', target: 'hunt-builder', title: 'Hunt Builder', category: 'Sistema', description: 'Gera times por hunt, fraqueza e cla', icon: 'HB', tags: ['hunt', 'time', 'fraqueza', 'finisher', 'stunner'] },
         { id: 'route:rotom-phone', kind: 'route', target: 'rotom-phone', title: 'Rotom Phone', category: 'Quest', description: 'Tasks de Kanto por cidade para progresso e Liga Pokemon', icon: 'RP', tags: ['rotom', 'phone', 'kanto', 'tasks', 'liga', 'quest'] },
         { id: 'route:police-operation', kind: 'route', target: 'police-operation', title: 'Police Operation', category: 'Quest', description: 'Investigacoes semanais da Officer Jenny contra a Equipe Rocket', icon: 'PO', tags: ['police', 'operation', 'jenny', 'rocket', 'tokens', 'held ticket', 'quest'] },
+        { id: 'route:police-expeditions', kind: 'route', target: 'police-expeditions', title: 'Police Expedition', category: 'Quest', description: 'Aces, cards da NPC Jenny e times de Grunt por faccao', icon: 'FH', tags: ['faction', 'hunt', 'ace', 'jenny', 'grunt', 'quest'] },
         { id: 'route:slowpoke-well', kind: 'route', target: 'slowpoke-well', title: 'Slowpoke Well', category: 'Quest', description: 'Quest semanal, requisitos, caminho e recompensas', icon: 'SW', tags: ['slowpoke', 'well', 'quest', 'expedicoes', 'timer ball', 'kurt'] },
         { id: 'route:liga-pokemon', kind: 'route', target: 'liga-pokemon', title: 'Liga Pokemon', category: 'Quest', description: 'Rotom Phone, ginasios, Kanto, Victory Road, Elite 4 e Red', icon: 'LP', tags: ['liga', 'pokemon', 'kanto', 'ginasio', 'victory road', 'elite 4', 'red'] },
         { id: 'route:fusao-de-held', kind: 'route', target: 'fusao-de-held', title: 'Fusao de Held', category: 'Sistema', description: 'Upgrade de Helds Primarios com materiais de fusao, moedas especiais, custos e chances', icon: 'HF', tags: ['held', 'fusion', 'fusao', 'upgrade', 'amulet coin', 'choice band', 'assault vest', 'life orb', 'moeda especial'] },
@@ -15349,6 +15357,81 @@ function showPoliceOperation(){
     updateUrl();
 }
 
+function initializeFactionHuntPokemonImages(){
+    if(!contentFactionHunts || contentFactionHunts.dataset.pokemonImagesReady === 'true') return;
+    const entries = Array.isArray(pokemonCatalog) ? pokemonCatalog : [];
+    const entriesByName = new Map(entries.map((entry) => [normalizePokemonSearchText(entry.name), entry]));
+    const nameAliases = new Map([
+        ['alolan raticate', 'raticate'],
+        ['alolan muk', 'muk'],
+        ['lumin(e)on', 'lumineon']
+    ]);
+    const getEntry = (name) => entriesByName.get(nameAliases.get(normalizePokemonSearchText(name)) || normalizePokemonSearchText(name));
+    const createPokemonImage = (name, className) => {
+        const image = document.createElement('img');
+        const entry = getEntry(name);
+        image.className = className;
+        image.alt = name;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.src = entry ? getPokemonImageSource(entry) : POKEMON_IMAGE_PLACEHOLDER;
+        setImageFallback(image);
+        return image;
+    };
+
+    contentFactionHunts.querySelectorAll('.faction-hunt-card li > strong').forEach((nameElement) => {
+        const name = nameElement.textContent.trim();
+        const nameLabel = document.createElement('span');
+        nameLabel.className = 'faction-hunt-pokemon-name';
+        nameLabel.textContent = name;
+        nameElement.replaceChildren(createPokemonImage(name, 'faction-hunt-pokemon-image'), nameLabel);
+    });
+
+    contentFactionHunts.querySelectorAll('.faction-hunt-card__body > p').forEach((listElement) => {
+        const names = listElement.textContent.split(/,|\s+e\s+/i).map((name) => name.replace(/\.$/, '').trim()).filter(Boolean);
+        const grid = document.createElement('div');
+        grid.className = 'faction-hunt-grunt-grid';
+        names.forEach((name) => {
+            const item = document.createElement('span');
+            item.className = 'faction-hunt-grunt-pokemon';
+            item.append(createPokemonImage(name, 'faction-hunt-pokemon-image'), document.createTextNode(name));
+            grid.appendChild(item);
+        });
+        listElement.replaceWith(grid);
+    });
+
+    contentFactionHunts.dataset.pokemonImagesReady = 'true';
+}
+
+function showFactionHunts(){
+    clearTabHighlights();
+    setActiveTabTheme('police-expeditions');
+    setVisiblePanel(contentFactionHunts);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Police Expedition';
+    updateBrowserTitle();
+    ensurePanelFragmentLoaded(contentFactionHunts).then(() => {
+        return ensurePokemonCatalogLoaded().then(() => initializeFactionHuntPokemonImages());
+    }).then(() => {
+        if(useGsap && contentFactionHunts && !contentFactionHunts.hidden){
+            gsap.from(contentFactionHunts, { opacity: 0, y: -10, duration: 0.4 });
+            gsap.from(contentFactionHunts.querySelectorAll('.faction-hunt-card'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.04 });
+        }
+    }).catch(error => console.error('Faction Hunts load failed', error));
+    updateUrl();
+    try{
+        const params = new URLSearchParams(location.search);
+        const canonicalPath = `/police-expeditions${params.toString() ? `?${params.toString()}` : ''}`;
+        history.replaceState(null, '', canonicalPath);
+        window.setTimeout(() => {
+            if(document.body?.dataset?.activeTab === 'police-expeditions') history.replaceState(null, '', canonicalPath);
+        }, 250);
+    }catch(error){}
+}
+
 let slowpokeShopModalInitialized = false;
 let slowpokeMapLocationInitialized = false;
 
@@ -18866,6 +18949,7 @@ function initTabFromUrl(){
     if(resolvedTab==='rotom-phone') return showRotomPhone();
     if(resolvedTab==='mapa-interativo') return showInteractiveMap();
     if(resolvedTab==='police-operation') return showPoliceOperation();
+    if(resolvedTab==='police-expeditions' || resolvedTab==='faction-hunts') return showFactionHunts();
     if(resolvedTab==='slowpoke-well') return showSlowpokeWell();
     if(resolvedTab==='liga-pokemon') return showLigaPokemon();
     if(resolvedTab==='fusao-de-held') return showHeldFusion();
@@ -22678,7 +22762,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20260825a').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20260826d').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }

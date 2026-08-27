@@ -166,7 +166,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260825b">
+  <link rel="stylesheet" href="styles.css?v=20260826b">
   <link rel="stylesheet" href="wiki-theme.css?v=20260817c">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -395,6 +395,10 @@
               <button class="sidebar-sublink" type="button" data-nav-target="police-operation">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-badge"></use></svg>
                 <span>Police Operation</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="police-expeditions">
+                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-compass"></use></svg>
+                <span>Police Expedition</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="mainquest">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-scroll"></use></svg>
@@ -766,6 +770,10 @@
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
+    <div id="content-faction-hunts" role="tabpanel" aria-label="Police Expedition" hidden data-panel-fragment="faction-hunts">
+      <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
+    </div>
+
     <div id="content-slowpoke-well" role="tabpanel" aria-label="Slowpoke Well" hidden data-panel-fragment="slowpoke-well">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
@@ -1032,8 +1040,9 @@
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20260811a" defer></script>
-    <script src="js/recommendation-engine.js?v=20260824a"></script>
-    <script src="script.js?v=20260824a" defer></script>
-    <script src="bosses/bosses.js?v=20260824a" defer></script>
+    <script src="bosses/recommendation-catalog.js?v=20260826d"></script>
+    <script src="js/recommendation-engine.js?v=20260826d"></script>
+    <script src="script.js?v=20260826h" defer></script>
+    <script src="bosses/bosses.js?v=20260826d" defer></script>
 </body>
 </html>

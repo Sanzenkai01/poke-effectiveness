@@ -219,7 +219,7 @@ const routes = [
       { pattern: /Picks para Mega Absol/i, description: 'mega absol recommendation target' },
       { pattern: /speedster-reco-name[^>]*>Dedenne</i, description: 'instinct speedster recommendation' },
       { pattern: /speedster-reco-name[^>]*>Dachsbun</i, description: 'mystic speedster recommendation' },
-      { pattern: /speedster-reco-name[^>]*>Ribombee</i, description: 'valor speedster recommendation' }
+      { pattern: /speedster-reco-name[^>]*>Heracross</i, description: 'valor automatic recommendation' }
     ]
   },
   {
