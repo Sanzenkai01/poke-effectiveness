@@ -151,6 +151,7 @@ const contentCalc = document.getElementById('content-calculator');
 const contentBoost = document.getElementById('content-boost');
 const contentPokemons = document.getElementById('content-pokemons');
 const contentTimes = document.getElementById('content-times');
+const contentClans = document.getElementById('content-cla');
 const contentTeamBuilder = document.getElementById('content-team-builder');
 const contentHuntBuilder = document.getElementById('content-hunt-builder');
 const contentRotomPhone = document.getElementById('content-rotom-phone');
@@ -169,7 +170,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentClans, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -357,10 +358,10 @@ let activeProfessionKey = '';
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20260826d';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260821a';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260827a';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260826a';
+const PANEL_FRAGMENT_VERSION = '20260827d';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -436,6 +437,8 @@ const APP_ROUTE_ALIASES = {
     pokemon: { path: '/pokemons', tab: 'pokemons' },
     pokemons: { path: '/pokemons', tab: 'pokemons' },
     times: { path: '/times', tab: 'times' },
+    cla: { path: '/cla', tab: 'cla' },
+    clans: { path: '/cla', tab: 'cla' },
     'team-builder': { path: '/team-builder', tab: 'team-builder' },
     teambuilder: { path: '/team-builder', tab: 'team-builder' },
     'hunt-builder': { path: '/hunt-builder', tab: 'hunt-builder' },
@@ -3336,6 +3339,7 @@ function getActiveSiteTarget(){
     if(contentBoost && !contentBoost.hidden) return 'boost';
     if(contentPokemons && !contentPokemons.hidden) return 'pokemons';
     if(contentTimes && !contentTimes.hidden) return 'times';
+    if(contentClans && !contentClans.hidden) return 'cla';
     if(contentTeamBuilder && !contentTeamBuilder.hidden) return 'team-builder';
     if(contentHuntBuilder && !contentHuntBuilder.hidden) return 'hunt-builder';
     if(contentRotomPhone && !contentRotomPhone.hidden) return 'rotom-phone';
@@ -3524,6 +3528,7 @@ function activateSidebarTarget(button){
         boost: showBoostCalculator,
         pokemons: showPokemons,
         times: showTimes,
+        cla: () => showClans({ resetToSelector: true }),
         'team-builder': showTeamBuilder,
         'hunt-builder': showHuntBuilder,
         'rotom-phone': showRotomPhone,
@@ -3692,6 +3697,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:boost', kind: 'route', target: 'boost', title: 'Calculadora de Boost', category: 'Calculadora', description: 'Materiais de boost por Pokemon', icon: 'B+', tags: ['stone', 'bronze', 'silver', 'star'] },
         { id: 'route:pokemon', kind: 'route', target: 'pokemons', title: 'Pokemons', category: 'Catalogo', description: 'Catalogo de Pokemon e Megas', icon: 'PK', tags: ['catalogo', 'mega'] },
         { id: 'route:times', kind: 'route', target: 'times', title: 'Times', category: 'Catalogo', description: 'Composicoes por cla e elemento', icon: 'TM', tags: ['mystic', 'valor', 'instinct', 'composicao'] },
+        { id: 'route:cla', kind: 'route', target: 'cla', title: 'Clas', category: 'Utilidade', description: 'Pokemons, tipagens e prioridades por cla', icon: 'CL', tags: ['cla', 'instinct', 'mystic', 'valor', 'tipagem', 'pokemon'] },
         { id: 'route:hunt-builder', kind: 'route', target: 'hunt-builder', title: 'Hunt Builder', category: 'Sistema', description: 'Gera times por hunt, fraqueza e cla', icon: 'HB', tags: ['hunt', 'time', 'fraqueza', 'finisher', 'stunner'] },
         { id: 'route:rotom-phone', kind: 'route', target: 'rotom-phone', title: 'Rotom Phone', category: 'Quest', description: 'Tasks de Kanto por cidade para progresso e Liga Pokemon', icon: 'RP', tags: ['rotom', 'phone', 'kanto', 'tasks', 'liga', 'quest'] },
         { id: 'route:police-operation', kind: 'route', target: 'police-operation', title: 'Police Operation', category: 'Quest', description: 'Investigacoes semanais da Officer Jenny contra a Equipe Rocket', icon: 'PO', tags: ['police', 'operation', 'jenny', 'rocket', 'tokens', 'held ticket', 'quest'] },
@@ -5164,6 +5170,8 @@ function updateTextContent(){
         if(titleEl) titleEl.textContent = t('pokemonsTitle');
     } else if(contentTimes && !contentTimes.hidden){
         if(titleEl) titleEl.textContent = t('timesTitle');
+    } else if(contentClans && !contentClans.hidden){
+        if(titleEl) titleEl.textContent = 'Clãs';
     } else if(contentTeamBuilder && !contentTeamBuilder.hidden){
         if(titleEl) titleEl.textContent = 'Team Builder';
     } else if(contentHuntBuilder && !contentHuntBuilder.hidden){
@@ -6376,7 +6384,15 @@ async function openInteractiveMapMarkerModal(entry, trigger){
     try{
         await ensureInteractiveMapAssetsReady();
         await Promise.resolve(window.initInteractiveMapPage?.());
-        const focused = entry.mapPokemonName
+        const focused = entry.mapCoordinates
+            ? await window.focusInteractiveMapCoordinates?.(entry.mapCoordinates, {
+                name: entry.name,
+                image: entry.pokemonImage || '',
+                imageAlt: entry.name,
+                details: entry.mapDetails,
+                zoom: 3
+            })
+            : entry.mapPokemonName
             ? await window.focusInteractiveMapPokemonRespawns?.(entry.mapPokemonName, {
                 dex: entry.pokemonDex,
                 isolate: true,
@@ -15432,6 +15448,244 @@ function showFactionHunts(){
     }catch(error){}
 }
 
+let clansPageInitialized = false;
+let activeClanKey = '';
+const CLAN_PULL_POKEMON_IMAGES = Object.freeze({
+    Barbaracle: 'pokemons/6gen/barbaracle.png',
+    Typhlosion: 'pokemons/2gen/typhlosion.png',
+    Camerupt: 'pokemons/3gen/camerupt.png',
+    Ceruledge: 'pokemons/9gen/ceruledge.png',
+    Pidgeot: 'pokemons/1gen/pidgeot.png',
+    Swampert: 'pokemons/3gen/swampert.png',
+    Feraligatr: 'pokemons/2gen/feraligatr.png',
+    Hariyama: 'pokemons/3gen/hariyama.png',
+    Tsareena: 'pokemons/7gen/tsareena.png',
+    Gardevoir: 'pokemons/3gen/gardevoir.png',
+    Crobat: 'pokemons/2gen/crobat.png',
+    Cramorant: 'pokemons/8gen/cramorant.png',
+    'Gorging Cramorant': 'pokemons/8gen/cramorant.png'
+});
+const CLAN_PULL_POKEMON_BY_CLAN = Object.freeze({
+    instinct: ['Tsareena', 'Gardevoir', 'Crobat'],
+    mystic: ['Swampert', 'Feraligatr', 'Hariyama'],
+    valor: ['Barbaracle', 'Typhlosion', 'Camerupt', 'Ceruledge', 'Pidgeot']
+});
+const CLAN_PULL_MANIAC_MARKERS = Object.freeze({
+    Bouffalant: 'poke-utilities-maniac-bouffalant',
+    Ribombee: 'poke-utilities-maniac-ribombee',
+    Cramorant: 'poke-utilities-maniac-cramorant',
+    'Gorging Cramorant': 'poke-utilities-maniac-cramorant',
+    Dedenne: 'poke-utilities-maniac-dedenne',
+    Dachsbun: 'poke-utilities-maniac-dachsbun'
+});
+const CLAN_DIRECT_MAP_MARKERS = Object.freeze({
+    Delphox: '390.5-7076.5-6',
+    Barbaracle: '1001.5-7068.5-7'
+});
+
+function createDirectMapButton(name, markerId){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'pokemon-respawn-map-btn';
+    button.setAttribute('aria-label', `Mostrar local de ${name} no mapa interativo`);
+    button.title = 'Mostrar localização no mapa';
+    button.textContent = '🗺️';
+    button.addEventListener('click', () => openInteractiveMapMarkerModal({
+        mapCoordinates: markerId,
+        name,
+        pokemonImage: CLAN_PULL_POKEMON_IMAGES[name]
+    }, button));
+    return button;
+}
+
+function createManiacMapButton(name, markerId){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'pokemon-respawn-map-btn';
+    button.setAttribute('aria-label', `Mostrar local do Maniac de ${name} no mapa interativo`);
+    button.title = 'Mostrar local do Maniac no mapa';
+    button.textContent = '🗺️';
+    button.addEventListener('click', () => openInteractiveMapMarker(markerId, {
+        name: `Maniac - ${name}`,
+        image: CLAN_PULL_POKEMON_IMAGES[name],
+        trigger: button
+    }));
+    return button;
+}
+const CLAN_ROLE_ORDER = Object.freeze(['Defender', 'Speedster', 'Suporte']);
+
+function renderClanPullPokemonImages(){
+    const pullItems = new Map();
+    contentClans?.querySelectorAll('.clan-pull-list > div').forEach((item) => {
+        const name = item.querySelector('strong')?.textContent?.trim() || '';
+        if(name) pullItems.set(name, item);
+        const imagePath = CLAN_PULL_POKEMON_IMAGES[name];
+        if(!imagePath || item.querySelector('.clan-pull-pokemon-image')) return;
+        const image = document.createElement('img');
+        image.className = 'clan-pull-pokemon-image';
+        image.src = imagePath;
+        image.alt = name;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        item.prepend(image);
+        if(typeof createPokemonRespawnMapButton === 'function' && !item.querySelector('.pokemon-respawn-map-btn')){
+            const directMarkerId = CLAN_DIRECT_MAP_MARKERS[name];
+            const maniacMarkerId = CLAN_PULL_MANIAC_MARKERS[name];
+            if(directMarkerId){
+                item.appendChild(createDirectMapButton(name, directMarkerId));
+            }else if(maniacMarkerId){
+                item.appendChild(createManiacMapButton(name, maniacMarkerId));
+            }else{
+                item.appendChild(createPokemonRespawnMapButton({ name }));
+            }
+        }
+    });
+    Object.entries(CLAN_PULL_POKEMON_BY_CLAN).forEach(([clanKey, names]) => {
+        const list = contentClans?.querySelector(`#clan-${clanKey}-detail .clan-pull-list`);
+        if(list) list.replaceChildren(...names.map((name) => pullItems.get(name)).filter(Boolean));
+    });
+}
+
+function orderClanRoleGroups(){
+    contentClans?.querySelectorAll('.clan-detail .clan-info-card').forEach((card) => {
+        const roleGroups = Array.from(card.querySelectorAll(':scope > .clan-role-group'));
+        if(!roleGroups.length) return;
+        roleGroups.sort((left, right) => (
+            CLAN_ROLE_ORDER.indexOf(left.querySelector(':scope > strong')?.textContent?.trim())
+            - CLAN_ROLE_ORDER.indexOf(right.querySelector(':scope > strong')?.textContent?.trim())
+        ));
+        roleGroups.forEach((group) => card.appendChild(group));
+    });
+}
+
+function renderClanBossRecommendations(){
+    const valorSpeedsterGroup = Array.from(contentClans?.querySelectorAll('#clan-valor-detail .clan-role-group') || [])
+        .find(group => group.querySelector(':scope > strong')?.textContent?.trim() === 'Speedster');
+    const valorDefenderGroup = Array.from(contentClans?.querySelectorAll('#clan-valor-detail .clan-role-group') || [])
+        .find(group => group.querySelector(':scope > strong')?.textContent?.trim() === 'Defender');
+    const valorDefenderGrid = valorDefenderGroup?.querySelector('.clan-pokemon-grid');
+    if(valorDefenderGrid && !valorDefenderGrid.querySelector('img[alt="Probopass"]')){
+        const figure = document.createElement('figure');
+        const image = document.createElement('img');
+        image.src = 'pokemons/4gen/probopass.png';
+        image.alt = 'Probopass';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        const caption = document.createElement('figcaption');
+        caption.textContent = 'Probopass';
+        figure.append(image, caption);
+        valorDefenderGrid.appendChild(figure);
+    }
+    const valorSpeedsterGrid = valorSpeedsterGroup?.querySelector('.clan-pokemon-grid');
+    if(valorSpeedsterGrid && !valorSpeedsterGrid.querySelector('img[alt="Gorging Cramorant"]')){
+        const figure = document.createElement('figure');
+        const image = document.createElement('img');
+        image.src = CLAN_PULL_POKEMON_IMAGES['Gorging Cramorant'];
+        image.alt = 'Gorging Cramorant';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        const caption = document.createElement('figcaption');
+        caption.textContent = 'Gorging Cramorant';
+        figure.append(image, caption);
+        valorSpeedsterGrid.appendChild(figure);
+    }
+    contentClans?.querySelectorAll('.clan-detail').forEach((detail) => {
+        const clanKey = detail.id.replace(/^clan-/, '').replace(/-detail$/, '');
+        detail.querySelectorAll('.clan-pokemon-grid figure').forEach((figure) => {
+            const pokemonName = figure.querySelector('img')?.getAttribute('alt') || '';
+            const usages = typeof window.getPokemonBossUsages === 'function'
+                ? window.getPokemonBossUsages(pokemonName).filter((usage) => usage.clanKey === clanKey)
+                : [];
+            const bosses = Array.from(new Map(usages.map((usage) => [usage.bossSlug || usage.bossName, usage])).values());
+            const directMarkerId = CLAN_DIRECT_MAP_MARKERS[pokemonName];
+            const maniacMarkerId = CLAN_PULL_MANIAC_MARKERS[pokemonName];
+            const mapButton = typeof createPokemonRespawnMapButton === 'function'
+                ? directMarkerId
+                    ? createDirectMapButton(pokemonName, directMarkerId)
+                    : maniacMarkerId
+                    ? createManiacMapButton(pokemonName, maniacMarkerId)
+                    : createPokemonRespawnMapButton({ name: pokemonName })
+                : null;
+            if(mapButton) figure.appendChild(mapButton);
+            if(!bosses.length) return;
+            const bossSeparator = document.createElement('span');
+            bossSeparator.className = 'clan-pokemon-boss-separator';
+            bossSeparator.setAttribute('aria-hidden', 'true');
+            figure.appendChild(bossSeparator);
+            const bossList = document.createElement('div');
+            bossList.className = 'clan-boss-list';
+            bossList.setAttribute('aria-label', `Bosses recomendados para ${pokemonName}`);
+            bosses.forEach((boss) => {
+                const bossLink = document.createElement('a');
+                bossLink.className = 'clan-boss-list__item';
+                bossLink.href = boss.url || '#';
+                bossLink.title = boss.bossName;
+                bossLink.setAttribute('aria-label', boss.bossName);
+                const bossImage = document.createElement('img');
+                bossImage.src = boss.image;
+                bossImage.alt = boss.bossName;
+                bossImage.loading = 'lazy';
+                bossImage.decoding = 'async';
+                bossLink.appendChild(bossImage);
+                bossList.appendChild(bossLink);
+            });
+            figure.appendChild(bossList);
+        });
+    });
+}
+
+function normalizeClanRouteKey(value){
+    const normalized = String(value || '').trim().toLowerCase().replace(/^#/, '');
+    return ['instinct', 'mystic', 'valor'].includes(normalized) ? normalized : '';
+}
+
+function setClanDetailView(clanKey = '', options = {}){
+    const normalizedClanKey = normalizeClanRouteKey(clanKey);
+    const hero = contentClans?.querySelector('.clans-hero') || null;
+    const selector = document.getElementById('clans-selector');
+    const details = Array.from(contentClans?.querySelectorAll('.clan-detail') || []);
+    const activeDetail = normalizedClanKey ? document.getElementById(`clan-${normalizedClanKey}-detail`) : null;
+    const showDetail = Boolean(activeDetail);
+    activeClanKey = showDetail ? normalizedClanKey : '';
+    if(hero) hero.hidden = showDetail;
+    if(selector) selector.hidden = showDetail;
+    details.forEach((detail) => { detail.hidden = detail !== activeDetail; });
+    if(options.updateUrl !== false && contentClans && !contentClans.hidden) updateUrl({ historyMode: options.historyMode || 'push' });
+    if(showDetail) requestAnimationFrame(() => activeDetail.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+}
+
+function initializeClansPage(){
+    if(clansPageInitialized) return;
+    contentClans?.querySelectorAll('[data-clan-select]').forEach((button) => {
+        button.addEventListener('click', () => setClanDetailView(button.getAttribute('data-clan-select'), { historyMode: 'push' }));
+    });
+    contentClans?.querySelectorAll('[data-clan-back]').forEach((button) => {
+        button.addEventListener('click', () => setClanDetailView('', { historyMode: 'push' }));
+    });
+    renderClanBossRecommendations();
+    renderClanPullPokemonImages();
+    orderClanRoleGroups();
+    clansPageInitialized = true;
+}
+
+function showClans(options = {}){
+    clearTabHighlights();
+    setActiveTabTheme('cla');
+    setVisiblePanel(contentClans);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Clãs';
+    updateBrowserTitle();
+    ensurePanelFragmentLoaded(contentClans).then(() => {
+        initializeClansPage();
+        setClanDetailView(options.resetToSelector ? '' : normalizeClanRouteKey(location.hash), { updateUrl: false });
+        if(useGsap && contentClans && !contentClans.hidden) gsap.from(contentClans, { opacity: 0, y: -10, duration: 0.4 });
+        updateUrl({ historyMode: options.resetToSelector ? 'replace' : 'push' });
+    }).catch(error => console.error('Clans load failed', error));
+}
+
 let slowpokeShopModalInitialized = false;
 let slowpokeMapLocationInitialized = false;
 
@@ -18958,6 +19212,7 @@ function initTabFromUrl(){
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
         requestedFilters: requestedTeamFilters
     });
+    if(resolvedTab==='cla') return showClans();
     // Se a URL apontou para uma rota especifica de Pokemon, abrir a aba pokemons e
     // abrir o modal pedido quando o catalogo carregar.
     if(initialDeepLinkedPokemonRouteToken !== null){
@@ -19007,6 +19262,7 @@ function initTabFromUrl(){
     if(saved==='helds') return showHelds();
     if(saved==='bosses-info') return showBossesInfo();
     if(saved==='times') return showTimes();
+    if(saved==='cla') return showClans();
     if(saved==='team-builder') return showTeamBuilder();
     if(saved==='hunt-builder') return showHuntBuilder();
     if(saved==='rotom-phone') return showRotomPhone();
@@ -22058,6 +22314,7 @@ function updateUrl(options = {}){
                       (contentBoost && !contentBoost.hidden) ? 'boost' :
                       (contentPokemons && !contentPokemons.hidden) ? 'pokemons' :
                       (contentTimes && !contentTimes.hidden) ? 'times' :
+                      (contentClans && !contentClans.hidden) ? 'cla' :
                       (contentTeamBuilder && !contentTeamBuilder.hidden) ? 'team-builder' :
                       (contentHuntBuilder && !contentHuntBuilder.hidden) ? 'hunt-builder' :
                       (contentRotomPhone && !contentRotomPhone.hidden) ? 'rotom-phone' :
@@ -22208,7 +22465,9 @@ function updateUrl(options = {}){
     }catch(e){}
     const routeHash = activeTab === 'profissoes' && activeProfessionKey
         ? `#${encodeURIComponent(activeProfessionKey)}`
-        : '';
+        : activeTab === 'cla' && activeClanKey
+            ? `#${encodeURIComponent(activeClanKey)}`
+            : '';
     const newUrl = routePath + (query ? `?${query}` : '') + routeHash;
     if(historyMode === 'push'){
         history.pushState(null, '', newUrl);

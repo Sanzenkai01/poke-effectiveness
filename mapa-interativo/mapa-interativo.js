@@ -1085,6 +1085,34 @@
         return true;
     }
 
+    async function focusCoordinateTarget(routeSlug, options = {}){
+        await initialize();
+        const match = String(routeSlug || '').match(/^([\d.]+)-([\d.]+)-(\d+)$/);
+        if(!match) return false;
+        const [, xValue, yValue, floorValue] = match;
+        const coordinate = { x: Number(xValue), y: Number(yValue), floor: Number(floorValue) };
+        const config = FLOOR_CONFIG.find(entry => entry.z === coordinate.floor);
+        if(!config || ![coordinate.x, coordinate.y].every(Number.isFinite)
+            || coordinate.x < 0 || coordinate.x > config.w || coordinate.y < 0 || coordinate.y > config.h) return false;
+        setFloor(coordinate.floor, false);
+        selectedMarker = null;
+        selectedMarkerMediaOverride = options.image
+            ? { src: String(options.image), alt: String(options.imageAlt || options.name || 'Localização') }
+            : null;
+        selectedMarkerDetailsOverride = options.details && typeof options.details === 'object'
+            ? { ...options.details }
+            : null;
+        sharedPin = coordinate;
+        if(elements.search){
+            elements.search.value = String(options.name || '');
+            elements.search.disabled = true;
+        }
+        await waitForViewportLayout();
+        centerAt(coordinate.x, coordinate.y, Number(options.zoom) || 3);
+        render();
+        return true;
+    }
+
     function getPokemonRespawnMarkers(pokemonName, pokemonDex){
         const normalizedName = normalizeRespawnPokemonName(pokemonName);
         if(!normalizedName) return [];
@@ -2036,6 +2064,7 @@
     window.focusInteractiveMapRoute = focusRequestedMarker;
     window.focusInteractiveMapSearch = focusSearchTarget;
     window.focusInteractiveMapMarker = focusMarkerTarget;
+    window.focusInteractiveMapCoordinates = focusCoordinateTarget;
     window.focusInteractiveMapPokemonRespawns = focusPokemonRespawns;
     window.clearInteractiveMapIsolation = clearMarkerIsolation;
     window.resetInteractiveMapSession = function(){
