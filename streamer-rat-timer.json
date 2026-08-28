@@ -1,18 +1,17 @@
 {
-  "updatedAt": "2026-08-28T01:30:14.363Z",
+  "updatedAt": "2026-08-28T01:49:18.360Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-08-28T01:30:10.056Z",
-    "endedAt": "2026-08-28T01:30:14.363Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-08-28T01:40:28.244Z",
+    "endedAt": "2026-08-28T01:49:18.360Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
       "ogordonha",
       "sousupermeme",
       "uguettolitz",
-      "vivihbecker",
       "thigaartus",
       "0taichou",
       "adivorcio",
@@ -38,32 +37,40 @@
       "raulzerah1",
       "sharxera",
       "sruni1",
+      "vivihbecker",
       "voltanb"
     ],
     "pstoryDropChannels": [
       "callmevitao_",
       "ogordonha",
       "sousupermeme",
-      "uguettolitz",
-      "vivihbecker"
+      "uguettolitz"
     ],
     "observedChannels": [
-      "sousupermeme"
+      "ogordonha"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "ogordonha"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "ogordonha",
+        "messageAt": 1787881758251,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "sousupermeme",
+        "channel": "ogordonha",
         "kind": "rattata-message",
-        "messageAt": 1787880614288,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1787881758251,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "sousupermeme",
-        "kind": "escape",
-        "messageAt": 1787880614288,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "ogordonha",
+        "kind": "spawn",
+        "messageAt": 1787881758251,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -113,16 +120,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "sousupermeme",
-    "lastMessageAt": 1787880614288,
-    "expectedNextAt": 1787881814288,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-08-27T22:56:32Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1787880614363,
-    "persistedAt": 1787880614363
+    "channel": "ogordonha",
+    "lastMessageAt": 1787881758251,
+    "expectedNextAt": 1787883018251,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-08-28T01:08:07Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1787881758359,
+    "persistedAt": 1787881758359
   },
   "timers": {
+    "ogordonha": {
+      "channel": "ogordonha",
+      "lastMessageAt": 1787881758251,
+      "expectedNextAt": 1787883018251,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-08-28T01:08:07Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1787881758359,
+      "persistedAt": 1787881758359
+    },
     "sousupermeme": {
       "channel": "sousupermeme",
       "lastMessageAt": 1787880614288,
@@ -131,17 +148,7 @@
       "streamStartedAt": "2026-08-27T22:56:32Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1787880614363,
-      "persistedAt": 1787880614363
-    },
-    "ogordonha": {
-      "channel": "ogordonha",
-      "lastMessageAt": 1787880549788,
-      "expectedNextAt": 1787881809788,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-08-28T01:08:07Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1787880549902,
-      "persistedAt": 1787880610055
+      "persistedAt": 1787881228243
     }
   }
 }
