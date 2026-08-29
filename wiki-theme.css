@@ -1861,6 +1861,15 @@ body > .header {
   display: none !important;
 }
 
+@media (max-width: 980px) {
+  .header #mobile-nav-toggle {
+    display: inline-flex !important;
+    position: static !important;
+    inset: auto !important;
+    z-index: 3;
+  }
+}
+
 .header .site-global-search {
   position: relative !important;
   inset: auto !important;

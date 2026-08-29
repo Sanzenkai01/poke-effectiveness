@@ -138,6 +138,14 @@ const tabCommunityBtn = document.getElementById('tab-community');
 const visionToggleBtn = document.getElementById('vision-toggle-btn');
 const cursorToggleBtn = document.getElementById('cursor-toggle-btn');
 const homeBtn = document.getElementById('home-btn');
+if(homeBtn){
+    homeBtn.type = 'button';
+    homeBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const nextOpen = !document.body.classList.contains('sidebar-open');
+        setSidebarOpen(nextOpen);
+    });
+}
 const contentHome = document.getElementById('content-home');
 const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
@@ -279,7 +287,7 @@ let timesDetailsAltPokemons = document.getElementById('times-details-alt-pokemon
 let timesDetailsAltHuntsGroup = document.getElementById('times-details-alt-hunts-group');
 let timesDetailsAltHunts = document.getElementById('times-details-alt-hunts');
 const mobileSidebarQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    ? window.matchMedia('(max-width: 980px)')
+    ? window.matchMedia('(max-width: 1100px)')
     : null;
 let sidebarNavigationInitialized = false;
 let typesDataLoaded = false;
@@ -3319,18 +3327,20 @@ function setSidebarGroupExpanded(groupEl, expanded){
 }
 
 function setSidebarOpen(nextOpen){
-    const shouldOpen = Boolean(nextOpen) && isMobileSidebarMode();
+    const shouldOpen = Boolean(nextOpen);
+    const isMobile = isMobileSidebarMode();
     document.body.classList.toggle('sidebar-open', shouldOpen);
 
     if(mobileNavToggle){
         mobileNavToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
     }
     if(appSidebar){
-        appSidebar.setAttribute('aria-hidden', isMobileSidebarMode() ? (shouldOpen ? 'false' : 'true') : 'false');
+        appSidebar.setAttribute('aria-hidden', isMobile ? (shouldOpen ? 'false' : 'true') : 'false');
     }
     if(appShellBackdrop){
-        appShellBackdrop.hidden = !shouldOpen;
-        appShellBackdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+        const showBackdrop = isMobile && shouldOpen;
+        appShellBackdrop.hidden = !showBackdrop;
+        appShellBackdrop.setAttribute('aria-hidden', showBackdrop ? 'false' : 'true');
     }
 }
 
@@ -3502,9 +3512,19 @@ function activateSidebarTarget(button){
         commands: commandsBtn,
         'elemental-balls': elementalBallsBtn,
         'full-map': { click: openFullMapVideo },
-        fishing: fishingBtn
+        fishing: fishingBtn,
+        'toggle-sidebar': {
+            click: () => {
+                const nextOpen = !document.body.classList.contains('sidebar-open');
+                setSidebarOpen(nextOpen);
+            }
+        }
     };
     if(action && actionButtons[action]){
+        if(action === 'toggle-sidebar'){
+            actionButtons[action]?.click();
+            return;
+        }
         const routeRestoreState = beginQuickActionRoute(action, button.dataset.navUrl);
         actionButtons[action]?.click();
         if(routeRestoreState && pendingQuickActionRouteRestore === routeRestoreState){
@@ -3570,6 +3590,7 @@ function bindSidebarActionButtons(root = document){
         ? root.querySelectorAll('[data-nav-target], [data-nav-action]')
         : [];
     buttons.forEach((button) => {
+        if(button === homeBtn) return;
         if(boundSidebarActionButtons.has(button)) return;
         boundSidebarActionButtons.add(button);
         button.addEventListener('click', () => {
@@ -16401,7 +16422,6 @@ function showHuntBuilder(){
 if(tabEffectBtn) tabEffectBtn.addEventListener('click',()=>{ showEffectiveness(); localStorage.setItem('selectedTab','effectiveness'); updateUrl(); });
 if(tabFossilsBtn) tabFossilsBtn.addEventListener('click',()=>{ showFossils(); localStorage.setItem('selectedTab','fossils'); updateUrl(); });
 if(tabCalcBtn) tabCalcBtn.addEventListener('click',()=>{ showCalculator(); localStorage.setItem('selectedTab','calculator'); updateUrl(); });
-if(homeBtn) homeBtn.addEventListener('click',()=>{ navigateToHomePage(); });
 function showCatch(){
     if(contentCatch?.dataset.panelFragment && contentCatch.dataset.panelLoaded !== 'true'){
         setVisiblePanel(contentCatch);
@@ -23021,7 +23041,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20260826d').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20260829-sidebar-toggle').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }

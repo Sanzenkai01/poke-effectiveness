@@ -166,8 +166,8 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20260826b">
-  <link rel="stylesheet" href="wiki-theme.css?v=20260817c">
+  <link rel="stylesheet" href="styles.css?v=20260829-sidebar-toggle">
+  <link rel="stylesheet" href="wiki-theme.css?v=20260829-sidebar-toggle">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -226,10 +226,14 @@
       })();
     </script>
     <header class="header">
-      <button id="mobile-nav-toggle" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">&#9776;</button>
-      <button id="home-btn" class="wiki-topbar__brand" aria-label="Abrir Pokédex" title="Pokédex">
+      <button id="home-btn" class="wiki-topbar__brand" data-nav-action="toggle-sidebar" aria-label="Mostrar ou ocultar a barra lateral" title="Mostrar ou ocultar a barra lateral">
+        <span class="home-btn__menu" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
         <img src="icons-type/favicon.ico" alt="" aria-hidden="true" />
-        <span>Poke Utilities</span>
+        <span class="home-btn__label">Poke Utilities</span>
       </button>
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
       <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
@@ -314,7 +318,7 @@
           <symbol id="sidebar-icon-broadcast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"></circle><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.5 5.5a9 9 0 0 0 0 13M18.5 5.5a9 9 0 0 1 0 13"></path></symbol>
           <symbol id="sidebar-icon-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"></path><path d="M8 10h.01M12 10h.01M16 10h.01"></path></symbol>
         </svg>
-        <button class="sidebar-home" type="button" data-nav-target="pokemons" aria-label="Abrir Pokédex">
+        <button class="sidebar-home" type="button" data-nav-action="toggle-sidebar" aria-label="Mostrar ou ocultar a barra lateral">
           <span class="sidebar-home__brand-mark">
             <img class="sidebar-home__brand-logo" src="icons-type/favicon.ico" alt="" aria-hidden="true" loading="lazy" decoding="async" />
           </span>
@@ -1052,7 +1056,7 @@
     <script src="js/visits.shared.js?v=20260811a" defer></script>
     <script src="bosses/recommendation-catalog.js?v=20260826d"></script>
     <script src="js/recommendation-engine.js?v=20260826d"></script>
-    <script src="script.js?v=20260827l" defer></script>
+    <script src="script.js?v=20260829-sidebar-toggle" defer></script>
     <script src="bosses/bosses.js?v=20260826d" defer></script>
 </body>
 </html>

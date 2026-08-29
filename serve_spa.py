@@ -18,6 +18,12 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         path = urlparse(path).path
         return super().translate_path(path)
 
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
+
     def do_GET(self):
         url_path = urlparse(self.path).path
         fs_path = self.translate_path(url_path)

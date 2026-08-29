@@ -1,12 +1,12 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v1124`;
+let CACHE_NAME = `${CACHE_PREFIX}v1125`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
   new URL('./app.html', self.registration.scope).toString(),
-  new URL('./styles.css?v=20260826a', self.registration.scope).toString(),
-  new URL('./wiki-theme.css?v=20260817c', self.registration.scope).toString(),
-  new URL('./script.js?v=20260826d', self.registration.scope).toString(),
+  new URL('./styles.css?v=20260829-sidebar-toggle', self.registration.scope).toString(),
+  new URL('./wiki-theme.css?v=20260829-sidebar-toggle', self.registration.scope).toString(),
+  new URL('./script.js?v=20260829-sidebar-toggle', self.registration.scope).toString(),
   new URL('./bosses/recommendation-catalog.js?v=20260826d', self.registration.scope).toString(),
   new URL('./js/recommendation-engine.js?v=20260826d', self.registration.scope).toString(),
   new URL('./bosses/bosses.js?v=20260826d', self.registration.scope).toString(),
