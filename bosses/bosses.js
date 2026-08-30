@@ -27,7 +27,7 @@ const bossFeaturedPickByClan = Object.freeze({
   'pikachu': Object.freeze({ instinct: 'Marowak', mystic: 'Seaking', valor: 'Bouffalant' }),
   'mewtwo': Object.freeze({ instinct: 'Shiftry', mystic: 'Banette', valor: 'Absol' }),
   'alpha-fearow': Object.freeze({ instinct: 'Pikachu', valor: 'Gorging Cramorant' }),
-  'alpha-marowak': Object.freeze({ valor: 'Gorging Cramorant' }),
+  'alpha-marowak': Object.freeze({ instinct: 'Serperior', valor: 'Gorging Cramorant' }),
   'alpha-kingler': Object.freeze({ instinct: 'Serperior', valor: 'Tauros' }),
   'alolan-golem': Object.freeze({ instinct: 'Marowak', mystic: 'Hawlucha', valor: 'Bouffalant' }),
   'stakataka': Object.freeze({ instinct: 'Marowak', mystic: 'Hawlucha', valor: 'Bouffalant' }),
@@ -63,7 +63,7 @@ const bossFeaturedPickByClan = Object.freeze({
 
 const bossForcedFeaturedPickByClan = Object.freeze({
   'alpha-fearow': Object.freeze({ valor: 'Gorging Cramorant' }),
-  'alpha-marowak': Object.freeze({ valor: 'Gorging Cramorant' })
+  'alpha-marowak': Object.freeze({ instinct: 'Serperior', valor: 'Gorging Cramorant' })
 });
 
 const bossFeaturedTankPickByClan = Object.freeze({
@@ -131,7 +131,8 @@ const bossForcedFeaturedRolePickByClan = Object.freeze({
   venusaur: Object.freeze({ tank: bossFeaturedTankPickByClan.venusaur, dps: bossFeaturedPickByClan.venusaur, support: bossFeaturedSupportPickByClan.venusaur }),
   charizard: Object.freeze({ tank: bossFeaturedTankPickByClan.charizard, dps: bossFeaturedPickByClan.charizard, support: bossFeaturedSupportPickByClan.charizard }),
   pikachu: Object.freeze({ tank: bossFeaturedTankPickByClan.pikachu, dps: bossFeaturedPickByClan.pikachu, support: bossFeaturedSupportPickByClan.pikachu }),
-  mewtwo: Object.freeze({ tank: bossFeaturedTankPickByClan.mewtwo, dps: bossFeaturedPickByClan.mewtwo, support: bossFeaturedSupportPickByClan.mewtwo })
+  mewtwo: Object.freeze({ tank: bossFeaturedTankPickByClan.mewtwo, dps: bossFeaturedPickByClan.mewtwo, support: bossFeaturedSupportPickByClan.mewtwo }),
+  'alpha-marowak': Object.freeze({ dps: bossFeaturedPickByClan['alpha-marowak'], tank: bossFeaturedTankPickByClan['alpha-marowak'] || {}, support: bossFeaturedSupportPickByClan['alpha-marowak'] || {} })
 });
 
 const bossExcludedPickNames = Object.freeze({
@@ -1108,6 +1109,8 @@ const rolePickImageOverrides = {
   charizardtwo: 'CharizardTwo.png',
   gorgingcramorant: 'gorging-cramorant.png',
   drifloon: 'drifloon.png',
+  relicanth: 'relicanth.png',
+  salazzle: 'salazzle.png',
   megadelphox: 'megadelphox.png',
   megagreninja: 'megagreninja.png',
   shinybanette: 'banette.png',
@@ -4808,8 +4811,10 @@ const bossPokemonAssetAliases = Object.freeze({
   'pyroar-female.png': 'pokemons/6gen/pyroar-female.png',
   'qwilfish.png': 'pokemons/2gen/qwilfish.png',
   'raticate.png': 'pokemons/1gen/raticate.png',
+  'relicanth.png': 'pokemons/3gen/relicanth.png',
   'ribombee.png': 'pokemons/7gen/ribombee.png',
   'sableye.png': 'pokemons/3gen/sableye.png',
+  'salazzle.png': 'pokemons/7gen/salazzle.png',
   'scizor.png': 'pokemons/2gen/scizor.png',
   'scolipede.png': 'pokemons/5gen/scolipede.png',
   'scyther.png': 'pokemons/1gen/scyther.png',
