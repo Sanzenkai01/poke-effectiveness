@@ -436,8 +436,8 @@ const APP_ROUTE_ALIASES = {
     maniacs: { path: '/maniacs', tab: 'maniacs' },
     helds: { path: '/helds', tab: 'helds' },
     held: { path: '/helds', tab: 'helds' },
-    'site-de-batalha': { path: '/site-de-batalha', tab: 'site-de-batalha' },
-    sitedebatalha: { path: '/site-de-batalha', tab: 'site-de-batalha' },
+    'site-de-batalha': { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
+    sitedebatalha: { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     'passe-de-batalha': { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     passedebatalha: { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     'bosses-info': { path: '/bosses-info', tab: 'bosses-info' },
@@ -6641,14 +6641,14 @@ function initializeBattlePassFilter(){
 
 function showBattlePass(){
     clearTabHighlights();
-    setActiveTabTheme('site-de-batalha');
+    setActiveTabTheme('passe-de-batalha');
     setVisiblePanel(contentBattlePass);
     document.body.classList.remove('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = 'Passe de Batalha';
-    localStorage.setItem('selectedTab', 'site-de-batalha');
+    localStorage.setItem('selectedTab', 'passe-de-batalha');
     updateBrowserTitle();
     ensurePanelFragmentLoaded(contentBattlePass).then(() => {
         initializeBattlePassFilter();
@@ -22746,7 +22746,7 @@ function updateUrl(options = {}){
                       (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentHelds && !contentHelds.hidden) ? 'helds' :
-                      (contentBattlePass && !contentBattlePass.hidden) ? 'site-de-batalha' :
+                      (contentBattlePass && !contentBattlePass.hidden) ? 'passe-de-batalha' :
                       (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
                       (contentBossesInfo && !contentBossesInfo.hidden) ? 'bosses-info' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
