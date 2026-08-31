@@ -1,0 +1,36 @@
+<div class="battle-pass-shell">
+  <section class="battle-pass-hero" aria-labelledby="battle-pass-title">
+    <span class="battle-pass-eyebrow">Utilidades</span>
+    <h2 id="battle-pass-title">Passe de Batalha</h2>
+    <p class="battle-pass-hero__text">Selecione 1 ou 2 tipagens para ver todos os Pokémons capturáveis.</p>
+  </section>
+
+  <section class="battle-pass-tool" aria-labelledby="battle-pass-tool-title">
+    <div class="battle-pass-tool__header">
+      <div class="battle-pass-tool__header-content">
+        <span class="battle-pass-tool__eyebrow">Captura</span>
+        <h3 id="battle-pass-tool-title">Filtro por tipagem</h3>
+      </div>
+      <button id="battle-pass-clear" class="battle-pass-clear" type="button">Limpar seleção</button>
+    </div>
+
+    <div id="battle-pass-location-cards" class="battle-pass-location-cards" aria-label="Localizações de bosses e Eeveelutions"></div>
+
+    <div id="battle-pass-type-picker" class="battle-pass-type-picker" aria-label="Seleção de tipagens"></div>
+
+    <div class="battle-pass-filters-section">
+      <div class="battle-pass-level-filter">
+        <label for="battle-pass-level-select" class="battle-pass-level-filter__label">Filtrar por level:</label>
+        <select id="battle-pass-level-select" class="battle-pass-level-filter__select" aria-label="Selecione o level mínimo">
+          <option value="1">Todos os levels</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="battle-pass-toolbar">
+      <strong id="battle-pass-summary" class="battle-pass-toolbar__summary">Selecione 1 ou 2 tipos</strong>
+    </div>
+
+    <div id="battle-pass-results" class="battle-pass-results" aria-live="polite"></div>
+  </section>
+</div>

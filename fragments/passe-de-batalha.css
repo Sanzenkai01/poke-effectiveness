@@ -1,0 +1,561 @@
+:root {
+  --battle-pass-bg: #0b1317;
+  --battle-pass-panel: rgba(17, 25, 30, 0.9);
+  --battle-pass-border: rgba(143, 160, 170, 0.18);
+  --battle-pass-text: #edf4f6;
+  --battle-pass-muted: rgba(237, 244, 246, 0.7);
+  --battle-pass-accent: #ff7b54;
+  --battle-pass-accent-strong: #ffad73;
+  --battle-pass-card: rgba(18, 27, 32, 0.92);
+}
+
+.battle-pass-shell {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  color: var(--battle-pass-text);
+}
+
+.battle-pass-hero {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.15rem 1.2rem;
+  border: 1px solid var(--battle-pass-border);
+  border-radius: 22px;
+  background: linear-gradient(140deg, rgba(255, 143, 92, 0.12), rgba(18, 27, 32, 0.92) 32%, rgba(18, 27, 32, 0.92));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.battle-pass-eyebrow,
+.battle-pass-tool__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffb88f;
+}
+
+.battle-pass-hero h2,
+.battle-pass-tool h3 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.battle-pass-hero p {
+  margin: 0;
+  max-width: 64ch;
+  width: 100%;
+  color: var(--battle-pass-muted);
+  line-height: 1.6;
+  justify-self: center;
+  text-align: center;
+}
+
+.battle-pass-hero__text {
+  text-align: center;
+  justify-self: center;
+}
+
+.battle-pass-tool {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid var(--battle-pass-border);
+  border-radius: 22px;
+  background: var(--battle-pass-panel);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.battle-pass-tool__header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.battle-pass-tool__header-content {
+  grid-column: 2;
+  justify-self: center;
+  text-align: center;
+}
+
+.battle-pass-clear {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.battle-pass-tool h3 {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.battle-pass-clear {
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(255, 173, 115, 0.4);
+  border-radius: 999px;
+  background: rgba(255, 123, 84, 0.12);
+  color: var(--battle-pass-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.battle-pass-location-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  padding-bottom: 0.15rem;
+}
+
+.battle-pass-location-group {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.8rem 0.8rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.battle-pass-location-group:last-child {
+  min-width: 0;
+}
+
+.battle-pass-location-group__title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffb88f;
+}
+
+.battle-pass-location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
+}
+
+.battle-pass-location-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 64px;
+  padding: 0.5rem 0.5rem 0.5rem 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(12, 18, 20, 0.82);
+  overflow: hidden;
+}
+
+.battle-pass-location-card__image-wrap {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.battle-pass-location-card__image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
+}
+
+.battle-pass-location-card__name {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--battle-pass-text);
+}
+
+.battle-pass-location-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(255, 173, 115, 0.36);
+  border-radius: 10px;
+  background: rgba(255, 123, 84, 0.09);
+  color: var(--battle-pass-text);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.battle-pass-location-card__button:hover,
+.battle-pass-location-card__button:focus-visible {
+  outline: none;
+  border-color: rgba(255, 173, 115, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 173, 115, 0.12);
+}
+
+.battle-pass-type-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 0.7rem;
+}
+
+.battle-pass-type-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 54px;
+  padding: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(12, 18, 20, 0.94);
+  color: var(--battle-pass-text);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.battle-pass-type-button:hover,
+.battle-pass-type-button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 173, 115, 0.44);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  outline: none;
+}
+
+.battle-pass-type-button.is-selected {
+  border-color: rgba(255, 173, 115, 0.8);
+  background: linear-gradient(140deg, rgba(255, 123, 84, 0.25), rgba(12, 18, 20, 0.96));
+  box-shadow: 0 10px 22px rgba(255, 123, 84, 0.18);
+}
+
+.battle-pass-type-button__icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.02);
+}
+
+.battle-pass-type-button__label {
+  display: none;
+}
+
+.battle-pass-filters-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  flex-wrap: wrap;
+}
+
+.battle-pass-level-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.battle-pass-level-filter__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--battle-pass-text);
+  white-space: nowrap;
+}
+
+.battle-pass-level-filter__select {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(255, 173, 115, 0.4);
+  border-radius: 10px;
+  background: rgba(12, 18, 20, 0.94);
+  color: var(--battle-pass-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,173,115,0.8)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1.2em 1.2em;
+  padding-right: 2.4rem;
+}
+
+.battle-pass-level-filter__select:hover {
+  border-color: rgba(255, 173, 115, 0.6);
+}
+
+.battle-pass-level-filter__select:focus {
+  outline: none;
+  border-color: rgba(255, 173, 115, 0.8);
+  box-shadow: 0 0 12px rgba(255, 123, 84, 0.3);
+}
+
+.battle-pass-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding-top: 0.2rem;
+  color: var(--battle-pass-muted);
+}
+
+.battle-pass-toolbar__hint {
+  font-size: 0.8rem;
+}
+
+.battle-pass-toolbar__summary {
+  width: 100%;
+  text-align: center;
+}
+
+.battle-pass-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 0.4rem;
+}
+
+.battle-pass-card {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 1px solid var(--battle-pass-border);
+  border-radius: 18px;
+  background: var(--battle-pass-card);
+  position: relative;
+}
+
+.battle-pass-card__image-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+}
+
+.battle-pass-card__image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.3));
+}
+
+.battle-pass-card__content {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+  padding-right: 2.2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.battle-pass-card__topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.battle-pass-card__name {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.battle-pass-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.24rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.battle-pass-card__tag--capture {
+  background: rgba(101, 202, 130, 0.12);
+  color: #9be3a7;
+}
+
+.battle-pass-card__tag--boss {
+  background: rgba(255, 123, 84, 0.12);
+  color: #ffb88f;
+}
+
+.battle-pass-card__tag--mixed {
+  background: rgba(128, 141, 255, 0.1);
+  color: #b7c3ff;
+}
+
+.battle-pass-card__types {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.battle-pass-type-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  font-size: 0;
+}
+
+.battle-pass-type-chip img {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+}
+
+.battle-pass-map-button {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 173, 115, 0.36);
+  border-radius: 10px;
+  background: rgba(255, 123, 84, 0.09);
+  color: var(--battle-pass-text);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.battle-pass-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  padding: 1.2rem;
+  border: 1px dashed rgba(255,255,255,0.14);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.02);
+  color: var(--battle-pass-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.battle-pass-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--battle-pass-muted);
+  text-align: center;
+}
+
+.battle-pass-card__level {
+  font-weight: 600;
+  color: rgba(255, 173, 115, 0.8);
+}
+
+.battle-pass-card__capture-average {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.36rem;
+  font-size: 0.72rem;
+  color: rgba(230, 237, 242, 0.8);
+}
+
+.battle-pass-card__capture-average-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.battle-pass-card__price {
+  font-size: 0.7rem;
+  color: rgba(237, 244, 246, 0.6);
+}
+
+.battle-pass-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(143, 160, 170, 0.1);
+}
+
+@media (max-width: 640px) {
+  .battle-pass-shell {
+    padding: 0.9rem;
+  }
+
+  .battle-pass-location-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-pass-location-group {
+    padding: 0.7rem;
+  }
+
+  .battle-pass-location-group:last-child .battle-pass-location-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .battle-pass-location-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.7rem;
+  }
+
+  .battle-pass-location-card {
+    grid-template-columns: 42px 1fr auto;
+    gap: 0.4rem;
+    min-height: 72px;
+    padding: 0.55rem 0.5rem 0.55rem 0.45rem;
+  }
+
+  .battle-pass-location-card__image-wrap {
+    width: 42px;
+    height: 42px;
+  }
+
+  .battle-pass-location-card__image {
+    width: 30px;
+    height: 30px;
+  }
+
+  .battle-pass-location-card__name {
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .battle-pass-location-card__button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .battle-pass-card {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .battle-pass-type-picker {
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  }
+}

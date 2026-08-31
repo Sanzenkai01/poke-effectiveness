@@ -151,6 +151,7 @@ const contentEffect = document.getElementById('content-effectiveness');
 const contentFossils = document.getElementById('content-fossils');
 const contentManiacs = document.getElementById('content-maniacs');
 const contentHelds = document.getElementById('content-helds');
+const contentBattlePass = document.getElementById('content-passe-de-batalha');
 let maniacsStonesGrid = document.getElementById('maniacs-stones-grid');
 let maniacsEssenceGrid = document.getElementById('maniacs-essence-grid');
 const contentBossesInfo = document.getElementById('content-bosses-info');
@@ -178,7 +179,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentClans, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBattlePass, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentClans, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -435,6 +436,10 @@ const APP_ROUTE_ALIASES = {
     maniacs: { path: '/maniacs', tab: 'maniacs' },
     helds: { path: '/helds', tab: 'helds' },
     held: { path: '/helds', tab: 'helds' },
+    'site-de-batalha': { path: '/site-de-batalha', tab: 'site-de-batalha' },
+    sitedebatalha: { path: '/site-de-batalha', tab: 'site-de-batalha' },
+    'passe-de-batalha': { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
+    passedebatalha: { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     'bosses-info': { path: '/bosses-info', tab: 'bosses-info' },
     bossesinfo: { path: '/bosses-info', tab: 'bosses-info' },
     'boss-locations': { path: '/bosses-info', tab: 'bosses-info' },
@@ -1565,6 +1570,14 @@ if(!window._fossilResetGlobalAttached){
 
 function getRouteInfo(routeKey){
     return APP_ROUTE_ALIASES[String(routeKey || '').trim().toLowerCase()] || null;
+}
+
+function getRouteInfoFromHash(hashValue = location.hash){
+    const rawHash = String(hashValue || '').trim();
+    if(!rawHash) return null;
+    const normalizedHash = rawHash.replace(/^#/, '').split(/[/?#]/)[0].trim();
+    if(!normalizedHash) return null;
+    return getRouteInfo(normalizedHash);
 }
 
 function normalizeQuickAction(value){
@@ -3543,6 +3556,8 @@ function activateSidebarTarget(button){
         fossils: showFossils,
         maniacs: showManiacs,
         helds: showHelds,
+        'site-de-batalha': showBattlePass,
+        'passe-de-batalha': showBattlePass,
         'bosses-info': showBossesInfo,
         calculator: showCalculator,
         boost: showBoostCalculator,
@@ -6259,6 +6274,389 @@ function showHelds(){
             gsap.from(contentHelds.querySelectorAll('.helds-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
         }
     }).catch(error => console.error('Helds load failed', error));
+    updateUrl();
+}
+
+function getBattlePassPokemonMatches(typeKeys = []){
+    const normalizedTypeKeys = Array.from(new Set((Array.isArray(typeKeys) ? typeKeys : []).map(normalizePokemonTypeKey).filter(Boolean)));
+    if(!normalizedTypeKeys.length) return [];
+
+    const catalogEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
+    return catalogEntries.filter((entry) => {
+        if(!entry || !entry.name) return false;
+        if(!entry.price) return false;
+        const types = [entry.type1, entry.type2].map(normalizePokemonTypeKey).filter(Boolean);
+        if(!types.length) return false;
+        const matchesAllSelected = normalizedTypeKeys.every(typeKey => types.includes(typeKey));
+        if(!matchesAllSelected) return false;
+
+        const bossRush = Boolean(String(entry.priceLabel || '').toLowerCase().includes('boss rush'));
+        const captureReady = Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
+        return Boolean(captureReady || bossRush);
+    });
+}
+
+function getBattlePassResultLabel(entry){
+    const bossRush = Boolean(String(entry.priceLabel || '').toLowerCase().includes('boss rush'));
+    const captureReady = Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
+    if(captureReady && bossRush) return { label: '+ Boss Rush', kind: 'mixed' };
+    if(captureReady) return { label: '✓', kind: 'capture' };
+    if(bossRush) return { label: 'Boss Rush', kind: 'boss' };
+    return { label: 'Disponível', kind: 'capture' };
+}
+
+function renderBattlePassResults(selectedTypes = [], levelFilter = null){
+    const resultsPanel = document.getElementById('battle-pass-results');
+    const summaryLabel = document.getElementById('battle-pass-summary');
+    if(!resultsPanel || !summaryLabel) return;
+
+    const normalizedTypes = Array.from(new Set((selectedTypes || []).map(normalizePokemonTypeKey).filter(Boolean)));
+    if(!normalizedTypes.length){
+        summaryLabel.textContent = 'Selecione 1 ou 2 tipos';
+        resultsPanel.innerHTML = '<div class="battle-pass-empty">Escolha uma ou duas tipagens para ver os Pokémon que combinam com esse tipo de composição.</div>';
+        return;
+    }
+
+    let filteredEntries = getBattlePassPokemonMatches(normalizedTypes);
+
+    const selectedLevel = Number(levelFilter);
+    if(Number.isFinite(selectedLevel) && selectedLevel > 0) {
+        filteredEntries = filteredEntries.filter(entry => Number(entry.level || 0) === selectedLevel);
+    } else {
+        filteredEntries = filteredEntries.filter(entry => Number(entry.level || 0) >= 50);
+    }
+    
+    filteredEntries = filteredEntries.sort((left, right) => {
+        const leftAverage = Number(getPokemonAverageValueForVariant(left, 'normal', 'ultra') || Number.MAX_SAFE_INTEGER);
+        const rightAverage = Number(getPokemonAverageValueForVariant(right, 'normal', 'ultra') || Number.MAX_SAFE_INTEGER);
+        if(leftAverage !== rightAverage) {
+            return leftAverage - rightAverage;
+        }
+
+        const leftValue = Number(left.dex || 0);
+        const rightValue = Number(right.dex || 0);
+        return leftValue - rightValue;
+    });
+
+    summaryLabel.textContent = normalizedTypes.length === 1
+        ? `Mostrando ${filteredEntries.length} Pokémon com ${formatPokemonTypeLabel(normalizedTypes[0])}`
+        : `Mostrando ${filteredEntries.length} Pokémon com ${normalizedTypes.map(formatPokemonTypeLabel).join(' / ')}`;
+
+    if(!filteredEntries.length){
+        resultsPanel.innerHTML = '<div class="battle-pass-empty">Nenhum Pokémon ou de Boss Rush corresponde a essa combinação de tipos.</div>';
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    filteredEntries.forEach((entry) => {
+        const card = document.createElement('article');
+        card.className = 'battle-pass-card';
+
+        const imageWrap = document.createElement('div');
+        imageWrap.className = 'battle-pass-card__image-wrap';
+        const image = document.createElement('img');
+        image.className = 'battle-pass-card__image';
+        image.src = getPokemonImageSource(entry);
+        image.alt = entry.name;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+        imageWrap.appendChild(image);
+
+        const content = document.createElement('div');
+        content.className = 'battle-pass-card__content';
+
+        const topLine = document.createElement('div');
+        topLine.className = 'battle-pass-card__topline';
+        const name = document.createElement('h4');
+        name.className = 'battle-pass-card__name';
+        name.textContent = entry.name;
+        topLine.append(name);
+
+        const types = document.createElement('div');
+        types.className = 'battle-pass-card__types';
+        [entry.type1, entry.type2].filter(Boolean).forEach((typeKey) => {
+            const chip = document.createElement('span');
+            chip.className = 'battle-pass-type-chip';
+            chip.title = formatPokemonTypeLabel(normalizePokemonTypeKey(typeKey));
+            const icon = document.createElement('img');
+            icon.src = `icons-type/${normalizePokemonTypeKey(typeKey)}.png`;
+            icon.alt = formatPokemonTypeLabel(normalizePokemonTypeKey(typeKey));
+            icon.loading = 'lazy';
+            icon.decoding = 'async';
+            chip.appendChild(icon);
+            types.appendChild(chip);
+        });
+
+        const footer = document.createElement('div');
+        footer.className = 'battle-pass-card__footer';
+
+        const info = document.createElement('div');
+        info.className = 'battle-pass-card__info';
+        if(entry.level) {
+            const levelSpan = document.createElement('span');
+            levelSpan.className = 'battle-pass-card__level';
+            levelSpan.textContent = `Lv.${entry.level}`;
+            info.appendChild(levelSpan);
+        }
+
+        const ultraAverage = getPokemonAverageValueForVariant(entry, 'normal', 'ultra');
+        if(Number.isFinite(ultraAverage) && ultraAverage > 0) {
+            const ultraAverageRow = document.createElement('span');
+            ultraAverageRow.className = 'battle-pass-card__capture-average';
+
+            const ultraIcon = document.createElement('img');
+            ultraIcon.src = 'balls/ultra.png';
+            ultraIcon.alt = 'Ultra Ball';
+            ultraIcon.loading = 'lazy';
+            ultraIcon.decoding = 'async';
+            ultraIcon.className = 'battle-pass-card__capture-average-icon';
+
+            const ultraText = document.createElement('span');
+            ultraText.textContent = `Média: ${ultraAverage}x`;
+
+            ultraAverageRow.append(ultraIcon, ultraText);
+            info.appendChild(ultraAverageRow);
+        }
+
+        if(entry.price) {
+            const priceSpan = document.createElement('span');
+            priceSpan.className = 'battle-pass-card__price';
+            priceSpan.textContent = `${entry.price.toLocaleString('pt-BR')} Pokédollars`;
+            info.appendChild(priceSpan);
+        }
+        if(info.children.length > 0) {
+            footer.appendChild(info);
+        }
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'battle-pass-map-button';
+        button.innerHTML = '🗺️';
+        button.addEventListener('click', async () => {
+            const opened = await openInteractiveMapPokemonRespawns(entry, { trigger: button });
+            if(!opened){
+                showPokemonRespawnMapFeedback(entry.name);
+            }
+        });
+
+        content.append(topLine, types, footer);
+        card.append(imageWrap, content, button);
+        fragment.appendChild(card);
+    });
+
+    resultsPanel.replaceChildren(fragment);
+}
+
+function getUniqueBattlePassLevels(){
+    const catalogEntries = getPokemonCatalogEntriesForVariant(POKEMON_CATALOG_VARIANT_DEFAULT);
+    const levels = new Set();
+    catalogEntries.forEach((entry) => {
+        if(entry && entry.price && entry.level){
+            const numericLevel = Number(entry.level);
+            if(numericLevel >= 50){
+                levels.add(numericLevel);
+            }
+        }
+    });
+    return Array.from(levels).sort((a, b) => a - b);
+}
+
+function renderBattlePassLocationCards(){
+    const container = document.getElementById('battle-pass-location-cards');
+    if(!container) return;
+
+    const groups = [
+        {
+            title: 'Bosses Ranger',
+            entries: [
+                { label: 'Hydrapple', mapMarkerId: 'poke-utilities-ranger-boss-hydrapple' },
+                { label: 'Aegislash', mapMarkerId: 'poke-utilities-ranger-boss-aegislash' },
+                { label: 'Zoroark', mapMarkerId: 'poke-utilities-ranger-boss-zoroark' }
+            ]
+        },
+        {
+            title: 'Eeveelutions',
+            entries: [
+                { label: 'Vaporeon', pokemonName: 'Vaporeon' },
+                { label: 'Jolteon', pokemonName: 'Jolteon' },
+                { label: 'Flareon', pokemonName: 'Flareon' },
+                { label: 'Espeon', pokemonName: 'Espeon' },
+                { label: 'Umbreon', pokemonName: 'Umbreon' },
+                { label: 'Leafeon', pokemonName: 'Leafeon' },
+                { label: 'Glaceon', pokemonName: 'Glaceon' },
+                { label: 'Sylveon', pokemonName: 'Sylveon' }
+            ]
+        }
+    ];
+
+    container.replaceChildren();
+    groups.forEach((group) => {
+        const groupWrap = document.createElement('div');
+        groupWrap.className = 'battle-pass-location-group';
+
+        const groupTitle = document.createElement('h4');
+        groupTitle.className = 'battle-pass-location-group__title';
+        groupTitle.textContent = group.title;
+
+        const locationGrid = document.createElement('div');
+        locationGrid.className = 'battle-pass-location-grid';
+
+        group.entries.forEach((entry) => {
+            const card = document.createElement('article');
+            card.className = 'battle-pass-location-card';
+
+            const preferredNameCandidates = [];
+            const primaryName = entry.label || entry.pokemonName || '';
+            const secondaryName = entry.pokemonName || entry.label || '';
+            if(primaryName){
+                preferredNameCandidates.push(primaryName, `${primaryName} (shield form)`, `${primaryName} (sword form)`);
+            }
+            if(secondaryName && secondaryName !== primaryName){
+                preferredNameCandidates.push(secondaryName, `${secondaryName} (shield form)`, `${secondaryName} (sword form)`);
+            }
+            const catalogEntry = preferredNameCandidates
+                .map((name) => getPokemonCatalogEntryByName(name))
+                .find(Boolean) || null;
+
+            const imageWrap = document.createElement('div');
+            imageWrap.className = 'battle-pass-location-card__image-wrap';
+            const image = document.createElement('img');
+            image.className = 'battle-pass-location-card__image';
+            image.src = getPokemonImageSource(catalogEntry || { image: entry.image || entry.pokemonImage || '' });
+            image.alt = entry.label;
+            image.loading = 'lazy';
+            image.decoding = 'async';
+            setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+            imageWrap.appendChild(image);
+
+            const label = document.createElement('p');
+            label.className = 'battle-pass-location-card__name';
+            label.textContent = entry.label;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'battle-pass-location-card__button';
+            button.setAttribute('aria-label', `Mostrar localização de ${entry.label}`);
+            button.title = 'Mostrar localização no mapa';
+            button.innerHTML = '🗺️';
+            button.addEventListener('click', async () => {
+                let opened = false;
+                if(entry.mapMarkerId){
+                    opened = await openInteractiveMapMarker(entry.mapMarkerId, { name: entry.label, trigger: button });
+                }else if(entry.pokemonName){
+                    opened = await openInteractiveMapPokemonRespawns({ name: entry.pokemonName }, { trigger: button });
+                }
+                if(!opened){
+                    showPokemonRespawnMapFeedback(entry.label);
+                }
+            });
+
+            card.append(imageWrap, label, button);
+            locationGrid.appendChild(card);
+        });
+
+        groupWrap.append(groupTitle, locationGrid);
+        container.appendChild(groupWrap);
+    });
+}
+
+function initializeBattlePassFilter(){
+    const picker = document.getElementById('battle-pass-type-picker');
+    const clearBtn = document.getElementById('battle-pass-clear');
+    const levelSelect = document.getElementById('battle-pass-level-select');
+    if(!picker || !clearBtn || !levelSelect) return;
+
+    renderBattlePassLocationCards();
+
+    const selected = new Set();
+    let selectedLevel = null;
+    const typeKeys = ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
+
+    const updateSelection = () => {
+        const currentSelected = Array.from(selected);
+        renderBattlePassResults(currentSelected, selectedLevel);
+        picker.querySelectorAll('.battle-pass-type-button').forEach((button) => {
+            const value = button.dataset.type;
+            const isSelected = selected.has(value);
+            button.classList.toggle('is-selected', isSelected);
+            button.setAttribute('aria-pressed', String(isSelected));
+        });
+    };
+
+    const uniqueLevels = getUniqueBattlePassLevels();
+    levelSelect.innerHTML = '<option value="">Todos os levels</option>';
+    uniqueLevels.forEach((level) => {
+        const option = document.createElement('option');
+        option.value = String(level);
+        option.textContent = String(level);
+        levelSelect.appendChild(option);
+    });
+
+    levelSelect.value = '';
+    selectedLevel = null;
+
+    levelSelect.addEventListener('change', (e) => {
+        const rawValue = String(e.target.value || '');
+        selectedLevel = rawValue ? Number(rawValue) : null;
+        updateSelection();
+    });
+
+    picker.replaceChildren();
+    typeKeys.forEach((typeKey) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'battle-pass-type-button';
+        button.dataset.type = typeKey;
+        button.setAttribute('aria-pressed', 'false');
+        button.title = formatPokemonTypeLabel(typeKey);
+        button.innerHTML = `
+            <img class="battle-pass-type-button__icon" src="icons-type/${typeKey}.png" alt="${formatPokemonTypeLabel(typeKey)}" loading="lazy" decoding="async">
+        `;
+        button.addEventListener('click', () => {
+            const isSelected = selected.has(typeKey);
+            if(isSelected){
+                selected.delete(typeKey);
+            } else {
+                if(selected.size >= 2){
+                    const [first] = selected;
+                    selected.delete(first);
+                }
+                selected.add(typeKey);
+            }
+            updateSelection();
+        });
+        picker.appendChild(button);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        selected.clear();
+        selectedLevel = null;
+        levelSelect.value = '';
+        updateSelection();
+    });
+
+    updateSelection();
+}
+
+function showBattlePass(){
+    clearTabHighlights();
+    setActiveTabTheme('site-de-batalha');
+    setVisiblePanel(contentBattlePass);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Passe de Batalha';
+    localStorage.setItem('selectedTab', 'site-de-batalha');
+    updateBrowserTitle();
+    ensurePanelFragmentLoaded(contentBattlePass).then(() => {
+        initializeBattlePassFilter();
+        if(useGsap && contentBattlePass && !contentBattlePass.hidden){
+            gsap.from(contentBattlePass, { opacity: 0, y: -10, duration: 0.4 });
+            gsap.from(contentBattlePass.querySelectorAll('.battle-pass-hero, .battle-pass-tool'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
+        }
+    }).catch(error => console.error('Passe de Batalha load failed', error));
     updateUrl();
 }
 
@@ -19195,9 +19593,10 @@ function initTabFromUrl(){
     }
 
     const tabparam = params.get('tab') || pathRouteInfo?.tab || '';
-    const requestedRouteInfo = getRouteInfo(tabparam);
-    let resolvedTab = requestedRouteInfo?.tab || tabparam;
-    const hasQuery = params.toString().length > 0;
+    const requestedHashRouteInfo = getRouteInfoFromHash(location.hash);
+    const requestedRouteInfo = getRouteInfo(tabparam) || requestedHashRouteInfo;
+    let resolvedTab = requestedRouteInfo?.tab || tabparam || requestedHashRouteInfo?.tab || '';
+    const hasQuery = params.toString().length > 0 || Boolean(location.hash);
     if(requestedPokemonCatalogPage !== null){
         resolvedTab = 'pokemons';
     } else if(requestedTeamRoute){
@@ -19217,6 +19616,7 @@ function initTabFromUrl(){
         requestedLocationSlug: requestedManiacsMapRoute?.locationSlug || ''
     });
     if(resolvedTab==='helds') return showHelds();
+    if(resolvedTab==='site-de-batalha' || resolvedTab==='passe-de-batalha') return showBattlePass();
     if(resolvedTab==='bosses-info') return showBossesInfo();
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
@@ -19280,6 +19680,7 @@ function initTabFromUrl(){
     if(saved==='fossils') return showFossils();
     if(saved==='maniacs') return showManiacs();
     if(saved==='helds') return showHelds();
+    if(saved==='site-de-batalha' || saved==='passe-de-batalha') return showBattlePass();
     if(saved==='bosses-info') return showBossesInfo();
     if(saved==='times') return showTimes();
     if(saved==='cla') return showClans();
@@ -22345,6 +22746,7 @@ function updateUrl(options = {}){
                       (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentHelds && !contentHelds.hidden) ? 'helds' :
+                      (contentBattlePass && !contentBattlePass.hidden) ? 'site-de-batalha' :
                       (contentManiacs && !contentManiacs.hidden) ? 'maniacs' :
                       (contentBossesInfo && !contentBossesInfo.hidden) ? 'bosses-info' :
                       tabEffectBtn.classList.contains('active') ? 'effectiveness' :
