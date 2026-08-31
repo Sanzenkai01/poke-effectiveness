@@ -436,8 +436,6 @@ const APP_ROUTE_ALIASES = {
     maniacs: { path: '/maniacs', tab: 'maniacs' },
     helds: { path: '/helds', tab: 'helds' },
     held: { path: '/helds', tab: 'helds' },
-    'site-de-batalha': { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
-    sitedebatalha: { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     'passe-de-batalha': { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     passedebatalha: { path: '/passe-de-batalha', tab: 'passe-de-batalha' },
     'bosses-info': { path: '/bosses-info', tab: 'bosses-info' },
@@ -3556,7 +3554,6 @@ function activateSidebarTarget(button){
         fossils: showFossils,
         maniacs: showManiacs,
         helds: showHelds,
-        'site-de-batalha': showBattlePass,
         'passe-de-batalha': showBattlePass,
         'bosses-info': showBossesInfo,
         calculator: showCalculator,
@@ -19616,7 +19613,6 @@ function initTabFromUrl(){
         requestedLocationSlug: requestedManiacsMapRoute?.locationSlug || ''
     });
     if(resolvedTab==='helds') return showHelds();
-    if(resolvedTab==='site-de-batalha' || resolvedTab==='passe-de-batalha') return showBattlePass();
     if(resolvedTab==='bosses-info') return showBossesInfo();
     if(resolvedTab==='team-builder') return showTeamBuilder();
     if(resolvedTab==='hunt-builder') return showHuntBuilder();
@@ -19680,7 +19676,6 @@ function initTabFromUrl(){
     if(saved==='fossils') return showFossils();
     if(saved==='maniacs') return showManiacs();
     if(saved==='helds') return showHelds();
-    if(saved==='site-de-batalha' || saved==='passe-de-batalha') return showBattlePass();
     if(saved==='bosses-info') return showBossesInfo();
     if(saved==='times') return showTimes();
     if(saved==='cla') return showClans();
