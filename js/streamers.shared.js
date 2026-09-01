@@ -31,6 +31,7 @@
         { name: 'Eusou_O_D', supportsDrops: false },
         { name: 'voltanb', supportsDrops: false },
         { name: '0taichou', supportsDrops: false },
+        { name: 'niinjan_', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
