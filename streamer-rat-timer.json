@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-09-02T20:13:12.854Z",
+  "updatedAt": "2026-09-02T20:14:17.521Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-02T20:03:54.718Z",
-    "endedAt": "2026-09-02T20:13:12.854Z",
-    "reason": "rat-found",
+    "startedAt": "2026-09-02T20:14:14.263Z",
+    "endedAt": "2026-09-02T20:14:17.521Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "eaisantinho",
       "indypereira",
       "karlin_nara",
       "thigaartus",
@@ -18,7 +19,6 @@
       "cafeina54",
       "callmevitao_",
       "dragonslayerpiva",
-      "eaisantinho",
       "enriqfmz",
       "eusou_o_d",
       "fernandoalcatraz",
@@ -42,36 +42,29 @@
       "voltanb"
     ],
     "pstoryDropChannels": [
+      "eaisantinho",
       "indypereira",
       "karlin_nara",
       "thigaartus",
       "uguettolitz"
     ],
     "observedChannels": [
-      "indypereira"
+      "eaisantinho"
     ],
-    "observedSpawnChannels": [
-      "indypereira"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "indypereira",
-        "messageAt": 1788379992748,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "indypereira",
+        "channel": "eaisantinho",
         "kind": "rattata-message",
-        "messageAt": 1788379992748,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1788380057435,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
-        "channel": "indypereira",
-        "kind": "spawn",
-        "messageAt": 1788379992748,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "channel": "eaisantinho",
+        "kind": "escape",
+        "messageAt": 1788380057435,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -121,16 +114,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "indypereira",
-    "lastMessageAt": 1788379992748,
-    "expectedNextAt": 1788381252748,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-09-02T19:44:39Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1788379992854,
-    "persistedAt": 1788379992854
+    "channel": "eaisantinho",
+    "lastMessageAt": 1788380057435,
+    "expectedNextAt": 1788381257435,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-09-02T20:09:20Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1788380057520,
+    "persistedAt": 1788380057520
   },
   "timers": {
+    "eaisantinho": {
+      "channel": "eaisantinho",
+      "lastMessageAt": 1788380057435,
+      "expectedNextAt": 1788381257435,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-09-02T20:09:20Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1788380057520,
+      "persistedAt": 1788380057520
+    },
     "indypereira": {
       "channel": "indypereira",
       "lastMessageAt": 1788379992748,
@@ -139,7 +142,7 @@
       "streamStartedAt": "2026-09-02T19:44:39Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1788379992854,
-      "persistedAt": 1788379992854
+      "persistedAt": 1788380054262
     },
     "karlin_nara": {
       "channel": "karlin_nara",
@@ -149,7 +152,7 @@
       "streamStartedAt": "2026-09-02T19:12:01Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1788377580908,
-      "persistedAt": 1788379434717
+      "persistedAt": 1788380054262
     }
   }
 }
