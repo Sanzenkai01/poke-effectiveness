@@ -45,6 +45,8 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     os.chdir(ROOT)
     handler = SPAHandler
+    # Allow socket reuse to avoid TIME_WAIT issues
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), handler) as httpd:
         print(f"Serving {ROOT} at http://localhost:{PORT} (SPA fallback to /app.html)")
         try:

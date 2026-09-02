@@ -828,9 +828,22 @@ const roleboardRoleLabels = {
   tank: 'Tank'
 };
 
-function getRoleboardRoleDisplayLabel(roleKey, mode = activeBossMode) {
+function getRecommendationEngineForBoss(boss) {
+  const isHorizonsBronze = String(boss?.encounterLabel || '').trim().toLowerCase().startsWith('horizons bronze');
+  return isHorizonsBronze
+    ? (window.PokeStrikerRecommendationEngine || window.PokeRecommendationEngine)
+    : window.PokeRecommendationEngine;
+}
+
+function getRoleboardRoleDisplayLabel(roleKey, mode = activeBossMode, boss = currentBoss) {
   const normalizedRoleKey = String(roleKey || '').trim().toLowerCase();
   const normalizedMode = String(mode || '').trim().toLowerCase();
+  const isHorizonsBronze = String(boss?.encounterLabel || '').trim().toLowerCase().startsWith('horizons bronze');
+
+  if (isHorizonsBronze && normalizedRoleKey === 'dps') {
+    return 'Striker';
+  }
+
   if (['hoopa', 'champion', 'special', 'horizons', 'mew2', 'mainquest'].includes(normalizedMode) && normalizedRoleKey === 'dps') {
     return 'Speedster';
   }
@@ -1122,6 +1135,32 @@ const rolePickImageOverrides = {
   venusaurtwo: 'VenusaurTwo.png'
   ,rosasserperior: 'serperior.png'
   ,shinyclaydol: 'claydol.png'
+  ,escavalier: 'pokemons/5gen/escavalier.png'
+  ,sawk: 'pokemons/5gen/sawk.png'
+  ,ferrothorn: 'pokemons/5gen/ferrothorn.png'
+  ,tatsugirisplashpartnerform: 'pokemons/9gen/tatsugiri.png'
+  ,binaclesplashpartnerform: 'pokemons/6gen/binacle.png'
+  ,seadraflappingbubblesform: 'pokemons/1gen/seadra.png'
+  ,piloswinemudstickform: 'pokemons/2gen/piloswine.png'
+  ,pupitardrillpupaform: 'pokemons/2gen/pupitar.png'
+  ,marowakthickclubform: 'pokemons/1gen/marowak.png'
+  ,lanturnburstlightform: 'pokemons/2gen/lanturn.png'
+  ,vikavoltchargedelytraform: 'pokemons/7gen/vikavolt.png'
+  ,electabuzzchargedbatteryform: 'pokemons/1gen/electabuzz.png'
+  ,panchamdarkfistform: 'pokemons/6gen/pancham.png'
+  ,krookodiledarkclawform: 'pokemons/5gen/krookodile.png'
+  ,bisharpdarkbladeform: 'pokemons/5gen/bisharp.png'
+  ,lucarioauraboneforme: 'pokemons/4gen/lucario.png'
+  ,magnetonextramagnetform: 'pokemons/1gen/magneton.png'
+  ,poliwrathchampionbeltform: 'pokemons/1gen/poliwrath.png'
+  ,galladeshiningbladeform: 'pokemons/4gen/gallade.png'
+  ,magmarlavacharcoalform: 'pokemons/1gen/magmar.png'
+  ,probopassmininoseform: 'pokemons/4gen/probopass.png'
+  ,shinyalolanmarowak: 'pokemons/7gen/alolan-marowak.png'
+  ,shinyalolanraichu: 'pokemons/7gen/alolan-raichu.png'
+  ,shinyalolangolem: 'pokemons/7gen/alolan-golem.png'
+  ,shinyalolanninetales: 'pokemons/7gen/alolan-ninetales.png'
+  ,shinyalolansandslash: 'pokemons/7gen/alolan-sandslash.png'
 };
 
 function getRolePickAssetKey(name) {
@@ -1575,17 +1614,158 @@ const horizonsGoldGigalithBosses = createAutomaticRoleboardBosses([
   encounterNote: 'Boss em trio entre a primeira e a segunda parte do Gold.'
 });
 
+const horizonsBronzeCrystalCaveBosses = createAutomaticRoleboardBosses([
+  {
+    id: 'crystal-onix',
+    name: 'Crystal Onix',
+    image: 'pokemons/special/crystal-onix.PNG',
+    types: ['rock', 'ground'],
+    moveType: 'ground',
+    automaticRoleLimits: {
+      tank: 0,
+      dps: 3,
+      support: 0
+    },
+    description: 'Boss final da Crystal Cave.\n Foque os cristais e utilize o Protect (M3) na mecanica azul.',
+    clans: {
+      instinct: {
+        dps: [],
+        tank: [],
+        support: []
+      },
+      mystic: {
+        dps: [],
+        tank: [],
+        support: []
+      },
+      valor: {
+        dps: [],
+        tank: [],
+        support: []
+      }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Bronze - Crystal Cave',
+  encounterNote: 'Boss final da Crystal Cave do Bronze.'
+});
+
+const horizonsBronzeMagikarpJumpBosses = createAutomaticRoleboardBosses([
+  {
+    id: 'giant-magikarp',
+    name: 'Giant Magikarp',
+    image: 'pokemons/special/giant-magikarp.png',
+    types: ['water'],
+    moveType: 'water',
+    automaticRoleLimits: {
+      tank: 0,
+      dps: 3,
+      support: 0
+    },
+    description: 'Boss final da Magikarp Jump.\n Desvie das ondas de cima e utilize o Protect (M3) na mecanica azul.',
+    clans: {
+      instinct: { dps: [], tank: [], support: [] },
+      mystic: { dps: [], tank: [], support: [] },
+      valor: { dps: [], tank: [], support: [] }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Bronze - Magikarp Jump',
+  encounterNote: 'Boss final da Magikarp Jump do Bronze.'
+});
+
+const horizonsBronzeIlexForestBosses = createAutomaticRoleboardBosses([
+  {
+    id: 'spiky-eared-pichu',
+    name: 'Spiky-Eared Pichu',
+    image: 'pokemons/special/spiky-eared-pichu.png',
+    types: ['electric'],
+    moveType: 'electric',
+    automaticRoleLimits: {
+      tank: 0,
+      dps: 3,
+      support: 0
+    },
+    description: 'Boss final da Ilex Forest. \n Ainda não tenho informações sobre.',
+    clans: {
+      instinct: { dps: [], tank: [], support: [] },
+      mystic: { dps: [], tank: [], support: [] },
+      valor: { dps: [], tank: [], support: [] }
+    }
+  }
+], {
+  id: 'horizons',
+  encounterLabel: 'Horizons Bronze - Ilex Forest',
+  encounterNote: 'Boss final da Ilex Forest do Bronze.'
+});
+
 const horizonsBronzeRunsData = [
   {
     id: 'bronze-normal-a',
     category: 'bronze',
     difficulty: 'normal',
     side: 'a',
-    title: 'Normal - Lado A',
-    eyebrow: 'Solo - Em breve',
-    summary: 'Categoria solo do Horizons. Informacoes em breve.',
+    title: 'Normal - Crystal Cave',
+    eyebrow: 'Solo - Configurado',
+    summary: 'Categoria solo do Horizons com rota de Crystal Cave disponível.',
+    pathSections: [
+      {
+        id: 'crystal-cave',
+        title: 'Crystal Cave',
+        subtitle: 'Todos os Pokémon da rota podem aparecer durante a passagem pela caverna.',
+        mobs: [
+          { name: 'Geodude', image: 'pokemons/1gen/geodude.png', types: ['rock', 'ground'] },
+          { name: 'Graveler', image: 'pokemons/1gen/graveler.png', types: ['rock', 'ground'] },
+          { name: 'Golem', image: 'pokemons/1gen/golem.png', types: ['rock', 'ground'] },
+          { name: 'Onix', image: 'pokemons/1gen/onix.png', types: ['rock', 'ground'] },
+          { name: 'Rhyhorn', image: 'pokemons/1gen/rhyhorn.png', types: ['ground', 'rock'] },
+          { name: 'Rhydon', image: 'pokemons/1gen/rhydon.png', types: ['ground', 'rock'] }
+        ],
+        effectiveTypes: ['water', 'grass', 'fighting', 'ground', 'steel'],
+        superEffectiveTypes: ['fighting', 'ground', 'water']
+      }
+    ],
+    bosses: horizonsBronzeCrystalCaveBosses
+  },
+  {
+    id: 'bronze-normal-b',
+    category: 'bronze',
+    difficulty: 'normal',
+    side: 'b',
+    title: 'Normal - Magikarp Jump',
+    eyebrow: 'Solo - Configurado',
+    summary: 'Categoria solo do Horizons com rota de Magikarp Jump disponível.',
+    pathSections: [
+      {
+        id: 'magikarp-jump',
+        title: 'Magikarp Jump',
+        subtitle: 'Todos os Pokémon da rota podem aparecer durante a passagem pela área.',
+        mobs: [
+          { name: 'Blue Magikarp', image: 'pokemons/special/blue-magikarp.png', types: ['water'] },
+          { name: 'Green Magikarp', image: 'pokemons/special/green-magikarp.png', types: ['water'] },
+          { name: 'White Magikarp', image: 'pokemons/special/white-magikarp.png', types: ['water'] },
+          { name: 'Purple Magikarp', image: 'pokemons/special/purple-magikarp.png', types: ['water'] },
+          { name: 'Black Magikarp', image: 'pokemons/special/black-magikarp.png', types: ['water'] },
+          { name: 'Yellow Magikarp', image: 'pokemons/special/yellow-magikarp.png', types: ['water'] }
+        ],
+        effectiveTypes: ['electric', 'grass'],
+        superEffectiveTypes: ['electric', 'grass']
+      }
+    ],
+    bosses: horizonsBronzeMagikarpJumpBosses
+  },
+  {
+    id: 'bronze-normal-c',
+    category: 'bronze',
+    difficulty: 'normal',
+    side: 'c',
+    title: 'Normal - Ilex Forest',
+    eyebrow: 'Solo - Configurado',
+    summary: 'Categoria solo do Horizons com rota de Ilex Forest disponível.',
     pathSections: [],
-    bosses: []
+    bosses: horizonsBronzeIlexForestBosses
   }
 ];
 
@@ -1876,7 +2056,7 @@ const horizonsRunsData = [
     category: 'gold',
     difficulty: 'medio',
     side: 'a',
-    title: 'Medio - Lado A',
+    title: 'Medio - Crystal Cave',
     eyebrow: 'Configurado',
     summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
     pathSections: [
@@ -1995,14 +2175,14 @@ if (horizonsGoldBaseRun) {
     ...horizonsGoldBaseRun,
     id: 'normal-a',
     difficulty: 'normal',
-    title: 'Normal - Lado A'
+    title: 'Normal - Crystal Cave'
   });
   horizonsRunsData.push(
     {
       ...horizonsGoldBaseRun,
       id: 'dificil-a',
       difficulty: 'dificil',
-      title: 'Dificil - Lado A',
+      title: 'Dificil - Crystal Cave',
       summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
       pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections, true, false)
     },
@@ -2010,7 +2190,7 @@ if (horizonsGoldBaseRun) {
       ...horizonsGoldBaseRun,
       id: 'especialista-a',
       difficulty: 'especialista',
-      title: 'Especialista - Lado A',
+      title: 'Especialista - Crystal Cave',
       summary: 'Dica: Intercale a tipagem dos times para abranger maior dano em lures com tipagens diferentes',
       pathSections: createHorizonsGoldPathSectionsWithGigalith(horizonsGoldBaseRun.pathSections, true, false)
     }
@@ -2038,8 +2218,8 @@ const horizonsCategoriesData = Object.freeze({
     label: 'Bronze',
     eyebrow: 'Solo',
     title: 'Bronze',
-    summary: 'Categoria solo do Horizons. Informacoes em breve.',
-    status: 'Em breve',
+    summary: 'Categoria solo do Horizons com rota de Crystal Cave disponível.',
+    status: '',
     pathSections: [],
     bosses: [],
     runs: horizonsBronzeRunsData
@@ -3030,7 +3210,8 @@ function createFixedRecommendationDefinition(name, primaryType, role, expectedCl
     primaryType: normalizedPrimaryType,
     moveType: normalizedMoveType,
     clan: derivedClan || String(expectedClan || '').trim().toLowerCase(),
-    role: normalizedRole
+    role: normalizedRole,
+    horizonsBronzeOnly: options?.horizonsBronzeOnly === true
   });
 }
 
@@ -3057,7 +3238,15 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Salazzle", 'poison', 'dps', 'instinct', { moveType: 'fire' }),
       createFixedRecommendationDefinition("Seviper", 'poison', 'dps', 'instinct'),
       createFixedRecommendationDefinition("Shiftry", 'grass', 'dps', 'instinct'),
-      createFixedRecommendationDefinition("VenusaurTwo", 'grass', 'dps', 'instinct')
+      createFixedRecommendationDefinition("VenusaurTwo", 'grass', 'dps', 'instinct'),
+      createFixedRecommendationDefinition("Electabuzz Charged Battery Form", 'electric', 'dps', 'instinct', { moveType: 'electric', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Marowak Thick Club Form", 'ground', 'dps', 'instinct', { moveType: 'ground', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Tatsugiri Splash Partner Form", 'dragon', 'dps', 'instinct', { moveType: 'water', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Ferrothorn", 'grass', 'dps', 'instinct', { moveType: 'steel', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Gallade Shining Blade Form", 'psychic', 'dps', 'instinct', { moveType: 'fighting' }),
+      createFixedRecommendationDefinition("Krookodile Dark Claw Form", 'ground', 'dps', 'instinct', { moveType: 'dark' }),
+      createFixedRecommendationDefinition("Magneton Extra Magnet Form", 'electric', 'dps', 'instinct', { moveType: 'steel' }),
+      createFixedRecommendationDefinition("Shiny Alolan Raichu", 'electric', 'dps', 'instinct', { moveType: 'psychic' })
     ]),
     tank: Object.freeze([
       createFixedRecommendationDefinition("Appletun", 'grass', 'tank', 'instinct'),
@@ -3107,6 +3296,15 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Mega Skarmory", 'steel', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Mega Starmie", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Melony's Frosmoth", 'ice', 'dps', 'mystic'),
+      createFixedRecommendationDefinition("Lanturn Burst Light Form", 'water', 'dps', 'mystic', { moveType: 'electric', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Piloswine Mud Stick Form", 'ice', 'dps', 'mystic', { moveType: 'ground', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Seadra Flapping Bubbles Form", 'water', 'dps', 'mystic', { moveType: 'water', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Sawk", 'fighting', 'dps', 'mystic', { moveType: 'fighting', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Lucario Aura Bone Forme", 'fighting', 'dps', 'mystic', { moveType: 'steel' }),
+      createFixedRecommendationDefinition("Pancham Dark Fist Form", 'fighting', 'dps', 'mystic', { moveType: 'dark' }),
+      createFixedRecommendationDefinition("Poliwrath Champion Belt Form", 'water', 'dps', 'mystic', { moveType: 'fighting' }),
+      createFixedRecommendationDefinition("Shiny Alolan Ninetales", 'ice', 'dps', 'mystic', { moveType: 'fairy' }),
+      createFixedRecommendationDefinition("Shiny Alolan Sandslash", 'ice', 'dps', 'mystic', { moveType: 'ice' }),
       createFixedRecommendationDefinition("Orthworm", 'steel', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Qwilfish", 'water', 'dps', 'mystic'),
       createFixedRecommendationDefinition("Relicanth", 'water', 'dps', 'mystic', { moveType: 'rock' }),
@@ -3153,7 +3351,16 @@ const fixedRecommendationPokemonPools = Object.freeze({
       createFixedRecommendationDefinition("Scolipede", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Scyther", 'bug', 'dps', 'valor'),
       createFixedRecommendationDefinition("Tauros", 'normal', 'dps', 'valor'),
-      createFixedRecommendationDefinition("Weavile", 'dark', 'dps', 'valor')
+      createFixedRecommendationDefinition("Weavile", 'dark', 'dps', 'valor'),
+      createFixedRecommendationDefinition("Binacle Splash Partner Form", 'rock', 'dps', 'valor', { moveType: 'water', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Pupitar Drill Pupa Form", 'rock', 'dps', 'valor', { moveType: 'ground', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Escavalier", 'bug', 'dps', 'valor', { moveType: 'steel', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Vikavolt Charged Elytra Form", 'bug', 'dps', 'valor', { moveType: 'electric', horizonsBronzeOnly: true }),
+      createFixedRecommendationDefinition("Bisharp Dark Blade Form", 'dark', 'dps', 'valor', { moveType: 'dark' }),
+      createFixedRecommendationDefinition("Magmar Lava Charcoal Form", 'fire', 'dps', 'valor', { moveType: 'fire' }),
+      createFixedRecommendationDefinition("Probopass Mini Nose Form", 'rock', 'dps', 'valor', { moveType: 'steel' }),
+      createFixedRecommendationDefinition("Shiny Alolan Marowak", 'fire', 'dps', 'valor', { moveType: 'ghost' }),
+      createFixedRecommendationDefinition("Shiny Alolan Golem", 'rock', 'dps', 'valor', { moveType: 'electric' })
     ]),
     tank: Object.freeze([
       createFixedRecommendationDefinition("Bastiodon", 'rock', 'tank', 'valor'),
@@ -3575,6 +3782,16 @@ function getImplicitRecommendationProfile(poke) {
     return {
       passiveName: 'Torrent',
       passiveDescription: 'Ao chegar 33% ou menos de vida, no proximo ataque basico que receber, seu ataque especial aumenta em 30% durante 20 segundos.'
+    };
+  }
+
+  if (nameKey === 'megaexcadrill') {
+    return {
+      defenseDamageFactorByBossType: {
+        fire: 0.5
+      },
+      passiveName: 'Rock Head',
+      passiveDescription: 'Rock Head: torna o Pokémon resistente a golpes do tipo FIRE.'
     };
   }
 
@@ -5893,7 +6110,7 @@ function getAutomaticRecommendationRolePicks(boss, clanKey, roleKey) {
 
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
   const includeAcceptableDefenders = normalizedRoleKey !== 'dps'
-    && window.PokeRecommendationEngine?.allowsAcceptableFallback?.(boss, catalogId, normalizedRoleKey) === true;
+    && getRecommendationEngineForBoss(boss)?.allowsAcceptableFallback?.(boss, catalogId, normalizedRoleKey) === true;
   const automaticPicks = AutomaticBossBestPicks(boss, {
     clanKey: normalizedClanKey,
     roleKey: normalizedRoleKey,
@@ -6272,6 +6489,13 @@ function filterHorizonsVisibleRolePicks(picks = [], context = {}) {
   }
 
   if (shouldKeepAllHorizonsNonRuimPicks(context?.boss, context?.clanKey, context?.roleKey)) {
+    return withoutRuim;
+  }
+
+  if (
+    String(context?.boss?.encounterLabel || '').trim().toLowerCase().startsWith('horizons bronze')
+    && String(context?.roleKey || '').trim().toLowerCase() === 'dps'
+  ) {
     return withoutRuim;
   }
 
@@ -6670,7 +6894,7 @@ function classifyDefenseOnlyRecommendationTier(worstDefense, options = {}) {
 
 function getRecommendationScoreWeights(boss, roleKey = '') {
   const catalogId = String(bossCatalogIdByReference.get(boss) || boss?.catalogId || '').toLowerCase();
-  const engineWeights = window.PokeRecommendationEngine?.getScoreWeights?.(boss, catalogId, roleKey);
+  const engineWeights = getRecommendationEngineForBoss(boss)?.getScoreWeights?.(boss, catalogId, roleKey);
   if (engineWeights && Number.isFinite(engineWeights.offense) && Number.isFinite(engineWeights.defense)) {
     return engineWeights;
   }
@@ -6843,7 +7067,7 @@ function scoreRecommendationForBoss(bossOrTypes, poke, options = {}) {
     _bossOffenseTargetTypes: [...offenseTargetTypes],
     _bossImmunities: [...bossImmunities],
     _scoreWeights: scoreWeights,
-    _recommendationContext: window.PokeRecommendationEngine?.getBossProfile?.(boss, bossCatalogIdByReference.get(boss) || boss?.catalogId)?.tankRole || 'defender',
+    _recommendationContext: getRecommendationEngineForBoss(boss)?.getBossProfile?.(boss, bossCatalogIdByReference.get(boss) || boss?.catalogId)?.tankRole || 'defender',
     _moveType: moveType,
     tier,
   };
@@ -6853,7 +7077,7 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
   const normalizedRoleKey = normalizeRecommendationRoleKey(options?.roleKey);
   const boss = Array.isArray(bossOrTypes) ? { types: bossOrTypes } : (bossOrTypes || {});
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
-  const engineCompare = window.PokeRecommendationEngine?.compareBossCandidates;
+  const engineCompare = getRecommendationEngineForBoss(boss)?.compareBossCandidates;
   return filterBossRecommendationsByMinimumLevel(recommendedList || [])
     .map((poke) => scoreRecommendationForBoss(bossOrTypes, poke, options))
     .filter((poke) => (
@@ -6878,7 +7102,7 @@ function rankRecommendedForBoss(bossOrTypes, recommendedList, options = {}) {
 
 function getAutomaticBossRoleLimits(boss, roleKeys, options = {}) {
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
-  const engineLimits = window.PokeRecommendationEngine?.getRoleLimits?.(boss, catalogId, {
+  const engineLimits = getRecommendationEngineForBoss(boss)?.getRoleLimits?.(boss, catalogId, {
     ...options,
     roleKeys
   });
@@ -6923,7 +7147,7 @@ function getAutomaticBossFamilyKey(nameOrPokemon) {
 
 function compareAutomaticBossPicks(left, right, roleKey, boss = null) {
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
-  const engineCompare = window.PokeRecommendationEngine?.compareBossCandidates;
+  const engineCompare = getRecommendationEngineForBoss(boss)?.compareBossCandidates;
   if (typeof engineCompare === 'function') {
     return engineCompare(left, right, boss, { roleKey, catalogId });
   }
@@ -6955,7 +7179,7 @@ function compareAutomaticBossPicks(left, right, roleKey, boss = null) {
 function isAutomaticBossPickEligible(pick, roleKey, maximumPriority, includeAcceptableDefenders, boss = null, minimumTier = 'bom') {
   if (!pick || !isBossRecommendationLevelEligible(pick)) return false;
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
-  const engineEligibility = window.PokeRecommendationEngine?.isCandidateEligible;
+  const engineEligibility = getRecommendationEngineForBoss(boss)?.isCandidateEligible;
   if (typeof engineEligibility === 'function') {
     return engineEligibility(pick, boss, {
       roleKey,
@@ -7034,7 +7258,7 @@ function createAutomaticBossCandidateVariants(entry, boss, roleKey, seedConfigs,
     delete candidate._shinyVariantTier;
     delete candidate._shinyVariantComparison;
     const scored = scoreRecommendationForBoss(boss, candidate, { roleKey });
-    const validationIssues = window.PokeRecommendationEngine?.getCandidateValidationIssues?.(scored) || [];
+    const validationIssues = getRecommendationEngineForBoss(boss)?.getCandidateValidationIssues?.(scored) || [];
     if (validationIssues.length) {
       scored._dataValid = false;
       recordAutomaticBossDataIssue('candidate', scored.name, validationIssues);
@@ -7061,7 +7285,7 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
   const requestedRole = normalizeRecommendationRoleKey(options?.roleKey);
   const clanKeys = requestedClan ? [requestedClan] : plannerClanOrder;
   const roleKeys = requestedRole ? [requestedRole] : roleboardRoleOrder;
-  const bossValidationIssues = window.PokeRecommendationEngine?.getBossValidationIssues?.(boss) || [];
+  const bossValidationIssues = getRecommendationEngineForBoss(boss)?.getBossValidationIssues?.(boss) || [];
   if (bossValidationIssues.length) {
     recordAutomaticBossDataIssue('boss', boss?.name || boss?.id, bossValidationIssues);
     if (requestedClan && requestedRole) return [];
@@ -7076,7 +7300,7 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
   const roleLimits = getAutomaticBossRoleLimits(boss, roleKeys, options);
   const catalogId = bossCatalogIdByReference.get(boss) || boss?.catalogId || boss?.recommendationContent || '';
   const engineMinimumTier = requestedRole
-    ? window.PokeRecommendationEngine?.getMinimumTier?.(boss, catalogId, requestedRole)
+    ? getRecommendationEngineForBoss(boss)?.getMinimumTier?.(boss, catalogId, requestedRole)
     : '';
   const minimumTier = normalizeTierKey(options?.minimumTier || engineMinimumTier || 'bom');
   const maximumPriority = getRecommendationMaximumPriority(minimumTier);
@@ -7092,16 +7316,18 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
 
     roleKeys.forEach((roleKey) => {
       const pool = fixedRecommendationPokemonPools?.[clanKey]?.[roleKey] || [];
+      const isHorizonsBronze = String(boss?.encounterLabel || '').trim().toLowerCase().startsWith('horizons bronze');
       const excludedPickNameKeys = getBossExcludedPickNameKeys(boss);
       const featuredPickName = getBossFeaturedPickName(boss, clanKey, roleKey);
       const featuredPickKey = getRecommendationNameKey(featuredPickName);
       const forceFeaturedPick = isBossForcedFeaturedPick(boss, clanKey, roleKey, featuredPickName);
       const candidates = pool
+        .filter((entry) => isHorizonsBronze ? entry.horizonsBronzeOnly === true : entry.horizonsBronzeOnly !== true)
         .filter((entry) => !excludedPickNameKeys.has(getRecommendationNameKey(entry)))
         .flatMap((entry) => (
         createAutomaticBossCandidateVariants(entry, boss, roleKey, seedConfigs, includeShinyVariants)
         ));
-      const engineSelection = window.PokeRecommendationEngine?.selectBestBossPicks;
+      const engineSelection = getRecommendationEngineForBoss(boss)?.selectBestBossPicks;
       let selected;
 
       if (typeof engineSelection === 'function') {
@@ -11939,6 +12165,7 @@ function makeSpeedsterCard(speedster) {
 }
 
 const horizonsDifficultyLabels = Object.freeze({
+  todas: 'Todas Dificuldades',
   normal: 'Normal',
   medio: 'Medio',
   dificil: 'Dificil',
@@ -11953,6 +12180,21 @@ const horizonsSideLabels = Object.freeze({
 const horizonsDifficultyOrder = Object.freeze(['normal', 'medio', 'dificil', 'especialista']);
 const horizonsSideOrder = Object.freeze(['a', 'b']);
 const horizonsCategoryOrder = Object.freeze(['bronze', 'silver', 'gold']);
+
+function getHorizonsSideLabels(categoryId = activeHorizonsCategoryId) {
+  if (categoryId === 'bronze') {
+    return Object.freeze({
+      a: 'Crystal Cave',
+      b: 'Magikarp Jump',
+      c: 'Ilex Forest'
+    });
+  }
+  return horizonsSideLabels;
+}
+
+function getHorizonsSideOrder(categoryId = activeHorizonsCategoryId) {
+  return categoryId === 'bronze' ? ['a', 'b', 'c'] : horizonsSideOrder;
+}
 
 let activeHorizonsCategoryId = '';
 let activeHorizonsDifficulty = 'medio';
@@ -11986,6 +12228,9 @@ function hasHorizonsRun(difficulty, side) {
 
 function getActiveHorizonsRun() {
   const runs = getHorizonsRuns();
+  if (activeHorizonsCategoryId === 'bronze' && activeHorizonsDifficulty === 'todas') {
+    return runs.find((run) => run?.side === activeHorizonsSide) || runs[0] || null;
+  }
   return runs.find((run) => run?.difficulty === activeHorizonsDifficulty && run?.side === activeHorizonsSide)
     || runs[0]
     || null;
@@ -11994,9 +12239,14 @@ function getActiveHorizonsRun() {
 function setActiveHorizonsCategory(categoryId) {
   const category = getHorizonsCategory(categoryId);
   activeHorizonsCategoryId = category ? category.id : '';
+  if (activeHorizonsCategoryId === 'bronze') {
+    activeHorizonsDifficulty = 'todas';
+  }
   const run = getHorizonsRuns(activeHorizonsCategoryId)[0];
   if (run) {
-    activeHorizonsDifficulty = run.difficulty || activeHorizonsDifficulty;
+    if (activeHorizonsCategoryId !== 'bronze') {
+      activeHorizonsDifficulty = run.difficulty || activeHorizonsDifficulty;
+    }
     activeHorizonsSide = run.side || activeHorizonsSide;
   }
 }
@@ -12004,6 +12254,13 @@ function setActiveHorizonsCategory(categoryId) {
 function setActiveHorizonsRun(nextState = {}) {
   const nextDifficulty = nextState.difficulty || activeHorizonsDifficulty;
   const nextSide = nextState.side || activeHorizonsSide;
+  if (activeHorizonsCategoryId === 'bronze' && nextDifficulty === 'todas') {
+    const bronzeRun = getHorizonsRuns().find((candidate) => candidate?.side === nextSide);
+    if (!bronzeRun) return;
+    activeHorizonsDifficulty = 'todas';
+    activeHorizonsSide = bronzeRun.side;
+    return;
+  }
   const run = getHorizonsRuns().find((candidate) => (
     candidate?.difficulty === nextDifficulty && candidate?.side === nextSide
   ));
@@ -12036,9 +12293,13 @@ function createHorizonsSelectorGroup(label, items, activeValue, type) {
       button.classList.add(`horizons-selector--${type}`);
     }
     const available = type === 'difficulty'
-      ? hasHorizonsRun(item.value, getActiveHorizonsRun()?.side || activeHorizonsSide)
+      ? (activeHorizonsCategoryId === 'bronze' && item.value === 'todas'
+        ? getHorizonsRuns().some((run) => run?.side === (getActiveHorizonsRun()?.side || activeHorizonsSide))
+        : hasHorizonsRun(item.value, getActiveHorizonsRun()?.side || activeHorizonsSide))
       : type === 'side'
-        ? hasHorizonsRun(getActiveHorizonsRun()?.difficulty || activeHorizonsDifficulty, item.value)
+        ? (activeHorizonsCategoryId === 'bronze' && activeHorizonsDifficulty === 'todas'
+          ? getHorizonsRuns().some((run) => run?.side === item.value)
+          : hasHorizonsRun(getActiveHorizonsRun()?.difficulty || activeHorizonsDifficulty, item.value))
         : item.available !== false;
     const active = item.value === activeValue;
     button.classList.toggle('is-active', active);
@@ -12222,7 +12483,7 @@ function createHorizonsOverview(data, fallbackTitle = 'Horizons') {
 function createHorizonsBossesSection(bosses = [], options = {}) {
   const bossesSection = document.createElement('section');
   bossesSection.className = 'horizons-bosses-section';
-  if (bosses.length === 1 && bosses[0]?.id === 'stakataka') {
+  if (bosses.length === 1 && ['stakataka', 'crystal-onix', 'giant-magikarp', 'spiky-eared-pichu'].includes(bosses[0]?.id)) {
     bossesSection.classList.add('horizons-bosses-section--stakataka');
   }
   if (options.compact) {
@@ -12291,25 +12552,38 @@ function renderHorizonsCategoryGrid() {
   const categoryRuns = getHorizonsRuns();
   if (categoryRuns.length) {
     const run = getActiveHorizonsRun();
+    const sideLabels = getHorizonsSideLabels();
+    const sideOrder = getHorizonsSideOrder();
+    const difficultyOptions = activeCategory.id === 'bronze'
+      ? [{
+        value: 'todas',
+        label: horizonsDifficultyLabels.todas,
+        onSelect: () => {
+          setActiveHorizonsRun({ difficulty: 'todas' });
+          renderGrid();
+        }
+      }]
+      : horizonsDifficultyOrder.map((value) => ({
+        value,
+        label: horizonsDifficultyLabels[value],
+        onSelect: () => {
+          setActiveHorizonsRun({ difficulty: value });
+          renderGrid();
+        }
+      }));
+
     selectors.append(
       createHorizonsSelectorGroup(
         'Dificuldade',
-        horizonsDifficultyOrder.map((value) => ({
-          value,
-          label: horizonsDifficultyLabels[value],
-          onSelect: () => {
-            setActiveHorizonsRun({ difficulty: value });
-            renderGrid();
-          }
-        })),
-        run?.difficulty || activeHorizonsDifficulty,
+        difficultyOptions,
+        activeCategory.id === 'bronze' ? 'todas' : (run?.difficulty || activeHorizonsDifficulty),
         'difficulty'
       ),
       createHorizonsSelectorGroup(
         'Lado',
-        horizonsSideOrder.map((value) => ({
+        sideOrder.map((value) => ({
           value,
-          label: horizonsSideLabels[value],
+          label: sideLabels[value],
           onSelect: () => {
             setActiveHorizonsRun({ side: value });
             renderGrid();
@@ -14412,6 +14686,7 @@ function openRoleBossModal(boss, options = {}) {
     roleGrid.className = 'boss-role-role-grid';
 
     roleboardRoleOrder.forEach((roleKey) => {
+      if (String(boss?.encounterLabel || '').trim().toLowerCase().startsWith('horizons bronze') && ['tank', 'support'].includes(roleKey)) return;
       if (roleKey === 'support' && String(boss.encounterLabel || '').trim() === 'Horizons Silver - Boss Rooms') return;
       const picks = getVisibleRolePicksForBoss(activeBossMode, boss, clanKey, roleKey);
       if (activeBossMode === 'mainquest' && !picks.length) return;

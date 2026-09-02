@@ -97,7 +97,8 @@
     "moveTypes": [
       "ground"
     ],
-    "level": 80
+    "level": 80,
+    "passiveDescription": "Rock Head: torna o Pokémon resistente a golpes do tipo FIRE."
   },
   "marowak": {
     "sourceName": "Marowak",
@@ -276,6 +277,100 @@
     ],
     "moveTypes": [
       "grass"
+    ],
+    "level": 100
+  },
+  "electabuzzchargedbatteryform": {
+    "sourceName": "Electabuzz Charged Battery Form",
+    "catalogRole": "striker",
+    "types": [
+      "electric"
+    ],
+    "moveTypes": [
+      "electric"
+    ],
+    "level": 80
+  },
+  "marowakthickclubform": {
+    "sourceName": "Marowak Thick Club Form",
+    "catalogRole": "striker",
+    "types": [
+      "ground"
+    ],
+    "moveTypes": [
+      "ground"
+    ],
+    "level": 50
+  },
+  "tatsugirisplashpartnerform": {
+    "sourceName": "Tatsugiri Splash Partner Form",
+    "catalogRole": "striker",
+    "types": [
+      "dragon",
+      "water"
+    ],
+    "moveTypes": [
+      "water"
+    ],
+    "level": 95
+  },
+  "ferrothorn": {
+    "sourceName": "Ferrothorn",
+    "catalogRole": "striker",
+    "types": [
+      "grass",
+      "steel"
+    ],
+    "moveTypes": [
+      "steel"
+    ],
+    "level": 80
+  },
+  "galladeshiningbladeform": {
+    "sourceName": "Gallade Shining Blade Form",
+    "catalogRole": "striker",
+    "types": [
+      "psychic",
+      "fighting"
+    ],
+    "moveTypes": [
+      "fighting"
+    ],
+    "level": 95
+  },
+  "krookodiledarkclawform": {
+    "sourceName": "Krookodile Dark Claw Form",
+    "catalogRole": "striker",
+    "types": [
+      "ground",
+      "dark"
+    ],
+    "moveTypes": [
+      "dark"
+    ],
+    "level": 95
+  },
+  "magnetonextramagnetform": {
+    "sourceName": "Magneton Extra Magnet Form",
+    "catalogRole": "striker",
+    "types": [
+      "electric",
+      "steel"
+    ],
+    "moveTypes": [
+      "steel"
+    ],
+    "level": 80
+  },
+  "shinyalolanraichu": {
+    "sourceName": "Shiny Alolan Raichu",
+    "catalogRole": "striker",
+    "types": [
+      "electric",
+      "psychic"
+    ],
+    "moveTypes": [
+      "psychic"
     ],
     "level": 100
   },
@@ -670,20 +765,6 @@
     "passiveName": "Unburden / Limber",
     "passiveDescription": "Unburden: Aumenta a velocidade base do pokémon. Limber: Torna o Pokémon imune ao status Paralyze."
   },
-  "dondozo": {
-    "sourceName": "Dondozo",
-    "catalogRole": "defender",
-    "specialTags": [
-      "maniac"
-    ],
-    "types": [
-      "water"
-    ],
-    "moveTypes": [
-      "water"
-    ],
-    "level": 95
-  },
   "kingdra": {
     "sourceName": "Kingdra",
     "catalogRole": "speedster",
@@ -851,6 +932,112 @@
       }
     }
   },
+  "lanturnburstlightform": {
+    "sourceName": "Lanturn Burst Light Form",
+    "catalogRole": "striker",
+    "types": [
+      "water",
+      "electric"
+    ],
+    "moveTypes": [
+      "electric"
+    ],
+    "level": 80
+  },
+  "piloswinemudstickform": {
+    "sourceName": "Piloswine Mud Stick Form",
+    "catalogRole": "striker",
+    "types": [
+      "ice",
+      "ground"
+    ],
+    "moveTypes": [
+      "ground"
+    ],
+    "level": 80
+  },
+  "seadraflappingbubblesform": {
+    "sourceName": "Seadra Flapping Bubbles Form",
+    "catalogRole": "striker",
+    "types": [
+      "water"
+    ],
+    "moveTypes": [
+      "water"
+    ],
+    "level": 65
+  },
+  "sawk": {
+    "sourceName": "Sawk",
+    "catalogRole": "striker",
+    "types": [
+      "fighting"
+    ],
+    "moveTypes": [
+      "fighting"
+    ],
+    "level": 95
+  },
+  "lucarioauraboneforme": {
+    "sourceName": "Lucario Aura Bone Forme",
+    "catalogRole": "striker",
+    "types": [
+      "fighting",
+      "steel"
+    ],
+    "moveTypes": [
+      "steel"
+    ],
+    "level": 95
+  },
+  "panchamdarkfistform": {
+    "sourceName": "Pancham Dark Fist Form",
+    "catalogRole": "striker",
+    "types": [
+      "fighting",
+      "dark"
+    ],
+    "moveTypes": [
+      "dark"
+    ],
+    "level": 65
+  },
+  "poliwrathchampionbeltform": {
+    "sourceName": "Poliwrath Champion Belt Form",
+    "catalogRole": "striker",
+    "types": [
+      "water",
+      "fighting"
+    ],
+    "moveTypes": [
+      "fighting"
+    ],
+    "level": 80
+  },
+  "shinyalolanninetales": {
+    "sourceName": "Shiny Alolan Ninetales",
+    "catalogRole": "striker",
+    "types": [
+      "ice",
+      "fairy"
+    ],
+    "moveTypes": [
+      "fairy"
+    ],
+    "level": 80
+  },
+  "shinyalolansandslash": {
+    "sourceName": "Shiny Alolan Sandslash",
+    "catalogRole": "striker",
+    "types": [
+      "ice",
+      "steel"
+    ],
+    "moveTypes": [
+      "ice"
+    ],
+    "level": 100
+  },
   "orthworm": {
     "sourceName": "Orthworm",
     "catalogRole": "speedster",
@@ -961,6 +1148,20 @@
     ],
     "moveTypes": [
       "flying"
+    ],
+    "level": 95
+  },
+  "dondozo": {
+    "sourceName": "Dondozo",
+    "catalogRole": "defender",
+    "specialTags": [
+      "maniac"
+    ],
+    "types": [
+      "water"
+    ],
+    "moveTypes": [
+      "water"
     ],
     "level": 95
   },
@@ -1386,6 +1587,112 @@
     "level": 95,
     "shinyPassiveName": "Keen Eye",
     "shinyPassiveDescription": "O Pokemon e imune ao status negativo de cegueira (BLIND)."
+  },
+  "binaclesplashpartnerform": {
+    "sourceName": "Binacle Splash Partner Form",
+    "catalogRole": "striker",
+    "types": [
+      "rock",
+      "water"
+    ],
+    "moveTypes": [
+      "water"
+    ],
+    "level": 65
+  },
+  "pupitardrillpupaform": {
+    "sourceName": "Pupitar Drill Pupa Form",
+    "catalogRole": "striker",
+    "types": [
+      "rock",
+      "ground"
+    ],
+    "moveTypes": [
+      "ground"
+    ],
+    "level": 80
+  },
+  "escavalier": {
+    "sourceName": "Escavalier",
+    "catalogRole": "striker",
+    "types": [
+      "bug",
+      "steel"
+    ],
+    "moveTypes": [
+      "steel"
+    ],
+    "level": 80
+  },
+  "vikavoltchargedelytraform": {
+    "sourceName": "Vikavolt Charged Elytra Form",
+    "catalogRole": "striker",
+    "types": [
+      "bug",
+      "electric"
+    ],
+    "moveTypes": [
+      "electric"
+    ],
+    "level": 80
+  },
+  "bisharpdarkbladeform": {
+    "sourceName": "Bisharp Dark Blade Form",
+    "catalogRole": "striker",
+    "types": [
+      "dark",
+      "steel"
+    ],
+    "moveTypes": [
+      "dark"
+    ],
+    "level": 80
+  },
+  "magmarlavacharcoalform": {
+    "sourceName": "Magmar Lava Charcoal Form",
+    "catalogRole": "striker",
+    "types": [
+      "fire"
+    ],
+    "moveTypes": [
+      "fire"
+    ],
+    "level": 80
+  },
+  "probopassmininoseform": {
+    "sourceName": "Probopass Mini Nose Form",
+    "catalogRole": "striker",
+    "types": [
+      "rock"
+    ],
+    "moveTypes": [
+      "steel"
+    ],
+    "level": 95
+  },
+  "shinyalolanmarowak": {
+    "sourceName": "Shiny Alolan Marowak",
+    "catalogRole": "striker",
+    "types": [
+      "fire",
+      "ghost"
+    ],
+    "moveTypes": [
+      "ghost"
+    ],
+    "level": 100
+  },
+  "shinyalolangolem": {
+    "sourceName": "Shiny Alolan Golem",
+    "catalogRole": "striker",
+    "types": [
+      "rock",
+      "electric"
+    ],
+    "moveTypes": [
+      "electric"
+    ],
+    "level": 80
   },
   "bastiodon": {
     "sourceName": "Bastiodon",
