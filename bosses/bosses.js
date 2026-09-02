@@ -1688,7 +1688,7 @@ const horizonsBronzeIlexForestBosses = createAutomaticRoleboardBosses([
       dps: 3,
       support: 0
     },
-    description: 'Boss final da Ilex Forest. \n Ainda não tenho informações sobre.',
+    description: 'Boss final da Ilex Forest. \n Fique perto do portal para a mecanica de memoria. \n Utilize o Protect (M3) na mecanica azul.',
     clans: {
       instinct: { dps: [], tank: [], support: [] },
       mystic: { dps: [], tank: [], support: [] },
@@ -1743,12 +1743,12 @@ const horizonsBronzeRunsData = [
         title: 'Magikarp Jump',
         subtitle: 'Todos os Pokémon da rota podem aparecer durante a passagem pela área.',
         mobs: [
-          { name: 'Blue Magikarp', image: 'pokemons/special/blue-magikarp.png', types: ['water'] },
-          { name: 'Green Magikarp', image: 'pokemons/special/green-magikarp.png', types: ['water'] },
-          { name: 'White Magikarp', image: 'pokemons/special/white-magikarp.png', types: ['water'] },
-          { name: 'Purple Magikarp', image: 'pokemons/special/purple-magikarp.png', types: ['water'] },
-          { name: 'Black Magikarp', image: 'pokemons/special/black-magikarp.png', types: ['water'] },
-          { name: 'Yellow Magikarp', image: 'pokemons/special/yellow-magikarp.png', types: ['water'] }
+          { name: 'Blue Magikarp', image: 'pokemons/special/blue-magikarp.PNG', types: ['water'] },
+          { name: 'Green Magikarp', image: 'pokemons/special/green-magikarp.PNG', types: ['water'] },
+          { name: 'White Magikarp', image: 'pokemons/special/white-magikarp.PNG', types: ['water'] },
+          { name: 'Purple Magikarp', image: 'pokemons/special/purple-magikarp.PNG', types: ['water'] },
+          { name: 'Black Magikarp', image: 'pokemons/special/black-magikarp.PNG', types: ['water'] },
+          { name: 'Yellow Magikarp', image: 'pokemons/special/yellow-magikarp.PNG', types: ['water'] }
         ],
         effectiveTypes: ['electric', 'grass'],
         superEffectiveTypes: ['electric', 'grass']
@@ -1764,7 +1764,24 @@ const horizonsBronzeRunsData = [
     title: 'Normal - Ilex Forest',
     eyebrow: 'Solo - Configurado',
     summary: 'Categoria solo do Horizons com rota de Ilex Forest disponível.',
-    pathSections: [],
+    pathSections: [
+      {
+        id: 'ilex-forest',
+        title: 'Ilex Forest',
+        subtitle: 'Todos os Pokémon da rota podem aparecer durante a passagem pela floresta.',
+        mobs: [
+          { name: 'Pikachu', image: 'pokemons/1gen/pikachu.png', types: ['electric'] },
+          { name: 'Raichu', image: 'pokemons/1gen/raichu.png', types: ['electric'] },
+          { name: 'Ampharos', image: 'pokemons/2gen/ampharos.png', types: ['electric'] },
+          { name: 'Elekid', image: 'pokemons/2gen/elekid.png', types: ['electric'] },
+          { name: 'Electabuzz', image: 'pokemons/1gen/electabuzz.png', types: ['electric'] },
+          { name: 'Flaffy', image: 'pokemons/2gen/flaaffy.png', types: ['electric'] },
+          { name: 'Mareep', image: 'pokemons/2gen/mareep.png', types: ['electric'] }
+        ],
+        effectiveTypes: ['ground'],
+        superEffectiveTypes: ['ground']
+      }
+    ],
     bosses: horizonsBronzeIlexForestBosses
   }
 ];
