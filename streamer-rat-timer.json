@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-09-02T19:08:37.839Z",
+  "updatedAt": "2026-09-02T19:13:53.471Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-02T19:03:33.343Z",
-    "endedAt": "2026-09-02T19:08:37.838Z",
-    "reason": "socket-ended",
+    "startedAt": "2026-09-02T19:13:52.109Z",
+    "endedAt": "2026-09-02T19:13:53.471Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "karlin_nara",
       "thigaartus",
       "uguettolitz",
       "0taichou",
@@ -24,7 +25,6 @@
       "indypereira",
       "itscaim",
       "jackpist0la",
-      "karlin_nara",
       "linikerquadrado2",
       "lordjuregi",
       "manoblaze",
@@ -42,13 +42,29 @@
       "voltanb"
     ],
     "pstoryDropChannels": [
+      "karlin_nara",
       "thigaartus",
       "uguettolitz"
     ],
-    "observedChannels": [],
+    "observedChannels": [
+      "thigaartus"
+    ],
     "observedSpawnChannels": [],
     "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedRatMessages": [
+      {
+        "channel": "thigaartus",
+        "kind": "rattata-message",
+        "messageAt": 1788376433392,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      },
+      {
+        "channel": "thigaartus",
+        "kind": "escape",
+        "messageAt": 1788376433392,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -96,16 +112,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "uguettolitz",
-    "lastMessageAt": 1788375223176,
-    "expectedNextAt": 1788376423176,
+    "channel": "thigaartus",
+    "lastMessageAt": 1788376433392,
+    "expectedNextAt": 1788377633392,
     "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-09-02T12:04:42Z",
+    "streamStartedAt": "2026-09-02T18:35:44Z",
     "source": "github-action-chat-escape",
-    "updatedAt": 1788375223258,
-    "persistedAt": 1788375813342
+    "updatedAt": 1788376433470,
+    "persistedAt": 1788376433470
   },
   "timers": {
+    "thigaartus": {
+      "channel": "thigaartus",
+      "lastMessageAt": 1788376433392,
+      "expectedNextAt": 1788377633392,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-09-02T18:35:44Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1788376433470,
+      "persistedAt": 1788376433470
+    },
     "uguettolitz": {
       "channel": "uguettolitz",
       "lastMessageAt": 1788375223176,
@@ -114,7 +140,7 @@
       "streamStartedAt": "2026-09-02T12:04:42Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1788375223258,
-      "persistedAt": 1788375813342
+      "persistedAt": 1788376432108
     }
   }
 }
