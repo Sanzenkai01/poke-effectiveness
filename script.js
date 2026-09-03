@@ -6284,8 +6284,9 @@ function getBattlePassPokemonMatches(typeKeys = []){
         if(!entry.price) return false;
         const types = [entry.type1, entry.type2].map(normalizePokemonTypeKey).filter(Boolean);
         if(!types.length) return false;
-        const matchesAllSelected = normalizedTypeKeys.every(typeKey => types.includes(typeKey));
-        if(!matchesAllSelected) return false;
+        const minimumMatches = Math.min(2, normalizedTypeKeys.length);
+        const matchingTypes = normalizedTypeKeys.filter(typeKey => types.includes(typeKey)).length;
+        if(matchingTypes < minimumMatches) return false;
 
         const bossRush = Boolean(String(entry.priceLabel || '').toLowerCase().includes('boss rush'));
         const captureReady = Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
@@ -6309,8 +6310,8 @@ function renderBattlePassResults(selectedTypes = [], levelFilter = null){
 
     const normalizedTypes = Array.from(new Set((selectedTypes || []).map(normalizePokemonTypeKey).filter(Boolean)));
     if(!normalizedTypes.length){
-        summaryLabel.textContent = 'Selecione 1 ou 2 tipos';
-        resultsPanel.innerHTML = '<div class="battle-pass-empty">Escolha uma ou duas tipagens para ver os Pokémon que combinam com esse tipo de composição.</div>';
+        summaryLabel.textContent = 'Selecione as tipagens';
+        resultsPanel.innerHTML = '<div class="battle-pass-empty">Escolha uma ou mais tipagens para ver os Pokémon que combinam com essa composição.</div>';
         return;
     }
 
@@ -6615,10 +6616,6 @@ function initializeBattlePassFilter(){
             if(isSelected){
                 selected.delete(typeKey);
             } else {
-                if(selected.size >= 2){
-                    const [first] = selected;
-                    selected.delete(first);
-                }
                 selected.add(typeKey);
             }
             updateSelection();
