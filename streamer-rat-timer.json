@@ -1,14 +1,16 @@
 {
-  "updatedAt": "2026-09-04T15:40:10.405Z",
+  "updatedAt": "2026-09-04T15:41:10.276Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-04T15:25:10.029Z",
-    "endedAt": "2026-09-04T15:40:10.405Z",
-    "reason": "rat-found",
+    "startedAt": "2026-09-04T15:40:43.866Z",
+    "endedAt": "2026-09-04T15:41:10.276Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "callmevitao_",
+      "thigaartus",
+      "itscaim",
       "0taichou",
       "adivorcio",
       "armster91",
@@ -20,7 +22,6 @@
       "fernandoalcatraz",
       "gordallink",
       "indypereira",
-      "itscaim",
       "jackpist0la",
       "karlin_nara",
       "linikerquadrado2",
@@ -36,39 +37,31 @@
       "sharxera",
       "sousupermeme",
       "sruni1",
-      "thigaartus",
       "uguettolitz",
       "vivihbecker",
       "voltanb"
     ],
     "pstoryDropChannels": [
-      "callmevitao_"
+      "callmevitao_",
+      "thigaartus"
     ],
     "observedChannels": [
       "thigaartus"
     ],
-    "observedSpawnChannels": [
-      "thigaartus"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "thigaartus",
-        "messageAt": 1788536410165,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "thigaartus",
         "kind": "rattata-message",
-        "messageAt": 1788536410165,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1788536470166,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "thigaartus",
-        "kind": "spawn",
-        "messageAt": 1788536410165,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1788536470166,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -119,24 +112,24 @@
   },
   "latest": {
     "channel": "thigaartus",
-    "lastMessageAt": 1788536410165,
-    "expectedNextAt": 1788537670165,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1788536410404,
-    "persistedAt": 1788536410404
+    "lastMessageAt": 1788536470166,
+    "expectedNextAt": 1788537670166,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-09-04T15:33:37Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1788536470276,
+    "persistedAt": 1788536470276
   },
   "timers": {
     "thigaartus": {
       "channel": "thigaartus",
-      "lastMessageAt": 1788536410165,
-      "expectedNextAt": 1788537670165,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1788536410404,
-      "persistedAt": 1788536410404
+      "lastMessageAt": 1788536470166,
+      "expectedNextAt": 1788537670166,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-09-04T15:33:37Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1788536470276,
+      "persistedAt": 1788536470276
     },
     "indypereira": {
       "channel": "indypereira",
@@ -146,7 +139,7 @@
       "streamStartedAt": "2026-09-04T11:49:00Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1788533984262,
-      "persistedAt": 1788535510029
+      "persistedAt": 1788536443865
     }
   }
 }
