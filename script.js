@@ -170,6 +170,7 @@ const contentFactionHunts = document.getElementById('content-faction-hunts');
 const contentSlowpokeWell = document.getElementById('content-slowpoke-well');
 const contentLigaPokemon = document.getElementById('content-liga-pokemon');
 const contentHeldFusion = document.getElementById('content-fusao-de-held');
+const contentShinyFragmentation = document.getElementById('content-shiny-fragmentation');
 const contentProfessions = document.getElementById('content-profissoes');
 const contentCatch = document.getElementById('content-catch');
 const contentSpeedsters = document.getElementById('content-bosses');
@@ -179,7 +180,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBattlePass, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentClans, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBattlePass, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentTimes, contentClans, contentTeamBuilder, contentHuntBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentShinyFragmentation, contentProfessions, contentCatch, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -473,6 +474,8 @@ const APP_ROUTE_ALIASES = {
     fusaodeheld: { path: '/fusao-de-held', tab: 'fusao-de-held' },
     'held-fusion': { path: '/fusao-de-held', tab: 'fusao-de-held' },
     heldfusion: { path: '/fusao-de-held', tab: 'fusao-de-held' },
+    'shiny-fragmentation': { path: '/shiny-fragmentation', tab: 'shiny-fragmentation' },
+    'fragmentacao-de-shiny': { path: '/shiny-fragmentation', tab: 'shiny-fragmentation' },
     profissoes: { path: '/profissoes', tab: 'profissoes' },
     professions: { path: '/profissoes', tab: 'profissoes' },
     catch: { path: '/catch', tab: 'catch' },
@@ -3370,6 +3373,7 @@ function getActiveSiteTarget(){
     if(contentSlowpokeWell && !contentSlowpokeWell.hidden) return 'slowpoke-well';
     if(contentLigaPokemon && !contentLigaPokemon.hidden) return 'liga-pokemon';
     if(contentHeldFusion && !contentHeldFusion.hidden) return 'fusao-de-held';
+    if(contentShinyFragmentation && !contentShinyFragmentation.hidden) return 'shiny-fragmentation';
     if(contentProfessions && !contentProfessions.hidden) return 'profissoes';
     if(contentHelds && !contentHelds.hidden) return 'helds';
     if(contentManiacs && !contentManiacs.hidden) return 'maniacs';
@@ -3570,6 +3574,7 @@ function activateSidebarTarget(button){
         'slowpoke-well': showSlowpokeWell,
         'liga-pokemon': showLigaPokemon,
         'fusao-de-held': showHeldFusion,
+        'shiny-fragmentation': showShinyFragmentation,
         profissoes: () => showProfessions({ resetToSelector: true }),
         catch: showCatch,
         'mapa-interativo': showInteractiveMap,
@@ -16747,6 +16752,156 @@ function showHeldFusion(){
     updateUrl();
 }
 
+const shinyFragmentationCandyByLevel = {
+    5: { blue: 5 },
+    20: { blue: 10 },
+    30: { blue: 40 },
+    50: { yellow: 50 },
+    65: { green: 60 },
+    80: { green: 80 },
+    95: { purple: 80 }
+};
+let shinyFragmentationInitialized = false;
+
+function getShinyFragmentationCandy(level){
+    const levels = Object.keys(shinyFragmentationCandyByLevel).map(Number);
+    const closestLevel = levels.reduce((closest, current) => Math.abs(current - level) < Math.abs(closest - level) ? current : closest, levels[0]);
+    return shinyFragmentationCandyByLevel[closestLevel];
+}
+
+function getShinyFragmentationReward(pokemon){
+    return pokemon ? getShinyFragmentationCandy(Number(pokemon.level) || 5) : null;
+}
+
+const shinyFragmentationExcludedTags = new Set([
+    'ace',
+    'legendary',
+    'mewtwo-solo',
+    'poke-gift',
+    'boss',
+    'ranger',
+    'pack',
+    'mega'
+]);
+
+function isShinyFragmentationEligiblePokemon(pokemon){
+    const specialTags = getPokemonEntrySpecialTags(pokemon);
+    const role = String(pokemon?.role || '').trim().toLowerCase();
+    return role !== 'striker' && !specialTags.some(tag => shinyFragmentationExcludedTags.has(tag));
+}
+
+function renderShinyFragmentationPokemon(pokemon){
+    const nameEl = document.getElementById('shiny-fragmentation-pokemon-name');
+    const imageEl = document.getElementById('shiny-fragmentation-pokemon-image');
+    const slotEl = document.getElementById('shiny-fragmentation-pokemon-slot');
+    const levelEl = document.getElementById('shiny-fragmentation-level');
+    const pickerEl = document.getElementById('shiny-fragmentation-pokemon-picker');
+    const emptyMessageEl = document.getElementById('shiny-fragmentation-empty-message');
+    const candy = getShinyFragmentationReward(pokemon);
+    if(nameEl) nameEl.textContent = pokemon ? `Shiny ${pokemon.name}` : 'None';
+    if(imageEl){ imageEl.hidden = !pokemon; imageEl.src = pokemon ? pokemon.image : ''; imageEl.alt = pokemon ? `Shiny ${pokemon.name}` : ''; }
+    if(slotEl) slotEl.classList.toggle('is-filled', Boolean(pokemon));
+    if(levelEl) levelEl.textContent = pokemon ? pokemon.level : '-';
+    if(pickerEl) pickerEl.classList.toggle('is-selected', Boolean(pokemon));
+    if(emptyMessageEl) emptyMessageEl.hidden = Boolean(pokemon);
+    ['blue', 'green', 'purple', 'yellow'].forEach(color => {
+        const valueEl = document.getElementById(`shiny-fragmentation-candy-${color}`);
+        const candyItem = valueEl?.closest('[data-candy-color]');
+        const amount = candy?.[color] || 0;
+        if(valueEl) valueEl.textContent = amount.toLocaleString('pt-BR');
+        if(candyItem) candyItem.hidden = !amount;
+    });
+}
+
+function initializeShinyFragmentation(){
+    if(shinyFragmentationInitialized) return;
+    const picker = document.getElementById('shiny-fragmentation-pokemon-picker');
+    const pickerOptions = document.getElementById('shiny-fragmentation-pokemon-options');
+    const deliverButton = document.getElementById('shiny-fragmentation-deliver');
+    const cancelButton = document.getElementById('shiny-fragmentation-cancel');
+    if(!picker) return;
+    const hidePickerOptions = () => {
+        if(pickerOptions) pickerOptions.hidden = true;
+    };
+    const renderPickerOptions = () => {
+        if(!pickerOptions || !Array.isArray(window.shinyFragmentationCatalog)) return;
+        const query = picker.value.trim().toLocaleLowerCase();
+        const matches = window.shinyFragmentationCatalog
+            .filter(item => !query || item.name.toLocaleLowerCase().includes(query))
+            .slice(0, 12);
+        pickerOptions.replaceChildren();
+        matches.forEach(pokemon => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'shiny-fragmentation__option';
+            option.setAttribute('role', 'option');
+            const image = document.createElement('img');
+            image.className = 'shiny-fragmentation__option-image';
+            image.src = pokemon.image;
+            image.alt = '';
+            image.loading = 'lazy';
+            image.decoding = 'async';
+            option.textContent = pokemon.name;
+            option.prepend(image);
+            option.addEventListener('mousedown', event => {
+                event.preventDefault();
+                picker.value = pokemon.name;
+                updateSelectedPokemon();
+                hidePickerOptions();
+            });
+            pickerOptions.appendChild(option);
+        });
+        pickerOptions.hidden = matches.length === 0;
+    };
+    const updateSelectedPokemon = () => {
+        const typedName = picker.value.trim().toLocaleLowerCase();
+        const pokemon = window.shinyFragmentationCatalog?.find(item => item.name.toLocaleLowerCase() === typedName) || null;
+        if(pokemon) picker.value = pokemon.name;
+        renderShinyFragmentationPokemon(pokemon);
+        if(deliverButton) deliverButton.disabled = !pokemon;
+    };
+    picker.addEventListener('focus', renderPickerOptions);
+    picker.addEventListener('input', () => {
+        renderPickerOptions();
+        updateSelectedPokemon();
+    });
+    picker.addEventListener('change', updateSelectedPokemon);
+    picker.addEventListener('blur', () => window.setTimeout(hidePickerOptions, 120));
+    cancelButton?.addEventListener('click', () => {
+        picker.value = '';
+        renderShinyFragmentationPokemon(null);
+        if(deliverButton) deliverButton.disabled = true;
+        hidePickerOptions();
+    });
+    shinyFragmentationInitialized = true;
+    fetch(POKEMON_CATALOG_URL)
+        .then(response => { if(!response.ok) throw new Error('Falha ao carregar o catalogo de Pokemon.'); return response.json(); })
+        .then(data => {
+            const catalog = Array.isArray(data?.pokemon)
+                ? data.pokemon.filter(item => item?.name && item?.image && isShinyFragmentationEligiblePokemon(item))
+                : [];
+            window.shinyFragmentationCatalog = catalog;
+            picker.placeholder = 'Digite o nome do Pokemon';
+            if(pickerOptions) pickerOptions.replaceChildren();
+            renderShinyFragmentationPokemon(null);
+        })
+        .catch(error => { console.error('Shiny fragmentation catalog load failed', error); picker.placeholder = 'Catalogo indisponivel'; });
+}
+
+function showShinyFragmentation(){
+    clearTabHighlights();
+    setActiveTabTheme('shiny-fragmentation');
+    setVisiblePanel(contentShinyFragmentation);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Fragmentacao de Shiny';
+    updateBrowserTitle();
+    ensurePanelFragmentLoaded(contentShinyFragmentation).then(() => initializeShinyFragmentation()).catch(error => console.error('Shiny fragmentation load failed', error));
+    updateUrl();
+}
+
 function showProfessions(options = {}){
     clearTabHighlights();
     setActiveTabTheme('profissoes');
@@ -17023,6 +17178,9 @@ let streamerSharedStatusLoadPromise = null;
 let streamerRatTimerPayloadLoadedAt = 0;
 let streamerRatTimerLoadPromise = null;
 const streamerRatTimerListeners = new Map();
+const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
+    ? sharedStreamerCatalog.normalizeStreamerChannelName
+    : (name) => (name || '').toString().trim().replace(/^#/, '').toLowerCase();
 const streamerRatTimerState = loadStreamerRatTimerState();
 const streamerRatChatMonitor = createStreamerRatChatMonitor();
 
@@ -17039,9 +17197,6 @@ if(typeof window !== 'undefined'){
     });
 }
 
-const normalizeStreamerChannelName = typeof sharedStreamerCatalog.normalizeStreamerChannelName === 'function'
-    ? sharedStreamerCatalog.normalizeStreamerChannelName
-    : (name) => (name || '').toString().trim().replace(/^#/, '').toLowerCase();
 const detectPstoryTitleState = typeof sharedStreamerCatalog.detectPstoryTitleState === 'function'
     ? sharedStreamerCatalog.detectPstoryTitleState
     : () => false;
@@ -19620,6 +19775,7 @@ function initTabFromUrl(){
     if(resolvedTab==='slowpoke-well') return showSlowpokeWell();
     if(resolvedTab==='liga-pokemon') return showLigaPokemon();
     if(resolvedTab==='fusao-de-held') return showHeldFusion();
+    if(resolvedTab==='shiny-fragmentation') return showShinyFragmentation();
     if(resolvedTab==='profissoes') return showProfessions();
     if(resolvedTab==='times') return showTimes({
         requestedTeamSlug: requestedTeamRoute?.teamSlug || '',
@@ -22736,6 +22892,7 @@ function updateUrl(options = {}){
                       (contentSlowpokeWell && !contentSlowpokeWell.hidden) ? 'slowpoke-well' :
                       (contentLigaPokemon && !contentLigaPokemon.hidden) ? 'liga-pokemon' :
                       (contentHeldFusion && !contentHeldFusion.hidden) ? 'fusao-de-held' :
+                      (contentShinyFragmentation && !contentShinyFragmentation.hidden) ? 'shiny-fragmentation' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentHelds && !contentHelds.hidden) ? 'helds' :
                       (contentBattlePass && !contentBattlePass.hidden) ? 'passe-de-batalha' :

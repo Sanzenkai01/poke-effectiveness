@@ -1,0 +1,140 @@
+.shiny-fragmentation-shell {
+  display: grid;
+  gap: 1.25rem;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 1.4rem;
+}
+
+.shiny-fragmentation-hero {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1.6rem 1.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(7, 12, 23, 0.86));
+  box-shadow: 0 24px 48px rgba(2, 8, 18, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.shiny-fragmentation-hero__copy {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.shiny-fragmentation-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.24rem 0.64rem;
+  border-radius: 999px;
+  border: 1px solid rgba(250, 204, 21, 0.28);
+  background: rgba(250, 204, 21, 0.1);
+  color: #fde68a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.shiny-fragmentation-hero h2 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  line-height: 1.1;
+  color: #f8fafc;
+}
+
+.shiny-fragmentation-hero p {
+  margin: 0;
+  max-width: 56ch;
+  color: rgba(226, 232, 240, 0.78);
+  line-height: 1.6;
+}
+
+.shiny-fragmentation-panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 1.25rem 1rem 0.4rem;
+}
+
+.shiny-fragmentation-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0.55rem 1.6rem 0.1rem;
+  border-radius: 22px;
+  background: rgba(18, 18, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.shiny-fragmentation {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  min-height: 640px;
+  margin: 0 auto;
+  padding: 1rem 1.05rem 0.9rem;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  background: #222222;
+  color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.shiny-fragmentation *,
+.shiny-fragmentation *::before,
+.shiny-fragmentation *::after { box-sizing: border-box; }
+
+.shiny-fragmentation__header { text-align: center; }
+.shiny-fragmentation h3,
+.shiny-fragmentation p { margin: 0; }
+.shiny-fragmentation__header h3 { font-size: 1.35rem; line-height: 1.15; }
+.shiny-fragmentation__name { min-height: 2.15rem; margin-top: 1rem !important; font-size: 1rem; }
+.shiny-fragmentation__pokemon-preview { display: grid; justify-items: center; gap: 0.65rem; margin-top: 0.15rem; }
+.shiny-fragmentation__pokemon-slot { display: grid; place-items: center; width: 122px; height: 122px; }
+.shiny-fragmentation__question { color: #1256d6; font-size: 5.6rem; font-weight: 900; line-height: 1; text-shadow: 2px 2px 0 #f4c400, -2px -2px 0 #f4c400, 2px -2px 0 #f4c400, -2px 2px 0 #f4c400; }
+.shiny-fragmentation__pokemon-slot img { width: 122px; height: 122px; object-fit: contain; filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.38)); }
+.shiny-fragmentation__pokemon-slot.is-filled .shiny-fragmentation__question { display: none; }
+.shiny-fragmentation__slot-label { font-size: 0.8rem; }
+.shiny-fragmentation__picker-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.shiny-fragmentation__picker-wrap { position: relative; width: min(100%, 250px); }
+.shiny-fragmentation__picker { width: 100%; min-height: 38px; padding: 0 0.6rem; border: 1px solid #4c4c4c; border-radius: 5px; background: #303030; color: #f4f4f4; font: inherit; }
+.shiny-fragmentation__picker.is-selected { border-color: #1685e8; }
+.shiny-fragmentation__options { position: absolute; z-index: 5; top: calc(100% + 3px); left: 0; right: 0; max-height: 180px; overflow-y: auto; border: 1px solid #4c4c4c; border-radius: 5px; background: #292929; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35); text-align: left; }
+.shiny-fragmentation__options[hidden] { display: none; }
+.shiny-fragmentation__option { display: flex; align-items: center; gap: 0.45rem; width: 100%; padding: 0.35rem 0.6rem; border: 0; background: transparent; color: #f4f4f4; font: inherit; text-align: left; cursor: pointer; }
+.shiny-fragmentation__option-image { flex: 0 0 28px; width: 28px; height: 28px; object-fit: contain; }
+.shiny-fragmentation__option:hover, .shiny-fragmentation__option:focus { background: #3d3d3d; outline: none; }
+.shiny-fragmentation__divider { height: 1px; margin: 1rem 0 0.85rem; background: #505050; }
+.shiny-fragmentation h3 { text-align: center; font-size: 1rem; }
+.shiny-fragmentation__delivery { display: grid; gap: 0.55rem; margin-top: 0.7rem; }
+.shiny-fragmentation__line { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 0.96rem; }
+.shiny-fragmentation__line strong { color: #78df87; font-size: 1.05rem; }
+.shiny-fragmentation__stars { display: inline-flex; gap: 0.65rem; color: #989898; font-size: 1.35rem; line-height: 1; }
+.shiny-fragmentation__stars .is-gold { color: #ae6900; text-shadow: 0 0 1px #000; }
+.shiny-fragmentation__candy-title { margin-top: 0.65rem; text-align: center; font-size: 0.96rem; }
+.shiny-fragmentation__candy-grid { display: flex; justify-content: center; align-items: center; gap: 0.45rem; }
+.shiny-fragmentation__candy-item { position: relative; display: grid; place-items: center; width: 80px; min-height: 58px; border-radius: 5px; background: #353535; }
+.shiny-fragmentation__candy-item img { width: 38px; height: 38px; object-fit: contain; }
+.shiny-fragmentation__candy-item strong { position: absolute; right: 0.23rem; bottom: 0.15rem; color: #fff; font-size: 0.72rem; text-shadow: 1px 1px #111; }
+.shiny-fragmentation__empty-message { min-height: 3.3rem; margin-top: 4.3rem !important; color: #666; font-size: 0.75rem; line-height: 1.45; text-align: center; }
+.shiny-fragmentation__empty-message[hidden] { display: none; }
+.shiny-fragmentation__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-top: 1.2rem; }
+.shiny-fragmentation__actions button { min-height: 40px; border: 0; border-radius: 4px; color: #fff; font-weight: 700; }
+.shiny-fragmentation__deliver { background: #c5c5c5; color: #777 !important; cursor: not-allowed; }
+.shiny-fragmentation__deliver:not(:disabled) { background: #0878d1; color: #fff !important; cursor: pointer; }
+.shiny-fragmentation__cancel { background: #ff3636; cursor: pointer; }
+
+@media (max-width: 480px) {
+  .shiny-fragmentation-shell { padding: 1rem; }
+  .shiny-fragmentation { min-height: 610px; margin: 0 auto; }
+  .shiny-fragmentation__empty-message { margin-top: 2.8rem !important; }
+}

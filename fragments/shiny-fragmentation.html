@@ -1,0 +1,54 @@
+<section class="shiny-fragmentation-shell" aria-labelledby="shiny-fragmentation-title">
+  <header class="shiny-fragmentation-hero">
+    <div class="shiny-fragmentation-hero__copy">
+      <span class="shiny-fragmentation-eyebrow">Utilidades</span>
+      <h2 id="shiny-fragmentation-title">Fragmenta&ccedil;&atilde;o de Shiny</h2>
+      <p>Converta Pok&eacute;mons Shiny em Candy.</p>
+    </div>
+  </header>
+
+  <div class="shiny-fragmentation-panel">
+    <section class="shiny-fragmentation" aria-label="Release de Shiny">
+      <div class="shiny-fragmentation__header">
+        <h3>Pok&eacute;mon Release</h3>
+        <p id="shiny-fragmentation-pokemon-name" class="shiny-fragmentation__name">None</p>
+      </div>
+
+      <div class="shiny-fragmentation__pokemon-preview">
+        <div id="shiny-fragmentation-pokemon-slot" class="shiny-fragmentation__pokemon-slot">
+          <span class="shiny-fragmentation__question" aria-hidden="true">?</span>
+          <img id="shiny-fragmentation-pokemon-image" hidden alt="" decoding="async">
+        </div>
+        <span class="shiny-fragmentation__slot-label">Pok&eacute;mon</span>
+        <label class="shiny-fragmentation__picker-label" for="shiny-fragmentation-pokemon-picker">Selecionar Pok&eacute;mon</label>
+        <div class="shiny-fragmentation__picker-wrap">
+          <input id="shiny-fragmentation-pokemon-picker" class="shiny-fragmentation__picker" type="text" placeholder="Digite o nome do Pok&eacute;mon" autocomplete="off">
+          <div id="shiny-fragmentation-pokemon-options" class="shiny-fragmentation__options" role="listbox" hidden></div>
+        </div>
+      </div>
+
+      <div class="shiny-fragmentation__divider"></div>
+      <h3>Informa&ccedil;&otilde;es da entrega:</h3>
+
+      <div class="shiny-fragmentation__delivery">
+        <div class="shiny-fragmentation__line">
+          <span>Level:</span>
+          <strong id="shiny-fragmentation-level">-</strong>
+        </div>
+        <div class="shiny-fragmentation__candy-title">Itens Recebidos:</div>
+        <div class="shiny-fragmentation__candy-grid" aria-label="Candies recebidos">
+          <div class="shiny-fragmentation__candy-item" data-candy-color="blue"><img src="shiny-fragmentation/blue-candy.png" alt="Blue Candy" decoding="async"><strong id="shiny-fragmentation-candy-blue">0</strong></div>
+          <div class="shiny-fragmentation__candy-item" data-candy-color="green"><img src="shiny-fragmentation/green-candy.png" alt="Green Candy" decoding="async"><strong id="shiny-fragmentation-candy-green">0</strong></div>
+          <div class="shiny-fragmentation__candy-item" data-candy-color="purple"><img src="shiny-fragmentation/purple-candy.png" alt="Purple Candy" decoding="async"><strong id="shiny-fragmentation-candy-purple">0</strong></div>
+          <div class="shiny-fragmentation__candy-item" data-candy-color="yellow"><img src="shiny-fragmentation/yellow-candy.png" alt="Yellow Candy" decoding="async"><strong id="shiny-fragmentation-candy-yellow">0</strong></div>
+        </div>
+      </div>
+
+      <p id="shiny-fragmentation-empty-message" class="shiny-fragmentation__empty-message">Coloque o Pok&eacute;mon Shiny no slot<br>para ver as informa&ccedil;&otilde;es da entrega</p>
+      <div class="shiny-fragmentation__actions">
+        <button type="button" class="shiny-fragmentation__deliver" id="shiny-fragmentation-deliver" disabled>Entregar</button>
+        <button type="button" class="shiny-fragmentation__cancel" id="shiny-fragmentation-cancel">Cancelar</button>
+      </div>
+    </section>
+  </div>
+</section>
