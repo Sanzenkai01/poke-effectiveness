@@ -1,14 +1,13 @@
 {
-  "updatedAt": "2026-09-05T15:27:48.759Z",
+  "updatedAt": "2026-09-05T15:47:03.928Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-05T15:27:17.190Z",
-    "endedAt": "2026-09-05T15:27:48.759Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-05T15:37:37.218Z",
+    "endedAt": "2026-09-05T15:47:03.928Z",
+    "reason": "rat-found",
     "candidateChannels": [
-      "indypereira",
       "karlin_nara",
       "nazgulplayer",
       "sruni1",
@@ -23,6 +22,7 @@
       "eusou_o_d",
       "fernandoalcatraz",
       "gordallink",
+      "indypereira",
       "itscaim",
       "jackpist0la",
       "linikerquadrado2",
@@ -42,26 +42,33 @@
       "voltanb"
     ],
     "pstoryDropChannels": [
-      "indypereira",
       "karlin_nara"
     ],
     "observedChannels": [
-      "indypereira"
+      "karlin_nara"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "karlin_nara"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "karlin_nara",
+        "messageAt": 1788623223825,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "indypereira",
+        "channel": "karlin_nara",
         "kind": "rattata-message",
-        "messageAt": 1788622068666,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1788623223825,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "indypereira",
-        "kind": "escape",
-        "messageAt": 1788622068666,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "karlin_nara",
+        "kind": "spawn",
+        "messageAt": 1788623223825,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -111,16 +118,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "indypereira",
-    "lastMessageAt": 1788622068666,
-    "expectedNextAt": 1788623268666,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-09-05T13:11:22Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1788622068759,
-    "persistedAt": 1788622068759
+    "channel": "karlin_nara",
+    "lastMessageAt": 1788623223825,
+    "expectedNextAt": 1788624483825,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-09-05T14:38:21Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1788623223927,
+    "persistedAt": 1788623223927
   },
   "timers": {
+    "karlin_nara": {
+      "channel": "karlin_nara",
+      "lastMessageAt": 1788623223825,
+      "expectedNextAt": 1788624483825,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-09-05T14:38:21Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1788623223927,
+      "persistedAt": 1788623223927
+    },
     "indypereira": {
       "channel": "indypereira",
       "lastMessageAt": 1788622068666,
@@ -129,17 +146,7 @@
       "streamStartedAt": "2026-09-05T13:11:22Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1788622068759,
-      "persistedAt": 1788622068759
-    },
-    "karlin_nara": {
-      "channel": "karlin_nara",
-      "lastMessageAt": 1788619656849,
-      "expectedNextAt": 1788620856849,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-09-05T14:38:21Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1788619656936,
-      "persistedAt": 1788622037189
+      "persistedAt": 1788622657217
     }
   }
 }
