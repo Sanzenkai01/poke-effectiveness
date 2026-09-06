@@ -16842,8 +16842,14 @@ function initializeShinyFragmentation(){
             image.alt = '';
             image.loading = 'lazy';
             image.decoding = 'async';
-            option.textContent = pokemon.name;
+            const name = document.createElement('span');
+            name.className = 'shiny-fragmentation__option-name';
+            name.textContent = pokemon.name;
+            const level = document.createElement('span');
+            level.className = 'shiny-fragmentation__option-level';
+            level.textContent = `Lv. ${pokemon.level}`;
             option.prepend(image);
+            option.append(name, level);
             option.addEventListener('mousedown', event => {
                 event.preventDefault();
                 picker.value = pokemon.name;
