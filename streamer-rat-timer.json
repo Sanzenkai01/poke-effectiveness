@@ -1,19 +1,18 @@
 {
-  "updatedAt": "2026-09-07T17:18:10.705Z",
+  "updatedAt": "2026-09-07T17:37:19.600Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-07T17:17:42.708Z",
-    "endedAt": "2026-09-07T17:18:10.705Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-07T17:28:01.441Z",
+    "endedAt": "2026-09-07T17:37:19.600Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "cafeina54",
       "callmevitao_",
       "eaisantinho",
       "indypereira",
       "karlin_nara",
-      "okamiulv",
       "uguettolitz",
       "nazgulplayer",
       "sruni1",
@@ -33,6 +32,7 @@
       "mataradz8",
       "niinjan_",
       "ogordonha",
+      "okamiulv",
       "playerclt",
       "raulzerah1",
       "sharxera",
@@ -47,26 +47,33 @@
       "eaisantinho",
       "indypereira",
       "karlin_nara",
-      "okamiulv",
       "uguettolitz"
     ],
     "observedChannels": [
       "indypereira"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "indypereira"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "indypereira",
+        "messageAt": 1788802639496,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1788801490621,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1788802639496,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "indypereira",
-        "kind": "escape",
-        "messageAt": 1788801490621,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1788802639496,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -117,34 +124,24 @@
   },
   "latest": {
     "channel": "indypereira",
-    "lastMessageAt": 1788801490621,
-    "expectedNextAt": 1788802690621,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1788802639496,
+    "expectedNextAt": 1788803899496,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-09-07T13:32:37Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1788801490704,
-    "persistedAt": 1788801490704
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1788802639599,
+    "persistedAt": 1788802639599
   },
   "timers": {
     "indypereira": {
       "channel": "indypereira",
-      "lastMessageAt": 1788801490621,
-      "expectedNextAt": 1788802690621,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1788802639496,
+      "expectedNextAt": 1788803899496,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-09-07T13:32:37Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1788801490704,
-      "persistedAt": 1788801490704
-    },
-    "cafeina54": {
-      "channel": "cafeina54",
-      "lastMessageAt": 1788799077168,
-      "expectedNextAt": 1788800277168,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-09-07T13:35:19Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1788799077342,
-      "persistedAt": 1788801462708
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1788802639599,
+      "persistedAt": 1788802639599
     }
   }
 }
