@@ -6295,21 +6295,26 @@ function getBattlePassPokemonMatches(typeKeys = []){
         if(matchingTypes < minimumMatches) return false;
 
         const bossRush = Boolean(String(entry.priceLabel || '').toLowerCase().includes('boss rush'));
-        const captureReady = Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
+        const captureReady = isBattlePassCaptureReady(entry);
         return Boolean(captureReady || bossRush);
     });
 }
 
+function isBattlePassCaptureReady(entry){
+    if(!entry || entry.normalCaptureAvailable === false && entry.shinyCaptureAvailable !== true) return false;
+    return Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
+}
+
 function getBattlePassResultLabel(entry){
     const bossRush = Boolean(String(entry.priceLabel || '').toLowerCase().includes('boss rush'));
-    const captureReady = Boolean(entry.normalCaptureAvailable === true || entry.shinyCaptureAvailable === true || String(entry.normalCaptureNote || '').toLowerCase().includes('captur'));
+    const captureReady = isBattlePassCaptureReady(entry);
     if(captureReady && bossRush) return { label: '+ Boss Rush', kind: 'mixed' };
     if(captureReady) return { label: '✓', kind: 'capture' };
     if(bossRush) return { label: 'Boss Rush', kind: 'boss' };
     return { label: 'Disponível', kind: 'capture' };
 }
 
-function renderBattlePassResults(selectedTypes = [], levelFilter = null){
+function renderBattlePassResults(selectedTypes = [], levelFilter = null, onRemovePokemonTypes = null){
     const resultsPanel = document.getElementById('battle-pass-results');
     const summaryLabel = document.getElementById('battle-pass-summary');
     if(!resultsPanel || !summaryLabel) return;
@@ -6428,6 +6433,14 @@ function renderBattlePassResults(selectedTypes = [], levelFilter = null){
             priceSpan.className = 'battle-pass-card__price';
             priceSpan.textContent = `${entry.price.toLocaleString('pt-BR')} Pokédollars`;
             info.appendChild(priceSpan);
+        }
+        if(typeof onRemovePokemonTypes === 'function') {
+            const removeTypesButton = document.createElement('button');
+            removeTypesButton.type = 'button';
+            removeTypesButton.className = 'battle-pass-remove-types-button';
+            removeTypesButton.textContent = 'Retirar Tipagens do Filtro';
+            removeTypesButton.addEventListener('click', () => onRemovePokemonTypes(entry));
+            info.appendChild(removeTypesButton);
         }
         if(info.children.length > 0) {
             footer.appendChild(info);
@@ -6579,7 +6592,13 @@ function initializeBattlePassFilter(){
 
     const updateSelection = () => {
         const currentSelected = Array.from(selected);
-        renderBattlePassResults(currentSelected, selectedLevel);
+        renderBattlePassResults(currentSelected, selectedLevel, (entry) => {
+            [entry.type1, entry.type2]
+                .map(normalizePokemonTypeKey)
+                .filter(Boolean)
+                .forEach((typeKey) => selected.delete(typeKey));
+            updateSelection();
+        });
         picker.querySelectorAll('.battle-pass-type-button').forEach((button) => {
             const value = button.dataset.type;
             const isSelected = selected.has(value);
@@ -19752,6 +19771,9 @@ function initTabFromUrl(){
     const requestedHashRouteInfo = getRouteInfoFromHash(location.hash);
     const requestedRouteInfo = getRouteInfo(tabparam) || requestedHashRouteInfo;
     let resolvedTab = requestedRouteInfo?.tab || tabparam || requestedHashRouteInfo?.tab || '';
+    const directBattlePassRoute = resolvedTab === 'passe-de-batalha'
+        || /\/passe-de-batalha\/?$/i.test(location.pathname);
+    if(directBattlePassRoute) return showBattlePass();
     const hasQuery = params.toString().length > 0 || Boolean(location.hash);
     if(requestedPokemonCatalogPage !== null){
         resolvedTab = 'pokemons';

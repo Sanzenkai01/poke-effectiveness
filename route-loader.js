@@ -3,6 +3,12 @@
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appUrl = new URL('../app.html', window.location.href);
     appUrl.searchParams.set('_shell', APP_SHELL_VERSION);
+    if(routeTab){
+        appUrl.searchParams.set('tab', routeTab);
+        var currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('tab', routeTab);
+        window.history.replaceState(null, '', currentUrl.toString());
+    }
 
     fetch(appUrl.toString())
         .then(function(response){
