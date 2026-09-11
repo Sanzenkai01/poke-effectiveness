@@ -21366,6 +21366,9 @@ function renderBoostSelectionPrompt(state){
 function syncBoostCalculatorVisibility(state){
     const hasSelection = hasBoostSelectedPokemon(state);
     const hasSelectedBoost = hasSelection && hasBoostSelectedLevel(state);
+    const hasSilverBoost = normalizeBoostLevel(state?.silverLevel) > normalizeBoostLevel(state?.silverCurrentLevel);
+    const boostSilverPanel = boostSilverResults?.closest('.boost-panel');
+    const boostStarPanel = boostStarResults?.closest('.boost-panel');
 
     if(boostLayout){
         boostLayout.dataset.hasSelection = hasSelection ? 'true' : 'false';
@@ -21375,6 +21378,12 @@ function syncBoostCalculatorVisibility(state){
     }
     if(boostResultsShell){
         boostResultsShell.hidden = !hasSelectedBoost;
+    }
+    if(boostSilverPanel){
+        boostSilverPanel.hidden = !hasSelectedBoost || !hasSilverBoost;
+    }
+    if(boostStarPanel){
+        boostStarPanel.hidden = !hasSelectedBoost || !hasSilverBoost;
     }
     if(boostHeroSummary){
         boostHeroSummary.hidden = !hasSelectedBoost;
@@ -22316,6 +22325,30 @@ function getBoostTotalMaterialBadgeText(item){
     return materialCategories.has(item?.category) ? 'Material' : 'Total';
 }
 
+function isBoostStarPieceMaterial(item){
+    return item?.name === 'Piece of Bronze Star' || item?.name === 'Piece of Silver Star';
+}
+
+function getBoostStarPieceRequirement(item){
+    const pieceNameByStar = {
+        'Bronze Star': 'Piece of Bronze Star',
+        'Silver Star': 'Piece of Silver Star'
+    };
+    const pieceName = pieceNameByStar[item?.name];
+    if(!pieceName) return null;
+
+    const piecesPerStar = item.name === 'Bronze Star'
+        ? BOOST_BRONZE_PIECES_PER_STAR
+        : BOOST_SILVER_STAR_RECIPE['Piece of Silver Star'];
+    const pieceMeta = getBoostMaterialMeta(pieceName);
+    return {
+        pieceName,
+        pieceImage: pieceMeta.image,
+        piecesPerStar,
+        totalPieces: item.quantity * piecesPerStar
+    };
+}
+
 function sortBoostMaterialItems(items = []){
     const categoryOrder = {
         stone: 0,
@@ -22433,7 +22466,7 @@ function calculateBoostTotalCraftItems(state){
         );
     }
 
-    return sortBoostMaterialItems(totalCraftItems.filter(Boolean));
+    return sortBoostMaterialItems(totalCraftItems.filter(Boolean).filter(item => !isBoostStarPieceMaterial(item)));
 }
 
 function calculateBoostMaterials(state){
@@ -22524,7 +22557,7 @@ function calculateBoostMaterials(state){
 
     const cleanBronzeItems = sortBoostMaterialItems(bronzeItems.filter(Boolean));
     const cleanSilverItems = sortBoostMaterialItems(silverItems.filter(Boolean));
-    const cleanStarCraftItems = sortBoostMaterialItems(starCraftItems.filter(Boolean));
+    const cleanStarCraftItems = sortBoostMaterialItems(starCraftItems.filter(Boolean).filter(item => !isBoostStarPieceMaterial(item)));
     const totalDirectItems = calculateBoostTotalDirectItems(state);
     const totalCraftItems = calculateBoostTotalCraftItems(state);
     const totalItems = sortBoostTotalItems(aggregateBoostMaterialItems([
@@ -22576,6 +22609,17 @@ function createBoostMaterialCard(item){
         card.dataset.category = item.category;
     }
 
+    const starPieceRequirement = getBoostStarPieceRequirement(item);
+    if(starPieceRequirement){
+        card.classList.add('boost-material-card--star');
+        card.tabIndex = 0;
+        card.setAttribute(
+            'aria-label',
+            `${item.name}: ${formatBoostQuantity(item.quantity)}. `
+            + `${formatBoostQuantity(starPieceRequirement.totalPieces)} ${starPieceRequirement.pieceName} necessarias.`
+        );
+    }
+
     const media = document.createElement('div');
     media.className = 'boost-material-card__media';
 
@@ -22625,6 +22669,37 @@ function createBoostMaterialCard(item){
     }
     content.append(footer);
     card.append(media, content);
+
+    if(starPieceRequirement){
+        const tooltip = document.createElement('span');
+        tooltip.className = 'boost-material-card__piece-tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+
+        const tooltipMedia = document.createElement('span');
+        tooltipMedia.className = 'boost-material-card__piece-tooltip-media';
+        const tooltipImage = document.createElement('img');
+        tooltipImage.src = starPieceRequirement.pieceImage;
+        tooltipImage.alt = starPieceRequirement.pieceName;
+        tooltipImage.loading = 'lazy';
+        tooltipImage.decoding = 'async';
+        tooltipImage.addEventListener('error', () => {
+            tooltipMedia.replaceChildren(createBoostMediaFallback(starPieceRequirement.pieceName));
+        }, { once: true });
+        tooltipMedia.appendChild(tooltipImage);
+
+        const tooltipCopy = document.createElement('span');
+        tooltipCopy.className = 'boost-material-card__piece-tooltip-copy';
+        const tooltipTitle = document.createElement('strong');
+        tooltipTitle.textContent = 'Pieces necessarias';
+
+        const tooltipDetail = document.createElement('span');
+        tooltipDetail.textContent = `${formatBoostQuantity(starPieceRequirement.totalPieces)}x ${starPieceRequirement.pieceName}`
+            + ` (${starPieceRequirement.piecesPerStar} por ${item.name})`;
+
+        tooltipCopy.append(tooltipTitle, tooltipDetail);
+        tooltip.append(tooltipMedia, tooltipCopy);
+        card.appendChild(tooltip);
+    }
     return card;
 }
 
