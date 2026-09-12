@@ -373,7 +373,7 @@ const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20260827a';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
-const PANEL_FRAGMENT_VERSION = '20260827d';
+const PANEL_FRAGMENT_VERSION = '20260912-boost-cache';
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -23735,7 +23735,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20260829-sidebar-toggle').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20260912-boost-cache').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }
