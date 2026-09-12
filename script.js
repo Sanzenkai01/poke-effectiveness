@@ -78,10 +78,8 @@ let boostType1Select = document.getElementById('boost-type1-select');
 let boostType2Select = document.getElementById('boost-type2-select');
 let boostConfigControls = document.getElementById('boost-config-controls');
 let boostShinyInputs = document.querySelectorAll('input[name="boost-shiny"]');
-let boostBronzeCurrentLevelSelect = document.getElementById('boost-bronze-current-level');
-let boostBronzeLevelSelect = document.getElementById('boost-bronze-level');
-let boostSilverCurrentLevelSelect = document.getElementById('boost-silver-current-level');
-let boostSilverLevelSelect = document.getElementById('boost-silver-level');
+let boostCurrentLevelSelect = document.getElementById('boost-current-level');
+let boostTargetLevelSelect = document.getElementById('boost-target-level');
 let boostSilverNote = document.getElementById('boost-silver-note');
 let boostFormMessage = document.getElementById('boost-form-message');
 let boostResetBtn = document.getElementById('boost-reset-btn');
@@ -4404,7 +4402,7 @@ const BOOST_DEFAULT_STATE = Object.freeze({
     type1: '',
     type2: '',
     bronzeCurrentLevel: 0,
-    bronzeLevel: 0,
+    bronzeLevel: 1,
     silverCurrentLevel: 0,
     silverLevel: 0
 });
@@ -9412,10 +9410,8 @@ function refreshBoostDomReferences(){
     boostType2Select = document.getElementById('boost-type2-select');
     boostConfigControls = document.getElementById('boost-config-controls');
     boostShinyInputs = document.querySelectorAll('input[name="boost-shiny"]');
-    boostBronzeCurrentLevelSelect = document.getElementById('boost-bronze-current-level');
-    boostBronzeLevelSelect = document.getElementById('boost-bronze-level');
-    boostSilverCurrentLevelSelect = document.getElementById('boost-silver-current-level');
-    boostSilverLevelSelect = document.getElementById('boost-silver-level');
+    boostCurrentLevelSelect = document.getElementById('boost-current-level');
+    boostTargetLevelSelect = document.getElementById('boost-target-level');
     boostSilverNote = document.getElementById('boost-silver-note');
     boostFormMessage = document.getElementById('boost-form-message');
     boostResetBtn = document.getElementById('boost-reset-btn');
@@ -21685,6 +21681,20 @@ function toggleBoostTypeSelection(type){
     renderBoostCalculator();
 }
 
+function getBoostLevelsFromStage(value){
+    const stage = Math.max(0, Number(value) || 0);
+    if(stage <= 5){
+        return { bronze: stage, silver: 0 };
+    }
+    return { bronze: 5, silver: stage - 6 };
+}
+
+function getBoostStageFromLevels(bronzeLevel, silverLevel){
+    const bronze = normalizeBoostLevel(bronzeLevel);
+    const silver = normalizeBoostLevel(silverLevel);
+    return silver > 0 ? 6 + silver : bronze;
+}
+
 function applyBoostFormState(nextState = getBoostDefaultFormState()){
     const state = {
         ...getBoostDefaultFormState(),
@@ -21702,17 +21712,15 @@ function applyBoostFormState(nextState = getBoostDefaultFormState()){
     boostShinyInputs.forEach(input => {
         input.checked = input.value === state.shiny;
     });
-    if(boostBronzeCurrentLevelSelect) boostBronzeCurrentLevelSelect.value = String(normalizeBoostLevel(state.bronzeCurrentLevel));
-    if(boostBronzeLevelSelect) boostBronzeLevelSelect.value = String(normalizeBoostLevel(state.bronzeLevel));
-    if(boostSilverCurrentLevelSelect) boostSilverCurrentLevelSelect.value = String(normalizeBoostLevel(state.silverCurrentLevel));
-    if(boostSilverLevelSelect) boostSilverLevelSelect.value = String(normalizeBoostLevel(state.silverLevel));
+    if(boostCurrentLevelSelect){
+        boostCurrentLevelSelect.value = String(getBoostStageFromLevels(state.bronzeCurrentLevel, state.silverCurrentLevel));
+    }
+    if(boostTargetLevelSelect){
+        boostTargetLevelSelect.value = String(getBoostStageFromLevels(state.bronzeLevel, state.silverLevel));
+    }
 }
 
 function syncBoostSilverAvailability(options = {}){
-    if(boostSilverLevelSelect){
-        boostSilverLevelSelect.disabled = false;
-    }
-
     if(boostSilverNote){
         boostSilverNote.textContent = '';
         boostSilverNote.hidden = true;
@@ -21739,10 +21747,16 @@ function getBoostFormState(){
         type1,
         type2,
         shiny: Array.from(boostShinyInputs).find(input => input.checked)?.value === 'yes' ? 'yes' : 'no',
-        bronzeCurrentLevel: normalizeBoostLevel(boostBronzeCurrentLevelSelect?.value),
-        bronzeLevel: normalizeBoostLevel(boostBronzeLevelSelect?.value),
-        silverCurrentLevel: normalizeBoostLevel(boostSilverCurrentLevelSelect?.value),
-        silverLevel: normalizeBoostLevel(boostSilverLevelSelect?.value)
+        ...(() => {
+            const currentLevels = getBoostLevelsFromStage(boostCurrentLevelSelect?.value);
+            const targetLevels = getBoostLevelsFromStage(boostTargetLevelSelect?.value);
+            return {
+                bronzeCurrentLevel: currentLevels.bronze,
+                bronzeLevel: targetLevels.bronze,
+                silverCurrentLevel: currentLevels.silver,
+                silverLevel: targetLevels.silver
+            };
+        })()
     };
 }
 
@@ -22918,12 +22932,12 @@ function initializeBoostCalculatorPage(){
     }
 
     const handleBoostChange = (event) => {
-        const shouldAnnounceReset = event?.target === boostBronzeLevelSelect;
+        const shouldAnnounceReset = event?.target === boostTargetLevelSelect;
         renderBoostCalculator({ announceSilverReset: shouldAnnounceReset });
     };
 
     boostShinyInputs.forEach(input => input.addEventListener('change', handleBoostChange));
-    [boostBronzeCurrentLevelSelect, boostBronzeLevelSelect, boostSilverCurrentLevelSelect, boostSilverLevelSelect]
+    [boostCurrentLevelSelect, boostTargetLevelSelect]
         .filter(Boolean)
         .forEach(element => {
             element.addEventListener('change', handleBoostChange);
