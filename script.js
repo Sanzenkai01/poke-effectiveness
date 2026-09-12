@@ -91,9 +91,13 @@ let boostSummaryFlags = document.getElementById('boost-summary-flags');
 let boostLayout = document.getElementById('boost-layout');
 let boostResultsShell = document.getElementById('boost-results-shell');
 let boostOverviewCards = document.getElementById('boost-overview-cards');
+let boostBronzePanel = document.getElementById('boost-bronze-panel');
 let boostBronzeResults = document.getElementById('boost-bronze-results');
 let boostSilverResults = document.getElementById('boost-silver-results');
 let boostStarResults = document.getElementById('boost-star-results');
+let boostSilverPieceResults = document.getElementById('boost-silver-piece-results');
+let boostStarPanel = document.getElementById('boost-star-panel');
+let boostSilverPiecePanel = document.getElementById('boost-silver-piece-panel');
 let boostTotalResults = document.getElementById('boost-total-results');
 let boostHelpPanel = document.getElementById('boost-help-panel');
 
@@ -9421,9 +9425,13 @@ function refreshBoostDomReferences(){
     boostLayout = document.getElementById('boost-layout');
     boostResultsShell = document.getElementById('boost-results-shell');
     boostOverviewCards = document.getElementById('boost-overview-cards');
+    boostBronzePanel = document.getElementById('boost-bronze-panel');
     boostBronzeResults = document.getElementById('boost-bronze-results');
     boostSilverResults = document.getElementById('boost-silver-results');
     boostStarResults = document.getElementById('boost-star-results');
+    boostSilverPieceResults = document.getElementById('boost-silver-piece-results');
+    boostStarPanel = document.getElementById('boost-star-panel');
+    boostSilverPiecePanel = document.getElementById('boost-silver-piece-panel');
     boostTotalResults = document.getElementById('boost-total-results');
     boostHelpPanel = document.getElementById('boost-help-panel');
 }
@@ -22341,11 +22349,17 @@ function getBoostStarPieceRequirement(item){
         ? BOOST_BRONZE_PIECES_PER_STAR
         : BOOST_SILVER_STAR_RECIPE['Piece of Silver Star'];
     const pieceMeta = getBoostMaterialMeta(pieceName);
+    const additionalRequirements = item.name === 'Silver Star'
+        ? Object.entries(BOOST_SILVER_STAR_RECIPE)
+            .filter(([name]) => name !== pieceName)
+            .map(([name, quantity]) => ({ name, quantity: item.quantity * quantity }))
+        : [];
     return {
         pieceName,
         pieceImage: pieceMeta.image,
         piecesPerStar,
-        totalPieces: item.quantity * piecesPerStar
+        totalPieces: item.quantity * piecesPerStar,
+        additionalRequirements
     };
 }
 
@@ -22466,14 +22480,14 @@ function calculateBoostTotalCraftItems(state){
         );
     }
 
-    return sortBoostMaterialItems(totalCraftItems.filter(Boolean).filter(item => !isBoostStarPieceMaterial(item)));
+    return sortBoostMaterialItems(totalCraftItems.filter(Boolean).filter(item => item.name !== 'Piece of Silver Star'));
 }
 
 function calculateBoostMaterials(state){
     const bronzeItems = [];
     const silverItems = [];
     const starCraftItems = [];
-    let bronzeStarCraftCount = 0;
+    const silverPieceCraftItems = [];
     let silverPieceCount = 0;
     const bronzeCurrent = normalizeBoostLevel(state.bronzeCurrentLevel);
     const bronzeTarget = normalizeBoostLevel(state.bronzeLevel);
@@ -22481,17 +22495,17 @@ function calculateBoostMaterials(state){
     const silverTarget = normalizeBoostLevel(state.silverLevel);
 
     if(bronzeTarget > bronzeCurrent){
-        bronzeItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true, contextLabel: 'Direto' }));
+        bronzeItems.push(...createBoostBronzeStoneItems(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget, cumulative: true, contextLabel: 'Stones' }));
 
         if(state.shiny === 'yes'){
             const bronzeStarCount = getBoostBronzeStarQuantity(state, { currentLevel: bronzeCurrent, targetLevel: bronzeTarget });
             bronzeItems.push(
                 createBoostMaterialItem('Bronze Star', bronzeStarCount, {
+                    category: 'bronze',
                     detail: 'Custo direto do shiny.',
                     contextLabel: 'Direto'
                 })
             );
-            bronzeStarCraftCount += bronzeStarCount;
         }
     }
 
@@ -22535,33 +22549,24 @@ function calculateBoostMaterials(state){
             let category = 'generic';
             if(name === 'Piece of Bronze Star') category = 'bronze-piece';
             if(name === 'Silver Token') category = 'silver-token';
-            starCraftItems.push(
-                createBoostMaterialItem(name, amount * silverPieceCount, {
-                    category,
-                    detail: 'Material da Piece of Silver Star.',
-                    contextLabel: 'Craft'
-                })
-            );
+            if(name === 'Piece of Bronze Star' || name === 'Silver Token'){
+                silverPieceCraftItems.push(
+                    createBoostMaterialItem(name, amount * silverPieceCount, {
+                        category,
+                        detail: 'Material da Piece of Silver Star.',
+                        contextLabel: 'Craft'
+                    })
+                );
+            }
         });
-    }
-
-    if(bronzeStarCraftCount > 0){
-        starCraftItems.push(
-            createBoostMaterialItem('Piece of Bronze Star', bronzeStarCraftCount * BOOST_BRONZE_PIECES_PER_STAR, {
-                category: 'bronze-piece',
-                detail: 'Craft da Bronze Star.',
-                contextLabel: 'Craft'
-            })
-        );
     }
 
     const cleanBronzeItems = sortBoostMaterialItems(bronzeItems.filter(Boolean));
     const cleanSilverItems = sortBoostMaterialItems(silverItems.filter(Boolean));
-    const cleanStarCraftItems = sortBoostMaterialItems(starCraftItems.filter(Boolean).filter(item => !isBoostStarPieceMaterial(item)));
-    const totalDirectItems = calculateBoostTotalDirectItems(state);
+    const cleanStarCraftItems = sortBoostMaterialItems(starCraftItems.filter(Boolean));
+    const cleanSilverPieceCraftItems = sortBoostMaterialItems(silverPieceCraftItems.filter(Boolean));
     const totalCraftItems = calculateBoostTotalCraftItems(state);
     const totalItems = sortBoostTotalItems(aggregateBoostMaterialItems([
-        totalDirectItems,
         totalCraftItems
     ], { asTotal: true }));
 
@@ -22569,6 +22574,7 @@ function calculateBoostMaterials(state){
         bronzeItems: cleanBronzeItems,
         silverItems: cleanSilverItems,
         starCraftItems: cleanStarCraftItems,
+        silverPieceCraftItems: cleanSilverPieceCraftItems,
         totalItems,
         bronzeStarCount: cleanBronzeItems
             .filter(item => item.name === 'Bronze Star')
@@ -22610,13 +22616,19 @@ function createBoostMaterialCard(item){
     }
 
     const starPieceRequirement = getBoostStarPieceRequirement(item);
+    const requirementDetails = starPieceRequirement
+        ? [
+            `${formatBoostQuantity(starPieceRequirement.totalPieces)}x ${starPieceRequirement.pieceName}`,
+            ...starPieceRequirement.additionalRequirements.map(requirement => `${formatBoostQuantity(requirement.quantity)}x ${requirement.name}`)
+        ].join(' + ')
+        : '';
     if(starPieceRequirement){
         card.classList.add('boost-material-card--star');
         card.tabIndex = 0;
         card.setAttribute(
             'aria-label',
             `${item.name}: ${formatBoostQuantity(item.quantity)}. `
-            + `${formatBoostQuantity(starPieceRequirement.totalPieces)} ${starPieceRequirement.pieceName} necessarias.`
+            + `${requirementDetails} necessarios.`
         );
     }
 
@@ -22690,11 +22702,10 @@ function createBoostMaterialCard(item){
         const tooltipCopy = document.createElement('span');
         tooltipCopy.className = 'boost-material-card__piece-tooltip-copy';
         const tooltipTitle = document.createElement('strong');
-        tooltipTitle.textContent = 'Pieces necessarias';
+        tooltipTitle.textContent = 'Materiais necessarios';
 
         const tooltipDetail = document.createElement('span');
-        tooltipDetail.textContent = `${formatBoostQuantity(starPieceRequirement.totalPieces)}x ${starPieceRequirement.pieceName}`
-            + ` (${starPieceRequirement.piecesPerStar} por ${item.name})`;
+        tooltipDetail.textContent = requirementDetails;
 
         tooltipCopy.append(tooltipTitle, tooltipDetail);
         tooltip.append(tooltipMedia, tooltipCopy);
@@ -22806,6 +22817,7 @@ function renderBoostBlockedState(state, message){
         bronzeItems: [],
         silverItems: [],
         starCraftItems: [],
+        silverPieceCraftItems: [],
         totalItems: [],
         bronzeStarCount: 0,
         silverStarCount: 0,
@@ -22816,6 +22828,7 @@ function renderBoostBlockedState(state, message){
     renderBoostMaterialGrid(boostBronzeResults, [], 'Calculo indisponivel', message);
     renderBoostMaterialGrid(boostSilverResults, [], 'Calculo indisponivel', message);
     renderBoostMaterialGrid(boostStarResults, [], 'Calculo indisponivel', message);
+    renderBoostMaterialGrid(boostSilverPieceResults, [], 'Calculo indisponivel', message);
     renderBoostMaterialGrid(boostTotalResults, [], 'Calculo indisponivel', message);
 }
 function renderBoostCalculator(options = {}){
@@ -22825,6 +22838,12 @@ function renderBoostCalculator(options = {}){
     syncBoostSilverAvailability({ announceReset: announceSilverReset });
 
     const state = getBoostFormState();
+    if(boostBronzePanel){
+        boostBronzePanel.hidden = normalizeBoostLevel(state.bronzeLevel) <= normalizeBoostLevel(state.bronzeCurrentLevel);
+    }
+    const hasSilverBoost = normalizeBoostLevel(state.silverLevel) > normalizeBoostLevel(state.silverCurrentLevel);
+    if(boostStarPanel) boostStarPanel.hidden = !hasSilverBoost;
+    if(boostSilverPiecePanel) boostSilverPiecePanel.hidden = !hasSilverBoost;
     renderBoostSelectionPrompt(state);
     renderBoostPokemonMeta(state);
     syncBoostCalculatorVisibility(state);
@@ -22866,6 +22885,12 @@ function renderBoostCalculator(options = {}){
         breakdown.starCraftItems,
         'Sem craft adicional.',
         'Os crafts aparecem aqui quando forem necessarios.'
+    );
+    renderBoostMaterialGrid(
+        boostSilverPieceResults,
+        breakdown.silverPieceCraftItems,
+        'Sem craft de Piece of Silver Star.',
+        'Os materiais aparecem aqui quando forem necessarios.'
     );
     renderBoostMaterialGrid(
         boostTotalResults,

@@ -122,15 +122,7 @@
           </section>
 
           <div id="boost-results-shell" class="boost-results" hidden>
-            <section class="boost-panel boost-panel--summary boost-panel--wide" aria-labelledby="boost-summary-title">
-              <div class="boost-panel__header">
-                <span class="boost-panel__eyebrow">Resumo</span>
-                <h3 id="boost-summary-title">Visao geral</h3>
-              </div>
-              <div id="boost-overview-cards" class="boost-overview-cards" aria-live="polite"></div>
-            </section>
-
-            <section class="boost-panel" aria-labelledby="boost-bronze-title">
+            <section id="boost-bronze-panel" class="boost-panel" aria-labelledby="boost-bronze-title">
               <div class="boost-section-header">
                 <div>
                   <span class="boost-panel__eyebrow">Bronze</span>
@@ -150,11 +142,22 @@
               <div id="boost-silver-results" class="boost-material-grid" aria-live="polite"></div>
             </section>
 
-            <section class="boost-panel boost-panel--wide" aria-labelledby="boost-star-title">
+            <section id="boost-silver-piece-panel" class="boost-panel boost-panel--wide" aria-labelledby="boost-silver-piece-title">
               <div class="boost-section-header">
                 <div>
                   <span class="boost-panel__eyebrow">Craft</span>
-                  <h3 id="boost-star-title">Craft das Stars</h3>
+                  <h3 id="boost-silver-piece-title">Craft da Piece of Silver Star</h3>
+                  <p class="boost-section-note">Materiais para craftar as Pieces of Silver Star.</p>
+                </div>
+              </div>
+              <div id="boost-silver-piece-results" class="boost-material-grid" aria-live="polite"></div>
+            </section>
+
+            <section id="boost-star-panel" class="boost-panel boost-panel--wide" aria-labelledby="boost-star-title">
+              <div class="boost-section-header">
+                <div>
+                  <span class="boost-panel__eyebrow">Craft</span>
+                  <h3 id="boost-star-title">Craft da Silver Star</h3>
                   <p class="boost-section-note">Apenas o craft do nivel escolhido.</p>
                 </div>
               </div>
@@ -165,7 +168,7 @@
               <div class="boost-section-header">
                 <div>
                   <span class="boost-panel__eyebrow">Total</span>
-                  <h3 id="boost-total-title">Total de materiais</h3>
+                  <h3 id="boost-total-title">Total de Materiais de Craft</h3>
                   <p class="boost-section-note">Soma de todos os boosts ate o nivel escolhido.</p>
                 </div>
               </div>
