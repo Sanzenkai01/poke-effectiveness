@@ -21,6 +21,7 @@
         { name: 'lordjuregi', supportsDrops: false },
         { name: 'Eusou_O_D', supportsDrops: false },
         { name: 'twozada212', supportsDrops: false },
+        { name: '0taichou', supportsDrops: false }
     ];
 
     function normalizeStreamerChannelName(name){
