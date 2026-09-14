@@ -12623,8 +12623,42 @@ textarea:focus {
     0 0 38px rgba(255, 184, 46, 0.3);
 }
 
+.speedster-reco-card.speedster-reco-card--pack,
+.boss-role-pick.boss-role-pick--pack {
+  border-color: rgba(236, 72, 153, 0.92) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 0 2px rgba(236, 72, 153, 0.18),
+    0 20px 36px rgba(0, 0, 0, 0.24),
+    0 0 32px rgba(236, 72, 153, 0.26);
+}
+
+.speedster-reco-card.speedster-reco-card--pack::before,
+.boss-role-pick.boss-role-pick--pack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.9;
+  background:
+    linear-gradient(135deg, rgba(244, 114, 182, 0.18), transparent 42%),
+    radial-gradient(circle at top right, var(--reco-tier-glow, var(--role-pick-tier-glow)), transparent 34%);
+}
+
+.speedster-reco-card.speedster-reco-card--pack:hover,
+.boss-role-pick.boss-role-pick--pack:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 0 0 2px rgba(236, 72, 153, 0.26),
+    0 23px 40px rgba(0, 0, 0, 0.28),
+    0 0 38px rgba(236, 72, 153, 0.34);
+}
+
 .speedster-reco-featured-badge,
-.boss-role-pick-featured-badge {
+.boss-role-pick-featured-badge,
+.speedster-reco-pack-badge,
+.boss-role-pick-pack-badge {
   position: absolute;
   top: 0.62rem;
   left: 0.62rem;
@@ -12647,6 +12681,20 @@ textarea:focus {
 
 .boss-role-pick-featured-badge {
   top: 0.48rem;
+  left: 0.48rem;
+}
+
+.speedster-reco-pack-badge,
+.boss-role-pick-pack-badge {
+  top: 2.28rem;
+  border-color: rgba(255, 190, 220, 0.94);
+  color: #3a0925;
+  background: linear-gradient(135deg, #ffc2df, #ec4899 58%, #be185d);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.3), 0 0 16px rgba(236, 72, 153, 0.32);
+}
+
+.boss-role-pick-pack-badge {
+  top: 2.08rem;
   left: 0.48rem;
 }
 

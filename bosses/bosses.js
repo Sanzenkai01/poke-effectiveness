@@ -7285,6 +7285,30 @@ function createAutomaticBossCandidateVariants(entry, boss, roleKey, seedConfigs,
   });
 }
 
+function isPackRecommendation(pick) {
+  return Array.isArray(pick?.specialTags) && pick.specialTags.includes('pack');
+}
+
+function appendPackRecommendation(selected, candidates, boss, roleKey, catalogId, minimumTier, includeAcceptableFallback, limit) {
+  if (roleKey !== 'dps' || !Array.isArray(selected) || !Array.isArray(candidates) || selected.length >= limit + 1) return selected;
+
+  const packCandidates = candidates.filter(isPackRecommendation);
+  if (!packCandidates.length) return selected;
+
+  const packPick = getRecommendationEngineForBoss(boss)?.selectBestBossPicks?.(packCandidates, boss, {
+    roleKey,
+    catalogId,
+    limit: 1,
+    minimumTier,
+    includeAcceptableFallback,
+    familyKey: getAutomaticBossFamilyKey
+  })?.[0];
+  if (!packPick || getRecommendationTierPriority(packPick.tier) > tierPriority.bom) return selected;
+  if (selected.some((pick) => getAutomaticBossFamilyKey(pick) === getAutomaticBossFamilyKey(packPick))) return selected;
+
+  return [...selected, { ...packPick, _packRecommendation: true }];
+}
+
 let automaticBossSeedConfigsCache = null;
 
 function getAutomaticBossSeedConfigs() {
@@ -7412,6 +7436,17 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
         );
       }
 
+      selected = appendPackRecommendation(
+        selected,
+        candidates,
+        boss,
+        roleKey,
+        catalogId,
+        minimumTier,
+        includeAcceptableDefenders,
+        roleLimits[roleKey]
+      );
+
       results[clanKey][roleKey] = selected
         .map((pick, index) => ({
           ...pick,
@@ -7424,7 +7459,8 @@ function AutomaticBossBestPicks(bossRef, options = {}) {
           _automaticBestTier: pick.tier,
           _automaticBestScore: pick._score,
           _automaticBestVariant: pick.name,
-          _automaticPassivePriority: getAutomaticBossPassivePriority(pick)
+          _automaticPassivePriority: getAutomaticBossPassivePriority(pick),
+          _packRecommendation: Boolean(pick?._packRecommendation || isPackRecommendation(pick))
         }));
     });
   });
@@ -13759,6 +13795,9 @@ function createRecommendationCard(poke, options = {}) {
     const card = document.createElement('div');
     card.className = 'speedster-reco-card';
     card.dataset.tier = tier;
+    if (poke?._packRecommendation) {
+      card.classList.add('speedster-reco-card--pack');
+    }
     if (poke?._featuredRecommendation) {
       card.classList.add('speedster-reco-card--featured');
       card.dataset.featured = 'true';
@@ -13767,6 +13806,9 @@ function createRecommendationCard(poke, options = {}) {
 
     const featuredBadge = poke?._featuredRecommendation
       ? createFeaturedRecommendationBadge('speedster-reco-featured-badge')
+      : null;
+    const packBadge = poke?._packRecommendation
+      ? createFeaturedRecommendationBadge('speedster-reco-pack-badge', 'Pacote')
       : null;
 
     const score = document.createElement('div');
@@ -13879,6 +13921,7 @@ function createRecommendationCard(poke, options = {}) {
     }
 
     if (featuredBadge) card.appendChild(featuredBadge);
+    if (packBadge) card.appendChild(packBadge);
     card.append(score, img, body);
 
     const extraDescription = showDescription ? getRecommendationExtraDescription(poke.description) : '';
@@ -13949,11 +13992,13 @@ function createRecommendationCard(poke, options = {}) {
   return card;
 }
 
-function createFeaturedRecommendationBadge(className = '') {
+function createFeaturedRecommendationBadge(className = '', label = 'Destaque') {
   const badge = document.createElement('span');
   badge.className = className;
-  badge.textContent = 'Destaque';
-  badge.title = 'Melhor escolha recomendada para este cla e boss';
+  badge.textContent = label;
+  badge.title = label === 'Pacote'
+    ? 'Pokemon pertencente ao pacote de speedsters'
+    : 'Melhor escolha recomendada para este cla e boss';
   badge.setAttribute('aria-label', badge.title);
   return badge;
 }
@@ -14449,11 +14494,17 @@ function createRolePickCard(poke) {
   const card = document.createElement('div');
   card.className = 'boss-role-pick';
   card.dataset.tier = normalizeTierKey(poke.tier);
+  if (poke?._packRecommendation) {
+    card.classList.add('boss-role-pick--pack');
+  }
   if (poke?._featuredRecommendation) {
     card.classList.add('boss-role-pick--featured');
     card.dataset.featured = 'true';
     card.setAttribute('aria-label', `${poke.name}: recomendacao destacada`);
     card.appendChild(createFeaturedRecommendationBadge('boss-role-pick-featured-badge'));
+  }
+  if (poke?._packRecommendation) {
+    card.appendChild(createFeaturedRecommendationBadge('boss-role-pick-pack-badge', 'Pacote'));
   }
   if (poke.note) {
     card.title = poke.note;
