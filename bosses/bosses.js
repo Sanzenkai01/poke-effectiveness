@@ -6140,6 +6140,44 @@ function getAutomaticRecommendationRolePicks(boss, clanKey, roleKey) {
   automaticBossRecommendationCache.set(cacheKey, automaticPicks.map(cloneRolePickConfig));
   return automaticPicks;
 }
+let automaticBossRecommendationPrewarmToken = 0;
+
+function scheduleAutomaticBossRecommendationPrewarm() {
+  const prewarmToken = ++automaticBossRecommendationPrewarmToken;
+  const bosses = getActiveBossesData().filter((boss) => !boss?.comingSoon);
+  const jobs = bosses.flatMap((boss) => plannerClanOrder.flatMap((clanKey) => (
+    roleboardRoleOrder.map((roleKey) => ({ boss, clanKey, roleKey }))
+  )));
+  let jobIndex = 0;
+
+  const scheduleIdleWork = (callback) => {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(callback, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(() => callback({ timeRemaining: () => 8 }), 0);
+  };
+
+  const processBatch = (deadline) => {
+    if (prewarmToken !== automaticBossRecommendationPrewarmToken) return;
+
+    let processed = 0;
+    while (
+      jobIndex < jobs.length
+      && (processed === 0 || deadline.timeRemaining() > 4)
+    ) {
+      const { boss, clanKey, roleKey } = jobs[jobIndex++];
+      getAutomaticRecommendationRolePicks(boss, clanKey, roleKey);
+      processed += 1;
+    }
+
+    if (jobIndex < jobs.length) {
+      scheduleIdleWork(processBatch);
+    }
+  };
+
+  if (jobs.length) scheduleIdleWork(processBatch);
+}
 
 function getFixedRecommendationRolePicks(boss, clanKey, roleKey) {
   return getAutomaticRecommendationRolePicks(boss, clanKey, roleKey);
@@ -8929,6 +8967,7 @@ function setBossMode(mode, options = {}) {
 
   if (options.render === false) return;
   renderGrid();
+  scheduleAutomaticBossRecommendationPrewarm();
 }
 
 window.setBossMode = setBossMode;
@@ -15786,6 +15825,7 @@ try {
 }
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
+scheduleAutomaticBossRecommendationPrewarm();
 
 
 
