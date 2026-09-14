@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-09-14T22:26:42.591Z",
+  "updatedAt": "2026-09-14T22:27:42.554Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-14T22:17:20.161Z",
-    "endedAt": "2026-09-14T22:26:42.591Z",
-    "reason": "rat-found",
+    "startedAt": "2026-09-14T22:27:40.057Z",
+    "endedAt": "2026-09-14T22:27:42.554Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "dragonslayerpiva",
       "vivihbecker",
@@ -38,28 +38,20 @@
     "observedChannels": [
       "dragonslayerpiva"
     ],
-    "observedSpawnChannels": [
-      "dragonslayerpiva"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "dragonslayerpiva",
-        "messageAt": 1789424802462,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1789424802462,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1789424862461,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "dragonslayerpiva",
-        "kind": "spawn",
-        "messageAt": 1789424802462,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1789424862461,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -110,24 +102,24 @@
   },
   "latest": {
     "channel": "dragonslayerpiva",
-    "lastMessageAt": 1789424802462,
-    "expectedNextAt": 1789426062462,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1789424862461,
+    "expectedNextAt": 1789426062461,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-09-14T18:07:24Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1789424802590,
-    "persistedAt": 1789424802590
+    "source": "github-action-chat-escape",
+    "updatedAt": 1789424862553,
+    "persistedAt": 1789424862553
   },
   "timers": {
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
-      "lastMessageAt": 1789424802462,
-      "expectedNextAt": 1789426062462,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1789424862461,
+      "expectedNextAt": 1789426062461,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-09-14T18:07:24Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1789424802590,
-      "persistedAt": 1789424802590
+      "source": "github-action-chat-escape",
+      "updatedAt": 1789424862553,
+      "persistedAt": 1789424862553
     }
   }
 }
