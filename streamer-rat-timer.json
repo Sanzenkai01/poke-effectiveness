@@ -1,14 +1,16 @@
 {
-  "updatedAt": "2026-09-14T17:32:44.924Z",
+  "updatedAt": "2026-09-14T17:33:44.920Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-14T17:20:29.572Z",
-    "endedAt": "2026-09-14T17:32:44.924Z",
-    "reason": "rat-found",
+    "startedAt": "2026-09-14T17:33:09.214Z",
+    "endedAt": "2026-09-14T17:33:44.920Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "gordallink",
       "uguettolitz",
+      "thigaartus",
       "twozada212",
       "0taichou",
       "adivorcio",
@@ -19,7 +21,6 @@
       "enriqfmz",
       "eusou_o_d",
       "fernandoalcatraz",
-      "gordallink",
       "indypereira",
       "jackpist0la",
       "karlin_nara",
@@ -28,37 +29,29 @@
       "okamiulv",
       "raulzerah1",
       "sousupermeme",
-      "thigaartus",
       "vivihbecker"
     ],
     "pstoryDropChannels": [
+      "gordallink",
       "uguettolitz"
     ],
     "observedChannels": [
       "gordallink"
     ],
-    "observedSpawnChannels": [
-      "gordallink"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "gordallink",
-        "messageAt": 1789407164804,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "gordallink",
         "kind": "rattata-message",
-        "messageAt": 1789407164804,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1789407224807,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "gordallink",
-        "kind": "spawn",
-        "messageAt": 1789407164804,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1789407224807,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -109,24 +102,24 @@
   },
   "latest": {
     "channel": "gordallink",
-    "lastMessageAt": 1789407164804,
-    "expectedNextAt": 1789408424804,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1789407164924,
-    "persistedAt": 1789407164924
+    "lastMessageAt": 1789407224807,
+    "expectedNextAt": 1789408424807,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-09-14T17:23:41Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1789407224919,
+    "persistedAt": 1789407224919
   },
   "timers": {
     "gordallink": {
       "channel": "gordallink",
-      "lastMessageAt": 1789407164804,
-      "expectedNextAt": 1789408424804,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1789407164924,
-      "persistedAt": 1789407164924
+      "lastMessageAt": 1789407224807,
+      "expectedNextAt": 1789408424807,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-09-14T17:23:41Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1789407224919,
+      "persistedAt": 1789407224919
     },
     "uguettolitz": {
       "channel": "uguettolitz",
@@ -136,7 +129,7 @@
       "streamStartedAt": "2026-09-14T10:55:05Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1789405958801,
-      "persistedAt": 1789406429572
+      "persistedAt": 1789407189214
     }
   }
 }
