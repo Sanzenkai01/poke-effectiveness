@@ -774,6 +774,8 @@ let activeBossTutorialBoss = null;
 let bossTutorialHistoryPushed = false;
 let bossTutorialPreviousUrl = '';
 let mainQuestPuzzleZoomScale = 1;
+let mainQuestAdvancedJennyZoomScale = 1;
+let mainQuestFaustoZoomScale = 1;
 const mainQuestPuzzleImages = Object.freeze([
   { src: '/mainquest/puzzle1.png', label: 'Quebra-cabeça 1' },
   { src: '/mainquest/puzzle2.png', label: 'Quebra-cabeça 2' },
@@ -2670,8 +2672,8 @@ const bossCatalogs = {
     id: 'mainquest',
     label: 'Main Quest',
     variant: 'roleboard',
-    searchEnabled: true,
-    summary: 'Lutas da Main Quest com recomendações por clã. Alphas são 1v1; Mega Malamar é 3v1, obrigatóriamente de clãs diferentes.\nDestaques são recomendados utiliza-los pelo menos level 80 ou com Boost 5.',
+    searchEnabled: false,
+    summary: '',
     pills: ['Alpha 1v1', 'Mega Malamar 3v1', 'Quebra-cabeças'],
     data: mainQuestBosses
   },
@@ -8602,8 +8604,98 @@ function closeMainQuestAdvancedJennyModal() {
   }
 }
 
+function closeMainQuestFaustoModal() {
+  const modal = document.querySelector('.mainquest-fausto-modal');
+  if (!modal) return;
+  modal.remove();
+  if (!document.querySelector('.modal[aria-hidden="false"]') && !document.querySelector('.speedster-modal[data-open="true"]')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function openMainQuestFaustoModal() {
+  closeMainQuestFaustoModal();
+  closeMainQuestAdvancedJennyModal();
+  mainQuestFaustoZoomScale = 1;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'mainquest-fausto-modal';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Fausto');
+
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'mainquest-fausto-modal__backdrop';
+  backdrop.setAttribute('aria-label', 'Fechar Fausto');
+  backdrop.addEventListener('click', closeMainQuestFaustoModal);
+
+  const content = document.createElement('div');
+  content.className = 'mainquest-fausto-modal__content';
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'mainquest-fausto-modal__close';
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Fechar Fausto');
+  close.addEventListener('click', closeMainQuestFaustoModal);
+
+  const title = document.createElement('h2');
+  title.className = 'mainquest-fausto-modal__title';
+  title.textContent = 'Fausto';
+
+  const image = document.createElement('img');
+  image.className = 'mainquest-fausto-modal__image mainquest-fausto-modal__image--zoomed';
+  image.src = '/mainquest/fausto.png';
+  image.alt = 'Fausto e o Team Member na entrada do Instinct';
+  image.decoding = 'async';
+
+  const zoomControls = document.createElement('div');
+  zoomControls.className = 'mainquest-fausto-modal__zoom-controls';
+
+  const zoomOut = document.createElement('button');
+  zoomOut.type = 'button';
+  zoomOut.className = 'mainquest-fausto-modal__zoom-btn';
+  zoomOut.textContent = '-';
+  zoomOut.setAttribute('aria-label', 'Diminuir zoom');
+
+  const zoomIn = document.createElement('button');
+  zoomIn.type = 'button';
+  zoomIn.className = 'mainquest-fausto-modal__zoom-btn';
+  zoomIn.textContent = '+';
+  zoomIn.setAttribute('aria-label', 'Aumentar zoom');
+
+  const applyZoom = () => {
+    image.style.transform = `scale(${mainQuestFaustoZoomScale})`;
+  };
+
+  zoomOut.addEventListener('click', () => {
+    mainQuestFaustoZoomScale = Math.max(1, Math.round((mainQuestFaustoZoomScale - 0.25) * 100) / 100);
+    applyZoom();
+  });
+
+  zoomIn.addEventListener('click', () => {
+    mainQuestFaustoZoomScale = Math.min(3, Math.round((mainQuestFaustoZoomScale + 0.25) * 100) / 100);
+    applyZoom();
+  });
+
+  zoomControls.append(zoomOut, zoomIn);
+
+  const description = document.createElement('p');
+  description.className = 'mainquest-fausto-modal__description';
+  description.textContent = 'Os NPCs ficam abaixo da entrada do Instinct.';
+
+  content.append(close, title, image, zoomControls, description);
+  overlay.append(backdrop, content);
+  document.body.appendChild(overlay);
+  document.body.classList.add('modal-open');
+  applyZoom();
+  close.focus({ preventScroll: true });
+}
+
 function openMainQuestAdvancedJennyModal() {
   closeMainQuestAdvancedJennyModal();
+  mainQuestAdvancedJennyZoomScale = 1;
 
   const overlay = document.createElement('div');
   overlay.className = 'mainquest-advanced-jenny-modal';
@@ -8632,19 +8724,51 @@ function openMainQuestAdvancedJennyModal() {
   title.textContent = 'Saffron Subway';
 
   const image = document.createElement('img');
-  image.className = 'mainquest-advanced-jenny-modal__image';
+  image.className = 'mainquest-advanced-jenny-modal__image mainquest-advanced-jenny-modal__image--zoomed';
   image.src = '/mainquest/advancedjenny.gif';
   image.alt = 'Saffron Subway - Advanced Jenny';
   image.decoding = 'async';
+
+  const zoomControls = document.createElement('div');
+  zoomControls.className = 'mainquest-advanced-jenny-modal__zoom-controls';
+
+  const zoomOut = document.createElement('button');
+  zoomOut.type = 'button';
+  zoomOut.className = 'mainquest-advanced-jenny-modal__zoom-btn';
+  zoomOut.textContent = '-';
+  zoomOut.setAttribute('aria-label', 'Diminuir zoom');
+
+  const zoomIn = document.createElement('button');
+  zoomIn.type = 'button';
+  zoomIn.className = 'mainquest-advanced-jenny-modal__zoom-btn';
+  zoomIn.textContent = '+';
+  zoomIn.setAttribute('aria-label', 'Aumentar zoom');
+
+  const applyZoom = () => {
+    image.style.transform = `scale(${mainQuestAdvancedJennyZoomScale})`;
+  };
+
+  zoomOut.addEventListener('click', () => {
+    mainQuestAdvancedJennyZoomScale = Math.max(1, Math.round((mainQuestAdvancedJennyZoomScale - 0.25) * 100) / 100);
+    applyZoom();
+  });
+
+  zoomIn.addEventListener('click', () => {
+    mainQuestAdvancedJennyZoomScale = Math.min(3, Math.round((mainQuestAdvancedJennyZoomScale + 0.25) * 100) / 100);
+    applyZoom();
+  });
+
+  zoomControls.append(zoomOut, zoomIn);
 
   const description = document.createElement('p');
   description.className = 'mainquest-advanced-jenny-modal__description';
   description.textContent = 'Desça todas as escadas até encontrar a Advanced Jenny';
 
-  content.append(close, title, image, description);
+  content.append(close, title, image, zoomControls, description);
   overlay.append(backdrop, content);
   document.body.appendChild(overlay);
   document.body.classList.add('modal-open');
+  applyZoom();
   close.focus({ preventScroll: true });
 }
 
@@ -9233,6 +9357,80 @@ function renderBossModeIntro() {
   const searchPanel = document.querySelector('.speedster-search-panel');
   const shell = document.querySelector('.bosses-shell');
   const catalog = getActiveBossCatalog();
+  const mainQuestNarrative = document.getElementById('mainquest-narrative');
+  const mainQuestBossSlot = document.getElementById('mainquest-bosses-slot');
+  const isMainQuestCatalog = String(catalog?.id || '').toLowerCase() === 'mainquest';
+
+  if (mainQuestNarrative) {
+    mainQuestNarrative.hidden = !isMainQuestCatalog;
+  }
+  if (isMainQuestCatalog && mainQuestNarrative) {
+    const stages = [...mainQuestNarrative.querySelectorAll('.mainquest-stage')];
+    const briefingStage = mainQuestNarrative.querySelector('.mainquest-stage--briefing') || stages[0];
+    const typesStage = mainQuestNarrative.querySelector('.mainquest-stage--types') || stages[1];
+    if (briefingStage && typesStage && !briefingStage.dataset.combined) {
+      const briefingBody = briefingStage.querySelector('.mainquest-stage__body');
+      const typesBody = typesStage.querySelector('.mainquest-stage__body');
+      const typeKicker = typesBody?.querySelector('.mainquest-stage__kicker');
+      const typeHeading = typesBody?.querySelector('h3');
+      const typeText = typesBody?.querySelector('p');
+      const typeStrip = typesBody?.querySelector('.mainquest-type-strip');
+      briefingBody?.querySelector('.mainquest-team-member-open-btn')?.remove();
+      if (typeKicker) briefingBody?.appendChild(typeKicker);
+      if (typeHeading) briefingBody?.appendChild(typeHeading);
+      if (typeText) briefingBody?.appendChild(typeText);
+      if (typeStrip) briefingBody?.appendChild(typeStrip);
+      typesStage.remove();
+      briefingStage.dataset.combined = 'true';
+    }
+    mainQuestNarrative.querySelectorAll('.mainquest-stage').forEach((stage, index) => {
+      const number = stage.querySelector('.mainquest-stage__number');
+      if (number) number.textContent = String(index + 1).padStart(2, '0');
+    });
+    const checklist = briefingStage?.querySelector('.mainquest-type-strip');
+    if (checklist && !checklist.dataset.checklistBound) {
+      checklist.classList.add('mainquest-inline-checklist');
+      checklist.setAttribute('role', 'group');
+      checklist.setAttribute('aria-label', 'Checklist dos 16 tipos, 750 derrotas por tipo');
+      const completedItems = getMainQuestTeamMemberCompletedItems();
+      checklist.querySelectorAll('span').forEach((chip) => {
+        const type = String(chip.textContent || '').trim();
+        const item = mainQuestTeamMemberItems.find((entry) => entry.type.toLowerCase() === type.toLowerCase());
+        if (!item) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'mainquest-inline-checklist__item';
+        button.dataset.type = item.id;
+        const typeIcon = document.createElement('img');
+        typeIcon.src = `/icons-type/${item.id}.png`;
+        typeIcon.alt = '';
+        typeIcon.setAttribute('aria-hidden', 'true');
+        button.append(typeIcon, document.createTextNode(`750x ${item.type}`));
+        const syncState = () => {
+          const done = completedItems.has(item.id);
+          button.dataset.completed = done ? 'true' : 'false';
+          button.setAttribute('aria-pressed', done ? 'true' : 'false');
+        };
+        button.addEventListener('click', () => {
+          if (completedItems.has(item.id)) completedItems.delete(item.id);
+          else completedItems.add(item.id);
+          saveMainQuestTeamMemberCompletedItems(completedItems);
+          syncState();
+        });
+        syncState();
+        chip.replaceWith(button);
+      });
+      checklist.dataset.checklistBound = 'true';
+    }
+    const bossStage = mainQuestNarrative.querySelector('.mainquest-stage--bosses') || mainQuestNarrative.querySelectorAll('.mainquest-stage')[1];
+    const bossIntro = bossStage?.querySelector('.mainquest-stage__body > p');
+    if (bossIntro) bossIntro.innerHTML = 'As batalhas custam 10.000 dol por tentativa e exigem Speedsters.<br>Abra cada chefe abaixo para ver os counters por clã.';
+  }
+  if (grid && mainQuestBossSlot && isMainQuestCatalog && grid.parentElement !== mainQuestBossSlot) {
+    mainQuestBossSlot.appendChild(grid);
+  } else if (grid && shell && !isMainQuestCatalog && grid.parentElement !== shell) {
+    shell.appendChild(grid);
+  }
 
   if (titleEl) titleEl.textContent = catalog.label;
 
@@ -9271,14 +9469,32 @@ function renderBossModeIntro() {
 
   try {
     const existingActions = document.querySelector('.mainquest-actions');
-    if (catalog && String(catalog.id || '').toLowerCase() === 'mainquest') {
-      if (!existingActions && introEl) {
-        introEl.appendChild(createMainQuestActions());
+    if (isMainQuestCatalog) {
+      if (introEl) {
+        introEl.innerHTML = '';
+        introEl.hidden = true;
       }
+      if (existingActions && existingActions.closest('.mainquest-narrative__lead')) {
+        existingActions.remove();
+      }
+      document.querySelector('.mainquest-actions .mainquest-team-member-open-btn')?.remove();
     } else if (existingActions) {
       existingActions.remove();
     }
   } catch (e) {}
+
+  if (isMainQuestCatalog) {
+    document.querySelectorAll('.mainquest-team-member-open-btn, .mainquest-puzzle-open-btn, .mainquest-advanced-jenny-open-btn, .mainquest-tutorial-open-btn, [data-mainquest-open-advanced-jenny="true"], [data-mainquest-open-fausto="true"]').forEach((button) => {
+      if (button.dataset.mainquestBound === 'true') return;
+      button.dataset.mainquestBound = 'true';
+      if (button.classList.contains('mainquest-team-member-open-btn')) button.addEventListener('click', openMainQuestTeamMemberModal);
+      if (button.classList.contains('mainquest-puzzle-open-btn')) button.addEventListener('click', openMainQuestPuzzleModal);
+      if (button.classList.contains('mainquest-advanced-jenny-open-btn')) button.addEventListener('click', openMainQuestAdvancedJennyModal);
+      if (button.classList.contains('mainquest-tutorial-open-btn')) button.addEventListener('click', openMainQuestTutorialModal);
+      if (button.matches('[data-mainquest-open-advanced-jenny="true"]')) button.addEventListener('click', openMainQuestAdvancedJennyModal);
+      if (button.matches('[data-mainquest-open-fausto="true"]')) button.addEventListener('click', openMainQuestFaustoModal);
+    });
+  }
 
   if (shell) {
     shell.dataset.catalogId = catalog.id || '';
@@ -13170,6 +13386,7 @@ function renderHorizonsGrid() {
 function renderGrid() {
   if (!grid) return;
   hidePassiveTooltip({ immediate: true });
+  document.getElementById('mainquest-final-boss-slot')?.replaceChildren();
   if (activeBossMode === 'hoopa') {
     ensureHoopaBossProgressFresh();
   }
@@ -13186,7 +13403,12 @@ function renderGrid() {
     return;
   }
   getActiveBossesData().forEach((boss) => {
-    grid.appendChild(makeSpeedsterCard(boss));
+    const card = makeSpeedsterCard(boss);
+    if (activeBossMode === 'mainquest' && String(boss?.id || '').toLowerCase() === 'mega-malamar') {
+      document.getElementById('mainquest-final-boss-slot')?.appendChild(card);
+      return;
+    }
+    grid.appendChild(card);
   });
 }
 
@@ -16113,6 +16335,3 @@ try {
 setBossMode(getInitialBossModeFromLocation(), { render: false });
 renderGrid();
 scheduleAutomaticBossRecommendationPrewarm();
-
-
-
