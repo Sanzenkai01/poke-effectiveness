@@ -16838,7 +16838,99 @@ function renderShinyFragmentationPokemon(pokemon){
 }
 
 function initializeShinyFragmentation(){
+    if(!document.getElementById('shiny-guide-suppression')) {
+        const guideSuppression = document.createElement('style');
+        guideSuppression.id = 'shiny-guide-suppression';
+        guideSuppression.textContent = '.shiny-fragmentation-guide{display:none!important}.shiny-fragmentation-hero:after{display:none!important}';
+        document.head.appendChild(guideSuppression);
+    }
+    document.querySelectorAll('.shiny-fragmentation-guide').forEach(guide => guide.remove());
     if(shinyFragmentationInitialized) return;
+    const pageShell = document.querySelector('.shiny-fragmentation-shell');
+    if(pageShell && !pageShell.querySelector('.shiny-fragmentation-guide')) {
+        pageShell.insertAdjacentHTML('beforeend', '<section class="shiny-fragmentation-guide" aria-label="Como usar a fragmentação"><div class="shiny-fragmentation-guide__intro"><span class="shiny-fragmentation-guide__kicker">Ritual da oficina</span><h3>Do Shiny ao próximo craft</h3><p>Escolha um Pokémon elegível, confira os candies recebidos e simule as trocas.</p></div><div class="shiny-fragmentation-guide__steps"><article><span class="shiny-fragmentation-guide__step">01</span><strong>Escolha o Shiny</strong><span>Use o seletor no release.</span></article><article><span class="shiny-fragmentation-guide__step">02</span><strong>Leia os candies</strong><span>O nível define a recompensa.</span></article><article><span class="shiny-fragmentation-guide__step">03</span><strong>Simule a troca</strong><span>Selecione o card e arraste a barra.</span></article></div></section>');
+    }
+    const workshopSection = document.querySelector('.shiny-workshop');
+    const guideSection = pageShell?.querySelector('.shiny-fragmentation-guide');
+    const releasePanel = pageShell?.querySelector('.shiny-fragmentation-panel');
+    guideSection?.remove();
+    if(pageShell && guideSection && releasePanel) {
+        pageShell.insertBefore(guideSection, releasePanel);
+        guideSection.style.cssText = 'grid-column:1 / -1;grid-template-columns:1fr;width:100%;min-width:0;box-sizing:border-box;margin:0';
+    }
+    if(pageShell && workshopSection && workshopSection.parentElement !== pageShell) pageShell.appendChild(workshopSection);
+    if(pageShell && window.innerWidth > 850) pageShell.style.gridTemplateColumns = 'minmax(300px,420px) minmax(600px,1fr)';
+    const heroCopy = pageShell?.querySelector('.shiny-fragmentation-hero__copy');
+    const hero = pageShell?.querySelector('.shiny-fragmentation-hero');
+    if(hero) hero.style.cssText += 'display:block;position:relative';
+    if(heroCopy) heroCopy.style.cssText = 'width:100%;text-align:center';
+    const heroSubtitle = heroCopy?.querySelector('p');
+    if(heroSubtitle) heroSubtitle.style.cssText = 'width:100%;max-width:none;margin:9px 0 0;text-align:center';
+    const trades = [...document.querySelectorAll('.shiny-trade')];
+    const range = document.getElementById('shiny-workshop-range');
+    const summary = document.getElementById('shiny-workshop-summary');
+    const colorNames = { blue: 'Blue', yellow: 'Yellow', green: 'Green', purple: 'Purple' };
+    const createButton = document.querySelector('.shiny-workshop__create');
+    document.getElementById('shiny-workshop-search')?.remove();
+    createButton?.remove();
+    if(range) { range.max = '100'; range.setAttribute('aria-valuemax', '100'); }
+    const referenceCharacter = document.querySelector('.shiny-workshop__researcher');
+    if(referenceCharacter) {
+        referenceCharacter.src = 'shiny-fragmentation/oficina-reference.png';
+        referenceCharacter.style.cssText = 'width:252px;height:588px;object-fit:none;object-position:left center;transform:none;filter:none';
+    }
+    const resultCandyImage = document.createElement('img');
+    const resultCandyAmount = document.createElement('strong');
+    const resultCardsImage = document.createElement('img');
+    const resultCardsAmount = document.createElement('strong');
+    const exchange = document.createElement('div');
+    exchange.className = 'shiny-workshop__exchange';
+    exchange.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:16px;grid-column:1 / -1;margin:4px 0 2px;padding:8px 12px;border:1px solid #454545;border-radius:8px;background:#292929';
+    resultCandyImage.style.cssText = 'width:34px;height:34px;object-fit:contain';
+    resultCardsImage.src = 'shiny-fragmentation/ditto_card.png';
+    resultCardsImage.alt = 'Ditto Card';
+    resultCardsImage.style.cssText = 'width:38px;height:38px;object-fit:contain';
+    resultCandyAmount.style.cssText = 'color:#fff;font-size:18px';
+    resultCardsAmount.style.cssText = 'color:#ffd34f;font-size:18px';
+    const exchangeArrow = document.createElement('span');
+    exchangeArrow.textContent = '->';
+    exchangeArrow.style.cssText = 'color:#7ed0ff;font-size:24px;font-weight:700';
+    const candyBox = document.createElement('span');
+    const cardBox = document.createElement('span');
+    candyBox.style.cssText = 'display:flex;align-items:center;gap:5px';
+    cardBox.style.cssText = 'display:flex;align-items:center;gap:5px';
+    candyBox.append(resultCandyImage, resultCandyAmount, document.createTextNode(' Candy'));
+    cardBox.append(resultCardsImage, resultCardsAmount, document.createTextNode(' Ditto Cards'));
+    exchange.append(candyBox, exchangeArrow, cardBox);
+    const footer = summary?.parentElement;
+    summary?.remove();
+    footer?.prepend(exchange);
+    if(range) range.style.cssText = 'grid-column:1 / -1;grid-row:2;justify-self:center;width:min(72%,360px);margin:0 auto;accent-color:#0878d1';
+    trades.forEach(trade => { const icon = trade.querySelector('.shiny-trade__icon img'); const iconBox = trade.querySelector('.shiny-trade__icon'); const rank = trade.querySelector('.shiny-trade__rank'); if(icon) { icon.src = 'shiny-fragmentation/ditto_card.png'; icon.alt = 'Ditto Card'; icon.style.cssText = 'width:24px;height:28px;object-fit:contain;visibility:visible'; } if(iconBox) iconBox.style.cssText += 'position:relative;display:inline-flex;align-items:center;overflow:visible'; if(rank && iconBox) { iconBox.append(rank); rank.style.cssText = 'position:absolute;right:-3px;bottom:-3px;margin:0;padding:0 2px;border-radius:2px;background:#111;color:#fff;font:700 10px Arial;text-shadow:none'; } });
+    const updateTrade = () => {
+        const selected = trades.find(trade => trade.classList.contains('is-selected')) || trades[0];
+        const amount = Number(range?.value || 10);
+        const cards = amount * Number(selected?.dataset.rate || 1);
+        trades.forEach(trade => {
+            const amountEl = trade.querySelector('[data-candy-amount]');
+            if(amountEl) {
+                amountEl.textContent = String(trade === selected ? amount : 10);
+                amountEl.style.display = 'none';
+            }
+        });
+        if(resultCandyImage) { resultCandyImage.src = `shiny-fragmentation/${selected?.dataset.color || 'blue'}-candy.png`; resultCandyImage.alt = `${colorNames[selected?.dataset.color || 'blue']} Candy`; }
+        if(resultCandyAmount) resultCandyAmount.textContent = String(amount);
+        if(resultCardsAmount) resultCardsAmount.textContent = String(cards);
+        if(summary) summary.textContent = `${amount} ${colorNames[selected?.dataset.color || 'blue']} Candy = ${cards} Ditto Cards`;
+    };
+    trades.forEach(trade => {
+        const selectTrade = () => { trades.forEach(item => item.classList.toggle('is-selected', item === trade)); updateTrade(); };
+        trade.addEventListener('click', selectTrade);
+        trade.addEventListener('keydown', event => { if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectTrade(); } });
+    });
+    range?.addEventListener('input', updateTrade);
+    updateTrade();
+    shinyFragmentationInitialized = true;
     const picker = document.getElementById('shiny-fragmentation-pokemon-picker');
     const pickerOptions = document.getElementById('shiny-fragmentation-pokemon-options');
     const deliverButton = document.getElementById('shiny-fragmentation-deliver');
@@ -16858,18 +16950,22 @@ function initializeShinyFragmentation(){
             const option = document.createElement('button');
             option.type = 'button';
             option.className = 'shiny-fragmentation__option';
+            option.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;min-height:42px;padding:6px 9px;border:0;background:transparent;color:#fff;text-align:left;cursor:pointer';
             option.setAttribute('role', 'option');
             const image = document.createElement('img');
             image.className = 'shiny-fragmentation__option-image';
+            image.style.cssText = 'flex:0 0 30px;width:30px;height:30px;object-fit:contain;display:block';
             image.src = pokemon.image;
             image.alt = '';
             image.loading = 'lazy';
             image.decoding = 'async';
             const name = document.createElement('span');
             name.className = 'shiny-fragmentation__option-name';
+            name.style.cssText = 'min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px';
             name.textContent = pokemon.name;
             const level = document.createElement('span');
             level.className = 'shiny-fragmentation__option-level';
+            level.style.cssText = 'margin-left:auto;color:#98a3b5;font-size:11px;white-space:nowrap';
             level.textContent = `Lv. ${pokemon.level}`;
             option.prepend(image);
             option.append(name, level);
