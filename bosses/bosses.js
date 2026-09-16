@@ -9120,10 +9120,32 @@ function renderMewtwoGuide() {
   const leadCopy = document.createElement('div');
   const level = document.createElement('span');
   level.className = 'mewtwo-guide__eyebrow';
-  level.textContent = 'Lv. 200';
+  level.textContent = 'Mewtwo';
   const leadText = document.createElement('p');
   leadText.textContent = 'Uma raid em grupo (3 pessoas) contra os clones do Mewtwo.\nPara participar você precisa ser Lv 200.';
-  leadCopy.append(level, leadText);
+  const raidVideo = document.createElement('button');
+  raidVideo.type = 'button';
+  raidVideo.className = 'mewtwo-guide__video';
+  raidVideo.setAttribute('aria-label', 'Assistir ao vídeo-guia: como fazer a raid no YouTube');
+  raidVideo.addEventListener('click', () => {
+    const tutorialUrl = 'https://youtu.be/k9Peq3AIC-w';
+    if (typeof window.openSiteYouTubeModal === 'function') {
+      const openedInModal = window.openSiteYouTubeModal({
+        url: tutorialUrl,
+        title: 'Tutorial da raid Mewtwo'
+      });
+      if (openedInModal) return;
+    }
+    window.open(tutorialUrl, '_blank', 'noopener,noreferrer');
+  });
+  const raidVideoIcon = document.createElement('img');
+  raidVideoIcon.src = resolveBossAssetSrc('youtube.png');
+  raidVideoIcon.alt = '';
+  raidVideoIcon.setAttribute('aria-hidden', 'true');
+  const raidVideoLabel = document.createElement('span');
+  raidVideoLabel.textContent = 'Tutorial da raid (YouTube)';
+  raidVideo.append(raidVideoIcon, raidVideoLabel);
+  leadCopy.append(level, leadText, raidVideo);
   lead.append(icon, leadCopy, rightIcon);
   guide.appendChild(lead);
 
@@ -9180,22 +9202,9 @@ function renderMewtwoGuide() {
   const raidNote = document.createElement('p');
   raidNote.className = 'mewtwo-guide__note';
   raidNote.textContent = 'Abra um boss para ver Tank, Speedster e Suporte por clã.';
-  const raidVideo = document.createElement('a');
-  raidVideo.className = 'mewtwo-guide__video';
-  raidVideo.href = 'https://youtu.be/k9Peq3AIC-w';
-  raidVideo.target = '_blank';
-  raidVideo.rel = 'noopener noreferrer';
-  raidVideo.setAttribute('aria-label', 'Assistir ao vídeo-guia: como fazer a raid no YouTube');
-  const raidVideoIcon = document.createElement('img');
-  raidVideoIcon.src = resolveBossAssetSrc('youtube.png');
-  raidVideoIcon.alt = '';
-  raidVideoIcon.setAttribute('aria-hidden', 'true');
-  const raidVideoLabel = document.createElement('span');
-  raidVideoLabel.textContent = 'Tutorial da raid (YouTube)';
-  raidVideo.append(raidVideoIcon, raidVideoLabel);
   const raidContent = document.createElement('div');
   raidContent.className = 'mewtwo-guide__stack mewtwo-guide__raid-content';
-  raidContent.append(raidIntro, depotIntro, depotTimeline, raidNote, raidVideo);
+  raidContent.append(raidIntro, depotIntro, depotTimeline, raidNote);
   if (grid) {
     grid.classList.add('mewtwo-guide__boss-grid');
     raidContent.appendChild(grid);
