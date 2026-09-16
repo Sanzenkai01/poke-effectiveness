@@ -128,6 +128,20 @@
             linkedMarkerId: null
         }
     ]);
+    const LOCAL_QUEST_MARKERS = Object.freeze([
+        {
+            id: 'poke-utilities-quest-jessie-james',
+            name: 'Jessie e James',
+            categoryId: '7a8f214b-35ba-4e34-a5f8-c69c953c7b07',
+            positionX: 1372.5,
+            positionY: 7525.5,
+            floor: 6,
+            description: 'Localização da Jessie e do James.',
+            details: null,
+            territory: null,
+            linkedMarkerId: null
+        }
+    ]);
     const TYPE_LABELS = {
         bug: 'Bug', dark: 'Dark', dragon: 'Dragon', electric: 'Electric',
         fairy: 'Fairy', fighting: 'Fighting', fire: 'Fire', flying: 'Flying',
@@ -183,6 +197,7 @@
     let selectedMarkerDetailsOverride = null;
     let isolatedMarkerIds = new Set();
     let sharedPin = null;
+    let hideMapMarkers = false;
     let placingSharedPin = false;
     let hiddenCategories = new Set();
     let activeCategoryListId = '';
@@ -751,7 +766,7 @@
 
     function renderMarkers(updateSummary = true){
         if(!elements.markers || !elements.labels) return;
-        const visibleMarkers = getVisibleMarkers();
+        const visibleMarkers = hideMapMarkers ? [] : getVisibleMarkers();
         const displayPoints = buildMarkerDisplayPoints(visibleMarkers);
         const renderedMarkerIds = new Set();
         visibleMarkers.forEach(marker => {
@@ -1018,6 +1033,7 @@
 
     async function focusSearchTarget(searchValue, options = {}){
         await initialize();
+        hideMapMarkers = false;
         const requestedQuery = String(searchValue || '').trim();
         if(!requestedQuery || !elements.search) return false;
 
@@ -1060,6 +1076,7 @@
 
     async function focusMarkerTarget(markerId, options = {}){
         await initialize();
+        hideMapMarkers = false;
         const normalizedMarkerId = String(markerId || '').trim();
         const target = markersById.get(normalizedMarkerId) || getMarkerByShareSlug(normalizedMarkerId);
         if(!target) return false;
@@ -1087,6 +1104,7 @@
 
     async function focusCoordinateTarget(routeSlug, options = {}){
         await initialize();
+        hideMapMarkers = Boolean(options.hideMarkers);
         const match = String(routeSlug || '').match(/^([\d.]+)-([\d.]+)-(\d+)$/);
         if(!match) return false;
         const [, xValue, yValue, floorValue] = match;
@@ -1948,6 +1966,11 @@
                 markers.push({ ...marker });
             }
         });
+        LOCAL_QUEST_MARKERS.forEach(marker => {
+            if(!markers.some(existingMarker => existingMarker.id === marker.id)){
+                markers.push({ ...marker });
+            }
+        });
         markers.forEach(marker => {
             if(!String(marker?.id || '').startsWith('poke-utilities-maniac-')) return;
             marker.categoryId = MANIACS_MAP_CATEGORY.id;
@@ -2077,6 +2100,7 @@
         selectedMarkerMediaOverride = null;
         selectedMarkerDetailsOverride = null;
         sharedPin = null;
+        hideMapMarkers = false;
         placingSharedPin = false;
         if(elements.search){
             elements.search.value = '';

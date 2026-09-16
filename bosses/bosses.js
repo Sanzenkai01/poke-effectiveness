@@ -2652,7 +2652,7 @@ const bossCatalogs = {
     label: 'Mewtwo',
     variant: 'roleboard',
     searchEnabled: true,
-    summary: 'Abra um chefe do Mewtwo para ver o trio ideal dividido por cla, com Tanque, DPS e Suporte.\n Destaques são apenas recomendações, podendo ser substituídos por outros pokémons com funções similares, Supporter podendo ser utilizado neutro.',
+    summary: '',
     pills: ['Tanque / DPS / Suporte', 'Busca por Pokémon', 'Exemplos temporários'],
     data: mew2Bosses
   },
@@ -8848,6 +8848,375 @@ function createMainQuestActions() {
   return actions;
 }
 
+const mewtwoGuideImages = Object.freeze([
+  { src: '/mewtwo/entrada.png', alt: 'Entrada da raid no Centro Pokémon', caption: 'Entrada (Centro Pokémon)' },
+  { src: '/mewtwo/mewtwo_raid_shop.png', alt: 'Mewtwo Raid Shop com Jessie e James', caption: 'Mewtwo Raid Shop' }
+]);
+
+const mewtwoGuideAshTeam = Object.freeze([
+  ['Charizard', ['fire', 'flying'], '006'],
+  ['Bulbasaur', ['grass', 'poison'], '001'],
+  ['Pikachu', ['electric'], '025'],
+  ['Squirtle', ['water'], '007'],
+  ['Kingler', ['water'], '099'],
+  ['Pidgeotto', ['normal', 'flying'], '017']
+]);
+
+const mewtwoGuideDepots = Object.freeze([
+  ['Dugtrio', 'Após o Dugtrio'],
+  ['Blastoise', 'Após o Blastoise'],
+  [['Tentacruel', 'Jynx'], 'Tentacruel → DEPOT → Jynx', 'Disponível apenas no Hard'],
+  ['Venusaur', 'Após o Venusaur'],
+  ['Charizard', 'Após o Charizard']
+]);
+
+let mewtwoGuideImageModal = null;
+
+function ensureMewtwoGuideImageModal() {
+  if (mewtwoGuideImageModal) return mewtwoGuideImageModal;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal image-modal mewtwo-guide-image-modal';
+  modal.setAttribute('aria-hidden', 'true');
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.innerHTML = `
+    <div class="modal-content">
+      <button class="modal-close" type="button" aria-label="Fechar">✖</button>
+      <h2 class="mewtwo-guide-image-modal__title">Imagem</h2>
+      <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
+        <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
+        <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
+        <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
+      </div>
+      <div class="image-modal__frame image-modal__viewport">
+        <div class="image-modal__canvas">
+          <img class="image-modal__image" src="" alt="" />
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const viewport = modal.querySelector('.image-modal__viewport');
+  const canvas = modal.querySelector('.image-modal__canvas');
+  const image = modal.querySelector('.image-modal__image');
+  setupZoomableImageModal(modal, viewport, canvas, image);
+
+  const close = () => {
+    modal.setAttribute('aria-hidden', 'true');
+    if (typeof modal._onClose === 'function') modal._onClose();
+  };
+  modal.querySelector('.modal-close').addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  modal._close = close;
+  mewtwoGuideImageModal = modal;
+  return modal;
+}
+
+function openMewtwoGuideImageModal(imageData) {
+  const modal = ensureMewtwoGuideImageModal();
+  const image = modal.querySelector('.mewtwo-guide__image-modal-image, .image-modal__image');
+  const title = modal.querySelector('.mewtwo-guide-image-modal__title');
+  image.src = imageData.src;
+  image.alt = imageData.alt;
+  title.textContent = imageData.caption || imageData.alt;
+  modal.setAttribute('aria-hidden', 'false');
+  if (typeof modal._onOpen === 'function') modal._onOpen();
+}
+
+function bindMewtwoGuideZoom(image, imageData) {
+  image.tabIndex = 0;
+  image.setAttribute('role', 'button');
+  image.setAttribute('aria-label', `Abrir imagem: ${imageData.caption || imageData.alt}`);
+  image.addEventListener('click', () => openMewtwoGuideImageModal(imageData));
+  image.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openMewtwoGuideImageModal(imageData);
+  });
+}
+
+function createMewtwoGuideImage(imageData, options = {}) {
+  const figure = document.createElement('figure');
+  figure.className = 'mewtwo-guide__figure';
+  const image = document.createElement('img');
+  image.src = imageData.src;
+  image.alt = imageData.alt;
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  if (options.actionImage) {
+    image.tabIndex = 0;
+    image.setAttribute('role', 'button');
+    image.setAttribute('aria-label', `Abrir ${imageData.caption || imageData.alt}`);
+    image.addEventListener('click', options.action);
+    image.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      options.action();
+    });
+  } else {
+    bindMewtwoGuideZoom(image, imageData);
+  }
+  const caption = options.action
+    ? document.createElement('button')
+    : document.createElement('figcaption');
+  caption.textContent = imageData.caption;
+  if (options.action) {
+    caption.type = 'button';
+    caption.className = 'mewtwo-guide__figure-action';
+    caption.addEventListener('click', options.action);
+  }
+  figure.append(image, caption);
+  if (options.mapPreview) {
+    const marker = document.createElement('span');
+    marker.className = 'mewtwo-guide__map-preview-marker';
+    marker.textContent = 'Ash';
+    marker.setAttribute('aria-hidden', 'true');
+    figure.appendChild(marker);
+  }
+  return figure;
+}
+
+function createMewtwoGuidePokemon(name, types, number) {
+  const card = document.createElement('article');
+  card.className = 'mewtwo-guide__pokemon';
+  const image = document.createElement('img');
+  image.src = resolveBossAssetSrc(`pokemons/1gen/${name.toLowerCase()}.png`);
+  image.alt = name;
+  image.loading = 'lazy';
+  image.tabIndex = 0;
+  image.setAttribute('role', 'button');
+  image.setAttribute('aria-label', `Abrir detalhes de ${name}`);
+  const openPokemonModal = () => {
+    if (typeof window.openPokemonDetailsModalByName === 'function') {
+      window.openPokemonDetailsModalByName(name);
+    }
+  };
+  image.addEventListener('click', openPokemonModal);
+  image.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openPokemonModal();
+  });
+  const copy = document.createElement('div');
+  const title = document.createElement('strong');
+  title.textContent = name;
+  const typeIcons = document.createElement('div');
+  typeIcons.className = 'mewtwo-guide__pokemon-types';
+  getBossTypeIcons(types).forEach((typeIcon) => {
+    typeIcons.appendChild(typeIcon);
+  });
+  copy.append(title, typeIcons);
+  card.append(image, copy);
+  return card;
+}
+
+function createMewtwoGuideSection(title, content) {
+  const section = document.createElement('section');
+  section.className = 'mewtwo-guide__section';
+  const heading = document.createElement('h3');
+  heading.textContent = title;
+  section.append(heading, content);
+  return section;
+}
+
+function createMewtwoGuideDepotTimeline() {
+  const timeline = document.createElement('div');
+  timeline.className = 'mewtwo-guide__depot-timeline';
+  timeline.setAttribute('aria-label', 'Depots disponíveis durante a raid');
+
+  mewtwoGuideDepots.forEach((_, index) => {
+    const depot = document.createElement('article');
+    depot.className = 'mewtwo-guide__depot';
+
+    const marker = document.createElement('span');
+    marker.className = 'mewtwo-guide__depot-marker';
+    marker.textContent = String(index + 1).padStart(2, '0');
+    marker.setAttribute('aria-hidden', 'true');
+
+    const [pokemonName, label, availability = 'Depot disponível'] = mewtwoGuideDepots[index];
+    const pokemonNames = Array.isArray(pokemonName) ? pokemonName : (pokemonName ? [pokemonName] : []);
+    const images = pokemonNames.map((name) => {
+      const image = document.createElement('img');
+      image.src = resolveBossAssetSrc(`pokemons/1gen/${name.toLowerCase()}.png`);
+      image.alt = name;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      return image;
+    });
+    const imageContent = images.length > 1
+      ? Object.assign(document.createElement('div'), { className: 'mewtwo-guide__depot-pair' })
+      : (images[0] || null);
+    if (images.length > 1) imageContent.append(...images);
+
+    const copy = document.createElement('div');
+    copy.className = 'mewtwo-guide__depot-copy';
+    const title = document.createElement('strong');
+    title.textContent = label;
+    const caption = document.createElement('span');
+    caption.textContent = availability;
+    copy.append(title, caption);
+
+    depot.append(marker, ...(imageContent ? [imageContent] : []), copy);
+    timeline.appendChild(depot);
+  });
+
+  return timeline;
+}
+
+function createMewtwoGuideMapButton(label, coordinate, name, options = {}) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mewtwo-guide__map-button';
+  button.dataset.mapCoordinate = coordinate || '';
+  button.setAttribute('aria-label', `Abrir localização de ${name} no mapa interativo`);
+  const icon = document.createElement('span');
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = '🗺️';
+  const text = document.createElement('span');
+  text.textContent = label;
+  button.append(icon, text);
+  button.addEventListener('click', () => showLocationOverlay('', {
+    boss: {
+      name,
+      mapCoordinate: options.mapMarkerId ? '' : coordinate,
+      mapZoom: 3,
+      hideMapMarkers: true,
+      ...options
+    },
+    pushState: false
+  }));
+  return button;
+}
+
+function renderMewtwoGuide() {
+  const shell = document.querySelector('.bosses-shell');
+  const header = shell?.querySelector('.bosses-header');
+  if (!shell || !header) return;
+
+  const existingGuide = shell.querySelector('.mewtwo-guide');
+  if (existingGuide && grid && existingGuide.contains(grid)) {
+    shell.appendChild(grid);
+  }
+  existingGuide?.remove();
+  if (activeBossMode !== 'mew2') return;
+
+  const guide = document.createElement('article');
+  guide.className = 'mewtwo-guide';
+  guide.setAttribute('aria-label', 'Guia Mewtwo Strikes Back');
+
+  const lead = document.createElement('div');
+  lead.className = 'mewtwo-guide__lead';
+  const icon = document.createElement('img');
+  icon.src = '/mewtwo/mewtwo-icon.webp';
+  icon.alt = 'Mewtwo Strikes Back';
+  bindMewtwoGuideZoom(icon, { src: icon.src, alt: icon.alt, caption: icon.alt });
+  const rightIcon = document.createElement('img');
+  rightIcon.src = icon.src;
+  rightIcon.alt = icon.alt;
+  bindMewtwoGuideZoom(rightIcon, { src: rightIcon.src, alt: rightIcon.alt, caption: rightIcon.alt });
+  const leadCopy = document.createElement('div');
+  const level = document.createElement('span');
+  level.className = 'mewtwo-guide__eyebrow';
+  level.textContent = 'Lv. 200';
+  const leadText = document.createElement('p');
+  leadText.textContent = 'Uma raid em grupo (3 pessoas) contra os clones do Mewtwo.\nPara participar você precisa ser Lv 200.';
+  leadCopy.append(level, leadText);
+  lead.append(icon, leadCopy, rightIcon);
+  guide.appendChild(lead);
+
+  const ashIntro = document.createElement('p');
+  ashIntro.textContent = 'O Ash fica ao norte de Old Shore Wharf, cheque o local clicando no Mapa-Interativo.\nAo vencê-lo, converse com o Dragonite para liberar a raid.';
+  const ashTeam = document.createElement('div');
+  ashTeam.className = 'mewtwo-guide__pokemon-grid';
+  mewtwoGuideAshTeam.forEach(([name, type, number]) => ashTeam.appendChild(createMewtwoGuidePokemon(name, type, number)));
+  const ashContent = document.createElement('div');
+  ashContent.className = 'mewtwo-guide__stack';
+  const ashHeading = document.createElement('h4');
+  ashHeading.textContent = 'Time do Ash';
+  ashContent.append(
+    ashIntro,
+    createMewtwoGuideMapButton('Localização do Ash', '', 'Ash Ketchum', {
+      mapMarkerId: 'bff51ff8-7700-4f84-a42b-58cfa5eb84ce'
+    }),
+    ashHeading,
+    ashTeam
+  );
+  guide.appendChild(createMewtwoGuideSection('Acesso: derrote o Ash e fale com o Dragonite.', ashContent));
+
+  const startContent = document.createElement('div');
+  startContent.className = 'mewtwo-guide__stack';
+  const steps = document.createElement('div');
+  steps.className = 'mewtwo-guide__steps';
+  [['Compre os convites', "Fale com a Jessie e o James, à esquerda do Ash, e compre o Mewtwo's Invite por 25K (1 = Easy, 2 = Medium = 5 Hard, Hard Solo = 10)."], ['Inicie no Centro Pokémon', 'Com o convite em mãos, a raid é iniciada dentro do Centro Pokémon de Old Shore Wharf. Interaja com a entrada para abrir a tela da raid.']].forEach(([title, text]) => {
+    const item = document.createElement('div');
+    item.className = 'mewtwo-guide__step';
+    const itemTitle = document.createElement('strong');
+    itemTitle.textContent = title;
+    const itemText = document.createElement('p');
+    itemText.textContent = text;
+    item.append(itemTitle, itemText);
+    if (title === 'Compre os convites') {
+      item.appendChild(createMewtwoGuideMapButton('Localização da Jessie e do James', '1374.5-7525.5-6', 'Jessie e James', {
+        mapMarkerId: 'poke-utilities-quest-jessie-james'
+      }));
+    }
+    steps.appendChild(item);
+  });
+  const startMedia = document.createElement('div');
+  startMedia.className = 'mewtwo-guide__media-grid mewtwo-guide__media-grid--centered';
+  mewtwoGuideImages.slice(0, 1).forEach((image) => startMedia.appendChild(createMewtwoGuideImage(image)));
+  startContent.append(steps, startMedia);
+  guide.appendChild(createMewtwoGuideSection('Como iniciar a raid', startContent));
+
+  const raidIntro = document.createElement('p');
+  raidIntro.textContent = 'A quest é feita em um grupo de 3 jogadores (Tank, Speedster e Suporte).';
+  const depotIntro = document.createElement('p');
+  depotIntro.className = 'mewtwo-guide__depot-intro';
+  depotIntro.textContent = 'Use os depots ao longo do caminho para se preparar para a próxima etapa.';
+  const depotTimeline = createMewtwoGuideDepotTimeline();
+  const raidNote = document.createElement('p');
+  raidNote.className = 'mewtwo-guide__note';
+  raidNote.textContent = 'Abra um boss para ver Tank, Speedster e Suporte por clã.';
+  const raidVideo = document.createElement('a');
+  raidVideo.className = 'mewtwo-guide__video';
+  raidVideo.href = 'https://youtu.be/k9Peq3AIC-w';
+  raidVideo.target = '_blank';
+  raidVideo.rel = 'noopener noreferrer';
+  raidVideo.setAttribute('aria-label', 'Assistir ao vídeo-guia: como fazer a raid no YouTube');
+  const raidVideoIcon = document.createElement('img');
+  raidVideoIcon.src = resolveBossAssetSrc('youtube.png');
+  raidVideoIcon.alt = '';
+  raidVideoIcon.setAttribute('aria-hidden', 'true');
+  const raidVideoLabel = document.createElement('span');
+  raidVideoLabel.textContent = 'Tutorial da raid (YouTube)';
+  raidVideo.append(raidVideoIcon, raidVideoLabel);
+  const raidContent = document.createElement('div');
+  raidContent.className = 'mewtwo-guide__stack mewtwo-guide__raid-content';
+  raidContent.append(raidIntro, depotIntro, depotTimeline, raidNote, raidVideo);
+  if (grid) {
+    grid.classList.add('mewtwo-guide__boss-grid');
+    raidContent.appendChild(grid);
+  }
+  guide.appendChild(createMewtwoGuideSection('A raid: clones do Mewtwo', raidContent));
+
+  const shopContent = document.createElement('div');
+  shopContent.className = 'mewtwo-guide__shop';
+  const shopText = document.createElement('p');
+  shopText.textContent = 'A Mewtwo Raid Shop também fica com a Jessie e o James.';
+  shopContent.append(
+    shopText,
+    createMewtwoGuideMapButton('Localização da Jessie e do James', '1374.5-7525.5-6', 'Jessie e James', {
+      mapMarkerId: 'poke-utilities-quest-jessie-james'
+    }),
+    createMewtwoGuideImage(mewtwoGuideImages[1])
+  );
+  guide.appendChild(createMewtwoGuideSection('Loja da Raid', shopContent));
+  shell.insertBefore(guide, header);
+}
+
 function renderBossModeIntro() {
   const titleEl = document.getElementById('bosses-mode-title');
   const introEl = document.getElementById('bosses-mode-intro');
@@ -8885,33 +9254,11 @@ function renderBossModeIntro() {
     }
   }
 
-  // Se estiver vendo a aba Mewtwo, adicionar um pequeno botao de acao "Tochas" na area de introducao
-  try {
-    const existingTochasBtn = document.querySelector('.bosses-tochas-btn');
-    if (catalog && String(catalog.id || '').toLowerCase() === 'mew2') {
-      if (!existingTochasBtn && introEl) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'speedster-modal-location-btn bosses-tochas-btn';
-        btn.setAttribute('aria-label', 'Abrir Tochas');
-        btn.textContent = 'Tochas';
-        btn.style.marginTop = '0.5rem';
-        btn.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          openTochasInModal();
-        });
-        if (shell) {
-          // Garantir que shell seja um container posicionado para posicionamento absoluto
-          try { shell.style.position = shell.style.position || 'relative'; } catch (e) {}
-          shell.appendChild(btn);
-        } else {
-          introEl.appendChild(btn);
-        }
-      }
-    } else if (existingTochasBtn) {
-      existingTochasBtn.remove();
-    }
-  } catch (e) {}
+  const isMewtwoMode = String(catalog?.id || '').toLowerCase() === 'mew2';
+  if (titleEl) titleEl.hidden = isMewtwoMode;
+  if (introEl && isMewtwoMode) introEl.hidden = true;
+  const heroEl = shell?.querySelector('.bosses-hero');
+  if (heroEl) heroEl.hidden = isMewtwoMode;
 
   try {
     const existingActions = document.querySelector('.mainquest-actions');
@@ -8930,8 +9277,10 @@ function renderBossModeIntro() {
   }
 
   if (searchPanel) {
-    searchPanel.hidden = !catalog.searchEnabled;
+    searchPanel.hidden = !catalog.searchEnabled || String(catalog.id || '').toLowerCase() === 'mew2';
   }
+
+  renderMewtwoGuide();
 
   modeButtons.forEach((button) => {
     const isActive = button.dataset.bossMode === activeBossMode;
@@ -14060,72 +14409,6 @@ function ensureModalLocationButton() {
   return modalLocationBtn;
 }
 
-function ensureModalTochasButton() {
-  const modalHeader = modal?.querySelector('.speedster-modal-header');
-  if (!modalHeader) return null;
-
-  let tochasBtn = modalHeader.querySelector('.speedster-modal-tochas-btn');
-  if (!tochasBtn) {
-    tochasBtn = document.createElement('button');
-    tochasBtn.type = 'button';
-    tochasBtn.className = 'speedster-modal-location-btn speedster-modal-tochas-btn';
-    tochasBtn.setAttribute('aria-label', 'Abrir Tochas');
-    tochasBtn.title = 'Tochas';
-    tochasBtn.textContent = 'Tochas';
-    modalHeader.appendChild(tochasBtn);
-  }
-
-  return tochasBtn;
-}
-
-function openTochasInModal() {
-  if (!modal || !modalBody) return;
-
-  const tochasPath = (String(location.pathname || '').toLowerCase().includes('/bosses')) ? '../tochas.html' : 'tochas.html';
-
-  modalTitle.textContent = 'Tochas — Acenda todas';
-  setModalSubtitleText('');
-
-  // Marcar modal como exibindo Tochas para aplicar regras especificas de chrome
-  try { modal.dataset.mode = 'tochas'; } catch (e) {}
-
-  // Ocultar legenda de tier e imagens de canto especificamente no modal de Tochas
-  try { setModalChrome({ showLegend: false, showImages: false, showLocation: false }); } catch (e) {}
-
-  modalBody.innerHTML = '';
-  modalBody.classList.remove('speedster-modal-body--roleboard', 'speedster-modal-body--split');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'speedster-modal-iframe-wrap';
-
-  const iframe = document.createElement('iframe');
-  iframe.className = 'speedster-modal-iframe';
-  iframe.src = tochasPath;
-  iframe.setAttribute('aria-label', 'Tochas — Acenda todas');
-  iframe.loading = 'lazy';
-  iframe.allow = 'fullscreen';
-
-  wrap.appendChild(iframe);
-  modalBody.appendChild(wrap);
-
-  modal.setAttribute('data-open', 'true');
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-  syncSharedModalOpenState();
-
-  // Garantir que o conteudo do modal use largura de roleboard para dar mais espaco a pagina embutida
-  const modalContentEl = modal.querySelector('.speedster-modal-content');
-  if (modalContentEl) modalContentEl.classList.add('speedster-modal-content--roleboard');
-
-  if (typeof gsap !== 'undefined') {
-    gsap.fromTo(
-      modal.querySelector('.speedster-modal-content'),
-      { opacity: 0, y: 40, scale: 0.96 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out' }
-    );
-  }
-}
-
 function setModalChrome({ bosses = [], locationImage = '', showLocation = false, showLegend = true, showImages = true } = {}) {
   const modalHeader = modal?.querySelector('.speedster-modal-header');
   const existingLocationBtn = modalHeader?.querySelector('.speedster-modal-location-btn') || null;
@@ -14745,19 +15028,6 @@ function openRoleBossModal(boss, options = {}) {
     showImages: true
   });
   setModalBossWeaknesses(boss);
-
-  // Adicionar botao "Tochas" apenas para Mewtwo (manter UI limpa para os demais)
-  try {
-    const existingTochas = modal?.querySelector('.speedster-modal-tochas-btn');
-    if (String(boss.id || '').toLowerCase() === 'mewtwo') {
-      const tb = ensureModalTochasButton();
-      if (tb) tb.onclick = (ev) => { ev.stopPropagation(); openTochasInModal(); };
-    } else if (existingTochas) {
-      existingTochas.remove();
-    }
-  } catch (e) {
-    // Falhar silenciosamente para evitar quebrar o comportamento do modal
-  }
 
   modalBody.innerHTML = '';
   modalBody.classList.remove('speedster-modal-body--split', 'speedster-modal-body--roleboard');
@@ -15493,8 +15763,7 @@ function getBossInteractiveMapQuery(boss) {
 
 function showLocationOverlay(src, options = {}) {
   const { boss = null, pushState = true, mapReady = false } = options || {};
-  const mapPanel = document.getElementById('content-mapa-interativo');
-  if (!mapPanel || !boss) return false;
+  if (!boss) return false;
   if (!mapReady && typeof window.ensureInteractiveMapPanelReady === 'function') {
     window.ensureInteractiveMapPanelReady()
       .then(() => showLocationOverlay(src, { ...options, mapReady: true }))
@@ -15503,6 +15772,8 @@ function showLocationOverlay(src, options = {}) {
       });
     return true;
   }
+  const mapPanel = document.getElementById('content-mapa-interativo');
+  if (!mapPanel) return false;
 
   const previousUrl = isLocationOverlayOpen() && locationOverlayPreviousUrl
     ? locationOverlayPreviousUrl
@@ -15604,6 +15875,13 @@ function showLocationOverlay(src, options = {}) {
         image: resolveBossAssetSrc(boss.image || ''),
         imageAlt: boss.name || ''
       };
+      if (boss.mapCoordinate && typeof window.focusInteractiveMapCoordinates === 'function') {
+        return window.focusInteractiveMapCoordinates(boss.mapCoordinate, {
+          zoom: Number.isFinite(Number(boss.mapZoom)) ? Number(boss.mapZoom) : 3,
+          name: boss.name || 'Ash',
+          hideMarkers: Boolean(boss.hideMapMarkers)
+        });
+      }
       if (boss.mapMarkerId && typeof window.focusInteractiveMapMarker === 'function') {
         return window.focusInteractiveMapMarker(boss.mapMarkerId, {
           ...mapOptions,
