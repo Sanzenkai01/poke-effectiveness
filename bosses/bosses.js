@@ -9424,7 +9424,7 @@ function renderBossModeIntro() {
     }
     const bossStage = mainQuestNarrative.querySelector('.mainquest-stage--bosses') || mainQuestNarrative.querySelectorAll('.mainquest-stage')[1];
     const bossIntro = bossStage?.querySelector('.mainquest-stage__body > p');
-    if (bossIntro) bossIntro.innerHTML = 'As batalhas custam 10.000 dol por tentativa e exigem Speedsters.<br>Abra cada chefe abaixo para ver os counters por clã.';
+    if (bossIntro) bossIntro.innerHTML = 'As batalhas custam 10k por tentativa e exigem Speedsters.<br>Abra cada chefe abaixo para ver os recomendações por clã.';
   }
   if (grid && mainQuestBossSlot && isMainQuestCatalog && grid.parentElement !== mainQuestBossSlot) {
     mainQuestBossSlot.appendChild(grid);
