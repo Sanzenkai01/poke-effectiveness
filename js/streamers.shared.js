@@ -298,7 +298,7 @@
         const doc = global.document;
         if(!doc) return false;
 
-        const currentTitle = doc.title || 'Poke Utilities';
+        const currentTitle = doc.title || 'Pstory Utilities';
         const baseTitle = ratAlertOriginalTitle || currentTitle;
 
         if(ratAlertTitleBlinkInterval || ratAlertTitleBlinkTimeout){

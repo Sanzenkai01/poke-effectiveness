@@ -4752,10 +4752,10 @@ const strings = {
         pokemonsTitle: 'Pokémons',
         timesTitle: 'Times',
         boostTitle: 'Calculadora de Boost',
-        siteName: 'Poke Utilities',
+        siteName: 'Pstory Utilities',
         homeLabel: 'Pokédex',
         homeEyebrow: 'Hub da comunidade',
-        homeTitleBefore: 'Poke Utilities',
+        homeTitleBefore: 'Pstory Utilities',
         homeTitleAccent: 'para PStory',
         homeLead: 'Guias, quests e ferramentas em uma entrada direta para jogar sem ficar pulando entre abas soltas.',
         homeSupporting: 'Entre por Bosses, Quests, Sistemas, Utilidades e Comunidade para acessar Rotom Phone, Police Operation, Slowpoke Well, hunts, times, captura, streamers e vídeos.',
@@ -4920,7 +4920,7 @@ const strings = {
 };
 const lang = 'pt';
 function t(k){return strings[lang][k]||'';}
-const FIXED_BROWSER_TITLE = 'Poke Utilities';
+const FIXED_BROWSER_TITLE = 'Pstory Utilities';
 const SITE_CURSOR_MODE_STORAGE_KEY = 'siteCursorMode';
 const SITE_CURSOR_MODE_PIKACHU = 'pikachu';
 const SITE_CURSOR_MODE_SYSTEM = 'system';
