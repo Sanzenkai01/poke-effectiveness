@@ -1,17 +1,17 @@
 {
-  "updatedAt": "2026-09-17T03:38:21.156Z",
+  "updatedAt": "2026-09-17T03:39:27.024Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-17T03:29:06.480Z",
-    "endedAt": "2026-09-17T03:38:21.156Z",
-    "reason": "rat-found",
+    "startedAt": "2026-09-17T03:39:24.420Z",
+    "endedAt": "2026-09-17T03:39:27.024Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "adivorcio",
-      "callmevitao_",
       "dragonslayerpiva",
       "indypereira",
+      "callmevitao_",
       "sousupermeme",
       "0taichou",
       "cafeina54",
@@ -33,35 +33,26 @@
     ],
     "pstoryDropChannels": [
       "adivorcio",
-      "callmevitao_",
       "dragonslayerpiva",
       "indypereira"
     ],
     "observedChannels": [
-      "indypereira"
+      "dragonslayerpiva"
     ],
-    "observedSpawnChannels": [
-      "indypereira"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "indypereira",
-        "messageAt": 1789616300993,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "indypereira",
+        "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1789616300993,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1789616366917,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
-        "channel": "indypereira",
-        "kind": "spawn",
-        "messageAt": 1789616300993,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "channel": "dragonslayerpiva",
+        "kind": "escape",
+        "messageAt": 1789616366917,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -111,25 +102,35 @@
     "error": ""
   },
   "latest": {
-    "channel": "indypereira",
-    "lastMessageAt": 1789616300993,
-    "expectedNextAt": 1789617560993,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-09-17T00:17:57Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1789616301155,
-    "persistedAt": 1789616301155
+    "channel": "dragonslayerpiva",
+    "lastMessageAt": 1789616366917,
+    "expectedNextAt": 1789617566917,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-09-17T02:08:48Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1789616367024,
+    "persistedAt": 1789616367024
   },
   "timers": {
+    "dragonslayerpiva": {
+      "channel": "dragonslayerpiva",
+      "lastMessageAt": 1789616366917,
+      "expectedNextAt": 1789617566917,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-09-17T02:08:48Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1789616367024,
+      "persistedAt": 1789616367024
+    },
     "indypereira": {
       "channel": "indypereira",
-      "lastMessageAt": 1789616300993,
-      "expectedNextAt": 1789617560993,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1789615151554,
+      "expectedNextAt": 1789616351554,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-09-17T00:17:57Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1789616301155,
-      "persistedAt": 1789616301155
+      "source": "github-action-chat-escape",
+      "updatedAt": 1789615151682,
+      "persistedAt": 1789616364420
     }
   }
 }
