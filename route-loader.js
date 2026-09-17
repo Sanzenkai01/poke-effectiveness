@@ -6,8 +6,10 @@
     if(routeTab){
         appUrl.searchParams.set('tab', routeTab);
         var currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('tab', routeTab);
-        window.history.replaceState(null, '', currentUrl.toString());
+        if(currentUrl.searchParams.has('tab')){
+            currentUrl.searchParams.delete('tab');
+            window.history.replaceState(null, '', currentUrl.toString());
+        }
     }
 
     fetch(appUrl.toString())

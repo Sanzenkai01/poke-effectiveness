@@ -6261,6 +6261,7 @@ function showManiacs(options = {}){
         gsap.from(contentManiacs, { opacity: 0, y: -10, duration: 0.4 });
         gsap.from(contentManiacs.querySelectorAll('.maniacs-card'), { opacity: 0, y: 20, duration: 0.5, stagger: 0.05 });
     }
+    updateUrl();
 }
 
 function showHelds(){
@@ -11575,12 +11576,32 @@ function isTeamBuilderTankSlot(slotConfig){
 
 function getTeamBuilderEntryKey(entry){
     if(!entry) return '';
-    return `${normalizePokemonCatalogVariant(entry.variant)}:${entry.id || entry.routeSlug || entry.name}`;
+    const normalizedName = normalizePokemonSearchText(entry.name || entry.searchName || '');
+    const normalizedBaseName = normalizedName.replace(/^mega\s+/, '').replace(/^shiny\s+/, '').trim();
+    const entryIdentity = ['charizard', 'blaziken'].includes(normalizedBaseName)
+        ? normalizedName
+        : (entry.id || entry.routeSlug || entry.name);
+    return `${normalizePokemonCatalogVariant(entry.variant)}:${entryIdentity}`;
 }
 
 function getTeamBuilderEntryDuplicateKey(entry){
-    const normalizedName = entry?.searchName || normalizePokemonSearchText(entry?.name || '');
-    return normalizedName.replace(/^mega\s+/, '').replace(/^shiny\s+/, '').trim();
+    const normalizedName = normalizePokemonSearchText(entry?.name || entry?.searchName || '');
+    const normalizedBaseName = normalizedName.replace(/^mega\s+/, '').replace(/^shiny\s+/, '').trim();
+    if(['charizard', 'blaziken'].includes(normalizedBaseName)){
+        const formKey = isMegaPokemonCatalogEntry(entry) ? 'mega' : 'normal';
+        return `${normalizedBaseName}:${formKey}`;
+    }
+    return normalizedBaseName;
+}
+
+function isTeamBuilderMegaNormalPairException(leftEntry, rightEntry){
+    if(!leftEntry || !rightEntry) return false;
+    const names = [leftEntry, rightEntry].map(entry => normalizePokemonSearchText(entry.name || entry.searchName || ''));
+    const baseNames = names.map(name => name.replace(/^mega\s+/, '').replace(/^shiny\s+/, '').trim());
+    const hasMegaAndNormalForm = (
+        names.some(name => name.startsWith('mega ')) || isMegaPokemonCatalogEntry(leftEntry) || isMegaPokemonCatalogEntry(rightEntry)
+    ) && names.some(name => !name.startsWith('mega '));
+    return hasMegaAndNormalForm && baseNames[0] === baseNames[1] && ['charizard', 'blaziken'].includes(baseNames[0]);
 }
 
 function getTeamBuilderEeveelutionBaseKey(entry){
@@ -11735,12 +11756,25 @@ function getTeamBuilderSelectedMegaEntry(exceptSlotId = ''){
 }
 
 function isTeamBuilderMegaSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
-    return isMegaPokemonCatalogEntry(entry) && Boolean(getTeamBuilderSelectedMegaEntry(slotId));
+    if(!isMegaPokemonCatalogEntry(entry)) return false;
+    const selectedEntries = Object.entries(teamBuilderSelections || {})
+        .filter(([selectedSlotId]) => selectedSlotId !== slotId)
+        .map(([, selectedEntry]) => selectedEntry)
+        .filter(Boolean);
+    if(selectedEntries.some(selectedEntry => isTeamBuilderMegaNormalPairException(entry, selectedEntry))) return false;
+    return Boolean(selectedEntries.some(isMegaPokemonCatalogEntry));
 }
 
 function isTeamBuilderDuplicateSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
     const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
-    return Boolean(duplicateKey && getTeamBuilderSelectedDuplicateKeys(slotId).has(duplicateKey));
+    if(!duplicateKey) return false;
+    return Object.entries(teamBuilderSelections || {})
+        .filter(([selectedSlotId]) => selectedSlotId !== slotId)
+        .map(([, selectedEntry]) => selectedEntry)
+        .some(selectedEntry => (
+            getTeamBuilderEntryDuplicateKey(selectedEntry) === duplicateKey
+            && !isTeamBuilderMegaNormalPairException(entry, selectedEntry)
+        ));
 }
 
 function isTeamBuilderAceSameRoleSelectionBlocked(entry, slotId = teamBuilderActiveSlotId){
@@ -11829,15 +11863,20 @@ function getFilteredTeamBuilderEntries(){
     const activeRoles = Array.isArray(teamBuilderFilters.roles)
         ? teamBuilderFilters.roles.map(normalizePokemonRoleKey).filter(Boolean)
         : [];
+    const selectedEntries = Object.entries(teamBuilderSelections || {})
+        .filter(([slotId]) => slotId !== teamBuilderActiveSlotId)
+        .map(([, entry]) => entry)
+        .filter(Boolean);
     const selectedKeys = getTeamBuilderSelectedKeys(teamBuilderActiveSlotId);
     const selectedDuplicateKeys = getTeamBuilderSelectedDuplicateKeys(teamBuilderActiveSlotId);
 
     return getTeamBuilderCatalogEntries()
         .filter(entry => {
-            if(selectedKeys.has(getTeamBuilderEntryKey(entry))) return false;
-            if(selectedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))) return false;
-            if(isTeamBuilderAceSameRoleSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
-            if(isTeamBuilderMegaSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
+            const isMegaNormalException = selectedEntries.some(selectedEntry => isTeamBuilderMegaNormalPairException(entry, selectedEntry));
+            if(!isMegaNormalException && selectedKeys.has(getTeamBuilderEntryKey(entry))) return false;
+            if(!isMegaNormalException && selectedDuplicateKeys.has(getTeamBuilderEntryDuplicateKey(entry))) return false;
+            if(!isMegaNormalException && isTeamBuilderAceSameRoleSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
+            if(!isMegaNormalException && isTeamBuilderMegaSelectionBlocked(entry, teamBuilderActiveSlotId)) return false;
             if(!teamBuilderEntryMatchesSlot(entry, slotConfig)) return false;
             if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
             if(normalizedClan !== 'all' && entry.team !== normalizedClan) return false;
@@ -13202,7 +13241,10 @@ function isTeamBuilderAutoCompleteEntryAllowed(entry, slot, selections){
     }
     const selectedEntries = Object.values(selections).filter(Boolean);
     const duplicateKey = getTeamBuilderEntryDuplicateKey(entry);
-    if(duplicateKey && selectedEntries.some(selected => getTeamBuilderEntryDuplicateKey(selected) === duplicateKey)) return false;
+    if(duplicateKey && selectedEntries.some(selected => (
+        getTeamBuilderEntryDuplicateKey(selected) === duplicateKey
+        && !isTeamBuilderMegaNormalPairException(entry, selected)
+    ))) return false;
     if(isMegaPokemonCatalogEntry(entry) && selectedEntries.some(isMegaPokemonCatalogEntry)) return false;
     const aceRoleKey = getTeamBuilderAceRoleKey(entry);
     if(aceRoleKey && selectedEntries.some(selected => getTeamBuilderAceRoleKey(selected) === aceRoleKey)) return false;
@@ -22252,8 +22294,7 @@ function usesBoostBraveBronzeStone(state){
     const braveStoneExceptions = ['sawk', 'ferrothorn', 'escavalier'];
     if(braveStoneExceptions.includes(normalizedName)) return false;
     
-    return entry.roleKey === 'striker'
-        || normalizedPriceLabel.endsWith('rush')
+    return normalizedPriceLabel.endsWith('rush')
         || normalizedName.includes('alolan');
 }
 
