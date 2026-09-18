@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-09-18T17:49:08.890Z",
+  "updatedAt": "2026-09-18T18:01:32.639Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-18T17:25:08.568Z",
-    "endedAt": "2026-09-18T17:49:08.890Z",
-    "reason": "timeout",
+    "startedAt": "2026-09-18T17:49:36.220Z",
+    "endedAt": "2026-09-18T18:01:32.639Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "0taichou",
       "adivorcio",
@@ -32,10 +32,33 @@
       "vivihbecker"
     ],
     "pstoryDropChannels": [],
-    "observedChannels": [],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedChannels": [
+      "gordallink"
+    ],
+    "observedSpawnChannels": [
+      "gordallink"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "gordallink",
+        "messageAt": 1789754492507,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "gordallink",
+        "kind": "rattata-message",
+        "messageAt": 1789754492507,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "gordallink",
+        "kind": "spawn",
+        "messageAt": 1789754492507,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -82,6 +105,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "gordallink",
+    "lastMessageAt": 1789754492507,
+    "expectedNextAt": 1789755752507,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1789754492638,
+    "persistedAt": 1789754492639
+  },
+  "timers": {
+    "gordallink": {
+      "channel": "gordallink",
+      "lastMessageAt": 1789754492507,
+      "expectedNextAt": 1789755752507,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1789754492638,
+      "persistedAt": 1789754492639
+    }
+  }
 }
