@@ -1,11 +1,11 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v1125`;
+let CACHE_NAME = `${CACHE_PREFIX}v1126`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
   new URL('./app.html', self.registration.scope).toString(),
   new URL('./styles.css?v=20260920-ranger-profile', self.registration.scope).toString(),
-  new URL('./wiki-theme.css?v=20260829-sidebar-toggle', self.registration.scope).toString(),
+  new URL('./wiki-theme.css?v=20260920-ranger-profile', self.registration.scope).toString(),
   new URL('./script.js?v=20260920-ranger-profile', self.registration.scope).toString(),
   new URL('./bosses/recommendation-catalog.js?v=20260826d', self.registration.scope).toString(),
   new URL('./js/recommendation-engine.js?v=20260826d', self.registration.scope).toString(),
@@ -13,7 +13,7 @@ const APP_SHELL = [
   new URL('./js/utf8-guard.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260707b', self.registration.scope).toString(),
   new URL('./js/visits.shared.js?v=20260811a', self.registration.scope).toString(),
-  new URL('./route-loader.js?v=20260821a', self.registration.scope).toString(),
+  new URL('./route-loader.js?v=20260920-ranger-profile', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString(),
   new URL('./icons-type/favicon.ico', self.registration.scope).toString()
 ];
