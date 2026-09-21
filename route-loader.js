@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20260912-boost-cache';
+    var APP_SHELL_VERSION = '20260920-ranger-jellybeans';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appUrl = new URL('../app.html', window.location.href);
     appUrl.searchParams.set('_shell', APP_SHELL_VERSION);

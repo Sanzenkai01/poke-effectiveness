@@ -9062,6 +9062,23 @@ function bindMewtwoGuideZoom(image, imageData) {
   });
 }
 
+function bindRangerPokemonProfile(image, name) {
+  image.tabIndex = 0;
+  image.setAttribute('role', 'button');
+  image.setAttribute('aria-label', `Abrir perfil de ${name}`);
+  const openProfile = () => {
+    if (typeof window.openPokemonDetailsModalByName === 'function') {
+      window.openPokemonDetailsModalByName(name);
+    }
+  };
+  image.addEventListener('click', openProfile);
+  image.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openProfile();
+  });
+}
+
 function createMewtwoGuideImage(imageData, options = {}) {
   const figure = document.createElement('figure');
   figure.className = 'mewtwo-guide__figure';
@@ -9466,6 +9483,24 @@ function renderBossModeIntro() {
   if (introEl && isMewtwoMode) introEl.hidden = true;
   const heroEl = shell?.querySelector('.bosses-hero');
   if (heroEl) heroEl.hidden = isMewtwoMode;
+  const rangerGuide = shell?.querySelector('[data-ranger-guide]');
+  if (rangerGuide) rangerGuide.hidden = String(catalog?.id || '').toLowerCase() !== 'special';
+  if (rangerGuide && String(catalog?.id || '').toLowerCase() === 'special') {
+    rangerGuide.querySelectorAll('img').forEach((image) => {
+      if (image.dataset.rangerZoomBound === 'true') return;
+      image.dataset.rangerZoomBound = 'true';
+      const profileName = ['Zorua', 'Applin', 'Honedge'].find((name) => name.toLowerCase() === String(image.alt || '').toLowerCase());
+      if (profileName) {
+        bindRangerPokemonProfile(image, profileName);
+        return;
+      }
+      bindMewtwoGuideZoom(image, {
+        src: image.currentSrc || image.src,
+        alt: image.alt || 'Imagem do guia Ranger Bosses',
+        caption: image.alt || 'Imagem do guia Ranger Bosses'
+      });
+    });
+  }
 
   try {
     const existingActions = document.querySelector('.mainquest-actions');

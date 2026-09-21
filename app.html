@@ -167,7 +167,7 @@
       })();
     </script>
   <link rel="stylesheet" href="styles.css?v=20260912-boost-cache">
-  <link rel="stylesheet" href="wiki-theme.css?v=20260829-sidebar-toggle">
+  <link rel="stylesheet" href="wiki-theme.css?v=20260920-ranger-profile">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -861,14 +861,11 @@
             <article class="mainquest-stage"><div class="mainquest-stage__number">05</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Boss Final</span><h3>Invada a base e enfrente Mega Malamar</h3><p>Derrote os Rockets, resolva os quebra-cabeças e enfrente o chefe Mega Malamar.</p><button class="mainquest-action-btn mainquest-puzzle-open-btn" type="button">Quebra-Cabeças</button><div id="mainquest-final-boss-slot"></div></div></article>
           </div>
         </section>
-        <div class="bosses-header">
-          <aside class="speedster-search-panel speedster-search-panel--inline" style="margin-bottom:1rem;">
-            <label for="speedster-search" class="speedster-search-label">Buscar Pokémon</label>
-            <input id="speedster-search" class="speedster-search-input" type="search" placeholder="Digite o nome de um Pokémon" aria-label="Buscar Pokémon" autocomplete="off" />
-            <div id="speedster-search-results" class="speedster-search-results" hidden aria-live="polite"></div>
-            <div id="speedster-search-no-results" class="speedster-search-no-results" hidden>Este Pokémon ainda não foi adicionado.</div>
-          </aside>
-        </div>
+        <section class="ranger-guide" data-ranger-guide hidden aria-label="Guia de Jellybeans dos Ranger Bosses">
+          <div class="ranger-guide__section"><div class="ranger-guide__section-heading"><span class="ranger-guide__step">01</span><div><h4>Como farmar Jellybeans</h4><p>Há duas lojas onde você pode trocar seus pontos por Jellybeans.</p></div></div><div class="ranger-guide__shops"><figure class="ranger-guide__figure"><img src="/ranger-bosses/ranger-shop.png" alt="Loja de Ranger Points com Jellybeans" loading="lazy"><figcaption><strong>Pontos de Ranger</strong><span>Troque seus pontos na Ranger Shop.</span></figcaption></figure><figure class="ranger-guide__figure"><img src="/ranger-bosses/weekly-shop.png" alt="Loja semanal com Jellybeans" loading="lazy"><figcaption><strong>Pontos de dailys semanais</strong><span>Use os pontos acumulados na Gift Shop de pontos Semanais.</span></figcaption></figure></div></div>
+          <div class="ranger-guide__section ranger-guide__section--craft"><div class="ranger-guide__section-heading"><span class="ranger-guide__step">02</span><div><h4>Jellybeans craftáveis</h4><p>Use 1 Jelly Bean base, 20 materiais do Pokémon indicado e 15 Ancient Stone.</p></div></div><div class="ranger-guide__craft-visuals"><figure class="ranger-guide__craft-image"><img src="/ranger-bosses/craft-image.png" alt="Tela de criação das Jellybeans especiais" loading="lazy"><figcaption>Receita e estação de craft das Jellybeans especiais.</figcaption></figure><figure class="ranger-guide__craft-image ranger-guide__craft-image--location"><img src="/ranger-bosses/location.png" alt="Localização da janela de craft das Jellybeans" loading="lazy"><figcaption><strong>Onde encontrar o craft<br></strong><span>O local do craft fica próximo ao restaurante do TC e à entrada da Expedition.</span></figcaption></figure></div>          <div class="ranger-guide__recipes"><article class="ranger-recipe ranger-recipe--illusion"><div class="ranger-recipe__icon">✦</div><div><h5>Jelly Bean: Illusion</h5><span class="ranger-recipe__boss">Ranger Boss Zoroark</span><p><b>1 Jelly Bean + 20 Illusion Fur, 15 Ancient Stone</b><small>Drop de Zorua</small><img class="ranger-recipe__pokemon" src="/pokemons/5gen/zorua.png" alt="Zorua" loading="lazy"></p></div></article><article class="ranger-recipe ranger-recipe--apple"><div class="ranger-recipe__icon">◈</div><div><h5>Jelly Bean: Apple</h5><span class="ranger-recipe__boss">Ranger Boss Hydrapple</span><p><b>1 Jelly Bean + 20 Apple Core, 15 Ancient Stone</b><small>Drop de Applin</small><img class="ranger-recipe__pokemon" src="/pokemons/8gen/applin.png" alt="Applin" loading="lazy"></p></div></article><article class="ranger-recipe ranger-recipe--royal"><div class="ranger-recipe__icon">♜</div><div><h5>Jelly Bean: Royal</h5><span class="ranger-recipe__boss">Ranger Boss Aegislash</span><p><b>1 Jelly Bean + 20 Piece of Goldsteel, 15 Ancient Stone</b><small>Drop de Honedge</small><img class="ranger-recipe__pokemon" src="/pokemons/6gen/honedge.png" alt="Honedge" loading="lazy"></p></div></article></div></div>
+          <div class="ranger-guide__section-heading ranger-guide__section-heading--bosses"><span class="ranger-guide__step">03</span><div><h4>Escolha seu Ranger Boss</h4><p>Abra um card para conferir as recomendações e os detalhes da batalha.</p></div></div>
+        </section>
         <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
       </div>
     </div>
@@ -1085,7 +1082,7 @@
     <script src="bosses/recommendation-catalog.js?v=20260826d"></script>
     <script src="js/recommendation-engine.js?v=20260826d"></script>
     <script src="js/striker-recommendation-engine.js?v=20260902a"></script>
-    <script src="script.js?v=20260912-boost-cache" defer></script>
-    <script src="bosses/bosses.js?v=20260916-mainquest3" defer></script>
+    <script src="script.js?v=20260920-ranger-profile" defer></script>
+    <script src="bosses/bosses.js?v=20260920-ranger-profile" defer></script>
 </body>
 </html>
