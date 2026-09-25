@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-09-25T18:53:09.159Z",
+  "updatedAt": "2026-09-25T19:12:15.547Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-25T18:53:06.581Z",
-    "endedAt": "2026-09-25T18:53:09.158Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-25T19:03:29.654Z",
+    "endedAt": "2026-09-25T19:12:15.547Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "dragonslayerpiva",
       "gordallink",
       "uguettolitz",
       "zsales33",
@@ -15,7 +16,6 @@
       "adivorcio",
       "cafeina54",
       "callmevitao_",
-      "dragonslayerpiva",
       "eaisantinho",
       "enriqfmz",
       "eusou_o_d",
@@ -33,27 +33,36 @@
       "vivihbecker"
     ],
     "pstoryDropChannels": [
+      "dragonslayerpiva",
       "gordallink",
       "uguettolitz",
       "zsales33"
     ],
     "observedChannels": [
-      "uguettolitz"
+      "gordallink"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "gordallink"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "gordallink",
+        "messageAt": 1790363535443,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "uguettolitz",
+        "channel": "gordallink",
         "kind": "rattata-message",
-        "messageAt": 1790362389061,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1790363535443,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "uguettolitz",
-        "kind": "escape",
-        "messageAt": 1790362389061,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "gordallink",
+        "kind": "spawn",
+        "messageAt": 1790363535443,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -103,16 +112,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "uguettolitz",
-    "lastMessageAt": 1790362389061,
-    "expectedNextAt": 1790363589061,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-09-24T21:07:36Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1790362389158,
-    "persistedAt": 1790362389158
+    "channel": "gordallink",
+    "lastMessageAt": 1790363535443,
+    "expectedNextAt": 1790364795443,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-09-25T18:11:28Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1790363535546,
+    "persistedAt": 1790363535546
   },
   "timers": {
+    "gordallink": {
+      "channel": "gordallink",
+      "lastMessageAt": 1790363535443,
+      "expectedNextAt": 1790364795443,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-09-25T18:11:28Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1790363535546,
+      "persistedAt": 1790363535546
+    },
     "uguettolitz": {
       "channel": "uguettolitz",
       "lastMessageAt": 1790362389061,
@@ -121,17 +140,7 @@
       "streamStartedAt": "2026-09-24T21:07:36Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1790362389158,
-      "persistedAt": 1790362389158
-    },
-    "gordallink": {
-      "channel": "gordallink",
-      "lastMessageAt": 1790362325919,
-      "expectedNextAt": 1790363585919,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-09-25T18:11:28Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1790362326041,
-      "persistedAt": 1790362386580
+      "persistedAt": 1790363009653
     }
   }
 }
