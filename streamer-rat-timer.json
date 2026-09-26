@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-09-26T19:32:45.336Z",
+  "updatedAt": "2026-09-26T19:51:54.358Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-26T19:32:08.778Z",
-    "endedAt": "2026-09-26T19:32:45.336Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-26T19:42:25.610Z",
+    "endedAt": "2026-09-26T19:51:54.358Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "karlin_nara",
       "uguettolitz",
       "zsales33",
       "twozada212",
@@ -23,7 +24,6 @@
       "gordallink",
       "indypereira",
       "jackpist0la",
-      "karlin_nara",
       "lordjuregi",
       "nazgulplayer",
       "okamiulv",
@@ -33,26 +33,35 @@
       "vivihbecker"
     ],
     "pstoryDropChannels": [
+      "karlin_nara",
       "uguettolitz",
       "zsales33"
     ],
     "observedChannels": [
-      "uguettolitz"
+      "karlin_nara"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "karlin_nara"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "karlin_nara",
+        "messageAt": 1790452314246,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "uguettolitz",
+        "channel": "karlin_nara",
         "kind": "rattata-message",
-        "messageAt": 1790451165228,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1790452314246,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "uguettolitz",
-        "kind": "escape",
-        "messageAt": 1790451165228,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "karlin_nara",
+        "kind": "spawn",
+        "messageAt": 1790452314246,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -102,16 +111,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "uguettolitz",
-    "lastMessageAt": 1790451165228,
-    "expectedNextAt": 1790452365228,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-09-26T18:12:48Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1790451165335,
-    "persistedAt": 1790451165335
+    "channel": "karlin_nara",
+    "lastMessageAt": 1790452314246,
+    "expectedNextAt": 1790453574246,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-09-26T19:33:47Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1790452314358,
+    "persistedAt": 1790452314358
   },
   "timers": {
+    "karlin_nara": {
+      "channel": "karlin_nara",
+      "lastMessageAt": 1790452314246,
+      "expectedNextAt": 1790453574246,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-09-26T19:33:47Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1790452314358,
+      "persistedAt": 1790452314358
+    },
     "uguettolitz": {
       "channel": "uguettolitz",
       "lastMessageAt": 1790451165228,
@@ -120,7 +139,7 @@
       "streamStartedAt": "2026-09-26T18:12:48Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1790451165335,
-      "persistedAt": 1790451165335
+      "persistedAt": 1790451745610
     },
     "cafeina54": {
       "channel": "cafeina54",
@@ -130,7 +149,7 @@
       "streamStartedAt": "2026-09-26T15:12:59Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1790449894418,
-      "persistedAt": 1790451128778
+      "persistedAt": 1790451745610
     }
   }
 }
