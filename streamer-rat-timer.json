@@ -1,19 +1,17 @@
 {
-  "updatedAt": "2026-09-26T03:04:51.926Z",
+  "updatedAt": "2026-09-26T03:24:01.587Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-26T03:04:22.173Z",
-    "endedAt": "2026-09-26T03:04:51.926Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-26T03:14:41.503Z",
+    "endedAt": "2026-09-26T03:24:01.587Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "adivorcio",
       "cafeina54",
       "dragonslayerpiva",
-      "zsales33",
       "callmevitao_",
-      "sousupermeme",
       "0taichou",
       "eaisantinho",
       "enriqfmz",
@@ -27,34 +25,43 @@
       "nazgulplayer",
       "okamiulv",
       "raulzerah1",
+      "sousupermeme",
       "thigaartus",
       "twozada212",
       "uguettolitz",
-      "vivihbecker"
+      "vivihbecker",
+      "zsales33"
     ],
     "pstoryDropChannels": [
       "adivorcio",
       "cafeina54",
-      "dragonslayerpiva",
-      "zsales33"
+      "dragonslayerpiva"
     ],
     "observedChannels": [
       "dragonslayerpiva"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "dragonslayerpiva"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "dragonslayerpiva",
+        "messageAt": 1790393041497,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1790391891827,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1790393041497,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "dragonslayerpiva",
-        "kind": "escape",
-        "messageAt": 1790391891827,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1790393041497,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -105,24 +112,24 @@
   },
   "latest": {
     "channel": "dragonslayerpiva",
-    "lastMessageAt": 1790391891827,
-    "expectedNextAt": 1790393091827,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1790393041497,
+    "expectedNextAt": 1790394301497,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-09-25T18:58:03Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1790391891925,
-    "persistedAt": 1790391891925
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1790393041586,
+    "persistedAt": 1790393041586
   },
   "timers": {
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
-      "lastMessageAt": 1790391891827,
-      "expectedNextAt": 1790393091827,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1790393041497,
+      "expectedNextAt": 1790394301497,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-09-25T18:58:03Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1790391891925,
-      "persistedAt": 1790391891925
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1790393041586,
+      "persistedAt": 1790393041586
     },
     "cafeina54": {
       "channel": "cafeina54",
@@ -132,7 +139,7 @@
       "streamStartedAt": "2026-09-25T22:44:42Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1790390622324,
-      "persistedAt": 1790391862172
+      "persistedAt": 1790392481502
     }
   }
 }
