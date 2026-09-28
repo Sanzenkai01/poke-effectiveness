@@ -1,18 +1,18 @@
 {
-  "updatedAt": "2026-09-28T16:12:45.931Z",
+  "updatedAt": "2026-09-28T16:31:52.609Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-09-28T16:12:20.708Z",
-    "endedAt": "2026-09-28T16:12:45.931Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-09-28T16:22:44.042Z",
+    "endedAt": "2026-09-28T16:31:52.609Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "cafeina54",
       "zsales33",
       "dragonslayerpiva",
       "0taichou",
       "adivorcio",
-      "cafeina54",
       "callmevitao_",
       "eaisantinho",
       "enriqfmz",
@@ -33,25 +33,34 @@
       "vivihbecker"
     ],
     "pstoryDropChannels": [
+      "cafeina54",
       "zsales33"
     ],
     "observedChannels": [
-      "zsales33"
+      "cafeina54"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "cafeina54"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "cafeina54",
+        "messageAt": 1790613112484,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "zsales33",
+        "channel": "cafeina54",
         "kind": "rattata-message",
-        "messageAt": 1790611965848,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1790613112484,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "zsales33",
-        "kind": "escape",
-        "messageAt": 1790611965848,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "cafeina54",
+        "kind": "spawn",
+        "messageAt": 1790613112484,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -101,16 +110,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "zsales33",
-    "lastMessageAt": 1790611965848,
-    "expectedNextAt": 1790613165848,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-09-28T15:03:36Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1790611965930,
-    "persistedAt": 1790611965930
+    "channel": "cafeina54",
+    "lastMessageAt": 1790613112484,
+    "expectedNextAt": 1790614372484,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-09-28T16:16:10Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1790613112608,
+    "persistedAt": 1790613112608
   },
   "timers": {
+    "cafeina54": {
+      "channel": "cafeina54",
+      "lastMessageAt": 1790613112484,
+      "expectedNextAt": 1790614372484,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-09-28T16:16:10Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1790613112608,
+      "persistedAt": 1790613112608
+    },
     "zsales33": {
       "channel": "zsales33",
       "lastMessageAt": 1790611965848,
@@ -119,17 +138,7 @@
       "streamStartedAt": "2026-09-28T15:03:36Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1790611965930,
-      "persistedAt": 1790611965930
-    },
-    "uguettolitz": {
-      "channel": "uguettolitz",
-      "lastMessageAt": 1790609544864,
-      "expectedNextAt": 1790610744864,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-09-28T12:13:09Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1790609544956,
-      "persistedAt": 1790611940707
+      "persistedAt": 1790612564042
     }
   }
 }
