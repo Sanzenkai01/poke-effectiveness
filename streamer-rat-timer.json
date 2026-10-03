@@ -1,14 +1,15 @@
 {
-  "updatedAt": "2026-10-03T12:26:52.047Z",
+  "updatedAt": "2026-10-03T12:27:30.331Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-03T12:02:51.847Z",
-    "endedAt": "2026-10-03T12:26:52.047Z",
-    "reason": "timeout",
+    "startedAt": "2026-10-03T12:27:20.240Z",
+    "endedAt": "2026-10-03T12:27:30.331Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
+      "nazgulplayer",
       "dragonslayerpiva",
       "0taichou",
       "adivorcio",
@@ -22,7 +23,6 @@
       "jackpist0la",
       "karlin_nara",
       "lordjuregi",
-      "nazgulplayer",
       "okamiulv",
       "raulzerah1",
       "sousupermeme",
@@ -33,12 +33,36 @@
       "zsales33"
     ],
     "pstoryDropChannels": [
-      "callmevitao_"
+      "callmevitao_",
+      "nazgulplayer"
     ],
-    "observedChannels": [],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedChannels": [
+      "nazgulplayer"
+    ],
+    "observedSpawnChannels": [
+      "nazgulplayer"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "nazgulplayer",
+        "messageAt": 1791030450240,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "nazgulplayer",
+        "kind": "rattata-message",
+        "messageAt": 1791030450240,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "nazgulplayer",
+        "kind": "spawn",
+        "messageAt": 1791030450240,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -85,6 +109,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "nazgulplayer",
+    "lastMessageAt": 1791030450240,
+    "expectedNextAt": 1791031710240,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-03T12:12:50Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1791030450330,
+    "persistedAt": 1791030450331
+  },
+  "timers": {
+    "nazgulplayer": {
+      "channel": "nazgulplayer",
+      "lastMessageAt": 1791030450240,
+      "expectedNextAt": 1791031710240,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-03T12:12:50Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1791030450330,
+      "persistedAt": 1791030450331
+    }
+  }
 }
