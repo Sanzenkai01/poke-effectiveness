@@ -46,22 +46,18 @@ let colCount = 0;
 let currentSelection = [];
 let effectivenessDomInitialized = false;
 
-let rangeSelect = document.getElementById('range-select');
-let rangeResults = document.getElementById('range-results');
-let commonInput = document.getElementById('common-plates');
-let commonResults = document.getElementById('common-results');
-let shinyInput = document.getElementById('shiny-plates');
-let shinyResults = document.getElementById('shiny-results');
-let variantRadios = document.querySelectorAll('input[name="poke-variant"]');
 let trainingPokemonSearchInput = document.getElementById('training-pokemon-search');
 let trainingPokemonResults = document.getElementById('training-pokemon-results');
 let trainingPokemonNoResults = document.getElementById('training-pokemon-no-results');
 let trainingSelectedPokemon = document.getElementById('training-selected-pokemon');
 let trainingCurrentLevelInput = document.getElementById('training-current-level');
+let trainingCurrentProgressInput = document.getElementById('training-current-progress');
+let trainingProgressControl = document.getElementById('training-progress-control');
 let trainingLevelDecreaseBtn = document.getElementById('training-level-decrease');
 let trainingLevelIncreaseBtn = document.getElementById('training-level-increase');
 let trainingLevelPreview = document.getElementById('training-level-preview');
 let trainingVariantInputs = document.querySelectorAll('input[name="training-variant"]');
+let trainingVariantDescription = document.getElementById('training-variant-description');
 let trainingResults = document.getElementById('training-results');
 let trainingSelectionStatus = document.getElementById('training-selection-status');
 let trainingInfoToggle = document.getElementById('training-info-toggle');
@@ -4367,26 +4363,12 @@ function setCommunityTopic(topicKey, options = {}){
     }
 }
 
-const ranges = {
-    '50-100': { plates: 280, gold: 40 },
-    '65-100': { plates: 284, gold: 37 },
-    '80-100': { plates: 289, gold: 34 },
-    '95-100': { plates: 135, gold: 15 }
-};
-
-const TRAINING_OFFICIAL_TOTALS = Object.freeze([
-    { level: 50, plates: 280, coins: 40 },
-    { level: 65, plates: 284, coins: 37 },
-    { level: 80, plates: 289, coins: 34 },
-    { level: 95, plates: 135, coins: 15 }
-]);
-
 const TRAINING_EXPERIENCE_RATES = Object.freeze([
-    { minLevel: 95, success: 35, fail: 15 },
-    { minLevel: 80, success: 60, fail: 25 },
-    { minLevel: 65, success: 95, fail: 40 },
-    { minLevel: 50, success: 125, fail: 65 },
-    { minLevel: 5, success: 100, fail: 50 }
+    { minLevel: 95, experience: 25 },
+    { minLevel: 80, experience: 50 },
+    { minLevel: 65, experience: 88 },
+    { minLevel: 50, experience: 125 },
+    { minLevel: 5, experience: 200 }
 ]);
 
 const COMMON_PLATE_COST = {
@@ -4395,7 +4377,9 @@ const COMMON_PLATE_COST = {
     stones: 1
 };
 
-const SHINING_PLATE_BLOCK_SIZE = 30;
+const CANDY_PLATE_COST = 10;
+const SHINY_CANDY_GOLDEN_TICKET_COST = 1;
+const SHINING_PLATE_BLOCK_SIZE = 40;
 const BOOST_DEFAULT_STATE = Object.freeze({
     pokemonName: '',
     shiny: 'no',
@@ -5283,12 +5267,6 @@ function updateTextContent(){
         homeBtn.setAttribute('title', t('homeLabel'));
         homeBtn.setAttribute('aria-label', t('homeLabel'));
     }
-    const ptLabel = document.getElementById('pokemon-type-label');
-    if(ptLabel) ptLabel.textContent = t('pokemonTypeLabel') + ':';
-    variantRadios.forEach(r=>{
-        if(r.value === 'normal') r.nextSibling.textContent = t('normal');
-        if(r.value === 'shiny') r.nextSibling.textContent = t('shiny');
-    });
     // Traduzir selects e notas na calculadora de captura
     const ballSelectEl = document.getElementById('ball-select');
     if(ballSelectEl){
@@ -5322,32 +5300,6 @@ function updateTextContent(){
     if(logInput) logInput.placeholder = t('logPlaceholder');
     const catchNoteEl = document.querySelector('.catch-note');
     if(catchNoteEl) catchNoteEl.textContent = t('catchNote');
-    // Atualizar paragrafos informativos da calculadora
-    if(contentCalc){
-        const calcInfo = contentCalc.querySelector('.calc-info');
-        if(calcInfo){
-            calcInfo.innerHTML = `<p>${t('infoPlateCommon')}</p><p>${t('infoShinyCost')}</p>`;
-        }
-        const rangeLabel = contentCalc.querySelector('label[for="range-select"]');
-        if(rangeLabel) rangeLabel.textContent = t('rangeLabel') + ':';
-        const commonLabel = contentCalc.querySelector('label[for="common-plates"]');
-        if(commonLabel) commonLabel.textContent = t('commonPlatesLabel') + ':';
-        const shinyLabel = contentCalc.querySelector('label[for="shiny-plates"]');
-        if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
-    }
-    // Traduzir opcoes do select de faixa
-    if(rangeSelect){
-        const map = {
-            '50-100': '50 ao 100',
-            '65-100': '65 ao 100',
-            '80-100': '80 ao 100',
-            '95-100': '95 ao 100'
-        };
-        Object.keys(map).forEach(val=>{
-            const opt = rangeSelect.querySelector(`option[value="${val}"]`);
-            if(opt) opt.textContent = map[val];
-        });
-    }
     // Rotulos da UI de captura
     const ballLabel = document.querySelector('label[for="ball-select"]');
     if(ballLabel) ballLabel.textContent = t('ballChoiceLabel');
@@ -5408,12 +5360,6 @@ function updateTextContent(){
         if(h2) h2.textContent = t('calculatorTitle');
         const instr = document.getElementById('calc-instructions');
         if(instr) instr.textContent = t('calculatorInstructions');
-        const rangeLabel = contentCalc.querySelector('label[for="range-select"]');
-        if(rangeLabel) rangeLabel.textContent = t('rangeLabel') + ':';
-        const commonLabel = contentCalc.querySelector('label[for="common-plates"]');
-        if(commonLabel) commonLabel.textContent = t('commonPlatesLabel') + ':';
-        const shinyLabel = contentCalc.querySelector('label[for="shiny-plates"]');
-        if(shinyLabel) shinyLabel.textContent = t('shinyPlatesLabel') + ':';
     }
     if(tabCalcBtn && tabCalcBtn.classList.contains('active') || (tabCatchBtn && tabCatchBtn.classList.contains('active'))){
         instr.style.display = 'none';
@@ -5475,9 +5421,7 @@ function updateTextContent(){
     if(coinIcon) coinIcon.alt = t('goldCoinsLabel');
     // Se a calculadora estiver visivel, recalcular saidas dinamicas para atualizar o idioma
     if(contentCalc && !contentCalc.hidden){
-        updateRangeResults();
-        updateCommon();
-        updateShiny();
+        syncTrainingCalculator();
     }
     // Se um resultado de fossil estiver visivel, redesenhar para usar textos no idioma correto
     if(lastFossilPair && fossilResultDiv && fossilResultDiv.innerHTML.trim() !== ''){
@@ -9388,9 +9332,6 @@ function showCalculator(){
     document.body.classList.remove('show-instructions');
     const legend = document.getElementById('legend');
     if(legend) legend.style.display = 'none';
-    updateRangeResults();
-    updateCommon();
-    updateShiny();
     const titleEl = document.getElementById('page-title');
     if(titleEl) titleEl.textContent = t('calculatorTitle');
     updateBrowserTitle();
@@ -20611,6 +20552,16 @@ function clampTrainingLevel(value){
     return Math.max(5, Math.min(99, parsed));
 }
 
+function clampTrainingProgress(value){
+    const parsed = Number.parseInt(value, 10);
+    if(!Number.isFinite(parsed)) return 0;
+    return Math.max(0, Math.min(99, parsed));
+}
+
+function getTrainingCurrentProgress(){
+    return clampTrainingProgress(trainingCurrentProgressInput?.value || 0);
+}
+
 function getTrainingEntryLevel(entry){
     const parsed = Number.parseInt(entry?.level, 10);
     return clampTrainingLevel(Number.isFinite(parsed) ? parsed : 5);
@@ -20758,10 +20709,6 @@ function getSelectedTrainingVariant(){
         : 'normal';
 }
 
-function getTrainingPlateCostForLevel(level){
-    return Math.max(1, Math.floor(Number(level) / 10));
-}
-
 function getTrainingExperienceRatesForLevel(level){
     const from = clampTrainingLevel(level);
     return TRAINING_EXPERIENCE_RATES.find(entry => from >= entry.minLevel) || TRAINING_EXPERIENCE_RATES[TRAINING_EXPERIENCE_RATES.length - 1];
@@ -20771,74 +20718,29 @@ function getTrainingBaseLevelForCalculation(currentLevel){
     return getTrainingEntryLevel(trainingSelectedPokemonEntry) || clampTrainingLevel(currentLevel);
 }
 
-function getTrainingProgressRows(startLevel, baseLevel, resultType = 'success'){
-    const rows = [];
-    const rates = getTrainingExperienceRatesForLevel(baseLevel);
-    const expPerTraining = resultType === 'fail' ? rates.fail : rates.success;
-    if(expPerTraining <= 0) return rows;
-    let level = clampTrainingLevel(startLevel);
-    while(level < 100){
-        const from = level;
-        const to = Math.min(100, level + (expPerTraining / 100));
-        rows.push({
-            from,
-            to,
-            plates: getTrainingPlateCostForLevel(from)
-        });
-        level = to;
-    }
-    return rows;
-}
-
-function getTrainingRows(startLevel, baseLevel = getTrainingBaseLevelForCalculation(startLevel)){
-    const from = clampTrainingLevel(startLevel);
-    const base = clampTrainingLevel(baseLevel);
-    const successRows = getTrainingProgressRows(from, base, 'success');
-    const failRows = getTrainingProgressRows(from, base, 'fail');
-    const totalRows = Math.max(successRows.length, failRows.length);
-    return Array.from({ length: totalRows }, (_, index) => {
-        const successRow = successRows[index] || null;
-        const failRow = failRows[index] || null;
-        const rowFrom = successRow?.from ?? failRow?.from ?? from;
-        const rowTo = successRow?.to ?? failRow?.to ?? 100;
-        return {
-            from: rowFrom,
-            to: rowTo,
-            trainingIndex: index + 1,
-            label: `Treino ${index + 1}`,
-            coins: successRow ? 1 : 0,
-            failCoins: 0,
-            successPlates: successRow?.plates || 0,
-            failPlates: failRow?.plates || 0
-        };
-    });
-}
-
-function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVariant(), baseLevel = getTrainingBaseLevelForCalculation(startLevel)){
-    const rows = getTrainingRows(startLevel, baseLevel);
-    const coins = rows.reduce((sum, row) => sum + row.coins, 0);
-    const failCoins = rows.reduce((sum, row) => sum + (row.failCoins || 0), 0);
-    const successPlates = rows.reduce((sum, row) => sum + row.successPlates, 0);
-    const failPlates = rows.reduce((sum, row) => sum + row.failPlates, 0);
-    const shiningPlates = variant === 'shiny' ? successPlates : 0;
-    const shiningStoneBlocks = variant === 'shiny'
-        ? Math.ceil(shiningPlates / SHINING_PLATE_BLOCK_SIZE)
+function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVariant(), baseLevel = getTrainingBaseLevelForCalculation(startLevel), progressPercent = getTrainingCurrentProgress()){
+    const experiencePerCandy = getTrainingExperienceRatesForLevel(baseLevel).experience;
+    const remainingExperiencePercent = (100 - clampTrainingLevel(startLevel)) * 100 - clampTrainingProgress(progressPercent);
+    const candies = Math.ceil(Math.max(0, remainingExperiencePercent) / experiencePerCandy);
+    const candyPlates = candies * CANDY_PLATE_COST;
+    const shiningPlatesRequired = variant === 'shiny' ? candyPlates : 0;
+    const shiningPlateBlocks = variant === 'shiny'
+        ? Math.ceil(shiningPlatesRequired / SHINING_PLATE_BLOCK_SIZE)
         : 0;
-    const craftCommonPlates = variant === 'shiny'
-        ? Math.max(successPlates, shiningStoneBlocks * SHINING_PLATE_BLOCK_SIZE)
-        : successPlates;
+    const shiningPlatesCrafted = shiningPlateBlocks * SHINING_PLATE_BLOCK_SIZE;
+    const commonPlates = variant === 'shiny' ? shiningPlatesCrafted : candyPlates;
     return {
-        rows,
-        coins,
-        failCoins,
-        successPlates,
-        failPlates,
-        shiningPlates,
-        shiningStoneBlocks,
-        craftCommonPlates,
-        elementItems: craftCommonPlates * COMMON_PLATE_COST.elementItems,
-        charItems: craftCommonPlates * COMMON_PLATE_COST.charItems,
-        stones: craftCommonPlates * COMMON_PLATE_COST.stones
+        experiencePerCandy,
+        candies,
+        candyPlates,
+        shiningPlatesRequired,
+        shiningPlatesCrafted,
+        shiningPlateBlocks,
+        commonPlates,
+        shiningTickets: variant === 'shiny' ? candies * SHINY_CANDY_GOLDEN_TICKET_COST : 0,
+        elementItems: commonPlates * COMMON_PLATE_COST.elementItems,
+        charItems: commonPlates * COMMON_PLATE_COST.charItems,
+        stones: commonPlates * COMMON_PLATE_COST.stones
     };
 }
 
@@ -20886,11 +20788,14 @@ function createTrainingMaterialCard(options = {}){
     title.textContent = label;
     const amount = document.createElement('span');
     amount.className = 'training-material-card__value';
-    amount.textContent = Number(value || 0).toLocaleString('pt-BR');
+    amount.textContent = typeof value === 'number' ? value.toLocaleString('pt-BR') : String(value);
     const note = document.createElement('small');
     note.textContent = detail;
-    body.append(title, amount, note);
-    card.append(media, body);
+    body.append(title, amount);
+    if(detail) body.appendChild(note);
+    if(image || badge) card.appendChild(media);
+    card.appendChild(body);
+    if(!image && !badge) card.classList.add('training-material-card--text-only');
     return card;
 }
 
@@ -20933,20 +20838,30 @@ function setTrainingStepUnlocked(stepEl, unlocked){
 function updateTrainingStepState(){
     const hasPokemon = Boolean(trainingSelectedPokemonEntry);
     const level = clampTrainingLevel(trainingCurrentLevelInput?.value || 5);
+    const baseLevel = hasPokemon ? getTrainingEntryLevel(trainingSelectedPokemonEntry) : 0;
+    const hasPartialLevelProgress = hasPokemon && baseLevel >= 50;
     const hasLevel = hasPokemon && level >= 5 && level < 100;
     setTrainingStepUnlocked(trainingStepLevel, hasPokemon);
     setTrainingStepUnlocked(trainingStepVariant, hasLevel);
 
     if(trainingCurrentLevelInput) trainingCurrentLevelInput.disabled = !hasPokemon;
+    if(trainingProgressControl) trainingProgressControl.hidden = !hasPartialLevelProgress;
+    if(trainingCurrentProgressInput) trainingCurrentProgressInput.disabled = !hasPartialLevelProgress;
     if(trainingLevelDecreaseBtn) trainingLevelDecreaseBtn.disabled = !hasPokemon || level <= 5;
     if(trainingLevelIncreaseBtn) trainingLevelIncreaseBtn.disabled = !hasPokemon || level >= 99;
     trainingVariantInputs.forEach(input => {
         input.disabled = !hasLevel;
     });
+    if(trainingVariantDescription){
+        trainingVariantDescription.textContent = getSelectedTrainingVariant() === 'shiny'
+            ? 'O Candy Shiny usa Shining Plates e Golden Tickets para ser fabricado.'
+            : 'O Candy usa apenas Plates Comuns para ser fabricado.';
+    }
     if(trainingLevelPreview){
-        const previewTotals = hasPokemon ? calculateTrainingTotals(level) : null;
+        const progress = getTrainingCurrentProgress();
+        const previewTotals = hasPokemon ? calculateTrainingTotals(level, getSelectedTrainingVariant(), baseLevel, progress) : null;
         trainingLevelPreview.textContent = hasPokemon
-            ? `${previewTotals.coins} treino(s) ate o level 100.`
+            ? `${previewTotals.candies} ${previewTotals.candies === 1 ? 'Candy' : 'Candies'} até o level 100${hasPartialLevelProgress ? ` • ${progress}% do level atual` : ''}.`
             : '';
     }
 }
@@ -20954,14 +20869,15 @@ function updateTrainingStepState(){
 function renderTrainingResults(){
     if(!trainingResults) return;
     if(!trainingSelectedPokemonEntry){
-        trainingResults.replaceChildren(trainingSelectionStatus || document.createTextNode('Selecione um Pokemon para liberar as proximas etapas.'));
-        if(trainingSelectionStatus) trainingSelectionStatus.textContent = 'Selecione um Pokemon para liberar as proximas etapas.';
+        trainingResults.replaceChildren(trainingSelectionStatus || document.createTextNode('Selecione um Pokémon para liberar as próximas etapas.'));
+        if(trainingSelectionStatus) trainingSelectionStatus.textContent = 'Selecione um Pokémon para liberar as próximas etapas.';
         return;
     }
 
     const level = clampTrainingLevel(trainingCurrentLevelInput?.value || getTrainingEntryLevel(trainingSelectedPokemonEntry));
+    const progress = getTrainingCurrentProgress();
     const variant = getSelectedTrainingVariant();
-    const totals = calculateTrainingTotals(level, variant);
+    const totals = calculateTrainingTotals(level, variant, getTrainingBaseLevelForCalculation(level), progress);
     const typeMeta = BOOST_TYPE_STONE_META[trainingSelectedPokemonEntry.type1] || null;
     const elementName = typeMeta?.name || 'Stone do tipo';
     const elementImage = typeMeta?.image || '';
@@ -20970,33 +20886,77 @@ function renderTrainingResults(){
     const shell = document.createElement('div');
     shell.className = 'training-results-shell';
 
-    const summary = document.createElement('div');
-    summary.className = 'training-summary-grid';
-    summary.append(
-        createTrainingMaterialCard({ label: 'Golden Coins', value: totals.coins, detail: `${level} -> 100`, image: 'calculadora/golden_coin.gif', tone: 'coin' }),
-        createTrainingMaterialCard({ label: 'Plates (S)', value: totals.successPlates, detail: 'Treinos com sucesso', image: 'calculadora/plate.gif', tone: 'success' })
+    const context = document.createElement('div');
+    context.className = 'training-result-context';
+    const progressContext = getTrainingEntryLevel(trainingSelectedPokemonEntry) >= 50 ? ` (${progress}% completo)` : '';
+    context.textContent = `${trainingSelectedPokemonEntry.name} • Level base ${getTrainingEntryLevel(trainingSelectedPokemonEntry)} • Level atual ${level}${progressContext} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • Tipo ${formatPokemonTypeLabel(trainingSelectedPokemonEntry.type1)}`;
+
+    const resultTitle = document.createElement('h3');
+    resultTitle.textContent = 'Resultado do treinamento';
+    const result = document.createElement('div');
+    result.className = 'training-summary-grid';
+    result.append(
+        createTrainingMaterialCard({
+            label: variant === 'shiny' ? 'Shiny Poke Candy' : 'Poke Candy',
+            value: totals.candies,
+            detail: `${level} → 100`,
+            badge: 'XP',
+            image: 'treinamento/poke_candy.png'
+        }),
+        createTrainingMaterialCard({
+            label: 'Experiência por Candy',
+            value: `${totals.experiencePerCandy}%`,
+            detail: 'por Candy'
+        })
     );
-    if(totals.failCoins > 0){
-        summary.append(createTrainingMaterialCard({ label: 'Golden Coins (F)', value: totals.failCoins, detail: 'Estimativa de falhas', image: 'calculadora/golden_coin.gif', tone: 'coin' }));
-    }
-    if(totals.failPlates > 0){
-        summary.append(createTrainingMaterialCard({ label: 'Plates (F)', value: totals.failPlates, detail: 'Estimativa de falhas', image: 'calculadora/plate.gif', tone: 'fail' }));
-    }
+
+    const candyCraftTitle = document.createElement('h3');
+    candyCraftTitle.textContent = 'Craft do Candy';
+    const candyCraft = document.createElement('div');
+    candyCraft.className = 'training-material-grid';
     if(variant === 'shiny'){
-        summary.append(createTrainingMaterialCard({
-            label: 'Shining Plates',
-            value: totals.shiningPlates,
-            detail: 'Usadas junto das Plates normais',
-            image: 'calculadora/shiny_plate.gif',
-            tone: 'shiny'
+        candyCraft.append(
+            createTrainingMaterialCard({
+                label: 'Shining Plates',
+                value: totals.shiningPlatesRequired,
+                detail: `${CANDY_PLATE_COST} por Shiny Poke Candy`,
+                image: 'calculadora/shiny_plate.gif',
+                tone: 'shiny'
+            }),
+            createTrainingMaterialCard({
+                label: 'Golden Tickets',
+                value: totals.shiningTickets,
+                detail: `${SHINY_CANDY_GOLDEN_TICKET_COST} por Shiny Poke Candy`,
+                image: 'treinamento/golden_ticket.png',
+                tone: 'coin'
+            })
+        );
+    } else {
+        candyCraft.append(createTrainingMaterialCard({
+            label: 'Plates comuns',
+            value: totals.candyPlates,
+            detail: `${CANDY_PLATE_COST} por Poke Candy`,
+            image: 'calculadora/plate.gif',
+            tone: 'success'
         }));
     }
 
-    const materialsTitle = document.createElement('h3');
-    materialsTitle.textContent = 'Materiais para craft';
-    const materials = document.createElement('div');
-    materials.className = 'training-material-grid';
-    materials.append(
+    const plateCraftTitle = document.createElement('h3');
+    plateCraftTitle.textContent = 'Craft das Plates';
+    const plateMaterialsTitle = document.createElement('h4');
+    plateMaterialsTitle.textContent = 'Materiais utilizados';
+    const plateMaterials = document.createElement('div');
+    plateMaterials.className = 'training-material-grid';
+    if(variant === 'shiny'){
+        plateMaterials.append(createTrainingMaterialCard({
+            label: 'Plates comuns',
+            value: totals.commonPlates,
+            detail: `Para craftar ${totals.shiningPlatesCrafted.toLocaleString('pt-BR')} Shining Plates`,
+            image: 'calculadora/plate.gif',
+            tone: 'success'
+        }));
+    }
+    plateMaterials.append(
         createTrainingMaterialCard({
             label: 'Itens do elemento',
             value: totals.elementItems,
@@ -21015,57 +20975,37 @@ function renderTrainingResults(){
         }),
         createTrainingMaterialCard({ label: elementName, value: totals.stones, detail: `${COMMON_PLATE_COST.stones} por Plate`, image: elementImage, tone: 'item' })
     );
+    const plateResultsTitle = document.createElement('h4');
+    plateResultsTitle.textContent = 'Resultado do craft';
+    const plateResults = document.createElement('div');
+    plateResults.className = 'training-material-grid';
     if(variant === 'shiny'){
-        materials.append(createTrainingMaterialCard({
+        plateMaterials.append(createTrainingMaterialCard({
             label: 'Shining Stones',
-            value: totals.shiningStoneBlocks,
-            detail: `1 bloco a cada ${SHINING_PLATE_BLOCK_SIZE} Shining Plates`,
+            value: totals.shiningPlateBlocks,
+            detail: `1 a cada ${SHINING_PLATE_BLOCK_SIZE} Shining Plates`,
             image: elementImage,
             tone: 'shiny',
             badge: '\u2728'
         }));
+        plateResults.append(createTrainingMaterialCard({
+            label: 'Shining Plates craftadas',
+            value: totals.shiningPlatesCrafted,
+            detail: `${totals.shiningPlatesRequired.toLocaleString('pt-BR')} necessárias; blocos de ${SHINING_PLATE_BLOCK_SIZE}`,
+            image: 'calculadora/shiny_plate.gif',
+            tone: 'shiny'
+        }));
+    } else {
+        plateResults.append(createTrainingMaterialCard({
+            label: 'Plates comuns craftadas',
+            value: totals.commonPlates,
+            detail: 'Usadas para craftar os Poke Candies',
+            image: 'calculadora/plate.gif',
+            tone: 'success'
+        }));
     }
 
-    const detail = document.createElement('details');
-    detail.className = 'training-detail-table';
-    const detailSummary = document.createElement('summary');
-    detailSummary.innerHTML = `<span>Tabela Detalhada</span><small>${totals.coins} treino(s)</small>`;
-    const tableWrap = document.createElement('div');
-    tableWrap.className = 'training-detail-table__wrap';
-    const table = document.createElement('table');
-    const hasFailCoins = totals.failCoins > 0;
-    const hasFailPlates = totals.failPlates > 0;
-    table.innerHTML = hasFailCoins
-        ? '<thead><tr><th>Treino</th><th>Coins (S)</th><th>Coins (F)</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>'
-        : hasFailPlates
-            ? '<thead><tr><th>Treino</th><th>Coins</th><th>Plates (S)</th><th>Plates (F)</th></tr></thead>'
-            : '<thead><tr><th>Treino</th><th>Coins</th><th>Plates</th></tr></thead>';
-    const body = document.createElement('tbody');
-    totals.rows.forEach(row => {
-        const tr = document.createElement('tr');
-        if(row.trainingIndex % 10 === 0) tr.className = 'training-detail-table__decade';
-        tr.innerHTML = hasFailCoins
-            ? `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.failCoins || 0}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`
-            : hasFailPlates
-                ? `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.successPlates}</td><td>${row.failPlates}</td>`
-                : `<td>${row.label || `${row.from} -> ${row.to}`}</td><td>${row.coins}</td><td>${row.successPlates}</td>`;
-        body.appendChild(tr);
-    });
-    const footer = document.createElement('tfoot');
-    footer.innerHTML = hasFailCoins
-        ? `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.failCoins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`
-        : hasFailPlates
-            ? `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th><th>${totals.failPlates.toLocaleString('pt-BR')}</th></tr>`
-            : `<tr><th>Total</th><th>${totals.coins.toLocaleString('pt-BR')}</th><th>${totals.successPlates.toLocaleString('pt-BR')}</th></tr>`;
-    table.append(body, footer);
-    tableWrap.appendChild(table);
-    detail.append(detailSummary, tableWrap);
-
-    const context = document.createElement('div');
-    context.className = 'training-result-context';
-    context.textContent = `${trainingSelectedPokemonEntry.name} • Level ${level} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • Tipo ${formatPokemonTypeLabel(trainingSelectedPokemonEntry.type1)}`;
-
-    shell.append(context, summary, materialsTitle, materials, detail);
+    shell.append(context, resultTitle, result, candyCraftTitle, candyCraft, plateCraftTitle, plateMaterialsTitle, plateMaterials, plateResultsTitle, plateResults);
     trainingResults.replaceChildren(shell);
     animateCalcResult(trainingResults);
 }
@@ -21078,6 +21018,7 @@ function syncTrainingCalculator(){
 
 function applyTrainingPokemonSelection(entry){
     trainingSelectedPokemonEntry = entry || null;
+    if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = '0';
     if(trainingPokemonSearchInput && entry){
         trainingPokemonSearchInput.value = entry.name;
     }
@@ -21088,65 +21029,6 @@ function applyTrainingPokemonSelection(entry){
     syncTrainingCalculator();
 }
 
-function updateRangeResults(){
-    const val = rangeSelect.value;
-    const data = ranges[val];
-    const variant = document.querySelector('input[name="poke-variant"]:checked')?.value || 'normal';
-    if(data){
-        const rangeStartLevel = Number.parseInt(val, 10) || 50;
-        const totals = calculateTrainingTotals(rangeStartLevel, variant, rangeStartLevel);
-        const plateCount = totals.successPlates;
-        const failPlateCount = totals.failPlates;
-        const failGoldCount = totals.failCoins;
-        const blocks = Math.ceil(plateCount / SHINING_PLATE_BLOCK_SIZE);
-        const totalInBlocks = blocks * SHINING_PLATE_BLOCK_SIZE;
-        const variantLabel = variant === 'shiny' ? t('shiny') : t('normal');
-        const requiredCommonPlates = variant === 'shiny' ? totalInBlocks : plateCount;
-        const elementItems = requiredCommonPlates * COMMON_PLATE_COST.elementItems;
-        const charItems = requiredCommonPlates * COMMON_PLATE_COST.charItems;
-        const stones = requiredCommonPlates * COMMON_PLATE_COST.stones;
-
-        if(variant === 'normal'){
-            if(commonInput) commonInput.value = plateCount;
-            if(shinyInput) shinyInput.value = 0;
-            if(shinyResults) shinyResults.innerHTML = '';
-            updateCommon();
-        } else {
-            const shinyVal = blocks * 30;
-            if(shinyInput) shinyInput.value = shinyVal;
-            if(commonInput) commonInput.value = shinyVal;
-            updateShiny();
-            updateCommon();
-        }
-
-        let html = `<p><strong>${t('pokemonTypeLabel')}:</strong> ${variantLabel}</p>`;
-        if(variant === 'normal'){
-            html += `<p><strong>${t('commonPlatesLabel')}:</strong> <span class="num" data-value="${plateCount}">${plateCount.toLocaleString()}</span></p>`;
-        } else {
-            html += `<p><strong>${t('shinyPlatesLabel')}:</strong> <span class="num" data-value="${plateCount}">${plateCount.toLocaleString()}</span></p>`;
-            html += `<p><strong>${t('roundedProductionLabel')}:</strong> <span class="num" data-value="${totalInBlocks}">${totalInBlocks.toLocaleString()}</span></p>`;
-            html += `<p><strong>${t('commonPlatesLabel')}:</strong> <span class="num" data-value="${requiredCommonPlates}">${requiredCommonPlates.toLocaleString()}</span></p>`;
-            html += `<p><strong>${t('shiningStonesLabel')}:</strong> <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span></p>`;
-        }
-        html += `<p><strong>${t('goldCoinsLabel')}:</strong> <span class="num" data-value="${totals.coins}">${totals.coins.toLocaleString()}</span></p>`;
-        if(failGoldCount > 0){
-            html += `<p><strong>${t('goldCoinsLabel')} (F):</strong> <span class="num" data-value="${failGoldCount}">${failGoldCount.toLocaleString()}</span></p>`;
-        }
-        if(failPlateCount > 0){
-            html += `<p><strong>Plates (F):</strong> <span class="num" data-value="${failPlateCount}">${failPlateCount.toLocaleString()}</span></p>`;
-        }
-        const materialsHtml = t('calcInfoItems')
-            .replace('{elementItems}', `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span>`)
-            .replace('{charItems}', `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span>`)
-            .replace('{stones}', `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span>`);
-        html += `<p><strong>${t('materialsForRangeLabel')}:</strong><br>${materialsHtml}</p>`;
-        html += `<p><em>${variant === 'normal' ? t('sameQuantityNote') : t('shiningBlockNote')}</em></p>`;
-        rangeResults.innerHTML = html;
-        animateCalcResult(rangeResults);
-    } else {
-        rangeResults.innerHTML = '';
-    }
-}
 function animateCalcResult(target){
     if(!target) return;
     if(useGsap){
@@ -21192,56 +21074,20 @@ function animateNumbersIn(target){
         }
     });
 }
-function updateCommon(){
-    const n = parseInt(commonInput.value) || 0;
-    const perPlateElement = COMMON_PLATE_COST.elementItems;
-    const perPlateChar = COMMON_PLATE_COST.charItems;
-    const perPlateStone = COMMON_PLATE_COST.stones;
-    const elementItems = n * perPlateElement;
-    const charItems = n * perPlateChar;
-    const stones = n * perPlateStone;
-    // Montar usando traducoes (apenas visual)
-    const header = t('forCommonLabel').replace('{n}', `<span class="num" data-value="${n}">${n.toLocaleString()}</span>`);
-    const itemsText = `<span class="num" data-value="${elementItems}">${elementItems.toLocaleString()}</span> itens do elemento (${perPlateElement}×${n}), ` +
-                      `<span class="num" data-value="${charItems}">${charItems.toLocaleString()}</span> itens característicos (${perPlateChar}×${n}), ` +
-                      `<span class="num" data-value="${stones}">${stones.toLocaleString()}</span> pedra(s) do elemento (${perPlateStone}×${n})`;
-    commonResults.innerHTML = `<p>${header}<br>${itemsText}</p>`;
-    animateCalcResult(commonResults);
-}
-function updateShiny(){
-    let n = parseInt(shinyInput.value) || 0;
-    let html = '';
-    if(n % SHINING_PLATE_BLOCK_SIZE !== 0){
-        const rounded = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE) * SHINING_PLATE_BLOCK_SIZE;
-        html += `<p><em>${t('adjustNote').replace('{rounded}', `<span class="num" data-value="${rounded}">${rounded.toLocaleString()}</span>`)}</em></p>`;
-        n = rounded;
-    }
-    const blocks = Math.ceil(n / SHINING_PLATE_BLOCK_SIZE);
-    const commonNeeded = blocks * SHINING_PLATE_BLOCK_SIZE;
-    const shiningStones = blocks;
-    html += `<p><span class="num" data-value="${n}">${n.toLocaleString()}</span> shining plate(s) requer <span class="num" data-value="${commonNeeded}">${commonNeeded.toLocaleString()}</span> plate(s) comum(ns)` +
-            ` e <span class="num" data-value="${shiningStones}">${shiningStones.toLocaleString()}</span> shining stone(s) (em <span class="num" data-value="${blocks}">${blocks.toLocaleString()}</span> bloco(s) de 30).</p>`;
-    shinyResults.innerHTML = html;
-    animateCalcResult(shinyResults);
-}
 
 function refreshCalculatorDomReferences(){
-    rangeSelect = document.getElementById('range-select');
-    rangeResults = document.getElementById('range-results');
-    commonInput = document.getElementById('common-plates');
-    commonResults = document.getElementById('common-results');
-    shinyInput = document.getElementById('shiny-plates');
-    shinyResults = document.getElementById('shiny-results');
-    variantRadios = document.querySelectorAll('input[name="poke-variant"]');
     trainingPokemonSearchInput = document.getElementById('training-pokemon-search');
     trainingPokemonResults = document.getElementById('training-pokemon-results');
     trainingPokemonNoResults = document.getElementById('training-pokemon-no-results');
     trainingSelectedPokemon = document.getElementById('training-selected-pokemon');
     trainingCurrentLevelInput = document.getElementById('training-current-level');
+    trainingCurrentProgressInput = document.getElementById('training-current-progress');
+    trainingProgressControl = document.getElementById('training-progress-control');
     trainingLevelDecreaseBtn = document.getElementById('training-level-decrease');
     trainingLevelIncreaseBtn = document.getElementById('training-level-increase');
     trainingLevelPreview = document.getElementById('training-level-preview');
     trainingVariantInputs = document.querySelectorAll('input[name="training-variant"]');
+    trainingVariantDescription = document.getElementById('training-variant-description');
     trainingResults = document.getElementById('training-results');
     trainingSelectionStatus = document.getElementById('training-selection-status');
     trainingInfoToggle = document.getElementById('training-info-toggle');
@@ -21299,6 +21145,12 @@ function initializeCalculatorPage(){
     if(trainingCurrentLevelInput){
         trainingCurrentLevelInput.addEventListener('input', () => {
             trainingCurrentLevelInput.value = clampTrainingLevel(trainingCurrentLevelInput.value);
+            syncTrainingCalculator();
+        });
+    }
+    if(trainingCurrentProgressInput){
+        trainingCurrentProgressInput.addEventListener('input', () => {
+            trainingCurrentProgressInput.value = clampTrainingProgress(trainingCurrentProgressInput.value);
             syncTrainingCalculator();
         });
     }

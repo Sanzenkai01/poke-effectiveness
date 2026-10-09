@@ -4954,11 +4954,6 @@ button[type="button"] {
 
 .calc-help { margin-top: 1rem; color: rgba(255,255,255,0.75); max-width: 900px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
 
-.training-calculator > .calc-grid--split,
-.training-calculator > .calc-help {
-  display: none;
-}
-
 .card.training-calculator {
   max-width: 1180px;
   padding: 1.25rem;
@@ -5033,7 +5028,7 @@ button[type="button"] {
 
 .training-info-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
@@ -5050,6 +5045,16 @@ button[type="button"] {
 }
 
 .training-info-grid span {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.training-info-rates ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
   color: rgba(226, 232, 240, 0.76);
   font-size: 0.86rem;
   line-height: 1.35;
@@ -5205,6 +5210,38 @@ button[type="button"] {
   text-align: center;
 }
 
+.training-progress-control {
+  display: grid;
+  justify-items: center;
+  margin-top: 0.65rem;
+}
+
+.training-progress-control[hidden] {
+  display: none;
+}
+
+.training-progress-control label {
+  display: grid;
+  width: min(100%, 240px);
+  gap: 0.3rem;
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.training-progress-control input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(52, 211, 153, 0.26);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.58);
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+}
+
 .training-stepper-btn {
   margin-top: 1.45rem;
   width: 42px;
@@ -5294,17 +5331,19 @@ button[type="button"] {
 .training-summary-grid,
 .training-material-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.training-material-grid {
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
 }
 
 .training-results h3 {
   margin: 0;
   color: #f8fafc;
+}
+
+.training-results h4 {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.95rem;
 }
 
 .training-material-card {
@@ -5324,8 +5363,8 @@ button[type="button"] {
 
 .training-material-card--coin { border-color: rgba(250, 204, 21, 0.26); }
 .training-material-card--success { border-color: rgba(34, 197, 94, 0.26); }
-.training-material-card--fail { border-color: rgba(248, 113, 113, 0.26); }
 .training-material-card--shiny { border-color: rgba(125, 211, 252, 0.3); }
+.training-material-card--text-only { grid-template-columns: minmax(0, 1fr); }
 
 .training-material-card__help {
   position: absolute;
@@ -5449,84 +5488,6 @@ button[type="button"] {
 .training-material-card__body small {
   color: rgba(203, 213, 225, 0.68);
   line-height: 1.25;
-}
-
-.training-detail-table {
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.76);
-  overflow: hidden;
-}
-
-.training-detail-table summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1rem;
-  color: #f8fafc;
-  font-weight: 900;
-  cursor: pointer;
-}
-
-.training-detail-table summary small {
-  padding: 0.2rem 0.45rem;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.12);
-  color: rgba(226, 232, 240, 0.72);
-}
-
-.training-detail-table__wrap {
-  max-height: 440px;
-  overflow: auto;
-  border-top: 1px solid rgba(148, 163, 184, 0.16);
-}
-
-.training-detail-table table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.86rem;
-}
-
-.training-detail-table th,
-.training-detail-table td {
-  padding: 0.48rem 0.75rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.13);
-  text-align: center;
-}
-
-.training-detail-table th:first-child,
-.training-detail-table td:first-child {
-  text-align: left;
-}
-
-.training-detail-table thead th:nth-child(2),
-.training-detail-table td:nth-child(2),
-.training-detail-table tfoot th:nth-child(2),
-.training-detail-table thead th:nth-child(3),
-.training-detail-table td:nth-child(3),
-.training-detail-table tfoot th:nth-child(3) {
-  color: #facc15;
-}
-
-.training-detail-table thead th:nth-child(4),
-.training-detail-table td:nth-child(4),
-.training-detail-table tfoot th:nth-child(4) {
-  color: #22c55e;
-}
-
-.training-detail-table thead th:nth-child(5),
-.training-detail-table td:nth-child(5),
-.training-detail-table tfoot th:nth-child(5) {
-  color: #ff4d5f;
-}
-
-.training-detail-table__decade td {
-  border-top: 2px solid rgba(34, 197, 94, 0.58);
-}
-
-.training-detail-table tfoot th {
-  background: rgba(255, 255, 255, 0.045);
 }
 
 @media (max-width: 900px) {
