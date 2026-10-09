@@ -13,4 +13,4 @@ description: "Revise ou corrija acessibilidade e usabilidade de teclado no Pstor
 - Mantenha a aparência e os padrões de foco/feedback já estabelecidos. Em páginas novas, use controles e componentes acessíveis existentes; não crie um padrão visual isolado para estados acessíveis.
 - Teste o comportamento real no navegador quando disponível; inspeção estática sozinha não demonstra conformidade.
 
-Faça a menor correção que resolva a barreira identificada e valide o fluxo e as rotas afetadas. Registre limitações de testes automatizados ou manuais sem declarar conformidade WCAG sem avaliação adequada.
+Faça a menor correção que resolva a barreira identificada e valide o fluxo e as rotas afetadas. Antes de testar uma instância local no navegador, siga o procedimento de limpeza de cache e sincronização das abas em `Sanzenkai_Skills`; ao modificar código do site, aplique também o checklist de build/cache. Registre limitações de testes automatizados ou manuais sem declarar conformidade WCAG sem avaliação adequada.

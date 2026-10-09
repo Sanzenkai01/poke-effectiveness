@@ -53,6 +53,9 @@ let trainingSelectedPokemon = document.getElementById('training-selected-pokemon
 let trainingCurrentLevelInput = document.getElementById('training-current-level');
 let trainingCurrentProgressInput = document.getElementById('training-current-progress');
 let trainingProgressControl = document.getElementById('training-progress-control');
+let trainingSavedPlan = document.getElementById('training-saved-plan');
+let trainingSavedEntriesContainer = document.getElementById('training-saved-entries');
+let trainingSavedTotalsContainer = document.getElementById('training-saved-totals');
 let trainingLevelDecreaseBtn = document.getElementById('training-level-decrease');
 let trainingLevelIncreaseBtn = document.getElementById('training-level-increase');
 let trainingLevelPreview = document.getElementById('training-level-preview');
@@ -299,6 +302,8 @@ let calculatorPageInitialized = false;
 let trainingPokemonEntries = [];
 let trainingPokemonSearchIndex = new Map();
 let trainingSelectedPokemonEntry = null;
+let trainingSavedPokemonEntries = [];
+let editingTrainingPokemonKey = '';
 let trainingPokemonSearchHideTimer = 0;
 let boostPageInitialized = false;
 let boostPokemonOptionsHydrated = false;
@@ -5441,6 +5446,10 @@ function updateTextContent(){
 }
 
 function updateColumns(){
+    if(!chart?.isConnected){
+        refreshEffectivenessDomReferences();
+    }
+    if(!chart) return;
     const btn = chart.querySelector('.type-button');
     if(btn) colCount = Math.floor(chart.clientWidth / btn.offsetWidth) || 1;
 }
@@ -9245,7 +9254,10 @@ function handleKeyNav(e){
 }
 
 window.addEventListener('keydown',e=>{if(e.key==='Escape')clearAll();});
-window.addEventListener('resize',()=>{updateColumns();if(currentSelection.length)renderSelection();});
+window.addEventListener('resize',()=>{
+    updateColumns();
+    if(currentSelection.length && chart && connectionsSvg) renderSelection();
+});
 
 function refreshEffectivenessDomReferences(){
     chart = document.getElementById('chart');
@@ -20825,8 +20837,182 @@ function renderTrainingSelectedPokemon(){
     ].filter(Boolean).join(' • ');
     const copy = document.createElement('span');
     copy.append(title, meta);
-    trainingSelectedPokemon.replaceChildren(sprite, copy);
+    const addButton = document.createElement('button');
+    addButton.type = 'button';
+    addButton.className = 'training-add-pokemon';
+    addButton.textContent = '+';
+    addButton.setAttribute('aria-label', editingTrainingPokemonKey ? `Atualizar ${entry.name} na lista de treino` : `Adicionar ${entry.name} ao treino`);
+    addButton.title = addButton.getAttribute('aria-label');
+    trainingSelectedPokemon.replaceChildren(sprite, copy, addButton);
     trainingSelectedPokemon.hidden = false;
+}
+
+function getTrainingPlanPokemonKey(entry){
+    return `${entry.variant || 'default'}:${entry.id || entry.routeSlug || entry.name}`;
+}
+
+function addTrainingPokemonToSavedPlan(){
+    if(!trainingSelectedPokemonEntry) return;
+    const entry = trainingSelectedPokemonEntry;
+    const key = getTrainingPlanPokemonKey(entry);
+    const level = clampTrainingLevel(trainingCurrentLevelInput?.value || getTrainingEntryLevel(entry));
+    const progress = getTrainingCurrentProgress();
+    const variant = getSelectedTrainingVariant();
+    const plan = {
+        key,
+        entry,
+        level,
+        progress,
+        variant,
+        totals: calculateTrainingTotals(level, variant, getTrainingEntryLevel(entry), progress)
+    };
+    const existingIndex = trainingSavedPokemonEntries.findIndex(saved => saved.key === (editingTrainingPokemonKey || key));
+    if(existingIndex >= 0){
+        plan.key = trainingSavedPokemonEntries[existingIndex].key;
+        trainingSavedPokemonEntries[existingIndex] = plan;
+    } else {
+        trainingSavedPokemonEntries.push(plan);
+    }
+
+    editingTrainingPokemonKey = '';
+    trainingSelectedPokemonEntry = null;
+    if(trainingPokemonSearchInput) trainingPokemonSearchInput.value = '';
+    if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = '0';
+    trainingVariantInputs.forEach(input => {
+        input.checked = input.value === 'normal';
+    });
+    hideTrainingPokemonSearchResults();
+    syncTrainingCalculator();
+    trainingPokemonSearchInput?.focus();
+}
+
+function renderTrainingSavedPlan(){
+    if(!trainingSavedPlan || !trainingSavedEntriesContainer || !trainingSavedTotalsContainer) return;
+    const plans = trainingSavedPokemonEntries;
+    trainingSavedPlan.hidden = plans.length === 0;
+    trainingSavedEntriesContainer.replaceChildren();
+    trainingSavedTotalsContainer.replaceChildren();
+    if(!plans.length) return;
+    const savedTitle = document.getElementById('training-saved-title');
+    if(savedTitle) savedTitle.textContent = `Pokémon adicionados ao treino (${plans.length})`;
+
+    const aggregate = {
+        normalCandies: 0,
+        shinyCandies: 0,
+        commonPlates: 0,
+        goldenTickets: 0,
+        shiningPlates: 0,
+        shiningStones: 0
+    };
+    const materials = new Map();
+    const addMaterial = (key, label, value, image, tone = 'item') => {
+        const current = materials.get(key) || {label, value: 0, image, tone};
+        current.value += value;
+        materials.set(key, current);
+    };
+
+    plans.forEach(plan => {
+        const {entry, totals, variant} = plan;
+        if(variant === 'shiny'){
+            aggregate.shinyCandies += totals.candies;
+            aggregate.goldenTickets += totals.shiningTickets;
+            aggregate.shiningPlates += totals.shiningPlatesCrafted;
+            aggregate.shiningStones += totals.shiningPlateBlocks;
+        } else {
+            aggregate.normalCandies += totals.candies;
+        }
+        aggregate.commonPlates += totals.commonPlates;
+
+        const typeMeta = BOOST_TYPE_STONE_META[entry.type1] || null;
+        const elementName = typeMeta?.name || 'Stone do tipo';
+        const elementImage = typeMeta?.image || '';
+        addMaterial(`element:${entry.type1}`, `Itens de ${formatPokemonTypeLabel(entry.type1)}`, totals.elementItems, `icons-type/${entry.type1}.png`);
+        addMaterial(`characteristic:${plan.key}`, `Itens característicos • ${entry.name}`, totals.charItems, 'calculadora/lotitems.png');
+        addMaterial(`stone:${elementName}`, elementName, totals.stones, elementImage);
+
+        const card = document.createElement('article');
+        card.className = 'training-saved-entry';
+        const sprite = document.createElement('img');
+        sprite.src = getPokemonImageSource(entry);
+        sprite.alt = '';
+        sprite.loading = 'lazy';
+        sprite.decoding = 'async';
+        setImageFallback(sprite, POKEMON_IMAGE_PLACEHOLDER);
+        const content = document.createElement('div');
+        content.className = 'training-saved-entry__content';
+        const name = document.createElement('strong');
+        name.textContent = entry.name;
+        const details = document.createElement('span');
+        details.textContent = `Level ${plan.level}${getTrainingEntryLevel(entry) >= 50 ? ` • ${plan.progress}%` : ''} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • ${totals.candies} ${totals.candies === 1 ? 'Candy' : 'Candies'}`;
+        content.append(name, details);
+        const actions = document.createElement('div');
+        actions.className = 'training-saved-entry__actions';
+        [
+            {action: 'edit', label: `Editar ${entry.name}`, text: 'Editar'},
+            {action: 'remove', label: `Remover ${entry.name}`, text: 'Remover'}
+        ].forEach(({action, label, text}) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'training-saved-entry__action';
+            button.dataset.trainingPlanAction = action;
+            button.dataset.trainingPlanKey = plan.key;
+            button.setAttribute('aria-label', label);
+            button.textContent = text;
+            actions.appendChild(button);
+        });
+        card.append(sprite, content, actions);
+        trainingSavedEntriesContainer.appendChild(card);
+    });
+
+    if(aggregate.normalCandies){
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Poke Candy',
+            value: aggregate.normalCandies,
+            image: 'treinamento/poke_candy.png'
+        }));
+    }
+    if(aggregate.shinyCandies){
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Shiny Poke Candy',
+            value: aggregate.shinyCandies,
+            image: 'treinamento/poke_candy.png',
+            tone: 'shiny'
+        }));
+    }
+    if(aggregate.commonPlates){
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Plates comuns',
+            value: aggregate.commonPlates,
+            detail: 'Total para fabricar os Candies e as Shining Plates',
+            image: 'calculadora/plate.gif',
+            tone: 'success'
+        }));
+    }
+    if(aggregate.goldenTickets){
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Golden Tickets',
+            value: aggregate.goldenTickets,
+            image: 'treinamento/golden_ticket.png',
+            tone: 'coin'
+        }));
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Shining Plates craftadas',
+            value: aggregate.shiningPlates,
+            image: 'calculadora/shiny_plate.gif',
+            tone: 'shiny'
+        }));
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+            label: 'Shining Stones',
+            value: aggregate.shiningStones,
+            detail: `1 a cada ${SHINING_PLATE_BLOCK_SIZE} Shining Plates`,
+            tone: 'shiny',
+            badge: '\u2728'
+        }));
+    }
+    materials.forEach(material => {
+        if(material.value <= 0) return;
+        trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard(material));
+    });
 }
 
 function setTrainingStepUnlocked(stepEl, unlocked){
@@ -20871,6 +21057,7 @@ function renderTrainingResults(){
     if(!trainingSelectedPokemonEntry){
         trainingResults.replaceChildren(trainingSelectionStatus || document.createTextNode('Selecione um Pokémon para liberar as próximas etapas.'));
         if(trainingSelectionStatus) trainingSelectionStatus.textContent = 'Selecione um Pokémon para liberar as próximas etapas.';
+        renderTrainingSavedPlan();
         return;
     }
 
@@ -21007,6 +21194,7 @@ function renderTrainingResults(){
 
     shell.append(context, resultTitle, result, candyCraftTitle, candyCraft, plateCraftTitle, plateMaterialsTitle, plateMaterials, plateResultsTitle, plateResults);
     trainingResults.replaceChildren(shell);
+    renderTrainingSavedPlan();
     animateCalcResult(trainingResults);
 }
 
@@ -21018,7 +21206,23 @@ function syncTrainingCalculator(){
 
 function applyTrainingPokemonSelection(entry){
     trainingSelectedPokemonEntry = entry || null;
-    if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = '0';
+    const savedPlan = entry
+        ? trainingSavedPokemonEntries.find(plan => plan.key === getTrainingPlanPokemonKey(entry))
+        : null;
+    if(savedPlan){
+        editingTrainingPokemonKey = savedPlan.key;
+        if(trainingCurrentLevelInput) trainingCurrentLevelInput.value = savedPlan.level;
+        if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = savedPlan.progress;
+        trainingVariantInputs.forEach(input => {
+            input.checked = input.value === savedPlan.variant;
+        });
+    } else {
+        editingTrainingPokemonKey = '';
+        if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = '0';
+        trainingVariantInputs.forEach(input => {
+            input.checked = input.value === 'normal';
+        });
+    }
     if(trainingPokemonSearchInput && entry){
         trainingPokemonSearchInput.value = entry.name;
     }
@@ -21083,6 +21287,9 @@ function refreshCalculatorDomReferences(){
     trainingCurrentLevelInput = document.getElementById('training-current-level');
     trainingCurrentProgressInput = document.getElementById('training-current-progress');
     trainingProgressControl = document.getElementById('training-progress-control');
+    trainingSavedPlan = document.getElementById('training-saved-plan');
+    trainingSavedEntriesContainer = document.getElementById('training-saved-entries');
+    trainingSavedTotalsContainer = document.getElementById('training-saved-totals');
     trainingLevelDecreaseBtn = document.getElementById('training-level-decrease');
     trainingLevelIncreaseBtn = document.getElementById('training-level-increase');
     trainingLevelPreview = document.getElementById('training-level-preview');
@@ -21123,6 +21330,9 @@ function initializeCalculatorPage(){
             const value = String(trainingPokemonSearchInput.value || '').trim();
             const key = normalizePokemonSearchText(value);
             trainingSelectedPokemonEntry = key ? trainingPokemonSearchIndex.get(key) || null : null;
+            if(!trainingSelectedPokemonEntry || getTrainingPlanPokemonKey(trainingSelectedPokemonEntry) !== editingTrainingPokemonKey){
+                editingTrainingPokemonKey = '';
+            }
             renderTrainingPokemonSearchResults(value);
             syncTrainingCalculator();
         });
@@ -21172,6 +21382,36 @@ function initializeCalculatorPage(){
     trainingVariantInputs.forEach(input => {
         input.addEventListener('change', syncTrainingCalculator);
     });
+    if(trainingSelectedPokemon){
+        trainingSelectedPokemon.addEventListener('click', event => {
+            if(event.target.closest('.training-add-pokemon')){
+                addTrainingPokemonToSavedPlan();
+            }
+        });
+    }
+    if(trainingSavedEntriesContainer){
+        trainingSavedEntriesContainer.addEventListener('click', event => {
+            const button = event.target.closest('[data-training-plan-action]');
+            if(!button) return;
+            const {trainingPlanAction: action, trainingPlanKey: key} = button.dataset;
+            const plan = trainingSavedPokemonEntries.find(saved => saved.key === key);
+            if(!plan) return;
+            if(action === 'edit'){
+                applyTrainingPokemonSelection(plan.entry);
+                trainingPokemonSearchInput?.scrollIntoView({behavior: 'smooth', block: 'center'});
+                return;
+            }
+            if(action === 'remove'){
+                trainingSavedPokemonEntries = trainingSavedPokemonEntries.filter(saved => saved.key !== key);
+                if(editingTrainingPokemonKey === key){
+                    editingTrainingPokemonKey = '';
+                    trainingSelectedPokemonEntry = null;
+                    if(trainingPokemonSearchInput) trainingPokemonSearchInput.value = '';
+                }
+                syncTrainingCalculator();
+            }
+        });
+    }
 
     ensurePokemonCatalogLoaded()
         .then(() => {
@@ -23724,7 +23964,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20260912-boost-cache').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261009-resize-guard').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }

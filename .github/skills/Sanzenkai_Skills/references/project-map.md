@@ -28,6 +28,13 @@ Os painéis do shell cobrem consulta de tipos, fósseis, treinamento/boost, capt
 - `scripts/validate_catalog_data.js` e `scripts/validate_boss_registry.js` verificam catálogos; `scripts/smoke_routes.js` verifica rotas servidas.
 - `.github/workflows/` mantém rotinas de atualização de conteúdo e status. Mudanças em formatos compartilhados podem afetar automações e site: verifique ambos.
 
+## Build e cache
+
+- O identificador visível da build fica no rodapé de `app.html`; baseline atual: `Build v1017 - 2026`. Mudança de código do site incrementa o contador sequencial uma vez por tarefa coesa; documentação/configuração de agente sem alteração servida não o incrementa.
+- Os cache-busters `?v=` são espalhados por HTMLs de rota e `app.html`; `sw.js` também lista URLs em `APP_SHELL`. Ao mudar um asset, encontre e atualize as referências desse asset em todos os consumidores relevantes, sem bump em massa de rotas não afetadas.
+- `route-loader.js` acrescenta `APP_SHELL_VERSION` à URL do shell. Altere-o se o HTML do shell mudar; se o próprio loader mudar, atualize seus cache-busters nas páginas que o carregam.
+- O service worker calcula o cache ativo por hash dos recursos de `APP_SHELL`; preserve a invalidação automática e mantenha suas URLs/precache alinhados. O cache manual de fallback não é substituto para atualizar as referências `?v=`.
+
 ## Roteiro para uma auditoria ampla
 
 1. Enumerar rotas públicas e painéis a partir de `index.html`, `app.html` e páginas HTML, sem assumir que diretórios têm comportamento idêntico.

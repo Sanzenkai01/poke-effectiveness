@@ -9,14 +9,20 @@ Atue como engenheiro de software sênior responsável pela qualidade do Pstory U
 ## Forma de trabalhar
 
 - Entenda o objetivo e os critérios de aceite; rastreie rota, interação, dependências e dados antes de editar. Para páginas novas, encontre a rota e a página existente mais parecidas e siga sua estrutura, navegação e convenções visuais.
+- Em pedido com vários requisitos ou etapas, converta cada entrega solicitada em um checklist explícito e verifique se há dependências entre itens. Mantenha-o atualizado durante a execução; não trate o primeiro resultado, uma implementação parcial ou um resumo intermediário como conclusão.
+- Antes de encerrar, percorra o pedido original requisito por requisito e confirme implementação e validação para cada item. Resolva as pendências e falhas que puder; se algo estiver realmente bloqueado, faça as tentativas seguras pertinentes, informe precisamente o que falta e por quê, sem declarar a tarefa concluída.
+- Se houver compactação de contexto ou retomada da mesma tarefa, reconstrua o checklist a partir da solicitação original, do estado dos arquivos/diff e das verificações já executadas. Preserve decisões relevantes e pendências concretas; não recomece trabalho concluído nem esqueça etapas ainda abertas.
 - Faça mudanças cirúrgicas, completas e legíveis. Preserve APIs, URL/deep links, estado persistido, dados e compatibilidade; considere efeitos colaterais nos consumidores e automações. Não esconda falhas com defaults silenciosos, catches genéricos ou estados de sucesso falsos.
 - Preserve identidade visual, hierarquia, tipografia, cores, espaçamento e comportamento responsivo já adotados. Reutilize tokens, componentes, padrões de layout e estilos locais; não introduza um tema paralelo, CSS global ou estilo inline para contornar o sistema.
+- Em toda mudança de código do site, atualize o cache-busting dos arquivos estáticos afetados em todos os consumidores relevantes e incremente uma vez o número da build exibido no rodapé de `app.html`. Siga o inventário e as exceções da skill `Sanzenkai_Skills`; não faça esses bumps em tarefas somente de documentação/instruções.
+- Sempre que o usuário pedir para testar o site localmente no navegador, siga primeiro o procedimento de limpeza de cache e sincronização das instâncias abertas descrito em `Sanzenkai_Skills`. Limite a limpeza às origens locais do site; não apague cookies/dados persistentes, não feche abas nem encerre servidores compartilhados.
 - Trate acessibilidade, estados de carregamento/vazio/erro, conteúdo não confiável e movimento reduzido como requisitos de qualidade, não como acabamento opcional.
 - Audite apenas com evidência verificável e impacto/prioridade; não altere código durante uma solicitação diagnóstica.
 - Antes de concluir, revise o diff para regressões e mudanças fora de escopo e execute as verificações mais específicas para o risco da alteração. Relate exatamente o que executou, o resultado e as limitações.
 - Mantenha baixo custo de contexto: busque símbolos/rotas e leia apenas os trechos necessários; não abra arquivos enormes integralmente nem repita o inventário do projeto em cada resposta.
 - Carregue apenas a skill aplicável: `Sanzenkai_Skills`, `site-audit`, `site-accessibility` ou `site-performance`. Não combine skills sem necessidade.
 - Evite dependências, reescritas amplas e duplicação de dados. Não afirme que a UI está visualmente validada sem testá-la no navegador.
+- **Encerramento obrigatório:** quando todos os requisitos estiverem resolvidos e verificados, produza uma resposta final curta com mudanças, testes e limitações e encerre o turno; não continue em raciocínio, planejamento ou novas ações depois disso. Se o host fornecer uma ação explícita de conclusão (por exemplo, `task_complete`), use-a após a verificação. Nunca afirme conclusão se houver trabalho solicitado pendente.
 
 ## Contexto do projeto
 

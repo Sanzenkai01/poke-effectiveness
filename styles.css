@@ -5151,7 +5151,7 @@ button[type="button"] {
 
 .training-selected-pokemon {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: 58px minmax(0, 1fr) 42px;
   gap: 0.7rem;
   align-items: center;
   padding: 0.7rem;
@@ -5181,6 +5181,31 @@ button[type="button"] {
 .training-selected-pokemon span span {
   color: rgba(203, 213, 225, 0.72);
   font-size: 0.82rem;
+}
+
+.training-add-pokemon {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(52, 211, 153, 0.38);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.18);
+  color: #d1fae5;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.training-add-pokemon:hover {
+  background: rgba(16, 185, 129, 0.3);
+}
+
+.training-add-pokemon:focus-visible,
+.training-saved-entry__action:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
 }
 
 .training-level-control {
@@ -5304,6 +5329,81 @@ button[type="button"] {
 
 .training-results {
   margin-top: 1rem;
+}
+
+.training-saved-plan {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.training-saved-plan[hidden] {
+  display: none;
+}
+
+.training-saved-entries {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.training-saved-entry {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.65rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 10px;
+  background: rgba(8, 15, 28, 0.62);
+}
+
+.training-saved-entry > img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.training-saved-entry__content {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.training-saved-entry__content strong {
+  color: #f8fafc;
+}
+
+.training-saved-entry__content span {
+  color: rgba(203, 213, 225, 0.72);
+  font-size: 0.82rem;
+}
+
+.training-saved-entry__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.training-saved-entry__action {
+  min-height: 34px;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 7px;
+  background: rgba(15, 23, 42, 0.78);
+  color: rgba(226, 232, 240, 0.9);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.training-saved-entry__action:hover {
+  border-color: rgba(52, 211, 153, 0.42);
 }
 
 .training-empty-state {
@@ -5504,6 +5604,17 @@ button[type="button"] {
   }
   .training-material-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .training-saved-entry {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+  .training-saved-entry > img {
+    width: 42px;
+    height: 42px;
+  }
+  .training-saved-entry__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
   }
 }
 
