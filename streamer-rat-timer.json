@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-10-09T20:04:27.703Z",
+  "updatedAt": "2026-10-09T20:23:28.655Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-09T20:04:25.866Z",
-    "endedAt": "2026-10-09T20:04:27.703Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-10-09T20:14:48.898Z",
+    "endedAt": "2026-10-09T20:23:28.655Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
       "indypereira",
@@ -38,22 +38,30 @@
       "zsales33"
     ],
     "observedChannels": [
-      "zsales33"
+      "indypereira"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "indypereira"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "indypereira",
+        "messageAt": 1791577408560,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "zsales33",
+        "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1791576267625,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1791577408560,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "zsales33",
-        "kind": "escape",
-        "messageAt": 1791576267625,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "indypereira",
+        "kind": "spawn",
+        "messageAt": 1791577408560,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -103,16 +111,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "zsales33",
-    "lastMessageAt": 1791576267625,
-    "expectedNextAt": 1791577467625,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-10-09T16:53:27Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1791576267703,
-    "persistedAt": 1791576267703
+    "channel": "indypereira",
+    "lastMessageAt": 1791577408560,
+    "expectedNextAt": 1791578668560,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-09T19:39:32Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1791577408655,
+    "persistedAt": 1791577408655
   },
   "timers": {
+    "indypereira": {
+      "channel": "indypereira",
+      "lastMessageAt": 1791577408560,
+      "expectedNextAt": 1791578668560,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-09T19:39:32Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1791577408655,
+      "persistedAt": 1791577408655
+    },
     "zsales33": {
       "channel": "zsales33",
       "lastMessageAt": 1791576267625,
@@ -121,27 +139,7 @@
       "streamStartedAt": "2026-10-09T16:53:27Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1791576267703,
-      "persistedAt": 1791576267703
-    },
-    "indypereira": {
-      "channel": "indypereira",
-      "lastMessageAt": 1791576198008,
-      "expectedNextAt": 1791577458008,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-10-09T19:39:32Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1791576198114,
-      "persistedAt": 1791576265865
-    },
-    "uguettolitz": {
-      "channel": "uguettolitz",
-      "lastMessageAt": 1791573784770,
-      "expectedNextAt": 1791575044770,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-10-09T13:44:57Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1791573784857,
-      "persistedAt": 1791576265865
+      "persistedAt": 1791576888898
     }
   }
 }
