@@ -30,9 +30,9 @@ Os painéis do shell cobrem consulta de tipos, fósseis, treinamento/boost, capt
 
 ## Build e cache
 
-- O identificador visível da build fica no rodapé de `app.html`; baseline atual: `Build v1017 - 2026`. Mudança de código do site incrementa o contador sequencial uma vez por tarefa coesa; documentação/configuração de agente sem alteração servida não o incrementa.
-- Os cache-busters `?v=` são espalhados por HTMLs de rota e `app.html`; `sw.js` também lista URLs em `APP_SHELL`. Ao mudar um asset, encontre e atualize as referências desse asset em todos os consumidores relevantes, sem bump em massa de rotas não afetadas.
-- `route-loader.js` acrescenta `APP_SHELL_VERSION` à URL do shell. Altere-o se o HTML do shell mudar; se o próprio loader mudar, atualize seus cache-busters nas páginas que o carregam.
+- O identificador visível da build fica no rodapé de `app.html`; baseline atual: `Build v1018 - 2026`. Mudança de código do site incrementa o contador sequencial uma vez por tarefa coesa; documentação/configuração de agente sem alteração servida não o incrementa.
+- Aplique cache-busting no escopo mínimo: páginas independentes recebem bump somente quando elas ou seus recursos mudam; recursos compartilhados recebem bump nas referências centrais (`app.html` e, se listado, `sw.js`/`APP_SHELL`). Não atualize indiscriminadamente os `?v=` de todas as rotas por causa de uma única alteração compartilhada; toque consumidores adicionais apenas quando precisarem efetivamente buscar os bytes novos.
+- `route-loader.js` acrescenta `APP_SHELL_VERSION` à URL do shell. Altere-o se o HTML do shell mudar; se o próprio loader mudar, atualize somente as páginas consumidoras que precisem da versão nova e documente a abrangência se ela for ampla.
 - O service worker calcula o cache ativo por hash dos recursos de `APP_SHELL`; preserve a invalidação automática e mantenha suas URLs/precache alinhados. O cache manual de fallback não é substituto para atualizar as referências `?v=`.
 
 ## Roteiro para uma auditoria ampla
