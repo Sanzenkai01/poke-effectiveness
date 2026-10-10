@@ -7,7 +7,7 @@ description: "Revise ou corrija acessibilidade e usabilidade de teclado no Pstor
 
 - Inspecione o fluxo solicitado com teclado: ordem de foco, visibilidade do foco, operação de controles, Escape/fechamento e retorno de foco em diálogos/menus.
 - Confira nomes acessíveis, rótulos e instruções de campos, semântica de botões/links, relações entre abas e painéis e anúncios de estados dinâmicos.
-- Não dependa só de cor para comunicar estado. Verifique zoom/reflow e controles em largura móvel.
+- Não dependa só de cor para comunicar estado. Verifique zoom/reflow e controles em largura móvel quando o fluxo ou a barreira de acessibilidade envolver layout, redimensionamento ou uso em telas estreitas.
 - Respeite `prefers-reduced-motion`; não remova animações globalmente se o fluxo existente já oferece tratamento específico.
 - Preserve textos e atributos necessários a leitores de tela. Corrija a origem sem adicionar ARIA redundante a elementos nativos.
 - Mantenha a aparência e os padrões de foco/feedback já estabelecidos. Em páginas novas, use controles e componentes acessíveis existentes; não crie um padrão visual isolado para estados acessíveis.

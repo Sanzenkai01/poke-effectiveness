@@ -39,5 +39,5 @@ Os painéis do shell cobrem consulta de tipos, fósseis, treinamento/boost, capt
 
 1. Enumerar rotas públicas e painéis a partir de `index.html`, `app.html` e páginas HTML, sem assumir que diretórios têm comportamento idêntico.
 2. Seguir cada interação até controlador, dados e integrações; registrar para cada ferramenta entrada, resultado, estado vazio/erro e persistência, quando houver.
-3. Usar servidor HTTP e smoke test para validar rotas. Testar interações e visual responsivo no navegador quando disponíveis.
-4. Priorizar erros que impeçam tarefas, links/rotas quebrados, dados incorretos, teclado/leitores de tela, layout móvel e custo de carregamento. Anexar evidência e impacto, sem afirmar cobertura não realizada.
+3. Usar servidor HTTP e smoke test para validar rotas. Testar interações no navegador quando disponíveis; verificar visual responsivo somente quando solicitado ou relevante ao fluxo auditado.
+4. Priorizar erros que impeçam tarefas, links/rotas quebrados, dados incorretos, teclado/leitores de tela, problemas responsivos relevantes ao escopo e custo de carregamento. Anexar evidência e impacto, sem afirmar cobertura não realizada.

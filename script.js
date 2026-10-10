@@ -4742,7 +4742,7 @@ const BOOST_STATIC_MATERIAL_META = Object.freeze({
     'Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient' },
     'Bronze Star': { image: 'calculadora/bronze_star.gif', craftable: true, category: 'bronze' },
     'Piece of Bronze Star': { image: 'calculadora/piece_bronze_star.png', craftable: false, category: 'bronze-piece' },
-    'Shining Ancient Stone': { image: 'calculadora/ancient_stone.gif', craftable: false, category: 'ancient-shiny' },
+    'Shining Ancient Stone': { image: 'calculadora/shining_ancient.gif', craftable: false, category: 'ancient-shiny' },
     'Silver Star': { image: 'calculadora/silver_star.gif', craftable: true, category: 'silver-star' },
     'Silver Flask': { image: 'calculadora/silver_flask.gif', craftable: false, category: 'silver-flask' },
     'Silver Token': { image: 'calculadora/silver_token.gif', craftable: false, category: 'silver-token' },
@@ -20796,6 +20796,15 @@ function formatTrainingCraftTime(minutes){
     return `${(minutes / 60).toLocaleString('pt-BR', {maximumFractionDigits: 2})} h`;
 }
 
+function getTrainingMaterialImage(label, image){
+    const baseStoneName = String(label || '').trim().replace(/^shining\s+/i, '');
+    if(baseStoneName === String(label || '').trim() || !/stone$/i.test(baseStoneName)){
+        return image;
+    }
+
+    return getBoostBaseStoneImage(baseStoneName) || image;
+}
+
 function createTrainingMaterialCard(options = {}){
     const {
         label = '',
@@ -20807,6 +20816,7 @@ function createTrainingMaterialCard(options = {}){
         info = '',
         badge = ''
     } = options;
+    const materialImage = getTrainingMaterialImage(label, image);
     const card = document.createElement('article');
     card.className = `training-material-card${tone ? ` training-material-card--${tone}` : ''}`;
     if(info){
@@ -20820,9 +20830,9 @@ function createTrainingMaterialCard(options = {}){
     }
     const media = document.createElement('span');
     media.className = 'training-material-card__media';
-    if(image){
+    if(materialImage){
         const img = document.createElement('img');
-        img.src = image;
+        img.src = materialImage;
         img.alt = '';
         img.loading = 'lazy';
         img.decoding = 'async';
@@ -20853,9 +20863,9 @@ function createTrainingMaterialCard(options = {}){
     note.textContent = detail;
     body.append(title, amount);
     if(detail) body.appendChild(note);
-    if(image || icon || badge) card.appendChild(media);
+    if(materialImage || icon || badge) card.appendChild(media);
     card.appendChild(body);
-    if(!image && !icon && !badge) card.classList.add('training-material-card--text-only');
+    if(!materialImage && !icon && !badge) card.classList.add('training-material-card--text-only');
     return card;
 }
 
@@ -22433,6 +22443,8 @@ function createBoostNamedStoneChip(name){
 }
 
 function getBoostMaterialMeta(name, overrides = {}){
+    const normalizedName = String(name || '').trim();
+    const shiningBaseStoneName = normalizedName.match(/^shining\s+(.+\s+stone)$/i)?.[1] || '';
     const namedStoneMeta = BOOST_NAMED_STONE_META[name]
         ? {
             ...BOOST_NAMED_STONE_META[name],
@@ -22440,9 +22452,16 @@ function getBoostMaterialMeta(name, overrides = {}){
             category: 'stone'
         }
         : {};
+    const shiningBaseStoneImage = shiningBaseStoneName
+        ? getBoostBaseStoneImage(shiningBaseStoneName)
+        : '';
     const staticMeta = BOOST_STATIC_MATERIAL_META[name]
         ? { ...BOOST_STATIC_MATERIAL_META[name] }
-        : { ...namedStoneMeta };
+        : Object.keys(namedStoneMeta).length
+        ? { ...namedStoneMeta }
+        : shiningBaseStoneImage
+        ? { image: shiningBaseStoneImage, craftable: false, category: 'stone' }
+        : {};
     const typeKey = overrides.typeKey || staticMeta.typeKey || '';
     const stoneMeta = typeKey ? getBoostStoneMetaByType(typeKey) : null;
 
@@ -22462,6 +22481,20 @@ function getBoostMaterialMeta(name, overrides = {}){
         ...overrides,
         typeKey
     };
+}
+
+function getBoostBaseStoneImage(name){
+    const normalizedName = String(name || '').trim().toLocaleLowerCase();
+    const namedStoneImage = Object.entries(BOOST_NAMED_STONE_META)
+        .find(([stoneName]) => stoneName.toLocaleLowerCase() === normalizedName)?.[1].image;
+    if(namedStoneImage) return namedStoneImage;
+
+    const typeStoneImage = Object.values(BOOST_TYPE_STONE_META)
+        .find(stone => stone.name.toLocaleLowerCase() === normalizedName)?.image;
+    if(typeStoneImage) return typeStoneImage;
+
+    return Object.entries(BOOST_STATIC_MATERIAL_META)
+        .find(([stoneName]) => stoneName.toLocaleLowerCase() === normalizedName)?.[1].image || '';
 }
 
 function createBoostMaterialItem(name, quantity, overrides = {}){
@@ -24123,19 +24156,10 @@ const fishingViewport = document.getElementById('fishing-viewport');
 const fishingCanvas = document.getElementById('fishing-canvas');
 const fishingImage = document.getElementById('fishing-image');
 const fishingBaitBtn = document.getElementById('fishing-bait-btn');
-const fossilLocationBtn = document.getElementById('fossil-location-btn');
 const matrixBtn = document.getElementById('matrix-btn');
 const matrixModal = document.getElementById('matrix-modal');
 const matrixBody = document.getElementById('matrix-body');
 
-if(fossilLocationBtn){
-    fossilLocationBtn.setAttribute('aria-label', 'Abrir local da troca de fosseis no Mapa Interativo');
-    fossilLocationBtn.setAttribute('title', 'Abrir no Mapa Interativo');
-    const fossilLocationLabel = fossilLocationBtn.querySelector('.fossil-location-btn__label');
-    if(fossilLocationLabel){
-        fossilLocationLabel.textContent = 'Local da troca';
-    }
-}
 if(elementalBallsKurtBtn){
     elementalBallsKurtBtn.setAttribute('aria-label', 'Abrir local do NPC Kurt no Mapa Interativo');
     elementalBallsKurtBtn.setAttribute('title', 'Abrir no Mapa Interativo');
@@ -24474,11 +24498,16 @@ if(fishingBaitBtn){
         });
     });
 }
-if(fossilLocationBtn){
-    fossilLocationBtn.addEventListener('click', () => {
+if(contentFossils){
+    contentFossils.addEventListener('click', event => {
+        const trigger = event.target instanceof Element
+            ? event.target.closest('#fossil-location-btn')
+            : null;
+        if(!trigger) return;
+
         openInteractiveMapMarker('poke-utilities-fossil-exchange', {
             name: 'Troca de Fósseis',
-            trigger: fossilLocationBtn
+            trigger
         });
     });
 }
