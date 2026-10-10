@@ -15,7 +15,7 @@
             <div class="pokemon-filter-panel__copy">
               <span class="pokemon-filter-panel__eyebrow">Busca avançada</span>
               <h3 id="pokemon-filters-title">Filtre a lista de Pokémons</h3>
-              <p>Combine nome, role, cl&atilde;, n&iacute;vel, gera&ccedil;&atilde;o, tags, tipos e moveset para refinar os cards sem sair da p&aacute;gina.</p>
+              <p>Combine nome, role, cl&atilde;, n&iacute;vel, tier, gera&ccedil;&atilde;o, tags, tipos e moveset para refinar os cards sem sair da p&aacute;gina.</p>
             </div>
           </div>
 
@@ -49,6 +49,13 @@
             <label class="pokemon-filter-field" for="pokemon-filter-level">
               <span>Nível</span>
               <select id="pokemon-filter-level">
+                <option value="">Todos</option>
+              </select>
+            </label>
+
+            <label class="pokemon-filter-field" for="pokemon-filter-tier">
+              <span>Tiers</span>
+              <select id="pokemon-filter-tier">
                 <option value="">Todos</option>
               </select>
             </label>

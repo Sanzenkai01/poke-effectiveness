@@ -223,6 +223,7 @@ let pokemonFilterRoleSelect = document.getElementById('pokemon-filter-role');
 let pokemonFilterSubFunctionSelect = document.getElementById('pokemon-filter-sub-function');
 let pokemonFilterClanSelect = document.getElementById('pokemon-filter-clan');
 let pokemonFilterLevelSelect = document.getElementById('pokemon-filter-level');
+let pokemonFilterTierSelect = document.getElementById('pokemon-filter-tier');
 let pokemonFilterGenerationSelect = document.getElementById('pokemon-filter-generation');
 let pokemonFilterTagSelect = document.getElementById('pokemon-filter-tag');
 let pokemonFilterType1Select = document.getElementById('pokemon-filter-type1');
@@ -323,6 +324,7 @@ let catchPokemonSearchHideTimer = 0;
 let bossesPageLoadPromise = null;
 let pokemonCatalogLoaded = false;
 let pokemonCatalogLoadPromise = null;
+let pokemonTierTooltipId = 0;
 let pokemonCatalog = [];
 let pokemonCatalogEntriesByVariant = {
     default: [],
@@ -376,6 +378,9 @@ const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=2026082
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20260920-ranger-jellybeans';
+const PANEL_FRAGMENT_VERSIONS = Object.freeze({
+    pokemons: '20261010-pokemon-tiers'
+});
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
 let optionalLocalConfigLoadPromise = null;
@@ -1509,12 +1514,14 @@ const POKEMON_SUB_FUNCTION_META = Object.freeze({
 });
 const POKEMON_SUB_FUNCTION_FILTER_OPTIONS = Object.freeze(['stunner', 'finisher', 'silencer', 'stuck', 'area-pull', 'frontal-pull']);
 const POKEMON_FILTER_TYPE2_NONE_VALUE = '__none__';
+const POKEMON_CATALOG_TIER_ORDER = Object.freeze(['F', 'E', 'D', 'C', 'B', 'A', 'M']);
 const DEFAULT_POKEMON_CATALOG_FILTERS = Object.freeze({
     name: '',
     role: '',
     subFunction: '',
     clan: '',
     level: '',
+    tier: '',
     generation: '',
     specialTag: '',
     type1: '',
@@ -1527,6 +1534,7 @@ const POKEMON_CATALOG_FILTER_QUERY_KEYS = Object.freeze({
     subFunction: 'psubfunction',
     clan: 'pclan',
     level: 'plevel',
+    tier: 'ptier',
     generation: 'pgeneration',
     specialTag: 'ptag',
     type1: 'ptype1',
@@ -1539,6 +1547,7 @@ const POKEMON_FILTER_SHARE_LABELS = Object.freeze({
     subFunction: 'Sub-funcao',
     clan: 'Cla',
     level: 'Nivel',
+    tier: 'Tier',
     generation: 'Geracao',
     specialTag: 'Tag',
     type1: 'Tipo 1',
@@ -9445,6 +9454,7 @@ function refreshPokemonCatalogDomReferences(){
     pokemonFilterSubFunctionSelect = document.getElementById('pokemon-filter-sub-function');
     pokemonFilterClanSelect = document.getElementById('pokemon-filter-clan');
     pokemonFilterLevelSelect = document.getElementById('pokemon-filter-level');
+    pokemonFilterTierSelect = document.getElementById('pokemon-filter-tier');
     pokemonFilterGenerationSelect = document.getElementById('pokemon-filter-generation');
     pokemonFilterTagSelect = document.getElementById('pokemon-filter-tag');
     pokemonFilterType1Select = document.getElementById('pokemon-filter-type1');
@@ -13815,8 +13825,9 @@ function ensurePanelFragmentLoaded(panel){
     if(panelFragmentLoadPromises.has(fragmentName)) return panelFragmentLoadPromises.get(fragmentName);
 
     panel.setAttribute('aria-busy', 'true');
-    const fragmentUrl = `fragments/${fragmentName}.html?v=${PANEL_FRAGMENT_VERSION}`;
-    const stylesheetUrl = `fragments/${fragmentName}.css?v=${PANEL_FRAGMENT_VERSION}`;
+    const fragmentVersion = PANEL_FRAGMENT_VERSIONS[fragmentName] || PANEL_FRAGMENT_VERSION;
+    const fragmentUrl = `fragments/${fragmentName}.html?v=${fragmentVersion}`;
+    const stylesheetUrl = `fragments/${fragmentName}.css?v=${fragmentVersion}`;
     const needsFragmentStylesheet = panel.dataset.panelFragmentStyles !== 'none';
     const htmlRequest = fetch(fragmentUrl).then(response => {
         if(!response.ok) throw new Error(`Falha ao carregar ${fragmentUrl}`);
@@ -25178,7 +25189,10 @@ function getPokemonEntrySpecialTags(entry){
 
 function getPokemonCardSpecialTags(entry){
     const tags = getPokemonEntrySpecialTags(entry);
-    const visibleTags = tags.filter(tagKey => tagKey !== 'pre-ace');
+    const visibleTags = tags.filter(tagKey => (
+        tagKey !== 'pre-ace'
+        && !(tagKey === 'mega' && isMegaPokemonCatalogEntry(entry))
+    ));
     if(entry?.searchName === 'zoroark'){
         return visibleTags.filter(tagKey => tagKey !== 'boss');
     }
@@ -25700,6 +25714,7 @@ function normalizePokemonCatalogFiltersInput(filters = DEFAULT_POKEMON_CATALOG_F
         subFunction: normalizePokemonSubFunctionKey(filters?.subFunction || ''),
         clan: String(filters?.clan || '').trim().toLowerCase(),
         level: normalizePokemonLevelFilterValue(filters?.level || ''),
+        tier: normalizePokemonCatalogTierFilterValue(filters?.tier || ''),
         generation: normalizePokemonGenerationFilterValue(filters?.generation || ''),
         specialTag: normalizePokemonSpecialTagKey(filters?.specialTag || ''),
         type1: normalizePokemonTypeKey(filters?.type1 || ''),
@@ -25708,6 +25723,16 @@ function normalizePokemonCatalogFiltersInput(filters = DEFAULT_POKEMON_CATALOG_F
             : normalizePokemonTypeKey(filters?.type2 || ''),
         moveset: normalizePokemonTypeKey(filters?.moveset || '')
     };
+}
+
+function normalizePokemonCatalogTierFilterValue(value){
+    const tier = String(value || '').trim().toUpperCase();
+    return POKEMON_CATALOG_TIER_ORDER.includes(tier) ? tier : '';
+}
+
+function getPokemonTierLabel(tier){
+    const normalizedTier = normalizePokemonCatalogTierFilterValue(tier);
+    return normalizedTier ? `Tier ${normalizedTier}` : 'Tier não definido';
 }
 
 function getPokemonCatalogFiltersFromUrl(search = location.search){
@@ -25719,6 +25744,7 @@ function getPokemonCatalogFiltersFromUrl(search = location.search){
             subFunction: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.subFunction) || '',
             clan: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.clan) || '',
             level: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.level) || '',
+            tier: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.tier) || '',
             generation: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.generation) || '',
             specialTag: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.specialTag) || '',
             type1: params.get(POKEMON_CATALOG_FILTER_QUERY_KEYS.type1) || '',
@@ -25768,6 +25794,8 @@ function getPokemonCatalogFilterDisplayLabel(filterKey, value){
             return getPokemonTeamInfo(normalizedValue).label;
         case 'level':
             return formatPokemonLevelLabel(normalizedValue);
+        case 'tier':
+            return getPokemonTierLabel(normalizedValue);
         case 'generation':
             return formatPokemonGenerationLabel(normalizedValue);
         case 'specialTag':
@@ -26119,6 +26147,7 @@ function readPokemonCatalogFiltersFromDom(){
         subFunction: pokemonFilterSubFunctionSelect?.value || '',
         clan: pokemonFilterClanSelect?.value || '',
         level: pokemonFilterLevelSelect?.value || '',
+        tier: pokemonFilterTierSelect?.value || '',
         generation: pokemonFilterGenerationSelect?.value || '',
         specialTag: pokemonFilterTagSelect?.value || '',
         type1: pokemonFilterType1Select?.value || '',
@@ -26137,6 +26166,7 @@ function writePokemonCatalogFiltersToDom(filters = DEFAULT_POKEMON_CATALOG_FILTE
         [pokemonFilterSubFunctionSelect, normalizedFilters.subFunction],
         [pokemonFilterClanSelect, normalizedFilters.clan],
         [pokemonFilterLevelSelect, normalizedFilters.level],
+        [pokemonFilterTierSelect, normalizedFilters.tier],
         [pokemonFilterGenerationSelect, normalizedFilters.generation],
         [pokemonFilterTagSelect, normalizedFilters.specialTag],
         [pokemonFilterType1Select, normalizedFilters.type1],
@@ -26197,6 +26227,7 @@ function getFilteredPokemonCatalogEntries(filters = pokemonCatalogFilters){
         if(filters?.subFunction && !getPokemonEntryAllSubFunctions(entry).some(subFunction => subFunction.key === filters.subFunction)) return false;
         if(filters?.clan && entry.team !== filters.clan) return false;
         if(filters?.level && entry.levelKey !== filters.level) return false;
+        if(filters?.tier && entry.tier !== filters.tier) return false;
         if(filters?.generation && entry.generationKey !== filters.generation) return false;
         if(filters?.specialTag && !getPokemonEntrySpecialTags(entry).includes(filters.specialTag)) return false;
         if(filters?.type1 && entry.type1 !== filters.type1) return false;
@@ -26385,6 +26416,13 @@ function populatePokemonFilterControls(){
         currentFilters.level
     );
 
+    populatePokemonFilterSelect(
+        pokemonFilterTierSelect,
+        POKEMON_CATALOG_TIER_ORDER.map(tier => ({ value: tier, label: getPokemonTierLabel(tier) })),
+        'Todos',
+        currentFilters.tier
+    );
+
     const generationOptions = Array.from(new Set(
         visibleEntries
             .map(entry => entry.generationKey)
@@ -26516,6 +26554,7 @@ function initializePokemonCatalogFilters(){
         pokemonFilterSubFunctionSelect,
         pokemonFilterClanSelect,
         pokemonFilterLevelSelect,
+        pokemonFilterTierSelect,
         pokemonFilterGenerationSelect,
         pokemonFilterTagSelect,
         pokemonFilterType1Select,
@@ -26594,6 +26633,64 @@ function createPokemonSpecialTagBadge(tagKey, options = {}){
     badge.className = 'pokemon-special-tag-badge';
     badge.dataset.tag = normalized || 'custom';
     badge.textContent = String(labelOverride || formatPokemonSpecialTagLabel(normalized)).trim();
+    return badge;
+}
+
+function createPokemonTierBadge(tier){
+    const normalizedTier = normalizePokemonCatalogTierFilterValue(tier);
+    const badge = document.createElement('span');
+    badge.className = 'pokemon-entry-card__tier';
+    badge.dataset.tier = normalizedTier || 'unassigned';
+    if(normalizedTier){
+        badge.textContent = getPokemonTierLabel(normalizedTier);
+    } else {
+        const description = 'Este Pokémon não tem informações sobre o Tier correto';
+        badge.textContent = 'TnF';
+        badge.dataset.tooltip = description;
+        badge.setAttribute('aria-label', description);
+        badge.tabIndex = 0;
+
+        let tooltip = null;
+        const hideTooltip = () => {
+            if(!tooltip) return;
+            tooltip.remove();
+            tooltip = null;
+            badge.removeAttribute('aria-describedby');
+        };
+        const showTooltip = () => {
+            if(tooltip) return;
+
+            tooltip = document.createElement('span');
+            tooltip.className = 'pokemon-tier-tooltip';
+            tooltip.id = `pokemon-tier-tooltip-${++pokemonTierTooltipId}`;
+            tooltip.setAttribute('role', 'tooltip');
+            tooltip.textContent = description;
+            document.body.appendChild(tooltip);
+            badge.setAttribute('aria-describedby', tooltip.id);
+
+            const badgeRect = badge.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const halfTooltipWidth = tooltipRect.width / 2;
+            const left = Math.min(
+                Math.max(badgeRect.left + badgeRect.width / 2, halfTooltipWidth + 8),
+                window.innerWidth - halfTooltipWidth - 8
+            );
+            const top = badgeRect.top > tooltipRect.height + 8
+                ? badgeRect.top - tooltipRect.height - 8
+                : badgeRect.bottom + 8;
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        };
+
+        badge.addEventListener('pointerenter', showTooltip);
+        badge.addEventListener('pointerleave', () => {
+            if(!badge.matches(':focus')) hideTooltip();
+        });
+        badge.addEventListener('focus', showTooltip);
+        badge.addEventListener('blur', () => {
+            if(!badge.matches(':hover')) hideTooltip();
+        });
+    }
     return badge;
 }
 
@@ -26790,6 +26887,32 @@ function getPokemonShinyCaptureLevelKey(entry){
 
 function isMegaPokemonCatalogEntry(entry){
     return normalizePokemonCatalogVariant(entry?.variant) === POKEMON_CATALOG_VARIANT_MEGA;
+}
+
+function getPokemonCatalogTier(entry){
+    if(isMegaPokemonCatalogEntry(entry)) return 'M';
+
+    const specialTags = getPokemonEntrySpecialTags(entry);
+    if(specialTags.includes('ace') || String(entry?.level || '').trim().toLowerCase() === 'ace'){
+        return 'A';
+    }
+    if(
+        specialTags.includes('boss')
+        || /alolan/i.test(String(entry?.name || ''))
+        || /^horizons(?:\s|$)/i.test(String(entry?.priceLabel || ''))
+    ){
+        return 'B';
+    }
+
+    const level = Number(entry?.level);
+    if(level === 5) return 'F';
+    if(level >= 20 && level <= 30) return 'E';
+
+    const captureLevel = specialTags.includes('pre-ace') ? 'pre' : entry?.level;
+    const storyBallAverage = getPokemonCaptureAverageForBall(captureLevel, 'shiny', 'story');
+    if(level === 50 || (level >= 65 && level <= 80 && storyBallAverage === 800)) return 'D';
+    if(storyBallAverage === 1600) return 'C';
+    return '';
 }
 
 function getPokemonNormalCaptureAverageForBall(entry, ballKey){
@@ -27178,7 +27301,14 @@ function normalizePokemonCatalogEntry(entry, index){
         defenseDamageFactorByBossType: entry.defenseDamageFactorByBossType && typeof entry.defenseDamageFactorByBossType === 'object'
             ? { ...entry.defenseDamageFactorByBossType }
             : {},
-        variant: normalizePokemonCatalogVariant(entry.variant)
+        variant: normalizePokemonCatalogVariant(entry.variant),
+        tier: getPokemonCatalogTier({
+            name,
+            level: entry.level,
+            priceLabel: entry.priceLabel,
+            specialTags,
+            variant: entry.variant
+        })
     };
 }
 
@@ -27539,6 +27669,7 @@ function renderPokemonCatalog(options = {}){
         const ariaLabelParts = [entry.name];
         if(hasRole) ariaLabelParts.push(entry.role);
         ariaLabelParts.push(getPokemonEntryLevelLabel(entry));
+        ariaLabelParts.push(getPokemonTierLabel(entry.tier));
         if(shouldShowPokemonNaturalShinyBadgeOnCard(entry)) ariaLabelParts.push('Shiny por natureza');
         specialTags.forEach((tagKey) => ariaLabelParts.push(formatPokemonSpecialTagLabel(tagKey)));
         card.setAttribute('aria-label', `${ariaLabelParts.join(', ')}.`);
@@ -27568,6 +27699,8 @@ function renderPokemonCatalog(options = {}){
         level.className = 'pokemon-entry-card__level';
         level.textContent = getPokemonEntryLevelLabel(entry);
         metaRow.appendChild(level);
+        metaRow.appendChild(document.createTextNode(' • '));
+        metaRow.appendChild(createPokemonTierBadge(entry.tier));
         if(shouldShowPokemonNaturalShinyBadgeOnCard(entry)){
             metaRow.appendChild(createPokemonNaturalShinyBadge());
         }
@@ -28092,7 +28225,7 @@ function renderPokemonDetailsModal(entry){
         const levelMeta = document.createElement('span');
         levelMeta.className = 'pokemon-level-meta-row';
         const levelText = document.createElement('span');
-        levelText.textContent = getPokemonEntryLevelLabel(entry);
+        levelText.textContent = `${getPokemonEntryLevelLabel(entry)} • ${getPokemonTierLabel(entry.tier)}`;
 
         // Badges sob o texto de nivel (shiny / tags especiais)
         const badgesWrap = document.createElement('span');
