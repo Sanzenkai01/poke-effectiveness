@@ -5168,7 +5168,7 @@ button[type="button"] {
   background: rgba(255, 255, 255, 0.055);
 }
 
-.training-selected-pokemon span {
+.training-selected-pokemon__copy {
   display: grid;
   gap: 0.15rem;
   min-width: 0;
@@ -5178,9 +5178,51 @@ button[type="button"] {
   color: #f8fafc;
 }
 
-.training-selected-pokemon span span {
+.training-selected-pokemon__meta {
   color: rgba(203, 213, 225, 0.72);
   font-size: 0.82rem;
+}
+
+.training-type-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.training-type-option {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.68);
+  color: rgba(226, 232, 240, 0.82);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.training-type-option[aria-pressed="true"] {
+  border-color: rgba(52, 211, 153, 0.58);
+  background: rgba(16, 185, 129, 0.16);
+  color: #ecfdf5;
+}
+
+.training-type-option img {
+  width: 22px;
+  height: 22px;
+  border-radius: 0;
+  background: none;
+  object-fit: contain;
+}
+
+.training-type-option:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
 }
 
 .training-add-pokemon {
@@ -5546,6 +5588,11 @@ button[type="button"] {
   max-width: 34px;
   max-height: 34px;
   object-fit: contain;
+}
+
+.training-material-card__media-icon {
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 .training-material-card__media-badge {

@@ -50,6 +50,7 @@ let trainingPokemonSearchInput = document.getElementById('training-pokemon-searc
 let trainingPokemonResults = document.getElementById('training-pokemon-results');
 let trainingPokemonNoResults = document.getElementById('training-pokemon-no-results');
 let trainingSelectedPokemon = document.getElementById('training-selected-pokemon');
+let trainingSelectedPokemonType = '';
 let trainingCurrentLevelInput = document.getElementById('training-current-level');
 let trainingCurrentProgressInput = document.getElementById('training-current-progress');
 let trainingProgressControl = document.getElementById('training-progress-control');
@@ -4385,6 +4386,12 @@ const COMMON_PLATE_COST = {
 const CANDY_PLATE_COST = 10;
 const SHINY_CANDY_GOLDEN_TICKET_COST = 1;
 const SHINING_PLATE_BLOCK_SIZE = 40;
+const TRAINING_CRAFT_TIME_MINUTES = Object.freeze({
+    commonPlate: 1,
+    shiningPlateBlock: 60,
+    normalCandy: 5,
+    shinyCandy: 20
+});
 const BOOST_DEFAULT_STATE = Object.freeze({
     pokemonName: '',
     shiny: 'no',
@@ -4403,7 +4410,7 @@ const BOOST_TYPE_STONE_META = Object.freeze({
     bug: { name: 'Cocoon Stone', image: 'calculadora/cocoon_stone.gif' },
     ghost: { name: 'Ghost Stone', image: '' },
     dark: { name: 'Darkness Stone', image: 'calculadora/darkness_stone.png' },
-    dragon: { name: 'Dragon Stone', image: 'calculadora/dragon_stone.gif' },
+    dragon: { name: 'Dragon Stone', image: 'calculadora/dragon_stone.png' },
     ground: { name: 'Earth Stone', image: 'calculadora/earth_stone.gif' },
     psychic: { name: 'Enigma Stone', image: 'calculadora/enigma_stone.gif' },
     fire: { name: 'Fire Stone', image: 'calculadora/fire_stone.gif' },
@@ -4436,7 +4443,7 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Brave Stone': { image: 'calculadora/brave_stone.png' },
     'Hearth Stone': { image: 'calculadora/heart_stone.gif' },
     'Metal Stone': { image: 'calculadora/metal_stone.png' },
-    'Dragon Stone': { image: 'calculadora/dragon_stone.gif' },
+    'Dragon Stone': { image: 'calculadora/dragon_stone.png' },
     'Fairy Stone': { image: 'calculadora/fairy_stone.gif' },
     'Ghost Stone': { image: '' }
 });
@@ -20721,6 +20728,15 @@ function getSelectedTrainingVariant(){
         : 'normal';
 }
 
+function getTrainingPokemonTypes(entry){
+    return [...new Set([entry?.type1, entry?.type2].filter(Boolean))];
+}
+
+function getTrainingSelectedType(entry = trainingSelectedPokemonEntry, preferredType = trainingSelectedPokemonType){
+    const types = getTrainingPokemonTypes(entry);
+    return types.includes(preferredType) ? preferredType : (types[0] || '');
+}
+
 function getTrainingExperienceRatesForLevel(level){
     const from = clampTrainingLevel(level);
     return TRAINING_EXPERIENCE_RATES.find(entry => from >= entry.minLevel) || TRAINING_EXPERIENCE_RATES[TRAINING_EXPERIENCE_RATES.length - 1];
@@ -20741,6 +20757,11 @@ function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVarian
         : 0;
     const shiningPlatesCrafted = shiningPlateBlocks * SHINING_PLATE_BLOCK_SIZE;
     const commonPlates = variant === 'shiny' ? shiningPlatesCrafted : candyPlates;
+    const commonPlateCraftMinutes = commonPlates * TRAINING_CRAFT_TIME_MINUTES.commonPlate;
+    const shiningPlateCraftMinutes = shiningPlateBlocks * TRAINING_CRAFT_TIME_MINUTES.shiningPlateBlock;
+    const candyCraftMinutes = candies * (variant === 'shiny'
+        ? TRAINING_CRAFT_TIME_MINUTES.shinyCandy
+        : TRAINING_CRAFT_TIME_MINUTES.normalCandy);
     return {
         experiencePerCandy,
         candies,
@@ -20749,11 +20770,19 @@ function calculateTrainingTotals(startLevel, variant = getSelectedTrainingVarian
         shiningPlatesCrafted,
         shiningPlateBlocks,
         commonPlates,
+        commonPlateCraftMinutes,
+        shiningPlateCraftMinutes,
+        candyCraftMinutes,
+        craftTimeMinutes: commonPlateCraftMinutes + shiningPlateCraftMinutes + candyCraftMinutes,
         shiningTickets: variant === 'shiny' ? candies * SHINY_CANDY_GOLDEN_TICKET_COST : 0,
         elementItems: commonPlates * COMMON_PLATE_COST.elementItems,
         charItems: commonPlates * COMMON_PLATE_COST.charItems,
         stones: commonPlates * COMMON_PLATE_COST.stones
     };
+}
+
+function formatTrainingCraftTime(minutes){
+    return `${(minutes / 60).toLocaleString('pt-BR', {maximumFractionDigits: 2})} h`;
 }
 
 function createTrainingMaterialCard(options = {}){
@@ -20762,6 +20791,7 @@ function createTrainingMaterialCard(options = {}){
         value = 0,
         detail = '',
         image = '',
+        icon = '',
         tone = '',
         info = '',
         badge = ''
@@ -20787,6 +20817,13 @@ function createTrainingMaterialCard(options = {}){
         img.decoding = 'async';
         media.appendChild(img);
     }
+    if(icon){
+        const iconEl = document.createElement('span');
+        iconEl.className = 'training-material-card__media-icon';
+        iconEl.textContent = icon;
+        iconEl.setAttribute('aria-hidden', 'true');
+        media.appendChild(iconEl);
+    }
     if(badge){
         const badgeEl = document.createElement('span');
         badgeEl.className = 'training-material-card__media-badge';
@@ -20805,9 +20842,9 @@ function createTrainingMaterialCard(options = {}){
     note.textContent = detail;
     body.append(title, amount);
     if(detail) body.appendChild(note);
-    if(image || badge) card.appendChild(media);
+    if(image || icon || badge) card.appendChild(media);
     card.appendChild(body);
-    if(!image && !badge) card.classList.add('training-material-card--text-only');
+    if(!image && !icon && !badge) card.classList.add('training-material-card--text-only');
     return card;
 }
 
@@ -20829,14 +20866,42 @@ function renderTrainingSelectedPokemon(){
     const title = document.createElement('strong');
     title.textContent = entry.name;
     const meta = document.createElement('span');
+    meta.className = 'training-selected-pokemon__meta';
     meta.textContent = [
         `Nivel base ${getTrainingEntryLevel(entry)}`,
         formatPokemonTypeLabel(entry.type1),
         entry.type2 ? formatPokemonTypeLabel(entry.type2) : '',
         entry.role ? formatPokemonRoleLabel(entry.role) : ''
     ].filter(Boolean).join(' • ');
-    const copy = document.createElement('span');
+    const copy = document.createElement('div');
+    copy.className = 'training-selected-pokemon__copy';
     copy.append(title, meta);
+    const types = getTrainingPokemonTypes(entry);
+    if(types.length > 1){
+        const typeSelector = document.createElement('div');
+        typeSelector.className = 'training-type-selector';
+        typeSelector.setAttribute('role', 'group');
+        typeSelector.setAttribute('aria-label', `Tipagem usada para calcular as Plates de ${entry.name}`);
+        const selectedType = getTrainingSelectedType(entry);
+        types.forEach(typeKey => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'training-type-option';
+            option.dataset.trainingType = typeKey;
+            option.setAttribute('aria-pressed', String(typeKey === selectedType));
+            option.setAttribute('aria-label', `Usar tipagem ${formatPokemonTypeLabel(typeKey)} para calcular as Plates`);
+            const icon = document.createElement('img');
+            icon.src = `icons-type/${typeKey}.png`;
+            icon.alt = '';
+            icon.loading = 'lazy';
+            icon.decoding = 'async';
+            const label = document.createElement('span');
+            label.textContent = formatPokemonTypeLabel(typeKey);
+            option.append(icon, label);
+            typeSelector.appendChild(option);
+        });
+        copy.appendChild(typeSelector);
+    }
     const addButton = document.createElement('button');
     addButton.type = 'button';
     addButton.className = 'training-add-pokemon';
@@ -20858,9 +20923,11 @@ function addTrainingPokemonToSavedPlan(){
     const level = clampTrainingLevel(trainingCurrentLevelInput?.value || getTrainingEntryLevel(entry));
     const progress = getTrainingCurrentProgress();
     const variant = getSelectedTrainingVariant();
+    const selectedType = getTrainingSelectedType(entry);
     const plan = {
         key,
         entry,
+        type: selectedType,
         level,
         progress,
         variant,
@@ -20876,6 +20943,7 @@ function addTrainingPokemonToSavedPlan(){
 
     editingTrainingPokemonKey = '';
     trainingSelectedPokemonEntry = null;
+    trainingSelectedPokemonType = '';
     if(trainingPokemonSearchInput) trainingPokemonSearchInput.value = '';
     if(trainingCurrentProgressInput) trainingCurrentProgressInput.value = '0';
     trainingVariantInputs.forEach(input => {
@@ -20902,7 +20970,10 @@ function renderTrainingSavedPlan(){
         commonPlates: 0,
         goldenTickets: 0,
         shiningPlates: 0,
-        shiningStones: 0
+        shiningStones: 0,
+        commonPlateCraftMinutes: 0,
+        shiningPlateCraftMinutes: 0,
+        candyCraftMinutes: 0
     };
     const materials = new Map();
     const addMaterial = (key, label, value, image, tone = 'item') => {
@@ -20922,11 +20993,15 @@ function renderTrainingSavedPlan(){
             aggregate.normalCandies += totals.candies;
         }
         aggregate.commonPlates += totals.commonPlates;
+        aggregate.commonPlateCraftMinutes += totals.commonPlateCraftMinutes;
+        aggregate.shiningPlateCraftMinutes += totals.shiningPlateCraftMinutes;
+        aggregate.candyCraftMinutes += totals.candyCraftMinutes;
 
-        const typeMeta = BOOST_TYPE_STONE_META[entry.type1] || null;
+        const selectedType = getTrainingSelectedType(entry, plan.type);
+        const typeMeta = BOOST_TYPE_STONE_META[selectedType] || null;
         const elementName = typeMeta?.name || 'Stone do tipo';
         const elementImage = typeMeta?.image || '';
-        addMaterial(`element:${entry.type1}`, `Itens de ${formatPokemonTypeLabel(entry.type1)}`, totals.elementItems, `icons-type/${entry.type1}.png`);
+        addMaterial(`element:${selectedType}`, `Itens de ${formatPokemonTypeLabel(selectedType)}`, totals.elementItems, `icons-type/${selectedType}.png`);
         addMaterial(`characteristic:${plan.key}`, `Itens característicos • ${entry.name}`, totals.charItems, 'calculadora/lotitems.png');
         addMaterial(`stone:${elementName}`, elementName, totals.stones, elementImage);
 
@@ -20943,7 +21018,7 @@ function renderTrainingSavedPlan(){
         const name = document.createElement('strong');
         name.textContent = entry.name;
         const details = document.createElement('span');
-        details.textContent = `Level ${plan.level}${getTrainingEntryLevel(entry) >= 50 ? ` • ${plan.progress}%` : ''} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • ${totals.candies} ${totals.candies === 1 ? 'Candy' : 'Candies'}`;
+        details.textContent = `Level ${plan.level}${getTrainingEntryLevel(entry) >= 50 ? ` • ${plan.progress}%` : ''} • ${formatPokemonTypeLabel(selectedType)} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • ${totals.candies} ${totals.candies === 1 ? 'Candy' : 'Candies'}`;
         content.append(name, details);
         const actions = document.createElement('div');
         actions.className = 'training-saved-entry__actions';
@@ -20964,6 +21039,16 @@ function renderTrainingSavedPlan(){
         trainingSavedEntriesContainer.appendChild(card);
     });
 
+    const totalCraftMinutes = aggregate.commonPlateCraftMinutes
+        + aggregate.shiningPlateCraftMinutes
+        + aggregate.candyCraftMinutes;
+    trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
+        label: 'Tempo total de craft',
+        value: formatTrainingCraftTime(totalCraftMinutes),
+        detail: `Craft das Plates: ${formatTrainingCraftTime(aggregate.commonPlateCraftMinutes + aggregate.shiningPlateCraftMinutes)} • Craft do Candy: ${formatTrainingCraftTime(aggregate.candyCraftMinutes)}`,
+        tone: 'shiny',
+        icon: '⏰'
+    }));
     if(aggregate.normalCandies){
         trainingSavedTotalsContainer.appendChild(createTrainingMaterialCard({
             label: 'Poke Candy',
@@ -20976,7 +21061,8 @@ function renderTrainingSavedPlan(){
             label: 'Shiny Poke Candy',
             value: aggregate.shinyCandies,
             image: 'treinamento/poke_candy.png',
-            tone: 'shiny'
+            tone: 'shiny',
+            badge: '✨'
         }));
     }
     if(aggregate.commonPlates){
@@ -21065,10 +21151,11 @@ function renderTrainingResults(){
     const progress = getTrainingCurrentProgress();
     const variant = getSelectedTrainingVariant();
     const totals = calculateTrainingTotals(level, variant, getTrainingBaseLevelForCalculation(level), progress);
-    const typeMeta = BOOST_TYPE_STONE_META[trainingSelectedPokemonEntry.type1] || null;
+    const selectedType = getTrainingSelectedType(trainingSelectedPokemonEntry);
+    const typeMeta = BOOST_TYPE_STONE_META[selectedType] || null;
     const elementName = typeMeta?.name || 'Stone do tipo';
     const elementImage = typeMeta?.image || '';
-    const elementItemImage = `icons-type/${trainingSelectedPokemonEntry.type1}.png`;
+    const elementItemImage = `icons-type/${selectedType}.png`;
 
     const shell = document.createElement('div');
     shell.className = 'training-results-shell';
@@ -21076,7 +21163,7 @@ function renderTrainingResults(){
     const context = document.createElement('div');
     context.className = 'training-result-context';
     const progressContext = getTrainingEntryLevel(trainingSelectedPokemonEntry) >= 50 ? ` (${progress}% completo)` : '';
-    context.textContent = `${trainingSelectedPokemonEntry.name} • Level base ${getTrainingEntryLevel(trainingSelectedPokemonEntry)} • Level atual ${level}${progressContext} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • Tipo ${formatPokemonTypeLabel(trainingSelectedPokemonEntry.type1)}`;
+    context.textContent = `${trainingSelectedPokemonEntry.name} • Level base ${getTrainingEntryLevel(trainingSelectedPokemonEntry)} • Level atual ${level}${progressContext} • ${variant === 'shiny' ? 'Shiny' : 'Normal'} • Tipagem ${formatPokemonTypeLabel(selectedType)}`;
 
     const resultTitle = document.createElement('h3');
     resultTitle.textContent = 'Resultado do treinamento';
@@ -21087,18 +21174,25 @@ function renderTrainingResults(){
             label: variant === 'shiny' ? 'Shiny Poke Candy' : 'Poke Candy',
             value: totals.candies,
             detail: `${level} → 100`,
-            badge: 'XP',
+            badge: variant === 'shiny' ? '✨' : 'XP',
             image: 'treinamento/poke_candy.png'
         }),
         createTrainingMaterialCard({
             label: 'Experiência por Candy',
             value: `${totals.experiencePerCandy}%`,
             detail: 'por Candy'
+        }),
+        createTrainingMaterialCard({
+            label: 'Tempo total de craft',
+            value: formatTrainingCraftTime(totals.craftTimeMinutes),
+            detail: 'Soma dos tempos das etapas',
+            tone: 'shiny',
+            icon: '⏰'
         })
     );
 
     const candyCraftTitle = document.createElement('h3');
-    candyCraftTitle.textContent = 'Craft do Candy';
+    candyCraftTitle.textContent = `Craft do Candy ⏰ ${formatTrainingCraftTime(totals.candyCraftMinutes)}`;
     const candyCraft = document.createElement('div');
     candyCraft.className = 'training-material-grid';
     if(variant === 'shiny'){
@@ -21129,7 +21223,7 @@ function renderTrainingResults(){
     }
 
     const plateCraftTitle = document.createElement('h3');
-    plateCraftTitle.textContent = 'Craft das Plates';
+    plateCraftTitle.textContent = `Craft das Plates ⏰ ${formatTrainingCraftTime(totals.commonPlateCraftMinutes + totals.shiningPlateCraftMinutes)}`;
     const plateMaterialsTitle = document.createElement('h4');
     plateMaterialsTitle.textContent = 'Materiais utilizados';
     const plateMaterials = document.createElement('div');
@@ -21209,6 +21303,7 @@ function applyTrainingPokemonSelection(entry){
     const savedPlan = entry
         ? trainingSavedPokemonEntries.find(plan => plan.key === getTrainingPlanPokemonKey(entry))
         : null;
+    trainingSelectedPokemonType = getTrainingSelectedType(entry, savedPlan?.type || entry?.type1 || '');
     if(savedPlan){
         editingTrainingPokemonKey = savedPlan.key;
         if(trainingCurrentLevelInput) trainingCurrentLevelInput.value = savedPlan.level;
@@ -21329,10 +21424,18 @@ function initializeCalculatorPage(){
         trainingPokemonSearchInput.addEventListener('input', () => {
             const value = String(trainingPokemonSearchInput.value || '').trim();
             const key = normalizePokemonSearchText(value);
+            const previousEntry = trainingSelectedPokemonEntry;
             trainingSelectedPokemonEntry = key ? trainingPokemonSearchIndex.get(key) || null : null;
             if(!trainingSelectedPokemonEntry || getTrainingPlanPokemonKey(trainingSelectedPokemonEntry) !== editingTrainingPokemonKey){
                 editingTrainingPokemonKey = '';
             }
+            const savedPlan = trainingSelectedPokemonEntry
+                ? trainingSavedPokemonEntries.find(plan => plan.key === getTrainingPlanPokemonKey(trainingSelectedPokemonEntry))
+                : null;
+            const preferredType = savedPlan?.type || (
+                trainingSelectedPokemonEntry === previousEntry ? trainingSelectedPokemonType : trainingSelectedPokemonEntry?.type1
+            );
+            trainingSelectedPokemonType = getTrainingSelectedType(trainingSelectedPokemonEntry, preferredType);
             renderTrainingPokemonSearchResults(value);
             syncTrainingCalculator();
         });
@@ -21384,6 +21487,15 @@ function initializeCalculatorPage(){
     });
     if(trainingSelectedPokemon){
         trainingSelectedPokemon.addEventListener('click', event => {
+            const typeOption = event.target.closest('[data-training-type]');
+            if(typeOption && trainingSelectedPokemon.contains(typeOption)){
+                const selectedType = typeOption.dataset.trainingType;
+                if(getTrainingPokemonTypes(trainingSelectedPokemonEntry).includes(selectedType)){
+                    trainingSelectedPokemonType = selectedType;
+                    syncTrainingCalculator();
+                }
+                return;
+            }
             if(event.target.closest('.training-add-pokemon')){
                 addTrainingPokemonToSavedPlan();
             }
@@ -21406,6 +21518,7 @@ function initializeCalculatorPage(){
                 if(editingTrainingPokemonKey === key){
                     editingTrainingPokemonKey = '';
                     trainingSelectedPokemonEntry = null;
+                    trainingSelectedPokemonType = '';
                     if(trainingPokemonSearchInput) trainingPokemonSearchInput.value = '';
                 }
                 syncTrainingCalculator();
@@ -23964,7 +24077,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20261009-resize-guard').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261009-training-time-cleanup').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }
