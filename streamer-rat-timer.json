@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-10-16T15:11:34.487Z",
+  "updatedAt": "2026-10-16T15:12:34.483Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-16T14:52:28.332Z",
-    "endedAt": "2026-10-16T15:11:34.487Z",
-    "reason": "rat-found",
+    "startedAt": "2026-10-16T15:12:01.331Z",
+    "endedAt": "2026-10-16T15:12:34.483Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "gordallink",
       "karlin_nara",
@@ -41,28 +41,20 @@
     "observedChannels": [
       "gordallink"
     ],
-    "observedSpawnChannels": [
-      "gordallink"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "gordallink",
-        "messageAt": 1792163494377,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "gordallink",
         "kind": "rattata-message",
-        "messageAt": 1792163494377,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1792163554378,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "gordallink",
-        "kind": "spawn",
-        "messageAt": 1792163494377,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1792163554378,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -113,24 +105,24 @@
   },
   "latest": {
     "channel": "gordallink",
-    "lastMessageAt": 1792163494377,
-    "expectedNextAt": 1792164754377,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "2026-10-16T14:49:32Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1792163494486,
-    "persistedAt": 1792163494486
+    "lastMessageAt": 1792163554378,
+    "expectedNextAt": 1792164754378,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-10-16T15:02:49Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1792163554482,
+    "persistedAt": 1792163554482
   },
   "timers": {
     "gordallink": {
       "channel": "gordallink",
-      "lastMessageAt": 1792163494377,
-      "expectedNextAt": 1792164754377,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-10-16T14:49:32Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1792163494486,
-      "persistedAt": 1792163494486
+      "lastMessageAt": 1792163554378,
+      "expectedNextAt": 1792164754378,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-10-16T15:02:49Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1792163554482,
+      "persistedAt": 1792163554482
     },
     "karlin_nara": {
       "channel": "karlin_nara",
@@ -140,17 +132,7 @@
       "streamStartedAt": "2026-10-16T14:14:16Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1792162287437,
-      "persistedAt": 1792162348331
-    },
-    "uguettolitz": {
-      "channel": "uguettolitz",
-      "lastMessageAt": 1792159868475,
-      "expectedNextAt": 1792161128475,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-10-16T11:20:46Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1792159868587,
-      "persistedAt": 1792162348331
+      "persistedAt": 1792163521331
     }
   }
 }
