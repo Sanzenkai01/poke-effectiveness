@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-10-16T17:13:34.406Z",
+  "updatedAt": "2026-10-16T17:32:41.774Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-16T17:13:00.619Z",
-    "endedAt": "2026-10-16T17:13:34.406Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-10-16T17:23:20.548Z",
+    "endedAt": "2026-10-16T17:32:41.774Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "gordallink",
       "karlin_nara",
       "dragonslayerpiva",
       "0taichou",
@@ -17,7 +18,6 @@
       "enriqfmz",
       "eusou_o_d",
       "fernandoalcatraz",
-      "gordallink",
       "indypereira",
       "jackpist0la",
       "lordjuregi",
@@ -33,25 +33,34 @@
       "zsales33"
     ],
     "pstoryDropChannels": [
+      "gordallink",
       "karlin_nara"
     ],
     "observedChannels": [
-      "karlin_nara"
+      "gordallink"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "gordallink"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "gordallink",
+        "messageAt": 1792171961641,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "karlin_nara",
+        "channel": "gordallink",
         "kind": "rattata-message",
-        "messageAt": 1792170814300,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1792171961641,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "karlin_nara",
-        "kind": "escape",
-        "messageAt": 1792170814300,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "gordallink",
+        "kind": "spawn",
+        "messageAt": 1792171961641,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -101,16 +110,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "karlin_nara",
-    "lastMessageAt": 1792170814300,
-    "expectedNextAt": 1792172014300,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-10-16T14:14:16Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1792170814405,
-    "persistedAt": 1792170814405
+    "channel": "gordallink",
+    "lastMessageAt": 1792171961641,
+    "expectedNextAt": 1792173221641,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-16T17:14:14Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1792171961773,
+    "persistedAt": 1792171961773
   },
   "timers": {
+    "gordallink": {
+      "channel": "gordallink",
+      "lastMessageAt": 1792171961641,
+      "expectedNextAt": 1792173221641,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-16T17:14:14Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1792171961773,
+      "persistedAt": 1792171961773
+    },
     "karlin_nara": {
       "channel": "karlin_nara",
       "lastMessageAt": 1792170814300,
@@ -119,17 +138,7 @@
       "streamStartedAt": "2026-10-16T14:14:16Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1792170814405,
-      "persistedAt": 1792170814405
-    },
-    "gordallink": {
-      "channel": "gordallink",
-      "lastMessageAt": 1792169541921,
-      "expectedNextAt": 1792170801921,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1792169542033,
-      "persistedAt": 1792170780619
+      "persistedAt": 1792171400548
     }
   }
 }
