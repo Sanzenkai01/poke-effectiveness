@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-10-17T18:11:16.683Z",
+  "updatedAt": "2026-10-17T18:12:20.667Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-17T18:01:58.311Z",
-    "endedAt": "2026-10-17T18:11:16.682Z",
-    "reason": "rat-found",
+    "startedAt": "2026-10-17T18:12:18.359Z",
+    "endedAt": "2026-10-17T18:12:20.667Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "fernandoalcatraz",
       "karlin_nara",
       "vivihbecker",
       "0taichou",
@@ -17,7 +18,6 @@
       "dragonslayerpiva",
       "enriqfmz",
       "eusou_o_d",
-      "fernandoalcatraz",
       "gordallink",
       "indypereira",
       "jackpist0la",
@@ -33,34 +33,27 @@
       "zsales33"
     ],
     "pstoryDropChannels": [
+      "fernandoalcatraz",
       "karlin_nara",
       "vivihbecker"
     ],
     "observedChannels": [
-      "fernandoalcatraz"
+      "vivihbecker"
     ],
-    "observedSpawnChannels": [
-      "fernandoalcatraz"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "fernandoalcatraz",
-        "messageAt": 1792260676550,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
-        "channel": "fernandoalcatraz",
+        "channel": "vivihbecker",
         "kind": "rattata-message",
-        "messageAt": 1792260676550,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1792260740578,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
-        "channel": "fernandoalcatraz",
-        "kind": "spawn",
-        "messageAt": 1792260676550,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "channel": "vivihbecker",
+        "kind": "escape",
+        "messageAt": 1792260740578,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -110,16 +103,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "fernandoalcatraz",
-    "lastMessageAt": 1792260676550,
-    "expectedNextAt": 1792261936550,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-    "streamStartedAt": "",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1792260676682,
-    "persistedAt": 1792260676682
+    "channel": "vivihbecker",
+    "lastMessageAt": 1792260740578,
+    "expectedNextAt": 1792261940578,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-10-17T13:46:48Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1792260740666,
+    "persistedAt": 1792260740666
   },
   "timers": {
+    "vivihbecker": {
+      "channel": "vivihbecker",
+      "lastMessageAt": 1792260740578,
+      "expectedNextAt": 1792261940578,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-10-17T13:46:48Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1792260740666,
+      "persistedAt": 1792260740666
+    },
     "fernandoalcatraz": {
       "channel": "fernandoalcatraz",
       "lastMessageAt": 1792260676550,
@@ -128,7 +131,7 @@
       "streamStartedAt": "",
       "source": "github-action-chat-spawn",
       "updatedAt": 1792260676682,
-      "persistedAt": 1792260676682
+      "persistedAt": 1792260738358
     },
     "karlin_nara": {
       "channel": "karlin_nara",
@@ -138,7 +141,7 @@
       "streamStartedAt": "2026-10-17T15:32:44Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1792259529924,
-      "persistedAt": 1792260118311
+      "persistedAt": 1792260738358
     }
   }
 }
