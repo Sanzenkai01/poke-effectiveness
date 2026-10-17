@@ -1,13 +1,15 @@
 {
-  "updatedAt": "2026-10-17T13:57:40.204Z",
+  "updatedAt": "2026-10-17T14:09:27.516Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-17T13:33:39.930Z",
-    "endedAt": "2026-10-17T13:57:40.204Z",
-    "reason": "timeout",
+    "startedAt": "2026-10-17T13:58:06.346Z",
+    "endedAt": "2026-10-17T14:09:27.516Z",
+    "reason": "rat-found",
     "candidateChannels": [
+      "nazgulplayer",
+      "vivihbecker",
       "twozada212",
       "0taichou",
       "adivorcio",
@@ -22,21 +24,45 @@
       "jackpist0la",
       "karlin_nara",
       "lordjuregi",
-      "nazgulplayer",
       "okamiulv",
       "olegarioojv",
       "raulzerah1",
       "sousupermeme",
       "thigaartus",
       "uguettolitz",
-      "vivihbecker",
       "zsales33"
     ],
-    "pstoryDropChannels": [],
-    "observedChannels": [],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [],
+    "pstoryDropChannels": [
+      "nazgulplayer",
+      "vivihbecker"
+    ],
+    "observedChannels": [
+      "vivihbecker"
+    ],
+    "observedSpawnChannels": [
+      "vivihbecker"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "vivihbecker",
+        "messageAt": 1792246167378,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "vivihbecker",
+        "kind": "rattata-message",
+        "messageAt": 1792246167378,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "vivihbecker",
+        "kind": "spawn",
+        "messageAt": 1792246167378,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -83,6 +109,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "vivihbecker",
+    "lastMessageAt": 1792246167378,
+    "expectedNextAt": 1792247427378,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-17T13:46:48Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1792246167515,
+    "persistedAt": 1792246167515
+  },
+  "timers": {
+    "vivihbecker": {
+      "channel": "vivihbecker",
+      "lastMessageAt": 1792246167378,
+      "expectedNextAt": 1792247427378,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-17T13:46:48Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1792246167515,
+      "persistedAt": 1792246167515
+    }
+  }
 }
