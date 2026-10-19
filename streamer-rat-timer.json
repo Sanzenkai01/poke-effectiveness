@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-10-19T03:41:33.140Z",
+  "updatedAt": "2026-10-19T03:42:33.131Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-19T03:32:07.758Z",
-    "endedAt": "2026-10-19T03:41:33.140Z",
-    "reason": "rat-found",
+    "startedAt": "2026-10-19T03:42:29.198Z",
+    "endedAt": "2026-10-19T03:42:33.131Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "adivorcio",
       "dragonslayerpiva",
@@ -40,28 +40,20 @@
     "observedChannels": [
       "fernandoalcatraz"
     ],
-    "observedSpawnChannels": [
-      "fernandoalcatraz"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "fernandoalcatraz",
-        "messageAt": 1792381293055,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "fernandoalcatraz",
         "kind": "rattata-message",
-        "messageAt": 1792381293055,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1792381353053,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "fernandoalcatraz",
-        "kind": "spawn",
-        "messageAt": 1792381293055,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1792381353053,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -112,24 +104,24 @@
   },
   "latest": {
     "channel": "fernandoalcatraz",
-    "lastMessageAt": 1792381293055,
-    "expectedNextAt": 1792382553055,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1792381353053,
+    "expectedNextAt": 1792382553053,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-10-19T00:41:05Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1792381293140,
-    "persistedAt": 1792381293140
+    "source": "github-action-chat-escape",
+    "updatedAt": 1792381353131,
+    "persistedAt": 1792381353131
   },
   "timers": {
     "fernandoalcatraz": {
       "channel": "fernandoalcatraz",
-      "lastMessageAt": 1792381293055,
-      "expectedNextAt": 1792382553055,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1792381353053,
+      "expectedNextAt": 1792382553053,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-10-19T00:41:05Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1792381293140,
-      "persistedAt": 1792381293140
+      "source": "github-action-chat-escape",
+      "updatedAt": 1792381353131,
+      "persistedAt": 1792381353131
     }
   }
 }
