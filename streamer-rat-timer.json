@@ -1,16 +1,17 @@
 {
-  "updatedAt": "2026-10-19T02:42:07.057Z",
+  "updatedAt": "2026-10-19T03:01:14.363Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-19T02:42:04.880Z",
-    "endedAt": "2026-10-19T02:42:07.057Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-10-19T02:52:34.883Z",
+    "endedAt": "2026-10-19T03:01:14.363Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "adivorcio",
       "dragonslayerpiva",
       "fernandoalcatraz",
+      "twozada212",
       "0taichou",
       "cafeina54",
       "callmevitao_",
@@ -27,7 +28,6 @@
       "raulzerah1",
       "sousupermeme",
       "thigaartus",
-      "twozada212",
       "uguettolitz",
       "vivihbecker",
       "zsales33"
@@ -38,22 +38,30 @@
       "fernandoalcatraz"
     ],
     "observedChannels": [
-      "dragonslayerpiva"
+      "fernandoalcatraz"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "fernandoalcatraz"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "fernandoalcatraz",
+        "messageAt": 1792378874283,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "dragonslayerpiva",
+        "channel": "fernandoalcatraz",
         "kind": "rattata-message",
-        "messageAt": 1792377726953,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1792378874283,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "dragonslayerpiva",
-        "kind": "escape",
-        "messageAt": 1792377726953,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "fernandoalcatraz",
+        "kind": "spawn",
+        "messageAt": 1792378874283,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -103,16 +111,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "dragonslayerpiva",
-    "lastMessageAt": 1792377726953,
-    "expectedNextAt": 1792378926953,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-10-17T22:39:49Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1792377727057,
-    "persistedAt": 1792377727057
+    "channel": "fernandoalcatraz",
+    "lastMessageAt": 1792378874283,
+    "expectedNextAt": 1792380134283,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-19T00:41:05Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1792378874362,
+    "persistedAt": 1792378874362
   },
   "timers": {
+    "fernandoalcatraz": {
+      "channel": "fernandoalcatraz",
+      "lastMessageAt": 1792378874283,
+      "expectedNextAt": 1792380134283,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-19T00:41:05Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1792378874362,
+      "persistedAt": 1792378874362
+    },
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
       "lastMessageAt": 1792377726953,
@@ -121,17 +139,7 @@
       "streamStartedAt": "2026-10-17T22:39:49Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1792377727057,
-      "persistedAt": 1792377727057
-    },
-    "fernandoalcatraz": {
-      "channel": "fernandoalcatraz",
-      "lastMessageAt": 1792377664877,
-      "expectedNextAt": 1792378924877,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
-      "streamStartedAt": "2026-10-19T00:41:05Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1792377664947,
-      "persistedAt": 1792377724879
+      "persistedAt": 1792378354882
     }
   }
 }
