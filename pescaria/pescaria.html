@@ -1,0 +1,32 @@
+<div class="pescaria-page">
+  <header class="pescaria-page__hero card">
+    <p class="pescaria-page__eyebrow">Sistemas</p>
+    <h2>Guia de Pescaria</h2>
+    <p>Confira o nível necessário para cada isca e os Pokémon que podem ser encontrados.</p>
+  </header>
+
+  <section class="pescaria-guide card" aria-labelledby="pescaria-guide-title">
+    <div class="pescaria-guide__heading">
+      <span class="pescaria-page__eyebrow">Iscas e encontros</span>
+      <h3 id="pescaria-guide-title">Pokémon por nível de pesca</h3>
+      <button id="pescaria-bait-location-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local para comprar iscas no Mapa Interativo" title="Abrir no Mapa Interativo">
+        <span class="fossil-location-btn__thumb" aria-hidden="true">&#128506;</span>
+        <span class="fossil-location-btn__label">Comprar iscas</span>
+      </button>
+    </div>
+    <p id="pescaria-page-error" class="pescaria-page__error" role="status" aria-live="polite"></p>
+    <div class="pescaria-table-wrap">
+      <table class="pescaria-table">
+        <caption class="visually-hidden">Iscas, nível de pesca e Pokémon encontrados</caption>
+        <thead>
+          <tr>
+            <th scope="col">Isca</th>
+            <th scope="col">Nível de pesca</th>
+            <th scope="col">Pokémon encontrados</th>
+          </tr>
+        </thead>
+        <tbody id="pescaria-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+</div>

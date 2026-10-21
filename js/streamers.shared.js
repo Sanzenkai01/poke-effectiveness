@@ -23,6 +23,7 @@
         { name: '0taichou', supportsDrops: false },
         { name: 'enriqfmz', supportsDrops: false },
         { name: 'olegarioojv', supportsDrops: false },
+        { name: 'galego_rj', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){

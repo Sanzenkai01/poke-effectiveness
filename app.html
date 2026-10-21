@@ -166,8 +166,8 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20261010-pokemon-tnf-portal">
-  <link rel="stylesheet" href="wiki-theme.css?v=20260920-ranger-profile">
+  <link rel="stylesheet" href="styles.css?v=20261021-sidebar-visible-v1">
+  <link rel="stylesheet" href="wiki-theme.css?v=20261021-mobile-sidebar-toggle-v1">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -226,6 +226,7 @@
       })();
     </script>
     <header class="header">
+      <button id="mobile-nav-toggle" type="button" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">☰</button>
       <button id="home-btn" class="wiki-topbar__brand" data-nav-action="toggle-sidebar" aria-label="Mostrar ou ocultar a barra lateral" title="Mostrar ou ocultar a barra lateral">
         <span class="home-btn__menu" aria-hidden="true">
           <span></span>
@@ -236,7 +237,7 @@
         <span class="home-btn__label">Pstory Utilities</span>
       </button>
       <button id="commands-btn" aria-label="Comandos" title="Comandos" style="font-size:1.2rem;">💬</button>
-      <button id="elemental-balls-btn" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
+      <button id="elemental-balls-btn" data-nav-target="pokebolas" aria-label="Pokébolas Elementais" title="Pokébolas Elementais">
         <img class="header-tool-icon" src="balls/pokebola.png" alt="" aria-hidden="true" decoding="async" />
       </button>
       <button id="fishing-btn" aria-label="Pescaria" title="Pescaria" style="font-size:1.15rem;line-height:1;">&#x1F3A3;</button>
@@ -361,10 +362,6 @@
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-badge"></use></svg>
                 <span>Ranger Bosses</span>
               </button>
-              <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="planner">
-                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-clipboard"></use></svg>
-                <span>Planejador</span>
-              </button>
               <button class="sidebar-sublink" type="button" data-nav-target="bosses" data-boss-mode="horizons" title="Horizons">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-compass"></use></svg>
                 <span>Horizons</span>
@@ -439,7 +436,7 @@
               </span>
               <span class="sidebar-group__copy">
                 <strong>Sistemas</strong>
-                <span>Captura, times e hunts</span>
+                <span>Captura, montagem de times e hunts</span>
               </span>
               <span class="sidebar-group__chevron" aria-hidden="true"></span>
             </button>
@@ -449,14 +446,15 @@
                 <span>Catch</span>
                 <span class="sidebar-sublink__badge">Popular 🔥</span>
               </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="pokebolas">
+                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-pokeball"></use></svg>
+                <span>Pokébolas</span>
+                <span class="sidebar-sublink__badge">New 🔥</span>
+              </button>
               <button class="sidebar-sublink" type="button" data-nav-target="team-builder">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-users"></use></svg>
                 <span>Team Builder</span>
                 <span class="sidebar-sublink__badge">Popular 🔥</span>
-              </button>
-              <button class="sidebar-sublink" type="button" data-nav-target="hunt-builder">
-                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-target"></use></svg>
-                <span>Hunt Builder</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="fusao-de-held">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-link"></use></svg>
@@ -482,6 +480,11 @@
               <button class="sidebar-sublink" type="button" data-nav-target="maniacs">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-coins"></use></svg>
                 <span>Maniacs</span>
+              </button>
+              <button class="sidebar-sublink" type="button" data-nav-target="pescaria">
+                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-compass"></use></svg>
+                <span>Pescaria</span>
+                <span class="sidebar-sublink__badge">New 🔥</span>
               </button>
             </div>
           </section>
@@ -520,7 +523,7 @@
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="pokemons">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-pokedex"></use></svg>
-                <span>Pokémons</span>
+                <span>Pokémon</span>
                 <span class="sidebar-sublink__badge" aria-hidden="true">99%</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="mapa-interativo">
@@ -537,10 +540,6 @@
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-shield-team"></use></svg>
                 <span>Cl&atilde;s</span>
                 <span class="sidebar-sublink__badge">New 🔥</span>
-              </button>
-              <button class="sidebar-sublink" type="button" data-nav-target="times">
-                <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-shield-team"></use></svg>
-                <span>Times</span>
               </button>
               <button class="sidebar-sublink" type="button" data-nav-target="shiny-fragmentation">
                 <svg class="sidebar-sublink__icon" aria-hidden="true"><use href="#sidebar-icon-link"></use></svg>
@@ -597,16 +596,6 @@
             <button class="sidebar-quick-link" type="button" data-nav-action="commands" data-nav-url="/comandos">
               <span class="sidebar-quick-link__icon" aria-hidden="true">&#128172;</span>
               <span>Comandos</span>
-            </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="elemental-balls" data-nav-url="/pokebolas">
-              <span class="sidebar-quick-link__icon sidebar-quick-link__icon--image" aria-hidden="true">
-                <img src="balls/pokebola.png" alt="" loading="lazy" decoding="async" />
-              </span>
-              <span>Pokébolas</span>
-            </button>
-            <button class="sidebar-quick-link" type="button" data-nav-action="fishing" data-nav-url="/pescaria">
-              <span class="sidebar-quick-link__icon" aria-hidden="true">&#127907;</span>
-              <span>Pescaria</span>
             </button>
           </div>
         </div>
@@ -684,32 +673,6 @@
       </div>
     </div>
 
-    <div class="modal image-modal" id="elemental-balls-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="elemental-balls-modal-title">
-      <div class="modal-content">
-        <button class="modal-close" aria-label="Fechar">✖</button>
-        <h2 id="elemental-balls-modal-title">Pokébolas Elementais</h2>
-        <div class="image-modal__toolbar">
-          <p class="image-modal__hint">Use os botões ou a roda do mouse para dar zoom na imagem.</p>
-          <div class="fishing-modal__actions elemental-balls-modal__actions">
-            <button id="elemental-balls-kurt-btn" class="fossil-location-btn fossil-location-btn--compact" type="button" aria-label="Abrir local do NPC Kurt no Mapa Interativo" title="Abrir no Mapa Interativo">
-              <span class="fossil-location-btn__thumb" aria-hidden="true">&#128506;</span>
-              <span class="fossil-location-btn__label">Local do Kurt</span>
-            </button>
-          </div>
-          <div class="image-modal__controls" role="group" aria-label="Controles de zoom">
-            <button type="button" class="image-modal__control" data-image-zoom="out" aria-label="Diminuir zoom">-</button>
-            <button type="button" class="image-modal__control image-modal__control--reset" data-image-zoom="reset" aria-label="Resetar zoom">100%</button>
-            <button type="button" class="image-modal__control" data-image-zoom="in" aria-label="Aumentar zoom">+</button>
-          </div>
-        </div>
-        <div class="image-modal__frame image-modal__viewport" id="elemental-balls-viewport">
-          <div class="image-modal__canvas" id="elemental-balls-canvas">
-            <img id="elemental-balls-image" class="image-modal__image" src="balls/craft-balls.png" alt="Imagem com a fabricação das pokébolas elementais" loading="lazy" decoding="async" />
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="modal image-modal" id="fishing-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fishing-modal-title">
       <div class="modal-content">
         <button class="modal-close" aria-label="Fechar">&#10006;</button>
@@ -736,85 +699,77 @@
       </div>
     </div>
 
-    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden data-panel-fragment="effectiveness" data-panel-fragment-styles="none">
+    <div id="content-effectiveness" role="tabpanel" aria-labelledby="tab-effectiveness" hidden data-panel-fragment="effectiveness" data-panel-fragment-path="tipos/effectiveness" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
 
 
-    <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden data-panel-fragment="fossils" data-panel-fragment-styles="none">
+    <div id="content-fossils" role="tabpanel" aria-labelledby="tab-fossils" hidden data-panel-fragment="fossils" data-panel-fragment-path="fossils/fossils" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-maniacs" role="tabpanel" aria-label="Maniacs" hidden data-panel-fragment="maniacs" data-panel-fragment-styles="none">
+    <div id="content-maniacs" role="tabpanel" aria-label="Maniacs" hidden data-panel-fragment="maniacs" data-panel-fragment-path="maniacs/maniacs" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-helds" role="tabpanel" aria-label="Helds" hidden data-panel-fragment="helds">
+    <div id="content-helds" role="tabpanel" aria-label="Helds" hidden data-panel-fragment="helds" data-panel-fragment-path="helds/helds">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-passe-de-batalha" role="tabpanel" aria-label="Passe de Batalha" hidden data-panel-fragment="passe-de-batalha">
+    <div id="content-passe-de-batalha" role="tabpanel" aria-label="Passe de Batalha" hidden data-panel-fragment="passe-de-batalha" data-panel-fragment-path="passe-de-batalha/passe-de-batalha">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-bosses-info" role="tabpanel" aria-label="Bosses" hidden data-panel-fragment="bosses-info" data-panel-fragment-styles="none">
+    <div id="content-bosses-info" role="tabpanel" aria-label="Bosses" hidden data-panel-fragment="bosses-info" data-panel-fragment-path="bosses-info/bosses-info" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden data-panel-fragment="calculator" data-panel-fragment-styles="none">
+    <div id="content-calculator" role="tabpanel" aria-labelledby="tab-calculator" hidden data-panel-fragment="calculator" data-panel-fragment-path="treinamento/calculator" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-boost" role="tabpanel" aria-labelledby="tab-boost" hidden data-panel-fragment="boost" data-panel-fragment-styles="none">
+    <div id="content-boost" role="tabpanel" aria-labelledby="tab-boost" hidden data-panel-fragment="boost" data-panel-fragment-path="boost/boost" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-pokemons" role="tabpanel" aria-label="Pokémons" hidden data-panel-fragment="pokemons" data-panel-fragment-styles="none">
+    <div id="content-pokemons" role="tabpanel" aria-label="Pokémon" hidden data-panel-fragment="pokemons" data-panel-fragment-path="pokemons/pokemons" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-times" role="tabpanel" aria-label="Times" hidden data-panel-fragment="times" data-panel-fragment-styles="none">
+    <div id="content-team-builder" role="tabpanel" aria-label="Team Builder" hidden data-panel-fragment="team-builder" data-panel-fragment-path="team-builder/team-builder" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-team-builder" role="tabpanel" aria-label="Team Builder" hidden data-panel-fragment="team-builder" data-panel-fragment-styles="none">
+    <div id="content-rotom-phone" role="tabpanel" aria-label="Rotom Phone" hidden data-panel-fragment="rotom-phone" data-panel-fragment-path="rotom-phone/rotom-phone">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-hunt-builder" role="tabpanel" aria-label="Hunt Builder" hidden data-panel-fragment="hunt-builder" data-panel-fragment-styles="none">
+    <div id="content-police-operation" role="tabpanel" aria-label="Police Operation" hidden data-panel-fragment="police-operation" data-panel-fragment-path="police-operation/police-operation">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-rotom-phone" role="tabpanel" aria-label="Rotom Phone" hidden data-panel-fragment="rotom-phone">
+    <div id="content-faction-hunts" role="tabpanel" aria-label="Police Expedition" hidden data-panel-fragment="faction-hunts" data-panel-fragment-path="police-expeditions/faction-hunts">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-police-operation" role="tabpanel" aria-label="Police Operation" hidden data-panel-fragment="police-operation">
+    <div id="content-slowpoke-well" role="tabpanel" aria-label="Slowpoke Well" hidden data-panel-fragment="slowpoke-well" data-panel-fragment-path="slowpoke-well/slowpoke-well">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-faction-hunts" role="tabpanel" aria-label="Police Expedition" hidden data-panel-fragment="faction-hunts">
+    <div id="content-liga-pokemon" role="tabpanel" aria-label="Liga Pokémon" hidden data-panel-fragment="liga-pokemon" data-panel-fragment-path="liga-pokemon/liga-pokemon">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-slowpoke-well" role="tabpanel" aria-label="Slowpoke Well" hidden data-panel-fragment="slowpoke-well">
+    <div id="content-fusao-de-held" role="tabpanel" aria-label="Fusão de Held" hidden data-panel-fragment="fusao-de-held" data-panel-fragment-path="fusao-de-held/fusao-de-held">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-liga-pokemon" role="tabpanel" aria-label="Liga Pokémon" hidden data-panel-fragment="liga-pokemon">
+    <div id="content-shiny-fragmentation" role="tabpanel" aria-label="Fragmentação de Shiny" hidden data-panel-fragment="shiny-fragmentation" data-panel-fragment-path="shiny-fragmentation/shiny-fragmentation">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-fusao-de-held" role="tabpanel" aria-label="Fusão de Held" hidden data-panel-fragment="fusao-de-held">
-      <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
-    </div>
-
-    <div id="content-shiny-fragmentation" role="tabpanel" aria-label="Fragmentação de Shiny" hidden data-panel-fragment="shiny-fragmentation">
-      <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
-    </div>
-
-    <div id="content-profissoes" role="tabpanel" aria-label="Profissões" hidden data-panel-fragment="profissoes">
+    <div id="content-profissoes" role="tabpanel" aria-label="Profissões" hidden data-panel-fragment="profissoes" data-panel-fragment-path="profissoes/profissoes">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
@@ -843,32 +798,9 @@
   </div>
 </div>
 
-<div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden>
-      <div class="card calc-card bosses-shell">
-        <div class="bosses-hero">
-          <div class="bosses-copy">
-            <h2 id="bosses-mode-title" class="bosses-mode-title">Hoopa Portais</h2>
-            <div id="bosses-mode-intro" class="bosses-mode-intro" aria-live="polite"></div>
-          </div>
-        </div>
-        <section id="mainquest-narrative" class="mainquest-narrative" hidden aria-label="Linha do tempo da Main Quest">
-          <div class="mainquest-narrative__lead"></div>
-          <div class="mainquest-timeline">
-            <article class="mainquest-stage"><div class="mainquest-stage__number">01</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Inicio</span><h3>Encontre Fausto e o Team Member</h3><p>Fale com Fausto ao sul do centro do mapa dos Times e procure o Team Member nas Áreas de Advanced Hunt.</p><div class="mainquest-fausto-callout"><button class="mainquest-fausto-callout__image-trigger" type="button" aria-label="Ampliar a imagem de Fausto" data-mainquest-open-fausto="true"><img src="/mainquest/fausto.png" alt="Fausto e o Team Member na entrada do Instinct"></button><p>Os NPC's se localizam abaixo da entrada do Instinct.</p></div><button class="mainquest-action-btn mainquest-team-member-open-btn" type="button">Abrir checklist dos 16 tipos</button></div></article>
-            <article class="mainquest-stage"><div class="mainquest-stage__number">02</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Task</span><h3>Derrote 750 Pokémon de cada tipo</h3><p>Complete os 16 tipos para restaurar o equilíbrio dos habitats.</p><div class="mainquest-type-strip"><span>Bug</span><span>Dark</span><span>Fire</span><span>Normal</span><span>Rock</span><span>Steel</span><span>Water</span><span>Fairy</span><span>Ghost</span><span>Ice</span><span>Fighting</span><span>Electric</span><span>Grass</span><span>Psychic</span><span>Ground</span><span>Poison</span></div></div></article>
-            <article class="mainquest-stage"><div class="mainquest-stage__number">03</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Mini-Bosses</span><h3>Derrote os três bosses Alpha</h3><p>As batalhas custam 10k por tentativa e exigem Speedsters. Abra cada chefe abaixo para ver os recomendações por clã.</p><div id="mainquest-bosses-slot"></div></div></article>
-            <article class="mainquest-stage"><div class="mainquest-stage__number">04</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Raid</span><h3>Rastreie o sinal até Saffron</h3><p>Leve o aparelho ao Team Member e a Fausto. A Officer Jenny rastreia a frequência até a estação de metrô de Saffron.</p><div class="mainquest-investigation"><div><strong>Advanced Jenny</strong><span>Monte um grupo com Valor, Instinct e Mystic.</span></div><button class="mainquest-investigation__image-trigger" type="button" aria-label="Ampliar a imagem de Advanced Jenny" data-mainquest-open-advanced-jenny="true"><img src="/mainquest/advancedjenny.gif" alt="Advanced Jenny na estação de metrô de Saffron"></button></div></div></article>
-            <article class="mainquest-stage"><div class="mainquest-stage__number">05</div><div class="mainquest-stage__body"><span class="mainquest-stage__kicker">Boss Final</span><h3>Invada a base e enfrente Mega Malamar</h3><p>Derrote os Rockets, resolva os quebra-cabeças e enfrente o chefe Mega Malamar.</p><button class="mainquest-action-btn mainquest-puzzle-open-btn" type="button">Quebra-Cabeças</button><div id="mainquest-final-boss-slot"></div></div></article>
-          </div>
-        </section>
-        <section class="ranger-guide" data-ranger-guide hidden aria-label="Guia de Jellybeans dos Ranger Bosses">
-          <div class="ranger-guide__section"><div class="ranger-guide__section-heading"><span class="ranger-guide__step">01</span><div><h4>Como farmar Jellybeans</h4><p>Há duas lojas onde você pode trocar seus pontos por Jellybeans.</p></div></div><div class="ranger-guide__shops"><figure class="ranger-guide__figure"><img src="/ranger-bosses/ranger-shop.png" alt="Loja de Ranger Points com Jellybeans" loading="lazy"><figcaption><strong>Pontos de Ranger</strong><span>Troque seus pontos na Ranger Shop.</span></figcaption></figure><figure class="ranger-guide__figure"><img src="/ranger-bosses/weekly-shop.png" alt="Loja semanal com Jellybeans" loading="lazy"><figcaption><strong>Pontos de dailys semanais</strong><span>Use os pontos acumulados na Gift Shop de pontos Semanais.</span></figcaption></figure></div></div>
-          <div class="ranger-guide__section ranger-guide__section--craft"><div class="ranger-guide__section-heading"><span class="ranger-guide__step">02</span><div><h4>Jellybeans craftáveis</h4><p>Use 1 Jelly Bean base, 20 materiais do Pokémon indicado e 15 Ancient Stone.</p></div></div><div class="ranger-guide__craft-visuals"><figure class="ranger-guide__craft-image"><img src="/ranger-bosses/craft-image.png" alt="Tela de criação das Jellybeans especiais" loading="lazy"><figcaption>Receita e estação de craft das Jellybeans especiais.</figcaption></figure><figure class="ranger-guide__craft-image ranger-guide__craft-image--location"><img src="/ranger-bosses/location.png" alt="Localização da janela de craft das Jellybeans" loading="lazy"><figcaption><strong>Onde encontrar o craft<br></strong><span>O local do craft fica próximo ao restaurante do TC e à entrada da Expedition.</span></figcaption></figure></div>          <div class="ranger-guide__recipes"><article class="ranger-recipe ranger-recipe--illusion"><div class="ranger-recipe__icon">✦</div><div><h5>Jelly Bean: Illusion</h5><span class="ranger-recipe__boss">Ranger Boss Zoroark</span><p><b>1 Jelly Bean + 20 Illusion Fur, 15 Ancient Stone</b><small>Drop de Zorua</small><img class="ranger-recipe__pokemon" src="/pokemons/5gen/zorua.png" alt="Zorua" loading="lazy"></p></div></article><article class="ranger-recipe ranger-recipe--apple"><div class="ranger-recipe__icon">◈</div><div><h5>Jelly Bean: Apple</h5><span class="ranger-recipe__boss">Ranger Boss Hydrapple</span><p><b>1 Jelly Bean + 20 Apple Core, 15 Ancient Stone</b><small>Drop de Applin</small><img class="ranger-recipe__pokemon" src="/pokemons/8gen/applin.png" alt="Applin" loading="lazy"></p></div></article><article class="ranger-recipe ranger-recipe--royal"><div class="ranger-recipe__icon">♜</div><div><h5>Jelly Bean: Royal</h5><span class="ranger-recipe__boss">Ranger Boss Aegislash</span><p><b>1 Jelly Bean + 20 Piece of Goldsteel, 15 Ancient Stone</b><small>Drop de Honedge</small><img class="ranger-recipe__pokemon" src="/pokemons/6gen/honedge.png" alt="Honedge" loading="lazy"></p></div></article></div></div>
-          <div class="ranger-guide__section-heading ranger-guide__section-heading--bosses"><span class="ranger-guide__step">03</span><div><h4>Escolha seu Ranger Boss</h4><p>Abra um card para conferir as recomendações e os detalhes da batalha.</p></div></div>
-        </section>
-        <div id="speedster-grid" class="speedster-grid" role="list" aria-label="Lista de chefes"></div>
-      </div>
-    </div>
+<div id="content-bosses" role="tabpanel" aria-labelledby="tab-bosses" hidden data-panel-fragment="bosses" data-panel-fragment-path="bosses/bosses" data-panel-fragment-styles="none">
+  <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
+</div>
 
     <div class="modal image-modal profession-image-modal" id="profession-image-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="profession-image-modal-title">
       <div class="modal-content">
@@ -892,15 +824,23 @@
       </div>
     </div>
 
-    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden data-panel-fragment="catch" data-panel-fragment-styles="none">
+    <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden data-panel-fragment="catch" data-panel-fragment-path="catch/catch" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden data-panel-fragment="streamers" data-panel-fragment-styles="none">
+    <div id="content-pokebolas" role="tabpanel" aria-label="Pokébolas Elementais" hidden data-panel-fragment="pokebolas" data-panel-fragment-path="pokebolas/pokebolas">
+      <div class="panel-fragment-loading" role="status">Carregando conteúdo...</div>
+    </div>
+
+    <div id="content-pescaria" role="tabpanel" aria-label="Pescaria" hidden data-panel-fragment="pescaria" data-panel-fragment-path="pescaria/pescaria">
+      <div class="panel-fragment-loading" role="status">Carregando conteúdo...</div>
+    </div>
+
+    <div id="content-streamers" role="tabpanel" aria-labelledby="tab-streamers" hidden data-panel-fragment="streamers" data-panel-fragment-path="streamers/streamers" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden data-panel-fragment="community" data-panel-fragment-styles="none">
+    <div id="content-community" role="tabpanel" aria-labelledby="tab-community" hidden data-panel-fragment="community" data-panel-fragment-path="youtube/community" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
@@ -964,72 +904,6 @@
       </div>
     </div>
 
-<div class="modal times-details-modal" id="times-details-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="times-details-title">
-      <div class="modal-content times-details-modal__content" role="document">
-        <button class="modal-close" aria-label="Fechar">&#10006;</button>
-
-        <div class="times-details-modal__hero">
-          <div class="times-details-modal__copy">
-            <h2 id="times-details-title">Time</h2>
-            <div id="times-details-clan" class="times-details-modal__clan"></div>
-            <div id="times-details-types" class="times-details-modal__types"></div>
-            <p id="times-details-subtitle" class="times-details-modal__subtitle"></p>
-          </div>
-        </div>
-
-        <section id="times-details-comment-panel" class="times-details-panel times-details-panel--comment" hidden aria-labelledby="times-details-comment-title">
-          <div class="times-details-panel__head">
-            <span class="times-details-panel__eyebrow">Comentario</span>
-            <h3 id="times-details-comment-title">Observacao</h3>
-          </div>
-          <p id="times-details-comment-text" class="times-details-comment-text"></p>
-        </section>
-
-        <section id="times-details-tips-panel" class="times-details-panel times-details-panel--tips" hidden aria-labelledby="times-details-tips-title">
-          <div class="times-details-panel__head">
-            <span class="times-details-panel__eyebrow">Dicas</span>
-            <h3 id="times-details-tips-title">Dicas de uso</h3>
-          </div>
-          <div id="times-details-tips" class="times-details-tips"></div>
-        </section>
-
-        <div class="times-details-modal__body">
-          <section class="times-details-panel" aria-labelledby="times-details-roster-title">
-            <div class="times-details-panel__head">
-              <span class="times-details-panel__eyebrow">Composicao</span>
-              <h3 id="times-details-roster-title">Pokemon do time</h3>
-            </div>
-            <div id="times-details-roster" class="times-details-roster"></div>
-          </section>
-
-          <section class="times-details-panel" aria-labelledby="times-details-hunts-title">
-            <div class="times-details-panel__head">
-              <span class="times-details-panel__eyebrow">Hunts</span>
-              <h3 id="times-details-hunts-title">Hunts recomendadas</h3>
-            </div>
-            <div id="times-details-hunts" class="times-details-entity-grid"></div>
-          </section>
-
-          <section id="times-details-alternatives-panel" class="times-details-panel" hidden aria-labelledby="times-details-alternatives-title">
-            <div class="times-details-panel__head">
-              <span class="times-details-panel__eyebrow">Alternativas</span>
-              <h3 id="times-details-alternatives-title">Alternativas do time</h3>
-            </div>
-            <div class="times-details-alt-grid">
-              <div id="times-details-alt-pokemons-group" class="times-details-alt-group times-details-alt-group--pokemons" hidden>
-                <strong class="times-details-alt-label">Pokemons alternativos</strong>
-                <div id="times-details-alt-pokemons" class="times-details-entity-grid"></div>
-              </div>
-              <div id="times-details-alt-hunts-group" class="times-details-alt-group times-details-alt-group--hunts" hidden>
-                <strong class="times-details-alt-label">Hunts alternativas</strong>
-                <div id="times-details-alt-hunts" class="times-details-entity-grid"></div>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-
     <div id="slowpoke-shop-modal" class="slowpoke-shop-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="slowpoke-shop-modal-title" hidden>
       <div class="slowpoke-shop-modal__backdrop" data-slowpoke-shop-close></div>
       <div class="slowpoke-shop-modal__content" role="document">
@@ -1040,11 +914,11 @@
     </div>
 
 
-    <div id="content-mapa-interativo" role="tabpanel" aria-label="Mapa Interativo" hidden data-panel-fragment="mapa-interativo" data-panel-fragment-styles="none">
+    <div id="content-mapa-interativo" role="tabpanel" aria-label="Mapa Interativo" hidden data-panel-fragment="mapa-interativo" data-panel-fragment-path="mapa-interativo/mapa-interativo" data-panel-fragment-styles="none">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
-    <div id="content-cla" role="tabpanel" aria-label="Clãs" hidden data-panel-fragment="cla">
+    <div id="content-cla" role="tabpanel" aria-label="Clãs" hidden data-panel-fragment="cla" data-panel-fragment-path="cla/cla">
       <div class="panel-fragment-loading" role="status">Carregando conteudo...</div>
     </div>
 
@@ -1061,7 +935,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1032 - 2026
+        Build v1142 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1078,11 +952,11 @@
     </div>
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
-    <script src="js/visits.shared.js?v=20260811a" defer></script>
+    <script src="js/visits.shared.js?v=20261014-page-visit-stats" defer></script>
     <script src="bosses/recommendation-catalog.js?v=20260826d"></script>
     <script src="js/recommendation-engine.js?v=20260826d"></script>
     <script src="js/striker-recommendation-engine.js?v=20260902a"></script>
-    <script src="script.js?v=20261010-shining-stone-images" defer></script>
-    <script src="bosses/bosses.js?v=20260920-ranger-profile" defer></script>
+    <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
+    <script src="script.js?v=20261021-mobile-sidebar-toggle-v1" defer></script>
 </body>
 </html>

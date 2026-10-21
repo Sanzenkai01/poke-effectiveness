@@ -91,12 +91,16 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         self.path = '/app.html'
         return super().do_GET()
 
+
+class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+
+
 if __name__ == '__main__':
     os.chdir(ROOT)
     handler = SPAHandler
-    # Allow socket reuse to avoid TIME_WAIT issues
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), handler) as httpd:
+    ThreadingTCPServer.allow_reuse_address = True
+    with ThreadingTCPServer(("", PORT), handler) as httpd:
         print(f"Serving {ROOT} at http://localhost:{PORT} (SPA fallback to /app.html)")
         try:
             httpd.serve_forever()

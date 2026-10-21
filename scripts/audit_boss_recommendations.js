@@ -62,7 +62,7 @@ const auditExpression = `(() => {
   const clanOrder = ['instinct', 'mystic', 'valor'];
   const tierMaximum = { dps: tierPriority.bom, tank: tierPriority.aceitavel, support: tierPriority.aceitavel };
   const sources = Object.entries(bossCatalogs)
-    .filter(([catalogId, catalog]) => catalogId !== 'planner' && Array.isArray(catalog?.data))
+    .filter(([, catalog]) => Array.isArray(catalog?.data))
     .map(([catalogId, catalog]) => ({ catalogId, bosses: catalog.data }));
   sources.push({
     catalogId: 'horizons',

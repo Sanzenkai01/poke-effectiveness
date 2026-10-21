@@ -1,0 +1,60 @@
+<div class="pokebolas-page">
+  <header class="pokebolas-page__hero card">
+    <div>
+      <p class="pokebolas-page__eyebrow">Sistemas</p>
+      <h2>Pokébolas Elementais</h2>
+      <p>Consulte os materiais de cada craft, veja quais Pokémon dropam os itens e simule a quantidade necessária.</p>
+    </div>
+  </header>
+
+  <div class="pokebolas-page__overview">
+    <section class="card pokebolas-simulator" aria-labelledby="pokebolas-simulator-title">
+      <div class="pokebolas-section-heading">
+        <span class="pokebolas-section-heading__eyebrow">Calculadora de materiais</span>
+        <h3 id="pokebolas-simulator-title">Simular um craft</h3>
+        <p>Escolha a Pokébola e informe quantas unidades deseja fabricar.</p>
+      </div>
+      <form id="pokebolas-simulator-form" class="pokebolas-simulator__form" novalidate>
+        <div class="pokebolas-simulator__fields">
+          <div class="pokebolas-field">
+            <label id="pokebolas-select-label" for="pokebolas-select-trigger">Pokébola</label>
+            <div id="pokebolas-select-control" class="pokebolas-field__select-control">
+              <select id="pokebolas-select" name="ball" aria-hidden="true" tabindex="-1" hidden required>
+                <option value="">Selecione uma Pokébola</option>
+              </select>
+              <button id="pokebolas-select-trigger" class="pokebolas-ball-picker__trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="pokebolas-ball-options" aria-labelledby="pokebolas-select-label pokebolas-select-value" aria-required="true">
+                <span id="pokebolas-select-value">Selecione uma Pokébola</span>
+                <span class="pokebolas-ball-picker__chevron" aria-hidden="true"></span>
+              </button>
+              <div id="pokebolas-ball-options" class="pokebolas-ball-picker__options" role="listbox" aria-labelledby="pokebolas-select-label" hidden></div>
+            </div>
+          </div>
+          <div class="pokebolas-field">
+            <label for="pokebolas-amount">Quantidade de Pokébolas</label>
+            <input id="pokebolas-amount" name="amount" type="number" min="25" max="9007199254740975" step="25" inputmode="numeric" placeholder="Ex.: 25, 50 ou 75" aria-describedby="pokebolas-amount-help pokebolas-page-error" required>
+            <small id="pokebolas-amount-help" class="pokebolas-field__hint">A quantidade deve ser múltipla de 25.</small>
+          </div>
+        </div>
+        <button class="pokebolas-simulator__submit" type="submit">Calcular materiais</button>
+        <p id="pokebolas-page-error" class="pokebolas-feedback" role="status" aria-live="polite"></p>
+      </form>
+      <section id="pokebolas-simulator-result" class="pokebolas-result" aria-labelledby="pokebolas-result-title" aria-live="polite" hidden>
+        <div class="pokebolas-result__header">
+          <img id="pokebolas-result-ball" class="pokebolas-result__ball" alt="" hidden>
+          <h4 id="pokebolas-result-title"></h4>
+        </div>
+        <p id="pokebolas-result-summary" class="pokebolas-result__summary"></p>
+        <ul id="pokebolas-result-materials" class="pokebolas-result__materials"></ul>
+      </section>
+    </section>
+  </div>
+
+  <section class="pokebolas-recipes" aria-labelledby="pokebolas-recipes-title">
+    <div class="pokebolas-section-heading">
+      <span class="pokebolas-section-heading__eyebrow">Materiais por craft</span>
+      <h3 id="pokebolas-recipes-title">Receitas e Pokémon que dropam os itens</h3>
+      <p>As quantidades abaixo correspondem a um craft, com rendimento de 25 Pokébolas.</p>
+    </div>
+    <div id="pokebolas-recipe-grid" class="pokebolas-recipe-grid"></div>
+  </section>
+</div>

@@ -1,19 +1,28 @@
 const CACHE_PREFIX = 'poke-effectiveness-';
-let CACHE_NAME = `${CACHE_PREFIX}v1126`;
+let CACHE_NAME = `${CACHE_PREFIX}v1127`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
   new URL('./app.html', self.registration.scope).toString(),
-  new URL('./styles.css?v=20261010-pokemon-tnf-portal', self.registration.scope).toString(),
-  new URL('./wiki-theme.css?v=20260920-ranger-profile', self.registration.scope).toString(),
-  new URL('./script.js?v=20261010-shining-stone-images', self.registration.scope).toString(),
+  new URL('./styles.css?v=20261021-sidebar-visible-v1', self.registration.scope).toString(),
+  new URL('./wiki-theme.css?v=20261021-mobile-sidebar-toggle-v1', self.registration.scope).toString(),
+  new URL('./script.js?v=20261021-mobile-sidebar-toggle-v1', self.registration.scope).toString(),
   new URL('./bosses/recommendation-catalog.js?v=20260826d', self.registration.scope).toString(),
   new URL('./js/recommendation-engine.js?v=20260826d', self.registration.scope).toString(),
-  new URL('./bosses/bosses.js?v=20260920-ranger-profile', self.registration.scope).toString(),
+  new URL('./bosses/bosses.html?v=20261021-bosses-panel-v1', self.registration.scope).toString(),
+  new URL('./js/pokemon-search.js?v=20261020-pokemon-search-module-v1', self.registration.scope).toString(),
+  new URL('./bosses/bosses.js?v=20261018-mewtwo-guide-anchor-v1', self.registration.scope).toString(),
   new URL('./js/utf8-guard.js?v=20260606a', self.registration.scope).toString(),
   new URL('./js/streamers.shared.js?v=20260707b', self.registration.scope).toString(),
-  new URL('./js/visits.shared.js?v=20260811a', self.registration.scope).toString(),
-  new URL('./route-loader.js?v=20261010-shining-stone-images', self.registration.scope).toString(),
+  new URL('./js/visits.shared.js?v=20261014-page-visit-stats', self.registration.scope).toString(),
+  new URL('./route-loader.js?v=20261021-sidebar-visible-v1', self.registration.scope).toString(),
+  new URL('./pokebolas/pokebolas.html?v=20261017-pokebolas-menu-overlay-v1', self.registration.scope).toString(),
+  new URL('./pokebolas/pokebolas.css?v=20261017-pokebolas-menu-overlay-v1', self.registration.scope).toString(),
+  new URL('./pokebolas/pokebolas.js?v=20261017-pokebolas-menu-overlay-v1', self.registration.scope).toString(),
+  new URL('./pokebolas/blueprint.png', self.registration.scope).toString(),
+  new URL('./pescaria/pescaria.html?v=20261018-pescaria-page-v2', self.registration.scope).toString(),
+  new URL('./pescaria/pescaria.css?v=20261018-pescaria-page-v2', self.registration.scope).toString(),
+  new URL('./pescaria/pescaria.js?v=20261018-pescaria-page-v2', self.registration.scope).toString(),
   new URL('./manifest.json', self.registration.scope).toString(),
   new URL('./icons-type/favicon.ico', self.registration.scope).toString()
 ];

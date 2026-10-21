@@ -66,8 +66,6 @@
                 home: './pokemons',
                 pokemon: './pokemons',
                 pokemons: './pokemons',
-                'hunt-builder': './hunt-builder',
-                huntbuilder: './hunt-builder',
                 'rotom-phone': './rotom-phone',
                 rotomphone: './rotom-phone',
                 rotom: './rotom-phone',
@@ -97,11 +95,9 @@
                 'ranger-bosses': './ranger-bosses',
                 especiais: './ranger-bosses',
                 'bosses-especiais': './ranger-bosses',
-                planejador: './planejador',
-                planner: './planejador',
                 horizons: './horizons'
             };
-            var hasAppParams = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'plan', 'quick'].some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
+            var hasAppParams = ['tab', 'types', 'topic', 'bossmode', 'boss', 'mode', 'quick'].some(function(key){ return params.has(key); }) || Boolean(window.location.hash);
             var quickPath = quickRouteMap[quick] || '';
             var targetPath = routeMap[tab] || quickPath || (params.has('types') ? './tipos' : './pokemons');
             params.delete('tab');

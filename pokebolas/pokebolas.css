@@ -1,0 +1,468 @@
+.pokebolas-page {
+  box-sizing: border-box;
+  display: grid;
+  gap: 1.25rem;
+  width: min(100%, 1800px);
+  margin-inline: auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.035), transparent 38%),
+    rgba(8, 12, 16, 0.72);
+  color: var(--text-strong);
+}
+
+.pokebolas-page__hero,
+.pokebolas-simulator {
+  margin: 0;
+  border: 1px solid var(--surface-border);
+  background: var(--card-bg);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.pokebolas-page__hero {
+  width: min(100%, 1200px);
+  justify-self: center;
+  padding: clamp(1rem, 2.4vw, 1.75rem);
+}
+
+.pokebolas-page__hero h2,
+.pokebolas-section-heading h3 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.pokebolas-page__hero h2 {
+  font-size: clamp(1.45rem, 2.6vw, 2rem);
+}
+
+.pokebolas-page__hero p:last-child,
+.pokebolas-section-heading p {
+  margin: 0.55rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.pokebolas-page__eyebrow,
+.pokebolas-section-heading__eyebrow {
+  margin: 0 0 0.45rem;
+  color: var(--accent-yellow);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pokebolas-page__overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 1200px);
+  justify-self: center;
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.pokebolas-simulator {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.pokebolas-simulator .pokebolas-section-heading {
+  text-align: center;
+}
+
+.pokebolas-section-heading {
+  margin-bottom: 1rem;
+}
+
+.pokebolas-section-heading h3 {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+}
+
+.pokebolas-simulator__form {
+  display: grid;
+  gap: 0.9rem;
+  width: min(100%, 48rem);
+  margin-inline: auto;
+}
+
+.pokebolas-simulator__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.pokebolas-field {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+}
+
+.pokebolas-field__select-control {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.pokebolas-field__hint {
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.pokebolas-field label {
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pokebolas-ball-picker__trigger,
+.pokebolas-field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--text-strong);
+  font: inherit;
+  text-align: center;
+}
+
+.pokebolas-ball-picker__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.pokebolas-ball-picker__trigger span:first-child {
+  overflow: hidden;
+  padding-inline: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pokebolas-ball-picker__chevron {
+  position: absolute;
+  right: 0.85rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.15rem) rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.pokebolas-ball-picker__trigger[aria-expanded="true"] .pokebolas-ball-picker__chevron {
+  transform: translateY(0.15rem) rotate(225deg);
+}
+
+.pokebolas-ball-picker__options {
+  position: fixed;
+  z-index: 1300;
+  max-height: min(18rem, 55vh);
+  overflow-y: auto;
+  padding: 0.3rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+}
+
+.pokebolas-ball-picker__options[hidden] {
+  display: none;
+}
+
+.pokebolas-ball-picker__option {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-strong);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pokebolas-ball-picker__option:hover,
+.pokebolas-ball-picker__option[aria-selected="true"],
+.pokebolas-ball-picker__option.is-active {
+  background: rgba(255, 209, 102, 0.16);
+}
+
+.pokebolas-ball-picker__option img {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pokebolas-ball-picker__trigger:focus-visible,
+.pokebolas-ball-picker__option:focus-visible,
+.pokebolas-field input:focus-visible,
+.pokebolas-simulator__submit:focus-visible {
+  outline: 3px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+.pokebolas-simulator__submit {
+  justify-self: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 209, 102, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 209, 102, 0.14);
+  color: var(--text-strong);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pokebolas-feedback {
+  min-height: 1.3rem;
+  margin: 0;
+  color: var(--accent-red);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.pokebolas-result {
+  width: min(100%, 48rem);
+  margin-inline: auto;
+  margin-top: 1.15rem;
+  padding: 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.pokebolas-simulator__submit:hover {
+  background: rgba(255, 209, 102, 0.22);
+}
+
+.pokebolas-result h4 {
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+.pokebolas-result__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.pokebolas-result__ball {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pokebolas-result__ball[hidden] {
+  display: none;
+}
+
+.pokebolas-result__summary {
+  margin: 0.45rem 0 0.8rem;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.pokebolas-result__materials {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pokebolas-result__material {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
+.pokebolas-result__material img {
+  width: 2.1rem;
+  height: 2.1rem;
+  object-fit: contain;
+}
+
+.pokebolas-result__material-icon,
+.pokebolas-recipe__material-icon {
+  display: block;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px dashed var(--surface-border);
+  border-radius: 8px;
+}
+
+.pokebolas-result__material strong {
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.pokebolas-recipes {
+  display: grid;
+  width: 100%;
+  gap: 0.9rem;
+}
+
+.pokebolas-recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 0.9rem;
+}
+
+.pokebolas-recipe {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+
+.pokebolas-recipe__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.pokebolas-recipe__ball {
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 auto;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pokebolas-recipe__title {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 1rem;
+}
+
+.pokebolas-recipe__type {
+  display: inline-block;
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+}
+
+.pokebolas-recipe__yield,
+.pokebolas-recipe__drop-label {
+  margin: 0.75rem 0 0.45rem;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pokebolas-recipe__materials {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pokebolas-recipe__material {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.pokebolas-recipe__material img {
+  width: 1.9rem;
+  height: 1.9rem;
+  object-fit: contain;
+}
+
+.pokebolas-recipe__material strong {
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.pokebolas-recipe__pokemon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pokebolas-recipe__pokemon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.45rem 0.2rem 0.2rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.pokebolas-recipe__pokemon-button:hover {
+  border-color: var(--accent-yellow);
+  color: var(--text-strong);
+}
+
+.pokebolas-recipe__pokemon-button:focus-visible {
+  outline: 3px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+.pokebolas-recipe__pokemon-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.pokebolas-recipe__pokemon-image {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 640px) {
+  .pokebolas-simulator__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pokebolas-page *,
+  .pokebolas-page *::before,
+  .pokebolas-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

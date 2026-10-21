@@ -1,11 +1,9 @@
 import json
-import os
+from pathlib import Path
 
-# Get the directory of this script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-json_path = os.path.join(script_dir, 'pokemons', 'pokemons.json')
+json_path = Path(__file__).resolve().parents[1] / 'pokemons' / 'pokemons.json'
 
-with open(json_path) as f:
+with json_path.open(encoding='utf-8') as f:
     data_obj = json.load(f)
 
 data = data_obj['pokemon']
@@ -13,7 +11,6 @@ data = data_obj['pokemon']
 print(f'Total: {len(data)}')
 print(f'Últimos 5: {", ".join([p["name"] for p in data[-5:]])}')
 
-# Contar os 3 novos
 new_pokemon = ['Crystal Onix', 'Giant Magikarp', 'Spiky-Eared Pichu']
 found = [p for p in data if p['name'] in new_pokemon]
 print(f'\nNovos Pokémon encontrados: {len(found)}')

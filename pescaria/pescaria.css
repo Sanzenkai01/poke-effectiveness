@@ -1,0 +1,178 @@
+.pescaria-page {
+  box-sizing: border-box;
+  display: grid;
+  gap: 1.25rem;
+  width: min(100%, 1800px);
+  margin-inline: auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.035), transparent 38%),
+    rgba(8, 12, 16, 0.72);
+  color: var(--text-strong);
+}
+
+.pescaria-page__hero,
+.pescaria-guide {
+  width: min(100%, 1200px);
+  justify-self: center;
+  margin: 0;
+  border: 1px solid var(--surface-border);
+  background: var(--card-bg);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.pescaria-page__hero {
+  padding: clamp(1rem, 2.4vw, 1.75rem);
+  text-align: center;
+}
+
+.pescaria-page__eyebrow {
+  display: block;
+  margin: 0 0 0.45rem;
+  color: var(--accent-yellow);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pescaria-page__hero h2,
+.pescaria-guide__heading h3 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.pescaria-page__hero h2 {
+  font-size: clamp(1.45rem, 2.6vw, 2rem);
+}
+
+.pescaria-page__hero p:last-child,
+.pescaria-guide__heading > p {
+  margin: 0.55rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.pescaria-guide {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.pescaria-guide__heading {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.pescaria-guide__heading h3 {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+}
+
+.pescaria-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+}
+
+.pescaria-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.pescaria-table th,
+.pescaria-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  vertical-align: middle;
+}
+
+.pescaria-table thead th {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pescaria-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.pescaria-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.pescaria-table__bait {
+  min-width: 9rem;
+  color: var(--text-strong);
+  font-weight: 750;
+}
+
+.pescaria-table__bait small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.pescaria-table__level {
+  width: 9rem;
+  color: var(--accent-yellow);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pescaria-pokemon-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pescaria-pokemon-list__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.25rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.25rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-strong);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.pescaria-pokemon-list__item img {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+}
+
+.pescaria-page__error {
+  margin: 0 0 0.75rem;
+  color: #ffb4ab;
+}
+
+.pescaria-page__error:empty {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .pescaria-guide__heading .fossil-location-btn {
+    width: min(100%, 320px);
+    justify-content: center;
+  }
+}

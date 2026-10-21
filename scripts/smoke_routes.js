@@ -10,7 +10,7 @@ const routes = [
     label: 'root',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' },
+      { pattern: /aria-label="Lista de Pokémon"/i, description: 'main pokemon grid' },
       { pattern: /data-global-search-ready="true"/i, description: 'global search initialized' }
     ]
   },
@@ -19,7 +19,7 @@ const routes = [
     label: 'home',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'legacy home redirects to pokemons' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'main pokemon grid' }
+      { pattern: /aria-label="Lista de Pokémon"/i, description: 'main pokemon grid' }
     ]
   },
   {
@@ -49,7 +49,7 @@ const routes = [
     label: 'boost',
     checks: [
       { pattern: /data-active-tab="boost"/i, description: 'boost active tab' },
-      { pattern: /id="boost-hero-summary"/i, description: 'boost hero summary' }
+      { pattern: /id="boost-heading"/i, description: 'boost calculator heading' }
     ]
   },
   {
@@ -57,7 +57,7 @@ const routes = [
     label: 'pokemon',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemon active tab' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'unified pokemon grid' }
+      { pattern: /aria-label="Lista de Pokémon"/i, description: 'unified pokemon grid' }
     ]
   },
   {
@@ -65,15 +65,7 @@ const routes = [
     label: 'pokemons',
     checks: [
       { pattern: /data-active-tab="pokemons"/i, description: 'pokemons active tab' },
-      { pattern: /aria-label="Lista de pokemons"/i, description: 'canonical pokemon grid' }
-    ]
-  },
-  {
-    path: '/times',
-    label: 'times',
-    checks: [
-      { pattern: /data-active-tab="times"/i, description: 'times active tab' },
-      { pattern: /id="times-card-grid"/i, description: 'times grid' }
+      { pattern: /aria-label="Lista de Pokémon"/i, description: 'canonical pokemon grid' }
     ]
   },
   {
@@ -82,15 +74,6 @@ const routes = [
     checks: [
       { pattern: /data-active-tab="team-builder"/i, description: 'team builder active tab' },
       { pattern: /id="team-builder-slots"/i, description: 'team builder slots' }
-    ]
-  },
-  {
-    path: '/hunt-builder',
-    label: 'hunt-builder',
-    checks: [
-      { pattern: /data-active-tab="hunt-builder"/i, description: 'hunt builder active tab' },
-      { pattern: /id="hunt-builder-search"/i, description: 'hunt builder search' },
-      { pattern: /id="hunt-builder-team"/i, description: 'hunt builder team grid' }
     ]
   },
   {
@@ -154,7 +137,7 @@ const routes = [
       { pattern: /data-active-tab="helds"/i, description: 'helds active tab' },
       { pattern: /id="content-helds"/i, description: 'helds panel' },
       { pattern: /id="primary-helds-title"/i, description: 'primary helds section' },
-      { pattern: /id="gems-title"/i, description: 'gems section' },
+      { pattern: />Gems<\/h4>/i, description: 'gems section' },
       { pattern: /id="boss-consumables-title"/i, description: 'boss consumables section' }
     ]
   },
@@ -177,6 +160,31 @@ const routes = [
       { pattern: /data-active-tab="bosses-info"/i, description: 'bosses info active tab' },
       { pattern: /id="content-bosses-info"/i, description: 'bosses info panel' },
       { pattern: /id="bosses-info-grid"/i, description: 'bosses info grid' }
+    ]
+  },
+  {
+    path: '/passe-de-batalha',
+    label: 'passe-de-batalha',
+    checks: [
+      { pattern: /data-active-tab="passe-de-batalha"/i, description: 'battle pass active tab' },
+      { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="passe-de-batalha"/i, description: 'battle pass selected sidebar link' }
+    ]
+  },
+  {
+    path: '/pokebolas',
+    label: 'pokebolas',
+    checks: [
+      { pattern: /data-active-tab="pokebolas"/i, description: 'pokebolas active tab' },
+      { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="pokebolas"/i, description: 'pokebolas selected sidebar link' },
+      { pattern: /class="pokebolas-recipe__pokemon-image"/i, description: 'pokebolas pokemon recipe images' }
+    ]
+  },
+  {
+    path: '/pescaria',
+    label: 'pescaria',
+    checks: [
+      { pattern: /data-active-tab="pescaria"/i, description: 'fishing active tab' },
+      { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="pescaria"/i, description: 'fishing selected sidebar link' }
     ]
   },
   {
@@ -208,7 +216,9 @@ const routes = [
     label: 'hoopa',
     checks: [
       { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
-      { pattern: /data-boss-mode="hoopa"/i, description: 'hoopa boss mode' }
+      { pattern: /data-boss-mode="hoopa"/i, description: 'hoopa boss mode' },
+      { pattern: /id="speedster-grid"[^>]*data-boss-mode="hoopa"/i, description: 'hoopa boss grid rendered' },
+      { pattern: /class="speedster-card(?:\s|")/i, description: 'hoopa boss cards rendered' }
     ]
   },
   {
@@ -227,7 +237,9 @@ const routes = [
     label: 'champion',
     checks: [
       { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
-      { pattern: /data-boss-mode="champion"/i, description: 'champion boss mode' }
+      { pattern: /data-boss-mode="champion"/i, description: 'champion boss mode' },
+      { pattern: /id="speedster-grid"[^>]*data-boss-mode="champion"/i, description: 'champion boss grid rendered' },
+      { pattern: /class="boss-role-card(?:\s|")/i, description: 'champion boss cards rendered' }
     ]
   },
   {
@@ -244,6 +256,8 @@ const routes = [
     checks: [
       { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
       { pattern: /data-boss-mode="special"/i, description: 'special boss mode' },
+      { pattern: /id="speedster-grid"[^>]*data-boss-mode="special"/i, description: 'ranger boss grid rendered' },
+      { pattern: /class="speedster-card(?:\s|")/i, description: 'ranger boss cards rendered' },
       { pattern: /Ranger Bosses/i, description: 'ranger bosses label' }
     ]
   },
@@ -257,19 +271,13 @@ const routes = [
     ]
   },
   {
-    path: '/planejador',
-    label: 'planejador',
-    checks: [
-      { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
-      { pattern: /data-boss-mode="planner"/i, description: 'planner boss mode' }
-    ]
-  },
-  {
     path: '/horizons',
     label: 'horizons',
     checks: [
       { pattern: /data-active-tab="bosses"/i, description: 'bosses active tab' },
-      { pattern: /data-boss-mode="horizons"/i, description: 'horizons boss mode' }
+      { pattern: /data-boss-mode="horizons"/i, description: 'horizons boss mode' },
+      { pattern: /id="speedster-grid"[^>]*data-boss-mode="horizons"/i, description: 'horizons boss grid rendered' },
+      { pattern: /class="horizons-board"/i, description: 'horizons selectors rendered' }
     ]
   }
 ];
@@ -328,10 +336,49 @@ function fetchWithHeadlessBrowser(browserPath, url) {
 }
 
 async function assertHttpOk(url) {
-  const response = await fetch(url, { redirect: 'follow' });
+  const response = await fetch(url, { redirect: 'follow', headers: { connection: 'close' } });
   if (!response.ok) {
     throw new Error(`HTTP ${response.status} em ${url}`);
   }
+  await response.arrayBuffer();
+}
+
+async function assertHttpNotFound(url) {
+  const response = await fetch(url, { redirect: 'follow', headers: { connection: 'close' } });
+  if (response.status !== 404) {
+    throw new Error(`Esperava HTTP 404, recebi HTTP ${response.status} em ${url}`);
+  }
+  await response.arrayBuffer();
+}
+
+async function assertPanelAssets() {
+  const appHtml = fs.readFileSync(path.join(__dirname, '..', 'app.html'), 'utf8');
+  const panelTags = [...appHtml.matchAll(/<div\b[^>]*\bdata-panel-fragment="[^"]+"[^>]*>/g)];
+  let stylesheetsChecked = 0;
+
+  for (const [tag] of panelTags) {
+    const name = tag.match(/\bdata-panel-fragment="([^"]+)"/)?.[1] || '';
+    const fragmentPath = tag.match(/\bdata-panel-fragment-path="([^"]+)"/)?.[1] || '';
+    if (!name || !fragmentPath) {
+      throw new Error(`Caminho ausente para o painel "${name || 'sem nome'}" em app.html.`);
+    }
+
+    const fragmentUrl = new URL(`${fragmentPath}.html`, `${baseUrl}/`).toString();
+    await assertHttpOk(fragmentUrl);
+
+    const panelStyles = tag.match(/\bdata-panel-fragment-styles="([^"]+)"/)?.[1];
+    if (panelStyles === 'none') continue;
+
+    const stylesheetUrl = new URL(`${fragmentPath}.css`, `${baseUrl}/`).toString();
+    await assertHttpOk(stylesheetUrl);
+    stylesheetsChecked++;
+  }
+
+  if (panelTags.length === 0) {
+    throw new Error('Nenhum painel lazy-loaded encontrado em app.html.');
+  }
+
+  console.log(`OK assets dos painéis -> ${panelTags.length} HTML, ${stylesheetsChecked} CSS`);
 }
 
 async function main() {
@@ -341,6 +388,7 @@ async function main() {
   }
 
   console.log(`Usando navegador: ${browserPath}`);
+  await assertPanelAssets();
 
   for (const route of routes) {
     const url = new URL(`${baseUrl}${route.path}`);
@@ -356,6 +404,12 @@ async function main() {
     });
 
     console.log(`OK ${route.label} -> ${routeUrl}`);
+  }
+
+  for (const path of ['/planejador']) {
+    const routeUrl = new URL(`${baseUrl}${path}`).toString();
+    await assertHttpNotFound(routeUrl);
+    console.log(`OK rota removida -> ${routeUrl}`);
   }
 }
 

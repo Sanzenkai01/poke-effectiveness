@@ -9,8 +9,72 @@
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
     const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v4';
+    const STORAGE_PAGE_MARKER_KEY_PREFIX = 'poke-effectiveness-visit-counter-page-v1-';
     const STORAGE_TOTAL_MARKER_KEY = 'poke-effectiveness-visit-counter-total-v5';
     const STORAGE_CACHE_KEY = 'poke-effectiveness-visit-counter-cache-v4';
+    const PAGE_VISIT_ROUTES = Object.freeze([
+        { key: 'pokemons', label: 'Pokédex' },
+        { key: 'tipos', label: 'Efetividade de tipos' },
+        { key: 'fossils', label: 'Fósseis' },
+        { key: 'maniacs', label: 'Maniacs' },
+        { key: 'helds', label: 'Helds' },
+        { key: 'passe-de-batalha', label: 'Passe de Batalha' },
+        { key: 'bosses-info', label: 'Localização de Bosses' },
+        { key: 'treinamento', label: 'Treinamento' },
+        { key: 'boost', label: 'Calculadora de Boost' },
+        { key: 'cla', label: 'Clãs' },
+        { key: 'team-builder', label: 'Team Builder' },
+        { key: 'rotom-phone', label: 'Rotom Phone' },
+        { key: 'mapa-interativo', label: 'Mapa Interativo' },
+        { key: 'police-operation', label: 'Police Operation' },
+        { key: 'police-expeditions', label: 'Police Expedition' },
+        { key: 'slowpoke-well', label: 'Slowpoke Well' },
+        { key: 'liga-pokemon', label: 'Liga Pokémon' },
+        { key: 'fusao-de-held', label: 'Fusão de Held' },
+        { key: 'shiny-fragmentation', label: 'Fragmentação de Shiny' },
+        { key: 'profissoes', label: 'Profissões' },
+        { key: 'catch', label: 'Catch' },
+        { key: 'streamers', label: 'Streamers' },
+        { key: 'youtube', label: 'Vídeos' },
+        { key: 'hoopa', label: 'Hoopa Portais' },
+        { key: 'champion', label: 'Champion Path' },
+        { key: 'mewtwo', label: 'Mewtwo' },
+        { key: 'ranger-bosses', label: 'Ranger Bosses' },
+        { key: 'main-quest', label: 'Main Quest' },
+        { key: 'horizons', label: 'Horizons' },
+        { key: 'comandos', label: 'Comandos' },
+        { key: 'pokebolas', label: 'Pokébolas Elementais' },
+        { key: 'mapa-completo', label: 'Mapa Completo' },
+        { key: 'pescaria', label: 'Pescaria' }
+    ]);
+    const PAGE_VISIT_ROUTE_KEYS = new Set(PAGE_VISIT_ROUTES.map(({ key }) => key));
+    const PAGE_VISIT_ROUTE_ALIASES = Object.freeze({
+        home: 'pokemons',
+        pokemon: 'pokemons',
+        effectiveness: 'tipos',
+        calculator: 'treinamento',
+        'calculadora-boost': 'boost',
+        'site-de-batalha': 'passe-de-batalha',
+        clans: 'cla',
+        teambuilder: 'team-builder',
+        mapas: 'mapa-interativo',
+        'faction-hunts': 'police-expeditions',
+        'fragmentacao-de-shiny': 'shiny-fragmentation',
+        professions: 'profissoes',
+        bosses: 'hoopa',
+        'hoopa-portais': 'hoopa',
+        champions: 'champion',
+        'champion-path': 'champion',
+        mew2: 'mewtwo',
+        special: 'ranger-bosses',
+        ranger: 'ranger-bosses',
+        especiais: 'ranger-bosses',
+        'bosses-especiais': 'ranger-bosses',
+        mainquest: 'main-quest',
+        'main-quest-bosses': 'main-quest'
+    });
+    const PAGE_VISIT_STATS_CACHE_MS = 60 * 1000;
+    const PAGE_VISIT_STATS_CONCURRENCY = 6;
     const COUNTER_TIME_ZONE = 'America/Sao_Paulo';
     const COUNTER_RESET_HOUR = 10;
     const COUNTER_RESET_MINUTE = 30;
@@ -27,6 +91,10 @@
     let portaledTooltipSurface = null;
     let portaledTooltipMount = null;
     let portaledTooltipHideTimer = 0;
+    let pageVisitStatsCache = null;
+    let pageVisitStatsPromise = null;
+    let pageVisitStatsRequestId = 0;
+    const pageVisitLastAttemptAt = new Map();
     const COUNTER_BYPASS_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
     const counterUrlParams = new URLSearchParams(window.location.search);
     const shouldBypassCounterIncrement = (() => {
@@ -57,6 +125,8 @@
         mount.dataset.visitCounterTooltipMode = getCounterTooltipMode(surface);
         if(getCounterTooltipMode(surface) === 'portal'){
             bindPortaledTooltipEvents(mount);
+        } else {
+            bindInlineTooltipEvents(mount);
         }
     });
 
@@ -90,7 +160,7 @@
 
     function buildCounterHoverContentHtml(){
         const startedLabel = getCounterStartedLabel();
-        return `<strong class="site-visit-counter__hover-title">Como a contagem funciona</strong><span class="site-visit-counter__hover-text">${getCounterHoverText()}</span><span class="site-visit-counter__hover-started">Contando desde o dia ${startedLabel}</span>`;
+        return `<strong class="site-visit-counter__hover-title">Acessos únicos por página</strong><span class="site-visit-counter__hover-text">Contagem de hoje. ${getCounterHoverText()}</span><span class="site-visit-counter__hover-started">Contando desde o dia ${startedLabel}</span><span class="site-visit-counter__pages" data-page-visit-stats aria-live="polite" aria-busy="true"><span class="site-visit-counter__pages-status" role="status">Carregando páginas...</span></span>`;
     }
 
     function buildCounterHoverHtml(){
@@ -176,6 +246,7 @@
         tooltip.setAttribute('aria-hidden', 'false');
         mount.dataset.visitCounterTooltipOpen = 'true';
         positionPortaledTooltip(mount);
+        void loadPageVisitStats(tooltip);
 
         window.requestAnimationFrame(() => {
             if(portaledTooltipMount !== mount) return;
@@ -237,6 +308,19 @@
         });
     }
 
+    function bindInlineTooltipEvents(mount){
+        if(mount.dataset.visitCounterTooltipBound === 'true') return;
+        mount.dataset.visitCounterTooltipBound = 'true';
+
+        const loadVisibleTooltipStats = () => {
+            const tooltip = mount.querySelector('.site-visit-counter__hover');
+            if(tooltip) void loadPageVisitStats(tooltip);
+        };
+
+        mount.addEventListener('mouseenter', loadVisibleTooltipStats);
+        mount.addEventListener('focus', loadVisibleTooltipStats);
+    }
+
     function getCounterDateParts(now = new Date()){
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: COUNTER_TIME_ZONE,
@@ -277,6 +361,41 @@
         }
 
         return getPreviousDateStamp(parts.year, parts.month, parts.day);
+    }
+
+    function normalizePageVisitRoute(value){
+        const normalized = String(value || '').trim().toLowerCase().replace(/\.html$/, '');
+        const routeKey = PAGE_VISIT_ROUTE_ALIASES[normalized] || normalized;
+        return PAGE_VISIT_ROUTE_KEYS.has(routeKey) ? routeKey : '';
+    }
+
+    function getCurrentPageVisitRouteKey(){
+        const segments = String(window.location.pathname || '').split('/').filter(Boolean);
+        const lastSegment = String(segments[segments.length - 1] || '').toLowerCase();
+        if(!segments.length){
+            return normalizePageVisitRoute('home');
+        }
+
+        if(lastSegment === 'app.html'){
+            const params = new URLSearchParams(window.location.search);
+            const tab = String(params.get('tab') || '').trim().toLowerCase();
+            if(tab === 'bosses'){
+                return normalizePageVisitRoute(params.get('bossmode') || params.get('boss') || params.get('mode') || 'hoopa');
+            }
+            return normalizePageVisitRoute(tab || 'home');
+        }
+
+        const pathSegments = lastSegment === 'index.html'
+            ? segments.slice(0, -1)
+            : segments;
+        if(!pathSegments.length){
+            return normalizePageVisitRoute('home');
+        }
+        for(const segment of pathSegments.reverse()){
+            const routeKey = normalizePageVisitRoute(segment);
+            if(routeKey) return routeKey;
+        }
+        return '';
     }
 
     function buildCounterUrl(counterKey, action = 'get'){
@@ -342,6 +461,183 @@
             return Number(payload?.value || payload?.count || payload?.data?.count || 0);
         }finally{
             window.clearTimeout(timeoutId);
+        }
+    }
+
+    function getPageVisitCounterKey(routeKey, dateStamp = getDateStamp()){
+        return `visits-page-${dateStamp}-${routeKey}`;
+    }
+
+    function readPageVisitMarker(routeKey){
+        try{
+            return window.localStorage.getItem(`${STORAGE_PAGE_MARKER_KEY_PREFIX}${routeKey}`) || '';
+        }catch(error){
+            console.error('page visit counter marker read error', error);
+            return '';
+        }
+    }
+
+    function writePageVisitMarker(routeKey, dateStamp){
+        try{
+            window.localStorage.setItem(`${STORAGE_PAGE_MARKER_KEY_PREFIX}${routeKey}`, dateStamp);
+        }catch(error){
+            console.error('page visit counter marker write error', error);
+        }
+    }
+
+    function trackCurrentPageView(){
+        const routeKey = getCurrentPageVisitRouteKey();
+        if(!routeKey || shouldBypassCounterIncrement) return;
+
+        const todayStamp = getDateStamp();
+        if(readPageVisitMarker(routeKey) === todayStamp) return;
+
+        const now = Date.now();
+        const lastAttemptAt = pageVisitLastAttemptAt.get(routeKey) || 0;
+        if(now - lastAttemptAt < EVENT_REFRESH_COOLDOWN_MS) return;
+        pageVisitLastAttemptAt.set(routeKey, now);
+
+        requestCounterIncrement(getPageVisitCounterKey(routeKey, todayStamp))
+            .then(() => {
+                writePageVisitMarker(routeKey, todayStamp);
+                pageVisitStatsCache = null;
+            })
+            .catch((error) => {
+                console.error(`page visit counter increment error (${routeKey})`, error);
+            });
+    }
+
+    async function fetchPageVisitStats(){
+        const todayStamp = getDateStamp();
+        const now = Date.now();
+        if(
+            pageVisitStatsCache
+            && pageVisitStatsCache.dateStamp === todayStamp
+            && now - pageVisitStatsCache.updatedAt < PAGE_VISIT_STATS_CACHE_MS
+        ){
+            return pageVisitStatsCache;
+        }
+        if(pageVisitStatsPromise) return pageVisitStatsPromise;
+
+        pageVisitStatsPromise = (async () => {
+            const counts = [];
+            const failedRoutes = [];
+            let nextRouteIndex = 0;
+            const readNextRoute = async () => {
+                while(nextRouteIndex < PAGE_VISIT_ROUTES.length){
+                    const route = PAGE_VISIT_ROUTES[nextRouteIndex++];
+                    try{
+                        const count = await requestCounter(getPageVisitCounterKey(route.key, todayStamp), 'get');
+                        if(count > 0){
+                            counts.push({ ...route, count });
+                        }
+                    }catch(error){
+                        failedRoutes.push(route.key);
+                        console.error(`page visit counter read error (${route.key})`, error);
+                    }
+                }
+            };
+
+            await Promise.all(
+                Array.from(
+                    { length: Math.min(PAGE_VISIT_STATS_CONCURRENCY, PAGE_VISIT_ROUTES.length) },
+                    () => readNextRoute()
+                )
+            );
+
+            counts.sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, 'pt-BR'));
+            pageVisitStatsCache = {
+                dateStamp: todayStamp,
+                updatedAt: Date.now(),
+                counts,
+                failedRoutes
+            };
+            return pageVisitStatsCache;
+        })();
+
+        try{
+            return await pageVisitStatsPromise;
+        }finally{
+            pageVisitStatsPromise = null;
+        }
+    }
+
+    function renderPageVisitStats(container, snapshot, requestId){
+        if(!container?.isConnected || container.dataset.requestId !== String(requestId)) return;
+
+        container.replaceChildren();
+        container.setAttribute('aria-busy', 'false');
+        if(snapshot.counts.length){
+            const list = document.createElement('span');
+            list.className = 'site-visit-counter__pages-list';
+            list.setAttribute('role', 'list');
+            snapshot.counts.forEach((page) => {
+                const item = document.createElement('span');
+                item.className = 'site-visit-counter__pages-item';
+                item.setAttribute('role', 'listitem');
+                const label = document.createElement('span');
+                label.className = 'site-visit-counter__pages-label';
+                label.textContent = page.label;
+                const count = document.createElement('strong');
+                count.className = 'site-visit-counter__pages-count';
+                count.textContent = page.count.toLocaleString('pt-BR');
+                item.append(label, count);
+                list.appendChild(item);
+            });
+            container.appendChild(list);
+        }else if(snapshot.failedRoutes.length === PAGE_VISIT_ROUTES.length){
+            const error = document.createElement('span');
+            error.className = 'site-visit-counter__pages-status site-visit-counter__pages-status--error';
+            error.setAttribute('role', 'status');
+            error.textContent = 'Não foi possível consultar os acessos por página.';
+            container.appendChild(error);
+        }else{
+            const empty = document.createElement('span');
+            empty.className = 'site-visit-counter__pages-status';
+            empty.setAttribute('role', 'status');
+            empty.textContent = 'Nenhuma página teve acessos únicos hoje.';
+            container.appendChild(empty);
+        }
+
+        if(snapshot.failedRoutes.length && snapshot.failedRoutes.length < PAGE_VISIT_ROUTES.length){
+            const partialError = document.createElement('span');
+            partialError.className = 'site-visit-counter__pages-status site-visit-counter__pages-status--error';
+            partialError.setAttribute('role', 'status');
+            partialError.textContent = 'Algumas páginas não puderam ser consultadas.';
+            container.appendChild(partialError);
+        }
+
+        if(portaledTooltipSurface?.contains(container) && portaledTooltipMount){
+            positionPortaledTooltip(portaledTooltipMount);
+        }
+    }
+
+    async function loadPageVisitStats(tooltip){
+        const container = tooltip?.querySelector('[data-page-visit-stats]');
+        if(!container) return;
+
+        const requestId = ++pageVisitStatsRequestId;
+        container.dataset.requestId = String(requestId);
+        container.setAttribute('aria-busy', 'true');
+        const status = document.createElement('span');
+        status.className = 'site-visit-counter__pages-status';
+        status.setAttribute('role', 'status');
+        status.textContent = 'Carregando páginas...';
+        container.replaceChildren(status);
+
+        try{
+            const snapshot = await fetchPageVisitStats();
+            renderPageVisitStats(container, snapshot, requestId);
+        }catch(error){
+            console.error('page visit counter stats error', error);
+            if(!container.isConnected || container.dataset.requestId !== String(requestId)) return;
+            container.replaceChildren();
+            container.setAttribute('aria-busy', 'false');
+            const errorStatus = document.createElement('span');
+            errorStatus.className = 'site-visit-counter__pages-status site-visit-counter__pages-status--error';
+            errorStatus.setAttribute('role', 'status');
+            errorStatus.textContent = 'Não foi possível consultar os acessos por página.';
+            container.appendChild(errorStatus);
         }
     }
 
@@ -632,6 +928,9 @@
     }
 
     setupAutoRefresh();
+    window.addEventListener('pstory-route-change', trackCurrentPageView);
+    window.addEventListener('popstate', trackCurrentPageView);
+    trackCurrentPageView();
     syncCounters({
         showLoading: true
     });

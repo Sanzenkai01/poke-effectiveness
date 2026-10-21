@@ -1,8 +1,11 @@
 import json
 import sys
+from pathlib import Path
+
+catalog_path = Path(__file__).resolve().parents[1] / 'pokemons' / 'pokemons.json'
 
 try:
-    with open('pokemons/pokemons.json', 'r', encoding='utf-8') as f:
+    with catalog_path.open('r', encoding='utf-8') as f:
         data = json.load(f)
     print(f'✓ JSON VALIDO - Total de Pokemon: {len(data["pokemon"])}')
     print('\nÚltimos 3 Pokemon:')

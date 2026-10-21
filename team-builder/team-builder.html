@@ -16,12 +16,21 @@
           <div class="team-builder-section-head" style="display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.45rem; width:100%; max-width:100%; min-width:0; text-align:center;">
             <span class="team-builder-eyebrow">Composi&ccedil;&atilde;o</span>
             <h3 id="team-builder-board-title">Slots do time</h3>
+            <label class="team-builder-mode-field" for="team-builder-mode">
+              <span>Formato do time</span>
+              <select id="team-builder-mode">
+                <option value="2x2x2">2x2x2 - Duplas</option>
+                <option value="3x3">3x3 - Trios</option>
+                <option value="6x">6x - Time completo</option>
+              </select>
+            </label>
             <div class="team-builder-action-row">
               <button id="team-builder-autofill" class="team-builder-action team-builder-action--complete" type="button" disabled>Completar Time</button>
+              <button id="team-builder-show-hunts" class="team-builder-action team-builder-action--complete" type="button" aria-controls="team-builder-complete" aria-expanded="false" disabled>Mostrar Hunts</button>
               <button id="team-builder-clear" class="team-builder-action team-builder-action--clear" type="button">Limpar time</button>
             </div>
           </div>
-          <p class="team-builder-drag-hint">Use "Completar Time" para preencher os slots vazios com Pokémon que combinam com os movesets selecionados e respeitam os filtros ativos.<br>Arraste os Pokémon dos slots DPS ou Finisher para trocar suas posições.</p>
+          <p class="team-builder-drag-hint">Nos modos 2x2x2 e 3x3, escolha um Lurer (AR ou Mega DPS) e até cinco Pokémon; cada dupla ou trio inclui o Lurer. No modo 6x, use "Completar Time" para preencher os slots vazios.<br>Arraste os Pokémon dos slots para trocar suas posições.</p>
           <div id="team-builder-slots" class="team-builder-slots" role="list" aria-label="Slots do time"></div>
         </section>
 
@@ -64,9 +73,9 @@
         <section id="team-builder-complete" class="team-builder-complete" aria-labelledby="team-builder-complete-title" hidden>
           <div class="team-builder-section-head">
             <span class="team-builder-eyebrow">Recomenda&ccedil;&atilde;o</span>
-            <h3 id="team-builder-complete-title">Time completo</h3>
+            <h3 id="team-builder-complete-title">Hunts recomendadas</h3>
           </div>
-          <p>As hunts s&atilde;o apenas recomenda&ccedil;&otilde;es automaticas com base na sua composi&ccedil;&atilde;o, tenha certeza de checar antes de fazer algo.</p>
+          <p id="team-builder-hunt-mode-note">As hunts s&atilde;o recomenda&ccedil;&otilde;es autom&aacute;ticas com base na composi&ccedil;&atilde;o selecionada. Confira os requisitos antes de ca&ccedil;ar.</p>
           <div id="team-builder-hunts" class="team-builder-hunts" aria-live="polite" hidden></div>
         </section>
       </div>
