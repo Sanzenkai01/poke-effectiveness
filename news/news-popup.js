@@ -10,7 +10,7 @@
             image: 'news/image-news.png',
             imageAlt: 'Sheriff no nível 274 com barras de progresso de 100% e 13%.',
             imageCaption: '',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1562909804006219808',
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1563267373958565939',
             linkLabel: 'Ler Dev-Notes no Discord'
         }
     ]);
