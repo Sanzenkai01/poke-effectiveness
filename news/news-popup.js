@@ -1,14 +1,14 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-23-dev-notes',
-            layout: 'text',
+            id: '2026-10-23-dev-notes-image-test',
+            layout: 'text-image',
             title: 'Atualizações do dia 23/10.',
             category: 'Dev-Notes',
             subtitle: 'Mudanças sobre morte e redução de dano no jogador através do Silver Starboost System',
             text: 'Confira as novidades mais recentes no Discord.',
-            image: '',
-            imageAlt: '',
+            image: 'news/image-news.png',
+            imageAlt: 'Sheriff no nível 274 com barras de progresso de 100% e 13%.',
             imageCaption: '',
             link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1562909804006219808',
             linkLabel: 'Ler Dev-Notes no Discord'
