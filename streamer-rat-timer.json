@@ -1,18 +1,19 @@
 {
-  "updatedAt": "2026-10-23T20:36:36.882Z",
+  "updatedAt": "2026-10-23T20:55:37.622Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-10-23T20:36:34.434Z",
-    "endedAt": "2026-10-23T20:36:36.882Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-10-23T20:46:56.981Z",
+    "endedAt": "2026-10-23T20:55:37.622Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "gordallink",
       "indypereira",
       "uguettolitz",
       "zsales33",
       "dragonslayerpiva",
+      "jackpist0la",
       "twozada212",
       "0taichou",
       "adivorcio",
@@ -22,7 +23,6 @@
       "eusou_o_d",
       "fernandoalcatraz",
       "galego_rj",
-      "jackpist0la",
       "karlin_nara",
       "lordjuregi",
       "nazgulplayer",
@@ -40,22 +40,30 @@
       "zsales33"
     ],
     "observedChannels": [
-      "zsales33"
+      "indypereira"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "indypereira"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "indypereira",
+        "messageAt": 1792788937524,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
-        "channel": "zsales33",
+        "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1792787796817,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1792788937524,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
-        "channel": "zsales33",
-        "kind": "escape",
-        "messageAt": 1792787796817,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "channel": "indypereira",
+        "kind": "spawn",
+        "messageAt": 1792788937524,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -105,16 +113,26 @@
     "error": ""
   },
   "latest": {
-    "channel": "zsales33",
-    "lastMessageAt": 1792787796817,
-    "expectedNextAt": 1792788996817,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-    "streamStartedAt": "2026-10-23T17:26:12Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1792787796882,
-    "persistedAt": 1792787796882
+    "channel": "indypereira",
+    "lastMessageAt": 1792788937524,
+    "expectedNextAt": 1792790197524,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-10-23T20:18:59Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1792788937621,
+    "persistedAt": 1792788937621
   },
   "timers": {
+    "indypereira": {
+      "channel": "indypereira",
+      "lastMessageAt": 1792788937524,
+      "expectedNextAt": 1792790197524,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-10-23T20:18:59Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1792788937621,
+      "persistedAt": 1792788937621
+    },
     "zsales33": {
       "channel": "zsales33",
       "lastMessageAt": 1792787796817,
@@ -123,7 +141,7 @@
       "streamStartedAt": "2026-10-23T17:26:12Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1792787796882,
-      "persistedAt": 1792787796882
+      "persistedAt": 1792788416981
     },
     "gordallink": {
       "channel": "gordallink",
@@ -133,7 +151,7 @@
       "streamStartedAt": "2026-10-23T15:50:01Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1792786582010,
-      "persistedAt": 1792787794434
+      "persistedAt": 1792788416981
     }
   }
 }
