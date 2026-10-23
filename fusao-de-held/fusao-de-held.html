@@ -3,15 +3,15 @@
           <div class="held-fusion-hero__copy">
             <span class="held-fusion-eyebrow">Sistemas</span>
             <h2 id="held-fusion-title">Fus&atilde;o de Held</h2>
-            <p>Aprimore Helds Prim&aacute;rios sacrificando itens do mesmo tier. A chance muda em tempo real conforme voc&ecirc; adiciona materiais e Moedas Especiais.</p>
-            <div class="held-fusion-hero__stats" aria-label="Resumo da fus&atilde;o de Held">
-              <span><strong>1-2</strong> Helds de descarte</span>
-              <span><strong>Mesmo tier</strong> obrigat&oacute;rio</span>
-              <span><strong>Item seguro</strong> se falhar</span>
-            </div>
           </div>
         </section>
 
+        <div class="held-fusion-mode-switch" role="group" aria-label="Op&ccedil;&otilde;es de melhoria">
+          <button type="button" class="is-active" aria-pressed="true" data-held-fusion-mode="primary">Fus&atilde;o de Held Prim&aacute;rio</button>
+          <button type="button" aria-pressed="false" data-held-fusion-mode="secondary">Melhoria de Held Secund&aacute;rio</button>
+        </div>
+
+        <div id="held-fusion-primary-panel" class="held-fusion-mode-panel" data-held-fusion-content="primary">
         <section class="held-fusion-section held-fusion-simulator" aria-labelledby="held-fusion-simulator-title">
           <div class="held-fusion-section__head">
             <span class="held-fusion-eyebrow">Simulador</span>
@@ -286,4 +286,106 @@
             </div>
           </div>
         </section>
+        </div>
+
+        <section id="held-fusion-secondary-panel" class="held-fusion-section held-fusion-secondary" data-held-fusion-content="secondary" aria-labelledby="held-fusion-secondary-title" hidden>
+          <div class="held-fusion-section__head">
+            <span class="held-fusion-eyebrow">Melhorias</span>
+            <h3 id="held-fusion-secondary-title">Melhoria de Held Secund&aacute;rio</h3>
+            <p>Simule a melhoria de um Held Secund&aacute;rio do cat&aacute;logo: escolha sua raridade atual e avance para a pr&oacute;xima sem chance de falha.</p>
+          </div>
+
+          <div class="held-fusion-secondary__layout">
+            <div class="held-fusion-secondary__controls">
+              <span id="held-fusion-secondary-picker-label" class="held-fusion-secondary__control-label">Helds Secund&aacute;rios</span>
+              <label class="held-fusion-secondary__search-label" for="held-fusion-secondary-search">Buscar Held Secund&aacute;rio</label>
+              <input id="held-fusion-secondary-search" class="held-fusion-secondary__search" type="search" placeholder="Digite o nome do Held..." autocomplete="off" disabled>
+              <div id="held-fusion-secondary-list" class="held-fusion-secondary__held-list" role="listbox" aria-labelledby="held-fusion-secondary-picker-label" aria-disabled="true">
+                <span class="held-fusion-secondary__list-placeholder">Carregando Helds Secund&aacute;rios...</span>
+              </div>
+              <select id="held-fusion-secondary-select" aria-hidden="true" tabindex="-1" hidden>
+                <option value="">Selecione um Held Secund&aacute;rio</option>
+              </select>
+
+              <label for="held-fusion-secondary-rarity">Raridade atual</label>
+              <select id="held-fusion-secondary-rarity" data-rarity="normal" disabled>
+                <option value="normal" data-rarity="normal">Common</option>
+                <option value="uncommon" data-rarity="uncommon">Uncommon</option>
+                <option value="rare" data-rarity="rare">Rare</option>
+                <option value="epic" data-rarity="epic">Epic</option>
+                <option value="legendary" data-rarity="legendary" disabled>Legendary (m&aacute;ximo)</option>
+              </select>
+              <p id="held-fusion-secondary-status" class="held-fusion-secondary__status" role="status" aria-live="polite">Carregando o cat&aacute;logo de Helds Secund&aacute;rios...</p>
+              <button id="held-fusion-secondary-retry" class="held-fusion-secondary__retry" type="button" hidden>Tentar novamente</button>
+            </div>
+
+            <div class="held-fusion-secondary__preview" aria-live="polite">
+              <div class="held-fusion-secondary__titlebar">
+                <h4>Aprimora&ccedil;&atilde;o Helds</h4>
+              </div>
+
+              <div class="held-fusion-secondary__item">
+                <span>Held Secund&aacute;rio:</span>
+                <div id="held-fusion-secondary-slot" class="held-fusion-secondary__slot" data-rarity="normal">
+                  <img id="held-fusion-secondary-image" alt="" hidden>
+                  <span id="held-fusion-secondary-empty" aria-hidden="true"></span>
+                  <button id="held-fusion-secondary-clear" class="held-fusion-secondary__clear" type="button" aria-label="Remover Held Secund&aacute;rio" hidden>&times;</button>
+                </div>
+                <span id="held-fusion-secondary-rarity-label" class="held-fusion-secondary__rarity-label" data-rarity="normal">Common</span>
+              </div>
+
+              <div class="held-fusion-secondary__dust">
+                <span>Sparkling Dust:</span>
+                <div class="held-fusion-secondary__dust-slot">
+                  <img src="fusao-de-held/sparkling-dust.png" alt="Sparkling Dust" loading="lazy" decoding="async">
+                  <span id="held-fusion-secondary-dust-amount">0</span>
+                </div>
+              </div>
+
+              <div class="held-fusion-secondary__info">
+                <h4>Informa&ccedil;&atilde;o Adicional <button class="held-fusion-secondary__tooltip" type="button" aria-label="Os Sparkling Dusts podem ser usados para tentar aumentar a raridade de alguns Helds secundários em um nível." aria-describedby="held-fusion-secondary-tooltip">?<span id="held-fusion-secondary-tooltip" class="held-fusion-secondary__tooltip-text" role="tooltip">Os Sparkling Dusts podem ser usados para tentar aumentar a raridade de alguns Helds secundários em um nível.</span></button></h4>
+                <p><span>Custo:</span><strong id="held-fusion-secondary-cost">0</strong></p>
+                <button id="held-fusion-secondary-upgrade" type="button" disabled>Aprimorar</button>
+                <p id="held-fusion-secondary-result" class="held-fusion-secondary__result" role="status" aria-live="polite">Selecione um Held Secund&aacute;rio para come&ccedil;ar.</p>
+              </div>
+            </div>
+          </div>
+
+          <section class="held-fusion-secondary__calculator" aria-labelledby="held-fusion-secondary-calculator-title">
+            <div class="held-fusion-section__head">
+              <span class="held-fusion-eyebrow">Simulador de custos</span>
+              <h3 id="held-fusion-secondary-calculator-title">Calcular custo total</h3>
+              <p>Escolha as raridades e informe o pre&ccedil;o unit&aacute;rio da Sparkling Dust para estimar o custo total da melhoria.</p>
+            </div>
+            <div class="held-fusion-secondary__calculator-controls">
+              <label for="held-fusion-secondary-cost-start">Raridade inicial</label>
+              <select id="held-fusion-secondary-cost-start" data-rarity="uncommon">
+                <option value="normal" data-rarity="normal">Common</option>
+                <option value="uncommon" data-rarity="uncommon" selected>Uncommon</option>
+                <option value="rare" data-rarity="rare">Rare</option>
+                <option value="epic" data-rarity="epic">Epic</option>
+                <option value="legendary" data-rarity="legendary">Legendary</option>
+              </select>
+              <label for="held-fusion-secondary-cost-target">Raridade desejada</label>
+              <select id="held-fusion-secondary-cost-target" data-rarity="legendary">
+                <option value="normal" data-rarity="normal">Common</option>
+                <option value="uncommon" data-rarity="uncommon">Uncommon</option>
+                <option value="rare" data-rarity="rare">Rare</option>
+                <option value="epic" data-rarity="epic">Epic</option>
+                <option value="legendary" data-rarity="legendary" selected>Legendary</option>
+              </select>
+              <label for="held-fusion-secondary-dust-price">Pre&ccedil;o por Sparkling Dust (Cash)</label>
+              <input id="held-fusion-secondary-dust-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Informe o pre&ccedil;o unit&aacute;rio" aria-describedby="held-fusion-secondary-dust-price-help">
+              <span id="held-fusion-secondary-dust-price-help" class="held-fusion-secondary__calculator-help">Informe quanto voc&ecirc; paga por 1 Sparkling Dust.</span>
+            </div>
+            <div class="held-fusion-secondary__calculator-result" aria-live="polite">
+              <p><span>Sparkling Dust total</span><strong id="held-fusion-secondary-cost-dust-total"><img src="fusao-de-held/sparkling-dust.png" alt="Sparkling Dust" loading="lazy" decoding="async"><span>0</span></strong></p>
+              <p><span>Dinheiro das melhorias</span><strong id="held-fusion-secondary-cost-cash-total">0</strong></p>
+              <p><span>Custo total da Sparkling Dust</span><strong id="held-fusion-secondary-dust-cash-total">—</strong></p>
+              <p><span>Total estimado</span><strong id="held-fusion-secondary-grand-total">—</strong></p>
+              <p id="held-fusion-secondary-cost-message" class="held-fusion-secondary__calculator-message" role="status"></p>
+              <ol id="held-fusion-secondary-cost-steps" class="held-fusion-secondary__calculator-steps"></ol>
+            </div>
+          </section>
+          </section>
       </div>

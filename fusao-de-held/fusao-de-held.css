@@ -793,6 +793,660 @@
   font-weight: 800;
 }
 
+.held-fusion-mode-switch {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.held-fusion-mode-switch button {
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  background: rgba(8, 14, 25, 0.82);
+  color: rgba(226, 232, 240, 0.82);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.held-fusion-mode-switch button.is-active {
+  border-color: rgba(250, 204, 21, 0.62);
+  background: rgba(250, 204, 21, 0.14);
+  color: #fef3c7;
+}
+
+.held-fusion-mode-switch button:focus-visible,
+.held-fusion-secondary button:focus-visible,
+.held-fusion-secondary select:focus-visible {
+  outline: 3px solid #7dd3fc;
+  outline-offset: 3px;
+}
+
+.held-fusion-mode-panel[hidden],
+.held-fusion-secondary[hidden] {
+  display: none;
+}
+
+.held-fusion-secondary__layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.held-fusion-secondary__controls {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-secondary__controls label {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.held-fusion-secondary__control-label {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.held-fusion-secondary__search-label {
+  margin-bottom: -0.35rem;
+}
+
+.held-fusion-secondary__search {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.88);
+  color: #f8fafc;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.held-fusion-secondary__search::placeholder {
+  color: rgba(226, 232, 240, 0.46);
+}
+
+.held-fusion-secondary__search:focus-visible {
+  border-color: rgba(125, 211, 252, 0.64);
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+.held-fusion-secondary__search:disabled {
+  opacity: 0.62;
+}
+
+.held-fusion-secondary__held-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.4rem;
+  max-height: 280px;
+  min-width: 0;
+  padding: 0.35rem;
+  overflow-y: auto;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.62);
+}
+
+.held-fusion-secondary__held-list[aria-disabled="true"] {
+  align-content: center;
+  min-height: 70px;
+}
+
+.held-fusion-secondary__held-option {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(226, 232, 240, 0.82);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.held-fusion-secondary__held-option[hidden] {
+  display: none;
+}
+
+.held-fusion-secondary__held-option img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.held-fusion-secondary__held-option:hover,
+.held-fusion-secondary__held-option:focus-visible {
+  border-color: rgba(125, 211, 252, 0.56);
+  outline: 2px solid #7dd3fc;
+  outline-offset: 1px;
+  background: rgba(14, 165, 233, 0.1);
+}
+
+.held-fusion-secondary__held-option.is-selected {
+  border-color: rgba(250, 204, 21, 0.62);
+  background: rgba(250, 204, 21, 0.1);
+  color: #fef3c7;
+}
+
+.held-fusion-secondary__list-placeholder {
+  grid-column: 1;
+  padding: 0.5rem;
+  color: rgba(226, 232, 240, 0.68);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.held-fusion-secondary__controls select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.88);
+  color: #f8fafc;
+  font: inherit;
+}
+
+.held-fusion-secondary__controls select:disabled {
+  opacity: 0.62;
+}
+
+#held-fusion-secondary-rarity[data-rarity="uncommon"],
+#held-fusion-secondary-cost-start[data-rarity="uncommon"],
+#held-fusion-secondary-cost-target[data-rarity="uncommon"],
+#held-fusion-secondary-rarity option[data-rarity="uncommon"],
+#held-fusion-secondary-cost-start option[data-rarity="uncommon"],
+#held-fusion-secondary-cost-target option[data-rarity="uncommon"] {
+  color: #4ade80 !important;
+}
+
+#held-fusion-secondary-rarity[data-rarity="rare"],
+#held-fusion-secondary-cost-start[data-rarity="rare"],
+#held-fusion-secondary-cost-target[data-rarity="rare"],
+#held-fusion-secondary-rarity option[data-rarity="rare"],
+#held-fusion-secondary-cost-start option[data-rarity="rare"],
+#held-fusion-secondary-cost-target option[data-rarity="rare"] {
+  color: #60a5fa !important;
+}
+
+#held-fusion-secondary-rarity[data-rarity="epic"],
+#held-fusion-secondary-cost-start[data-rarity="epic"],
+#held-fusion-secondary-cost-target[data-rarity="epic"],
+#held-fusion-secondary-rarity option[data-rarity="epic"],
+#held-fusion-secondary-cost-start option[data-rarity="epic"],
+#held-fusion-secondary-cost-target option[data-rarity="epic"] {
+  color: #f87171 !important;
+}
+
+#held-fusion-secondary-rarity[data-rarity="legendary"],
+#held-fusion-secondary-cost-start[data-rarity="legendary"],
+#held-fusion-secondary-cost-target[data-rarity="legendary"],
+#held-fusion-secondary-rarity option[data-rarity="legendary"],
+#held-fusion-secondary-cost-start option[data-rarity="legendary"],
+#held-fusion-secondary-cost-target option[data-rarity="legendary"] {
+  color: #c084fc !important;
+}
+
+.held-fusion-secondary__status,
+.held-fusion-secondary__result {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.held-fusion-secondary__retry {
+  min-height: 38px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 9px;
+  background: rgba(14, 165, 233, 0.12);
+  color: #bae6fd;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.held-fusion-secondary__retry[hidden] {
+  display: none;
+}
+
+.held-fusion-secondary__preview {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: #1f1f1f;
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.28);
+}
+
+.held-fusion-secondary__titlebar h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  text-align: center;
+}
+
+.held-fusion-secondary__item,
+.held-fusion-secondary__dust {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  color: #f5f5f5;
+  text-align: center;
+}
+
+.held-fusion-secondary__item {
+  position: relative;
+  margin-top: 1.1rem;
+}
+
+.held-fusion-secondary__slot,
+.held-fusion-secondary__dust-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.held-fusion-secondary__slot[data-rarity="uncommon"] {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.32), 0 0 16px rgba(34, 197, 94, 0.24);
+}
+
+.held-fusion-secondary__slot[data-rarity="rare"] {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.34), 0 0 16px rgba(59, 130, 246, 0.25);
+}
+
+.held-fusion-secondary__slot[data-rarity="epic"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.34), 0 0 16px rgba(239, 68, 68, 0.25);
+}
+
+.held-fusion-secondary__slot[data-rarity="legendary"] {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.36), 0 0 18px rgba(168, 85, 247, 0.3);
+}
+
+.held-fusion-secondary__slot img,
+.held-fusion-secondary__dust-slot img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.held-fusion-secondary__slot > span {
+  max-width: 84px;
+  color: rgba(245, 245, 245, 0.62);
+  font-size: 0.58rem;
+  line-height: 1.1;
+}
+
+.held-fusion-secondary__rarity-label {
+  min-height: 1.2em;
+  color: rgba(245, 245, 245, 0.68);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.held-fusion-secondary__rarity-label[data-rarity="uncommon"] { color: #4ade80; }
+.held-fusion-secondary__rarity-label[data-rarity="rare"] { color: #60a5fa; }
+.held-fusion-secondary__rarity-label[data-rarity="epic"] { color: #f87171; }
+.held-fusion-secondary__rarity-label[data-rarity="legendary"] { color: #c084fc; }
+
+.held-fusion-secondary__clear {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: #ef2f2f;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.held-fusion-secondary__clear[hidden] {
+  display: none;
+}
+
+.held-fusion-secondary__dust {
+  margin-top: 0.95rem;
+}
+
+.held-fusion-secondary__dust-slot {
+  color: #ffffff;
+}
+
+.held-fusion-secondary__dust-slot span {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  min-width: 17px;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: #1f1f1f;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.held-fusion-secondary__info {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.held-fusion-secondary__info h4 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.held-fusion-secondary__tooltip {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #dfe88f;
+  color: #4b5563;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: help;
+}
+
+.held-fusion-secondary__tooltip-text {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  bottom: calc(100% + 0.65rem);
+  width: min(260px, calc(100vw - 3rem));
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(125, 211, 252, 0.42);
+  border-radius: 10px;
+  background: #0b1422;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42);
+  color: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+  pointer-events: none;
+}
+
+.held-fusion-secondary__tooltip:hover .held-fusion-secondary__tooltip-text,
+.held-fusion-secondary__tooltip:focus-visible .held-fusion-secondary__tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.held-fusion-secondary__info > p:first-of-type {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  color: rgba(245, 245, 245, 0.82);
+}
+
+.held-fusion-secondary__info > p:first-of-type strong {
+  color: #ffffff;
+}
+
+#held-fusion-secondary-upgrade {
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: #0868c9;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+#held-fusion-secondary-upgrade:disabled {
+  background: #c4c4c4;
+  color: #858585;
+  cursor: not-allowed;
+}
+
+.held-fusion-secondary__result {
+  text-align: center;
+}
+
+.held-fusion-secondary__calculator {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 18px;
+  background: rgba(8, 14, 25, 0.72);
+}
+
+.held-fusion-secondary__calculator .held-fusion-section__head h3 {
+  font-size: 1.5rem;
+}
+
+.held-fusion-secondary__calculator-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.55rem 0.85rem;
+  max-width: 620px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.held-fusion-secondary__calculator-controls label {
+  color: rgba(226, 232, 240, 0.76);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.held-fusion-secondary__calculator-controls select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.88);
+  color: #f8fafc;
+  font: inherit;
+}
+
+.held-fusion-secondary__calculator-controls input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.88);
+  color: #f8fafc;
+  font: inherit;
+}
+
+.held-fusion-secondary__calculator-controls select:focus-visible,
+.held-fusion-secondary__calculator-controls input:focus-visible {
+  outline: 3px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+.held-fusion-secondary__calculator-controls label:nth-of-type(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.held-fusion-secondary__calculator-controls select:nth-of-type(2) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.held-fusion-secondary__calculator-controls label:nth-of-type(3) {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.held-fusion-secondary__calculator-controls input {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.held-fusion-secondary__calculator-help {
+  grid-column: 1 / -1;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.76rem;
+}
+
+.held-fusion-secondary__calculator-controls input[aria-invalid="true"] {
+  border-color: #f87171;
+}
+
+.held-fusion-secondary__calculator-result {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 620px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 14px;
+  background: rgba(2, 6, 14, 0.46);
+}
+
+.held-fusion-secondary__calculator-result > p:not(.held-fusion-secondary__calculator-message) {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.held-fusion-secondary__calculator-result strong {
+  color: #fef3c7;
+  text-align: right;
+}
+
+#held-fusion-secondary-cost-dust-total {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#held-fusion-secondary-cost-dust-total img,
+.held-fusion-secondary__calculator-steps img {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.held-fusion-secondary__calculator-message {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.68);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.held-fusion-secondary__calculator-steps {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.75rem 0 0 1.25rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  color: rgba(226, 232, 240, 0.78);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.held-fusion-secondary__calculator-steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.held-fusion-secondary__calculator-tier[data-rarity="uncommon"] {
+  color: #4ade80;
+}
+
+.held-fusion-secondary__calculator-tier[data-rarity="rare"] {
+  color: #60a5fa;
+}
+
+.held-fusion-secondary__calculator-tier[data-rarity="epic"] {
+  color: #f87171;
+}
+
+.held-fusion-secondary__calculator-tier[data-rarity="legendary"] {
+  color: #c084fc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .held-fusion-mode-switch button,
+  .held-fusion-secondary__slot,
+  .held-fusion-secondary__dust-slot,
+  .held-fusion-secondary__tooltip-text {
+    transition: none;
+  }
+}
+
 @media (max-width: 980px) {
   body[data-active-tab="fusao-de-held"] #content-fusao-de-held,
   body[data-active-tab="fusao-de-held"] #content-fusao-de-held .held-fusion-shell,
@@ -808,7 +1462,8 @@
   .held-fusion-hero,
   .held-fusion-sim,
   .held-fusion-system-layout,
-  .held-fusion-amulet__layout {
+  .held-fusion-amulet__layout,
+  .held-fusion-secondary__layout {
     grid-template-columns: 1fr;
   }
 
@@ -909,6 +1564,22 @@
   .held-fusion-sim__controls,
   .held-fusion-sim__stats {
     grid-template-columns: 1fr;
+  }
+
+  .held-fusion-secondary__calculator-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .held-fusion-secondary__calculator-controls label:nth-of-type(2),
+  .held-fusion-secondary__calculator-controls select:nth-of-type(2),
+  .held-fusion-secondary__calculator-controls label:nth-of-type(3),
+  .held-fusion-secondary__calculator-controls input {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .held-fusion-secondary__calculator-help {
+    grid-column: auto;
   }
 
   .held-fusion-sim__modal {

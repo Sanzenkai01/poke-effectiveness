@@ -1,7 +1,8 @@
 (function(){
-    var APP_SHELL_VERSION = '20261021-sidebar-visible-v1';
+    var APP_SHELL_VERSION = '20261023-news-title-centered-v1';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
-    var appUrl = new URL('../app.html', window.location.href);
+    var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
+    var appUrl = new URL(appShellPath, window.location.href);
     appUrl.searchParams.set('_shell', APP_SHELL_VERSION);
     if(routeTab){
         appUrl.searchParams.set('tab', routeTab);
@@ -26,7 +27,7 @@
         })
         .catch(function(error){
             console.error('route-loader fallback error', error);
-            var target = new URL('../app.html', window.location.href);
+            var target = new URL(appShellPath, window.location.href);
             var params = new URLSearchParams(window.location.search);
             params.delete('bossmode');
             params.delete('boss');

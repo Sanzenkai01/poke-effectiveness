@@ -342,7 +342,9 @@ const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     pokemons: '20261016-pokemon-singular-labels-v1',
     'team-builder': '20261011-team-builder-groups',
     pokebolas: '20261017-pokebolas-menu-overlay-v1',
-    pescaria: '20261018-pescaria-page-v2'
+    pescaria: '20261018-pescaria-page-v2',
+    'fusao-de-held': '20261023-secondary-held-search-v1',
+    helds: '20261022-held-secondary-catalog-v1'
 });
 const panelFragmentLoadPromises = new Map();
 let interactiveMapAssetsLoadPromise = null;
@@ -14728,6 +14730,18 @@ const HELD_FUSION_AMULET_OVERRIDES = {
 };
 
 let heldFusionSimulatorInitialized = false;
+let heldFusionModesInitialized = false;
+let heldSecondaryUpgradeInitialized = false;
+let heldSecondaryCostCalculatorInitialized = false;
+let heldSecondaryCatalog = [];
+const heldSecondaryRarityById = new Map();
+const HELD_SECONDARY_RARITIES = [
+    { key: 'normal', label: 'Common', next: 'uncommon', dust: 30, cost: 500000, costLabel: '500K' },
+    { key: 'uncommon', label: 'Uncommon', next: 'rare', dust: 100, cost: 3000000, costLabel: '3KK' },
+    { key: 'rare', label: 'Rare', next: 'epic', dust: 500, cost: 5000000, costLabel: '5KK' },
+    { key: 'epic', label: 'Epic', next: 'legendary', dust: 1500, cost: 15000000, costLabel: '15KK' },
+    { key: 'legendary', label: 'Legendary', next: null, dust: 0, cost: 0, costLabel: '0' }
+];
 
 function getHeldFusionHeld(key){
     return HELD_FUSION_HELDS.find(held => held.key === key) || HELD_FUSION_HELDS[0];
@@ -14992,6 +15006,400 @@ function initializeHeldFusionSimulator(){
     renderHeldFusionSimulator('Resultado: aguardando simulacao.');
 }
 
+function initializeHeldFusionModes(){
+    if(heldFusionModesInitialized) return;
+    const buttons = Array.from(document.querySelectorAll('[data-held-fusion-mode]'));
+    const panels = Array.from(document.querySelectorAll('[data-held-fusion-content]'));
+    if(!buttons.length || !panels.length) return;
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            applyHeldFusionMode(button.dataset.heldFusionMode);
+            updateUrl({ historyMode: 'push' });
+        });
+    });
+
+    applyHeldFusionMode(getHeldFusionModeFromUrl());
+    heldFusionModesInitialized = true;
+}
+
+function getHeldFusionModeFromUrl(){
+    return /\/fusao-de-held\/secundario(?:\/|$)/i.test(location.pathname) ? 'secondary' : 'primary';
+}
+
+function applyHeldFusionMode(mode){
+    const selectedMode = mode === 'secondary' ? 'secondary' : 'primary';
+    const buttons = Array.from(document.querySelectorAll('[data-held-fusion-mode]'));
+    const panels = Array.from(document.querySelectorAll('[data-held-fusion-content]'));
+    buttons.forEach((button) => {
+        const isSelected = button.dataset.heldFusionMode === selectedMode;
+        button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        button.classList.toggle('is-active', isSelected);
+    });
+    panels.forEach((panel) => {
+        panel.hidden = panel.dataset.heldFusionContent !== selectedMode;
+    });
+}
+
+function getHeldFusionSelectedMode(){
+    const secondaryPanel = document.querySelector('[data-held-fusion-content="secondary"]');
+    return secondaryPanel ? (secondaryPanel.hidden ? 'primary' : 'secondary') : getHeldFusionModeFromUrl();
+}
+
+function getHeldSecondaryRarity(key){
+    return HELD_SECONDARY_RARITIES.find(rarity => rarity.key === key) || HELD_SECONDARY_RARITIES[0];
+}
+
+function updateHeldSecondaryRarityColor(select){
+    if(select) select.dataset.rarity = select.value;
+}
+
+function calculateHeldSecondaryUpgradeCosts(startKey, targetKey){
+    const startIndex = HELD_SECONDARY_RARITIES.findIndex(rarity => rarity.key === startKey);
+    const targetIndex = HELD_SECONDARY_RARITIES.findIndex(rarity => rarity.key === targetKey);
+    if(startIndex < 0 || targetIndex < 0 || targetIndex <= startIndex){
+        return { valid: false, dust: 0, cash: 0, steps: [] };
+    }
+
+    const steps = HELD_SECONDARY_RARITIES.slice(startIndex, targetIndex);
+    return {
+        valid: true,
+        dust: steps.reduce((total, rarity) => total + rarity.dust, 0),
+        cash: steps.reduce((total, rarity) => total + rarity.cost, 0),
+        steps
+    };
+}
+
+function renderHeldSecondaryCostCalculator(){
+    const startSelect = document.getElementById('held-fusion-secondary-cost-start');
+    const targetSelect = document.getElementById('held-fusion-secondary-cost-target');
+    const dustPriceInput = document.getElementById('held-fusion-secondary-dust-price');
+    const dustTotal = document.getElementById('held-fusion-secondary-cost-dust-total');
+    const dustTotalValue = dustTotal?.querySelector('span');
+    const cashTotal = document.getElementById('held-fusion-secondary-cost-cash-total');
+    const dustCashTotal = document.getElementById('held-fusion-secondary-dust-cash-total');
+    const grandTotal = document.getElementById('held-fusion-secondary-grand-total');
+    const message = document.getElementById('held-fusion-secondary-cost-message');
+    const stepsList = document.getElementById('held-fusion-secondary-cost-steps');
+    if(!startSelect || !targetSelect || !dustPriceInput || !dustTotalValue || !cashTotal || !dustCashTotal || !grandTotal || !message || !stepsList) return;
+
+    const calculation = calculateHeldSecondaryUpgradeCosts(startSelect.value, targetSelect.value);
+    stepsList.replaceChildren();
+    if(!calculation.valid){
+        dustTotalValue.textContent = '—';
+        cashTotal.textContent = '—';
+        dustCashTotal.textContent = '—';
+        grandTotal.textContent = '—';
+        dustPriceInput.setAttribute('aria-invalid', 'false');
+        message.textContent = 'A raridade desejada precisa ser superior à raridade inicial.';
+        return;
+    }
+
+    const unitPrice = Number(dustPriceInput.value);
+    const hasValidDustPrice = dustPriceInput.value.trim() !== '' && Number.isFinite(unitPrice) && unitPrice >= 0;
+    dustTotalValue.textContent = calculation.dust.toLocaleString('pt-BR');
+    cashTotal.textContent = calculation.cash.toLocaleString('pt-BR');
+    dustPriceInput.setAttribute('aria-invalid', hasValidDustPrice ? 'false' : 'true');
+    if(hasValidDustPrice){
+        const dustCash = Math.round(calculation.dust * unitPrice * 100) / 100;
+        const total = calculation.cash + dustCash;
+        const formatCash = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        dustCashTotal.textContent = formatCash(dustCash);
+        grandTotal.textContent = formatCash(total);
+        message.textContent = `Custo para evoluir de ${getHeldSecondaryRarity(startSelect.value).label} até ${getHeldSecondaryRarity(targetSelect.value).label}, considerando ${formatCash(unitPrice)} Cash por Sparkling Dust.`;
+    } else {
+        dustCashTotal.textContent = '—';
+        grandTotal.textContent = '—';
+        message.textContent = 'Informe um preço por Sparkling Dust igual ou maior que zero para calcular o total estimado.';
+    }
+    calculation.steps.forEach((rarity) => {
+        const item = document.createElement('li');
+        const nextRarity = getHeldSecondaryRarity(rarity.next);
+        const dustIcon = document.createElement('img');
+        dustIcon.src = 'fusao-de-held/sparkling-dust.png';
+        dustIcon.alt = 'Sparkling Dust';
+        dustIcon.loading = 'lazy';
+        dustIcon.decoding = 'async';
+        const startTier = document.createElement('span');
+        startTier.className = 'held-fusion-secondary__calculator-tier';
+        startTier.dataset.rarity = rarity.key;
+        startTier.textContent = rarity.label;
+        const nextTierLabel = document.createElement('span');
+        nextTierLabel.className = 'held-fusion-secondary__calculator-tier';
+        nextTierLabel.dataset.rarity = nextRarity.key;
+        nextTierLabel.textContent = nextRarity.label;
+        const stepDetails = document.createTextNode(`: ${rarity.dust.toLocaleString('pt-BR')} Sparkling Dust · ${rarity.cost.toLocaleString('pt-BR')} em dinheiro`);
+        item.append(dustIcon, startTier, document.createTextNode(' → '), nextTierLabel, stepDetails);
+        stepsList.appendChild(item);
+    });
+}
+
+function initializeHeldSecondaryCostCalculator(){
+    if(heldSecondaryCostCalculatorInitialized) return;
+    const startSelect = document.getElementById('held-fusion-secondary-cost-start');
+    const targetSelect = document.getElementById('held-fusion-secondary-cost-target');
+    if(!startSelect || !targetSelect) return;
+
+    const dustPriceInput = document.getElementById('held-fusion-secondary-dust-price');
+    [startSelect, targetSelect].forEach((select) => {
+        updateHeldSecondaryRarityColor(select);
+        select.addEventListener('change', () => {
+            updateHeldSecondaryRarityColor(select);
+            renderHeldSecondaryCostCalculator();
+        });
+    });
+    dustPriceInput?.addEventListener('input', renderHeldSecondaryCostCalculator);
+    heldSecondaryCostCalculatorInitialized = true;
+    renderHeldSecondaryCostCalculator();
+}
+
+function renderHeldSecondaryUpgrade(resultMessage = ''){
+    const select = document.getElementById('held-fusion-secondary-select');
+    const raritySelect = document.getElementById('held-fusion-secondary-rarity');
+    const slot = document.getElementById('held-fusion-secondary-slot');
+    const image = document.getElementById('held-fusion-secondary-image');
+    const emptyLabel = document.getElementById('held-fusion-secondary-empty');
+    const rarityLabel = document.getElementById('held-fusion-secondary-rarity-label');
+    const clearButton = document.getElementById('held-fusion-secondary-clear');
+    const heldList = document.getElementById('held-fusion-secondary-list');
+    const dustAmount = document.getElementById('held-fusion-secondary-dust-amount');
+    const cost = document.getElementById('held-fusion-secondary-cost');
+    const upgradeButton = document.getElementById('held-fusion-secondary-upgrade');
+    const result = document.getElementById('held-fusion-secondary-result');
+    if(!select || !raritySelect || !slot || !image || !emptyLabel || !rarityLabel || !clearButton || !heldList || !dustAmount || !cost || !upgradeButton || !result) return;
+
+    const held = heldSecondaryCatalog.find(item => item.id === select.value);
+    const heldOptions = Array.from(heldList.querySelectorAll('[role="option"]'));
+    const visibleOptions = heldOptions.filter(option => !option.hidden);
+    const selectedOptionIsVisible = visibleOptions.some(option => option.dataset.heldId === select.value);
+    heldOptions.forEach((option) => {
+        const isSelected = option.dataset.heldId === select.value && Boolean(held);
+        option.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        option.tabIndex = isSelected || (!selectedOptionIsVisible && visibleOptions[0] === option) ? 0 : -1;
+        option.classList.toggle('is-selected', isSelected);
+    });
+    if(!held){
+        slot.dataset.rarity = 'normal';
+        image.hidden = true;
+        image.removeAttribute('src');
+        image.alt = '';
+        emptyLabel.hidden = false;
+        rarityLabel.dataset.rarity = 'normal';
+        rarityLabel.textContent = 'Common';
+        raritySelect.value = 'normal';
+        updateHeldSecondaryRarityColor(raritySelect);
+        raritySelect.disabled = true;
+        clearButton.hidden = true;
+        dustAmount.textContent = '0';
+        cost.textContent = '0';
+        upgradeButton.disabled = true;
+        result.textContent = resultMessage || 'Selecione um Held Secundário para começar.';
+        return;
+    }
+
+    const rarityKey = heldSecondaryRarityById.get(held.id) || 'normal';
+    const rarity = getHeldSecondaryRarity(rarityKey);
+    const nextRarity = rarity.next ? getHeldSecondaryRarity(rarity.next) : null;
+    slot.dataset.rarity = rarity.key;
+    image.src = held.file;
+    image.alt = held.name;
+    image.hidden = false;
+    emptyLabel.hidden = true;
+    rarityLabel.dataset.rarity = rarity.key;
+    rarityLabel.textContent = rarity.label;
+    raritySelect.disabled = false;
+    raritySelect.value = rarity.key;
+    updateHeldSecondaryRarityColor(raritySelect);
+    clearButton.hidden = false;
+    dustAmount.textContent = String(rarity.dust);
+    cost.textContent = rarity.costLabel;
+    upgradeButton.disabled = !nextRarity;
+    result.textContent = resultMessage || (nextRarity
+        ? `Pronto para aprimorar de ${rarity.label} para ${nextRarity.label}.`
+        : `${held.name} já está na raridade máxima.`);
+}
+
+function filterHeldSecondaryCatalog(){
+    const searchInput = document.getElementById('held-fusion-secondary-search');
+    const heldList = document.getElementById('held-fusion-secondary-list');
+    const status = document.getElementById('held-fusion-secondary-status');
+    if(!searchInput || !heldList || !status) return;
+
+    const query = searchInput.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+    let visibleCount = 0;
+    heldList.querySelectorAll('[role="option"]').forEach((option) => {
+        const name = option.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+        option.hidden = !name.includes(query);
+        if(!option.hidden) visibleCount += 1;
+    });
+    if(query){
+        status.textContent = visibleCount
+            ? `Exibindo ${visibleCount} de ${heldSecondaryCatalog.length} Helds Secundários.`
+            : `Nenhum Held Secundário encontrado para "${searchInput.value.trim()}".`;
+    } else if(heldSecondaryCatalog.length){
+        status.textContent = `${heldSecondaryCatalog.length} Helds Secundários disponíveis.`;
+    }
+    renderHeldSecondaryUpgrade();
+}
+
+async function loadHeldSecondaryCatalog(){
+    const select = document.getElementById('held-fusion-secondary-select');
+    const searchInput = document.getElementById('held-fusion-secondary-search');
+    const heldList = document.getElementById('held-fusion-secondary-list');
+    const status = document.getElementById('held-fusion-secondary-status');
+    const retryButton = document.getElementById('held-fusion-secondary-retry');
+    if(!select || !searchInput || !heldList || !status || !retryButton) return;
+
+    select.disabled = true;
+    searchInput.disabled = true;
+    heldList.setAttribute('aria-disabled', 'true');
+    heldList.replaceChildren();
+    const loading = document.createElement('span');
+    loading.className = 'held-fusion-secondary__list-placeholder';
+    loading.textContent = 'Carregando Helds Secundários...';
+    heldList.appendChild(loading);
+    retryButton.hidden = true;
+    status.textContent = 'Carregando o catálogo de Helds Secundários...';
+    try {
+        const catalogVersion = PANEL_FRAGMENT_VERSIONS.helds || PANEL_FRAGMENT_VERSION;
+        const response = await fetch(`helds/helds.html?v=${encodeURIComponent(catalogVersion)}`);
+        if(!response.ok) throw new Error(`Falha ao carregar o catálogo (${response.status}).`);
+        const html = await response.text();
+        const catalogDocument = new DOMParser().parseFromString(html, 'text/html');
+        const secondaryCards = Array.from(catalogDocument.querySelectorAll(
+            'section[aria-labelledby="secondary-helds-title"] .helds-item-grid .helds-item-card'
+        ));
+        const secondaryAcquisitionCards = Array.from(catalogDocument.querySelectorAll(
+            'section[aria-labelledby="primary-helds-title"] .helds-item-card'
+        )).filter((card) => ['Eject Button', 'Swift Feather'].includes(card.querySelector('strong')?.textContent?.trim() || ''));
+        const cards = [...secondaryCards, ...secondaryAcquisitionCards];
+        if(!cards.length) throw new Error('O catálogo não contém Helds Secundários.');
+
+        heldSecondaryCatalog = cards.map((card) => {
+            const name = card.querySelector('strong')?.textContent?.trim() || '';
+            const file = card.querySelector('img')?.getAttribute('src') || '';
+            if(!name || !file.startsWith('helds/')){
+                throw new Error('O catálogo contém um Held Secundário sem nome ou imagem válida.');
+            }
+            return { id: file, name, file };
+        });
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Selecione um Held Secundário';
+        select.replaceChildren(placeholder);
+        heldList.replaceChildren();
+        heldSecondaryCatalog.forEach((held) => {
+            const option = document.createElement('option');
+            option.value = held.id;
+            option.textContent = held.name;
+            select.appendChild(option);
+
+            const heldButton = document.createElement('button');
+            heldButton.type = 'button';
+            heldButton.className = 'held-fusion-secondary__held-option';
+            heldButton.dataset.heldId = held.id;
+            heldButton.setAttribute('role', 'option');
+            heldButton.setAttribute('aria-selected', 'false');
+            heldButton.tabIndex = -1;
+            const heldImage = document.createElement('img');
+            heldImage.src = held.file;
+            heldImage.alt = '';
+            heldImage.loading = 'lazy';
+            heldImage.decoding = 'async';
+            const heldName = document.createElement('span');
+            heldName.textContent = held.name;
+            heldButton.append(heldImage, heldName);
+            heldButton.addEventListener('click', () => {
+                select.value = held.id;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            heldList.appendChild(heldButton);
+        });
+        heldList.setAttribute('aria-disabled', 'false');
+        select.disabled = false;
+        searchInput.disabled = false;
+        filterHeldSecondaryCatalog();
+        renderHeldSecondaryUpgrade();
+    } catch(error) {
+        console.error('Held secondary catalog load failed', error);
+        heldList.setAttribute('aria-disabled', 'true');
+        searchInput.disabled = true;
+        heldList.replaceChildren();
+        const unavailable = document.createElement('span');
+        unavailable.className = 'held-fusion-secondary__list-placeholder';
+        unavailable.textContent = 'Não foi possível carregar a lista.';
+        heldList.appendChild(unavailable);
+        status.textContent = `Não foi possível carregar os Helds Secundários. ${error.message}`;
+        retryButton.hidden = false;
+    }
+}
+
+function initializeHeldSecondaryUpgrade(){
+    initializeHeldSecondaryCostCalculator();
+    if(heldSecondaryUpgradeInitialized) return;
+    const select = document.getElementById('held-fusion-secondary-select');
+    const raritySelect = document.getElementById('held-fusion-secondary-rarity');
+    const searchInput = document.getElementById('held-fusion-secondary-search');
+    const heldList = document.getElementById('held-fusion-secondary-list');
+    const clearButton = document.getElementById('held-fusion-secondary-clear');
+    const upgradeButton = document.getElementById('held-fusion-secondary-upgrade');
+    const retryButton = document.getElementById('held-fusion-secondary-retry');
+    if(!select || !raritySelect || !searchInput || !heldList || !clearButton || !upgradeButton || !retryButton) return;
+
+    searchInput.addEventListener('input', filterHeldSecondaryCatalog);
+    heldList.addEventListener('keydown', (event) => {
+        const options = Array.from(heldList.querySelectorAll('[role="option"]:not([hidden])'));
+        if(!options.length) return;
+        const currentIndex = Math.max(0, options.indexOf(document.activeElement));
+        let nextIndex = null;
+        if(event.key === 'ArrowDown' || event.key === 'ArrowRight') nextIndex = Math.min(options.length - 1, currentIndex + 1);
+        if(event.key === 'ArrowUp' || event.key === 'ArrowLeft') nextIndex = Math.max(0, currentIndex - 1);
+        if(event.key === 'Home') nextIndex = 0;
+        if(event.key === 'End') nextIndex = options.length - 1;
+        if(nextIndex !== null){
+            event.preventDefault();
+            options[nextIndex].focus();
+        }
+        if(event.key === 'Enter' || event.key === ' '){
+            const activeOption = options[currentIndex];
+            if(activeOption){
+                event.preventDefault();
+                activeOption.click();
+            }
+        }
+    });
+    select.addEventListener('change', () => {
+        const held = heldSecondaryCatalog.find(item => item.id === select.value);
+        raritySelect.value = held ? (heldSecondaryRarityById.get(held.id) || 'normal') : 'normal';
+        renderHeldSecondaryUpgrade();
+    });
+    raritySelect.addEventListener('change', () => {
+        if(select.value) heldSecondaryRarityById.set(select.value, raritySelect.value);
+        renderHeldSecondaryUpgrade();
+    });
+    clearButton.addEventListener('click', () => {
+        select.value = '';
+        raritySelect.value = 'normal';
+        renderHeldSecondaryUpgrade();
+        (heldList.querySelector('[role="option"]:not([hidden])') || searchInput).focus();
+    });
+    upgradeButton.addEventListener('click', () => {
+        const held = heldSecondaryCatalog.find(item => item.id === select.value);
+        if(!held) return;
+        const currentRarity = getHeldSecondaryRarity(heldSecondaryRarityById.get(held.id) || 'normal');
+        if(!currentRarity.next) return;
+        const nextRarity = getHeldSecondaryRarity(currentRarity.next);
+        heldSecondaryRarityById.set(held.id, nextRarity.key);
+        raritySelect.value = nextRarity.key;
+        renderHeldSecondaryUpgrade(`Melhoria simulada concluída: ${held.name} avançou para ${nextRarity.label}.`);
+    });
+    retryButton.addEventListener('click', loadHeldSecondaryCatalog);
+
+    heldSecondaryUpgradeInitialized = true;
+    loadHeldSecondaryCatalog();
+}
+
 function showHeldFusion(){
     clearTabHighlights();
     setActiveTabTheme('fusao-de-held');
@@ -15003,7 +15411,9 @@ function showHeldFusion(){
     if(titleEl) titleEl.textContent = 'Fusao de Held';
     updateBrowserTitle();
     ensurePanelFragmentLoaded(contentHeldFusion).then(() => {
+        initializeHeldFusionModes();
         initializeHeldFusionSimulator();
+        initializeHeldSecondaryUpgrade();
         if(useGsap && contentHeldFusion && !contentHeldFusion.hidden){
             gsap.from(contentHeldFusion, { opacity: 0, y: -10, duration: 0.4 });
             gsap.from(contentHeldFusion.querySelectorAll('.held-fusion-section'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
@@ -21761,6 +22171,10 @@ function updateUrl(options = {}){
             } else {
                 routePath = getPokemonCatalogRoutePath(pokemonCatalogCurrentPage, pokemonVariant);
             }
+        } else if(!isHomeView && activeTab === 'fusao-de-held'){
+            routePath = getHeldFusionSelectedMode() === 'secondary'
+                ? '/fusao-de-held/secundario'
+                : getRoutePathForTab(activeTab);
         } else if(!isHomeView && activeTab === 'mapa-interativo'){
             const activeMapRoute = String(location.pathname || '').match(/\/mapa-interativo\/(?:[a-z0-9][a-z0-9-]*|[\d.]+-[\d.]+-\d+)\/?$/i);
             routePath = activeMapRoute ? activeMapRoute[0].replace(/\/+$/, '') : getRoutePathForTab(activeTab);
@@ -26748,6 +27162,9 @@ window.addEventListener('popstate', () => {
         }
     }
 
+    if(contentHeldFusion && !contentHeldFusion.hidden){
+        applyHeldFusionMode(getHeldFusionModeFromUrl());
+    }
     syncSidebarNavigationState();
 });
 
