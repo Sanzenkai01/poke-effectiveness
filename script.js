@@ -177,6 +177,7 @@ const contentProfessions = document.getElementById('content-profissoes');
 const contentCatch = document.getElementById('content-catch');
 const contentPokebolas = document.getElementById('content-pokebolas');
 const contentPescaria = document.getElementById('content-pescaria');
+const contentTrainerPlus = document.getElementById('content-trainer-plus');
 const contentSpeedsters = document.getElementById('content-bosses');
 const contentStreamers = document.getElementById('content-streamers');
 const contentCommunity = document.getElementById('content-community');
@@ -184,7 +185,7 @@ const appMainContent = document.querySelector('.app-main');
 if(contentInteractiveMap && appMainContent && contentInteractiveMap.parentElement !== appMainContent){
     appMainContent.appendChild(contentInteractiveMap);
 }
-const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBattlePass, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentClans, contentTeamBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentShinyFragmentation, contentProfessions, contentCatch, contentPokebolas, contentPescaria, contentSpeedsters, contentStreamers, contentCommunity];
+const mainPanels = [contentHome, contentEffect, contentFossils, contentManiacs, contentHelds, contentBattlePass, contentBossesInfo, contentCalc, contentBoost, contentPokemons, contentClans, contentTeamBuilder, contentRotomPhone, contentInteractiveMap, contentPoliceOperation, contentFactionHunts, contentSlowpokeWell, contentLigaPokemon, contentHeldFusion, contentShinyFragmentation, contentProfessions, contentCatch, contentPokebolas, contentPescaria, contentTrainerPlus, contentSpeedsters, contentStreamers, contentCommunity];
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
 const appSidebar = document.getElementById('app-sidebar');
 const appShellBackdrop = document.getElementById('app-shell-backdrop');
@@ -343,6 +344,8 @@ const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     'team-builder': '20261011-team-builder-groups',
     pokebolas: '20261017-pokebolas-menu-overlay-v1',
     pescaria: '20261018-pescaria-page-v2',
+    'police-operation': '20261023-police-operation-v1',
+    'trainer-plus': '20261023-trainer-plus-v3',
     'fusao-de-held': '20261023-secondary-held-search-v1',
     helds: '20261022-held-secondary-catalog-v1'
 });
@@ -401,6 +404,8 @@ const APP_ROUTE_ALIASES = {
     pokebolas: { path: '/pokebolas', tab: 'pokebolas' },
     'poke-bolas': { path: '/pokebolas', tab: 'pokebolas' },
     'elemental-balls': { path: '/pokebolas', tab: 'pokebolas' },
+    'trainer-plus': { path: '/trainer-plus', tab: 'trainer-plus' },
+    trainerplus: { path: '/trainer-plus', tab: 'trainer-plus' },
     mapas: { path: '/mapa-interativo', tab: 'mapa-interativo' },
     respawns: { path: '/mapa-interativo', tab: 'mapa-interativo' },
     'mapa-completo': { path: '/mapa-completo', tab: 'effectiveness', quickAction: 'full-map' },
@@ -3263,6 +3268,7 @@ function getActiveSiteTarget(){
     if(contentBossesInfo && !contentBossesInfo.hidden) return 'bosses-info';
     if(contentPokebolas && !contentPokebolas.hidden) return 'pokebolas';
     if(contentPescaria && !contentPescaria.hidden) return 'pescaria';
+    if(contentTrainerPlus && !contentTrainerPlus.hidden) return 'trainer-plus';
     if(tabEffectBtn?.classList.contains('active')) return 'effectiveness';
     if(tabFossilsBtn?.classList.contains('active')) return 'fossils';
     if(tabCalcBtn?.classList.contains('active')) return 'calculator';
@@ -3425,6 +3431,7 @@ function activateSidebarTarget(button){
         catch: showCatch,
         pokebolas: showPokebolas,
         pescaria: showPescaria,
+        'trainer-plus': showTrainerPlus,
         'mapa-interativo': showInteractiveMap,
         bosses: () => showSpeedsters(requestedBossMode || 'hoopa'),
         streamers: showStreamers,
@@ -3593,6 +3600,7 @@ function getGlobalSearchStaticEntries(){
         { id: 'route:profissoes', kind: 'route', target: 'profissoes', title: 'Profissoes', category: 'Sistema', description: 'Guias de profissoes como Designer, Breeder, Photographer, Researcher, crafts e ranks', icon: 'PR', tags: ['designer', 'breeder', 'photographer', 'researcher', 'craft', 'pokeblock', 'ration', 'pokepedia', 'berry', 'battle item', 'camera upgrade', 'vitamin', 'pokeball', 'machine', 'outfit', 'addon'] },
         { id: 'route:catch', kind: 'route', target: 'catch', title: 'Catch', category: 'Calculadora', description: 'Estimativa de captura por Pokebola', icon: 'CT', tags: ['captura', 'pokebola'] },
         { id: 'route:pescaria', kind: 'route', target: 'pescaria', title: 'Pescaria', category: 'Sistemas', description: 'Iscas, níveis de pesca e Pokémon encontrados', icon: 'PS', tags: ['fishing', 'fish', 'isca', 'pesca', 'pokemon'] },
+        { id: 'route:trainer-plus', kind: 'route', target: 'trainer-plus', title: 'Trainer Plus', category: 'Sistemas', description: 'Níveis do PokePlus e bônus de experiência, loot e Shiny Charm', icon: '🔥', tags: ['pokeplus', 'poke plus', 'trainer plus', 'new'] },
         { id: 'route:hoopa', kind: 'route', target: 'bosses', bossMode: 'hoopa', title: 'Hoopa Portais', category: 'Bosses', description: 'Bosses dos portais Hoopa', icon: 'HP', tags: ['chefes', 'portal'] },
         { id: 'route:champion', kind: 'route', target: 'bosses', bossMode: 'champion', title: 'Champion Path', category: 'Bosses', description: 'Bosses Champion Path', icon: 'CP', tags: ['chefes', 'tanque', 'dps', 'suporte'] },
         { id: 'route:mewtwo', kind: 'route', target: 'bosses', bossMode: 'mew2', title: 'Mewtwo', category: 'Quest', description: 'Bosses do Mewtwo', icon: 'M2', tags: ['mew2', 'chefes'] },
@@ -15791,6 +15799,37 @@ function showPescaria(){
         });
     updateUrl();
 }
+function showTrainerPlus(){
+    if(!contentTrainerPlus) return;
+    if(contentTrainerPlus.dataset.panelFragment && contentTrainerPlus.dataset.panelLoaded !== 'true'){
+        setVisiblePanel(contentTrainerPlus);
+        ensurePanelFragmentLoaded(contentTrainerPlus)
+            .then(() => showTrainerPlus())
+            .catch(error => console.error('Trainer Plus panel load failed', error));
+        return;
+    }
+    clearTabHighlights();
+    setActiveTabTheme('trainer-plus');
+    setVisiblePanel(contentTrainerPlus);
+    document.body.classList.remove('show-instructions');
+    const legend = document.getElementById('legend');
+    if(legend) legend.style.display = 'none';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.textContent = 'Trainer Plus';
+    localStorage.setItem('selectedTab', 'trainer-plus');
+    updateBrowserTitle();
+    loadDeferredScript('trainer-plus/trainer-plus.js?v=20261023-trainer-plus-v3', () => typeof window.initTrainerPlusPage === 'function')
+        .then(() => window.initTrainerPlusPage())
+        .catch(error => {
+            console.error('Trainer Plus page initialization failed', error);
+            const feedback = document.getElementById('trainer-plus-page-error');
+            if(feedback){
+                feedback.textContent = 'Não foi possível carregar os bônus do Trainer Plus. Atualize a página para tentar novamente.';
+                feedback.hidden = false;
+            }
+        });
+    updateUrl();
+}
 if(tabSpeedstersBtn) tabSpeedstersBtn.addEventListener('click',()=>{ showSpeedsters(); localStorage.setItem('selectedTab','bosses'); updateUrl(); });
 if(tabStreamersBtn) tabStreamersBtn.addEventListener('click',()=>{ showStreamers(); localStorage.setItem('selectedTab','streamers'); updateUrl(); });
 if(tabCommunityBtn) tabCommunityBtn.addEventListener('click',()=>{ showCommunity(); localStorage.setItem('selectedTab','youtube'); updateUrl(); });
@@ -18602,6 +18641,7 @@ function initTabFromUrl(){
     if(resolvedTab==='catch') return showCatch();
     if(resolvedTab==='pokebolas') return showPokebolas();
     if(resolvedTab==='pescaria') return showPescaria();
+    if(resolvedTab==='trainer-plus') return showTrainerPlus();
     if(requestedBossTab) return showSpeedsters(requestedBossTab);
     if(resolvedTab==='bosses' || resolvedTab==='speedsters') return showSpeedsters(requestedBossMode);
     if(resolvedTab==='streamers') return showStreamers();
@@ -18628,6 +18668,7 @@ function initTabFromUrl(){
     if(saved==='catch') return showCatch();
     if(saved==='pokebolas') return showPokebolas();
     if(saved==='pescaria') return showPescaria();
+    if(saved==='trainer-plus') return showTrainerPlus();
     if(saved==='bosses' || saved==='speedsters') return showSpeedsters();
     if(saved==='streamers') return showStreamers();
     if(saved==='youtube' || saved==='community' || saved==='feed') return showCommunity();
@@ -22068,6 +22109,7 @@ function updateUrl(options = {}){
                       (contentShinyFragmentation && !contentShinyFragmentation.hidden) ? 'shiny-fragmentation' :
                       (contentProfessions && !contentProfessions.hidden) ? 'profissoes' :
                       (contentPescaria && !contentPescaria.hidden) ? 'pescaria' :
+                      (contentTrainerPlus && !contentTrainerPlus.hidden) ? 'trainer-plus' :
                       (contentPokebolas && !contentPokebolas.hidden) ? 'pokebolas' :
                       (contentHelds && !contentHelds.hidden) ? 'helds' :
                       (contentBattlePass && !contentBattlePass.hidden) ? 'passe-de-batalha' :

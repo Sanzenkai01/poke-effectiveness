@@ -1,0 +1,70 @@
+<div class="trainer-plus-page">
+  <header class="trainer-plus-page__hero card" aria-labelledby="trainer-plus-title">
+    <div class="trainer-plus-page__heading">
+      <p class="trainer-plus-page__eyebrow">Sistemas · PokePlus</p>
+      <h1 id="trainer-plus-title">Trainer Plus</h1>
+      <p>Acompanhe sua evolução e descubra os bônus liberados em cada nível.</p>
+    </div>
+  </header>
+
+  <section class="card trainer-plus-progress" aria-labelledby="trainer-plus-progress-title">
+    <div class="trainer-plus-progress__intro">
+      <h2 id="trainer-plus-progress-title">Seu progresso</h2>
+      <p>Selecione seu nível e informe os pontos atuais para consultar o avanço até o próximo nível.</p>
+    </div>
+    <div class="trainer-plus-progress__top">
+      <div class="trainer-plus-progress__level">
+        <label for="trainer-plus-level">Nível atual</label>
+        <select id="trainer-plus-level" name="level">
+          <option value="0">Nível 0</option>
+          <option value="1">Nível 1</option>
+          <option value="2">Nível 2</option>
+          <option value="3">Nível 3</option>
+          <option value="4">Nível 4</option>
+          <option value="5">Nível 5</option>
+          <option value="6" selected>Nível 6</option>
+          <option value="7">Nível 7</option>
+          <option value="8">Nível 8</option>
+          <option value="9">Nível 9</option>
+          <option value="10">Nível 10</option>
+        </select>
+      </div>
+      <label class="trainer-plus-progress__points" id="trainer-plus-points-field" for="trainer-plus-points">
+        Pontos no nível
+        <input id="trainer-plus-points" name="points" type="number" min="0" max="7600" step="1" value="15" inputmode="numeric">
+      </label>
+    </div>
+
+    <div class="trainer-plus-levels" role="group" aria-label="Níveis do Trainer Plus">
+      <p class="trainer-plus-levels__hint">Selecione uma barra ou passe o cursor sobre ela para consultar os bônus daquele nível.</p>
+      <div id="trainer-plus-level-bars" class="trainer-plus-levels__track"></div>
+    </div>
+    <div class="trainer-plus-progress__footer">
+      <span id="trainer-plus-progress-label">Progresso para o nível 7</span>
+      <output id="trainer-plus-progress-value" for="trainer-plus-points">0,2%</output>
+    </div>
+    <p id="trainer-plus-progress-note" class="trainer-plus-progress__note">Pré-visualização: altere o nível e os pontos para consultar os bônus.</p>
+    <p id="trainer-plus-page-error" class="trainer-plus-feedback" role="status" aria-live="polite" hidden></p>
+  </section>
+
+  <section class="trainer-plus-bonuses" aria-labelledby="trainer-plus-bonuses-title">
+    <div class="trainer-plus-bonuses__intro">
+      <h2 id="trainer-plus-bonuses-title">Bônus do nível selecionado</h2>
+      <p>Os valores abaixo são atualizados conforme o nível escolhido.</p>
+    </div>
+    <div class="trainer-plus-bonuses__grid">
+      <article class="card trainer-plus-bonus">
+        <h4><span class="trainer-plus-bonus__icon" aria-hidden="true">✦</span>Experiência</h4>
+        <p id="trainer-plus-exp-bonus">+10%</p>
+      </article>
+      <article class="card trainer-plus-bonus">
+        <h4><span class="trainer-plus-bonus__icon" aria-hidden="true">▣</span>Loot</h4>
+        <p id="trainer-plus-loot-bonus">+0%</p>
+      </article>
+      <article class="card trainer-plus-bonus">
+        <h4><span class="trainer-plus-bonus__icon" aria-hidden="true">✧</span>Shiny Charm</h4>
+        <p id="trainer-plus-charm-bonus">+2%</p>
+      </article>
+    </div>
+  </section>
+</div>

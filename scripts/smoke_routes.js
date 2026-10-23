@@ -107,7 +107,16 @@ const routes = [
     checks: [
       { pattern: /data-active-tab="police-operation"/i, description: 'police operation active tab' },
       { pattern: /id="content-police-operation"/i, description: 'police operation panel' },
-      { pattern: /id="police-operation-rewards-title"/i, description: 'police operation rewards section' }
+      { pattern: /id="police-operation-rewards-title"/i, description: 'police operation rewards section' },
+      { pattern: /<strong>8 Rockets<\/strong>/i, description: 'weekly Rocket limit' },
+      { pattern: /<strong>1 investiga&ccedil;&atilde;o<\/strong>/i, description: 'investigations per city' },
+      { pattern: /<strong>5 Rockets<\/strong>/i, description: 'Easy quest progression' },
+      { pattern: /<strong>Lv\. 150 \/ 8 Rockets<\/strong>/i, description: 'Medium quest progression' },
+      { pattern: /<strong>Lv\. 200 \/ 16 Rockets<\/strong>/i, description: 'Hard quest progression' },
+      { pattern: /<strong>Lv\. 250\+ \/ 40 Rockets<\/strong>/i, description: 'Expert quest progression' },
+      { pattern: /<tr><td>Expert<\/td><td>125<\/td><td>25<\/td><\/tr>/i, description: 'Expert token rewards' },
+      { pattern: /<tr><td>ADMIN<\/td><td>500<\/td><td>-<\/td><\/tr>/i, description: 'ADMIN token reward' },
+      { pattern: /\(Informa&ccedil;&otilde;es n&atilde;o divulgadas\)\./i, description: 'undisclosed recurring reward' }
     ]
   },
   {
@@ -193,6 +202,20 @@ const routes = [
     checks: [
       { pattern: /data-active-tab="pescaria"/i, description: 'fishing active tab' },
       { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="pescaria"/i, description: 'fishing selected sidebar link' }
+    ]
+  },
+  {
+    path: '/trainer-plus',
+    label: 'trainer-plus',
+    checks: [
+      { pattern: /data-active-tab="trainer-plus"/i, description: 'Trainer Plus active tab' },
+      { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="trainer-plus"/i, description: 'Trainer Plus selected sidebar link' },
+      { pattern: /<h1 id="trainer-plus-title">Trainer Plus<\/h1>/i, description: 'Trainer Plus page heading' },
+      { pattern: /id="trainer-plus-points"[^>]*max="7600"/i, description: 'level 6 progress requirement' },
+      { pattern: /class="trainer-plus-progress__intro"/i, description: 'progress section introduction' },
+      { pattern: /class="trainer-plus-page__badge">New<\/span>/i, description: 'Trainer Plus new badge' },
+      { pattern: /data-level="8"/i, description: 'level 8 bonus tooltip' },
+      { pattern: /id="trainer-plus-charm-bonus"[^>]*>\+2%/i, description: 'level 6 Shiny Charm bonus' }
     ]
   },
   {

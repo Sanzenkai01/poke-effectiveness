@@ -1,10 +1,11 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-22-dev-notes',
+            id: '2026-10-23-dev-notes',
             layout: 'text',
-            title: 'Atualizações do dia 22/10.',
+            title: 'Atualizações do dia 23/10.',
             category: 'Dev-Notes',
+            subtitle: 'Mudanças sobre morte e redução de dano no jogador através do Silver Starboost System',
             text: 'Confira as novidades mais recentes no Discord.',
             image: '',
             imageAlt: '',
@@ -23,6 +24,7 @@
             dialog,
             category: dialog.querySelector('[data-news-category]'),
             title: dialog.querySelector('[data-news-title]'),
+            subtitle: dialog.querySelector('[data-news-subtitle]'),
             text: dialog.querySelector('[data-news-text]'),
             image: dialog.querySelector('[data-news-image]'),
             imageCaption: dialog.querySelector('[data-news-image-caption]'),
@@ -40,6 +42,9 @@
         }
         if(typeof item.title !== 'string' || !item.title.trim()){
             throw new Error(`A notícia "${item.id}" precisa de um título.`);
+        }
+        if(item.subtitle !== undefined && typeof item.subtitle !== 'string'){
+            throw new Error(`O subtítulo da notícia "${item.id}" precisa ser um texto.`);
         }
         if(item.layout !== 'image' && (typeof item.text !== 'string' || !item.text.trim())){
             throw new Error(`A notícia "${item.id}" precisa de um texto.`);
@@ -85,12 +90,14 @@
     }
 
     function renderNews(item, elements){
-        const { dialog, category, title, text, image, imageCaption, link } = elements;
+        const { dialog, category, title, subtitle, text, image, imageCaption, link } = elements;
         validateNewsItem(item);
         dialog.dataset.newsId = item.id;
         dialog.querySelector('.site-news-popup__content').dataset.layout = item.layout;
         category.textContent = item.category || 'Notícias';
         title.textContent = item.title;
+        subtitle.textContent = item.subtitle || '';
+        subtitle.hidden = !item.subtitle || item.layout === 'image';
         text.textContent = item.text || '';
         text.hidden = item.layout === 'image';
         image.hidden = item.layout === 'text';
@@ -116,7 +123,10 @@
             link.parentElement.hidden = true;
         }
         if(item.layout === 'image') dialog.removeAttribute('aria-describedby');
-        else dialog.setAttribute('aria-describedby', 'site-news-text');
+        else dialog.setAttribute('aria-describedby', [
+            item.subtitle ? 'site-news-subtitle' : '',
+            'site-news-text'
+        ].filter(Boolean).join(' '));
         elements.dismissChoice.checked = false;
     }
 
