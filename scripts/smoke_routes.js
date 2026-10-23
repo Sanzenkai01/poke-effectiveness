@@ -77,6 +77,14 @@ const routes = [
     ]
   },
   {
+    path: '/planejador',
+    label: 'legacy planner redirect',
+    checks: [
+      { pattern: /data-active-tab="pokemons"/i, description: 'redirect to pokemon catalog' },
+      { pattern: /aria-label="Lista de Pokémon"/i, description: 'pokemon catalog loaded' }
+    ]
+  },
+  {
     path: '/rotom-phone',
     label: 'rotom-phone',
     checks: [
@@ -343,14 +351,6 @@ async function assertHttpOk(url) {
   await response.arrayBuffer();
 }
 
-async function assertHttpNotFound(url) {
-  const response = await fetch(url, { redirect: 'follow', headers: { connection: 'close' } });
-  if (response.status !== 404) {
-    throw new Error(`Esperava HTTP 404, recebi HTTP ${response.status} em ${url}`);
-  }
-  await response.arrayBuffer();
-}
-
 async function assertPanelAssets() {
   const appHtml = fs.readFileSync(path.join(__dirname, '..', 'app.html'), 'utf8');
   const panelTags = [...appHtml.matchAll(/<div\b[^>]*\bdata-panel-fragment="[^"]+"[^>]*>/g)];
@@ -404,12 +404,6 @@ async function main() {
     });
 
     console.log(`OK ${route.label} -> ${routeUrl}`);
-  }
-
-  for (const path of ['/planejador']) {
-    const routeUrl = new URL(`${baseUrl}${path}`).toString();
-    await assertHttpNotFound(routeUrl);
-    console.log(`OK rota removida -> ${routeUrl}`);
   }
 }
 
