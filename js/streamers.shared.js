@@ -24,6 +24,7 @@
         { name: 'enriqfmz', supportsDrops: false },
         { name: 'olegarioojv', supportsDrops: false },
         { name: 'galego_rj', supportsDrops: false },
+        { name: 'lineashh', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
