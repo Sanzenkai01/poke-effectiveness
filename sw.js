@@ -8,7 +8,7 @@ const APP_SHELL = [
   new URL('./news/news-popup.js?v=20261023-news-discord-link-v1', self.registration.scope).toString(),
   new URL('./news/image-news.png', self.registration.scope).toString(),
   new URL('./styles.css?v=20261026-pokemon-tier-bonus-tooltip-v6', self.registration.scope).toString(),
-  new URL('./wiki-theme.css?v=20261026-sidebar-branded-toggle-v1', self.registration.scope).toString(),
+  new URL('./wiki-theme.css?v=20261026-sidebar-spacing-breakpoint-v1', self.registration.scope).toString(),
   new URL('./script.js?v=20261026-mapdex-markers-v1', self.registration.scope).toString(),
   new URL('./bosses/recommendation-catalog.js?v=20260826d', self.registration.scope).toString(),
   new URL('./js/recommendation-engine.js?v=20260826d', self.registration.scope).toString(),
