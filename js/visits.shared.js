@@ -2,15 +2,13 @@
     const mounts = Array.from(document.querySelectorAll('[data-visit-counter]'));
     if(!mounts.length) return;
 
-    const API_BASE_URL = 'https://counterapi.com/api';
-    const API_NAMESPACE = 'poke-utilities-traffic-20260520c';
-    const API_ACTION = 'visit';
-    const LEGACY_TOTAL_START_NUMBER = 20872;
+    const API_BASE_URL = 'https://countapi.mileshilliard.com/api/v1';
+    const API_KEY_PREFIX = 'pstory-utilities-traffic-20261026-v1-';
     const TOTAL_COUNTER_KEY = 'visits-total';
     const DAILY_COUNTER_KEY_PREFIX = 'visits-day';
-    const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v4';
-    const STORAGE_PAGE_MARKER_KEY_PREFIX = 'poke-effectiveness-visit-counter-page-v1-';
-    const STORAGE_TOTAL_MARKER_KEY = 'poke-effectiveness-visit-counter-total-v5';
+    const STORAGE_DAILY_MARKER_KEY = 'poke-effectiveness-visit-counter-daily-v5';
+    const STORAGE_PAGE_MARKER_KEY_PREFIX = 'poke-effectiveness-visit-counter-page-v2-';
+    const STORAGE_TOTAL_MARKER_KEY = 'poke-effectiveness-visit-counter-total-v6';
     const STORAGE_CACHE_KEY = 'poke-effectiveness-visit-counter-cache-v4';
     const PAGE_VISIT_ROUTES = Object.freeze([
         { key: 'pokemons', label: 'Pokédex' },
@@ -399,17 +397,9 @@
     }
 
     function buildCounterUrl(counterKey, action = 'get'){
-        const encodedNamespace = encodeURIComponent(API_NAMESPACE);
-        const encodedKey = encodeURIComponent(counterKey);
-        const params = new URLSearchParams();
-        if(counterKey === TOTAL_COUNTER_KEY){
-            params.set('startNumber', String(LEGACY_TOTAL_START_NUMBER));
-        }
-        if(action !== 'up'){
-            params.set('readOnly', 'true');
-        }
-        params.set('cb', Date.now().toString(36));
-        return `${API_BASE_URL}/${encodedNamespace}/${encodeURIComponent(API_ACTION)}/${encodedKey}?${params}`;
+        const endpoint = action === 'up' ? 'hit' : 'get';
+        const key = encodeURIComponent(`${API_KEY_PREFIX}${counterKey}`);
+        return `${API_BASE_URL}/${endpoint}/${key}`;
     }
 
     async function requestCounterFromUrl(url, action = 'get'){
@@ -427,6 +417,9 @@
                 signal: controller.signal
             });
             const payload = await response.json();
+            if(response.status === 404 && action !== 'up'){
+                return 0;
+            }
             if(!response.ok){
                 throw new Error(`counter request failed (${response.status})`);
             }
