@@ -26,7 +26,8 @@
         bossesInfoMarkers: 'mapa-interativo/data/bosses-info-markers.json?v=20260802b',
         ligaPokemonMarkers: 'mapa-interativo/data/liga-pokemon-markers.json?v=20260802d',
         rangerBossesMarkers: 'mapa-interativo/data/ranger-bosses-markers.json?v=20260808a',
-        pokemon: 'pokemons/pokemons.json?v=20260812a'
+        pokemon: 'pokemons/pokemons.json?v=20260812a',
+        supplementalMarkers: 'mapa-interativo/data/mapdex-supplemental-markers.json?v=20261026a'
     };
     const MAP_POKEMON_NAME_ALIASES = {
         buttefree: 'butterfree',
@@ -1940,7 +1941,7 @@
     async function loadData(){
         const responses = await Promise.all(Object.values(DATA_URLS).map(url => fetch(url)));
         if(responses.some(response => !response.ok)) throw new Error('Falha ao carregar os dados do mapa.');
-        const [categoryRoot, labelRoot, markerRoot, bossesInfoRoot, ligaPokemonRoot, rangerBossesRoot, pokemonRoot] = await Promise.all(responses.map(response => response.json()));
+        const [categoryRoot, labelRoot, markerRoot, bossesInfoRoot, ligaPokemonRoot, rangerBossesRoot, pokemonRoot, supplementalMarkersRoot] = await Promise.all(responses.map(response => response.json()));
         categories = Array.isArray(categoryRoot.categories) ? categoryRoot.categories : [];
         if(!categories.some(category => category.id === MANIACS_MAP_CATEGORY.id)){
             categories.push(MANIACS_MAP_CATEGORY);
@@ -1956,6 +1957,14 @@
         }
         labels = Array.isArray(labelRoot.labels) ? labelRoot.labels : [];
         markers = Array.isArray(markerRoot.markers) ? markerRoot.markers : [];
+        if(Array.isArray(supplementalMarkersRoot?.markers)){
+            const markerIds = new Set(markers.map(marker => marker.id));
+            supplementalMarkersRoot.markers.forEach(marker => {
+                if(markerIds.has(marker.id)) return;
+                markers.push(marker);
+                markerIds.add(marker.id);
+            });
+        }
         LOCAL_HOOPA_PORTAL_MARKERS.forEach(marker => {
             if(!markers.some(existingMarker => existingMarker.id === marker.id)){
                 markers.push({ ...marker });

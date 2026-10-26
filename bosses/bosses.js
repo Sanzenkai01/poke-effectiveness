@@ -11449,7 +11449,14 @@ function renderGrid() {
     renderHorizonsGrid();
     return;
   }
-  getActiveBossesData().forEach((boss) => {
+  const activeBosses = getActiveBossesData();
+  const bossesToRender = activeBossMode === 'hoopa'
+    ? [
+      ...activeBosses.filter((boss) => !boss?.duo),
+      ...activeBosses.filter((boss) => boss?.duo)
+    ]
+    : activeBosses;
+  bossesToRender.forEach((boss) => {
     const card = makeSpeedsterCard(boss);
     if (activeBossMode === 'mainquest' && String(boss?.id || '').toLowerCase() === 'mega-malamar') {
       document.getElementById('mainquest-final-boss-slot')?.appendChild(card);
