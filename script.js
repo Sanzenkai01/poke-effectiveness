@@ -3282,7 +3282,17 @@ function setSidebarGroupExpanded(groupEl, expanded){
 function setSidebarOpen(nextOpen){
     const shouldOpen = Boolean(nextOpen);
     const isMobile = isMobileSidebarMode();
+    const sidebarWasOpen = document.body.classList.contains('sidebar-open');
+    const shouldAnimateGridReflow = !isMobile
+        && shouldOpen !== sidebarWasOpen
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const gridItemPositions = shouldAnimateGridReflow
+        ? captureSidebarGridItemPositions()
+        : [];
     document.body.classList.toggle('sidebar-open', shouldOpen);
+    if(gridItemPositions.length){
+        animateSidebarGridReflow(gridItemPositions);
+    }
 
     if(mobileNavToggle){
         mobileNavToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
@@ -3297,6 +3307,42 @@ function setSidebarOpen(nextOpen){
         appShellBackdrop.hidden = !showBackdrop;
         appShellBackdrop.setAttribute('aria-hidden', showBackdrop ? 'false' : 'true');
     }
+}
+
+function captureSidebarGridItemPositions(){
+    const activePanel = mainPanels.find((panel) => panel && !panel.hidden);
+    if(!activePanel) return [];
+
+    return Array.from(activePanel.querySelectorAll(
+        '.pokemon-card-grid > *, .speedster-grid > *, .horizons-boss-grid > *'
+    )).flatMap((item) => {
+        const rect = item.getBoundingClientRect();
+        return rect.width && rect.height
+            ? [{ item, left: rect.left, top: rect.top }]
+            : [];
+    });
+}
+
+function animateSidebarGridReflow(previousPositions){
+    previousPositions.forEach(({ item, left, top }) => {
+        if(!item.isConnected) return;
+        const rect = item.getBoundingClientRect();
+        const offsetX = left - rect.left;
+        const offsetY = top - rect.top;
+        if(Math.abs(offsetX) < 1 && Math.abs(offsetY) < 1) return;
+
+        item.animate(
+            [
+                { translate: `${offsetX}px ${offsetY}px` },
+                { translate: '0px 0px' }
+            ],
+            {
+                duration: 320,
+                easing: 'cubic-bezier(0.22, 0.68, 0, 1)',
+                composite: 'replace'
+            }
+        );
+    });
 }
 
 function getActiveSiteTarget(){

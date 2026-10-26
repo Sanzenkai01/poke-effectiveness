@@ -254,6 +254,16 @@ textarea {
   box-shadow: none !important;
 }
 
+@media (min-width: 981px) {
+  body.sidebar-open .app-shell {
+    padding-left: 0 !important;
+  }
+
+  body.home-view.sidebar-open #content-home {
+    margin-left: 0 !important;
+  }
+}
+
 .sidebar-home {
   display: flex !important;
   align-items: center;

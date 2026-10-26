@@ -76,7 +76,6 @@
     const COUNTER_TIME_ZONE = 'America/Sao_Paulo';
     const COUNTER_RESET_HOUR = 10;
     const COUNTER_RESET_MINUTE = 30;
-    const COUNTER_STARTED_AT = Object.freeze({ day: 20, month: 5, year: 2026 });
     const TOTAL_ACCESS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
     const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
     const EVENT_REFRESH_COOLDOWN_MS = 45 * 1000;
@@ -136,29 +135,16 @@
         return `${year}-${padDatePart(month)}-${padDatePart(day)}`;
     }
 
-    function formatDisplayDate(day, month, year){
-        return `${padDatePart(day)}/${padDatePart(month)}/${year}`;
-    }
-
-    function getCounterStartedLabel(){
-        return formatDisplayDate(
-            COUNTER_STARTED_AT.day,
-            COUNTER_STARTED_AT.month,
-            COUNTER_STARTED_AT.year
-        );
-    }
-
     function getCounterHoverText(){
         return 'Cada navegador contabiliza no máximo 1 acesso único a cada 24 horas.';
     }
 
     function getCounterTooltipText(){
-        return `Contando desde o dia ${getCounterStartedLabel()}. ${getCounterHoverText()}`;
+        return getCounterHoverText();
     }
 
     function buildCounterHoverContentHtml(){
-        const startedLabel = getCounterStartedLabel();
-        return `<strong class="site-visit-counter__hover-title">Acessos únicos por página</strong><span class="site-visit-counter__hover-text">Contagem de hoje. ${getCounterHoverText()}</span><span class="site-visit-counter__hover-started">Contando desde o dia ${startedLabel}</span><span class="site-visit-counter__pages" data-page-visit-stats aria-live="polite" aria-busy="true"><span class="site-visit-counter__pages-status" role="status">Carregando páginas...</span></span>`;
+        return `<strong class="site-visit-counter__hover-title">Acessos únicos por página</strong><span class="site-visit-counter__hover-text">Contagem de hoje. ${getCounterHoverText()}</span><span class="site-visit-counter__pages" data-page-visit-stats aria-live="polite" aria-busy="true"><span class="site-visit-counter__pages-status" role="status">Carregando páginas...</span></span>`;
     }
 
     function buildCounterHoverHtml(){
@@ -669,7 +655,6 @@
     function formatValues(dailyCount, totalCount, surface = ''){
         const normalized = normalizeCounts(dailyCount, totalCount);
         const safeDaily = normalized.daily;
-        const startedLabel = getCounterStartedLabel();
         const dailyDescription = 'acessos únicos hoje';
         const counterHtml = `<span class="site-visit-counter__line"><span class="site-visit-counter__number">${safeDaily.toLocaleString('pt-BR')}</span><span class="site-visit-counter__description">${dailyDescription}</span></span>`;
         const hoverHtml = getCounterTooltipMode(surface) === 'inline'
@@ -679,7 +664,7 @@
         return {
             html: `${counterHtml}${hoverHtml}`,
             tooltipText: getCounterTooltipText(),
-            ariaLabel: `${safeDaily.toLocaleString('pt-BR')} ${dailyDescription}. Contando desde o dia ${startedLabel}.`
+            ariaLabel: `${safeDaily.toLocaleString('pt-BR')} ${dailyDescription}.`
         };
     }
 
