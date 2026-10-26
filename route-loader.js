@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20261023-trainer-plus-v3';
+    var APP_SHELL_VERSION = '20261026-brave-ball-capture-average-v1';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
     var appUrl = new URL(appShellPath, window.location.href);

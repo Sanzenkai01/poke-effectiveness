@@ -478,7 +478,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261016-catalog-image-case-v1';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261026-brave-ball-capture-average-v1';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
@@ -1381,6 +1381,58 @@ const POKEMON_SUB_FUNCTION_META = Object.freeze({
 const POKEMON_SUB_FUNCTION_FILTER_OPTIONS = Object.freeze(['stunner', 'finisher', 'silencer', 'stuck', 'area-pull', 'frontal-pull']);
 const POKEMON_FILTER_TYPE2_NONE_VALUE = '__none__';
 const POKEMON_CATALOG_TIER_ORDER = Object.freeze(['F', 'E', 'D', 'C', 'B', 'A', 'M']);
+const POKEMON_TIER_SHINY_BONUS_BY_ROLE = Object.freeze({
+    supporter: Object.freeze({
+        F: [10, 10, 10, 0], E: [10, 10, 10, 0], D: [10, 10, 10, 0],
+        C: [15, 10, 10, 0], B: [20, 10, 10, 0], A: [25, 10, 10, 0], M: [25, 10, 10, 0]
+    }),
+    attacker: Object.freeze({
+        F: [10, 10, 10, 0], E: [10, 10, 10, 0], D: [10, 10, 10, 0],
+        C: [10, 10, 15, 0], B: [10, 10, 20, 0], A: [10, 10, 30, 0], M: [18, 18, 30, 0]
+    }),
+    'all-rounder': Object.freeze({
+        F: [10, 10, 10, 0], E: [10, 10, 10, 0], D: [10, 10, 10, 0],
+        C: [12, 12, 12, 0], B: [15, 15, 15, 0], A: [18, 18, 18, 0], M: [18, 18, 30, 0]
+    }),
+    defender: Object.freeze({
+        F: [10, 10, 10, 0], E: [10, 10, 10, 0], D: [10, 10, 10, 0],
+        C: [15, 15, 10, 0], B: [20, 20, 10, 0], A: [25, 25, 10, 0], M: [25, 25, 10, 0]
+    }),
+    speedster: Object.freeze({
+        F: [10, 10, 10, 2], E: [10, 10, 10, 2], D: [10, 10, 10, 2],
+        C: [10, 10, 10, 6], B: [10, 10, 10, 12], A: [10, 10, 10, 20], M: [10, 10, 10, 20]
+    }),
+    striker: Object.freeze({
+        F: [10, 10, 10, 0], E: [10, 10, 10, 0], D: [10, 10, 10, 0],
+        C: [12, 12, 12, 0], B: [15, 15, 15, 0], A: [18, 18, 18, 0], M: [18, 18, 30, 0]
+    })
+});
+const POKEMON_TIER_SYNC_EX_BONUS_BY_ROLE = Object.freeze({
+    supporter: Object.freeze({
+        F: [1, null, null], E: [2, null, null], D: [3, null, null],
+        C: [5, null, null], B: [8, null, null], A: [10, null, null], M: [10, 5, 5]
+    }),
+    attacker: Object.freeze({
+        F: [null, null, 1], E: [null, null, 2], D: [null, null, 3],
+        C: [null, null, 5], B: [null, null, 8], A: [null, null, 10], M: [5, 5, 10]
+    }),
+    'all-rounder': Object.freeze({
+        F: [1, 1, null], E: [2, 2, null], D: [2, 2, null],
+        C: [3, 3, null], B: [4, 4, null], A: [5, 5, null], M: [5, 5, 10]
+    }),
+    defender: Object.freeze({
+        F: [1, 1, null], E: [2, 2, null], D: [2, 2, null],
+        C: [3, 3, null], B: [4, 4, null], A: [7, 7, null], M: [7, 7, null]
+    }),
+    speedster: Object.freeze({
+        F: [null, null, 1], E: [null, null, 2], D: [null, null, 3],
+        C: [null, null, 5], B: [null, null, 8], A: [null, null, 10], M: [5, 5, 10]
+    }),
+    striker: Object.freeze({
+        F: [1, 1, null], E: [2, 2, null], D: [2, 2, null],
+        C: [3, 3, null], B: [4, 4, null], A: [5, 5, null], M: [5, 5, 10]
+    })
+});
 const DEFAULT_POKEMON_CATALOG_FILTERS = Object.freeze({
     name: '',
     role: '',
@@ -6949,10 +7001,12 @@ const catchBallRequirementAliases = Object.freeze(
 const catchBallPreviewImages = {
     ultra: 'ultra',
     story: 'story',
+    brave: 'brave',
     elemental: 'elemental',
     safari: 'saffari'
 };
 const ballPrices = Object.freeze({ ultra:130, story:250, elemental:330, safari:130 });
+const CATCH_BRAVE_BALL_STORY_EQUIVALENT = 50;
 const CATCH_ELEMENTAL_BALL_OPTIONS = Object.freeze(
     Object.entries(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, [rawType, ball]) => {
         const type = normalizePokemonTypeKey(rawType);
@@ -19330,6 +19384,30 @@ function hydrateTrainingPokemonOptions(){
     }
 }
 
+function selectTrainingPokemonFromUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const requestedToken = normalizePokemonSearchText(params.get('trainingPokemon') || '');
+    if(!requestedToken) return false;
+
+    const entry = trainingPokemonEntries.find(candidate => (
+        [candidate.routeSlug, candidate.id, candidate.name, candidate.searchName]
+            .map(normalizePokemonSearchText)
+            .filter(Boolean)
+            .includes(requestedToken)
+    ));
+    if(!entry) return false;
+
+    applyTrainingPokemonSelection(entry);
+    params.delete('trainingPokemon');
+    const query = params.toString();
+    window.history.replaceState(
+        window.history.state,
+        '',
+        `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`
+    );
+    return true;
+}
+
 function getTrainingPokemonSearchResultEntries(value = '', limit = 8){
     const normalizedValue = normalizePokemonSearchText(value || trainingPokemonSearchInput?.value || '');
     return getLimitedPokemonSearchEntries(trainingPokemonEntries, normalizedValue, getTrainingPokemonSearchKey, limit);
@@ -20110,6 +20188,7 @@ function initializeCalculatorPage(){
         ensurePokemonCatalogLoaded()
             .then(() => {
                 hydrateTrainingPokemonOptions();
+                selectTrainingPokemonFromUrl();
                 syncTrainingCalculator();
             })
             .catch(() => {
@@ -20235,6 +20314,7 @@ function initializeCalculatorPage(){
     ensurePokemonCatalogLoaded()
         .then(() => {
             hydrateTrainingPokemonOptions();
+            selectTrainingPokemonFromUrl();
             syncTrainingCalculator();
         })
         .catch(() => {
@@ -22173,7 +22253,7 @@ function updateUrl(options = {}){
             }
         }
     } else {
-        params.delete('pokemon');
+        if(activeTab !== 'calculator') params.delete('pokemon');
         params.delete('alvo');
         params.delete('variant');
         params.delete('variante');
@@ -25286,15 +25366,108 @@ function createPokemonSpecialTagBadge(tagKey, options = {}){
     return badge;
 }
 
-function createPokemonTierBadge(tier){
+function createPokemonTierBonusTooltip(badge, roleKey, tier){
+    const stats = POKEMON_TIER_SHINY_BONUS_BY_ROLE[roleKey]?.[tier];
+    if(!stats) return;
+
+    const roleLabel = formatPokemonRoleLabel(getPokemonRoleInfo(roleKey).label);
+    const statDefinitions = [
+        { key: 'vitality', label: 'Vitality' },
+        { key: 'defense', label: 'Defense' },
+        { key: 'sp-attack', label: 'Sp. Attack (força das habilidades)' },
+        { key: 'offense', label: 'Offense (força do ataque básico)' }
+    ];
+    const description = `Tier ${tier}, ${roleLabel}, Shiny Bonus. ${statDefinitions.map((stat, index) => `${stat.label}: ${stats[index]}%`).join('. ')}. Os tiers não são confirmados.`;
+
+    badge.classList.add('pokemon-entry-card__tier--has-bonus');
+    badge.setAttribute('aria-label', description);
+    badge.tabIndex = 0;
+
+    let tooltip = null;
+    const hideTooltip = () => {
+        if(!tooltip) return;
+        tooltip.remove();
+        tooltip = null;
+        badge.removeAttribute('aria-describedby');
+    };
+    const showTooltip = () => {
+        if(tooltip) return;
+
+        tooltip = document.createElement('span');
+        tooltip.className = 'pokemon-tier-tooltip pokemon-tier-tooltip--bonus';
+        tooltip.id = `pokemon-tier-tooltip-${++pokemonTierTooltipId}`;
+        tooltip.setAttribute('role', 'tooltip');
+
+        const heading = document.createElement('strong');
+        heading.className = 'pokemon-tier-tooltip__title';
+        heading.textContent = 'Shiny Bonus (%)';
+
+        const subtitle = document.createElement('span');
+        subtitle.className = 'pokemon-tier-tooltip__subtitle';
+        subtitle.textContent = `${roleLabel} • Tier ${tier}`;
+
+        const statsList = document.createElement('span');
+        statsList.className = 'pokemon-tier-tooltip__stats';
+        statDefinitions.forEach((stat, index) => {
+            const row = document.createElement('span');
+            row.className = 'pokemon-tier-tooltip__stat';
+
+            const label = document.createElement('span');
+            label.className = 'pokemon-tier-tooltip__stat-label';
+            label.dataset.stat = stat.key;
+            label.textContent = stat.label;
+
+            const value = document.createElement('strong');
+            value.className = 'pokemon-tier-tooltip__stat-value';
+            value.dataset.value = stats[index] === 0 ? 'neutral' : 'positive';
+            value.textContent = `+ ${stats[index]}%`;
+
+            row.append(label, value);
+            statsList.appendChild(row);
+        });
+
+        const disclaimer = document.createElement('span');
+        disclaimer.className = 'pokemon-tier-tooltip__disclaimer';
+        disclaimer.textContent = 'Os tiers não são confirmados.';
+
+        tooltip.append(heading, subtitle, statsList, disclaimer);
+        document.body.appendChild(tooltip);
+        badge.setAttribute('aria-describedby', tooltip.id);
+
+        const badgeRect = badge.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const halfTooltipWidth = tooltipRect.width / 2;
+        const left = Math.min(
+            Math.max(badgeRect.left + badgeRect.width / 2, halfTooltipWidth + 8),
+            window.innerWidth - halfTooltipWidth - 8
+        );
+        const top = badgeRect.top > tooltipRect.height + 8
+            ? badgeRect.top - tooltipRect.height - 8
+            : badgeRect.bottom + 8;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
+
+    badge.addEventListener('pointerenter', showTooltip);
+    badge.addEventListener('pointerleave', () => {
+        if(!badge.matches(':focus')) hideTooltip();
+    });
+    badge.addEventListener('focus', showTooltip);
+    badge.addEventListener('blur', () => {
+        if(!badge.matches(':hover')) hideTooltip();
+    });
+}
+
+function createPokemonTierBadge(tier, role){
     const normalizedTier = normalizePokemonCatalogTierFilterValue(tier);
     const badge = document.createElement('span');
     badge.className = 'pokemon-entry-card__tier';
     badge.dataset.tier = normalizedTier || 'unassigned';
     if(normalizedTier){
         badge.textContent = getPokemonTierLabel(normalizedTier);
+        createPokemonTierBonusTooltip(badge, normalizePokemonRoleKey(role), normalizedTier);
     } else {
-        const description = 'Este Pokémon não tem informações sobre o Tier correto';
+        const description = 'Este Pokémon não tem informações confirmadas sobre o Tier correto. Os tiers não são confirmados.';
         badge.textContent = 'TnF';
         badge.dataset.tooltip = description;
         badge.setAttribute('aria-label', description);
@@ -25377,6 +25550,131 @@ function createPokemonFieldCard(label, value){
     return card;
 }
 
+function createPokemonSyncExTooltip(badge, roleKey){
+    const tiers = POKEMON_TIER_SYNC_EX_BONUS_BY_ROLE[roleKey];
+    if(!tiers) return;
+
+    const roleLabel = formatPokemonRoleLabel(getPokemonRoleInfo(roleKey).label);
+    const stats = [
+        { key: 'vitality', label: 'Vitality' },
+        { key: 'defense', label: 'Defense' },
+        { key: 'sp-attack', label: 'Sp. Attack' }
+    ];
+    const description = Object.entries(tiers)
+        .map(([tier, values]) => `${tier}: ${stats.map((stat, index) => (
+            `${stat.label} ${values[index] === null ? 'sem bônus' : `${values[index]}%`}`
+        )).join(', ')}`)
+        .join('. ');
+
+    badge.classList.add('pokemon-role-badge--sync-ex');
+    badge.setAttribute('aria-label', `${roleLabel}, bônus de Sync EX por tier. ${description}`);
+    badge.tabIndex = 0;
+
+    let tooltip = null;
+    const hideTooltip = () => {
+        if(!tooltip) return;
+        tooltip.remove();
+        tooltip = null;
+        badge.removeAttribute('aria-describedby');
+    };
+    const showTooltip = () => {
+        if(tooltip) return;
+
+        tooltip = document.createElement('span');
+        tooltip.className = 'pokemon-sync-ex-tooltip';
+        tooltip.dataset.role = roleKey;
+        tooltip.id = `pokemon-sync-ex-tooltip-${++pokemonTierTooltipId}`;
+        tooltip.setAttribute('role', 'tooltip');
+
+        const heading = document.createElement('strong');
+        heading.className = 'pokemon-sync-ex-tooltip__title';
+        heading.textContent = 'Bônus de Sync EX (%)';
+
+        const subtitle = document.createElement('span');
+        subtitle.className = 'pokemon-sync-ex-tooltip__subtitle';
+        subtitle.textContent = roleLabel;
+
+        const progression = document.createElement('span');
+        progression.className = 'pokemon-sync-ex-tooltip__progression';
+        progression.setAttribute('aria-label', 'Progressão dos bônus por tier');
+
+        Object.entries(tiers).forEach(([tier, values], tierIndex) => {
+            const step = document.createElement('span');
+            step.className = 'pokemon-sync-ex-tooltip__step';
+            step.setAttribute('role', 'group');
+            step.setAttribute('aria-label', `Tier ${tier}`);
+
+            const tierMarker = document.createElement('strong');
+            tierMarker.className = 'pokemon-sync-ex-tooltip__tier-marker';
+            tierMarker.textContent = tier;
+
+            const bonusList = document.createElement('span');
+            bonusList.className = 'pokemon-sync-ex-tooltip__bonuses';
+            values.forEach((value, statIndex) => {
+                const bonus = document.createElement('span');
+                bonus.className = 'pokemon-sync-ex-tooltip__bonus';
+                bonus.dataset.stat = stats[statIndex].key;
+                bonus.dataset.bonus = value === null ? 'none' : 'present';
+                bonus.setAttribute(
+                    'aria-label',
+                    `${stats[statIndex].label}: ${value === null ? 'sem bônus' : `${value}%`}`
+                );
+                bonus.textContent = value === null ? '–' : `${value}%`;
+                bonusList.appendChild(bonus);
+            });
+
+            step.append(tierMarker, bonusList);
+            if(tierIndex < Object.keys(tiers).length - 1){
+                const connector = document.createElement('span');
+                connector.className = 'pokemon-sync-ex-tooltip__connector';
+                connector.setAttribute('aria-hidden', 'true');
+                step.appendChild(connector);
+            }
+            progression.appendChild(step);
+        });
+
+        const legend = document.createElement('span');
+        legend.className = 'pokemon-sync-ex-tooltip__legend';
+        stats.forEach((stat) => {
+            const item = document.createElement('span');
+            item.className = 'pokemon-sync-ex-tooltip__legend-item';
+            item.dataset.stat = stat.key;
+            item.textContent = stat.label;
+            legend.appendChild(item);
+        });
+
+        const note = document.createElement('span');
+        note.className = 'pokemon-sync-ex-tooltip__note';
+        note.textContent = '– = sem bônus nesse atributo';
+
+        tooltip.append(heading, subtitle, legend, progression, note);
+        document.body.appendChild(tooltip);
+        badge.setAttribute('aria-describedby', tooltip.id);
+
+        const badgeRect = badge.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const halfTooltipWidth = tooltipRect.width / 2;
+        const left = Math.min(
+            Math.max(badgeRect.left + badgeRect.width / 2, halfTooltipWidth + 8),
+            window.innerWidth - halfTooltipWidth - 8
+        );
+        const top = badgeRect.top > tooltipRect.height + 8
+            ? badgeRect.top - tooltipRect.height - 8
+            : badgeRect.bottom + 8;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
+
+    badge.addEventListener('pointerenter', showTooltip);
+    badge.addEventListener('pointerleave', () => {
+        if(!badge.matches(':focus')) hideTooltip();
+    });
+    badge.addEventListener('focus', showTooltip);
+    badge.addEventListener('blur', () => {
+        if(!badge.matches(':hover')) hideTooltip();
+    });
+}
+
 function createPokemonRoleBadge(roleValue, options = {}){
     const { compact = false, modal = false } = options;
     const roleInfo = typeof roleValue === 'object' && roleValue
@@ -25387,6 +25685,7 @@ function createPokemonRoleBadge(roleValue, options = {}){
     if(compact) badge.classList.add('pokemon-role-badge--compact');
     if(modal) badge.classList.add('pokemon-role-badge--modal');
     badge.dataset.role = roleInfo.key || 'unknown';
+    createPokemonSyncExTooltip(badge, normalizePokemonRoleKey(roleInfo.key));
 
     const icon = document.createElement('img');
     icon.className = 'pokemon-role-badge__icon';
@@ -25569,6 +25868,13 @@ function getPokemonNormalCaptureAverageForBall(entry, ballKey){
     const normalizedBallKey = getCatchRequirementBallKey(ballKey);
     const ballPrice = Number(ballPrices?.[normalizedBallKey] || 0);
     const pokemonPrice = Number(entry?.price || 0);
+    const braveBallAverage = Number(entry?.normalCaptureBraveAverage || 0);
+    if(braveBallAverage > 0){
+        if(String(ballKey || '').trim().toLowerCase() === 'brave') return Math.ceil(braveBallAverage);
+        const storyBallPrice = Number(ballPrices.story || 0);
+        if(!ballPrice || !storyBallPrice) return 0;
+        return Math.ceil(braveBallAverage * CATCH_BRAVE_BALL_STORY_EQUIVALENT * storyBallPrice / ballPrice);
+    }
     if(!ballPrice || !pokemonPrice) return 0;
     return Math.ceil(pokemonPrice / ballPrice);
 }
@@ -25747,10 +26053,16 @@ function buildPokemonAverageCards(entry, variant){
                 `${variant === 'shiny' ? 'Shiny' : 'Normal'} \u2022 ${getPokemonElementalBallTypeLabel(ball.key, entry?.naturalElements || [])}`
             );
         });
+        if(variant === 'normal' && Number(entry?.normalCaptureBraveAverage) > 0){
+            appendBallCard({ key: 'brave', label: 'Brave Ball' });
+        }
         return cards;
     }
 
     appendBallCard({ key: 'elemental', label: 'Ball Elemental' });
+    if(variant === 'normal' && Number(entry?.normalCaptureBraveAverage) > 0){
+        appendBallCard({ key: 'brave', label: 'Brave Ball' });
+    }
     return cards;
 }
 
@@ -25916,6 +26228,9 @@ function normalizePokemonCatalogEntry(entry, index){
         price: Number(entry.price ?? entry.preco ?? 0) || 0,
         priceLabel: String(entry.priceLabel || '').trim(),
         acquisitionUrl: String(entry.acquisitionUrl || '').trim(),
+        normalCaptureBraveAverage: Number.isFinite(Number(entry.normalCaptureBraveAverage)) && Number(entry.normalCaptureBraveAverage) > 0
+            ? Number(entry.normalCaptureBraveAverage)
+            : 0,
         levelLabel: String(entry.levelLabel || '').trim(),
         movesetLabel: String(entry.movesetLabel || '').trim(),
         teamLabel: String(entry.teamLabel || '').trim(),
@@ -26350,7 +26665,7 @@ function renderPokemonCatalog(options = {}){
         level.textContent = getPokemonEntryLevelLabel(entry);
         metaRow.appendChild(level);
         metaRow.appendChild(document.createTextNode(' • '));
-        metaRow.appendChild(createPokemonTierBadge(entry.tier));
+        metaRow.appendChild(createPokemonTierBadge(entry.tier, entry.roleKey));
         if(shouldShowPokemonNaturalShinyBadgeOnCard(entry)){
             metaRow.appendChild(createPokemonNaturalShinyBadge());
         }
@@ -26851,6 +27166,7 @@ function renderPokemonDetailsModal(entry){
         if(hasRole){
             metaFragment.appendChild(createPokemonRoleBadge({ key: entry.roleKey, label: entry.role }, { modal: true }));
         }
+        metaFragment.appendChild(createPokemonTierBadge(entry.tier, entry.roleKey));
         const passiveBadge = createPokemonPassiveBadge(entry);
         if(passiveBadge){
             metaFragment.appendChild(passiveBadge);
@@ -26870,8 +27186,73 @@ function renderPokemonDetailsModal(entry){
         const shinySubFunctions = getPokemonEntryShinySubFunctions(entry);
         const levelMeta = document.createElement('span');
         levelMeta.className = 'pokemon-level-meta-row';
-        const levelText = document.createElement('span');
-        levelText.textContent = `${getPokemonEntryLevelLabel(entry)} • ${getPokemonTierLabel(entry.tier)}`;
+        const trainingLink = document.createElement('a');
+        trainingLink.className = 'pokemon-level-meta-row__training-link';
+        trainingLink.textContent = getPokemonEntryLevelLabel(entry);
+        trainingLink.setAttribute('aria-label', `Abrir treinamento para ${entry.name}, nível ${getTrainingEntryLevel(entry)}`);
+        trainingLink.setAttribute('aria-haspopup', 'true');
+        const trainingUrl = new URL('/treinamento', window.location.origin);
+        trainingUrl.searchParams.set('trainingPokemon', String(entry.routeSlug || entry.id || entry.name));
+        trainingLink.href = `${trainingUrl.pathname}${trainingUrl.search}`;
+        let trainingTooltip = null;
+        const hideTrainingTooltip = () => {
+            if(!trainingTooltip) return;
+            trainingTooltip.remove();
+            trainingTooltip = null;
+            trainingLink.removeAttribute('aria-describedby');
+        };
+        const showTrainingTooltip = () => {
+            if(trainingTooltip) return;
+
+            trainingTooltip = document.createElement('span');
+            trainingTooltip.className = 'pokemon-training-tooltip';
+            trainingTooltip.id = `pokemon-training-tooltip-${++pokemonTierTooltipId}`;
+            trainingTooltip.setAttribute('role', 'tooltip');
+
+            const icon = document.createElement('span');
+            icon.className = 'pokemon-training-tooltip__icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = '↗';
+
+            const copy = document.createElement('span');
+            copy.className = 'pokemon-training-tooltip__copy';
+
+            const heading = document.createElement('strong');
+            heading.className = 'pokemon-training-tooltip__heading';
+            heading.textContent = 'Atalho para treinamento';
+
+            const message = document.createElement('span');
+            message.className = 'pokemon-training-tooltip__message';
+            message.textContent = 'Clique para abrir a calculadora com este Pokémon já selecionado.';
+
+            const pokemonName = document.createElement('span');
+            pokemonName.className = 'pokemon-training-tooltip__pokemon';
+            pokemonName.textContent = entry.name;
+
+            copy.append(heading, message, pokemonName);
+            trainingTooltip.append(icon, copy);
+            document.body.appendChild(trainingTooltip);
+            trainingLink.setAttribute('aria-describedby', trainingTooltip.id);
+
+            const linkRect = trainingLink.getBoundingClientRect();
+            const tooltipRect = trainingTooltip.getBoundingClientRect();
+            const halfTooltipWidth = tooltipRect.width / 2;
+            const left = Math.min(
+                Math.max(linkRect.left + linkRect.width / 2, halfTooltipWidth + 8),
+                window.innerWidth - halfTooltipWidth - 8
+            );
+            const top = linkRect.top > tooltipRect.height + 8
+                ? linkRect.top - tooltipRect.height - 8
+                : linkRect.bottom + 8;
+            trainingTooltip.style.left = `${left}px`;
+            trainingTooltip.style.top = `${top}px`;
+        };
+        trainingLink.addEventListener('pointerenter', showTrainingTooltip);
+        trainingLink.addEventListener('pointerleave', () => {
+            if(!trainingLink.matches(':focus')) hideTrainingTooltip();
+        });
+        trainingLink.addEventListener('focus', showTrainingTooltip);
+        trainingLink.addEventListener('blur', hideTrainingTooltip);
 
         // Badges sob o texto de nivel (shiny / tags especiais)
         const badgesWrap = document.createElement('span');
@@ -26883,7 +27264,12 @@ function renderPokemonDetailsModal(entry){
             badgesWrap.appendChild(createPokemonSpecialTagBadge(tagKey));
         });
 
-        levelMeta.append(levelText, badgesWrap);
+        levelMeta.append(
+            trainingLink,
+            document.createTextNode(' • '),
+            createPokemonTierBadge(entry.tier, entry.roleKey),
+            badgesWrap
+        );
 
         infoFragment.append(
             createPokemonFieldCard('Tipo 1', entry.type1 ? createPokemonTypeToken(entry.type1) : 'Não informado'),

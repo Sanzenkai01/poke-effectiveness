@@ -16521,6 +16521,12 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   cursor: help;
 }
 
+.pokemon-entry-card__tier--has-bonus {
+  position: relative;
+  z-index: 2;
+  cursor: help;
+}
+
 .pokemon-tier-tooltip {
   position: fixed;
   z-index: 100000;
@@ -16539,6 +16545,332 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
   pointer-events: none;
   transform: translateX(-50%);
+}
+
+.pokemon-tier-tooltip--bonus {
+  display: grid;
+  gap: 0.22rem;
+  width: min(18rem, calc(100vw - 1.25rem));
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+}
+
+.pokemon-tier-tooltip__title {
+  color: #f4f7fa;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.pokemon-tier-tooltip__subtitle {
+  color: rgba(216, 229, 244, 0.68);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.pokemon-tier-tooltip__disclaimer {
+  margin-top: 0.2rem;
+  color: rgba(216, 229, 244, 0.72);
+  font-size: 0.62rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.pokemon-tier-tooltip__stats {
+  display: grid;
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+
+.pokemon-tier-tooltip__stat {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.2rem 0.35rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.pokemon-tier-tooltip__stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.pokemon-tier-tooltip__stat-label[data-stat="vitality"] {
+  color: #7ee4c1;
+}
+
+.pokemon-tier-tooltip__stat-label[data-stat="defense"] {
+  color: #8fc5ff;
+}
+
+.pokemon-tier-tooltip__stat-label[data-stat="sp-attack"] {
+  color: #d5a5ff;
+}
+
+.pokemon-tier-tooltip__stat-label[data-stat="offense"] {
+  color: #ffd27d;
+}
+
+.pokemon-tier-tooltip__stat-value {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pokemon-tier-tooltip__stat-value[data-value="positive"] {
+  color: #8ee6a8;
+}
+
+.pokemon-tier-tooltip__stat-value[data-value="neutral"] {
+  color: #c1c9d2;
+}
+
+.pokemon-training-tooltip {
+  position: fixed;
+  z-index: 100000;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  width: min(17rem, calc(100vw - 1rem));
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(118, 214, 255, 0.32);
+  border-radius: 0.7rem;
+  background:
+    linear-gradient(135deg, rgba(91, 188, 230, 0.13), transparent 58%),
+    #17212b;
+  color: #f4f7fa;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(118, 214, 255, 0.06);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.pokemon-training-tooltip__icon {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: 0 0 1.65rem;
+  place-items: center;
+  border: 1px solid rgba(118, 214, 255, 0.26);
+  border-radius: 0.5rem;
+  background: rgba(82, 174, 220, 0.14);
+  color: #8edcff;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.pokemon-training-tooltip__copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.pokemon-training-tooltip__heading {
+  color: #8edcff;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.pokemon-training-tooltip__message {
+  color: rgba(235, 243, 250, 0.9);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.pokemon-training-tooltip__pokemon {
+  width: fit-content;
+  margin: 0.12rem auto 0;
+  padding: 0.12rem 0.4rem;
+  border: 1px solid rgba(118, 214, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(82, 174, 220, 0.1);
+  color: #b9eaff;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.pokemon-role-badge--sync-ex {
+  position: relative;
+  z-index: 2;
+  cursor: help;
+}
+
+.pokemon-sync-ex-tooltip {
+  --sync-ex-accent: #76d6ff;
+  position: fixed;
+  z-index: 100000;
+  display: grid;
+  gap: 0.45rem;
+  width: min(22rem, calc(100vw - 1rem));
+  padding: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--sync-ex-accent) 44%, transparent);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(ellipse at top left, color-mix(in srgb, var(--sync-ex-accent) 20%, transparent), transparent 58%),
+    linear-gradient(155deg, #1b293a, #111a26 72%);
+  color: #f4f7fa;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.48), inset 0 1px rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.pokemon-sync-ex-tooltip[data-role="supporter"] { --sync-ex-accent: #39c58a; }
+.pokemon-sync-ex-tooltip[data-role="attacker"] { --sync-ex-accent: #ff656b; }
+.pokemon-sync-ex-tooltip[data-role="all-rounder"] { --sync-ex-accent: #ffae48; }
+.pokemon-sync-ex-tooltip[data-role="defender"] { --sync-ex-accent: #5b95ff; }
+.pokemon-sync-ex-tooltip[data-role="speedster"] { --sync-ex-accent: #e3c323; }
+.pokemon-sync-ex-tooltip[data-role="striker"] { --sync-ex-accent: #b16bff; }
+
+.pokemon-sync-ex-tooltip__title {
+  color: var(--sync-ex-accent);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pokemon-sync-ex-tooltip__subtitle {
+  margin-top: -0.42rem;
+  color: rgba(232, 239, 248, 0.66);
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pokemon-sync-ex-tooltip__legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+}
+
+.pokemon-sync-ex-tooltip__legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  color: rgba(235, 243, 250, 0.76);
+  font-size: 0.57rem;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.pokemon-sync-ex-tooltip__legend-item::before {
+  width: 0.38rem;
+  height: 0.38rem;
+  flex: 0 0 0.38rem;
+  border-radius: 50%;
+  background: var(--sync-ex-accent);
+  content: "";
+}
+
+.pokemon-sync-ex-tooltip__legend-item[data-stat="vitality"]::before { background: #65ddb3; }
+.pokemon-sync-ex-tooltip__legend-item[data-stat="defense"]::before { background: #82b8ff; }
+.pokemon-sync-ex-tooltip__legend-item[data-stat="sp-attack"]::before { background: #d19bff; }
+
+.pokemon-sync-ex-tooltip__progression {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.pokemon-sync-ex-tooltip__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.65rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pokemon-sync-ex-tooltip__tier-marker {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--sync-ex-accent) 38%, transparent);
+  border-radius: 0.48rem;
+  background: color-mix(in srgb, var(--sync-ex-accent) 14%, #182434);
+  color: #f4f7fa;
+  font-size: 0.66rem;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.pokemon-sync-ex-tooltip__bonuses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.pokemon-sync-ex-tooltip__bonus {
+  display: grid;
+  min-height: 1.55rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 0.42rem;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(225, 233, 243, 0.35);
+  font-size: 0.63rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pokemon-sync-ex-tooltip__bonus[data-stat="vitality"][data-bonus="present"] {
+  border-color: rgba(101, 221, 179, 0.17);
+  background: rgba(101, 221, 179, 0.1);
+  color: #83e9c2;
+}
+
+.pokemon-sync-ex-tooltip__bonus[data-stat="defense"][data-bonus="present"] {
+  border-color: rgba(130, 184, 255, 0.17);
+  background: rgba(130, 184, 255, 0.1);
+  color: #a5ccff;
+}
+
+.pokemon-sync-ex-tooltip__bonus[data-stat="sp-attack"][data-bonus="present"] {
+  border-color: rgba(209, 155, 255, 0.17);
+  background: rgba(209, 155, 255, 0.1);
+  color: #dfbaff;
+}
+
+.pokemon-sync-ex-tooltip__connector {
+  position: absolute;
+  top: calc(100% + 0.08rem);
+  bottom: calc(-0.3rem);
+  left: 0.72rem;
+  width: 1px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--sync-ex-accent) 40%, transparent), transparent);
+}
+
+.pokemon-sync-ex-tooltip__note {
+  margin-top: 0.08rem;
+  color: rgba(216, 229, 244, 0.58);
+  font-size: 0.58rem;
+  text-align: right;
+}
+
+@supports not (color: color-mix(in srgb, white, black)) {
+  .pokemon-sync-ex-tooltip {
+    border-color: rgba(118, 214, 255, 0.3);
+    background: linear-gradient(155deg, #1b293a, #111a26 72%);
+  }
+
+  .pokemon-sync-ex-tooltip__tier-marker {
+    border-color: rgba(118, 214, 255, 0.3);
+    background: rgba(118, 214, 255, 0.12);
+  }
+
+  .pokemon-sync-ex-tooltip__connector {
+    background: linear-gradient(to bottom, rgba(118, 214, 255, 0.4), transparent);
+  }
 }
 
 .pokemon-entry-card__tier[data-tier="F"] {
