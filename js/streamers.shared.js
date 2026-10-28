@@ -19,7 +19,6 @@
         { name: 'raulzerah1', supportsDrops: false },
         { name: 'lordjuregi', supportsDrops: false },
         { name: 'Eusou_O_D', supportsDrops: false },
-        { name: 'twozada212', supportsDrops: false },
         { name: '0taichou', supportsDrops: false },
         { name: 'enriqfmz', supportsDrops: false },
         { name: 'olegarioojv', supportsDrops: false },
