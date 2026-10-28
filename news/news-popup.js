@@ -1,17 +1,17 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-27-calendar-mega-dimension',
+            id: '2026-10-28-online-store-stamina',
             layout: 'text-image',
-            title: 'Atualizações do dia 27/10.',
+            title: 'Atualizações do dia 28/10.',
             category: 'Atualizações',
-            subtitle: 'Mudanças no sistema de calendário e rotação de Mega Dimension',
+            subtitle: 'Novo sistema de Loja Online e recuperação de Stamina',
             text: 'Confira as novidades mais recentes no Discord.',
-            image: 'news/image-news.png?v=20261027-news-calendar-mega-dimension-v1',
-            imageAlt: 'Tela de recompensas diárias com calendário premium e recompensas por dia.',
+            image: 'news/image-news.png?v=20261028-online-store-stamina-v1',
+            imageAlt: 'Interface da Loja Online com saldo de pontos e recompensas disponíveis para resgate.',
             imageCaption: '',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1563267373958565939',
-            linkLabel: 'Ler Dev-Notes no Discord'
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1565074030455816282',
+            linkLabel: 'Confira as novidades no Discord'
         }
     ]);
     const PERMANENT_DISMISSAL_KEY = 'pstory-news-dismissed-id';
@@ -26,10 +26,13 @@
             title: dialog.querySelector('[data-news-title]'),
             subtitle: dialog.querySelector('[data-news-subtitle]'),
             text: dialog.querySelector('[data-news-text]'),
+            imageTrigger: dialog.querySelector('[data-news-image-trigger]'),
             image: dialog.querySelector('[data-news-image]'),
             imageCaption: dialog.querySelector('[data-news-image-caption]'),
             link: dialog.querySelector('[data-news-link]'),
-            dismissChoice: dialog.querySelector('[data-news-dismiss-choice]')
+            dismissChoice: dialog.querySelector('[data-news-dismiss-choice]'),
+            zoomDialog: document.querySelector('[data-news-zoom]'),
+            zoomImage: document.querySelector('[data-news-zoom-image]')
         };
     }
 
@@ -90,7 +93,7 @@
     }
 
     function renderNews(item, elements){
-        const { dialog, category, title, subtitle, text, image, imageCaption, link } = elements;
+        const { dialog, category, title, subtitle, text, imageTrigger, image, imageCaption, link } = elements;
         validateNewsItem(item);
         dialog.dataset.newsId = item.id;
         dialog.querySelector('.site-news-popup__content').dataset.layout = item.layout;
@@ -100,10 +103,11 @@
         subtitle.hidden = !item.subtitle || item.layout === 'image';
         text.textContent = item.text || '';
         text.hidden = item.layout === 'image';
-        image.hidden = item.layout === 'text';
+        imageTrigger.hidden = item.layout === 'text';
         if(item.layout !== 'text'){
             image.src = item.image;
             image.alt = item.imageAlt;
+            imageTrigger.setAttribute('aria-label', `Ampliar imagem: ${item.imageAlt}`);
             imageCaption.textContent = item.imageCaption || '';
             imageCaption.hidden = !item.imageCaption;
         } else {
@@ -148,6 +152,26 @@
         closeButtons.forEach(button => {
             button.addEventListener('click', () => dialog.close());
         });
+        const { zoomDialog, zoomImage } = elements;
+        const zoomCloseButton = zoomDialog.querySelector('[data-news-zoom-close]');
+        elements.imageTrigger.addEventListener('click', () => {
+            zoomImage.src = elements.image.currentSrc || elements.image.src;
+            zoomImage.alt = elements.image.alt;
+            zoomDialog.showModal();
+            zoomCloseButton.focus();
+        });
+        zoomCloseButton.addEventListener('click', () => zoomDialog.close());
+        zoomDialog.addEventListener('click', event => {
+            if(event.target === zoomDialog) zoomDialog.close();
+        });
+        zoomDialog.addEventListener('keydown', event => {
+            if(event.key === 'Escape'){
+                event.preventDefault();
+                event.stopPropagation();
+                zoomDialog.close();
+            }
+        });
+        zoomDialog.addEventListener('close', () => elements.imageTrigger.focus());
         dialog.addEventListener('click', event => {
             if(event.target === dialog) dialog.close();
         });

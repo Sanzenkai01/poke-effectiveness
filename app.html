@@ -168,7 +168,7 @@
     </script>
   <link rel="stylesheet" href="styles.css?v=20261026-pokemon-tier-bonus-tooltip-v6">
   <link rel="stylesheet" href="wiki-theme.css?v=20261026-sidebar-spacing-breakpoint-v1">
-  <link rel="stylesheet" href="news/news-popup.css?v=20261027-news-calendar-mega-dimension-v1">
+  <link rel="stylesheet" href="news/news-popup.css?v=20261028-online-store-stamina-v1">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -945,7 +945,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1193 - 2026
+        Build v1194 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -973,7 +973,9 @@
             <p class="site-news-popup__subtitle" id="site-news-subtitle" data-news-subtitle hidden></p>
             <p class="site-news-popup__text" id="site-news-text" data-news-text></p>
           </div>
-          <img class="site-news-popup__image" data-news-image alt="" hidden>
+          <button class="site-news-popup__image-trigger" type="button" data-news-image-trigger>
+            <img class="site-news-popup__image" data-news-image alt="">
+          </button>
           <p class="site-news-popup__image-caption" data-news-image-caption hidden></p>
           <div class="site-news-popup__actions">
             <a class="site-news-popup__link" data-news-link target="_blank" rel="noopener noreferrer" hidden></a>
@@ -988,6 +990,12 @@
         </footer>
       </div>
     </dialog>
+    <dialog class="site-news-popup__zoom" data-news-zoom aria-label="Imagem ampliada da notícia">
+      <div class="site-news-popup__zoom-content">
+        <button class="site-news-popup__zoom-close" type="button" data-news-zoom-close aria-label="Fechar imagem ampliada">&times;</button>
+        <img class="site-news-popup__zoom-image" data-news-zoom-image alt="">
+      </div>
+    </dialog>
     </main>
     </div>
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
@@ -998,6 +1006,6 @@
     <script src="js/striker-recommendation-engine.js?v=20260902a"></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
     <script src="script.js?v=20261026-mapdex-markers-v1" defer></script>
-    <script src="news/news-popup.js?v=20261027-news-calendar-mega-dimension-v1" defer></script>
+    <script src="news/news-popup.js?v=20261028-online-store-stamina-v1" defer></script>
 </body>
 </html>
