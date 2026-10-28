@@ -1,14 +1,14 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-23-dev-notes-image-test',
+            id: '2026-10-27-calendar-mega-dimension',
             layout: 'text-image',
-            title: 'Atualizações do dia 23/10.',
-            category: 'Dev-Notes',
-            subtitle: 'Mudanças sobre morte e redução de dano no jogador através do Silver Starboost System',
+            title: 'Atualizações do dia 27/10.',
+            category: 'Atualizações',
+            subtitle: 'Mudanças no sistema de calendário e rotação de Mega Dimension',
             text: 'Confira as novidades mais recentes no Discord.',
-            image: 'news/image-news.png',
-            imageAlt: 'Sheriff no nível 274 com barras de progresso de 100% e 13%.',
+            image: 'news/image-news.png?v=20261027-news-calendar-mega-dimension-v1',
+            imageAlt: 'Tela de recompensas diárias com calendário premium e recompensas por dia.',
             imageCaption: '',
             link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1563267373958565939',
             linkLabel: 'Ler Dev-Notes no Discord'
