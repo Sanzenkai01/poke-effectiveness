@@ -341,6 +341,7 @@ const PANEL_FRAGMENT_VERSION = '20261020-page-folders-v1';
 const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     bosses: '20261021-bosses-panel-v1',
     pokemons: '20261016-pokemon-singular-labels-v1',
+    'liga-pokemon': '20261028-liga-required-pokemon-v2',
     'team-builder': '20261011-team-builder-groups',
     pokebolas: '20261017-pokebolas-menu-overlay-v1',
     pescaria: '20261018-pescaria-page-v2',
@@ -14540,11 +14541,11 @@ function showSlowpokeWell(){
     updateUrl();
 }
 
-const LIGA_POKEMON_KANTO_NAMES = `Bulbasaur|Ivysaur|Venusaur|Charmander|Charmeleon|Charizard|Squirtle|Wartortle|Blastoise|Caterpie|Metapod|Butterfree|Weedle|Kakuna|Beedrill|Pidgey|Pidgeotto|Pidgeot|Rattata|Raticate|Spearow|Fearow|Ekans|Arbok|Pikachu|Raichu|Sandshrew|Sandslash|Nidoran (F)|Nidorina|Nidoqueen|Nidoran (M)|Nidorino|Nidoking|Clefairy|Clefable|Vulpix|Ninetales|Jigglypuff|Wigglytuff|Zubat|Golbat|Oddish|Gloom|Vileplume|Paras|Parasect|Venonat|Venomoth|Diglett|Dugtrio|Meowth|Persian|Psyduck|Golduck|Mankey|Primeape|Growlithe|Arcanine|Poliwag|Poliwhirl|Poliwrath|Abra|Kadabra|Alakazam|Machop|Machoke|Machamp|Bellsprout|Weepinbell|Victreebel|Tentacool|Tentacruel|Geodude|Graveler|Golem|Ponyta|Rapidash|Slowpoke|Slowbro|Magnemite|Magneton|Farfetch'd|Doduo|Dodrio|Seel|Dewgong|Grimer|Muk|Shellder|Cloyster|Gastly|Haunter|Gengar|Onix|Drowzee|Hypno|Krabby|Kingler|Voltorb|Electrode|Exeggcute|Exeggutor|Cubone|Marowak|Hitmonlee|Hitmonchan|Lickitung|Koffing|Weezing|Rhyhorn|Rhydon|Chansey|Tangela|Kangaskhan|Horsea|Seadra|Goldeen|Seaking|Staryu|Starmie|Mr. Mime|Scyther|Jynx|Electabuzz|Magmar|Pinsir|Tauros|Magikarp|Gyarados|Lapras|Eevee|Vaporeon|Jolteon|Flareon|Porygon|Omanyte|Omastar|Kabuto|Kabutops|Aerodactyl|Snorlax|Articuno|Zapdos|Moltres|Dratini|Dragonair|Dragonite|Mewtwo|Mew`.split('|');
-const LIGA_POKEMON_EXCLUDED_KANTO_DEX = new Set([144, 145, 146, 150, 151]);
+const LIGA_POKEMON_KANTO_NAMES = `Bulbasaur|Ivysaur|Venusaur|Charmander|Charmeleon|Charizard|Squirtle|Wartortle|Blastoise|Caterpie|Metapod|Butterfree|Weedle|Kakuna|Beedrill|Pidgey|Pidgeotto|Pidgeot|Rattata|Raticate|Spearow|Fearow|Ekans|Arbok|Pikachu|Raichu|Sandshrew|Sandslash|Nidoran (F)|Nidorina|Nidoqueen|Nidoran (M)|Nidorino|Nidoking|Clefairy|Clefable|Vulpix|Ninetales|Jigglypuff|Wigglytuff|Zubat|Golbat|Oddish|Gloom|Vileplume|Paras|Parasect|Venonat|Venomoth|Diglett|Dugtrio|Meowth|Persian|Psyduck|Golduck|Mankey|Primeape|Growlithe|Arcanine|Poliwag|Poliwhirl|Poliwrath|Abra|Kadabra|Alakazam|Machop|Machoke|Machamp|Bellsprout|Weepinbell|Victreebel|Tentacool|Tentacruel|Geodude|Graveler|Golem|Ponyta|Rapidash|Slowpoke|Slowbro|Magnemite|Magneton|Farfetch'd|Doduo|Dodrio|Seel|Dewgong|Grimer|Muk|Shellder|Cloyster|Gastly|Haunter|Gengar|Onix|Drowzee|Hypno|Krabby|Kingler|Voltorb|Electrode|Exeggcute|Exeggutor|Cubone|Marowak|Hitmonlee|Hitmonchan|Lickitung|Koffing|Weezing|Rhyhorn|Rhydon|Chansey|Tangela|Kangaskhan|Horsea|Seadra|Goldeen|Seaking|Staryu|Starmie|Mr. Mime|Scyther|Jynx|Electabuzz|Magmar|Pinsir|Tauros|Magikarp|Gyarados|Lapras|Ditto|Eevee|Vaporeon|Jolteon|Flareon|Porygon|Omanyte|Omastar|Kabuto|Kabutops|Aerodactyl|Snorlax|Articuno|Zapdos|Moltres|Dratini|Dragonair|Dragonite|Mewtwo|Mew`.split('|');
+const LIGA_POKEMON_EXCLUDED_KANTO_NAMES = new Set(['Articuno', 'Zapdos', 'Moltres', 'Ditto', 'Mewtwo', 'Mew']);
 const LIGA_POKEMON_KANTO = LIGA_POKEMON_KANTO_NAMES
     .map((name, index) => ({ dex: index + 1, name }))
-    .filter(entry => !LIGA_POKEMON_EXCLUDED_KANTO_DEX.has(entry.dex))
+    .filter(entry => !LIGA_POKEMON_EXCLUDED_KANTO_NAMES.has(entry.name))
     .map(entry => {
         const slug = entry.name
             .normalize('NFD')
@@ -14658,7 +14659,8 @@ function createLigaPokemonMapButton(options = {}){
 
 function initializeLigaPokemonPage(){
     if(!contentLigaPokemon || ligaPokemonPageInitialized) return;
-    const storageKey = 'pokeEffectiveness.ligaPokemon.kantoCaptured';
+    const storageKey = 'pokeEffectiveness.ligaPokemon.kantoCaptured.v2';
+    const legacyStorageKey = 'pokeEffectiveness.ligaPokemon.kantoCaptured';
     const kantoGrid = contentLigaPokemon.querySelector('#liga-pokemon-kanto-grid');
     const kantoSummary = contentLigaPokemon.querySelector('#liga-pokemon-kanto-summary');
     const kantoProgress = contentLigaPokemon.querySelector('.liga-pokemon-kanto-progress');
@@ -14667,8 +14669,18 @@ function initializeLigaPokemonPage(){
 
     const readCaptured = () => {
         try {
-            const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
-            return new Set((Array.isArray(parsed) ? parsed : []).map(Number).filter(Number.isFinite));
+            const storedCaptures = localStorage.getItem(storageKey);
+            if(storedCaptures !== null){
+                const parsed = JSON.parse(storedCaptures);
+                return new Set((Array.isArray(parsed) ? parsed : []).map(Number).filter(Number.isFinite));
+            }
+            const legacyCaptures = JSON.parse(localStorage.getItem(legacyStorageKey) || '[]');
+            const migrated = new Set((Array.isArray(legacyCaptures) ? legacyCaptures : [])
+                .map(Number)
+                .filter(Number.isFinite)
+                .map(dex => dex >= 132 ? dex + 1 : dex));
+            localStorage.setItem(storageKey, JSON.stringify(Array.from(migrated).sort((a, b) => a - b)));
+            return migrated;
         } catch {
             return new Set();
         }

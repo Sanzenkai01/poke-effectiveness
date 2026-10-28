@@ -601,14 +601,20 @@ body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
 }
 
 .liga-pokemon-kanto-toolbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
 }
 
+.liga-pokemon-kanto-toolbar p {
+  grid-column: 2;
+  text-align: center;
+}
+
 .liga-pokemon-kanto-toolbar button {
-  flex: 0 0 auto;
+  grid-column: 3;
+  justify-self: end;
   min-height: 2.3rem;
   padding: 0.45rem 0.7rem;
   border: 1px solid rgba(var(--liga-red), 0.35);
@@ -1402,8 +1408,17 @@ body[data-active-tab="liga-pokemon"] #content-liga-pokemon {
   }
 
   .liga-pokemon-kanto-toolbar {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .liga-pokemon-kanto-toolbar p,
+  .liga-pokemon-kanto-toolbar button {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+
+  .liga-pokemon-kanto-toolbar p {
+    text-align: center;
   }
 
   .liga-pokemon-kanto-grid {
