@@ -27,7 +27,7 @@ const bossFeaturedPickByClan = Object.freeze({
   'pikachu': Object.freeze({ instinct: 'Marowak', mystic: 'Seaking', valor: 'Bouffalant' }),
   'mewtwo': Object.freeze({ instinct: 'Shiftry', mystic: 'Banette', valor: 'Absol' }),
   'alpha-fearow': Object.freeze({ instinct: 'Pikachu', valor: 'Gorging Cramorant' }),
-  'alpha-marowak': Object.freeze({ instinct: 'Serperior', valor: 'Gorging Cramorant' }),
+  'alpha-marowak': Object.freeze({ instinct: 'Serperior', mystic: 'Lombre', valor: 'Gorging Cramorant' }),
   'alpha-kingler': Object.freeze({ instinct: 'Serperior', valor: 'Tauros' }),
   'alolan-golem': Object.freeze({ instinct: 'Marowak', mystic: 'Hawlucha', valor: 'Bouffalant' }),
   'stakataka': Object.freeze({ instinct: 'Marowak', mystic: 'Hawlucha', valor: 'Bouffalant' }),
@@ -6841,10 +6841,15 @@ function shouldApplyMainQuestTierVisibilityRules(catalogOrMode, boss) {
 
 function shouldExcludeMainQuestPick(pick, context = {}) {
   const bossId = String(context?.boss?.id || '').trim().toLowerCase();
+  const clanKey = String(context?.clanKey || '').trim().toLowerCase();
   const roleKey = String(context?.roleKey || '').trim().toLowerCase();
   const pickKey = getRecommendationNameKey(pick);
 
-  if (roleKey === 'dps' && mainQuestNonSpeedsterNameKeys.has(pickKey)) {
+  const allowAlphaMarowakMysticLombre = bossId === 'alpha-marowak'
+    && clanKey === 'mystic'
+    && pickKey === 'lombre';
+
+  if (roleKey === 'dps' && mainQuestNonSpeedsterNameKeys.has(pickKey) && !allowAlphaMarowakMysticLombre) {
     return true;
   }
 
