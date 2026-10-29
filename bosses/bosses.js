@@ -11225,17 +11225,11 @@ function createHorizonsGoldTeamRecommendations(side) {
   header.className = 'horizons-section-header';
   const copy = document.createElement('div');
   copy.className = 'horizons-section-header__copy';
-  const eyebrow = document.createElement('span');
-  eyebrow.className = 'horizons-section-header__eyebrow';
-  eyebrow.textContent = 'Sugestão de equipe';
   const title = document.createElement('h3');
   title.className = 'horizons-section-header__title';
   title.id = 'horizons-gold-teams-title';
-  title.textContent = 'Times recomendados para Gold';
-  const subtitle = document.createElement('p');
-  subtitle.className = 'horizons-section-header__subtitle';
-  subtitle.textContent = 'Composições recomendadas para cada clã e lado.';
-  copy.append(eyebrow, title, subtitle);
+  title.textContent = 'Times de Exemplo para Horizons Gold';
+  copy.appendChild(title);
   header.appendChild(copy);
   section.appendChild(header);
 
