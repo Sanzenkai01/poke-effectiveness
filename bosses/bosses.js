@@ -11123,6 +11123,174 @@ function createHorizonsOverview(data, fallbackTitle = 'Horizons') {
   return overview;
 }
 
+const HORIZONS_GOLD_TEAM_EXAMPLES = Object.freeze([
+  Object.freeze({
+    clan: 'Mystic',
+    image: 'Mystic.png',
+    sides: ['a', 'b'],
+    moveset: 'Steel',
+    sideLabel: 'Lados A e B',
+    pokemon: Object.freeze([
+      ['Mawile', 'pokemons/3gen/mawile.png'],
+      ['Empoleon', 'pokemons/4gen/empoleon.png'],
+      ['Tinkaton', 'pokemons/9gen/tinkaton.png'],
+      ['Aegislash (sword form)', 'pokemons/6gen/aegislash-blade.png'],
+      ['Lucario', 'pokemons/4gen/lucario.png'],
+      ['Pokémon de Função', '']
+    ])
+  }),
+  Object.freeze({
+    clan: 'Mystic',
+    image: 'Mystic.png',
+    sides: ['a'],
+    moveset: 'Water',
+    sideLabel: 'Lado A',
+    pokemon: Object.freeze([
+      ['Starmie', 'pokemons/1gen/starmie.png'],
+      ['Gyarados', 'pokemons/1gen/gyarados.png'],
+      ['Octillery', 'pokemons/2gen/octillery.png'],
+      ['Milotic', 'pokemons/3gen/milotic.png'],
+      ['Samurott', 'pokemons/5gen/samurott.png'],
+      ['Pokémon de Função', '']
+    ])
+  }),
+  Object.freeze({
+    clan: 'Valor',
+    image: 'Valor.png',
+    sides: ['a'],
+    moveset: 'Steel e Água',
+    sideLabel: 'Lado A',
+    pokemon: Object.freeze([
+      ['Wormadam Trash', 'pokemons/4gen/wormadam-trash.png'],
+      ['Bisharp', 'pokemons/5gen/bisharp.png'],
+      ['Kingambit', 'pokemons/9gen/kingambit.png'],
+      ['Barbaracle', 'pokemons/6gen/barbaracle.png'],
+      ['Wimpod', 'pokemons/7gen/wimpod.png'],
+      ['Pokémon de Função', '']
+    ])
+  }),
+  Object.freeze({
+    clan: 'Valor',
+    image: 'Valor.png',
+    sides: ['b'],
+    moveset: 'Steel e Fire',
+    sideLabel: 'Lado B',
+    pokemon: Object.freeze([
+      ['Wormadam Trash', 'pokemons/4gen/wormadam-trash.png'],
+      ['Bisharp', 'pokemons/5gen/bisharp.png'],
+      ['Kingambit', 'pokemons/9gen/kingambit.png'],
+      ['Mega Blaziken', 'pokemons/megas/mega-blaziken.png'],
+      ['Blaziken', 'pokemons/3gen/blaziken.png'],
+      ['Pokémon de Função', '']
+    ])
+  }),
+  Object.freeze({
+    clan: 'Instinct',
+    image: 'Instinct.png',
+    sides: ['a'],
+    moveset: 'Lutador e Água',
+    sideLabel: 'Lado A',
+    pokemon: Object.freeze([
+      ['Mega Gallade', 'pokemons/megas/mega-gallade.png'],
+      ['Kommo-o', 'pokemons/7gen/kommo-o.png'],
+      ['Curly Tatsugiri', 'pokemons/9gen/curly-tatsugiri.png'],
+      ['Droopy Tatsugiri', 'pokemons/9gen/droopy-tatsugiri.png'],
+      ['Stretchy Tatsugiri', 'pokemons/9gen/stretchy-tatsugiri.png'],
+      ['Pokémon de Função', '']
+    ])
+  }),
+  Object.freeze({
+    clan: 'Instinct',
+    image: 'Instinct.png',
+    sides: ['b'],
+    moveset: 'Lutador',
+    sideLabel: 'Lado B',
+    pokemon: Object.freeze([
+      ['Mega Gallade', 'pokemons/megas/mega-gallade.png'],
+      ['Kommo-o', 'pokemons/7gen/kommo-o.png'],
+      ['Breloom', 'pokemons/3gen/breloom.png'],
+      ['Croagunk', 'pokemons/4gen/croagunk.png'],
+      ['Hakamo-o', 'pokemons/7gen/hakamo-o.png'],
+      ['Pokémon de Função', '']
+    ])
+  })
+]);
+
+function createHorizonsGoldTeamRecommendations(side) {
+  const section = document.createElement('section');
+  section.className = 'horizons-gold-teams';
+  section.setAttribute('aria-labelledby', 'horizons-gold-teams-title');
+
+  const header = document.createElement('div');
+  header.className = 'horizons-section-header';
+  const copy = document.createElement('div');
+  copy.className = 'horizons-section-header__copy';
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'horizons-section-header__eyebrow';
+  eyebrow.textContent = 'Sugestão de equipe';
+  const title = document.createElement('h3');
+  title.className = 'horizons-section-header__title';
+  title.id = 'horizons-gold-teams-title';
+  title.textContent = 'Times recomendados para Gold';
+  const subtitle = document.createElement('p');
+  subtitle.className = 'horizons-section-header__subtitle';
+  subtitle.textContent = 'Composições recomendadas para cada clã e lado.';
+  copy.append(eyebrow, title, subtitle);
+  header.appendChild(copy);
+  section.appendChild(header);
+
+  const grid = document.createElement('div');
+  grid.className = 'horizons-gold-teams__grid';
+  HORIZONS_GOLD_TEAM_EXAMPLES.filter((team) => team.sides.includes(side)).forEach((team) => {
+    const card = document.createElement('article');
+    card.className = 'horizons-gold-team';
+
+    const teamHeader = document.createElement('div');
+    teamHeader.className = 'horizons-gold-team__header';
+    const clanImage = document.createElement('img');
+    clanImage.className = 'horizons-gold-team__clan';
+    clanImage.src = resolveBossAssetSrc(team.image);
+    clanImage.alt = '';
+    clanImage.setAttribute('aria-hidden', 'true');
+    const clanName = document.createElement('h4');
+    clanName.className = 'horizons-gold-team__title';
+    clanName.textContent = team.clan;
+    teamHeader.append(clanImage, clanName);
+
+    const moveset = document.createElement('p');
+    moveset.className = 'horizons-gold-team__moveset';
+    moveset.textContent = `${team.moveset} · ${team.sideLabel}`;
+
+    const pokemonList = document.createElement('ul');
+    pokemonList.className = 'horizons-gold-team__pokemon';
+    pokemonList.setAttribute('aria-label', `Exemplo de equipe ${team.clan} com moveset ${team.moveset}`);
+    team.pokemon.forEach(([name, assetPath]) => {
+      const item = document.createElement('li');
+      const label = document.createElement('span');
+      label.textContent = name;
+      if (assetPath) {
+        const image = document.createElement('img');
+        image.src = resolveBossAssetSrc(assetPath);
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        item.append(image, label);
+      } else {
+        item.classList.add('horizons-gold-team__function');
+        const roleDetails = document.createElement('span');
+        roleDetails.textContent = 'Defender - DPS - Supporter';
+        item.append(label, roleDetails);
+      }
+      pokemonList.appendChild(item);
+    });
+
+    card.append(teamHeader, moveset, pokemonList);
+    grid.appendChild(card);
+  });
+  section.appendChild(grid);
+  return section;
+}
+
 function createHorizonsBossesSection(bosses = [], options = {}) {
   const bossesSection = document.createElement('section');
   bossesSection.className = 'horizons-bosses-section';
@@ -11316,6 +11484,9 @@ function renderHorizonsCategoryGrid() {
         tutorialUrl: sideBTutorialComingSoon ? '' : (activeCategory.tutorialUrl || run.tutorialUrl),
         tutorialComingSoon: sideBTutorialComingSoon
       }, 'Rota'));
+      if (activeCategory.id === 'gold') {
+        wrap.appendChild(createHorizonsGoldTeamRecommendations(run.side));
+      }
       (run.pathSections || []).forEach((sectionData) => {
         wrap.appendChild(createHorizonsPathSection(sectionData));
         if (Array.isArray(sectionData.bossesAfter) && sectionData.bossesAfter.length) {
