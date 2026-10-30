@@ -25508,7 +25508,7 @@ function createPokemonTierBonusTooltip(badge, roleKey, tier){
 
     badge.addEventListener('pointerenter', showTooltip);
     badge.addEventListener('pointerleave', () => {
-        if(!badge.matches(':focus')) hideTooltip();
+        if(!badge.matches(':focus-visible')) hideTooltip();
     });
     badge.addEventListener('focus', showTooltip);
     badge.addEventListener('blur', () => {
@@ -25725,7 +25725,7 @@ function createPokemonSyncExTooltip(badge, roleKey){
 
     badge.addEventListener('pointerenter', showTooltip);
     badge.addEventListener('pointerleave', () => {
-        if(!badge.matches(':focus')) hideTooltip();
+        if(!badge.matches(':focus-visible')) hideTooltip();
     });
     badge.addEventListener('focus', showTooltip);
     badge.addEventListener('blur', () => {
