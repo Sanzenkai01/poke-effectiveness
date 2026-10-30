@@ -1,6 +1,6 @@
 ---
 name: Sanzenkai_Skills
-description: "Implemente e evolua páginas e funções do Pstory Utilities com práticas de engenharia sênior. Preserve o padrão visual atual em páginas existentes e novas, salvo pedido explícito de redesign."
+description: "Implemente, evolua e recomende Pokémon para páginas e funções do Pstory Utilities. Em pedidos de recomendação, compare todos os Pokémon da classe/função relevante antes de escolher; preserve o padrão visual existente."
 ---
 
 # Engenharia de qualidade para o site
@@ -11,6 +11,17 @@ description: "Implemente e evolua páginas e funções do Pstory Utilities com p
 2. Siga o fluxo real da rota até o HTML, inicialização, handlers, dados e estilos. Busque símbolos e referências e leia trechos pequenos; `script.js` e as folhas de estilo são grandes.
 3. Identifique se a tela é um painel do shell, uma página HTML independente ou uma rota que carrega o shell. Verifique deep links, parâmetros de URL, navegação, estado persistido, carregamento e erros antes de mudar contratos.
 4. Localize uma tela existente análoga e observe a versão atual do layout, hierarquia, tipografia, cores, espaçamento, componentes e estados responsivos. Preserve-a como baseline visual.
+
+## Recomendações de Pokémon
+
+Sempre que o usuário pedir para recomendar, escolher ou destacar um Pokémon para um conteúdo, boss, clã, equipe ou outra situação, analise **todos os Pokémon candidatos da classe/função solicitada** antes de concluir. Não escolha apenas entre os destaques existentes, os primeiros resultados, os exemplos conhecidos ou os candidatos mais óbvios.
+
+1. Delimite o pedido: conteúdo/boss, clã, classe ou função (por exemplo, Speedster/DPS), restrições de nível, disponibilidade, formato da equipe e critérios de sucesso.
+2. Encontre as fontes de verdade da função e do elenco completo: pools de recomendação, catálogo/registro de Pokémon, dados específicos do conteúdo e regras de elegibilidade. Cruze essas fontes; não trate uma recomendação destacada atual como prova de que ela é a melhor.
+3. Monte a lista completa dos candidatos dessa classe/função no escopo pedido e avalie cada um com os mesmos critérios: elegibilidade, matchup ofensivo e defensivo pertinente, moveset/tipos efetivamente usados, passivas, tier e regras/mecânicas do conteúdo. Use o motor de recomendação existente quando houver, mas confira o universo completo de candidatos — não somente seu resultado limitado ou ordenado.
+4. Verifique explicitamente exceções, filtros e listas de exclusão que possam ocultar candidatos válidos. Não descarte alguém por uma classificação antiga, nome, tipo ou heurística sem confirmar seu cadastro atual e a função no conteúdo. Uma recomendação conhecida continua sendo candidata a comparar, nunca uma resposta automática.
+5. Escolha pelo melhor resultado que satisfaça os critérios do usuário; se nenhum candidato cumprir os critérios, diga isso e mostre a alternativa mais próxima com a limitação. Não force um destaque inelegível nem esconda resultados contrários.
+6. Ao responder, informe o recomendado, por que venceu e alternativas relevantes; resuma a comparação exaustiva (quantos candidatos foram considerados e os critérios usados). Ao implementar uma recomendação no site, verifique que ela aparece no fluxo real e permanece compatível com as regras e filtros existentes.
 
 ## Memória de tarefa e conclusão
 
@@ -36,12 +47,14 @@ Sempre que o usuário pedir para testar o site localmente no navegador, antes de
 - Em página nova, reutilize navegação, shell/loader, componentes e estilos da tela análoga; acrescente somente os elementos necessários. Mantenha as convenções de rota, nomes, arquivos, localização pt-BR e metadados existentes.
 - Prefira tokens CSS e classes/componentes compartilhados. Antes de acrescentar CSS, procure regras/tokens existentes e estilos por página; evite estilos inline, overrides globais, valores visuais duplicados e seletor amplo que vaze para outras rotas.
 - Construa o fluxo inteiro, incluindo carregamento, resultado, lista vazia, entrada inválida e erro recuperável quando aplicável. Valide os dados no limite de entrada, mostre falhas reais e não use fallback que pareça sucesso.
+- Ao alterar fórmulas ou cálculos, confirme a regra em uma fonte confiável do projeto e valide resultados conhecidos e casos-limite, incluindo arredondamento e entradas inválidas; não infira a fórmula apenas pela interface.
+- Para dados remotos ou atualizados periodicamente, identifique a fonte e o fluxo de atualização. Diferencie dado atual, desatualizado e indisponível na interface; não apresente cache ou fallback como informação ao vivo.
 - Use HTML semântico e controles nativos; forneça rótulos, foco visível, teclado e nomes acessíveis. Não dependa exclusivamente de cor, posição, hover ou ícones para comunicar significado.
 - Faça primeiro a menor mudança completa e coesa. Separe refatorações, dependências e limpeza que não sejam necessárias ao pedido; não duplique lógica/dados nem amplie escopo sem motivo documentado.
 
 ## Cache e identificação da build
 
-- Para toda alteração de código publicada no site (funcionalidade, correção ou página nova), incremente **uma vez por tarefa coesa** o número sequencial mostrado no rodapé do shell em `app.html`; preserve o formato `Desenvolvido por Liniko<br>Build vNNNN - AAAA` e atualize o ano quando a build mudar de ano. A referência atual no repositório é `Build v1030 - 2026`, portanto a próxima alteração de código deve usar `Build v1031 - 2026`.
+- Para toda alteração de código publicada no site (funcionalidade, correção ou página nova), leia o número atual mostrado no rodapé de `app.html` e incremente-o **uma vez por tarefa coesa**; preserve o formato `Desenvolvido por Liniko<br>Build vNNNN - AAAA` e atualize o ano quando necessário. Não use número de build memorizado ou copiado de instruções/mapas.
 - Atualize `?v=` apenas nos arquivos realmente modificados e nos pontos centrais que precisam apontar para eles. Para uma página independente, limite o bump ao HTML e aos recursos dessa página; para recursos compartilhados do shell, atualize a referência central em `app.html` e a entrada correspondente de `sw.js` (`APP_SHELL`), quando presente. Não altere os cache-busters de todas as páginas de rota só porque um recurso compartilhado mudou ou porque uma versão está sendo padronizada.
 - Antes de editar referências, trace quem carrega o recurso. Atualize uma página consumidora somente se ela própria mudou ou se precisa comprovadamente buscar uma nova versão do recurso; não propague um bump global por conveniência. Se mudar `app.html`, ajuste `APP_SHELL_VERSION` em `route-loader.js` somente se necessário para buscar o novo shell; isso não exige alterar o `?v=` de `route-loader.js` nos HTMLs. Esse `?v=` identifica o próprio script do carregador, não o shell que ele busca.
 - Nunca propague um novo `route-loader.js?v=...` por todas as rotas. Em mudanças no shell, em `script.js` ou nos dados, preserve as referências existentes de `route-loader.js` nos HTMLs. Se o código do carregador mudar, atualize somente o HTML de rota que também mudou e precisa dessa versão; não edite em massa consumidores inalterados. Se parecer necessário atualizar todos os consumidores, pare e procure uma estratégia central de invalidação; não faça a propagação sem pedido explícito e justificativa técnica verificada.
