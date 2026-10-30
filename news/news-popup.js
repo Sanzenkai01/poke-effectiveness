@@ -1,16 +1,13 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-28-online-store-stamina',
-            layout: 'text-image',
-            title: 'Atualizações do dia 28/10.',
+            id: '2026-10-30-ace-pokemon',
+            layout: 'text',
+            title: 'Atualizações do dia 30/10.',
             category: 'Atualizações',
-            subtitle: 'Novo sistema de Loja Online e recuperação de Stamina',
-            text: 'Confira as novidades mais recentes no Discord.',
-            image: 'news/image-news.png?v=20261028-online-store-stamina-v1',
-            imageAlt: 'Interface da Loja Online com saldo de pontos e recompensas disponíveis para resgate.',
-            imageCaption: '',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1565074030455816282',
+            subtitle: 'Novos Pokémon Ace: Gogoat, Braviary e Mienshao',
+            text: 'Mais Pokémon serão adicionados após a atualização.',
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1565796162487714003',
             linkLabel: 'Confira as novidades no Discord'
         }
     ]);
