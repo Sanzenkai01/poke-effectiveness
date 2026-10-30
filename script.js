@@ -479,10 +479,10 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261026-brave-ball-capture-average-v1';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261030-ace-pokemon-trio-v1';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
-const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20260711a';
+const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
 const TEAMS_CATALOG_URL = 'times/teams.json?v=20260629a';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
@@ -23979,6 +23979,7 @@ function getPokemonCardSpecialTags(entry){
     const tags = getPokemonEntrySpecialTags(entry);
     const visibleTags = tags.filter(tagKey => (
         tagKey !== 'pre-ace'
+        && tagKey !== 'ace'
         && !(tagKey === 'mega' && isMegaPokemonCatalogEntry(entry))
     ));
     if(entry?.searchName === 'zoroark'){
@@ -27164,7 +27165,7 @@ function renderPokemonDetailsModal(entry){
     if(!entry || !pokemonDetailsModal) return;
     const hasRole = hasPokemonVisibleRole({ key: entry.roleKey, label: entry.role });
     const specialTags = getPokemonEntrySpecialTags(entry);
-    const visibleSpecialTags = specialTags.filter(tagKey => tagKey !== 'pre-ace');
+    const visibleSpecialTags = specialTags.filter(tagKey => tagKey !== 'pre-ace' && tagKey !== 'ace');
     const subFunctions = getPokemonEntrySubFunctions(entry);
 
     activePokemonCatalogEntry = entry;
