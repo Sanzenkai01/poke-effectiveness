@@ -1,7 +1,7 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-30-ace-pokemon-halloween-streams-v2',
+            id: '2026-10-30-ace-pokemon-halloween-streams-v3',
             layout: 'text',
             title: 'Atualizações do dia 30/10.',
             category: 'Atualizações',
@@ -18,7 +18,8 @@
                     { name: 'indypereira', url: 'https://www.twitch.tv/indypereira' },
                     { name: 'cafeina54', url: 'https://www.twitch.tv/cafeina54' },
                     { name: 'uguettolitz', url: 'https://www.twitch.tv/uguettolitz' },
-                    { name: 'okamiulv', url: 'https://www.twitch.tv/okamiulv' }
+                    { name: 'okamiulv', url: 'https://www.twitch.tv/okamiulv' },
+                    { name: 'FernandoAlcatraz', url: 'https://www.twitch.tv/fernandoalcatraz' }
                 ]
             },
             link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1565796162487714003',
