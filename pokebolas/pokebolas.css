@@ -37,7 +37,7 @@
   font-size: clamp(1.45rem, 2.6vw, 2rem);
 }
 
-.pokebolas-page__hero p:last-child,
+.pokebolas-page__hero p:last-of-type,
 .pokebolas-section-heading p {
   margin: 0.55rem 0 0;
   color: var(--text-soft);
@@ -213,6 +213,36 @@
 .pokebolas-simulator__submit:focus-visible {
   outline: 3px solid var(--accent-yellow);
   outline-offset: 2px;
+}
+
+.pokebolas-map-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  margin-top: 0.9rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 209, 102, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 209, 102, 0.14);
+  color: var(--text-strong);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pokebolas-map-button:hover {
+  background: rgba(255, 209, 102, 0.22);
+}
+
+.pokebolas-map-button:focus-visible {
+  outline: 3px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+.pokebolas-map-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .pokebolas-simulator__submit {

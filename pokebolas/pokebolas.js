@@ -146,6 +146,7 @@
         const optionList = document.getElementById('pokebolas-ball-options');
         const amountInput = document.getElementById('pokebolas-amount');
         const feedback = document.getElementById('pokebolas-page-error');
+        const kurtLocationButton = document.getElementById('pokebolas-kurt-location');
         const result = document.getElementById('pokebolas-simulator-result');
         const resultTitle = document.getElementById('pokebolas-result-title');
         const resultBall = document.getElementById('pokebolas-result-ball');
@@ -336,6 +337,29 @@
                 input.removeAttribute('aria-invalid');
                 if (calculationRequested) calculate();
             });
+        });
+
+        kurtLocationButton?.addEventListener('click', async () => {
+            const openMapMarker = window.openInteractiveMapMarker;
+            if (typeof openMapMarker !== 'function') {
+                feedback.textContent = 'O Mapa Interativo não está disponível no momento.';
+                return;
+            }
+            kurtLocationButton.disabled = true;
+            try {
+                const opened = await openMapMarker('fcba6047-96d4-4af3-a978-5c912de33a86', {
+                    name: 'Kurt - Slowpoke Well',
+                    trigger: kurtLocationButton
+                });
+                feedback.textContent = opened
+                    ? ''
+                    : 'Não foi possível abrir a localização do Kurt. Tente novamente.';
+            } catch (error) {
+                console.error('Não foi possível abrir a localização do Kurt.', error);
+                feedback.textContent = 'Não foi possível abrir a localização do Kurt. Tente novamente.';
+            } finally {
+                kurtLocationButton.disabled = false;
+            }
         });
     }
 

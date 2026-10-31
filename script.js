@@ -343,7 +343,7 @@ const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     pokemons: '20261016-pokemon-singular-labels-v1',
     'liga-pokemon': '20261028-liga-required-pokemon-v2',
     'team-builder': '20261011-team-builder-groups',
-    pokebolas: '20261017-pokebolas-menu-overlay-v1',
+    pokebolas: '20261031-pokebolas-kurt-map-v1',
     pescaria: '20261018-pescaria-page-v2',
     'police-operation': '20261023-police-operation-v1',
     'trainer-plus': '20261023-trainer-plus-v3',
@@ -15874,7 +15874,7 @@ function showPokebolas(){
     if(titleEl) titleEl.textContent = 'Pokébolas Elementais';
     localStorage.setItem('selectedTab', 'pokebolas');
     updateBrowserTitle();
-    loadDeferredScript('pokebolas/pokebolas.js?v=20261017-pokebolas-menu-overlay-v1', () => typeof window.initPokebolasPage === 'function')
+    loadDeferredScript('pokebolas/pokebolas.js?v=20261031-pokebolas-kurt-map-v1', () => typeof window.initPokebolasPage === 'function')
         .then(() => window.initPokebolasPage())
         .catch(error => {
             console.error('Pokebolas page initialization failed', error);
@@ -22942,7 +22942,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20261017-pokebolas-menu-overlay-v1').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261031-pokebolas-kurt-map-v1').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }
