@@ -9,6 +9,26 @@ const clanLabelByKey = Object.freeze({
   mystic: 'Mystic',
   valor: 'Valor'
 });
+const clanByPrimaryType = Object.freeze({
+  fairy: 'mystic',
+  fighting: 'mystic',
+  ghost: 'mystic',
+  ice: 'mystic',
+  steel: 'mystic',
+  water: 'mystic',
+  dragon: 'instinct',
+  electric: 'instinct',
+  grass: 'instinct',
+  ground: 'instinct',
+  poison: 'instinct',
+  psychic: 'instinct',
+  bug: 'valor',
+  dark: 'valor',
+  fire: 'valor',
+  flying: 'valor',
+  normal: 'valor',
+  rock: 'valor'
+});
 
 function readJson(relativePath) {
   const absolutePath = path.join(repoRoot, relativePath);
@@ -158,8 +178,16 @@ function main() {
       }
 
       const teamKey = String(entry?.team || '').trim().toLowerCase();
-      if (!validCatalogTeams.has(teamKey)) {
+      if (teamKey && !validCatalogTeams.has(teamKey)) {
         collector.error(`${context}: time/clan invalido (${entry?.team || 'vazio'})`);
+      }
+
+      const primaryType = String(entry?.type1 || entry?.primaryType || '').trim().toLowerCase();
+      const derivedClan = clanByPrimaryType[primaryType] || '';
+      if (!derivedClan) {
+        collector.error(`${context}: nao foi possivel derivar clan do tipo primario (${primaryType || 'vazio'})`);
+      } else if (teamKey && teamKey !== derivedClan) {
+        collector.warn(`${context}: team "${teamKey}" ignorado; o tipo primario ${primaryType} define ${derivedClan}`);
       }
 
       for (const typeField of ['type1', 'type2']) {
@@ -255,7 +283,8 @@ function main() {
 
       const catalogEntry = catalogNameMap.get(memberName.toLowerCase());
       if (catalogEntry) {
-        const expectedClanLabel = clanLabelByKey[String(catalogEntry.team || '').trim().toLowerCase()] || '';
+        const primaryType = String(catalogEntry.type1 || catalogEntry.primaryType || '').trim().toLowerCase();
+        const expectedClanLabel = clanLabelByKey[clanByPrimaryType[primaryType] || ''] || '';
         if (expectedClanLabel && expectedClanLabel !== clan) {
           collector.error(`${memberContext}: clan divergente do catalogo (${clan} x ${expectedClanLabel})`);
         }

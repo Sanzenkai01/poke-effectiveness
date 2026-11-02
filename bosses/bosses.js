@@ -6741,6 +6741,10 @@ function isPokemonBossUsageRoleAllowedForCatalog(catalogOrMode, roleKey) {
 function getPokemonBossUsageClanKeyForSubject(subject) {
   if (!subject || typeof subject !== 'object') return '';
 
+  const primaryType = String(subject.type1 || subject.primaryType || '').trim().toLowerCase();
+  const clanFromPrimaryType = fixedRecommendationClanByPrimaryType[primaryType];
+  if (clanFromPrimaryType) return clanFromPrimaryType;
+
   return normalizeBossClanKey(subject.team || subject.clan || subject.clanKey || '');
 }
 
@@ -11702,6 +11706,7 @@ function createBossSearchEntryFromCatalogPokemon(entry) {
   if (!name || !catalogRole) return null;
 
   const moveTypes = getBossSearchCatalogEntryMoveTypes(entry);
+  const primaryType = String(entry.type1 || entry.primaryType || '').trim().toLowerCase();
   const result = {
     name,
     image: entry.image || '',
@@ -11710,7 +11715,7 @@ function createBossSearchEntryFromCatalogPokemon(entry) {
     description: replaceRecommendationMoveTypeDescription(entry.description || '', moveTypes),
     note: entry.note || '',
     level: entry.level,
-    team: entry.team || '',
+    team: fixedRecommendationClanByPrimaryType[primaryType] || '',
     searchCatalogRole: catalogRole,
     recommendedRole: bossSearchCatalogRoleMap[catalogRole]
   };

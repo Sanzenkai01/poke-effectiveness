@@ -331,7 +331,7 @@ const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261101-horizons-gold-team-recommendations-v2';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261102-pokemon-clan-primary-type-v1';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261026-mapdex-markers-v1';
@@ -935,6 +935,26 @@ const TEAM_ASSETS = Object.freeze({
     instinct: { label: 'Instinct', image: 'bosses/Instinct.png' },
     mystic: { label: 'Mystic', image: 'bosses/Mystic.png' },
     valor: { label: 'Valor', image: 'bosses/Valor.png' }
+});
+const POKEMON_CLAN_BY_PRIMARY_TYPE = Object.freeze({
+    fairy: 'mystic',
+    fighting: 'mystic',
+    ghost: 'mystic',
+    ice: 'mystic',
+    steel: 'mystic',
+    water: 'mystic',
+    dragon: 'instinct',
+    electric: 'instinct',
+    grass: 'instinct',
+    ground: 'instinct',
+    poison: 'instinct',
+    psychic: 'instinct',
+    bug: 'valor',
+    dark: 'valor',
+    fire: 'valor',
+    flying: 'valor',
+    normal: 'valor',
+    rock: 'valor'
 });
 const TEAM_BUILDER_DPS_SUB_FUNCTIONS = Object.freeze(['finisher', 'stunner', 'silencer']);
 const TEAM_BUILDER_TANK_ROLE_FILTERS = Object.freeze(['defender', 'all-rounder']);
@@ -22942,7 +22962,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20261101-horizons-gold-team-recommendations-v2').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261102-pokemon-clan-primary-type-v1').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }
@@ -24043,6 +24063,10 @@ function getPokemonTeamInfo(teamKey){
         label: normalized ? normalized.charAt(0).toUpperCase() + normalized.slice(1) : 'Sem time',
         image: ''
     };
+}
+
+function getPokemonClanFromPrimaryType(primaryType){
+    return POKEMON_CLAN_BY_PRIMARY_TYPE[normalizePokemonTypeKey(primaryType)] || '';
 }
 
 function getPokemonImageSource(entry){
@@ -26282,7 +26306,7 @@ function normalizePokemonCatalogEntry(entry, index){
         type2: secondaryType,
         naturalElements,
         moveset,
-        team: String(entry.team || '').trim().toLowerCase(),
+        team: getPokemonClanFromPrimaryType(primaryType),
         image: hasImage ? String(entry.image || '').trim() : `${slug}.png`,
         price: Number(entry.price ?? entry.preco ?? 0) || 0,
         priceLabel: String(entry.priceLabel || '').trim(),
