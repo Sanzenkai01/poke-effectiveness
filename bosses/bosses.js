@@ -11136,26 +11136,11 @@ const HORIZONS_GOLD_TEAM_EXAMPLES = Object.freeze([
     moveset: 'Steel',
     sideLabel: 'Lados A e B',
     pokemon: Object.freeze([
-      ['Mawile', 'pokemons/3gen/mawile.png'],
+      ['Mega Steelix', 'pokemons/megas/mega-steelix.png'],
       ['Empoleon', 'pokemons/4gen/empoleon.png'],
       ['Tinkaton', 'pokemons/9gen/tinkaton.png'],
       ['Aegislash (sword form)', 'pokemons/6gen/aegislash-blade.png'],
       ['Lucario', 'pokemons/4gen/lucario.png'],
-      ['Pokémon de Função', '']
-    ])
-  }),
-  Object.freeze({
-    clan: 'Mystic',
-    image: 'Mystic.png',
-    sides: ['a'],
-    moveset: 'Water',
-    sideLabel: 'Lado A',
-    pokemon: Object.freeze([
-      ['Starmie', 'pokemons/1gen/starmie.png'],
-      ['Gyarados', 'pokemons/1gen/gyarados.png'],
-      ['Octillery', 'pokemons/2gen/octillery.png'],
-      ['Milotic', 'pokemons/3gen/milotic.png'],
-      ['Samurott', 'pokemons/5gen/samurott.png'],
       ['Pokémon de Função', '']
     ])
   }),
@@ -11166,7 +11151,7 @@ const HORIZONS_GOLD_TEAM_EXAMPLES = Object.freeze([
     moveset: 'Steel e Água',
     sideLabel: 'Lado A',
     pokemon: Object.freeze([
-      ['Wormadam Trash', 'pokemons/4gen/wormadam-trash.png'],
+      ['Scizor', 'pokemons/2gen/scizor.png'],
       ['Bisharp', 'pokemons/5gen/bisharp.png'],
       ['Kingambit', 'pokemons/9gen/kingambit.png'],
       ['Barbaracle', 'pokemons/6gen/barbaracle.png'],
@@ -11181,7 +11166,7 @@ const HORIZONS_GOLD_TEAM_EXAMPLES = Object.freeze([
     moveset: 'Steel e Fire',
     sideLabel: 'Lado B',
     pokemon: Object.freeze([
-      ['Wormadam Trash', 'pokemons/4gen/wormadam-trash.png'],
+      ['Scizor', 'pokemons/2gen/scizor.png'],
       ['Bisharp', 'pokemons/5gen/bisharp.png'],
       ['Kingambit', 'pokemons/9gen/kingambit.png'],
       ['Mega Blaziken', 'pokemons/megas/mega-blaziken.png'],

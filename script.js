@@ -331,7 +331,7 @@ const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261029-alpha-marowak-lombre-v2';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261101-horizons-gold-team-recommendations-v2';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261026-mapdex-markers-v1';
@@ -22942,7 +22942,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20261031-pokebolas-kurt-map-v1').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261101-horizons-gold-team-recommendations-v2').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }
