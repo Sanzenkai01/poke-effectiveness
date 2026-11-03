@@ -1,13 +1,15 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-10-30-ace-pokemon',
-            layout: 'text',
-            title: 'Atualizações do dia 30/10.',
+            id: '2026-11-03-mini-tasks',
+            layout: 'text-image',
+            title: 'Atualizações do dia 03/11/2026.',
             category: 'Atualizações',
-            subtitle: 'Novos Pokémon Ace: Gogoat, Braviary e Mienshao',
-            text: 'Mais Pokémon serão adicionados após a atualização.',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1565796162487714003',
+            subtitle: 'Novo Funcionamento das Mini Tasks',
+            text: 'Derrote qualquer pokémon para Task de Kill, entrega de itens agora é com Ace Essence, mesma mini task pode ser feita até 3x.',
+            image: 'news/image-news.png',
+            imageAlt: 'Captura de tela de uma Mini Task para derrotar Pokémon, com o limite semanal de 0/3, detalhes do objetivo e botão Aceitar.',
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567236421939372113',
             linkLabel: 'Confira as novidades no Discord'
         }
     ]);
