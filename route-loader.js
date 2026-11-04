@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20261103-mini-tasks-news-v1';
+    var APP_SHELL_VERSION = '20261104-trainer-relics-v1';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
     var appUrl = new URL(appShellPath, window.location.href);

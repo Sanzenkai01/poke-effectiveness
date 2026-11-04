@@ -1,15 +1,15 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-11-03-mini-tasks',
+            id: '2026-11-04-trainer-relics',
             layout: 'text-image',
-            title: 'Atualizações do dia 03/11/2026.',
+            title: 'Notícias do dia 04/11/2026.',
             category: 'Atualizações',
-            subtitle: 'Novo Funcionamento das Mini Tasks',
-            text: 'Derrote qualquer pokémon para Task de Kill, entrega de itens agora é com Ace Essence, mesma mini task pode ser feita até 3x.',
+            subtitle: 'Novo sistema de Relics',
+            text: 'Esse novo sistema trará melhorias permanentes para o treinador, beneficiando todos os seus Pokémon!',
             image: 'news/image-news.png',
-            imageAlt: 'Captura de tela de uma Mini Task para derrotar Pokémon, com o limite semanal de 0/3, detalhes do objetivo e botão Aceitar.',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567236421939372113',
+            imageAlt: 'Cartão de treinador na aba Relics, mostrando efeitos permanentes e materiais para desbloqueio.',
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567616647798460487',
             linkLabel: 'Confira as novidades no Discord'
         }
     ]);
