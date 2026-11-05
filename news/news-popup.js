@@ -1,15 +1,15 @@
 (() => {
     const NEWS_ITEMS = Object.freeze([
         {
-            id: '2026-11-04-trainer-relics',
+            id: '2026-11-05-wiki-pstory',
             layout: 'text-image',
-            title: 'Notícias do dia 04/11/2026.',
+            title: 'Atualizações do dia 05/11/2026.',
             category: 'Atualizações',
-            subtitle: 'Novo sistema de Relics',
-            text: 'Esse novo sistema trará melhorias permanentes para o treinador, beneficiando todos os seus Pokémon!',
-            image: 'news/image-news.png',
-            imageAlt: 'Cartão de treinador na aba Relics, mostrando efeitos permanentes e materiais para desbloqueio.',
-            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567616647798460487',
+            subtitle: 'Nova Wiki Pstory Oficial',
+            text: 'Conheça a nova Wiki Pstory Oficial e explore os conteúdos e ferramentas disponíveis para a comunidade.',
+            image: 'news/image-news.png?v=20261105-wiki-pstory-v1',
+            imageAlt: 'Página inicial da Wiki Pstory Oficial, com navegação rápida e atalhos para conteúdos da comunidade.',
+            link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567977567649140899',
             linkLabel: 'Confira as novidades no Discord'
         }
     ]);
