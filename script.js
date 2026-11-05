@@ -4324,6 +4324,18 @@ function initializeGlobalSearch(){
 
 }
 
+function initializeSkipLink(){
+    const skipLink = document.querySelector('.skip-link');
+    const mainContent = document.getElementById('app-main-content');
+    if(!skipLink || !mainContent) return;
+
+    skipLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        mainContent.focus();
+    });
+}
+
+initializeSkipLink();
 initializeGlobalSearch();
 
 function resolveCommunityTopicKey(topicKey){
