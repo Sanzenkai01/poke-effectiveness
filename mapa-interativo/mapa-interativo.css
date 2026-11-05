@@ -416,6 +416,12 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .interactive-map-filter-tooltip {
+    animation: none;
+  }
+}
+
 .interactive-map-sidebar__summary {
   margin-top: 0.65rem;
   padding-top: 0.65rem;
@@ -1320,5 +1326,4 @@ body[data-active-tab="mapa-interativo"] #content-mapa-interativo {
 body.interactive-map-page-fullscreen {
   overflow: hidden !important;
 }
-
 

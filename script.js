@@ -336,13 +336,13 @@ const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261102-pokemon-clan-pri
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261026-mapdex-markers-v1';
-const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20260817f';
+const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20261105-map-reduced-motion-v1';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20261020-page-folders-v1';
 const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     bosses: '20261021-bosses-panel-v1',
     pokemons: '20261016-pokemon-singular-labels-v1',
-    times: '20261105-times-search-panel-polish-v1',
+    times: '20261105-times-team-builder-load-v1',
     'liga-pokemon': '20261028-liga-required-pokemon-v2',
     'passe-de-batalha': '20261105-battle-pass-empty-state-section-v6',
     'team-builder': '20261011-team-builder-groups',
@@ -487,7 +487,7 @@ const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261030-tinkatuff-steel-m
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
-const TEAMS_CATALOG_URL = 'times/teams.json?v=20260629a';
+const TEAMS_CATALOG_URL = 'times/teams.json?v=20261105-times-lazy-catalog-v1';
 const POKEMON_CATALOG_PAGE_SIZE = 50;
 const TEAM_POKEMON_IMAGE_VERSION = '20260604a';
 const POKEMON_IMAGE_PLACEHOLDER = 'pokemons/placeholder.svg';
@@ -1331,6 +1331,8 @@ let timesClanFilter = 'all';
 let timesTagFilter = 'all';
 let timesSearchFilter = '';
 let timesComputedTeams = [];
+let timesTeamCardsById = new Map();
+let timesRenderedTeamIds = [];
 let timesCalculationPromise = null;
 let timesStatus = null;
 let timesSearchInput = null;
@@ -3309,6 +3311,18 @@ function isMobileSidebarMode(){
     return Boolean(mobileSidebarQuery?.matches);
 }
 
+function getSidebarFocusableElements(){
+    if(!appSidebar) return [];
+
+    return Array.from(appSidebar.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter((element) => (
+        element.tabIndex >= 0
+        && element.getClientRects().length > 0
+        && !element.closest('[hidden]')
+    ));
+}
+
 function setSidebarGroupExpanded(groupEl, expanded){
     if(!(groupEl instanceof HTMLElement)) return;
 
@@ -3346,6 +3360,9 @@ function setSidebarOpen(nextOpen){
         mobileNavToggle.setAttribute('aria-label', shouldOpen ? 'Fechar menu' : 'Abrir menu');
         mobileNavToggle.setAttribute('title', shouldOpen ? 'Fechar menu' : 'Abrir menu');
     }
+    if(homeBtn){
+        homeBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
     if(appSidebar){
         appSidebar.setAttribute('aria-hidden', isMobile ? (shouldOpen ? 'false' : 'true') : 'false');
     }
@@ -3353,6 +3370,15 @@ function setSidebarOpen(nextOpen){
         const showBackdrop = isMobile && shouldOpen;
         appShellBackdrop.hidden = !showBackdrop;
         appShellBackdrop.setAttribute('aria-hidden', showBackdrop ? 'false' : 'true');
+    }
+
+    if(isMobile && shouldOpen && !sidebarWasOpen){
+        (getSidebarFocusableElements()[0] || appSidebar)?.focus();
+    } else if(isMobile && !shouldOpen && sidebarWasOpen){
+        const focusTarget = mobileNavToggle?.getClientRects().length
+            ? mobileNavToggle
+            : homeBtn;
+        focusTarget?.focus();
     }
 }
 
@@ -3692,6 +3718,34 @@ function initializeSidebarNavigation(){
     document.addEventListener('keydown', (event) => {
         if(event.key === 'Escape' && document.body.classList.contains('sidebar-open')){
             setSidebarOpen(false);
+            return;
+        }
+
+        if(
+            event.key !== 'Tab'
+            || !appSidebar
+            || !document.body.classList.contains('sidebar-open')
+            || !isMobileSidebarMode()
+        ){
+            return;
+        }
+
+        const focusableElements = getSidebarFocusableElements();
+        if(!focusableElements.length){
+            event.preventDefault();
+            appSidebar.focus();
+            return;
+        }
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const focusIsOutsideSidebar = !appSidebar.contains(document.activeElement);
+        if(event.shiftKey && (document.activeElement === firstElement || focusIsOutsideSidebar)){
+            event.preventDefault();
+            lastElement.focus();
+        } else if(!event.shiftKey && (document.activeElement === lastElement || focusIsOutsideSidebar)){
+            event.preventDefault();
+            firstElement.focus();
         }
     });
 
@@ -4223,9 +4277,12 @@ function initializeGlobalSearch(){
     });
 
     siteGlobalSearchInput.addEventListener('focus', () => {
-        if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length >= 2){
-            renderGlobalSearchResults();
-        }
+        if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length < 2) return;
+        ensureGlobalSearchHydrated().then(() => {
+            if(normalizeGlobalSearchValue(siteGlobalSearchInput.value || '').length >= 2){
+                renderGlobalSearchResults();
+            }
+        }).catch(console.error);
     });
 
     siteGlobalSearchInput.addEventListener('search', () => {
@@ -4265,9 +4322,6 @@ function initializeGlobalSearch(){
         hideGlobalSearchResults();
     });
 
-    window.setTimeout(() => {
-        ensureGlobalSearchHydrated().catch(console.error);
-    }, 0);
 }
 
 initializeGlobalSearch();
@@ -9711,6 +9765,12 @@ function normalizeTeamEntry(entry, index){
     const elementLabel = rawElementLabel || elementKeys.map(formatPokemonTypeLabel).join('/') || 'Sem elemento';
     const tags = normalizeTeamTextList(entry.tags || entry.tag || entry.labels);
     const tagKeys = tags.map(normalizeTeamTagKey).filter(Boolean);
+    const hiddenTags = normalizeTeamTextList(entry.hiddenTags || entry.hiddenTag);
+    const hiddenTagKeys = hiddenTags.map(normalizeTeamTagKey).filter(Boolean);
+    const builderModes = hiddenTagKeys.filter(key => Object.prototype.hasOwnProperty.call(TEAM_BUILDER_MODE_CONFIGS, key));
+    if(builderModes.length > 1){
+        throw new Error(`O time "${entry.id || index + 1}" tem mais de uma tag de modo do Team Builder.`);
+    }
     const comment = String(entry.comment || entry.note || entry.description || '').trim();
     const tips = normalizeTeamTextList(entry.tips || entry.advice || entry.strategies);
     const pokemons = Array.isArray(entry.pokemons)
@@ -9730,6 +9790,9 @@ function normalizeTeamEntry(entry, index){
         alternatives.hunts || alternatives.hunt || entry.alternativeHunts || entry.alternativeHunt
     ));
     const id = String(entry.id || `${clanKey || 'team'}-${index + 1}`).trim();
+    const computedHunts = entry.computedHunts == null
+        ? null
+        : normalizeComputedTeamHunts(entry.computedHunts, id);
     return {
         id,
         clanKey,
@@ -9738,10 +9801,13 @@ function normalizeTeamEntry(entry, index){
         elementKeys,
         tags,
         tagKeys,
+        hiddenTags,
+        builderMode: builderModes[0] || '6x',
         comment,
         tips,
         pokemons,
         hunts,
+        computedHunts,
         alternativePokemons,
         alternativeHunts
     };
@@ -9797,6 +9863,38 @@ function normalizeTeamEntityList(values){
             return null;
         })
         .filter(Boolean);
+}
+
+function normalizeComputedTeamHunts(values, teamId){
+    if(!Array.isArray(values)){
+        throw new Error(`As hunts precomputadas do time "${teamId}" precisam ser uma lista.`);
+    }
+
+    return values.map((hunt, index) => {
+        const name = String(hunt?.name || '').trim();
+        if(!name){
+            throw new Error(`A hunt ${index + 1} do time "${teamId}" não tem nome.`);
+        }
+        if(!Array.isArray(hunt.items)){
+            throw new Error(`A hunt "${name}" do time "${teamId}" não tem uma lista de Pokémon.`);
+        }
+        const items = hunt.items.map(item => {
+            const itemName = String(item?.name || '').trim();
+            if(!itemName) return null;
+            return {
+                name: itemName,
+                image: String(item.image || buildTeamPokemonImageFileName(itemName)).trim()
+            };
+        }).filter(Boolean);
+        if(!items.length){
+            throw new Error(`A hunt "${name}" do time "${teamId}" não tem Pokémon válidos.`);
+        }
+        return {
+            name,
+            image: String(hunt.image || items[0].image).trim(),
+            items
+        };
+    });
 }
 
 function getTeamHuntPreEvolutionSourceNames(huntName){
@@ -13727,7 +13825,7 @@ function initializeTimesPage(){
 
     if(timesRetryButton){
         timesRetryButton.addEventListener('click', () => {
-            calculateTimesPageHunts({ retry: true });
+            loadTimesPageTeams({ retry: true });
         });
     }
 
@@ -13837,11 +13935,11 @@ function createTimesTeamCard(team){
 
     const roster = document.createElement('div');
     roster.className = 'team-card__roster times-team-card__roster';
-    team.computedMembers.forEach(({ member, entry }) => {
+    team.pokemons.forEach(member => {
         const memberCard = document.createElement('div');
         memberCard.className = 'times-team-member';
         const image = document.createElement('img');
-        image.src = getPokemonImageSource(entry);
+        image.src = getTeamPokemonImageSource(member);
         image.alt = member.name;
         image.loading = 'lazy';
         image.decoding = 'async';
@@ -13872,6 +13970,26 @@ function createTimesTeamCard(team){
     }
     huntsDetails.append(huntsSummary, huntList);
 
+    const loadStatus = document.createElement('p');
+    loadStatus.className = 'times-team-card__load-status';
+    loadStatus.setAttribute('aria-live', 'polite');
+    loadStatus.hidden = true;
+    const loadButton = document.createElement('button');
+    loadButton.type = 'button';
+    loadButton.className = 'times-team-builder-cta__button times-team-card__builder-button';
+    loadButton.textContent = 'Montar este time';
+    loadButton.setAttribute('aria-label', `Carregar ${team.clanLabel} ${team.elementLabel} no Team Builder`);
+    loadButton.addEventListener('click', () => {
+        loadStatus.hidden = true;
+        try{
+            showTeamBuilder({ team });
+        }catch(error){
+            console.error('Times team could not be loaded in Team Builder', error);
+            loadStatus.textContent = `Não foi possível carregar este time: ${error.message}`;
+            loadStatus.hidden = false;
+        }
+    });
+
     card.append(meta, hero, tags, roster, huntsDetails);
     if(team.comment || team.tips.length || team.alternativePokemons.length){
         const more = document.createElement('details');
@@ -13898,6 +14016,7 @@ function createTimesTeamCard(team){
         more.append(summary, content);
         card.appendChild(more);
     }
+    card.append(loadStatus, loadButton);
     return card;
 }
 
@@ -13914,11 +14033,25 @@ function renderTimesCatalog(){
     const filteredTeams = timesComputedTeams.filter(team => {
         if(timesClanFilter !== 'all' && team.clanKey !== timesClanFilter) return false;
         if(timesTagFilter !== 'all' && !(team.tagKeys || []).includes(timesTagFilter)) return false;
-        return !normalizedSearch || getTimesTeamSearchText(team).includes(normalizedSearch);
+        return !normalizedSearch || team.searchText.includes(normalizedSearch);
     });
-    const fragment = document.createDocumentFragment();
-    filteredTeams.forEach(team => fragment.appendChild(createTimesTeamCard(team)));
-    timesCardGrid.replaceChildren(fragment);
+    const nextTeamIds = filteredTeams.map(team => team.id);
+    if(
+        nextTeamIds.length !== timesRenderedTeamIds.length
+        || nextTeamIds.some((id, index) => id !== timesRenderedTeamIds[index])
+    ){
+        const fragment = document.createDocumentFragment();
+        filteredTeams.forEach(team => {
+            let card = timesTeamCardsById.get(team.id);
+            if(!card){
+                card = createTimesTeamCard(team);
+                timesTeamCardsById.set(team.id, card);
+            }
+            fragment.appendChild(card);
+        });
+        timesCardGrid.replaceChildren(fragment);
+        timesRenderedTeamIds = nextTeamIds;
+    }
 
     const emptyState = document.getElementById('times-empty-state');
     const emptyTitle = document.getElementById('times-empty-title');
@@ -13931,7 +14064,7 @@ function renderTimesCatalog(){
             : 'O catálogo de times está vazio.';
     }
     if(timesStatus){
-        timesStatus.textContent = `${filteredTeams.length} de ${timesComputedTeams.length} times exibidos. As hunts são calculadas pelo Team Builder.`;
+        timesStatus.textContent = `${filteredTeams.length} de ${timesComputedTeams.length} times exibidos. Hunts pré-calculadas pelo Team Builder.`;
     }
 }
 
@@ -13966,19 +14099,7 @@ function getTimesTeamBuilderCatalogEntry(member, team){
 }
 
 function mapTeamToTeamBuilderSelections(team){
-    const roster = team.pokemons.map(member => ({
-        member,
-        entry: getTimesTeamBuilderCatalogEntry(member, team),
-        slot: { kind: getTeamMemberSlotKind(member) }
-    })).filter(item => item.entry);
-    if(roster.length !== team.pokemons.length || roster.length !== 6){
-        const mappedNames = new Set(roster.map(item => normalizePokemonSearchText(item.member?.name || item.entry?.name)));
-        const missingNames = team.pokemons
-            .filter(member => !mappedNames.has(normalizePokemonSearchText(member.name)))
-            .map(member => member.name);
-        throw new Error(`O time "${team.clanLabel} ${team.elementLabel}" não pode ser calculado; Pokémon sem entrada no Team Builder: ${missingNames.join(', ') || 'composição incompleta'}.`);
-    }
-
+    const roster = getTimesTeamBuilderRoster(team);
     const tank = roster.find(item => item.slot.kind === 'tank');
     const remainingEntries = roster.filter(item => item !== tank);
     if(!tank || remainingEntries.length !== 5){
@@ -14001,50 +14122,85 @@ function mapTeamToTeamBuilderSelections(team){
     };
 }
 
-async function calculateTimesPageHunts({ retry = false } = {}){
+function getTimesTeamBuilderRoster(team){
+    const roster = team.pokemons.map(member => ({
+        member,
+        entry: getTimesTeamBuilderCatalogEntry(member, team),
+        slot: { kind: getTeamMemberSlotKind(member) }
+    })).filter(item => item.entry);
+    if(roster.length !== team.pokemons.length || roster.length !== 6){
+        const mappedNames = new Set(roster.map(item => normalizePokemonSearchText(item.member?.name || item.entry?.name)));
+        const missingNames = team.pokemons
+            .filter(member => !mappedNames.has(normalizePokemonSearchText(member.name)))
+            .map(member => member.name);
+        throw new Error(`O time "${team.clanLabel} ${team.elementLabel}" não pode ser calculado; Pokémon sem entrada no Team Builder: ${missingNames.join(', ') || 'composição incompleta'}.`);
+    }
+    return roster;
+}
+
+function mapTimesTeamToBuilderSelections(team, mode = team.builderMode || '6x'){
+    if(mode === '6x') return mapTeamToTeamBuilderSelections(team).selections;
+
+    const modeConfig = TEAM_BUILDER_MODE_CONFIGS[mode];
+    if(!modeConfig?.slotLabels?.length){
+        throw new Error(`O modo "${mode}" do Team Builder não é válido.`);
+    }
+    const availableMembers = getTimesTeamBuilderRoster(team).map(({ member, entry, slot }) => ({
+        member,
+        entry,
+        slotKind: slot.kind
+    }));
+    const selections = {};
+    TEAM_BUILDER_SLOT_CONFIGS.forEach((slot, index) => {
+        const label = modeConfig.slotLabels[index];
+        const memberIndex = availableMembers.findIndex(item => {
+            if(label === 'Lurer') return isTeamBuilderLurerEntry(item.entry);
+            if(label === 'Finisher') return item.slotKind === 'finisher';
+            return item.slotKind === 'dps';
+        });
+        if(memberIndex < 0){
+            throw new Error(`A composição não tem Pokémon suficiente para preencher o slot "${label}" do modo ${mode}.`);
+        }
+        selections[slot.id] = availableMembers.splice(memberIndex, 1)[0].entry;
+    });
+    return selections;
+}
+
+async function loadTimesPageTeams({ retry = false } = {}){
     if(timesCalculationPromise) return timesCalculationPromise;
     if(timesComputedTeams.length && !retry){
         renderTimesCatalog();
         return true;
     }
-    if(retry) timesComputedTeams = [];
+    if(retry){
+        timesComputedTeams = [];
+        timesTeamCardsById.clear();
+        timesRenderedTeamIds = [];
+    }
     refreshTimesDomReferences();
-    if(timesStatus) timesStatus.textContent = 'Calculando as hunts para cada time...';
+    if(timesStatus) timesStatus.textContent = 'Carregando os times e hunts registradas...';
     if(timesRetryButton) timesRetryButton.hidden = true;
     if(timesCardGrid) timesCardGrid.replaceChildren();
 
-    timesCalculationPromise = Promise.all([
-        ensurePokemonCatalogLoaded(),
-        ensureTeamsCatalogLoaded()
-    ])
+    timesCalculationPromise = ensureTeamsCatalogLoaded(retry)
         .then(() => {
             if(!teamsCatalog.length) throw new Error('O catálogo não contém times para calcular.');
-            const previousSelections = teamBuilderSelections;
-            const previousMode = teamBuilderMode;
-            const previousIgnoreTank = teamBuilderIgnoreTankForHunts;
-            const computedTeams = [];
-            try{
-                teamBuilderMode = '6x';
-                teamBuilderIgnoreTankForHunts = false;
-                for(let index = 0; index < teamsCatalog.length; index += 1){
-                    const team = teamsCatalog[index];
-                    const { selections, members } = mapTeamToTeamBuilderSelections(team);
-                    teamBuilderSelections = selections;
-                    const computedHunts = getTeamBuilderHuntRecommendations();
-                    computedTeams.push({ ...team, computedMembers: members, computedHunts });
+            const computedTeams = teamsCatalog.map(team => {
+                if(!Array.isArray(team.computedHunts)){
+                    throw new Error(`O time "${team.id}" não tem hunts precomputadas no catálogo.`);
                 }
-            }finally{
-                teamBuilderSelections = previousSelections;
-                teamBuilderMode = previousMode;
-                teamBuilderIgnoreTankForHunts = previousIgnoreTank;
-            }
+                return {
+                    ...team,
+                    searchText: getTimesTeamSearchText(team)
+                };
+            });
             timesComputedTeams = computedTeams;
             renderTimesCatalog();
             return true;
         })
         .catch(error => {
-            console.error('Times hunt calculation failed', error);
-            if(timesStatus) timesStatus.textContent = 'Não foi possível calcular as hunts dos times.';
+            console.error('Times catalog loading failed', error);
+            if(timesStatus) timesStatus.textContent = 'Não foi possível carregar os times e hunts registradas.';
             if(timesCardGrid) timesCardGrid.replaceChildren();
             if(timesRetryButton) timesRetryButton.hidden = false;
             return false;
@@ -14076,16 +14232,16 @@ function showTimes(){
     if(timesComputedTeams.length){
         renderTimesCatalog();
     } else {
-        calculateTimesPageHunts();
+        loadTimesPageTeams();
     }
     updateUrl();
 }
 
-function showTeamBuilder(){
+function showTeamBuilder(options = {}){
     if(contentTeamBuilder?.dataset.panelFragment && contentTeamBuilder.dataset.panelLoaded !== 'true'){
         setVisiblePanel(contentTeamBuilder);
         ensurePanelFragmentLoaded(contentTeamBuilder)
-            .then(() => showTeamBuilder())
+            .then(() => showTeamBuilder(options))
             .catch(error => console.error('Team Builder panel load failed', error));
         return;
     }
@@ -14113,14 +14269,41 @@ function showTeamBuilder(){
         renderTeamBuilderClanFilters();
         renderTeamBuilderSubFunctionFilters();
         renderTeamBuilderTypeFilters();
-        applyTeamBuilderShareValueFromUrl();
+        if(options.team){
+            const mode = TEAM_BUILDER_MODE_CONFIGS[options.team.builderMode]
+                ? options.team.builderMode
+                : '6x';
+            teamBuilderMode = mode;
+            if(teamBuilderModeSelect) teamBuilderModeSelect.value = mode;
+            teamBuilderSelections = mapTimesTeamToBuilderSelections(options.team, mode);
+            teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS[0]?.id || '';
+            teamBuilderIgnoreTankForHunts = false;
+            teamBuilderHuntsVisible = false;
+            teamBuilderHuntsLoading = false;
+            teamBuilderFilters = { search: '', clan: 'all', subFunctions: [], roles: [], type: 'all' };
+            if(teamBuilderSearchInput) teamBuilderSearchInput.value = '';
+            teamBuilderUrlHydratedValue = getTeamBuilderShareValue();
+        } else {
+            applyTeamBuilderShareValueFromUrl();
+        }
         renderTeamBuilder();
         if(useGsap && contentTeamBuilder){
             gsap.from(contentTeamBuilder, { opacity: 0, y: -10, duration: 0.4 });
         }
     }).catch(error => {
         console.error('Team Builder load failed', error);
-        if(teamBuilderStatus) teamBuilderStatus.textContent = 'Nao foi possivel carregar o Team Builder.';
+        if(teamBuilderStatus){
+            if(options.team){
+                teamBuilderSelections = {};
+                teamBuilderActiveSlotId = TEAM_BUILDER_SLOT_CONFIGS[0]?.id || '';
+                teamBuilderHuntsVisible = false;
+                teamBuilderHuntsLoading = false;
+                renderTeamBuilder();
+            }
+            teamBuilderStatus.textContent = options.team
+                ? `Não foi possível carregar o time selecionado: ${error.message}`
+                : 'Nao foi possivel carregar o Team Builder.';
+        }
     });
 }
 
@@ -23515,7 +23698,7 @@ async function cleanupDisabledServiceWorker(){
 
 if('serviceWorker' in navigator){
     if(enableSW){
-        navigator.serviceWorker.register('sw.js?v=20261105-times-search-panel-polish-v1').then(reg=>{
+        navigator.serviceWorker.register('sw.js?v=20261105-times-team-builder-load-v1').then(reg=>{
             if(reg.waiting){
                 alert('Nova versão disponível. Atualize a página.');
             }

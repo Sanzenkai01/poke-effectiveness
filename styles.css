@@ -1007,6 +1007,23 @@ p {
   border: 0;
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10000;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--wiki-border);
+  border-radius: var(--wiki-radius);
+  background: var(--wiki-surface-raised);
+  color: var(--wiki-text);
+  transform: translateY(calc(-100% - 1rem));
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 .type-button:hover {
   transform: scale(1.1);
 }
@@ -1769,6 +1786,16 @@ p {
   text-align: center;
 }
 
+.speedster-search-close::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
 .speedster-search-close:hover {
   background: rgba(0,0,0,0.6);
 }
@@ -2046,6 +2073,11 @@ p {
 
 .location-overlay:focus {
   outline: none;
+}
+
+.location-overlay:focus-visible {
+  outline: 2px solid var(--wiki-accent, #e6e8ea) !important;
+  outline-offset: -4px;
 }
 
 .speedster-image-wrapper {
@@ -3619,6 +3651,23 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body,
+  .info-icon,
+  .streamer-rat-chip::before,
+  .result-fossils,
+  .boost-type-button:hover .boost-type-thumb::after,
+  .pokemon-entry-card:hover::after,
+  .team-card:hover::after,
+  .team-builder-result-card:hover::after,
+  .team-builder-hunt-card:hover::after,
+  .boost-material-card:hover::after,
+  .speedster-card:hover::after,
+  .boss-role-card:hover::after,
+  .boss-role-pick:hover::after,
+  .streamer-card:hover::after,
+  .maniacs-card:hover::after,
+  .bosses-info-card:hover::after,
+  .home-tool-card:hover::after,
   body::before,
   .header::before,
   .site-global-search::before,
@@ -20726,6 +20775,20 @@ body.home-view .app-shell {
       0 10px 22px rgba(0, 0, 0, 0.24);
     backdrop-filter: blur(10px);
     font-size: 1.25rem;
+  }
+
+  #mobile-nav-toggle {
+    position: relative !important;
+  }
+
+  #mobile-nav-toggle::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
   }
 
   #mobile-nav-toggle:hover,

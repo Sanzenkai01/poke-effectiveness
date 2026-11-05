@@ -166,12 +166,13 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20261028-horizons-gold-team-guide-v3">
+  <link rel="stylesheet" href="styles.css?v=20261105-mobile-sidebar-targets-v1">
   <link rel="stylesheet" href="wiki-theme.css?v=20261026-sidebar-spacing-breakpoint-v1">
   <link rel="stylesheet" href="news/news-popup.css?v=20261101-ace-pokemon-news-v1">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
+    <a class="skip-link" href="#app-main-content">Pular para o conteúdo</a>
     <div id="app-boot-screen" role="status" aria-live="polite" aria-label="Carregando Pstory Utilities">
       <div class="app-boot-screen__content">
         <span class="app-boot-screen__orb" aria-hidden="true"></span>
@@ -228,7 +229,7 @@
     </script>
     <header class="header">
       <button id="mobile-nav-toggle" type="button" aria-label="Abrir menu" title="Menu" aria-expanded="false" aria-controls="app-sidebar">☰</button>
-      <button id="home-btn" class="wiki-topbar__brand" data-nav-action="toggle-sidebar" aria-label="Mostrar ou ocultar a barra lateral" title="Mostrar ou ocultar a barra lateral">
+      <button id="home-btn" class="wiki-topbar__brand" data-nav-action="toggle-sidebar" aria-label="Mostrar ou ocultar a barra lateral" title="Mostrar ou ocultar a barra lateral" aria-expanded="false" aria-controls="app-sidebar">
         <span class="home-btn__menu" aria-hidden="true">
           <span></span>
           <span></span>
@@ -291,7 +292,7 @@
       <button id="tab-community" class="tab" role="tab" aria-selected="false" aria-controls="content-community">Vídeos</button>
     </nav>
 <div class="app-shell">
-      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site">
+      <aside id="app-sidebar" class="app-sidebar" aria-label="Navegacao do site" tabindex="-1">
         <svg class="sidebar-icon-sprite" aria-hidden="true" focusable="false" style="display: none;">
           <symbol id="sidebar-icon-portal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 4c3 2 4 5 2 8s-5 4-8 2M12 20c-3-2-4-5-2-8s5-4 8-2"></path></symbol>
           <symbol id="sidebar-icon-trophy" viewBox="0 0 24 24"><path d="M8 4h8v4c0 4-1.8 6-4 6s-4-2-4-6V4zM9 20h6M12 14v6M8 6H4v2c0 2.2 1.8 4 4 4M16 6h4v2c0 2.2-1.8 4-4 4"></path></symbol>
@@ -619,7 +620,7 @@
         aria-label="Fechar navegação"
       ></button>
 
-      <main class="app-main">
+      <main id="app-main-content" class="app-main" tabindex="-1">
     <p id="instructions"></p>
 
     <section id="legend" class="legend legend-panel" aria-labelledby="legend-title">
@@ -953,7 +954,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1228 - 2026
+        Build v1236 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1009,11 +1010,11 @@
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
     <script src="js/streamers.shared.js?v=20260707b" defer></script>
     <script src="js/visits.shared.js?v=20261026-countapi-migration-v2" defer></script>
-    <script src="bosses/recommendation-catalog.js?v=20260826d"></script>
-    <script src="js/recommendation-engine.js?v=20260826d"></script>
-    <script src="js/striker-recommendation-engine.js?v=20260902a"></script>
+    <script src="bosses/recommendation-catalog.js?v=20260826d" defer></script>
+    <script src="js/recommendation-engine.js?v=20260826d" defer></script>
+    <script src="js/striker-recommendation-engine.js?v=20260902a" defer></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
-    <script src="script.js?v=20261105-times-search-panel-polish-v1" defer></script>
+    <script src="script.js?v=20261105-times-lazy-catalog-v1" defer></script>
     <script src="news/news-popup.js?v=20261104-trainer-relics-v1" defer></script>
 </body>
 </html>

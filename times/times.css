@@ -3,6 +3,18 @@
   gap: 1.25rem;
 }
 
+.times-team-card__builder-button {
+  justify-self: center;
+  margin-top: 0.15rem;
+}
+
+.times-team-card__load-status {
+  margin: 0;
+  color: #ffb7a8;
+  font-size: 0.74rem;
+  text-align: center;
+}
+
 .times-filter-panel {
   min-width: 0;
 }
@@ -138,12 +150,14 @@
 .times-hub__status-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
 }
 
 .times-hub__status-row p {
   margin: 0;
+  text-align: center;
 }
 
 .times-retry-button,
@@ -166,7 +180,7 @@
 
 .times-team-builder-cta {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .times-card-grid {
@@ -311,15 +325,15 @@
 
 @media (max-width: 640px) {
   .times-hub__status-row {
-    align-items: stretch;
+    align-items: center;
     flex-direction: column;
   }
 
   .times-team-builder-cta {
-    justify-content: stretch;
+    justify-content: center;
   }
 
   .times-team-builder-cta__button {
-    width: 100%;
+    width: auto;
   }
 }

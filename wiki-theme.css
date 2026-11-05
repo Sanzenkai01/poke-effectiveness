@@ -14,7 +14,7 @@
   --wiki-border-soft: #252a30;
   --wiki-text: #e6e8ea;
   --wiki-muted: #9aa2aa;
-  --wiki-faint: #6f7780;
+  --wiki-faint: #8a929a;
   --wiki-accent: #d7b85b;
   --wiki-accent-soft: rgba(215, 184, 91, 0.12);
   --wiki-link: #8db9df;
@@ -72,6 +72,19 @@ body::after,
 a {
   color: var(--wiki-link);
   text-underline-offset: 0.18em;
+}
+
+.app-main :where(p, li) a:not(
+  .card a,
+  [class*="card"] a,
+  [class*="menu"] a,
+  [class*="nav"] a,
+  [role="menu"] a,
+  [role="button"],
+  .button,
+  .btn
+) {
+  text-decoration: underline !important;
 }
 
 button,
