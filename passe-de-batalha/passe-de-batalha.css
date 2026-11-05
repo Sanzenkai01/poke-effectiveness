@@ -328,6 +328,46 @@
   position: relative;
 }
 
+.battle-pass-type-group-title {
+  grid-column: 1 / -1;
+  margin: 0.35rem 0 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--battle-pass-border);
+  color: #ffb88f;
+  font-size: 0.9rem;
+}
+
+.battle-pass-type-group-empty {
+  grid-column: 1 / -1;
+}
+
+.battle-pass-hide-button {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 173, 115, 0.36);
+  border-radius: 10px;
+  background: rgba(255, 123, 84, 0.09);
+  color: var(--battle-pass-text);
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.battle-pass-hide-button:hover,
+.battle-pass-hide-button:focus-visible {
+  outline: none;
+  border-color: rgba(255, 173, 115, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 173, 115, 0.12);
+}
+
 .battle-pass-card__image-wrap {
   position: relative;
   display: grid;
@@ -349,12 +389,17 @@
   display: grid;
   gap: 0.45rem;
   min-width: 0;
+  padding-top: 1.8rem;
   padding-right: 2.2rem;
   align-items: center;
   text-align: center;
 }
 
 .battle-pass-card__topline {
+  position: absolute;
+  top: 0.75rem;
+  left: 3rem;
+  right: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -509,6 +554,56 @@
 
 .battle-pass-remove-types-button:hover,
 .battle-pass-remove-types-button:focus-visible {
+  border-color: rgba(255, 173, 115, 0.65);
+  background: rgba(255, 123, 84, 0.16);
+}
+
+.battle-pass-hidden-pokemon {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid var(--battle-pass-border);
+  border-radius: 16px;
+  background: rgba(12, 18, 20, 0.55);
+}
+
+.battle-pass-hidden-pokemon[hidden] {
+  display: none;
+}
+
+.battle-pass-hidden-pokemon__title {
+  margin: 0;
+  color: var(--battle-pass-muted);
+  font-size: 0.85rem;
+}
+
+.battle-pass-hidden-pokemon__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.battle-pass-restore-button {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 173, 115, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 123, 84, 0.08);
+  cursor: pointer;
+}
+
+.battle-pass-restore-button img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.battle-pass-restore-button:hover,
+.battle-pass-restore-button:focus-visible {
+  outline: none;
   border-color: rgba(255, 173, 115, 0.65);
   background: rgba(255, 123, 84, 0.16);
 }

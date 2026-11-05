@@ -1,0 +1,325 @@
+.times-hub {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.times-filter-panel {
+  min-width: 0;
+}
+
+.times-hunt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.4rem;
+  padding: 0.32rem 0.68rem 0.32rem 0.38rem;
+  border: 1px solid rgba(117, 213, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(117, 213, 255, 0.07);
+  color: #f4f8ff;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.times-hunt-chip__media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 auto;
+}
+
+.times-hunt-chip__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.times-filter-panel .pokemon-filter-panel__head {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+}
+
+.times-filter-panel .pokemon-filter-panel__copy {
+  justify-items: center;
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.times-clan-filter-row,
+.times-tag-filter-row {
+  justify-content: center;
+}
+
+.times-filter-grid {
+  grid-template-columns: minmax(0, min(100%, 32rem));
+  justify-content: center;
+}
+
+.times-filter-button__clan-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  object-fit: contain;
+}
+
+.times-clan-filter-row,
+.times-tag-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.times-filter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(9, 17, 29, 0.72);
+  color: rgba(229, 238, 250, 0.82);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.times-filter-button.is-active,
+.times-filter-button[aria-pressed="true"] {
+  border-color: rgba(var(--module-accent-rgb), 0.42);
+  background: rgba(var(--module-accent-rgb), 0.16);
+  color: #fff;
+}
+
+.times-team-builder-cta__button {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .times-team-builder-cta__button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--module-accent-rgb), 0.68);
+    background: rgba(var(--module-accent-rgb), 0.22);
+    box-shadow: 0 8px 20px rgba(var(--module-accent-rgb), 0.18);
+  }
+}
+
+.times-team-builder-cta__button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .times-team-builder-cta__button {
+    transition: none;
+  }
+
+  .times-team-builder-cta__button:hover,
+  .times-team-builder-cta__button:active {
+    transform: none;
+  }
+}
+
+.times-filter-button:focus-visible,
+.times-team-builder-cta__button:focus-visible,
+.times-retry-button:focus-visible,
+.times-team-more summary:focus-visible,
+.times-hunts-details summary:focus-visible {
+  outline: 2px solid #75d5ff;
+  outline-offset: 3px;
+}
+
+.times-hub__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.times-hub__status-row p {
+  margin: 0;
+}
+
+.times-retry-button,
+.times-team-builder-cta__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.45rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(var(--module-accent-rgb), 0.34);
+  border-radius: 999px;
+  background: rgba(var(--module-accent-rgb), 0.12);
+  color: #f4f8ff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.times-team-builder-cta {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.times-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.times-card-grid .times-team-card {
+  grid-template-rows: auto auto auto auto;
+  gap: 0.75rem;
+  max-width: none;
+  min-height: 0;
+  text-align: left;
+  content-visibility: visible;
+  contain: none;
+}
+
+.times-team-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.times-team-card__clan {
+  color: rgba(216, 229, 244, 0.76);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.times-team-card__count {
+  color: rgba(216, 229, 244, 0.72);
+  font-size: 0.72rem;
+}
+
+.times-team-card__roster {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.times-team-member {
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.42rem 0.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  background: rgba(5, 11, 20, 0.44);
+  text-align: center;
+}
+
+.times-team-member img {
+  width: 2.7rem;
+  height: 2.7rem;
+  object-fit: contain;
+}
+
+.times-team-member__name {
+  overflow: hidden;
+  max-width: 100%;
+  color: #f4f8ff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.times-team-member__role {
+  color: rgba(216, 229, 244, 0.6);
+  font-size: 0.59rem;
+}
+
+.times-hunts-details,
+.times-team-more {
+  min-width: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.65rem;
+}
+
+.times-hunts-details summary,
+.times-team-more summary {
+  color: #f4f8ff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.times-hunts-details__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  padding-top: 0.65rem;
+}
+
+.times-hunts-details .times-hunt-chip {
+  min-height: 2rem;
+  gap: 0.35rem;
+  padding: 0.24rem 0.55rem 0.24rem 0.3rem;
+  font-size: 0.72rem;
+}
+
+.times-hunts-details .times-hunt-chip__media {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.times-team-more__content {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 0.6rem;
+  color: rgba(216, 229, 244, 0.76);
+  font-size: 0.76rem;
+}
+
+.times-team-more__content p {
+  margin: 0;
+}
+
+.times-empty-state {
+  padding: 1.3rem;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  color: rgba(216, 229, 244, 0.78);
+  text-align: center;
+}
+
+.times-empty-state strong,
+.times-empty-state p {
+  margin: 0;
+}
+
+.times-empty-state p {
+  padding-top: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  .times-hub__status-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .times-team-builder-cta {
+    justify-content: stretch;
+  }
+
+  .times-team-builder-cta__button {
+    width: 100%;
+  }
+}

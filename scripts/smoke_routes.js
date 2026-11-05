@@ -69,6 +69,15 @@ const routes = [
     ]
   },
   {
+    path: '/times',
+    label: 'times',
+    checks: [
+      { pattern: /data-active-tab="times"/i, description: 'times active tab' },
+      { pattern: /class="sidebar-sublink is-active"[^>]*data-nav-target="times"/i, description: 'times selected sidebar entry' },
+      { pattern: /id="content-times"/i, description: 'times panel' }
+    ]
+  },
+  {
     path: '/team-builder',
     label: 'team-builder',
     checks: [
