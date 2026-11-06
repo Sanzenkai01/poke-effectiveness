@@ -4366,11 +4366,18 @@ body[data-initial-boss-mode] .bosses-shell .bosses-copy,
   .header #home-btn.wiki-topbar__brand {
     position: fixed !important;
     inset: 7px auto auto 8px !important;
-    width: min(12.5rem, calc(100vw - 120px)) !important;
-    min-width: 0 !important;
+    width: 44px !important;
+    min-width: 44px !important;
     height: 36px !important;
-    padding: 0 8px !important;
-    gap: 0.45rem !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    justify-content: center !important;
+  }
+
+  .header #home-btn.wiki-topbar__brand .home-btn__label,
+  .header #home-btn.wiki-topbar__brand img,
+  .header #home-btn.wiki-topbar__brand::after {
+    display: none !important;
   }
 
   .header #home-btn.wiki-topbar__brand::before {
@@ -4380,7 +4387,6 @@ body[data-initial-boss-mode] .bosses-shell .bosses-copy,
     left: 0;
     width: 44px;
     height: 44px;
-    border-radius: inherit;
     transform: translateY(-50%);
   }
 

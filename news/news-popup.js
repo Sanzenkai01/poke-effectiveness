@@ -8,6 +8,7 @@
             subtitle: 'Nova Wiki Pstory Oficial',
             text: 'Conheça a nova Wiki Pstory Oficial e explore os conteúdos e ferramentas disponíveis para a comunidade.',
             image: 'news/image-news.png?v=20261105-wiki-pstory-v1',
+            imageWebp: 'news/image-news.webp?v=20261105-news-webp-dialog-v1',
             imageAlt: 'Página inicial da Wiki Pstory Oficial, com navegação rápida e atalhos para conteúdos da comunidade.',
             link: 'https://discord.com/channels/1200210281410854982/1556721004670091335/1567977567649140899',
             linkLabel: 'Confira as novidades no Discord'
@@ -26,6 +27,7 @@
             subtitle: dialog.querySelector('[data-news-subtitle]'),
             text: dialog.querySelector('[data-news-text]'),
             imageTrigger: dialog.querySelector('[data-news-image-trigger]'),
+            imageWebpSource: dialog.querySelector('[data-news-image-webp]'),
             image: dialog.querySelector('[data-news-image]'),
             imageCaption: dialog.querySelector('[data-news-image-caption]'),
             link: dialog.querySelector('[data-news-link]'),
@@ -55,10 +57,18 @@
             if(typeof item.image !== 'string' || !item.image.startsWith('news/')){
                 throw new Error(`A notícia "${item.id}" precisa de uma imagem dentro de /news.`);
             }
-            const imageUrl = new URL(item.image, document.baseURI);
-            if(imageUrl.origin !== window.location.origin || !imageUrl.pathname.startsWith('/news/')){
-                throw new Error(`A imagem da notícia "${item.id}" precisa estar dentro de /news.`);
+            if(item.imageWebp !== undefined && (
+                typeof item.imageWebp !== 'string'
+                || !item.imageWebp.startsWith('news/')
+            )){
+                throw new Error(`A imagem WebP da notícia "${item.id}" precisa estar dentro de /news.`);
             }
+            [item.image, item.imageWebp].filter(Boolean).forEach(imagePath => {
+                const imageUrl = new URL(imagePath, document.baseURI);
+                if(imageUrl.origin !== window.location.origin || !imageUrl.pathname.startsWith('/news/')){
+                    throw new Error(`A imagem da notícia "${item.id}" precisa estar dentro de /news.`);
+                }
+            });
             if(typeof item.imageAlt !== 'string' || !item.imageAlt.trim()){
                 throw new Error(`A imagem da notícia "${item.id}" precisa de uma descrição.`);
             }
@@ -92,7 +102,7 @@
     }
 
     function renderNews(item, elements){
-        const { dialog, category, title, subtitle, text, imageTrigger, image, imageCaption, link } = elements;
+        const { dialog, category, title, subtitle, text, imageTrigger, imageWebpSource, image, imageCaption, link } = elements;
         validateNewsItem(item);
         dialog.dataset.newsId = item.id;
         dialog.querySelector('.site-news-popup__content').dataset.layout = item.layout;
@@ -104,12 +114,18 @@
         text.hidden = item.layout === 'image';
         imageTrigger.hidden = item.layout === 'text';
         if(item.layout !== 'text'){
+            if(item.imageWebp){
+                imageWebpSource.srcset = item.imageWebp;
+            } else {
+                imageWebpSource.removeAttribute('srcset');
+            }
             image.src = item.image;
             image.alt = item.imageAlt;
             imageTrigger.setAttribute('aria-label', `Ampliar imagem: ${item.imageAlt}`);
             imageCaption.textContent = item.imageCaption || '';
             imageCaption.hidden = !item.imageCaption;
         } else {
+            imageWebpSource.removeAttribute('srcset');
             image.removeAttribute('src');
             image.alt = '';
             imageCaption.textContent = '';

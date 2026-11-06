@@ -166,8 +166,8 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20261105-mobile-sidebar-targets-v1">
-  <link rel="stylesheet" href="wiki-theme.css?v=20261105-mobile-home-hit-area-v1">
+  <link rel="stylesheet" href="styles.css?v=20261105-mobile-home-icon-v1">
+  <link rel="stylesheet" href="wiki-theme.css?v=20261105-mobile-home-icon-v1">
   <link rel="stylesheet" href="news/news-popup.css?v=20261101-ace-pokemon-news-v1">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -954,7 +954,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1239 - 2026
+        Build v1241 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -967,7 +967,7 @@
         <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
     </footer>
-    <dialog id="site-news-dialog" aria-labelledby="site-news-title" aria-describedby="site-news-text">
+    <dialog id="site-news-dialog" role="dialog" aria-modal="true" aria-labelledby="site-news-title" aria-describedby="site-news-text">
       <div class="site-news-popup__inner">
         <header class="site-news-popup__header">
           <div class="site-news-popup__identity">
@@ -983,7 +983,10 @@
             <p class="site-news-popup__text" id="site-news-text" data-news-text></p>
           </div>
           <button class="site-news-popup__image-trigger" type="button" data-news-image-trigger>
-            <img class="site-news-popup__image" data-news-image alt="">
+            <picture>
+              <source data-news-image-webp type="image/webp">
+              <img class="site-news-popup__image" data-news-image src="news/image-news.png?v=20261105-wiki-pstory-v1" width="1358" height="674" decoding="async" alt="">
+            </picture>
           </button>
           <p class="site-news-popup__image-caption" data-news-image-caption hidden></p>
           <div class="site-news-popup__actions">
@@ -1015,6 +1018,6 @@
     <script src="js/striker-recommendation-engine.js?v=20260902a" defer></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
     <script src="script.js?v=20261105-skip-link-focus-v1" defer></script>
-    <script src="news/news-popup.js?v=20261105-wiki-pstory-v1" defer></script>
+    <script src="news/news-popup.js?v=20261105-news-webp-dialog-v1" defer></script>
 </body>
 </html>
