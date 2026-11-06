@@ -3,7 +3,7 @@ let CACHE_NAME = `${CACHE_PREFIX}v1127`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
-  new URL('./app.html', self.registration.scope).toString(),
+  new URL('./app.html?v=20261106-news-image-lazy-v1', self.registration.scope).toString(),
   new URL('./news/news-popup.css?v=20261101-ace-pokemon-news-v1', self.registration.scope).toString(),
   new URL('./news/news-popup.js?v=20261105-news-webp-dialog-v1', self.registration.scope).toString(),
   new URL('./news/image-news.webp?v=20261105-news-webp-dialog-v1', self.registration.scope).toString(),
