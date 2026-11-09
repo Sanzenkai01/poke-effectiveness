@@ -209,6 +209,13 @@ let pokemonCatalogNextPageBottomBtn = document.getElementById('pokemon-catalog-n
 let pokemonCatalogPageIndicatorBottom = document.getElementById('pokemon-catalog-page-indicator-bottom');
 const pokemonDetailsModal = document.getElementById('pokemon-details-modal');
 const pokemonDetailsContent = pokemonDetailsModal?.querySelector('.pokemon-details-modal__content') || null;
+const pokemonLootSearchModal = document.getElementById('pokemon-loot-search-modal');
+const pokemonLootSearchTitle = document.getElementById('pokemon-loot-search-title');
+const pokemonLootSearchImage = document.getElementById('pokemon-loot-search-image');
+const pokemonLootSearchCount = document.getElementById('pokemon-loot-search-count');
+const pokemonLootSearchList = document.getElementById('pokemon-loot-search-list');
+let pokemonLootSearchLastFocus = null;
+let pokemonLootSearchKeyHandler = null;
 const pokemonDetailsImage = document.getElementById('pokemon-details-image');
 const pokemonDetailsRole = document.getElementById('pokemon-details-role');
 const pokemonDetailsTitle = document.getElementById('pokemon-details-title');
@@ -332,6 +339,7 @@ let globalSearchInitialized = false;
 let globalSearchHydrated = false;
 let globalSearchHydrationPromise = null;
 let globalSearchEntries = [];
+let globalSearchDropLoadError = null;
 let globalSearchActiveIndex = -1;
 let globalSearchRenderTimer = 0;
 const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
@@ -3904,6 +3912,52 @@ function buildGlobalSearchPokemonEntries(){
     }).filter(Boolean);
 }
 
+function buildGlobalSearchPokemonLootEntries(lootsByPokemon){
+    const excludedLootSourceKeys = new Set([
+        'eventvenusaur',
+        'greensvenusaur',
+        'eventcharizard',
+        'redscharizard',
+        'bluesblastoise'
+    ]);
+    const itemsByKey = new Map();
+
+    lootsByPokemon.forEach((sources) => {
+        sources.forEach((source) => {
+            if(excludedLootSourceKeys.has(source.key)) return;
+            const pokemon = getPokemonCatalogEntryByName(source.name);
+            if(!canOpenPokemonCatalogEntry(pokemon)) return;
+
+            source.loots.forEach((loot) => {
+                const itemKey = `${String(loot.id)}:${normalizeGlobalSearchValue(loot.item)}`;
+                let item = itemsByKey.get(itemKey);
+                if(!item){
+                    item = {
+                        id: `pokemon-loot:${itemKey}`,
+                        kind: 'pokemon-loot',
+                        title: loot.item,
+                        category: 'Item de drop',
+                        description: '',
+                        image: getPokemonLootImageSources(loot.item)[0] || '',
+                        pokemonRouteTokens: new Set()
+                    };
+                    itemsByKey.set(itemKey, item);
+                }
+                item.pokemonRouteTokens.add(getPokemonDetailRouteToken(pokemon));
+            });
+        });
+    });
+
+    return Array.from(itemsByKey.values()).map((item) => {
+        const pokemonRouteTokens = Array.from(item.pokemonRouteTokens).filter(Boolean);
+        return createGlobalSearchEntry({
+            ...item,
+            description: `Drop de ${pokemonRouteTokens.length} Pokémon`,
+            pokemonRouteTokens
+        });
+    }).filter(Boolean);
+}
+
 function buildGlobalSearchBossEntries(){
     const provider = typeof window.getBossSearchEntries === 'function'
         ? window.getBossSearchEntries
@@ -3967,7 +4021,8 @@ function ensureGlobalSearchHydrated(){
     const sourceLoaders = [
         () => ensureTypesDataLoaded(),
         () => ensurePokemonCatalogLoaded(),
-        () => ensureBossesPageReady()
+        () => ensureBossesPageReady(),
+        () => ensurePokemonCatalogLoaded().then(() => ensurePokemonLootsLoaded())
     ];
     const loadWithTimeout = (loader) => Promise.race([
         Promise.resolve().then(loader),
@@ -3978,11 +4033,19 @@ function ensureGlobalSearchHydrated(){
 
     globalSearchHydrationPromise = Promise.allSettled(
         sourceLoaders.map(loadWithTimeout)
-    ).then(() => {
+    ).then((loadResults) => {
+        const lootResult = loadResults[3];
+        const lootsByPokemon = lootResult?.status === 'fulfilled' && lootResult.value instanceof Map
+            ? lootResult.value
+            : null;
+        globalSearchDropLoadError = lootsByPokemon
+            ? null
+            : lootResult?.reason || new Error('Os dados de drops dos Pokémon não foram carregados.');
         setGlobalSearchEntries([
             ...getGlobalSearchStaticEntries(),
             ...buildGlobalSearchTypeEntries(),
             ...buildGlobalSearchPokemonEntries(),
+            ...(lootsByPokemon ? buildGlobalSearchPokemonLootEntries(lootsByPokemon) : []),
             ...buildGlobalSearchBossEntries(),
             ...buildGlobalSearchStreamerEntries()
         ]);
@@ -4018,10 +4081,25 @@ function getGlobalSearchMatches(query, limit = 12){
     const normalizedQuery = normalizeGlobalSearchValue(query);
     const terms = normalizedQuery.split(/\s+/).filter(Boolean);
     if(normalizedQuery.length < 2 || !terms.length) return [];
-    return (globalSearchEntries || [])
+    const matches = (globalSearchEntries || [])
         .map(entry => ({ entry, score: scoreGlobalSearchEntry(entry, normalizedQuery, terms) }))
         .filter(item => item.score > 0)
-        .sort((left, right) => right.score - left.score || String(left.entry.title).localeCompare(String(right.entry.title)))
+        .sort((left, right) => right.score - left.score || String(left.entry.title).localeCompare(String(right.entry.title)));
+    const lootMatches = matches.filter(item => item.entry.kind === 'pokemon-loot');
+
+    if(lootMatches.length){
+        const itemEntries = lootMatches.map(item => item.entry);
+        const dropperRouteTokens = new Set(itemEntries.flatMap(entry => entry.pokemonRouteTokens || []));
+        const dropperEntries = (globalSearchEntries || [])
+            .filter((entry) => (
+                entry.kind === 'pokemon'
+                && dropperRouteTokens.has(entry.routeToken)
+            ))
+            .sort((left, right) => String(left.title).localeCompare(String(right.title)));
+        return [...itemEntries, ...dropperEntries].slice(0, limit);
+    }
+
+    return matches
         .slice(0, limit)
         .map(item => item.entry);
 }
@@ -4047,6 +4125,30 @@ function renderGlobalSearchStatus(message){
     if(siteGlobalSearchInput){
         siteGlobalSearchInput.setAttribute('aria-expanded', 'true');
     }
+}
+
+function appendGlobalSearchDropLoadError(container){
+    if(!container || !globalSearchDropLoadError) return;
+    const status = document.createElement('div');
+    status.className = 'site-global-search__status';
+    status.setAttribute('role', 'status');
+    status.textContent = 'Não foi possível carregar os drops dos Pokémon.';
+    container.appendChild(status);
+
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'site-global-search__retry';
+    retry.textContent = 'Tentar carregar novamente';
+    retry.addEventListener('click', () => {
+        globalSearchHydrated = false;
+        globalSearchHydrationPromise = null;
+        globalSearchDropLoadError = null;
+        renderGlobalSearchStatus('Carregando drops dos Pokémon...');
+        ensureGlobalSearchHydrated()
+            .then(renderGlobalSearchResults)
+            .catch((error) => console.error('Não foi possível atualizar os drops na busca geral.', error));
+    });
+    container.appendChild(retry);
 }
 
 function createGlobalSearchResultButton(entry, index){
@@ -4142,6 +4244,11 @@ function renderGlobalSearchResults(){
     globalSearchActiveIndex = matches.length ? Math.min(Math.max(globalSearchActiveIndex, 0), matches.length - 1) : -1;
 
     if(!matches.length){
+        if(globalSearchDropLoadError){
+            renderGlobalSearchStatus('Nenhum resultado encontrado.');
+            appendGlobalSearchDropLoadError(siteGlobalSearchResults);
+            return;
+        }
         renderGlobalSearchStatus(globalSearchHydrated ? 'Nenhum resultado encontrado.' : 'Carregando catalogos...');
         return;
     }
@@ -4155,6 +4262,9 @@ function renderGlobalSearchResults(){
         status.className = 'site-global-search__status';
         status.textContent = 'Carregando catalogos...';
         fragment.appendChild(status);
+    }
+    if(globalSearchDropLoadError){
+        appendGlobalSearchDropLoadError(fragment);
     }
 
     siteGlobalSearchResults.replaceChildren(fragment);
@@ -4238,6 +4348,115 @@ function runGlobalSearchStreamerEntry(entry){
     }
 }
 
+function createPokemonLootSearchPokemonButton(entry){
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'pokemon-loot-search-modal__pokemon';
+
+    const media = document.createElement('span');
+    media.className = 'pokemon-loot-search-modal__media';
+    const image = document.createElement('img');
+    image.src = getPokemonImageSource(entry);
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    setImageFallback(image, POKEMON_IMAGE_PLACEHOLDER);
+    media.appendChild(image);
+
+    const name = document.createElement('span');
+    name.className = 'pokemon-loot-search-modal__name';
+    name.textContent = entry.name;
+    button.append(media, name);
+    button.addEventListener('click', () => {
+        closePokemonLootSearchModal({ restoreFocus: false });
+        if(siteGlobalSearchInput){
+            try{ siteGlobalSearchInput.focus({ preventScroll: true }); }catch(error){}
+        }
+        openPokemonDetailsModal(entry, { pushState: true });
+    });
+    return button;
+}
+
+function openPokemonLootSearchModal(entry){
+    if(!pokemonLootSearchModal || !pokemonLootSearchTitle || !pokemonLootSearchList) return;
+
+    const pokemonEntries = (entry.pokemonRouteTokens || [])
+        .map((routeToken) => findPokemonCatalogEntryByRouteToken(routeToken, POKEMON_CATALOG_VARIANT_DEFAULT))
+        .filter(canOpenPokemonCatalogEntry)
+        .sort((left, right) => String(left.name).localeCompare(String(right.name)));
+
+    pokemonLootSearchTitle.textContent = entry.title;
+    if(pokemonLootSearchImage){
+        pokemonLootSearchImage.src = getPokemonLootImageSources(entry.title)[0] || POKEMON_LOOT_IMAGE_PLACEHOLDER;
+        pokemonLootSearchImage.dataset.fallbackApplied = 'false';
+        setImageFallback(pokemonLootSearchImage, POKEMON_LOOT_IMAGE_PLACEHOLDER);
+    }
+    if(pokemonLootSearchCount){
+        pokemonLootSearchCount.textContent = pokemonEntries.length
+            ? `${pokemonEntries.length} Pokémon podem dropar este item.`
+            : 'Nenhum Pokémon encontrado para este item.';
+    }
+    const fragment = document.createDocumentFragment();
+    pokemonEntries.forEach((pokemon) => {
+        fragment.appendChild(createPokemonLootSearchPokemonButton(pokemon));
+    });
+    pokemonLootSearchList.replaceChildren(fragment);
+
+    pokemonLootSearchLastFocus = siteGlobalSearchInput || (
+        document.activeElement instanceof HTMLElement ? document.activeElement : null
+    );
+    pokemonLootSearchModal.setAttribute('aria-hidden', 'false');
+    syncBasicModalPageState();
+    const closeButton = pokemonLootSearchModal.querySelector('.modal-close');
+    if(closeButton instanceof HTMLElement){
+        try{ closeButton.focus({ preventScroll: true }); }catch(error){}
+    }
+
+    if(pokemonLootSearchKeyHandler){
+        document.removeEventListener('keydown', pokemonLootSearchKeyHandler);
+    }
+    pokemonLootSearchKeyHandler = (event) => {
+        if(event.key === 'Escape'){
+            event.preventDefault();
+            event.stopPropagation();
+            closePokemonLootSearchModal();
+            return;
+        }
+        if(event.key !== 'Tab') return;
+
+        const focusable = Array.from(pokemonLootSearchModal.querySelectorAll(
+            'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => !element.hidden);
+        if(!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if(event.shiftKey && document.activeElement === first){
+            event.preventDefault();
+            last.focus();
+        } else if(!event.shiftKey && document.activeElement === last){
+            event.preventDefault();
+            first.focus();
+        }
+    };
+    document.addEventListener('keydown', pokemonLootSearchKeyHandler);
+}
+
+function closePokemonLootSearchModal({ restoreFocus = true } = {}){
+    if(!pokemonLootSearchModal || pokemonLootSearchModal.getAttribute('aria-hidden') === 'true') return;
+    pokemonLootSearchModal.setAttribute('aria-hidden', 'true');
+    syncBasicModalPageState();
+
+    if(pokemonLootSearchKeyHandler){
+        document.removeEventListener('keydown', pokemonLootSearchKeyHandler);
+        pokemonLootSearchKeyHandler = null;
+    }
+    const lastFocus = pokemonLootSearchLastFocus;
+    pokemonLootSearchLastFocus = null;
+    if(restoreFocus && lastFocus instanceof HTMLElement && lastFocus.isConnected){
+        try{ lastFocus.focus({ preventScroll: true }); }catch(error){}
+    }
+}
+
 function runGlobalSearchEntry(entry){
     if(!entry) return;
     hideGlobalSearchResults();
@@ -4249,6 +4468,7 @@ function runGlobalSearchEntry(entry){
     if(entry.kind === 'route') return runGlobalSearchRouteEntry(entry);
     if(entry.kind === 'quick') return runGlobalSearchQuickEntry(entry);
     if(entry.kind === 'type') return runGlobalSearchTypeEntry(entry);
+    if(entry.kind === 'pokemon-loot') return openPokemonLootSearchModal(entry);
     if(entry.kind === 'pokemon') return runGlobalSearchPokemonEntry(entry);
     if(entry.kind === 'boss') return runGlobalSearchBossEntry(entry);
     if(entry.kind === 'streamer') return runGlobalSearchStreamerEntry(entry);
@@ -4329,6 +4549,13 @@ function initializeGlobalSearch(){
         hideGlobalSearchResults();
     });
 
+    const lootSearchCloseButton = pokemonLootSearchModal?.querySelector('.modal-close');
+    lootSearchCloseButton?.addEventListener('click', closePokemonLootSearchModal);
+    pokemonLootSearchModal?.addEventListener('click', (event) => {
+        if(event.target === pokemonLootSearchModal){
+            closePokemonLootSearchModal();
+        }
+    });
 }
 
 function initializeSkipLink(){
@@ -9419,7 +9646,11 @@ function handleKeyNav(e){
     }
 }
 
-window.addEventListener('keydown',e=>{if(e.key==='Escape')clearAll();});
+window.addEventListener('keydown',e=>{
+    if(e.key === 'Escape' && isEffectivenessRouteActive() && chart && connectionsSvg){
+        clearAll();
+    }
+});
 window.addEventListener('resize',()=>{
     updateColumns();
     if(currentSelection.length && chart && connectionsSvg) renderSelection();
@@ -28091,14 +28322,45 @@ function getPokemonLootRarity(chance){
     return ['rare', 'epic', 'legendary'].includes(rarity) ? rarity : '';
 }
 
+const POKEMON_LOOT_IMAGE_PLACEHOLDER = 'itens/loot-item-placeholder.svg';
+const POKEMON_LOOT_GEM_IMAGES = Object.freeze({
+    'bug gem': 'itens/bug-gem.png',
+    'dark gem': 'itens/dark-gem.png',
+    'dragon gem': 'itens/dragon-gem.png',
+    'electric gem': 'itens/electric-gem.png',
+    'fairy gem': 'itens/fairy-gem.png',
+    'fighting gem': 'itens/fighting-gem.png',
+    'fire gem': 'itens/fire-gem.png',
+    'flying gem': 'itens/flying-gem.png',
+    'ghost gem': 'itens/ghost-gem.png',
+    'grass gem': 'itens/grass-gem.png',
+    'ground gem': 'itens/ground-gem.png',
+    'ice gem': 'itens/ice-gem.png',
+    'normal gem': 'itens/normal-gem.png',
+    'poison gem': 'itens/poison-gem.png',
+    'psychic gem': 'itens/psychic-gem.png',
+    'rock gem': 'itens/rock-gem.png',
+    'steel gem': 'itens/steel-gem.png',
+    'water gem': 'itens/water-gem.png',
+    'life orb': 'itens/lifeorb.png',
+    'flame orb': 'itens/flame-orb.png',
+    'toxic orb': 'itens/toxic-orb.png',
+    'hard stone': 'itens/hard-stone.png',
+    'miracle seed': 'itens/miracleseed.png',
+    'berry juice': 'itens/berryjuice.png'
+});
+
 function getPokemonLootImageSources(itemName){
     const normalizedName = String(itemName || '').trim();
     if(!normalizedName) return [];
-    if(/ card$/i.test(normalizedName)) return ['balls/card.png'];
+    if(/ card$/i.test(normalizedName)) return ['itens/card.png', POKEMON_LOOT_IMAGE_PLACEHOLDER];
 
     const baseStoneName = normalizedName.replace(/^shining\s+/i, '');
     const stoneImage = getBoostBaseStoneImage(baseStoneName);
-    if(stoneImage) return [stoneImage];
+    if(stoneImage){
+        const stoneImageName = stoneImage.split('/').pop();
+        return [stoneImageName ? `itens/${stoneImageName}` : POKEMON_LOOT_IMAGE_PLACEHOLDER, POKEMON_LOOT_IMAGE_PLACEHOLDER];
+    }
     if(/\bstones?\b/i.test(baseStoneName)){
         const knownStoneNames = [
             ...Object.keys(BOOST_NAMED_STONE_META),
@@ -28111,25 +28373,15 @@ function getPokemonLootImageSources(itemName){
         const matchingStoneImage = matchingStoneName
             ? getBoostBaseStoneImage(matchingStoneName)
             : '';
-        return [matchingStoneImage || 'calculadora/ancient_stone.gif'];
+        const matchingStoneImageName = matchingStoneImage.split('/').pop();
+        return [
+            matchingStoneImageName ? `itens/${matchingStoneImageName}` : 'itens/ancient_stone.gif',
+            POKEMON_LOOT_IMAGE_PLACEHOLDER
+        ];
     }
 
-    const words = normalizedName.split(/\s+/).filter(Boolean);
-
-    const fileNames = [
-        words.map((word, index) => index === 0
-            ? `${word.charAt(0).toUpperCase()}${word.slice(1)}`
-            : word).join('_'),
-        words.map(word => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(''),
-        words.join('')
-    ].filter(Boolean);
-    const uniqueFileNames = Array.from(new Set(fileNames));
-
-    return uniqueFileNames.flatMap((fileName) => ['png', 'gif'].map((extension) => {
-        const imageUrl = new URL('https://wiki.pokexgames.com/index.php');
-        imageUrl.searchParams.set('title', `Special:FilePath/${fileName}.${extension}`);
-        return imageUrl.toString();
-    }));
+    const mappedImage = POKEMON_LOOT_GEM_IMAGES[normalizedName.toLocaleLowerCase()];
+    return mappedImage ? [mappedImage, POKEMON_LOOT_IMAGE_PLACEHOLDER] : [POKEMON_LOOT_IMAGE_PLACEHOLDER];
 }
 
 function createPokemonLootImage(itemName){
@@ -28683,7 +28935,11 @@ function openPokemonDetailsModal(entry, options = {}){
         document.removeEventListener('keydown', pokemonDetailsKeyHandler);
     }
     pokemonDetailsKeyHandler = (event) => {
-        if(event.key === 'Escape') closePokemonDetailsModal();
+        if(event.key === 'Escape'){
+            event.preventDefault();
+            event.stopPropagation();
+            closePokemonDetailsModal();
+        }
     };
     document.addEventListener('keydown', pokemonDetailsKeyHandler);
 

@@ -9258,6 +9258,25 @@ h2 {
   text-align: center;
 }
 
+.site-global-search__retry {
+  justify-self: center;
+  margin: 0.08rem 0 0.18rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(var(--module-accent-rgb, 104, 215, 255), 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dff7ff;
+  font: 700 0.78rem "Space Grotesk", "Montserrat", sans-serif;
+  cursor: pointer;
+}
+
+.site-global-search__retry:hover,
+.site-global-search__retry:focus-visible {
+  border-color: rgba(var(--module-accent-rgb, 104, 215, 255), 0.46);
+  background: rgba(var(--module-accent-rgb, 104, 215, 255), 0.1);
+  outline: none;
+}
+
 .site-global-search__result {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -17633,6 +17652,154 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 12px 24px rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.14),
     0 0 0 1px rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.12);
+}
+
+.pokemon-loot-search-modal .modal-content {
+  width: min(820px, 94vw);
+  max-width: 94vw;
+  max-height: 88vh;
+  padding: 1.12rem;
+  border: 1px solid rgba(104, 215, 255, 0.2);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(104, 215, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 100% 4%, rgba(255, 209, 102, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(7, 12, 23, 0.94));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 32px 72px rgba(2, 8, 18, 0.46);
+}
+
+.pokemon-loot-search-modal__content {
+  display: grid;
+  gap: 0.82rem;
+}
+
+.pokemon-loot-search-modal .modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 1;
+}
+
+.pokemon-loot-search-modal__header {
+  display: grid;
+  gap: 0.32rem;
+  padding-right: 2.8rem;
+}
+
+.pokemon-loot-search-modal__item-heading {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.72rem;
+  min-width: 0;
+  margin-right: -2.8rem;
+}
+
+.pokemon-loot-search-modal__item-image {
+  display: block;
+  grid-column: 1;
+  grid-row: 1;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0.2rem;
+  border: 1px solid rgba(104, 215, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(3, 9, 18, 0.48);
+  object-fit: contain;
+}
+
+.pokemon-loot-search-modal__item-copy {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  gap: 0.16rem;
+  min-width: 0;
+  padding-inline: 3.97rem;
+  text-align: center;
+}
+
+.pokemon-loot-search-modal__eyebrow {
+  color: #68d7ff;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pokemon-loot-search-modal__title {
+  margin: 0;
+  color: #f8fbff;
+  font: 800 clamp(1.15rem, 3vw, 1.55rem) "Space Grotesk", "Montserrat", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.pokemon-loot-search-modal__count {
+  margin: 0;
+  color: #a7bdd3;
+  font-size: 0.82rem;
+}
+
+.pokemon-loot-search-modal__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr));
+  gap: 0.5rem;
+  max-height: min(62vh, 36rem);
+  padding: 0.12rem 0.18rem 0.12rem 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(104, 215, 255, 0.42) rgba(255, 255, 255, 0.06);
+}
+
+.pokemon-loot-search-modal__pokemon {
+  display: grid;
+  grid-template-columns: 2.8rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.62rem;
+  min-width: 0;
+  min-height: 3.55rem;
+  padding: 0.48rem 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(3, 9, 18, 0.48);
+  color: #edf6ff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.pokemon-loot-search-modal__pokemon:hover,
+.pokemon-loot-search-modal__pokemon:focus-visible {
+  border-color: rgba(104, 215, 255, 0.38);
+  background:
+    linear-gradient(135deg, rgba(104, 215, 255, 0.13), rgba(255, 209, 102, 0.08)),
+    rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.pokemon-loot-search-modal__media {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  overflow: hidden;
+  border: 1px solid rgba(104, 215, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.pokemon-loot-search-modal__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pokemon-loot-search-modal__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font: 800 0.86rem "Space Grotesk", "Montserrat", sans-serif;
 }
 
 .pokemon-details-modal__hero {

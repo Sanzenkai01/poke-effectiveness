@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20261109-ghost-stone-png-v1';
+    var APP_SHELL_VERSION = '20261109-pokemon-loot-title-center-v2';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
     var appUrl = new URL(appShellPath, window.location.href);

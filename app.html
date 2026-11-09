@@ -166,7 +166,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20261108-pokemon-capture-averages-v1">
+  <link rel="stylesheet" href="styles.css?v=20261109-pokemon-loot-title-center-v2">
   <link rel="stylesheet" href="wiki-theme.css?v=20261105-mobile-home-icon-v1">
   <link rel="stylesheet" href="news/news-popup.css?v=20261101-ace-pokemon-news-v1">
     <link rel="manifest" href="manifest.json">
@@ -251,7 +251,7 @@
       <div id="site-global-search" class="site-global-search" role="search">
         <label class="visually-hidden" for="site-global-search-input">Buscar no site</label>
         <span class="site-global-search__icon" aria-hidden="true"></span>
-        <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Pesquisar guias e ferramentas" autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
+        <input id="site-global-search-input" class="site-global-search__input" type="search" placeholder="Pesquisar Pokémon, itens, guias e ferramentas" autocomplete="off" spellcheck="false" aria-controls="site-global-search-results" aria-expanded="false" />
         <div id="site-global-search-results" class="site-global-search__results" role="listbox" aria-label="Resultados da busca" hidden></div>
       </div>
       <div class="header-visit-counter site-visit-counter" data-visit-counter data-visit-counter-surface="header" aria-live="polite">
@@ -935,6 +935,23 @@
       </div>
     </div>
 
+    <div id="pokemon-loot-search-modal" class="modal pokemon-loot-search-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pokemon-loot-search-title">
+      <div class="modal-content pokemon-loot-search-modal__content" role="document">
+        <button class="modal-close" type="button" aria-label="Fechar lista de Pokémon">✖</button>
+        <header class="pokemon-loot-search-modal__header">
+          <div class="pokemon-loot-search-modal__item-heading">
+            <img id="pokemon-loot-search-image" class="pokemon-loot-search-modal__item-image" src="itens/loot-item-placeholder.svg" alt="" aria-hidden="true" />
+            <div class="pokemon-loot-search-modal__item-copy">
+              <span class="pokemon-loot-search-modal__eyebrow">Pokémon que dropam</span>
+              <h2 id="pokemon-loot-search-title" class="pokemon-loot-search-modal__title">Item</h2>
+            </div>
+          </div>
+          <p id="pokemon-loot-search-count" class="pokemon-loot-search-modal__count" role="status" aria-live="polite"></p>
+        </header>
+        <div id="pokemon-loot-search-list" class="pokemon-loot-search-modal__list" role="list" aria-label="Pokémon que podem dropar este item"></div>
+      </div>
+    </div>
+
     <div id="slowpoke-shop-modal" class="slowpoke-shop-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="slowpoke-shop-modal-title" hidden>
       <div class="slowpoke-shop-modal__backdrop" data-slowpoke-shop-close></div>
       <div class="slowpoke-shop-modal__content" role="document">
@@ -966,7 +983,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1251 - 2026
+        Build v1254 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1029,7 +1046,7 @@
     <script src="js/recommendation-engine.js?v=20260826d" defer></script>
     <script src="js/striker-recommendation-engine.js?v=20260902a" defer></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
-    <script src="script.js?v=20261109-ghost-stone-png-v1" defer></script>
+    <script src="script.js?v=20261109-pokemon-loot-icon-v1" defer></script>
     <script src="news/news-popup.js?v=20261105-news-webp-dialog-v1" defer></script>
 </body>
 </html>
