@@ -4456,7 +4456,7 @@ const BOOST_BRONZE_PIECES_PER_STAR = 3;
 const BOOST_SILVER_ANCIENT_STONE_PER_LEVEL = 100;
 const BOOST_TYPE_STONE_META = Object.freeze({
     bug: { name: 'Cocoon Stone', image: 'calculadora/cocoon_stone.gif' },
-    ghost: { name: 'Ghost Stone', image: '' },
+    ghost: { name: 'Ghost Stone', image: 'calculadora/ghost_stone.png' },
     dark: { name: 'Darkness Stone', image: 'calculadora/darkness_stone.png' },
     dragon: { name: 'Dragon Stone', image: 'calculadora/dragon_stone.png' },
     ground: { name: 'Earth Stone', image: 'calculadora/earth_stone.gif' },
@@ -4493,7 +4493,7 @@ const BOOST_NAMED_STONE_META = Object.freeze({
     'Metal Stone': { image: 'calculadora/metal_stone.png' },
     'Dragon Stone': { image: 'calculadora/dragon_stone.png' },
     'Fairy Stone': { image: 'calculadora/fairy_stone.gif' },
-    'Ghost Stone': { image: '' }
+    'Ghost Stone': { image: 'calculadora/ghost_stone.png' }
 });
 const BOSSES_INFO_STONE_COST = 300;
 const BOSSES_INFO_ENTRIES = Object.freeze([
@@ -16647,7 +16647,7 @@ function showPokebolas(){
     if(titleEl) titleEl.textContent = 'Pokébolas Elementais';
     localStorage.setItem('selectedTab', 'pokebolas');
     updateBrowserTitle();
-    loadDeferredScript('pokebolas/pokebolas.js?v=20261109-pokebolas-ghost-stone-v1', () => typeof window.initPokebolasPage === 'function')
+    loadDeferredScript('pokebolas/pokebolas.js?v=20261109-ghost-stone-png-v1', () => typeof window.initPokebolasPage === 'function')
         .then(() => window.initPokebolasPage())
         .catch(error => {
             console.error('Pokebolas page initialization failed', error);
