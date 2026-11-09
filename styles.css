@@ -17774,6 +17774,156 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
   padding: 0.58rem 0.68rem;
 }
 
+.pokemon-details-modal__section--loot {
+  display: grid;
+  gap: 0.48rem;
+  margin-top: 0.36rem;
+}
+
+.pokemon-loot-status {
+  margin: 0;
+  color: rgba(216, 229, 244, 0.72);
+  font-size: 0.78rem;
+}
+
+.pokemon-loot-status:empty {
+  display: none;
+}
+
+.pokemon-loot-groups {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.pokemon-loot-group {
+  display: grid;
+  gap: 0.32rem;
+}
+
+.pokemon-loot-group__title {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.88);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.pokemon-loot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pokemon-loot-card {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  gap: 0.58rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.48rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+    rgba(3, 9, 18, 0.48);
+}
+
+.pokemon-loot-card__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  overflow: hidden;
+  border: 1px solid rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.16);
+  border-radius: 12px;
+  background:
+    linear-gradient(145deg, rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.14), rgba(var(--pokemon-detail-secondary-rgb, 255, 209, 102), 0.08)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.pokemon-loot-card__media img {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+.pokemon-loot-card__media img[hidden],
+.pokemon-loot-card__image-placeholder[hidden] {
+  display: none;
+}
+
+.pokemon-loot-card__image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(216, 229, 244, 0.68);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.pokemon-loot-card__body {
+  display: grid;
+  gap: 0.32rem;
+  min-width: 0;
+}
+
+.pokemon-loot-card__name {
+  overflow-wrap: anywhere;
+  color: #f8fbff;
+  font-size: 0.84rem;
+  line-height: 1.25;
+}
+
+.pokemon-loot-card__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem 0.45rem;
+  align-items: center;
+  color: rgba(216, 229, 244, 0.76);
+  font-size: 0.72rem;
+}
+
+.pokemon-loot-card__rarity {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.42rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pokemon-loot-card__rarity--rare {
+  color: #72bcff;
+  background: rgba(65, 153, 255, 0.12);
+}
+
+.pokemon-loot-card__rarity--epic {
+  color: #c28aff;
+  background: rgba(165, 92, 255, 0.13);
+}
+
+.pokemon-loot-card__rarity--legendary {
+  color: #ffd35f;
+  background: rgba(255, 194, 54, 0.13);
+}
+
+.pokemon-loot-retry {
+  justify-self: start;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.3);
+  border-radius: 999px;
+  color: #f1f7ff;
+  background: rgba(var(--pokemon-detail-primary-rgb, 104, 215, 255), 0.1);
+  font: inherit;
+  cursor: pointer;
+}
+
 .pokemon-details-modal__boss-usage-block {
   display: grid;
   gap: 0.24rem;
@@ -28949,4 +29099,185 @@ body.home-view main {
     0 0 0 2px rgba(255, 205, 74, 0.22),
     0 23px 40px rgba(0, 0, 0, 0.3),
     0 0 38px rgba(255, 184, 46, 0.3) !important;
+}
+
+#pokemon-details-modal .pokemon-details-modal__section--averages .pokemon-details-modal__section-head {
+  justify-items: start;
+  gap: 4px;
+  text-align: left;
+}
+
+#pokemon-details-modal .pokemon-details-modal__section--averages .pokemon-details-modal__section-kicker {
+  margin: 0;
+  color: var(--wiki-text, #e6e8ea);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+}
+
+#pokemon-details-modal .pokemon-details-modal__average-price {
+  margin: 0;
+  color: var(--wiki-muted, #9aa2aa);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+#pokemon-details-modal .pokemon-averages-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px;
+}
+
+#pokemon-details-modal .pokemon-average-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+#pokemon-details-modal .pokemon-average-group__head {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+#pokemon-details-modal .pokemon-average-group__title {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--wiki-border-soft, #252a30);
+  color: var(--wiki-muted, #9aa2aa);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left !important;
+}
+
+#pokemon-details-modal .pokemon-average-group__description {
+  margin: 0;
+  color: var(--wiki-muted, #9aa2aa);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left !important;
+}
+
+#pokemon-details-modal .pokemon-average-group__grid {
+  display: block;
+  min-width: 0;
+}
+
+#pokemon-details-modal .pokemon-average-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 0;
+  background: transparent !important;
+  color: var(--wiki-text, #e6e8ea);
+  font-family: var(--wiki-font);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+#pokemon-details-modal .pokemon-average-table th {
+  padding: 4px 0 8px;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border-soft, #252a30) !important;
+  background: transparent !important;
+  color: var(--wiki-muted, #9aa2aa) !important;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: normal !important;
+  text-align: left;
+  text-transform: none !important;
+}
+
+#pokemon-details-modal .pokemon-average-table th:first-child {
+  width: 68%;
+}
+
+#pokemon-details-modal .pokemon-average-table th:last-child {
+  width: 32%;
+  text-align: right;
+}
+
+#pokemon-details-modal .pokemon-average-table td {
+  min-width: 0;
+  padding: 8px 0;
+  border: 0 !important;
+  border-bottom: 1px solid var(--wiki-border-soft, #252a30) !important;
+  background: transparent !important;
+  color: var(--wiki-text, #e6e8ea);
+  vertical-align: middle;
+}
+
+#pokemon-details-modal .pokemon-average-table__ball {
+  overflow-wrap: anywhere;
+  text-align: left !important;
+}
+
+#pokemon-details-modal .pokemon-average-table__ball .pokemon-ball-card__media {
+  display: inline-flex;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  vertical-align: middle;
+}
+
+#pokemon-details-modal .pokemon-average-table__ball .pokemon-ball-card__media img {
+  width: 28px;
+  height: 28px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+#pokemon-details-modal .pokemon-average-table__ball .pokemon-ball-card__title {
+  color: var(--wiki-text, #e6e8ea);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  vertical-align: middle;
+}
+
+#pokemon-details-modal .pokemon-average-table__average {
+  text-align: right !important;
+}
+
+#pokemon-details-modal .pokemon-average-table__value-group {
+  display: inline-flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+#pokemon-details-modal .pokemon-average-table__value-group .pokemon-ball-card__value {
+  color: var(--wiki-text, #e6e8ea);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+#pokemon-details-modal .pokemon-average-table__value-group .pokemon-average-table__value--minimum {
+  font-weight: 600;
+}
+
+#pokemon-details-modal .pokemon-average-table__minimum-label {
+  color: var(--wiki-muted, #9aa2aa);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
 }

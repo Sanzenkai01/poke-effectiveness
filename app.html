@@ -166,7 +166,7 @@
         }
       })();
     </script>
-  <link rel="stylesheet" href="styles.css?v=20261105-mobile-home-icon-v1">
+  <link rel="stylesheet" href="styles.css?v=20261108-pokemon-capture-averages-v1">
   <link rel="stylesheet" href="wiki-theme.css?v=20261105-mobile-home-icon-v1">
   <link rel="stylesheet" href="news/news-popup.css?v=20261101-ace-pokemon-news-v1">
     <link rel="manifest" href="manifest.json">
@@ -888,6 +888,16 @@
           <div id="pokemon-details-evolution" class="pokemon-evolution-nav"></div>
         </section>
 
+        <section id="pokemon-details-loot-section" class="pokemon-details-modal__section pokemon-details-modal__section--loot" aria-labelledby="pokemon-details-loot-title" aria-busy="false" hidden>
+          <div class="pokemon-details-modal__section-head">
+            <span class="pokemon-details-modal__section-kicker">Drops</span>
+            <h3 id="pokemon-details-loot-title" class="pokemon-details-modal__subtitle">Itens que este Pokémon pode dropar</h3>
+          </div>
+          <p id="pokemon-details-loot-status" class="pokemon-loot-status" role="status" aria-live="polite"></p>
+          <div id="pokemon-details-loot-groups" class="pokemon-loot-groups"></div>
+          <button id="pokemon-details-loot-retry" class="pokemon-loot-retry" type="button" hidden>Tentar carregar novamente</button>
+        </section>
+
         <div class="pokemon-details-modal__body">
           <section class="pokemon-details-modal__section pokemon-details-modal__section--info" aria-labelledby="pokemon-details-info-title">
             <div class="pokemon-details-modal__section-head">
@@ -913,13 +923,15 @@
 
           <section class="pokemon-details-modal__section pokemon-details-modal__section--averages" aria-labelledby="pokemon-details-averages-title">
             <div class="pokemon-details-modal__section-head">
-              <span class="pokemon-details-modal__section-kicker">Médias</span>
+              <h3 id="pokemon-details-averages-title" class="pokemon-details-modal__section-kicker">Médias de captura</h3>
+              <p class="pokemon-details-modal__average-price" hidden></p>
             </div>
             <div id="pokemon-details-averages" class="pokemon-averages-grid"></div>
           </section>
 
           <!-- removed duplicate weaknesses section (moved into Combate) -->
         </div>
+
       </div>
     </div>
 
@@ -954,7 +966,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1242 - 2026
+        Build v1250 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -1017,7 +1029,7 @@
     <script src="js/recommendation-engine.js?v=20260826d" defer></script>
     <script src="js/striker-recommendation-engine.js?v=20260902a" defer></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
-    <script src="script.js?v=20261105-skip-link-focus-v1" defer></script>
+    <script src="script.js?v=20261109-pokebolas-ghost-stone-v1" defer></script>
     <script src="news/news-popup.js?v=20261105-news-webp-dialog-v1" defer></script>
 </body>
 </html>
