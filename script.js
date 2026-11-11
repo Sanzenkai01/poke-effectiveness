@@ -497,7 +497,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261030-tinkatuff-steel-moveset-v1';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261111-musharna-shiny-capture-v1';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
@@ -28182,6 +28182,12 @@ function renderPokemonDetailsAverages(entry){
             .map(row => row.value)
             .filter(value => Number.isFinite(value) && value > 0);
         const minimumValue = availableValues.length ? Math.min(...availableValues) : null;
+        const rankedValues = [...new Set(availableValues)].sort((left, right) => left - right);
+        const valueToneByValue = new Map(rankedValues.map((value, index) => {
+            const rank = rankedValues.length > 1 ? index / (rankedValues.length - 1) : 0;
+            const tone = rank <= 0.25 ? 'low' : rank >= 0.75 ? 'high' : 'middle';
+            return [value, tone];
+        }));
 
         rows.forEach(({ card, value }) => {
             const row = document.createElement('tr');
@@ -28202,6 +28208,15 @@ function renderPokemonDetailsAverages(entry){
             const isMinimum = minimumValue !== null && value === minimumValue;
             if(average){
                 if(isMinimum) average.classList.add('pokemon-average-table__value--minimum');
+                const tone = valueToneByValue.get(value);
+                if(tone){
+                    average.classList.add(`pokemon-average-table__value--${tone}`);
+                    if(tone === 'middle'){
+                        average.setAttribute('aria-label', `${average.textContent}; média intermediária neste grupo`);
+                    } else if(tone === 'high'){
+                        average.setAttribute('aria-label', `${average.textContent}; maior média neste grupo`);
+                    }
+                }
                 averageGroup.appendChild(average);
             }
             if(isMinimum){
