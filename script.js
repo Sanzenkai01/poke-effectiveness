@@ -10650,16 +10650,29 @@ function getTeamBuilderModeConfig(mode = teamBuilderMode){
 }
 
 function getTeamBuilderSlotLabel(slotConfig){
+    const slotIndex = TEAM_BUILDER_SLOT_CONFIGS.findIndex(slot => slot.id === slotConfig?.id);
+    if(teamBuilderMode === '6x'){
+        if(slotIndex === 0) return 'Lurer';
+        if(slotIndex >= 1 && slotIndex <= 4) return 'DPS/Stun';
+        if(slotIndex === 5) return 'Finisher';
+    }
     if(teamBuilderMode !== '6x'){
-        const slotIndex = TEAM_BUILDER_SLOT_CONFIGS.findIndex(slot => slot.id === slotConfig?.id);
         const modeSlotLabel = getTeamBuilderModeConfig().slotLabels?.[slotIndex];
         if(modeSlotLabel) return modeSlotLabel;
     }
     return slotConfig?.label || '';
 }
 
+function isTeamBuilderLurerSlot(slotConfig = getTeamBuilderSlotConfig()){
+    if(!slotConfig) return false;
+    if(teamBuilderMode === '6x'){
+        return slotConfig.id === TEAM_BUILDER_SLOT_CONFIGS[0]?.id;
+    }
+    return getTeamBuilderSlotLabel(slotConfig) === 'Lurer';
+}
+
 function getTeamBuilderSlotRequirement(slotConfig){
-    if(teamBuilderMode !== '6x' && getTeamBuilderSlotLabel(slotConfig) === 'Lurer'){
+    if(isTeamBuilderLurerSlot(slotConfig)){
         return 'AR ou Mega DPS';
     }
     return slotConfig?.requirement || '';
@@ -11224,7 +11237,7 @@ function getTeamBuilderCatalogEntries(){
 
 function teamBuilderEntryMatchesSlot(entry, slotConfig = getTeamBuilderSlotConfig()){
     if(!entry || !slotConfig) return false;
-    if(teamBuilderMode !== '6x' && getTeamBuilderSlotLabel(slotConfig) === 'Lurer'){
+    if(isTeamBuilderLurerSlot(slotConfig)){
         return isTeamBuilderTankEntry(entry)
             || (isMegaPokemonCatalogEntry(entry) && teamBuilderEntryMatchesSlot(entry, { kind: 'dps' }));
     }
@@ -11274,9 +11287,11 @@ function getFilteredTeamBuilderEntries(){
             if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
             if(normalizedClan !== 'all' && entry.team !== normalizedClan) return false;
             if(normalizedType && normalizedType !== 'all' && !teamBuilderEntryCoversType(entry, normalizedType)) return false;
-            if(isTeamBuilderTankSlot(slotConfig) && activeRoles.length){
-                const isLurerSlot = teamBuilderMode !== '6x' && getTeamBuilderSlotLabel(slotConfig) === 'Lurer';
-                const matchesLurerMegaDps = isLurerSlot
+            if(
+                (isTeamBuilderTankSlot(slotConfig) || isTeamBuilderLurerSlot(slotConfig))
+                && activeRoles.length
+            ){
+                const matchesLurerMegaDps = isTeamBuilderLurerSlot(slotConfig)
                     && activeRoles.includes('mega-dps')
                     && isMegaPokemonCatalogEntry(entry)
                     && teamBuilderEntryMatchesSlot(entry, { kind: 'dps' });
@@ -11285,7 +11300,13 @@ function getFilteredTeamBuilderEntries(){
             }
             const isDpsRoleFilterable = ['all-rounder', 'attacker', 'striker'].includes(entry.roleKey)
                 || (isTeamBuilderExplicitlyAllowedEntry(entry) && entry.roleKey === 'supporter');
-            if(isTeamBuilderDpsSlot(slotConfig) && activeRoles.length && isDpsRoleFilterable && !activeRoles.includes(entry.roleKey)) return false;
+            if(
+                isTeamBuilderDpsSlot(slotConfig)
+                && !isTeamBuilderLurerSlot(slotConfig)
+                && activeRoles.length
+                && isDpsRoleFilterable
+                && !activeRoles.includes(entry.roleKey)
+            ) return false;
             if(isTeamBuilderDpsSlot(slotConfig) && activeSubFunctions.length){
                 const entrySubFunctionKeys = getPokemonEntrySubFunctions(entry).map(subFunction => subFunction.key);
                 if(!activeSubFunctions.some(key => entrySubFunctionKeys.includes(key))) return false;
@@ -12030,12 +12051,17 @@ function createTeamBuilderPokemonCard(entry){
 }
 
 function getTeamBuilderResultGroupKey(entry, slotConfig = getTeamBuilderSlotConfig()){
+    if(isTeamBuilderLurerSlot(slotConfig)){
+        if(isMegaPokemonCatalogEntry(entry)) return 'mega-dps';
+        if(isTeamBuilderTankEntry(entry)) return 'defender-ar';
+    }
     if(slotConfig?.kind === 'tank' && isTeamBuilderTankEntry(entry)) return 'defender-ar';
     return entry?.roleKey || 'unknown';
 }
 
 function getTeamBuilderResultGroupLabel(roleKey){
     if(roleKey === 'defender-ar') return 'Defender/AR';
+    if(roleKey === 'mega-dps') return 'Mega DPS';
     return formatPokemonRoleLabel(roleKey);
 }
 
@@ -12299,9 +12325,11 @@ function renderTeamBuilderResults(){
         if(!groups.has(groupKey)) groups.set(groupKey, []);
         groups.get(groupKey).push(entry);
     });
-    const groupOrder = slotConfig.kind === 'tank'
-        ? ['defender-ar']
-        : [...POKEMON_ROLE_ORDER, 'unknown'];
+    const groupOrder = isTeamBuilderLurerSlot(slotConfig)
+        ? ['defender-ar', 'mega-dps']
+        : slotConfig.kind === 'tank'
+            ? ['defender-ar']
+            : [...POKEMON_ROLE_ORDER, 'unknown'];
     groupOrder.forEach(roleKey => {
         const groupEntries = groups.get(roleKey) || [];
         if(groupEntries.length){
@@ -12361,7 +12389,7 @@ function renderTeamBuilderClanFilters(){
 }
 
 function getTeamBuilderFunctionFilterMode(slotConfig = getTeamBuilderSlotConfig()){
-    if(isTeamBuilderTankSlot(slotConfig)) return 'role';
+    if(isTeamBuilderTankSlot(slotConfig) || isTeamBuilderLurerSlot(slotConfig)) return 'role';
     if(isTeamBuilderDpsSlot(slotConfig)) return 'subFunction';
     return '';
 }
@@ -12400,7 +12428,7 @@ function createTeamBuilderFunctionFilterButton({ value, label, mode, image = '' 
 function renderTeamBuilderSubFunctionFilters(){
     if(!(teamBuilderSubFunctionFilterRow instanceof HTMLElement)) return;
     const mode = getTeamBuilderFunctionFilterMode();
-    const isLurerSlot = teamBuilderMode !== '6x' && getTeamBuilderSlotLabel(getTeamBuilderSlotConfig()) === 'Lurer';
+    const isLurerSlot = isTeamBuilderLurerSlot();
     const filterContext = `${mode}:${isLurerSlot ? 'lurer' : 'standard'}`;
     if(teamBuilderSubFunctionFilterRow.dataset.filterMode === filterContext && teamBuilderSubFunctionFilterRow.childElementCount) return;
 
@@ -12696,7 +12724,12 @@ function getTeamBuilderAutoCompleteEntryRelevance(entry, slot, preferredMovesets
 
 function isTeamBuilderAutoCompleteEntryAllowed(entry, slot, selections){
     if(!teamBuilderEntryMatchesSlot(entry, slot)) return false;
-    if(isTeamBuilderDpsSlot(slot) && entry.roleKey === 'all-rounder' && !isMegaPokemonCatalogEntry(entry)) return false;
+    if(
+        isTeamBuilderDpsSlot(slot)
+        && !isTeamBuilderLurerSlot(slot)
+        && entry.roleKey === 'all-rounder'
+        && !isMegaPokemonCatalogEntry(entry)
+    ) return false;
     const normalizedSearch = normalizePokemonSearchText(teamBuilderFilters.search || '');
     const normalizedClan = String(teamBuilderFilters.clan || 'all').trim().toLowerCase();
     const normalizedType = normalizePokemonTypeKey(teamBuilderFilters.type || '');
@@ -12709,10 +12742,25 @@ function isTeamBuilderAutoCompleteEntryAllowed(entry, slot, selections){
     if(normalizedSearch && !entry.searchName.includes(normalizedSearch)) return false;
     if(normalizedClan !== 'all' && entry.team !== normalizedClan) return false;
     if(normalizedType && normalizedType !== 'all' && !teamBuilderEntryCoversType(entry, normalizedType)) return false;
-    if(isTeamBuilderTankSlot(slot) && activeRoles.length && !activeRoles.includes(entry.roleKey)) return false;
+    if(
+        (isTeamBuilderTankSlot(slot) || isTeamBuilderLurerSlot(slot))
+        && activeRoles.length
+    ){
+        const matchesLurerMegaDps = isTeamBuilderLurerSlot(slot)
+            && activeRoles.includes('mega-dps')
+            && isMegaPokemonCatalogEntry(entry)
+            && teamBuilderEntryMatchesSlot(entry, { kind: 'dps' });
+        if(!matchesLurerMegaDps && !activeRoles.includes(entry.roleKey)) return false;
+    }
     const isDpsRoleFilterable = ['all-rounder', 'attacker', 'striker'].includes(entry.roleKey)
         || (isTeamBuilderExplicitlyAllowedEntry(entry) && entry.roleKey === 'supporter');
-    if(isTeamBuilderDpsSlot(slot) && activeRoles.length && isDpsRoleFilterable && !activeRoles.includes(entry.roleKey)) return false;
+    if(
+        isTeamBuilderDpsSlot(slot)
+        && !isTeamBuilderLurerSlot(slot)
+        && activeRoles.length
+        && isDpsRoleFilterable
+        && !activeRoles.includes(entry.roleKey)
+    ) return false;
     if(isTeamBuilderDpsSlot(slot) && activeSubFunctions.length){
         const entrySubFunctionKeys = getPokemonEntrySubFunctions(entry).map(subFunction => subFunction.key);
         if(!activeSubFunctions.some(key => entrySubFunctionKeys.includes(key))) return false;

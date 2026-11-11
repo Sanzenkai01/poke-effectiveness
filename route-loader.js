@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20261111-pokemon-ball-average-colors-v4';
+    var APP_SHELL_VERSION = '20261111-team-builder-slot-labels-v1';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
     var appUrl = new URL(appShellPath, window.location.href);
