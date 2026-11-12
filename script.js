@@ -6942,10 +6942,19 @@ function initializeBattlePassFilter(){
     const updateSelection = () => {
         const currentSelected = Array.from(selected);
         renderBattlePassResults(currentSelected, selectedLevel, (entry) => {
-            [entry.type1, entry.type2]
+            const removedTypes = [entry.type1, entry.type2]
                 .map(normalizePokemonTypeKey)
                 .filter(Boolean)
-                .forEach((typeKey) => selected.delete(typeKey));
+                .filter(typeKey => selected.has(typeKey));
+            removedTypes.forEach(typeKey => selected.delete(typeKey));
+            hiddenPokemon.forEach((hiddenEntry, key) => {
+                const hiddenTypes = [hiddenEntry.type1, hiddenEntry.type2]
+                    .map(normalizePokemonTypeKey)
+                    .filter(Boolean);
+                if(removedTypes.some(typeKey => hiddenTypes.includes(typeKey))){
+                    hiddenPokemon.delete(key);
+                }
+            });
             updateSelection();
         }, new Set(hiddenPokemon.keys()), (entry) => {
             const entryTypes = [entry.type1, entry.type2]
