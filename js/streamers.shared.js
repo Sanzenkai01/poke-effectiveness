@@ -4,7 +4,7 @@
         { name: 'callmevitao_', hasPack: true, discord: 'https://discord.gg/HzY9sMpaSV' },
         { name: 'OKAMIulv', discord: 'https://discord.gg/NJCJn7anYQ' },
         { name: 'FernandoAlcatraz', discord: 'https://discord.gg/5hjyzM6' },
-        { name: 'sousupermeme', discord: 'https://discord.gg/xFegFmpTaP' },
+        /*{ name: 'sousupermeme', discord: 'https://discord.gg/xFegFmpTaP' },*/
         { name: 'uguettolitz', discord: 'https://discord.gg/g7fBkqtHtG'},
         { name: 'indypereira', hasPack: true },
         { name: 'cafeina54' },
@@ -16,15 +16,11 @@
         { name: 'zsales33' },
         { name: 'thigaartus' },
         { name: 'jackpist0la', supportsDrops: false },
-        { name: 'raulzerah1', supportsDrops: false },
-        { name: 'lordjuregi', supportsDrops: false },
         { name: 'Eusou_O_D', supportsDrops: false },
-        { name: '0taichou', supportsDrops: false },
         { name: 'enriqfmz', supportsDrops: false },
-        { name: 'olegarioojv', supportsDrops: false },
         { name: 'galego_rj', supportsDrops: false },
         { name: 'lineashh', supportsDrops: false },
-        { name: 'lipeeko', supportsDrops: false },
+        { name: 'rinconnn', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
