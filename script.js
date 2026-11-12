@@ -3310,6 +3310,10 @@ function loadCommunityVideoFrame(video, options = {}){
 }
 
 function setVisiblePanel(activePanel){
+    const currentPanel = mainPanels.find(panel => panel && !panel.hidden);
+    if(currentPanel !== activePanel){
+        clearPokemonTooltipOverlays();
+    }
     mainPanels.forEach(panel => {
         if(!panel) return;
         const isActive = panel === activePanel;
@@ -3320,6 +3324,14 @@ function setVisiblePanel(activePanel){
     if(activePanel !== contentHome){
 
     }
+}
+
+function clearPokemonTooltipOverlays(){
+    document.querySelectorAll('.pokemon-tier-tooltip, .pokemon-sync-ex-tooltip')
+        .forEach(tooltip => tooltip.remove());
+    document.querySelectorAll(
+        '[aria-describedby^="pokemon-tier-tooltip-"], [aria-describedby^="pokemon-sync-ex-tooltip-"]'
+    ).forEach(trigger => trigger.removeAttribute('aria-describedby'));
 }
 
 function isMobileSidebarMode(){
@@ -6888,6 +6900,7 @@ function initializeBattlePassFilter(){
     const hiddenPokemonSection = document.getElementById('battle-pass-hidden-pokemon');
     const hiddenPokemonList = document.getElementById('battle-pass-hidden-list');
     if(!picker || !clearBtn || !levelSelect || !hiddenPokemonSection || !hiddenPokemonList) return;
+    if(picker.dataset.initialized === 'true') return;
 
     renderBattlePassLocationCards();
 
@@ -7003,6 +7016,7 @@ function initializeBattlePassFilter(){
     });
 
     updateSelection();
+    picker.dataset.initialized = 'true';
 }
 
 function showBattlePass(){
@@ -7017,12 +7031,31 @@ function showBattlePass(){
     localStorage.setItem('selectedTab', 'passe-de-batalha');
     updateBrowserTitle();
     ensurePanelFragmentLoaded(contentBattlePass).then(() => {
+        const picker = document.getElementById('battle-pass-type-picker');
+        if(picker?.dataset.initialized === 'true') return false;
+        const summaryLabel = document.getElementById('battle-pass-summary');
+        const resultsPanel = document.getElementById('battle-pass-results');
+        if(summaryLabel) summaryLabel.textContent = 'Carregando catálogo de Pokémon...';
+        if(resultsPanel) resultsPanel.textContent = 'Carregando Pokémon...';
+        contentBattlePass.setAttribute('aria-busy', 'true');
+        return ensurePokemonCatalogLoaded().then(() => true);
+    }).then(shouldInitialize => {
+        if(!shouldInitialize || contentBattlePass.hidden) return;
         initializeBattlePassFilter();
+        contentBattlePass.removeAttribute('aria-busy');
         if(useGsap && contentBattlePass && !contentBattlePass.hidden){
             gsap.from(contentBattlePass, { opacity: 0, y: -10, duration: 0.4 });
             gsap.from(contentBattlePass.querySelectorAll('.battle-pass-hero, .battle-pass-tool'), { opacity: 0, y: 18, duration: 0.45, stagger: 0.06 });
         }
-    }).catch(error => console.error('Passe de Batalha load failed', error));
+    }).catch(error => {
+        console.error('Passe de Batalha load failed', error);
+        if(contentBattlePass.hidden) return;
+        contentBattlePass.removeAttribute('aria-busy');
+        const summaryLabel = document.getElementById('battle-pass-summary');
+        const resultsPanel = document.getElementById('battle-pass-results');
+        if(summaryLabel) summaryLabel.textContent = 'Não foi possível carregar o catálogo de Pokémon.';
+        if(resultsPanel) resultsPanel.textContent = 'Verifique sua conexão e acesse esta página novamente para tentar outra vez.';
+    });
     updateUrl();
 }
 
@@ -26418,7 +26451,8 @@ function createPokemonTierBonusTooltip(badge, roleKey, tier){
         badge.removeAttribute('aria-describedby');
     };
     const showTooltip = () => {
-        if(tooltip) return;
+        if(tooltip?.isConnected) return;
+        tooltip = null;
 
         tooltip = document.createElement('span');
         tooltip.className = 'pokemon-tier-tooltip pokemon-tier-tooltip--bonus';
@@ -26508,7 +26542,8 @@ function createPokemonTierBadge(tier, role){
             badge.removeAttribute('aria-describedby');
         };
         const showTooltip = () => {
-            if(tooltip) return;
+            if(tooltip?.isConnected) return;
+            tooltip = null;
 
             tooltip = document.createElement('span');
             tooltip.className = 'pokemon-tier-tooltip';
@@ -26605,7 +26640,8 @@ function createPokemonSyncExTooltip(badge, roleKey){
         badge.removeAttribute('aria-describedby');
     };
     const showTooltip = () => {
-        if(tooltip) return;
+        if(tooltip?.isConnected) return;
+        tooltip = null;
 
         tooltip = document.createElement('span');
         tooltip.className = 'pokemon-sync-ex-tooltip';
@@ -27613,6 +27649,7 @@ function applyPokemonCatalogVariant(variant = POKEMON_CATALOG_VARIANT_DEFAULT, o
 function renderPokemonCatalog(options = {}){
     const { animate = false, historyMode = 'replace' } = options;
     if(!pokemonCardGrid) return;
+    clearPokemonTooltipOverlays();
     const visibleEntries = getVisiblePokemonCatalogEntries();
 
     if(!visibleEntries.length){
