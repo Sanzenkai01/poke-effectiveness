@@ -21,6 +21,7 @@
         { name: 'galego_rj', supportsDrops: false },
         { name: 'lineashh', supportsDrops: false },
         { name: 'rinconnn', supportsDrops: false },
+        { name: 'nandoxd1996', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
