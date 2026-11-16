@@ -1,7 +1,7 @@
 <div id="content-catch" role="tabpanel" aria-labelledby="tab-catch" hidden>
       <div class="card calc-card catch-card">
         <div class="catch-hero">
-          <p id="catch-description" class="visually-hidden">Calculadora de captura com estimativa por alvo, variante e pokebola.</p>
+          <p id="catch-description" class="visually-hidden">Calculadora do limite de captura por alvo, variante, tier e pokébola.</p>
           <div class="catch-hero__preview" aria-live="polite">
             <span id="catch-selected-ball-label" class="catch-hero__preview-label">Pokébola selecionada</span>
             <div class="catch-ball-preview">
@@ -17,9 +17,9 @@
         <div class="catch-dashboard">
           <section class="catch-panel catch-panel--primary catch-panel--estimator" aria-labelledby="catch-calc-title">
             <div class="catch-panel__header">
-              <span class="catch-panel__eyebrow">Estimativa</span>
-              <h3 id="catch-calc-title" class="catch-panel__title">Calcule a média de pokébolas</h3>
-              <p id="catch-calc-hint" class="catch-panel__hint">Escolha o alvo e a variante para liberar a estimativa.</p>
+              <span class="catch-panel__eyebrow">Regras de captura</span>
+              <h3 id="catch-calc-title" class="catch-panel__title">Consulte o limite de captura</h3>
+              <p id="catch-calc-hint" class="catch-panel__hint">A Chance Base é oculta e padronizada por Tier; confira a máxima de brokes correspondente ao alvo.</p>
             </div>
 
             <div class="catch-section catch-field catch-field--full catch-target-picker">
@@ -42,21 +42,21 @@
                   <input type="radio" name="catch-variant-legacy" value="normal">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Normal</strong>
-                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Usa os dados cadastrados do alvo.</span>
+                    <span id="catch-variant-normal-hint-legacy" class="catch-variant-card__hint">Primeira captura garantida ao atingir 100% do valor de captura, exceto com Premier Ball; as seguintes não têm máxima.</span>
                   </span>
                 </label>
                 <label class="catch-variant-card">
                   <input type="radio" name="catch-variant-legacy" value="shiny">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Shiny</strong>
-                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Calcula pelo nivel do alvo.</span>
+                    <span id="catch-variant-shiny-hint-legacy" class="catch-variant-card__hint">Captura garantida ao atingir a máxima de brokes do Tier, exceto com Premier Ball.</span>
                   </span>
                 </label>
               </div>
             </div>
 
             <div id="catch-selection-prompt" class="catch-selection-prompt" aria-live="polite">
-              <span id="catch-selection-prompt-hint">Depois disso, a p&aacute;gina usa pre&ccedil;o, n&iacute;vel e tipos cadastrados automaticamente.</span>
+            <span id="catch-selection-prompt-hint">O Tier do Pokémon é identificado automaticamente a partir do catálogo.</span>
             </div>
 
             <div id="catch-config-shell" class="catch-config-shell" hidden>
@@ -68,6 +68,7 @@
                   <option value="safari">Pokébola Safari</option>
                   <option value="story">Pokébola Story</option>
                   <option value="elemental">Pokébola Elemental</option>
+                  <option value="premier">Premier Ball</option>
                 </select>
               </div>
               <div id="catch-level-field" class="catch-section catch-field" hidden>
@@ -102,22 +103,22 @@
                   <input type="radio" name="catch-variant" value="normal">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Normal</strong>
-                    <span id="catch-variant-normal-hint" class="catch-variant-card__hint">Estimativa padrão de captura.</span>
+                    <span id="catch-variant-normal-hint" class="catch-variant-card__hint">A primeira captura é garantida ao atingir 100% do valor de captura, exceto com Premier Ball; as seguintes não têm máxima.</span>
                   </span>
                 </label>
                 <label class="catch-variant-card">
                   <input type="radio" name="catch-variant" value="shiny">
                   <span class="catch-variant-card__body">
                     <strong class="catch-variant-card__title">Shiny</strong>
-                    <span id="catch-variant-shiny-hint" class="catch-variant-card__hint">Mostra a média para capturas shiny.</span>
+                    <span id="catch-variant-shiny-hint" class="catch-variant-card__hint">A captura é garantida ao atingir a máxima de brokes do Tier, exceto com Premier Ball.</span>
                   </span>
                 </label>
               </div>
             </div>
 
             <div class="catch-section catch-actions">
-              <button id="calc-catch-btn" class="catch-action-button">Calcular estimativa</button>
-              <p class="catch-note">Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.</p>
+              <button id="calc-catch-btn" class="catch-action-button">Ver limite de captura</button>
+              <p class="catch-note">A Chance Base é oculta e padronizada por Tier. A Persistência aumenta a chance a cada arremesso. Premier Ball usa apenas a Chance Base, não é afetada pela Persistência e não garante captura na máxima.</p>
             </div>
 
             <div id="catch-result" class="calc-info catch-result-area" aria-live="polite"></div>
@@ -129,12 +130,12 @@
               <div class="catch-panel__header">
                 <span class="catch-panel__eyebrow">Log</span>
                 <h3 id="catch-log-title" class="catch-panel__title">Analise o histórico de pokébolas</h3>
-                <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.</p>
+                <p id="catch-log-hint" class="catch-panel__hint">Cole o retorno do comando no jogo para acompanhar os brokes até a máxima. Arremessos de Premier Ball também contam.</p>
               </div>
 
               <div class="catch-section catch-field catch-field--full">
                 <label for="log-input">Log de pokébolas usadas:</label>
-                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui (inclua a despesa)."></textarea>
+                <textarea id="log-input" rows="5" placeholder="Utilize !pokeballs 'nome do pokemon' no jogo e cole a mensagem aqui com as quantidades de Pokébolas."></textarea>
               </div>
 
               <div class="catch-section catch-actions">

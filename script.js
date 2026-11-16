@@ -349,11 +349,12 @@ let activeProfessionKey = '';
 const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261102-pokemon-clan-primary-type-v1';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
-const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261026-mapdex-markers-v1';
+const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261116-capture-tier-broke-v1';
 const INTERACTIVE_MAP_STYLESHEET_SRC = 'mapa-interativo/mapa-interativo.css?v=20261105-map-reduced-motion-v1';
 const EFFECTIVENESS_HELPER_SCRIPT_SRC = 'js/main.js?v=20260802a';
 const PANEL_FRAGMENT_VERSION = '20261020-page-folders-v1';
 const PANEL_FRAGMENT_VERSIONS = Object.freeze({
+    catch: '20261116-capture-tier-broke-v2',
     bosses: '20261021-bosses-panel-v1',
     pokemons: '20261016-pokemon-singular-labels-v1',
     times: '20261105-times-team-builder-load-v1',
@@ -5133,8 +5134,8 @@ const strings = {
         catchEyebrow: '',
         catchDescription: '',
         selectedBallLabel: 'Pokébola selecionada',
-        catchCalcTitle: 'Calcule a média de pokébolas',
-        catchCalcHint: 'Escolha o alvo e a variante para liberar a estimativa.',
+        catchCalcTitle: 'Consulte o limite de captura',
+        catchCalcHint: 'A Chance Base é oculta e padronizada por Tier; confira a máxima de brokes correspondente ao alvo.',
         ballChoiceLabel: 'Escolha a pokébola:',
         pokemonLevelLabel: 'Nível do pokémon:',
         catchPriceLabel: 'Preço do pokémon:',
@@ -5142,17 +5143,17 @@ const strings = {
         catchPriceLoading: 'Carregando preços...',
         catchPriceUnavailable: 'Preços indisponíveis no momento',
         catchVariantLabel: 'Variante',
-        catchVariantNormalHint: 'Usa o preço e os tipos cadastrados do alvo.',
-        catchVariantShinyHint: 'Usa o nível e os tipos cadastrados do alvo.',
+        catchVariantNormalHint: 'A primeira captura é garantida ao atingir 100% do valor de captura, exceto com Premier Ball; as seguintes não têm máxima.',
+        catchVariantShinyHint: 'A captura é garantida ao atingir a máxima de brokes do Tier, exceto com Premier Ball.',
         catchSelectionPromptTitle: 'Escolha o alvo e a variante para começar',
-        catchSelectionPromptHint: 'Depois disso, a página usa preço, nível e tipos cadastrados automaticamente.',
+        catchSelectionPromptHint: 'O Tier do Pokémon é identificado automaticamente a partir do catálogo.',
         catchSelectVariantFirst: 'Selecione um alvo e uma variante para liberar a estimativa.',
-        catchSelectPriceFirst: 'Dados de captura indisponíveis para esta seleção.',
+        catchTierUnavailable: 'Não há Tier com máxima de captura cadastrada para este Pokémon.',
         optionsLabel: 'Opções',
         catchOptionLabel: 'Opção',
-        calcCatchBtn: 'Calcular estimativa',
+        calcCatchBtn: 'Ver limite de captura',
         catchLogTitle: 'Analise o histórico de pokébolas',
-        catchLogHint: 'Cole o retorno do comando no jogo para converter o gasto e ver quanto ainda falta.',
+        catchLogHint: 'Cole o retorno do comando no jogo para contar os brokes. Premier Balls também contam para o progresso da máxima.',
         logBallsLabel: 'Log de pokébolas usadas:',
         parseLogBtn: 'Processar log',
         catchQuickAdjustLabel: 'Ajuste rapido',
@@ -5162,29 +5163,34 @@ const strings = {
         catchQuickAdjustDecrease: 'Remover 1 {ball} do ajuste manual',
         catchQuickAdjustIncrease: 'Adicionar 1 {ball} ao ajuste manual',
         expensesMsg: 'Despesas',
-        ballsCountMsg: 'Ultra: {ultra}, Story: {story}, Elemental: {elemental}, Safari: {safari}',
-        catchResultTitle: 'Estimativa para sua seleção',
-        catchResultCountLabel: 'Média',
-        catchResultLevelLabel: 'Nível',
-        catchResultPriceLabel: 'Preço',
+        ballsCountMsg: 'Ultra: {ultra}, Safari: {safari}, Story: {story}, Elemental: {elemental}, Premier: {premier}',
+        catchResultTitle: 'Limite para sua seleção',
+        catchResultCountLabel: 'Máxima de brokes',
+        catchResultLevelLabel: 'Tier',
         catchResultVariantLabel: 'Variante',
         catchResultBallLabel: 'Pokébola',
         catchLogResultTitle: 'Leitura do log',
         catchLogBallsLabel: 'Pokébolas reconhecidas',
-        catchLogEquivalentLabel: 'Equivalente em {ball}',
+        catchLogEquivalentLabel: 'Brokes acumulados',
         catchLogSpentLabel: 'Gasto total',
-        catchRemainingTitle: 'Ainda faltam',
-        catchAchievedTitle: 'Status da média',
+        catchRemainingTitle: 'Progresso até a máxima',
+        catchAchievedTitle: 'Máxima alcançada',
+        catchLogRemaining: 'Faltam {count} brokes para atingir a máxima.',
+        catchLogNormalReached: 'Primeira captura Normal garantida; capturas seguintes não têm máxima.',
+        catchLogShinyReached: 'Captura Shiny garantida ao atingir a máxima.',
+        catchLogPremierRemaining: 'Premier Ball conta para o progresso, mas não garante captura na máxima.',
+        catchLogPremierReached: 'A máxima foi alcançada, mas Premier Ball não garante a captura.',
         /* texto adicional de captura e calculadora */
         ballElemental: 'Pokébola Elemental',
         ballStory: 'Pokébola Story',
         ballUltra: 'Pokébola Ultra',
         ballSafari: 'Pokébola Safari',
+        ballPremier: 'Premier Ball',
         lvlPrefix: 'Nível ',
         preLabel: 'Pré Ace',
         aceLabel: 'Ace',
         logPlaceholder: "Utilize !pokeballs 'nome do Pokémon' no jogo e cole a mensagem aqui.",
-        catchNote: 'Nota: os valores são uma média aproximada; geralmente gastam-se algumas pokébolas a mais.',
+        catchNote: 'A Chance Base é oculta e padronizada por Tier. A Persistência aumenta a chance a cada arremesso. Premier Ball usa apenas a Chance Base, não é afetada pela Persistência e não garante captura na máxima.',
         infoPlateCommon: '1 plate comum precisa de 750 itens do elemento, 24 itens característicos e 1 pedra do elemento.',
         infoShinyCost: '30 shining plates custam 30 plates comuns e 1 shining stone.',
         adjustNote: 'Valor ajustado para múltiplo de 30: {rounded}',
@@ -5193,10 +5199,6 @@ const strings = {
         materialsForRangeLabel: 'Materiais para fabricar',
         roundedProductionLabel: 'Produção ajustada',
         shiningStonesLabel: 'Shining Stones',
-        /* novas mensagens para leitura de log */
-        avgReached: 'Parabéns! Você já atingiu a média de {avg} {ball}.',
-        overAvg: 'Você passou da média por {over} {ball}.',
-        encouragement: 'Continue assim, você está no caminho certo!',
         noBallsParsed: 'Nenhuma pokébola reconhecida no log.'
     }
 };
@@ -6695,14 +6697,14 @@ function renderBattlePassResults(selectedTypes = [], levelFilter = null, onRemov
             ultraAverageRow.className = 'battle-pass-card__capture-average';
 
             const ultraIcon = document.createElement('img');
-            ultraIcon.src = 'balls/ultra.png';
-            ultraIcon.alt = 'Ultra Ball';
+            ultraIcon.src = 'balls/story.png';
+            ultraIcon.alt = 'Story Ball';
             ultraIcon.loading = 'lazy';
             ultraIcon.decoding = 'async';
             ultraIcon.className = 'battle-pass-card__capture-average-icon';
 
             const ultraText = document.createElement('span');
-            ultraText.textContent = `Média: ${ultraAverage}x`;
+            ultraText.textContent = `Máxima de brokes: ${formatBrokeAmount(ultraAverage)}`;
 
             ultraAverageRow.append(ultraIcon, ultraText);
             info.appendChild(ultraAverageRow);
@@ -7555,7 +7557,15 @@ function renderTypeInfoEmptyState(message){
     `;
 }
 // Dados da calculadora de captura
-const catchBallOrder = ['ultra', 'story', 'elemental', 'safari'];
+const catchBallOrder = ['ultra', 'safari', 'story', 'elemental', 'premier'];
+const CATCH_MAX_BROKES_BY_TIER = Object.freeze({
+    A: 10400,
+    B: 6400,
+    C: 3200,
+    D: 1200,
+    E: 400,
+    F: 100
+});
 const catchBallRequirementAliases = Object.freeze(
     Object.values(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, ball) => {
         if(ball?.key){
@@ -7569,9 +7579,10 @@ const catchBallPreviewImages = {
     story: 'story',
     brave: 'brave',
     elemental: 'elemental',
-    safari: 'saffari'
+    safari: 'saffari',
+    premier: 'premier'
 };
-const ballPrices = Object.freeze({ ultra:130, story:250, elemental:330, safari:130 });
+const ballPrices = Object.freeze({ ultra:130, story:250, elemental:250, safari:130, premier:250 });
 const CATCH_BRAVE_BALL_STORY_EQUIVALENT = 50;
 const CATCH_ELEMENTAL_BALL_OPTIONS = Object.freeze(
     Object.entries(ELEMENTAL_BALL_TYPE_MAP).reduce((acc, [rawType, ball]) => {
@@ -7587,46 +7598,7 @@ const CATCH_TARGET_TYPE_OPTIONS = Object.freeze(
         label: formatPokemonTypeLabel(type)
     }))
 );
-const CATCH_NORMAL_PRICE_VALUES = Object.freeze([
-    5, 60, 80, 125, 200, 250, 300, 500,
-    1000, 2000, 3000, 3800, 4000, 6000, 6500, 7000, 8000, 9000,
-    10000, 13000, 15000, 15800, 22000, 25000, 26000, 28000,
-    39000, 40000, 45000, 85500, 97500, 115500
-]);
-let catchNormalPriceOptions = [];
 let catchPriceActiveGroupKey = '';
-// Contagens por nivel diferem entre normal e shiny
-// Para niveis com multiplas opcoes, guardamos um array de requisitos alternativos
-const captureData = {
-    normal: {
-        5:  [{ultra:1}],
-        20: [{ultra:8}],
-        30: [{ultra:31}],
-        50: [{ultra:54}],
-        65: [{ultra:46}],
-        80: [{ultra:169}],
-        95: [{ultra:192}],
-        pre:[{ultra:750},{story:390},{elemental:300},{safari:750}],
-        ace:[{ultra:889}]
-    },
-    shiny: {
-        5:  [{ultra:100},{story:50},{elemental:38}],
-        20: [{ultra:200},{story:100},{elemental:77}],
-        30: [{ultra:800},{story:400},{elemental:308}],
-        50: [{ultra:1000},{story:500},{elemental:385}],
-        65: [{ultra:1600},{story:800},{elemental:615}],
-        80: [{ultra:1600},{story:800},{elemental:615}],
-        95: [{ultra:3200},{story:1600},{elemental:1231}],
-        pre:[{ultra:3200},{story:1600},{elemental:1231}],
-        ace:[{ultra:10400},{story:5200},{elemental:4000}]
-    }
-};
-function computeRequired(lvl, variant){
-    variant = variant || 'normal';
-    const data = captureData[variant] || captureData['normal'];
-    // Retornar array de opcoes; padrao para requisito zero
-    return data[lvl] || [{ultra:0,story:0,elemental:0}];
-}
 function parseLog(text){
     let totalCost = 0;
     const counts = createEmptyCatchBallCounts();
@@ -7656,7 +7628,7 @@ function parseLog(text){
 }
 
 function createEmptyCatchBallCounts(){
-    return { ultra: 0, story: 0, elemental: 0, safari: 0 };
+    return { ultra: 0, safari: 0, story: 0, elemental: 0, premier: 0 };
 }
 
 function createEmptyCatchSpecificElementalCounts(){
@@ -7687,7 +7659,8 @@ function getBallTranslationKey(ball){
         ultra: 'ballUltra',
         story: 'ballStory',
         elemental: 'ballElemental',
-        safari: 'ballSafari'
+        safari: 'ballSafari',
+        premier: 'ballPremier'
     };
     return keyMap[ball] || 'ballUltra';
 }
@@ -7988,15 +7961,8 @@ function renderCatchPricePicker(){
 
 function getCatchPokemonCaptureValue(entry, variant){
     if(!entry) return '';
-    if(variant === 'normal'){
-        const price = Number(entry.price || 0);
-        return price > 0 ? String(price) : '';
-    }
-    if(variant === 'shiny'){
-        const levelKey = getPokemonShinyCaptureLevelKey(entry);
-        return levelKey ? String(levelKey) : '';
-    }
-    return '';
+    if(variant !== 'normal' && variant !== 'shiny') return '';
+    return getPokemonCaptureLimit(entry)?.tier || '';
 }
 
 function isCatchVariantUsable(entry, variant){
@@ -8438,13 +8404,7 @@ function getSelectedCatchVariant(){
 
 function getCatchSelectionValue(variant = getSelectedCatchVariant()){
     const entry = catchSelectedPokemonEntry || getCatchSelectedPokemonEntry();
-    if(variant === 'shiny'){
-        return getCatchPokemonCaptureValue(entry, 'shiny');
-    }
-    if(variant === 'normal'){
-        return getCatchPokemonCaptureValue(entry, 'normal');
-    }
-    return '';
+    return getCatchPokemonCaptureValue(entry, variant);
 }
 
 function isCatchSelectionReady(variant = getSelectedCatchVariant()){
@@ -8452,23 +8412,6 @@ function isCatchSelectionReady(variant = getSelectedCatchVariant()){
     if(!entry || !variant) return false;
     if(!isCatchVariantUsable(entry, variant)) return false;
     return Boolean(getCatchSelectionValue(variant));
-}
-
-function buildCatchNormalPriceOptions(){
-    return Array.from(new Set(CATCH_NORMAL_PRICE_VALUES))
-        .filter((value) => Number.isFinite(value) && value > 0)
-        .sort((left, right) => left - right)
-        .map((value) => ({
-            value: String(value),
-            label: formatCatchPriceOptionLabel(value)
-        }));
-}
-
-function getCatchAvailablePriceOptions(){
-    if(Array.isArray(catchNormalPriceOptions) && catchNormalPriceOptions.length){
-        return catchNormalPriceOptions;
-    }
-    return buildCatchNormalPriceOptions();
 }
 
 function setCatchPriceSelectPlaceholder(label, disabled = true){
@@ -8482,43 +8425,10 @@ function setCatchPriceSelectPlaceholder(label, disabled = true){
     renderCatchPricePicker();
 }
 
-function syncCatchNormalPriceSelect(selectedValue = catchPriceSelect?.value || ''){
-    if(!catchPriceSelect) return false;
-    const options = getCatchAvailablePriceOptions();
-    if(!options.length) return false;
-    catchNormalPriceOptions = options;
-    setCatchSelectOptions(catchPriceSelect, options, {
-        includeEmpty: true,
-        emptyLabel: t('catchPricePlaceholder'),
-        selectedValue
-    });
-    catchPriceSelect.disabled = false;
-    renderCatchPricePicker();
-    return true;
-}
-
-function ensureCatchNormalPriceOptionsLoaded(){
-    if(syncCatchNormalPriceSelect()){
-        return Promise.resolve(catchNormalPriceOptions);
-    }
-    catchNormalPriceOptions = buildCatchNormalPriceOptions();
-    if(!syncCatchNormalPriceSelect()){
-        setCatchPriceSelectPlaceholder(t('catchPriceUnavailable'));
-    }
-    updateCatchActionState();
-    return Promise.resolve(catchNormalPriceOptions);
-}
-
 function getCatchSelectionSummary(selectionValue, variant){
-    if(variant === 'normal'){
-        return {
-            label: t('catchResultPriceLabel'),
-            value: formatCatchPriceOptionLabel(selectionValue)
-        };
-    }
     return {
         label: t('catchResultLevelLabel'),
-        value: getCatchLevelLabel(selectionValue)
+        value: `Tier ${selectionValue}`
     };
 }
 
@@ -8528,6 +8438,10 @@ function formatBallAmount(count, ball){
 
 function formatBallAmountWithLabel(count, label){
     return `${count}x ${label}`;
+}
+
+function formatBrokeAmount(count){
+    return `${Number(count || 0).toLocaleString('pt-BR')} brokes`;
 }
 
 function setCatchSelectOptions(select, items = [], config = {}){
@@ -9104,7 +9018,12 @@ function updateBallPreview(){
     const previewName = document.getElementById('ball-preview-name');
     if(previewName) previewName.textContent = selectedBallLabel;
     const previewPrice = document.getElementById('ball-preview-price');
-    if(previewPrice) previewPrice.textContent = `${formatCurrencyValue(getCatchBallUnitPrice(selectedBall))} cada`;
+    if(previewPrice){
+        const unitPriceLabel = `${formatCurrencyValue(getCatchBallUnitPrice(selectedBall))} cada`;
+        previewPrice.textContent = selectedBall === 'premier'
+            ? `${unitPriceLabel} · Chance Base; sem Persistência`
+            : unitPriceLabel;
+    }
     updateCatchElementalRuleStatus();
 }
 
@@ -9130,15 +9049,25 @@ function renderCatchEstimateResult(target, chosen, selectionValue, variant, opti
     }
     const selectedBallLabel = getCatchBallDisplayLabel(chosen);
     const selectionSummary = getCatchSelectionSummary(selectionValue, variant);
-    const headline = formatBallAmountWithLabel(optionItems[0].needed, selectedBallLabel);
+    const maximumLabel = formatBrokeAmount(optionItems[0].needed);
+    const headline = chosen === 'premier'
+        ? `Máxima: ${maximumLabel}`
+        : variant === 'shiny'
+            ? `Captura garantida ao atingir ${maximumLabel}`
+            : `Primeira captura garantida ao atingir ${maximumLabel}`;
+    const explanation = chosen === 'premier'
+        ? 'Premier Ball usa somente a Chance Base: não acumula Persistência e não garante captura ao atingir a máxima. Seus arremessos contam para os brokes.'
+        : variant === 'shiny'
+            ? 'A Chance Base é oculta e a Persistência aumenta a chance a cada arremesso. A captura Shiny é garantida na máxima.'
+            : 'A primeira captura Normal é garantida ao atingir 100% do valor de captura. Depois dela, as capturas não têm máxima de brokes.';
     const chips = renderCatchChips([
         `${selectionSummary.label}: ${selectionSummary.value}`,
         `${t('catchResultVariantLabel')}: ${getCatchVariantLabel(variant)}`,
         `${t('catchResultBallLabel')}: ${selectedBallLabel}`
     ]);
     const metrics = renderCatchMetrics(optionItems.map((item, index)=>({
-        label: optionItems.length > 1 ? `${t('catchOptionLabel')} ${index + 1}` : t('catchResultCountLabel'),
-        value: formatBallAmountWithLabel(item.needed, selectedBallLabel)
+        label: t('catchResultCountLabel'),
+        value: formatBrokeAmount(item.needed)
     })));
     target.innerHTML = `
         <div class="calc-result-highlight catch-result-shell">
@@ -9150,11 +9079,12 @@ function renderCatchEstimateResult(target, chosen, selectionValue, variant, opti
                 <div class="catch-result-shell__meta">${chips}</div>
             </div>
             <div class="catch-result-shell__grid">${metrics}</div>
+            <div class="catch-result-empty">${explanation}</div>
         </div>
     `;
 }
 
-function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, remainingItems, avgNeeded, over, manualState = {}){
+function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, remainingItems, maximumBrokes, manualState = {}){
     if(!target) return;
     const totalBalls = catchBallOrder.reduce((sum, ball) => sum + (counts[ball] || 0), 0);
     if(totalCost === 0 && totalBalls === 0){
@@ -9172,24 +9102,39 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
         return;
     }
     const selectedBallLabel = getCatchBallDisplayLabel(chosen);
-    const metrics = renderCatchMetrics([
-        {label: t('catchLogSpentLabel'), value: formatCurrencyValue(totalCost)},
-        {label: t('catchLogEquivalentLabel').replace('{ball}', selectedBallLabel), value: formatBallAmountWithLabel(effectiveUsed, selectedBallLabel)},
+    const metricsList = [];
+    if(totalCost > 0){
+        metricsList.push({label: t('catchLogSpentLabel'), value: formatCurrencyValue(totalCost)});
+    }
+    metricsList.push(
+        {
+            label: t('catchLogEquivalentLabel'),
+            value: maximumBrokes
+                ? `${formatBrokeAmount(effectiveUsed)} / ${formatBrokeAmount(maximumBrokes)}`
+                : formatBrokeAmount(effectiveUsed)
+        },
         {label: t('catchLogBallsLabel'), value: `${totalBalls}`}
-    ]);
+    );
+    const metrics = renderCatchMetrics(metricsList);
     const breakdown = renderCatchPills(
         catchBallOrder.map((ball) => `${getCatchBallDisplayLabel(ball)}: ${counts[ball] || 0}`)
     );
     const hasSelection = manualState?.hasSelection !== false;
+    const isPremierBall = chosen === 'premier';
+    const remaining = remainingItems[0]?.needed || 0;
+    const reachedMessage = isPremierBall
+        ? t('catchLogPremierReached')
+        : manualState?.variant === 'shiny'
+            ? t('catchLogShinyReached')
+            : t('catchLogNormalReached');
     const statusLines = hasSelection
         ? (
             remainingItems.length
-                ? remainingItems.map(item=>formatBallAmountWithLabel(item.needed, selectedBallLabel))
-                : [
-                    t('avgReached').replace('{avg}', avgNeeded).replace('{ball}', selectedBallLabel),
-                    over > 0 ? t('overAvg').replace('{over}', over).replace('{ball}', selectedBallLabel) : '',
-                    t('encouragement')
+                ? [
+                    t('catchLogRemaining').replace('{count}', formatBrokeAmount(remaining)),
+                    ...(isPremierBall ? [t('catchLogPremierRemaining')] : [])
                 ]
+                : [reachedMessage]
         )
         : ['Escolha o alvo e a variante para calcular quanto falta.'];
     const statusTitle = hasSelection
@@ -9204,7 +9149,7 @@ function renderCatchLogResult(target, chosen, totalCost, counts, effectiveUsed, 
             <div class="catch-result-shell__header">
                 <div>
                     <span class="catch-result-shell__eyebrow">${t('catchLogResultTitle')}</span>
-                    <div class="catch-result-shell__title">${formatBallAmountWithLabel(effectiveUsed, selectedBallLabel)}</div>
+                    <div class="catch-result-shell__title">${formatBrokeAmount(effectiveUsed)}</div>
                 </div>
                 <div class="catch-result-shell__meta">
                     ${renderCatchChips([`${t('catchResultBallLabel')}: ${selectedBallLabel}`])}
@@ -23548,34 +23493,13 @@ function refreshCatchDomReferences(){
     catchElementalRuleStatus = document.getElementById('catch-elemental-rule-status');
 }
 
-function getCatchNormalPriceRequirementOptions(priceValue, chosen){
-    const selectedPrice = Math.max(0, Number(priceValue) || 0);
-    const chosenBallPrice = Math.max(0, getCatchBallUnitPrice(chosen));
-    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
-    if(!selectedPrice || !chosenBallPrice || !requirementBall) return [];
-    const needed = Math.ceil(selectedPrice / chosenBallPrice);
-    return needed > 0 ? [{ [requirementBall]: needed }] : [];
-}
-
 function getSelectedCatchRequirementOptions(selectionValue, variant, chosen){
-    if(variant === 'normal'){
-        return getCatchNormalPriceRequirementOptions(selectionValue, chosen);
-    }
-    const reqList = computeRequired(selectionValue, variant) || [];
+    if(variant !== 'normal' && variant !== 'shiny') return [];
+    const maximum = Number(CATCH_MAX_BROKES_BY_TIER[String(selectionValue || '').toUpperCase()] || 0);
     const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
-
-    // Preferir uma opcao que liste explicitamente a ball obrigatoria (ex: {story:390}).
-    // Se encontrar, apresentar apenas essa opcao. Caso contrario, se houver multiplas alternativas,
-    // cair para a segunda opcao (Opcao 2), considerada a correta.
-    let selected = reqList;
-    const explicit = reqList.find((opt) => typeof opt === 'object' && opt !== null && typeof opt[requirementBall] === 'number' && opt[requirementBall] > 0);
-    if (explicit) {
-        selected = [explicit];
-    } else if (reqList.length > 1) {
-        selected = [reqList[1]];
-    }
-
-    return selected;
+    return maximum > 0 && requirementBall
+        ? [{ [requirementBall]: maximum }]
+        : [];
 }
 
 function getCatchOptionItems(lvl, variant, chosen){
@@ -23599,7 +23523,7 @@ function renderCatchCalculation(options = {}){
     }
     const selectionValue = getCatchSelectionValue(variant);
     if(!selectionValue){
-        renderCatchPendingState(catchResult, t('catchSelectPriceFirst'));
+        renderCatchPendingState(catchResult, t('catchTierUnavailable'));
         if(shouldUpdateUrl) updateUrl();
         return;
     }
@@ -23623,32 +23547,21 @@ function renderCatchLogFromState(){
     const selectedOptions = hasReadySelection
         ? getSelectedCatchRequirementOptions(selectionValue, variant, chosen)
         : [];
-    const requirementBall = getCatchEffectiveRequirementBallKey(chosen);
-    const chosenPrice = getCatchBallUnitPrice(chosen);
     const counts = getCatchLogCombinedCounts(state);
-    const convertToChosen = (typeCountMap, target) => {
-        let sum = 0;
-        const targetPrice = getCatchBallUnitPrice(target);
-        Object.entries(typeCountMap).forEach(([type,cnt])=>{
-            const sourcePrice = getCatchBallUnitPrice(type);
-            if(cnt && targetPrice && sourcePrice){
-                sum += cnt * sourcePrice / targetPrice;
-            }
-        });
-        return Math.floor(sum);
-    };
+    const totalBalls = catchBallOrder.reduce((sum, ball) => sum + (counts[ball] || 0), 0);
     const parsedTotalCost = Math.max(0, Number(state.parsedTotalCost) || 0);
     const manualCostDelta = getCatchLogManualCostDelta(state);
     let totalCost = parsedTotalCost > 0
         ? Math.max(0, parsedTotalCost + manualCostDelta)
         : 0;
-    const converted = convertToChosen(counts, chosen);
-    const costBased = chosenPrice ? Math.floor(totalCost / chosenPrice) : 0;
-    const effectiveUsed = Math.max(converted, costBased);
+    const effectiveUsed = totalBalls;
     const remMap = {};
+    let maximumBrokes = 0;
     if(hasReadySelection){
         selectedOptions.forEach(opt=>{
-            const needed = Math.max(getCatchRequiredAmount(opt, requirementBall, variant) - effectiveUsed, 0);
+            const optionMaximum = getCatchRequiredAmount(opt, getCatchEffectiveRequirementBallKey(chosen), variant);
+            maximumBrokes = Math.max(maximumBrokes, optionMaximum);
+            const needed = Math.max(optionMaximum - effectiveUsed, 0);
             if(needed > 0){
                 const key = `${needed}`;
                 if(!remMap[key]){
@@ -23667,18 +23580,9 @@ function renderCatchLogFromState(){
             }
         });
     }
-    let avgNeeded = 0;
-    if(hasReadySelection){
-        const directOpt = selectedOptions.find(opt=>getCatchRequiredAmount(opt, requirementBall, variant) > 0);
-        if(directOpt){
-            avgNeeded = getCatchRequiredAmount(directOpt, requirementBall, variant);
-        } else if(selectedOptions.length && chosenPrice){
-            avgNeeded = convertToChosen(selectedOptions[0], chosen);
-        }
-    }
-    const over = effectiveUsed - avgNeeded;
-    renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, avgNeeded, over, {
+    renderCatchLogResult(logResult, chosen, totalCost, counts, effectiveUsed, remLines, maximumBrokes, {
         hasSelection: hasReadySelection,
+        variant,
         manualCount: Number(state?.manualCounts?.[chosen] || 0),
         baseCount: Number(state?.parsedCounts?.[chosen] || 0) + Number(state?.manualCounts?.[chosen] || 0)
     });
@@ -23735,7 +23639,7 @@ function syncCatchSelectionUi(){
         const hint = catchSelectionPrompt.querySelector('#catch-selection-prompt-hint');
         if(hint){
             if(!hasTarget){
-                hint.textContent = 'Busque um Pokemon cadastrado para carregar preco, nivel e tipos automaticamente.';
+                hint.textContent = 'Busque um Pokémon cadastrado para identificar o Tier e a máxima de brokes.';
             } else if(!hasVariant){
                 hint.textContent = 'Selecione Normal ou Shiny para liberar os controles da estimativa.';
             } else {
@@ -26855,7 +26759,7 @@ function setPokemonDetailsModalTheme(entry){
     pokemonDetailsContent.style.setProperty('--pokemon-detail-secondary-rgb', hexToRgb(secondaryColor));
 }
 
-function createPokemonBallCard(ballConfig, averageValue, caption){
+function createPokemonBallCard(ballConfig, brokeThreshold, caption, variant){
     const card = document.createElement('article');
     card.className = 'pokemon-ball-card';
 
@@ -26879,7 +26783,11 @@ function createPokemonBallCard(ballConfig, averageValue, caption){
 
     const value = document.createElement('span');
     value.className = 'pokemon-ball-card__value';
-    value.textContent = Number.isFinite(averageValue) ? `${averageValue} em m\u00e9dia` : 'Sem m\u00e9dia';
+    const hasThreshold = Number.isFinite(brokeThreshold) && brokeThreshold > 0;
+    value.dataset.brokes = hasThreshold ? String(brokeThreshold) : '';
+    value.textContent = hasThreshold
+        ? formatBrokeAmount(brokeThreshold)
+        : variant === 'normal' ? 'Não disponível' : 'Máxima indisponível';
 
     const note = document.createElement('span');
     note.className = 'pokemon-ball-card__note';
@@ -26897,15 +26805,6 @@ function getPokemonCaptureLevelKey(level){
     return normalized || 0;
 }
 
-function getPokemonShinyCaptureLevelKey(entry){
-    const specialTags = Array.isArray(entry?.specialTags) ? entry.specialTags : [];
-    if(specialTags.includes('ace')) return 'ace';
-    if(specialTags.includes('pre-ace')) return 'pre';
-    if(isPokemonHuntAceSourceEntry(entry)) return 'ace';
-    if(isPokemonHuntPreAceEntry(entry)) return 'pre';
-    return getPokemonCaptureLevelKey(entry?.level);
-}
-
 function isMegaPokemonCatalogEntry(entry){
     return normalizePokemonCatalogVariant(entry?.variant) === POKEMON_CATALOG_VARIANT_MEGA;
 }
@@ -26914,7 +26813,8 @@ function getPokemonCatalogTier(entry){
     if(isMegaPokemonCatalogEntry(entry)) return 'M';
 
     const specialTags = getPokemonEntrySpecialTags(entry);
-    if(specialTags.includes('ace') || String(entry?.level || '').trim().toLowerCase() === 'ace'){
+    const levelKey = String(entry?.level || '').trim().toLowerCase();
+    if(specialTags.includes('ace') || levelKey === 'ace'){
         return 'A';
     }
     if(
@@ -26925,30 +26825,27 @@ function getPokemonCatalogTier(entry){
         return 'B';
     }
 
-    const level = Number(entry?.level);
+    if(specialTags.includes('pre-ace') || levelKey === 'pre') return 'C';
+
+    const level = Number(levelKey);
     if(level === 5) return 'F';
     if(level >= 20 && level <= 30) return 'E';
-
-    const captureLevel = specialTags.includes('pre-ace') ? 'pre' : entry?.level;
-    const storyBallAverage = getPokemonCaptureAverageForBall(captureLevel, 'shiny', 'story');
-    if(level === 50 || (level >= 65 && level <= 80 && storyBallAverage === 800)) return 'D';
-    if(storyBallAverage === 1600) return 'C';
+    if(level === 50 || level === 65 || level === 80) return 'D';
+    if(level === 95) return 'C';
     return '';
 }
 
-function getPokemonNormalCaptureAverageForBall(entry, ballKey){
-    const normalizedBallKey = getCatchRequirementBallKey(ballKey);
-    const ballPrice = Number(ballPrices?.[normalizedBallKey] || 0);
-    const pokemonPrice = Number(entry?.price || 0);
-    const braveBallAverage = Number(entry?.normalCaptureBraveAverage || 0);
-    if(braveBallAverage > 0){
-        if(String(ballKey || '').trim().toLowerCase() === 'brave') return Math.ceil(braveBallAverage);
-        const storyBallPrice = Number(ballPrices.story || 0);
-        if(!ballPrice || !storyBallPrice) return 0;
-        return Math.ceil(braveBallAverage * CATCH_BRAVE_BALL_STORY_EQUIVALENT * storyBallPrice / ballPrice);
-    }
-    if(!ballPrice || !pokemonPrice) return 0;
-    return Math.ceil(pokemonPrice / ballPrice);
+function getPokemonCaptureLimit(entry){
+    if(!entry) return null;
+    const tier = getPokemonCatalogTier(entry);
+    const maximum = Number(CATCH_MAX_BROKES_BY_TIER[tier] || 0);
+    return maximum ? { tier, maximum } : null;
+}
+
+window.getPokemonCaptureLimit = getPokemonCaptureLimit;
+
+function getPokemonCaptureMaximumBrokes(entry){
+    return getPokemonCaptureLimit(entry)?.maximum || 0;
 }
 
 function isPokemonCaptureVariantAvailable(entry, variant){
@@ -26957,25 +26854,6 @@ function isPokemonCaptureVariantAvailable(entry, variant){
     if(variant === 'normal') return entry?.normalCaptureAvailable !== false;
     if(variant === 'shiny') return entry?.shinyCaptureAvailable !== false;
     return false;
-}
-
-function getPokemonCaptureAverageForBall(level, variant, ballKey){
-    const levelKey = getPokemonCaptureLevelKey(level);
-    const requirementBall = getCatchRequirementBallKey(ballKey);
-    const options = computeRequired(levelKey, variant) || [];
-
-    const explicitOption = options.find((option) => (
-        option
-        && typeof option === 'object'
-        && typeof option[requirementBall] === 'number'
-        && option[requirementBall] > 0
-    ));
-    if(explicitOption){
-        return Number(explicitOption[requirementBall] || 0);
-    }
-
-    const fallbackOption = options.find((option) => getCatchRequiredAmount(option, ballKey, variant) > 0);
-    return fallbackOption ? Number(getCatchRequiredAmount(fallbackOption, ballKey, variant) || 0) : 0;
 }
 
 function forEachTeamHuntSourceName(callback){
@@ -27041,19 +26919,25 @@ function isPokemonHuntPreAceEntry(entry){
     return getPokemonHuntPreAceEvolutionStage(entry) > 0;
 }
 
-function getPokemonHuntPreAceShinyAverageForBall(entry, ballKey){
-    if(!isPokemonHuntPreAceEntry(entry)) return 0;
-    return getPokemonCaptureAverageForBall('pre', 'shiny', ballKey);
+function getPokemonNormalCaptureAverageForBall(entry, ballKey){
+    const normalizedBallKey = getCatchRequirementBallKey(ballKey);
+    const ballPrice = Number(ballPrices?.[normalizedBallKey] || 0);
+    const pokemonPrice = Number(entry?.price || 0);
+    const braveBallAverage = Number(entry?.normalCaptureBraveAverage || 0);
+    if(braveBallAverage > 0){
+        if(String(ballKey || '').trim().toLowerCase() === 'brave') return Math.ceil(braveBallAverage);
+        const storyBallPrice = Number(ballPrices.story || 0);
+        if(!ballPrice || !storyBallPrice) return 0;
+        return Math.ceil(braveBallAverage * CATCH_BRAVE_BALL_STORY_EQUIVALENT * storyBallPrice / ballPrice);
+    }
+    if(!ballPrice || !pokemonPrice) return 0;
+    return Math.ceil(pokemonPrice / ballPrice);
 }
 
 function getPokemonAverageValueForVariant(entry, variant, ballKey){
     if(!isPokemonCaptureVariantAvailable(entry, variant)) return 0;
     if(variant === 'normal') return getPokemonNormalCaptureAverageForBall(entry, ballKey);
-    if(variant === 'shiny'){
-        const levelForRequirements = getPokemonShinyCaptureLevelKey(entry);
-        return levelForRequirements ? getPokemonCaptureAverageForBall(levelForRequirements, variant, ballKey) : 0;
-    }
-    return 0;
+    return getPokemonCaptureMaximumBrokes(entry);
 }
 
 function isPokemonNormalCaptureBallAllowed(entry, ballKey){
@@ -27101,12 +26985,16 @@ function shouldDisplayPokemonSafariAverageLabel(entry){
 function buildPokemonAverageCards(entry, variant){
     const cards = [];
     const isSafariCapture = isPokemonSafariCaptureEntry(entry);
-    const appendBallCard = (ball, caption = variant === 'shiny' ? 'Shiny' : 'Normal') => {
-        if(variant === 'normal' && !isPokemonNormalCaptureBallAllowed(entry, ball.key)) return;
+    const captureNote = variant === 'shiny'
+        ? 'Captura garantida ao atingir a máxima.'
+        : 'Primeira captura garantida; capturas seguintes sem limite de brokes.';
+    const appendBallCard = (ball, caption = captureNote) => {
+        if(variant === 'normal' && ball.key !== 'premier' && !isPokemonNormalCaptureBallAllowed(entry, ball.key)) return;
         cards.push(createPokemonBallCard(
             ball,
             getPokemonAverageValueForVariant(entry, variant, ball.key),
-            caption
+            caption,
+            variant
         ));
     };
 
@@ -27122,12 +27010,13 @@ function buildPokemonAverageCards(entry, variant){
         elementalOptions.forEach((ball) => {
             appendBallCard(
                 ball,
-                `${variant === 'shiny' ? 'Shiny' : 'Normal'} \u2022 ${getPokemonElementalBallTypeLabel(ball.key, entry?.naturalElements || [])}`
+                `${getPokemonElementalBallTypeLabel(ball.key, entry?.naturalElements || [])} • ${captureNote}`
             );
         });
         if(variant === 'normal' && Number(entry?.normalCaptureBraveAverage) > 0){
             appendBallCard({ key: 'brave', label: 'Brave Ball' });
         }
+        appendBallCard({ key: 'premier', label: 'Premier Ball' }, 'Usa apenas Chance Base; atingir o limite não garante a captura.');
         return cards;
     }
 
@@ -27135,22 +27024,30 @@ function buildPokemonAverageCards(entry, variant){
     if(variant === 'normal' && Number(entry?.normalCaptureBraveAverage) > 0){
         appendBallCard({ key: 'brave', label: 'Brave Ball' });
     }
+    appendBallCard({ key: 'premier', label: 'Premier Ball' }, 'Usa apenas Chance Base; atingir o limite não garante a captura.');
     return cards;
 }
 
 function getPokemonAverageDescription(entry, variant){
     if(variant === 'normal'){
-        if(entry?.normalCaptureNote) return entry.normalCaptureNote;
         if(isMegaPokemonCatalogEntry(entry)) return 'Mega nao pode ser capturado.';
-        if(entry?.normalCaptureAvailable === false) return 'Nao pode ser capturado no momento.';
-        if(isPokemonSafariCaptureEntry(entry)) return 'Captura apenas com Safari Ball, Story Ball e Elemental Balls.';
-        return 'Preco do Pokemon dividido pelo preco da Ultra, Story e Elemental Ball.';
+        if(entry?.normalCaptureAvailable === false){
+            return entry?.normalCaptureNote || 'Nao pode ser capturado no momento.';
+        }
+        const note = String(entry?.normalCaptureNote || '').trim();
+        const restriction = isPokemonSafariCaptureEntry(entry)
+            ? ' Captura apenas com Safari Ball, Story Ball, Elemental Balls e Premier Ball.'
+            : '';
+        return `${note ? `${note} ` : ''}A primeira captura Normal é garantida ao atingir 100% do valor de captura, exceto com Premier Ball. Esse limite não se aplica às capturas seguintes, e a Premier Ball não garante captura ao atingi-lo.${restriction}`;
     }
-    if(isPokemonSafariCaptureEntry(entry)) return 'Use Safari Ball, Story Ball e as Elemental Balls do(s) tipo(s).';
-    if(entry?.shinyCaptureNote) return entry.shinyCaptureNote;
     if(isMegaPokemonCatalogEntry(entry)) return 'Mega nao pode ser capturado.';
-    if(entry?.shinyCaptureAvailable === false) return 'Versao shiny nao pode ser capturada.';
-    return 'Use Ultra Ball, Story Ball e as Elemental Balls do(s) tipo(s).';
+    if(entry?.shinyCaptureAvailable === false){
+        return entry?.shinyCaptureNote || 'Versao shiny nao pode ser capturada.';
+    }
+    const restriction = isPokemonSafariCaptureEntry(entry)
+        ? ' Use Safari Ball, Story Ball, as Elemental Balls do(s) tipo(s) ou Premier Ball.'
+        : '';
+    return `Capturas Shiny são garantidas ao atingir a máxima de brokes, exceto com Premier Ball.${restriction}`;
 }
 
 function createPokemonAverageGroup(titleText, descriptionText, cards = []){
@@ -28158,7 +28055,8 @@ function renderPokemonDetailsAverages(entry){
 
         const table = document.createElement('table');
         table.className = 'pokemon-average-table';
-        table.setAttribute('aria-label', `${titleText}: médias por Pokébola`);
+        const valueHeading = variant === 'normal' ? 'Brokes até o limite' : 'Máxima de brokes';
+        table.setAttribute('aria-label', `${titleText}: ${valueHeading.toLowerCase()} por Pokébola`);
         table.setAttribute('aria-describedby', descriptionId);
 
         const thead = document.createElement('thead');
@@ -28168,18 +28066,17 @@ function renderPokemonDetailsAverages(entry){
         ballHeader.textContent = 'Pokébola';
         const averageHeader = document.createElement('th');
         averageHeader.scope = 'col';
-        averageHeader.textContent = 'Média de capturas';
+        averageHeader.textContent = valueHeading;
         headerRow.append(ballHeader, averageHeader);
         thead.appendChild(headerRow);
         table.appendChild(thead);
 
         const tbody = document.createElement('tbody');
         const rows = cards.map((card) => {
-            const valueText = card.querySelector('.pokemon-ball-card__value')?.textContent || '';
-            const numberMatch = valueText.match(/-?\d+(?:[.,]\d+)?/);
+            const rawValue = card.querySelector('.pokemon-ball-card__value')?.dataset.brokes;
             return {
                 card,
-                value: numberMatch ? Number(numberMatch[0].replace(',', '.')) : null
+                value: rawValue ? Number(rawValue) : null
             };
         });
         const availableValues = rows
@@ -28187,8 +28084,10 @@ function renderPokemonDetailsAverages(entry){
             .filter(value => Number.isFinite(value) && value > 0);
         const minimumValue = availableValues.length ? Math.min(...availableValues) : null;
         const rankedValues = [...new Set(availableValues)].sort((left, right) => left - right);
-        const valueToneByValue = new Map(rankedValues.map((value, index) => {
-            const rank = rankedValues.length > 1 ? index / (rankedValues.length - 1) : 0;
+        const hasDistinctMaximums = rankedValues.length > 1;
+        const comparisonMeasure = variant === 'normal' ? 'valor' : 'máxima';
+        const valueToneByValue = new Map((hasDistinctMaximums ? rankedValues : []).map((value, index) => {
+            const rank = index / (rankedValues.length - 1);
             const tone = rank <= 0.25 ? 'low' : rank >= 0.75 ? 'high' : 'middle';
             return [value, tone];
         }));
@@ -28209,16 +28108,16 @@ function renderPokemonDetailsAverages(entry){
             const averageGroup = document.createElement('span');
             averageGroup.className = 'pokemon-average-table__value-group';
             const average = card.querySelector('.pokemon-ball-card__value');
-            const isMinimum = minimumValue !== null && value === minimumValue;
+            const isMinimum = hasDistinctMaximums && minimumValue !== null && value === minimumValue;
             if(average){
                 if(isMinimum) average.classList.add('pokemon-average-table__value--minimum');
                 const tone = valueToneByValue.get(value);
                 if(tone){
                     average.classList.add(`pokemon-average-table__value--${tone}`);
                     if(tone === 'middle'){
-                        average.setAttribute('aria-label', `${average.textContent}; média intermediária neste grupo`);
+                        average.setAttribute('aria-label', `${average.textContent}; ${variant === 'normal' ? 'valor intermediário' : 'máxima intermediária'} neste grupo`);
                     } else if(tone === 'high'){
-                        average.setAttribute('aria-label', `${average.textContent}; maior média neste grupo`);
+                        average.setAttribute('aria-label', `${average.textContent}; maior ${comparisonMeasure} neste grupo`);
                     }
                 }
                 averageGroup.appendChild(average);
@@ -28226,7 +28125,7 @@ function renderPokemonDetailsAverages(entry){
             if(isMinimum){
                 const minimumLabel = document.createElement('span');
                 minimumLabel.className = 'pokemon-average-table__minimum-label';
-                minimumLabel.textContent = 'menor média';
+                minimumLabel.textContent = `menor ${comparisonMeasure}`;
                 averageGroup.appendChild(minimumLabel);
             }
             averageCell.appendChild(averageGroup);
@@ -28707,7 +28606,7 @@ function renderPokemonDetailsModal(entry){
     if(pokemonDetailsAveragesKicker){
         const priceLabel = getPokemonEntryPriceLabel(entry);
         const acquisitionLink = getPokemonEntryAcquisitionLink(entry, priceLabel);
-        pokemonDetailsAveragesKicker.textContent = 'Médias de captura';
+        pokemonDetailsAveragesKicker.textContent = 'Limites de captura';
 
         const priceLine = pokemonDetailsAveragesKicker.parentElement
             ?.querySelector('.pokemon-details-modal__average-price');

@@ -17899,7 +17899,7 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 
 .pokemon-details-modal__body {
   display: grid;
-  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.36rem;
   align-items: start;
 }
@@ -17927,8 +17927,8 @@ body.sidebar-open .app-sidebar::-webkit-scrollbar {
 }
 
 .pokemon-details-modal__section--averages {
-  grid-column: 2;
-  grid-row: 1 / span 3;
+  grid-column: 1;
+  grid-row: 2;
 }
 
 .pokemon-details-modal__section--weaknesses {
@@ -24961,7 +24961,7 @@ body[data-boss-mode="hoopa"] .speedster-modal-body > .speedster-clan-grid {
 
 .pokemon-details-modal__body {
   display: grid;
-  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 0.36rem;
   flex-wrap: nowrap;
@@ -24978,8 +24978,8 @@ body[data-boss-mode="hoopa"] .speedster-modal-body > .speedster-clan-grid {
 }
 
 .pokemon-details-modal__body > .pokemon-details-modal__section--averages {
-  grid-column: 2;
-  grid-row: 1;
+  grid-column: 1;
+  grid-row: 2;
 }
 
 @media (max-width: 980px) {
@@ -29305,7 +29305,7 @@ body.home-view main {
 }
 
 #pokemon-details-modal .pokemon-averages-grid {
-  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 12px;
 }
 
@@ -29359,6 +29359,12 @@ body.home-view main {
   #pokemon-details-modal .pokemon-details-modal__average-price {
     grid-column: 1;
     justify-self: center;
+  }
+}
+
+@media (max-width: 720px) {
+  #pokemon-details-modal .pokemon-averages-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
 

@@ -39,17 +39,6 @@
         shellos: 'shelloswest',
         gastrodon: 'gastrodonwest'
     };
-    const SHINY_ELEMENTAL_AVERAGES = {
-        5: 38,
-        20: 77,
-        30: 308,
-        50: 385,
-        65: 615,
-        80: 615,
-        95: 1231,
-        pre: 1231,
-        ace: 4000
-    };
     const LEGACY_FILTER_STORAGE_KEY = 'poke-interactive-map-hidden-categories-v1';
     const MAX_ZOOM = 3;
     const SHARE_GRID_SIZE = 1;
@@ -1409,23 +1398,19 @@
         return getMarkerPokemon(selectedMarker);
     }
 
-    function getPokemonCaptureAverages(entry){
+    function getPokemonCaptureLimits(entry){
         if(!entry) return null;
         const specialTags = Array.isArray(entry.specialTags) ? entry.specialTags : [];
         const normalAvailable = entry.normalCaptureAvailable !== false && !specialTags.includes('pack');
         const shinyAvailable = entry.shinyCaptureAvailable !== false && !specialTags.includes('pack');
-        const normalUltra = normalAvailable && Number(entry.price) > 0
-            ? Math.ceil(Number(entry.price) / 130)
+        const captureLimit = window.getPokemonCaptureLimit(entry);
+        const formattedMaximum = captureLimit
+            ? `${captureLimit.tier} · ${captureLimit.maximum.toLocaleString('pt-BR')} brokes`
             : null;
-        const shinyLevel = specialTags.includes('ace')
-            ? 'ace'
-            : specialTags.includes('pre-ace')
-                ? 'pre'
-                : Number(entry.level);
-        const shinyElemental = shinyAvailable
-            ? Number(SHINY_ELEMENTAL_AVERAGES[shinyLevel] || 0) || null
-            : null;
-        return { normalUltra, shinyElemental };
+        return {
+            normalMaximum: normalAvailable ? formattedMaximum : null,
+            shinyMaximum: shinyAvailable ? formattedMaximum : null
+        };
     }
 
     function renderDetails(){
@@ -1509,9 +1494,9 @@
         };
         appendDetailRow(rows, 'Pokédex', details.dexNumber);
         appendDetailRow(rows, 'Tipo', details.types ? String(details.types).split(',').map(type => TYPE_LABELS[normalize(type)] || type).join(' / ') : '');
-        const captureAverages = getPokemonCaptureAverages(getSelectedMarkerPokemon());
-        appendDetailRow(rows, 'Média de Ultra Balls', captureAverages?.normalUltra);
-        appendDetailRow(rows, 'Média de Elementais (Shiny)', captureAverages?.shinyElemental);
+        const captureLimits = getPokemonCaptureLimits(getSelectedMarkerPokemon());
+        appendDetailRow(rows, 'Máxima de brokes (Normal)', captureLimits?.normalMaximum);
+        appendDetailRow(rows, 'Máxima de brokes (Shiny)', captureLimits?.shinyMaximum);
         Object.entries(details).forEach(([key, value]) => {
             if(['dexNumber', 'types'].includes(key) || value === '' || value === null) return;
             appendDetailRow(rows, key, Array.isArray(value) ? value.join(', ') : value);
