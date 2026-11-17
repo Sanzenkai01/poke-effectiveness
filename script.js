@@ -11143,13 +11143,22 @@ function getTeamBuilderAceRoleKey(entry){
     return normalizePokemonRoleKey(entry?.roleKey || entry?.role || '');
 }
 
+function isTeamBuilderAceRoleConflict(entry, selectedEntry){
+    const roleKey = getTeamBuilderAceRoleKey(entry);
+    return Boolean(
+        roleKey
+        && getTeamBuilderAceRoleKey(selectedEntry) === roleKey
+        && !isTeamBuilderMegaNormalPairException(entry, selectedEntry)
+    );
+}
+
 function getTeamBuilderAceSameRoleSelectionEntry(entry, exceptSlotId = ''){
     const roleKey = getTeamBuilderAceRoleKey(entry);
     if(!roleKey) return null;
     return Object.entries(teamBuilderSelections || {})
         .filter(([slotId]) => slotId !== exceptSlotId)
         .map(([, selectedEntry]) => selectedEntry)
-        .find(selectedEntry => getTeamBuilderAceRoleKey(selectedEntry) === roleKey) || null;
+        .find(selectedEntry => isTeamBuilderAceRoleConflict(entry, selectedEntry)) || null;
 }
 
 function getTeamBuilderSelectedMegaEntry(exceptSlotId = ''){
@@ -12672,8 +12681,7 @@ function isTeamBuilderAutoCompleteEntryAllowed(entry, slot, selections){
         isMegaPokemonCatalogEntry(selected)
         && !isTeamBuilderMegaNormalPairException(entry, selected)
     ))) return false;
-    const aceRoleKey = getTeamBuilderAceRoleKey(entry);
-    if(aceRoleKey && selectedEntries.some(selected => getTeamBuilderAceRoleKey(selected) === aceRoleKey)) return false;
+    if(selectedEntries.some(selected => isTeamBuilderAceRoleConflict(entry, selected))) return false;
     return true;
 }
 
@@ -12960,7 +12968,7 @@ function applyTeamBuilderShareValue(rawValue){
 
     const nextSelections = {};
     const usedDuplicateEntries = [];
-    const usedAceRoleKeys = new Set();
+    const usedAceRoleEntries = [];
     let selectedMegaKey = '';
     for(let index = 0; index < TEAM_BUILDER_SLOT_CONFIGS.length; index += 1){
         const slot = TEAM_BUILDER_SLOT_CONFIGS[index];
@@ -12974,8 +12982,8 @@ function applyTeamBuilderShareValue(rawValue){
         ))) return false;
         if(duplicateKey) usedDuplicateEntries.push(entry);
         const aceRoleKey = getTeamBuilderAceRoleKey(entry);
-        if(aceRoleKey && usedAceRoleKeys.has(aceRoleKey)) return false;
-        if(aceRoleKey) usedAceRoleKeys.add(aceRoleKey);
+        if(aceRoleKey && usedAceRoleEntries.some(selectedEntry => isTeamBuilderAceRoleConflict(entry, selectedEntry))) return false;
+        if(aceRoleKey) usedAceRoleEntries.push(entry);
         if(isMegaPokemonCatalogEntry(entry)){
             const megaKey = getTeamBuilderEntryKey(entry);
             if(selectedMegaKey && selectedMegaKey !== megaKey) return false;

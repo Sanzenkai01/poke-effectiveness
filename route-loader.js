@@ -1,5 +1,5 @@
 (function(){
-    var APP_SHELL_VERSION = '20261116-capture-tier-broke-v7';
+    var APP_SHELL_VERSION = '20261116-team-builder-mega-pair-v1';
     var routeTab = String(document.documentElement.dataset.routeTab || '').trim();
     var appShellPath = String(document.documentElement.dataset.appShellPath || '../app.html').trim();
     var appUrl = new URL(appShellPath, window.location.href);

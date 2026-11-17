@@ -3,13 +3,13 @@ let CACHE_NAME = `${CACHE_PREFIX}v1127`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
-  new URL('./app.html?v=20261116-capture-tier-broke-v7', self.registration.scope).toString(),
+  new URL('./app.html?v=20261116-team-builder-mega-pair-v1', self.registration.scope).toString(),
   new URL('./news/news-popup.css?v=20261101-ace-pokemon-news-v1', self.registration.scope).toString(),
   new URL('./news/news-popup.js?v=20261105-news-webp-dialog-v1', self.registration.scope).toString(),
   new URL('./news/image-news.webp?v=20261105-news-webp-dialog-v1', self.registration.scope).toString(),
   new URL('./styles.css?v=20261116-pokemon-details-layout-v1', self.registration.scope).toString(),
   new URL('./wiki-theme.css?v=20261105-mobile-home-icon-v1', self.registration.scope).toString(),
-  new URL('./script.js?v=20261116-capture-tier-broke-v7', self.registration.scope).toString(),
+  new URL('./script.js?v=20261116-team-builder-mega-pair-v1', self.registration.scope).toString(),
   ...[
     'ancient_stone.gif', 'brave_stone.png', 'berryjuice.png', 'bug-gem.png', 'card.png',
     'cocoon_stone.gif', 'dark-gem.png', 'darkness_stone.png', 'dragon_stone.gif',
