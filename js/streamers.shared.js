@@ -22,6 +22,7 @@
         { name: 'lineashh', supportsDrops: false },
         { name: 'rinconnn', supportsDrops: false },
         { name: 'nandoxd1996', supportsDrops: false },
+        { name: 'ailimm', supportsDrops: false },
     ];
 
     function normalizeStreamerChannelName(name){
