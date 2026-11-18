@@ -357,6 +357,7 @@ const PANEL_FRAGMENT_VERSIONS = Object.freeze({
     catch: '20261116-capture-tier-broke-v2',
     bosses: '20261021-bosses-panel-v1',
     pokemons: '20261016-pokemon-singular-labels-v1',
+    'shiny-fragmentation': '20261118-shiny-fragmentation-tier-candy-v1',
     times: '20261105-times-team-builder-load-v1',
     'liga-pokemon': '20261028-liga-required-pokemon-v2',
     'passe-de-batalha': '20261105-battle-pass-empty-state-section-v6',
@@ -498,7 +499,7 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261118-pokemon-balance-update-v3';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261118-official-pokemon-tiers-v1';
 const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20261118-pokemon-balance-update-v3';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
@@ -16499,29 +16500,43 @@ function showHeldFusion(){
     updateUrl();
 }
 
-const shinyFragmentationCandyByLevel = {
-    5: { blue: 5 },
-    20: { blue: 10 },
-    30: { blue: 40 },
-    50: { yellow: 50 },
-    65: { green: 60 },
-    80: { green: 80 },
-    95: { purple: 80 }
-};
+const shinyFragmentationCandyByTier = Object.freeze({
+    F: Object.freeze({ blue: 10 }),
+    E: Object.freeze({ yellow: 25 }),
+    D: Object.freeze({ green: 80 }),
+    C: Object.freeze({ purple: 80 }),
+    B: Object.freeze({ red: 80 }),
+    A: Object.freeze({ cyan: 80 })
+});
+const shinyFragmentationCandyColors = Object.freeze(['blue', 'yellow', 'green', 'purple', 'red', 'cyan']);
+const shinyFragmentationCandyNameByColor = Object.freeze({
+    blue: 'Blue',
+    yellow: 'Yellow',
+    green: 'Green',
+    purple: 'Purple',
+    red: 'Red',
+    cyan: 'Cyan'
+});
+const shinyFragmentationCandyAssetByColor = Object.freeze({
+    blue: 'blue-candy.png',
+    yellow: 'yellow-candy.png',
+    green: 'green-candy.png',
+    purple: 'purple-candy.png',
+    red: 'blue-candy.png',
+    cyan: 'blue-candy.png'
+});
 let shinyFragmentationInitialized = false;
 
-function getShinyFragmentationCandy(level){
-    const levels = Object.keys(shinyFragmentationCandyByLevel).map(Number);
-    const closestLevel = levels.reduce((closest, current) => Math.abs(current - level) < Math.abs(closest - level) ? current : closest, levels[0]);
-    return shinyFragmentationCandyByLevel[closestLevel];
+function getShinyFragmentationCandy(tier){
+    const normalizedTier = String(tier || '').trim().toUpperCase();
+    return shinyFragmentationCandyByTier[normalizedTier] || null;
 }
 
 function getShinyFragmentationReward(pokemon){
-    return pokemon ? getShinyFragmentationCandy(Number(pokemon.level) || 5) : null;
+    return pokemon ? getShinyFragmentationCandy(getPokemonCatalogTier(pokemon)) : null;
 }
 
 const shinyFragmentationExcludedTags = new Set([
-    'ace',
     'legendary',
     'mewtwo-solo',
     'poke-gift',
@@ -16542,16 +16557,19 @@ function renderShinyFragmentationPokemon(pokemon){
     const imageEl = document.getElementById('shiny-fragmentation-pokemon-image');
     const slotEl = document.getElementById('shiny-fragmentation-pokemon-slot');
     const levelEl = document.getElementById('shiny-fragmentation-level');
+    const tierEl = document.getElementById('shiny-fragmentation-tier');
     const pickerEl = document.getElementById('shiny-fragmentation-pokemon-picker');
     const emptyMessageEl = document.getElementById('shiny-fragmentation-empty-message');
     const candy = getShinyFragmentationReward(pokemon);
+    const tier = pokemon ? getPokemonCatalogTier(pokemon) : '';
     if(nameEl) nameEl.textContent = pokemon ? `Shiny ${pokemon.name}` : 'None';
     if(imageEl){ imageEl.hidden = !pokemon; imageEl.src = pokemon ? pokemon.image : ''; imageEl.alt = pokemon ? `Shiny ${pokemon.name}` : ''; }
     if(slotEl) slotEl.classList.toggle('is-filled', Boolean(pokemon));
     if(levelEl) levelEl.textContent = pokemon ? pokemon.level : '-';
+    if(tierEl) tierEl.textContent = tier ? `Tier ${tier}` : '-';
     if(pickerEl) pickerEl.classList.toggle('is-selected', Boolean(pokemon));
     if(emptyMessageEl) emptyMessageEl.hidden = Boolean(pokemon);
-    ['blue', 'green', 'purple', 'yellow'].forEach(color => {
+    shinyFragmentationCandyColors.forEach(color => {
         const valueEl = document.getElementById(`shiny-fragmentation-candy-${color}`);
         const candyItem = valueEl?.closest('[data-candy-color]');
         const amount = candy?.[color] || 0;
@@ -16592,7 +16610,6 @@ function initializeShinyFragmentation(){
     const trades = [...document.querySelectorAll('.shiny-trade')];
     const range = document.getElementById('shiny-workshop-range');
     const summary = document.getElementById('shiny-workshop-summary');
-    const colorNames = { blue: 'Blue', yellow: 'Yellow', green: 'Green', purple: 'Purple' };
     const createButton = document.querySelector('.shiny-workshop__create');
     document.getElementById('shiny-workshop-search')?.remove();
     createButton?.remove();
@@ -16641,10 +16658,16 @@ function initializeShinyFragmentation(){
                 amountEl.style.display = 'none';
             }
         });
-        if(resultCandyImage) { resultCandyImage.src = `shiny-fragmentation/${selected?.dataset.color || 'blue'}-candy.png`; resultCandyImage.alt = `${colorNames[selected?.dataset.color || 'blue']} Candy`; }
+        const selectedColor = selected?.dataset.color || 'blue';
+        const candyName = shinyFragmentationCandyNameByColor[selectedColor] || 'Blue';
+        if(resultCandyImage) {
+            resultCandyImage.src = `shiny-fragmentation/${shinyFragmentationCandyAssetByColor[selectedColor] || shinyFragmentationCandyAssetByColor.blue}`;
+            resultCandyImage.alt = `${candyName} Candy`;
+        }
+        candyBox.dataset.candyColor = selectedColor;
         if(resultCandyAmount) resultCandyAmount.textContent = String(amount);
         if(resultCardsAmount) resultCardsAmount.textContent = String(cards);
-        if(summary) summary.textContent = `${amount} ${colorNames[selected?.dataset.color || 'blue']} Candy = ${cards} Ditto Cards`;
+        if(summary) summary.textContent = `${amount} ${candyName} Candy = ${cards} Ditto Cards`;
     };
     trades.forEach(trade => {
         const selectTrade = () => { trades.forEach(item => item.classList.toggle('is-selected', item === trade)); updateTrade(); };
@@ -25325,12 +25348,15 @@ function renderPokemonEvolutionNavigation(entry){
     );
     const alignedMegaNames = new Set(['mega gardevoir', 'mega gallade']);
 
-    parents.forEach((parentEntry) => {
-        track.appendChild(createPokemonEvolutionStage('previous', [parentEntry]));
-    });
-    track.appendChild(createPokemonEvolutionStage('current', [entry], { currentEntry: entry }));
-    children.forEach((childEntry) => {
-        track.appendChild(createPokemonEvolutionStage('next', [childEntry]));
+    const baseStages = [
+        ...parents.map(stageEntry => ({ stage: 'previous', entry: stageEntry })),
+        { stage: 'current', entry },
+        ...children.map(stageEntry => ({ stage: 'next', entry: stageEntry }))
+    ];
+    baseStages.forEach(({ stage, entry: stageEntry }) => {
+        track.appendChild(createPokemonEvolutionStage(stage, [stageEntry], {
+            currentEntry: stage === 'current' ? entry : null
+        }));
     });
     megas.forEach((megaEntry) => {
         const megaStage = createPokemonEvolutionStage('mega', [megaEntry]);
@@ -26818,6 +26844,9 @@ function isMegaPokemonCatalogEntry(entry){
 }
 
 function getPokemonCatalogTier(entry){
+    const explicitTier = String(entry?.officialTier || entry?.tier || '').trim().toUpperCase();
+    if(POKEMON_CATALOG_TIER_ORDER.includes(explicitTier)) return explicitTier;
+
     if(isMegaPokemonCatalogEntry(entry)) return 'M';
 
     const specialTags = getPokemonEntrySpecialTags(entry);
@@ -27249,7 +27278,8 @@ function normalizePokemonCatalogEntry(entry, index){
             level: entry.level,
             priceLabel: entry.priceLabel,
             specialTags,
-            variant: entry.variant
+            variant: entry.variant,
+            officialTier: entry.officialTier
         })
     };
 }
