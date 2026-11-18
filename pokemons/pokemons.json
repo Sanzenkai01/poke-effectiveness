@@ -3,7 +3,7 @@
     {
       "name": "Bulbasaur",
       "image": "pokemons/1gen/bulbasaur.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Finisher"
       ],
@@ -19,7 +19,7 @@
     {
       "name": "Ivysaur",
       "image": "pokemons/1gen/ivysaur.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -35,7 +35,7 @@
     {
       "name": "Venusaur",
       "image": "pokemons/1gen/venusaur.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -51,7 +51,7 @@
     {
       "name": "Charmander",
       "image": "pokemons/1gen/charmander.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -66,7 +66,7 @@
     {
       "name": "Charmeleon",
       "image": "pokemons/1gen/charmeleon.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -81,7 +81,7 @@
     {
       "name": "Charizard",
       "image": "pokemons/1gen/charizard.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -201,7 +201,7 @@
     {
       "name": "Metapod",
       "image": "pokemons/1gen/metapod.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "type1": "bug",
       "moveset": [
         "bug"
@@ -213,7 +213,7 @@
     {
       "name": "Butterfree",
       "image": "pokemons/1gen/butterfree.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -747,7 +747,7 @@
       "type1": "grass",
       "type2": "poison",
       "moveset": [
-        "grass"
+        "fighting"
       ],
       "team": "instinct",
       "price": 5,
@@ -771,7 +771,7 @@
       "image": "pokemons/1gen/vileplume.png",
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Finisher"
       ],
       "type1": "grass",
       "type2": "poison",
@@ -812,7 +812,8 @@
       "image": "pokemons/1gen/parasect.png",
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "type1": "bug",
       "type2": "grass",
@@ -905,7 +906,12 @@
       ],
       "team": "valor",
       "price": 6000,
-      "level": 50
+      "level": 50,
+      "shinyPassiveName": "Night Cry",
+      "shinyPassiveDescription": "O Pokémon torna-se resistente a ataques do tipo PSYCHIC.",
+      "shinyDefenseByBossType": {
+        "psychic": 0.5
+      }
     },
     {
       "name": "Psyduck",
@@ -928,8 +934,7 @@
       "image": "pokemons/1gen/golduck.png",
       "role": "attacker",
       "subFunctions": [
-        "Finisher",
-        "Silencer"
+        "Stunner"
       ],
       "type1": "water",
       "moveset": [
@@ -1163,7 +1168,9 @@
       ],
       "team": "instinct",
       "price": 15000,
-      "level": 80
+      "level": 80,
+      "passiveName": "Gluttony",
+      "passiveDescription": "Ao ficar com pouca vida, o Pokémon se alimenta para recuperar parte da vida perdida."
     },
     {
       "name": "Tentacool",
@@ -1247,7 +1254,7 @@
       "image": "pokemons/1gen/rapidash.png",
       "role": "attacker",
       "subFunctions": [
-        "Silencer"
+        "Stunner"
       ],
       "type1": "fire",
       "moveset": [
@@ -1869,12 +1876,25 @@
       ],
       "team": "instinct",
       "price": 5000,
-      "level": 50
+      "level": 50,
+      "passiveName": "Leaf Guard (Adaptado)",
+      "passiveDescription": "O Pokémon recebe resistência a ataques do tipo ROCK.",
+      "defenseByBossType": {
+        "rock": 0.5
+      },
+      "shinyPassiveName": "Leaf Guard (Adaptado)",
+      "shinyPassiveDescription": "O Pokémon recebe resistência a ataques do tipo ROCK.",
+      "shinyDefenseByBossType": {
+        "rock": 0.5
+      }
     },
     {
       "name": "Tangrowth",
       "image": "pokemons/4gen/tangrowth.png",
-      "role": "defender",
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "grass",
       "moveset": [
         "grass"
@@ -2357,8 +2377,7 @@
       "shinyCaptureAvailable": false,
       "shinyCaptureNote": "Versão shiny não pode ser capturada.",
       "shinySubFunctions": [
-        "Stunner",
-        "Area Pull"
+        "Stunner"
       ]
     },
     {
@@ -2422,7 +2441,7 @@
       "image": "pokemons/2gen/umbreon.png",
       "generation": 2,
       "dex": 197,
-      "role": "all-rounder",
+      "role": "attacker",
       "type1": "dark",
       "team": "valor",
       "price": 22000,
@@ -2431,14 +2450,12 @@
       ],
       "level": 80,
       "subFunctions": [
-        "Frontal Pull",
-        "Finisher"
+        "Stunner"
       ],
       "shinyCaptureAvailable": false,
       "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
       "shinySubFunctions": [
-        "Finisher",
-        "Area Pull"
+        "Stunner"
       ]
     },
     {
@@ -2454,7 +2471,13 @@
       "level": 30,
       "specialTags": [
         "pre-ace"
-      ]
+      ],
+      "passiveName": "Cursed Body (Adaptado)",
+      "passiveDescription": "O Pokémon recebe resistência a ataques dos tipos GHOST e PSYCHIC.",
+      "defenseByBossType": {
+        "ghost": 0.5,
+        "psychic": 0.5
+      }
     },
     {
       "name": "Porygon 2",
@@ -2487,7 +2510,14 @@
       "level": 100,
       "specialTags": [
         "ace"
-      ]
+      ],
+      "passiveName": "Martial Roundhouse",
+      "passiveDescription": "O Pokémon treina seus giros marciais para se proteger, tornando os danos dos tipos STEEL, ICE e NORMAL super inefetivos.",
+      "defenseByBossType": {
+        "steel": 0.5,
+        "ice": 0.5,
+        "normal": 0.5
+      }
     },
     {
       "name": "Omanyte",
@@ -2508,7 +2538,13 @@
       "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
       "specialTags": [
         "fossil"
-      ]
+      ],
+      "shinyPassiveName": "Fossil Bind",
+      "shinyPassiveDescription": "O Pokémon torna-se resistente a ataques dos tipos GROUND e ROCK.",
+      "shinyDefenseByBossType": {
+        "ground": 0.5,
+        "rock": 0.5
+      }
     },
     {
       "name": "Omastar",
@@ -2529,7 +2565,13 @@
       "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
       "specialTags": [
         "fossil"
-      ]
+      ],
+      "shinyPassiveName": "Fossil Bind",
+      "shinyPassiveDescription": "O Pokémon torna-se resistente a ataques dos tipos GROUND e ROCK.",
+      "shinyDefenseByBossType": {
+        "ground": 0.5,
+        "rock": 0.5
+      }
     },
     {
       "name": "Kabuto",
@@ -3043,7 +3085,7 @@
       "dex": 168,
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Finisher"
       ],
       "type1": "bug",
       "team": "valor",
@@ -3997,7 +4039,7 @@
       "image": "pokemons/2gen/delibird.png",
       "generation": 2,
       "dex": 225,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -4008,7 +4050,12 @@
       "moveset": [
         "ice"
       ],
-      "level": 50
+      "level": 50,
+      "passiveName": "Vital Spirit (Adaptado)",
+      "passiveDescription": "O Pokémon recebe resistência a ataques do tipo FIGHTING.",
+      "defenseByBossType": {
+        "fighting": 0.5
+      }
     },
     {
       "name": "Mantine",
@@ -4731,7 +4778,7 @@
     {
       "name": "Ludicolo",
       "image": "pokemons/3gen/ludicolo.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Silencer",
         "Finisher"
@@ -4739,7 +4786,7 @@
       "type1": "water",
       "type2": "grass",
       "moveset": [
-        "grass"
+        "fighting"
       ],
       "team": "mystic",
       "price": 19000,
@@ -4899,7 +4946,7 @@
     {
       "name": "Gallade",
       "image": "pokemons/4gen/gallade.png",
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -4910,7 +4957,14 @@
       ],
       "team": "instinct",
       "price": 39000,
-      "level": 95
+      "level": 95,
+      "passiveName": "Justified",
+      "passiveDescription": "Torna o Pokémon resistente a golpes dos tipos DARK, STEEL e NORMAL.",
+      "defenseByBossType": {
+        "dark": 0.5,
+        "steel": 0.5,
+        "normal": 0.5
+      }
     },
     {
       "name": "Surskit",
@@ -5169,7 +5223,7 @@
       "searchAliases": [
         "vitao"
       ],
-      "role": "defender",
+      "role": "all-rounder",
       "type1": "rock",
       "type2": "steel",
       "moveset": [
@@ -6099,11 +6153,27 @@
       "type1": "grass",
       "type2": "flying",
       "moveset": [
-        "grass"
+        "flying"
       ],
       "team": "instinct",
       "price": 60000,
-      "level": 95
+      "level": 95,
+      "passiveName": "Tropical Motion",
+      "passiveDescription": "O Pokémon recebe resistência a ataques do tipo BUG. Todos os ataques deste Pokémon causam dano super efetivo contra Pokémon do tipo WATER.",
+      "defenseByBossType": {
+        "bug": 0.5
+      },
+      "passiveSuperEffectiveTypes": [
+        "water"
+      ],
+      "shinyPassiveName": "Tropical Motion",
+      "shinyPassiveDescription": "O Pokémon recebe resistência a ataques do tipo BUG. Todos os ataques deste Pokémon causam dano super efetivo contra Pokémon do tipo WATER.",
+      "shinyDefenseByBossType": {
+        "bug": 0.5
+      },
+      "shinyPassiveSuperEffectiveTypes": [
+        "water"
+      ]
     },
     {
       "name": "Chimecho",
@@ -6600,7 +6670,7 @@
       "image": "pokemons/4gen/empoleon.png",
       "generation": 4,
       "dex": 395,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -6648,7 +6718,7 @@
       "image": "pokemons/4gen/staraptor.png",
       "generation": 4,
       "dex": 398,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Finisher"
       ],
@@ -6659,7 +6729,17 @@
       ],
       "team": "valor",
       "price": 18000,
-      "level": 80
+      "level": 80,
+      "passiveName": "Intimidate (Adaptado)",
+      "passiveDescription": "Ao ser atacado, existe uma chance de reduzir o ataque dos Pokémon ao redor em 30% por 5 segundos. Além disso, torna o Pokémon resistente a ataques do tipo FIGHTING.",
+      "defenseByBossType": {
+        "fighting": 0.5
+      },
+      "passiveName": "Intimidate (Adaptado)",
+      "passiveDescription": "Ao ser atacado, existe uma chance de reduzir o ataque dos Pokémon ao redor em 30% por 5 segundos. Além disso, torna o Pokémon resistente a ataques do tipo FIGHTING.",
+      "defenseByBossType": {
+        "fighting": 0.5
+      }
     },
     {
       "name": "Bidoof",
@@ -7362,7 +7442,7 @@
       "image": "pokemons/4gen/hippowdon-female.png",
       "generation": 4,
       "dex": 450,
-      "role": "defender",
+      "role": "attacker",
       "type1": "ground",
       "moveset": [
         "ground"
@@ -7477,7 +7557,8 @@
       "dex": 459,
       "role": "attacker",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "type1": "grass",
       "type2": "ice",
@@ -7501,7 +7582,13 @@
       ],
       "team": "instinct",
       "price": 60000,
-      "level": 95
+      "level": 95,
+      "shinyPassiveName": "Snow Veil",
+      "shinyPassiveDescription": "Concede resistência a golpes dos tipos DRAGON e FLYING.",
+      "shinyDefenseByBossType": {
+        "dragon": 0.5,
+        "flying": 0.5
+      }
     },
     {
       "name": "Leafeon",
@@ -8223,7 +8310,7 @@
       "dex": 553,
       "role": "attacker",
       "subFunctions": [
-        "Finisher"
+        "Stunner"
       ],
       "type1": "ground",
       "type2": "dark",
@@ -8391,7 +8478,7 @@
       "image": "pokemons/5gen/archen.png",
       "generation": 5,
       "dex": 566,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Finisher"
       ],
@@ -9270,7 +9357,7 @@
       "image": "pokemons/5gen/hydreigon.png",
       "generation": 5,
       "dex": 635,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Finisher"
       ],
@@ -9450,10 +9537,13 @@
         "story",
         "elemental"
       ],
-      "passiveName": "Scorching Aura",
-      "passiveDescription": "O Pokémon emite um calor extremo que evapora a água e reduz o solo ao seu redor em cinzas. Devido à intensidade dessa aura, o usuário recebe dano reduzido de ataques do tipo Water e Ground.",
+      "passiveName": "Searing Flame (Adaptado)",
+      "passiveDescription": "Concede resistência a ataques dos tipos FLYING e WATER e mantém a redução de dano do tipo GROUND da passiva anterior.",
+      "defenseByBossType": {
+        "flying": 0.5,
+        "water": 0.5
+      },
       "defenseDamageFactorByBossType": {
-        "water": 0.5,
         "ground": 0.5
       }
     },
@@ -9462,7 +9552,7 @@
       "image": "pokemons/6gen/pyroar.png",
       "generation": 6,
       "dex": 668,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -9480,10 +9570,13 @@
         "story",
         "elemental"
       ],
-      "passiveName": "Scorching Aura",
-      "passiveDescription": "O Pokémon emite um calor extremo que evapora a água e reduz o solo ao seu redor em cinzas. Devido à intensidade dessa aura, o usuário recebe dano reduzido de ataques do tipo Water e Ground.",
+      "passiveName": "Searing Flame (Adaptado)",
+      "passiveDescription": "Concede resistência a ataques dos tipos FLYING e WATER e mantém a redução de dano do tipo GROUND da passiva anterior.",
+      "defenseByBossType": {
+        "flying": 0.5,
+        "water": 0.5
+      },
       "defenseDamageFactorByBossType": {
-        "water": 0.5,
         "ground": 0.5
       }
     },
@@ -9706,7 +9799,7 @@
       "image": "pokemons/6gen/malamar.png",
       "generation": 6,
       "dex": 687,
-      "role": "attacker",
+      "role": "all-rounder",
       "subFunctions": [
         "Stunner"
       ],
@@ -9719,6 +9812,11 @@
       "price": 0,
       "priceLabel": "Obtido em troca com o Maniac",
       "level": 80,
+      "passiveDescription": "Torna o Pokémon resistente a ataques dos tipos POISON e FIGHTING.",
+      "defenseByBossType": {
+        "poison": 0.5,
+        "fighting": 0.5
+      },
       "normalCaptureAvailable": false,
       "normalCaptureNote": "Pokemon maniac nao pode ser capturado.",
       "shinyCaptureAvailable": false,
@@ -10005,7 +10103,13 @@
       "shinyCaptureNote": "Versao shiny nao pode ser capturada.",
       "specialTags": [
         "fossil"
-      ]
+      ],
+      "shinyPassiveName": "Tundra Wall",
+      "shinyPassiveDescription": "Torna o Pokémon resistente a ataques dos tipos DRAGON e FIRE.",
+      "shinyDefenseByBossType": {
+        "dragon": 0.5,
+        "fire": 0.5
+      }
     },
     {
       "name": "Sylveon",
@@ -10573,7 +10677,7 @@
       "image": "pokemons/7gen/shiinotic.png",
       "generation": 7,
       "dex": 756,
-      "role": "attacker",
+      "role": "all-rounder",
       "type1": "grass",
       "moveset": [
         "fairy"
@@ -11778,6 +11882,9 @@
       "generation": 8,
       "dex": 812,
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "grass",
       "moveset": [
         "grass"
@@ -11961,7 +12068,10 @@
       "image": "pokemons/8gen/corviknight.png",
       "generation": 8,
       "dex": 823,
-      "role": "all-rounder",
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "flying",
       "type2": "steel",
       "moveset": [
@@ -12158,7 +12268,10 @@
       "image": "pokemons/9gen/hydrapple.png",
       "generation": 9,
       "dex": 1019,
-      "role": "all-rounder",
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "grass",
       "type2": "dragon",
       "moveset": [
@@ -12231,7 +12344,7 @@
       "image": "pokemons/8gen/toxtricity-low-key.png",
       "generation": 8,
       "dex": null,
-      "role": "attacker",
+      "role": "all-rounder",
       "type1": "electric",
       "type2": "poison",
       "moveset": [
@@ -12317,11 +12430,6 @@
       "priceLabel": "Obtido em troca com o Maniac",
       "acquisitionUrl": "/maniacs",
       "level": 95,
-      "subFunctions": [
-        "Stunner",
-        "Silencer",
-        "Finisher"
-      ],
       "specialTags": [
         "maniac"
       ],
@@ -12455,7 +12563,7 @@
       "acquisitionUrl": "/maniacs",
       "level": 80,
       "subFunctions": [
-        "Finisher"
+        "Stunner"
       ],
       "specialTags": [
         "maniac"
@@ -12482,7 +12590,7 @@
       "acquisitionUrl": "/maniacs",
       "level": 80,
       "subFunctions": [
-        "Finisher"
+        "Stunner"
       ],
       "specialTags": [
         "maniac"
@@ -12558,7 +12666,7 @@
       "image": "pokemons/8gen/drakloak.png",
       "generation": 8,
       "dex": 886,
-      "role": "attacker",
+      "role": "all-rounder",
       "type1": "dragon",
       "type2": "ghost",
       "moveset": [
@@ -12572,7 +12680,13 @@
       ],
       "specialTags": [
         "pre-ace"
-      ]
+      ],
+      "passiveName": "Cursed Body (Adaptado)",
+      "passiveDescription": "O Pokémon recebe resistência a ataques dos tipos GHOST e PSYCHIC.",
+      "defenseByBossType": {
+        "ghost": 0.5,
+        "psychic": 0.5
+      }
     },
     {
       "name": "Dragapult",
@@ -12589,7 +12703,8 @@
       "price": 115500,
       "level": 100,
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "specialTags": [
         "ace"
@@ -13188,7 +13303,14 @@
       "level": 100,
       "specialTags": [
         "ace"
-      ]
+      ],
+      "passiveName": "Martial Roundhouse",
+      "passiveDescription": "O Pokémon treina seus giros marciais para se proteger, tornando os danos dos tipos STEEL, ICE e NORMAL super inefetivos.",
+      "defenseByBossType": {
+        "steel": 0.5,
+        "ice": 0.5,
+        "normal": 0.5
+      }
     },
     {
       "name": "Braviary",
@@ -13210,6 +13332,46 @@
       "specialTags": [
         "ace"
       ]
+    },
+    {
+      "name": "Skiddo",
+      "image": "pokemons/6gen/skiddo.png",
+      "generation": 6,
+      "dex": 672,
+      "role": "attacker",
+      "type1": "grass",
+      "moveset": [
+        "grass"
+      ],
+      "team": "instinct"
+    },
+    {
+      "name": "Mienfoo",
+      "image": "pokemons/5gen/mienfoo.png",
+      "generation": 5,
+      "dex": 619,
+      "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
+      "type1": "fighting",
+      "moveset": [
+        "fighting"
+      ],
+      "team": "mystic"
+    },
+    {
+      "name": "Rufflet",
+      "image": "pokemons/5gen/rufflet.png",
+      "generation": 5,
+      "dex": 627,
+      "role": "attacker",
+      "type1": "normal",
+      "type2": "flying",
+      "moveset": [
+        "flying"
+      ],
+      "team": "valor"
     },
     {
       "name": "Crystal Onix",

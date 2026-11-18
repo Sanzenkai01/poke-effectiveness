@@ -11671,7 +11671,7 @@ function formatSearchLabel(speedster) {
 
 function getBossSearchCatalogUrl() {
   const prefix = isBossesStandaloneAssetContext() ? '../' : '';
-  return `${prefix}pokemons/pokemons.json?v=20260826a`;
+  return `${prefix}pokemons/pokemons.json?v=20261118-pokemon-balance-update-v3`;
 }
 
 function getBossSearchCatalogRole(entry) {

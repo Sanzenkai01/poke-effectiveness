@@ -477,7 +477,7 @@
   },
   "hippowdonfemale": {
     "sourceName": "Hippowdon Female",
-    "catalogRole": "defender",
+    "catalogRole": "attacker",
     "types": [
       "ground"
     ],
@@ -500,7 +500,10 @@
   },
   "tangrowth": {
     "sourceName": "Tangrowth",
-    "catalogRole": "defender",
+    "catalogRole": "attacker",
+    "subFunctions": [
+      "Stunner"
+    ],
     "specialTags": [
       "boss"
     ],
@@ -1496,10 +1499,13 @@
       "grass"
     ],
     "level": 80,
-    "passiveName": "Scorching Aura",
-    "passiveDescription": "O Pokémon emite um calor extremo que evapora a água e reduz o solo ao seu redor em cinzas. Devido à intensidade dessa aura, o usuário recebe dano reduzido de ataques do tipo Water e Ground.",
+    "passiveName": "Searing Flame (Adaptado)",
+    "passiveDescription": "Concede resistência a ataques dos tipos FLYING e WATER e mantém a redução de dano do tipo GROUND da passiva anterior.",
+    "defenseByBossType": {
+      "flying": 0.5,
+      "water": 0.5
+    },
     "defenseDamageFactorByBossType": {
-      "water": 0.5,
       "ground": 0.5
     }
   },
@@ -1770,7 +1776,7 @@
   },
   "probopass": {
     "sourceName": "Probopass",
-    "catalogRole": "defender",
+    "catalogRole": "all-rounder",
     "types": [
       "rock",
       "steel"

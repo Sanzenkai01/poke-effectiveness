@@ -346,7 +346,7 @@ const GLOBAL_SEARCH_HYDRATION_TIMEOUT_MS = 8000;
 let professionsPageInitialized = false;
 let professionsImageModalInitialized = false;
 let activeProfessionKey = '';
-const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261102-pokemon-clan-primary-type-v1';
+const DEFERRED_BOSSES_SCRIPT_SRC = 'bosses/bosses.js?v=20261118-pokemon-balance-update-v3';
 const DEFERRED_LZ_STRING_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js';
 const DEFERRED_PAKO_SCRIPT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js';
 const INTERACTIVE_MAP_SCRIPT_SRC = 'mapa-interativo/mapa-interativo.js?v=20261116-capture-tier-broke-v1';
@@ -498,8 +498,8 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261111-musharna-shiny-capture-v1';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20260812a';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261118-pokemon-balance-update-v3';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20261118-pokemon-balance-update-v3';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
 const POKEMON_LOOTS_URL = 'pokemons/pokemon-loots.json?v=20261108-pokemon-loot-section-v3';
@@ -4676,9 +4676,9 @@ const SHINY_CANDY_GOLDEN_TICKET_COST = 1;
 const SHINING_PLATE_BLOCK_SIZE = 40;
 const TRAINING_CRAFT_TIME_MINUTES = Object.freeze({
     commonPlate: 1,
-    shiningPlateBlock: 60,
-    normalCandy: 5,
-    shinyCandy: 20
+    shiningPlateBlock: 20,
+    normalCandy: 1,
+    shinyCandy: 5
 });
 const BOOST_DEFAULT_STATE = Object.freeze({
     pokemonName: '',
