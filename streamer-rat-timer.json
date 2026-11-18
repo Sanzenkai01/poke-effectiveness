@@ -1,14 +1,15 @@
 {
-  "updatedAt": "2026-11-18T19:34:33.639Z",
+  "updatedAt": "2026-11-18T19:47:37.987Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-18T19:10:33.404Z",
-    "endedAt": "2026-11-18T19:34:33.638Z",
-    "reason": "timeout",
+    "startedAt": "2026-11-18T19:35:05.692Z",
+    "endedAt": "2026-11-18T19:47:37.987Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "callmevitao_",
+      "okamiulv",
       "rinconnn",
       "adivorcio",
       "ailimm",
@@ -25,19 +26,42 @@
       "lineashh",
       "nandoxd1996",
       "nazgulplayer",
-      "okamiulv",
       "thigaartus",
       "uguettolitz",
       "vivihbecker",
       "zsales33"
     ],
     "pstoryDropChannels": [
-      "callmevitao_"
+      "callmevitao_",
+      "okamiulv"
     ],
-    "observedChannels": [],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedChannels": [
+      "okamiulv"
+    ],
+    "observedSpawnChannels": [
+      "okamiulv"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "okamiulv",
+        "messageAt": 1795031257880,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
+    "observedRatMessages": [
+      {
+        "channel": "okamiulv",
+        "kind": "rattata-message",
+        "messageAt": 1795031257880,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      },
+      {
+        "channel": "okamiulv",
+        "kind": "spawn",
+        "messageAt": 1795031257880,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -85,6 +109,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "okamiulv",
+    "lastMessageAt": 1795031257880,
+    "expectedNextAt": 1795032517880,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "streamStartedAt": "2026-11-18T19:34:06Z",
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1795031257986,
+    "persistedAt": 1795031257986
+  },
+  "timers": {
+    "okamiulv": {
+      "channel": "okamiulv",
+      "lastMessageAt": 1795031257880,
+      "expectedNextAt": 1795032517880,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "streamStartedAt": "2026-11-18T19:34:06Z",
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1795031257986,
+      "persistedAt": 1795031257986
+    }
+  }
 }
