@@ -167,8 +167,7 @@
       })();
     </script>
   <link rel="stylesheet" href="styles.css?v=20261118-remove-evolution-stones-v1">
-  <link rel="stylesheet" href="wiki-theme.css?v=20261105-mobile-home-icon-v1">
-  <link rel="stylesheet" href="news/news-popup.css?v=20261101-ace-pokemon-news-v1">
+  <link rel="stylesheet" href="wiki-theme.css?v=20261119-wiki-official-link-v1">
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="dark">
@@ -261,6 +260,9 @@
         <span class="site-visit-counter__label" hidden></span>
         <span class="site-visit-counter__values">Carregando visitas...</span>
       </div>
+      <a class="wiki-topbar__wiki-link" href="https://wiki.pstoryonline.com/" target="_blank" rel="noopener noreferrer">
+        Conheça a Wiki Oficial
+      </a>
       <div class="wiki-topbar__status">
         <span class="wiki-topbar__status-label">Rattata</span>
         <div id="site-rat-summary" class="site-global-search__rat streamer-rat-summary" aria-live="polite"></div>
@@ -983,7 +985,7 @@
       </a>
       <div class="footer-credits">
         Desenvolvido por Liniko<br>
-        Build v1288 - 2026
+        Build v1293 - 2026
       </div>
       <a
         class="footer-discord-link footer-discord-link-right"
@@ -996,47 +998,6 @@
         <img src="icons-type/discord.png" alt="" aria-hidden="true" class="footer-discord-icon" loading="lazy" decoding="async">
       </a>
     </footer>
-    <dialog id="site-news-dialog" role="dialog" aria-modal="true" aria-labelledby="site-news-title" aria-describedby="site-news-text">
-      <div class="site-news-popup__inner">
-        <header class="site-news-popup__header">
-          <div class="site-news-popup__identity">
-            <span class="site-news-popup__mark" aria-hidden="true">✦</span>
-          </div>
-          <span class="site-news-popup__category" data-news-category></span>
-          <button class="site-news-popup__close" type="button" data-news-close aria-label="Fechar notícia" autofocus>&times;</button>
-        </header>
-        <div class="site-news-popup__content" data-layout="text">
-          <div class="site-news-popup__copy">
-            <h2 class="site-news-popup__title" id="site-news-title" data-news-title></h2>
-            <p class="site-news-popup__subtitle" id="site-news-subtitle" data-news-subtitle hidden></p>
-            <p class="site-news-popup__text" id="site-news-text" data-news-text></p>
-          </div>
-          <button class="site-news-popup__image-trigger" type="button" data-news-image-trigger>
-            <picture>
-              <source data-news-image-webp type="image/webp">
-              <img class="site-news-popup__image" data-news-image width="1358" height="674" decoding="async" alt="">
-            </picture>
-          </button>
-          <p class="site-news-popup__image-caption" data-news-image-caption hidden></p>
-          <div class="site-news-popup__actions">
-            <a class="site-news-popup__link" data-news-link target="_blank" rel="noopener noreferrer" hidden></a>
-          </div>
-        </div>
-        <footer class="site-news-popup__footer">
-          <label class="site-news-popup__dismiss-choice">
-            <input type="checkbox" data-news-dismiss-choice>
-            <span>Não mostrar esta notícia novamente</span>
-          </label>
-          <button class="site-news-popup__done" type="button" data-news-close>Entendi</button>
-        </footer>
-      </div>
-    </dialog>
-    <dialog class="site-news-popup__zoom" data-news-zoom aria-label="Imagem ampliada da notícia">
-      <div class="site-news-popup__zoom-content">
-        <button class="site-news-popup__zoom-close" type="button" data-news-zoom-close aria-label="Fechar imagem ampliada">&times;</button>
-        <img class="site-news-popup__zoom-image" data-news-zoom-image alt="">
-      </div>
-    </dialog>
     </main>
     </div>
     <script src="js/utf8-guard.js?v=20260606a" defer></script>
@@ -1046,7 +1007,6 @@
     <script src="js/recommendation-engine.js?v=20260826d" defer></script>
     <script src="js/striker-recommendation-engine.js?v=20260902a" defer></script>
     <script src="js/pokemon-search.js?v=20261020-pokemon-search-module-v1" defer></script>
-    <script src="script.js?v=20261119-team-hunt-stage-tier-v1" defer></script>
-    <script src="news/news-popup.js?v=20261105-news-webp-dialog-v1" defer></script>
+    <script src="script.js?v=20261119-kommo-o-frontal-pull-v1" defer></script>
 </body>
 </html>

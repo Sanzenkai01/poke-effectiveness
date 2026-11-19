@@ -1797,7 +1797,7 @@ body[data-active-tab] {
 body > .header {
   inset: 0 !important;
   display: grid !important;
-  grid-template-columns: var(--wiki-sidebar) minmax(220px, 460px) auto minmax(0, 1fr) auto;
+  grid-template-columns: var(--wiki-sidebar) minmax(180px, 1fr) auto auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   width: 100% !important;
@@ -1933,7 +1933,7 @@ body > .header {
 
 .wiki-topbar__status {
   position: static !important;
-  grid-column: 4 !important;
+  grid-column: 5 !important;
   grid-row: 1 !important;
   display: flex;
   align-items: center;
@@ -1989,9 +1989,52 @@ body > .header {
   display: none !important;
 }
 
+.wiki-topbar__wiki-link {
+  position: static !important;
+  grid-column: 4 !important;
+  grid-row: 1 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px solid rgba(215, 184, 91, 0.64);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(215, 184, 91, 0.2), rgba(215, 184, 91, 0.08));
+  color: #f0d477;
+  box-shadow: 0 0 16px rgba(215, 184, 91, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  font-size: 0.7rem;
+  font-weight: 750;
+  line-height: 1.15;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 140ms ease;
+}
+
+.wiki-topbar__wiki-link::after {
+  content: "↗";
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.wiki-topbar__wiki-link:hover,
+.wiki-topbar__wiki-link:focus-visible {
+  border-color: #f0d477;
+  background: rgba(215, 184, 91, 0.24);
+  color: #fff3bd;
+  box-shadow: 0 0 20px rgba(215, 184, 91, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.wiki-topbar__wiki-link:focus-visible {
+  outline: 2px solid #f0d477;
+  outline-offset: 3px;
+}
+
 .wiki-topbar__actions {
   position: static !important;
-  grid-column: 5 !important;
+  grid-column: 6 !important;
   grid-row: 1 !important;
   display: flex;
   align-items: center;
@@ -2342,7 +2385,7 @@ body.home-view > main > .home-landing {
   }
 
   body > .header {
-    grid-template-columns: var(--wiki-sidebar) minmax(260px, 1fr) auto auto;
+    grid-template-columns: var(--wiki-sidebar) minmax(0, 1fr) auto auto auto;
   }
 
   .header .site-global-search {
@@ -2353,8 +2396,14 @@ body.home-view > main > .home-landing {
     grid-column: 3 !important;
   }
 
-  .wiki-topbar__actions {
+  .header .wiki-topbar__wiki-link {
     grid-column: 4 !important;
+    padding-inline: 8px;
+    font-size: 0.64rem;
+  }
+
+  .wiki-topbar__actions {
+    grid-column: 5 !important;
   }
 
   .wiki-home__layout {
@@ -2418,6 +2467,20 @@ body.home-view > main > .home-landing {
     inset: 56px 10px auto 10px !important;
     width: auto !important;
     grid-area: auto !important;
+  }
+
+  .header .wiki-topbar__wiki-link {
+    position: absolute !important;
+    top: 49px !important;
+    left: 10px !important;
+    z-index: 2;
+    grid-area: auto !important;
+    max-width: calc((100% - 38px) / 2);
+    min-height: 34px;
+    padding: 6px 8px;
+    overflow: hidden;
+    font-size: 0.58rem;
+    text-overflow: ellipsis;
   }
 
   .app-shell {
@@ -2575,7 +2638,7 @@ body.home-view > main > .home-landing {
 
 @media (min-width: 761px) and (max-width: 900px) {
   body > .header {
-    grid-template-columns: var(--wiki-sidebar) minmax(180px, 1fr) auto minmax(0, 200px) auto;
+    grid-template-columns: var(--wiki-sidebar) minmax(0, 1fr) auto auto auto;
     gap: 8px;
   }
 
@@ -2587,8 +2650,12 @@ body.home-view > main > .home-landing {
     grid-column: 3 !important;
   }
 
-  .header .wiki-topbar__status {
+  .header .wiki-topbar__wiki-link {
     grid-column: 4 !important;
+  }
+
+  .header .wiki-topbar__status {
+    grid-column: 5 !important;
   }
 
   .wiki-topbar__actions {
@@ -2687,12 +2754,13 @@ body.home-view > main > .home-landing {
   body > .header .wiki-topbar__status {
     position: absolute !important;
     top: 49px !important;
-    left: 50% !important;
+    left: auto !important;
+    right: 10px !important;
     display: flex !important;
     grid-column: auto !important;
     grid-row: auto !important;
-    max-width: calc(100% - 24px);
-    transform: translateX(-50%) !important;
+    max-width: calc((100% - 38px) / 2);
+    transform: none !important;
   }
 
   .header .site-global-search {

@@ -3459,6 +3459,11 @@
       "team": "valor",
       "price": 22000,
       "level": 80,
+      "passiveName": "Green Dignity",
+      "passiveDescription": "O corpo da realeza da Vespiquen é preparado contra golpes do tipo Dark, tornando o dano desse tipo inefetivo.",
+      "defenseByBossType": {
+        "dark": 0
+      },
       "normalCaptureAvailable": true,
       "normalCaptureNote": "",
       "shinyCaptureAvailable": false,
@@ -5442,7 +5447,9 @@
       ],
       "team": "instinct",
       "price": 16000,
-      "level": 80
+      "level": 80,
+      "passiveName": "Static",
+      "passiveDescription": "Ao ser atacado fisicamente, tem chance de aplicar Blind por 2 segundos aos adversários próximos. Esse efeito só pode ocorrer uma vez a cada 4 segundos."
     },
     {
       "name": "Plusle",
@@ -8348,7 +8355,8 @@
       "dex": 552,
       "role": "attacker",
       "subFunctions": [
-        "Finisher"
+        "Finisher",
+        "Stunner"
       ],
       "type1": "ground",
       "type2": "dark",
@@ -8680,13 +8688,14 @@
       "acquisitionUrl": "/ranger-bosses",
       "level": 100,
       "normalCaptureAvailable": true,
-      "normalCaptureNote": "Captura liberada em hunt; sem preco cadastrado para calcular a media normal. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
+      "normalCaptureNote": "Captura liberada em hunt; média Tier B estimada com Story Ball como base, sem preço de NPC. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
       "normalCaptureBalls": [
         "ultra",
         "story",
         "elemental",
         "premier"
       ],
+      "normalCaptureStoryAverage": 2750,
       "shinyCaptureAvailable": true,
       "shinyCaptureNote": "Captura liberada em hunt.",
       "specialTags": [
@@ -9452,9 +9461,10 @@
         "ace"
       ],
       "passiveName": "Levitate",
-      "passiveDescription": "O Pokemon e imune a danos do tipo Ground.",
+      "passiveDescription": "O Pokémon é imune a ataques do tipo Ground, exceto quando o atacante está sob efeito de Vulnerable. Sua levitação também torna o dano do tipo Dragon inefetivo.",
       "defenseByBossType": {
-        "ground": 0
+        "ground": 0,
+        "dragon": 0
       }
     },
     {
@@ -10055,13 +10065,14 @@
       "acquisitionUrl": "/ranger-bosses",
       "level": 100,
       "normalCaptureAvailable": true,
-      "normalCaptureNote": "Captura liberada em hunt; sem preco cadastrado para calcular a media normal. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
+      "normalCaptureNote": "Captura liberada em hunt; média Tier B estimada com Story Ball como base, sem preço de NPC. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
       "normalCaptureBalls": [
         "ultra",
         "story",
         "elemental",
         "premier"
       ],
+      "normalCaptureStoryAverage": 2750,
       "shinyCaptureAvailable": true,
       "shinyCaptureNote": "Captura liberada em hunt.",
       "specialTags": [
@@ -10086,13 +10097,14 @@
       "acquisitionUrl": "/ranger-bosses",
       "level": 100,
       "normalCaptureAvailable": true,
-      "normalCaptureNote": "Captura liberada em hunt; sem preco cadastrado para calcular a media normal. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
+      "normalCaptureNote": "Captura liberada em hunt; média Tier B estimada com Story Ball como base, sem preço de NPC. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
       "normalCaptureBalls": [
         "ultra",
         "story",
         "elemental",
         "premier"
       ],
+      "normalCaptureStoryAverage": 2750,
       "shinyCaptureAvailable": true,
       "shinyCaptureNote": "Captura liberada em hunt.",
       "specialTags": [
@@ -11461,7 +11473,8 @@
       "level": 100,
       "type2": "fighting",
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "specialTags": [
         "ace"
@@ -12405,13 +12418,14 @@
       "passiveName": "Supersweet Syrup",
       "passiveDescription": "Com uma pequena chance ao ser atacado fisicamente, o Pokémon cria uma chuva de xarope que cura a si mesmo e aliados, removendo os efeitos negativos por 6 segundos. Também concede defesa ao tipo Dragon.",
       "normalCaptureAvailable": true,
-      "normalCaptureNote": "Captura liberada em hunt; sem preco cadastrado para calcular a media normal. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
+      "normalCaptureNote": "Captura liberada em hunt; média Tier B estimada com Story Ball como base, sem preço de NPC. Use Ultra Ball, Story Ball, Elemental Ball da tipagem ou Premier Ball.",
       "normalCaptureBalls": [
         "ultra",
         "story",
         "elemental",
         "premier"
       ],
+      "normalCaptureStoryAverage": 2750,
       "shinyCaptureAvailable": true,
       "shinyCaptureNote": "Captura liberada em hunt."
     },
@@ -13076,7 +13090,8 @@
       "price": 115500,
       "level": 100,
       "subFunctions": [
-        "Stunner"
+        "Stunner",
+        "Frontal Pull"
       ],
       "specialTags": [
         "ace"
@@ -13465,11 +13480,16 @@
       "generation": 6,
       "dex": 672,
       "role": "attacker",
+      "subFunctions": [
+        "Stunner"
+      ],
       "type1": "grass",
       "moveset": [
         "grass"
       ],
-      "team": "instinct"
+      "team": "instinct",
+      "price": 97500,
+      "level": 65
     },
     {
       "name": "Mienfoo",
@@ -13485,7 +13505,9 @@
       "moveset": [
         "fighting"
       ],
-      "team": "mystic"
+      "team": "mystic",
+      "price": 97500,
+      "level": 65
     },
     {
       "name": "Rufflet",
@@ -13499,7 +13521,12 @@
       "moveset": [
         "flying"
       ],
-      "team": "valor"
+      "team": "valor",
+      "subFunctions": [
+        "Finisher"
+      ],
+      "price": 97500,
+      "level": 65
     },
     {
       "name": "Crystal Onix",
@@ -13584,7 +13611,12 @@
       "priceLabel": "Horizons Bronze",
       "level": 95,
       "normalCaptureAvailable": false,
-      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze."
+      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze.",
+      "passiveName": "Cinnabar Lure",
+      "passiveDescription": "Ao receber dano, há a possibilidade de causar dano ao redor. Por ser uma iguaria, este Pokémon possui resistência natural ao tipo Rock.",
+      "defenseByBossType": {
+        "rock": 0.5
+      }
     },
     {
       "name": "Binacle Splash Partner Form",
@@ -13599,7 +13631,12 @@
       "priceLabel": "Horizons Bronze",
       "level": 65,
       "normalCaptureAvailable": false,
-      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze."
+      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze.",
+      "passiveName": "Cinnabar Lure",
+      "passiveDescription": "Ao receber dano, há a possibilidade de causar dano ao redor. Por ser uma iguaria, este Pokémon possui resistência natural ao tipo Rock.",
+      "defenseByBossType": {
+        "rock": 0.5
+      }
     },
     {
       "name": "Seadra Flapping Bubbles Form",
@@ -13613,7 +13650,12 @@
       "priceLabel": "Horizons Bronze",
       "level": 65,
       "normalCaptureAvailable": false,
-      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze."
+      "normalCaptureNote": "Impossivel de capturar; obtido por Horizons Bronze.",
+      "passiveName": "Bubble Bomb",
+      "passiveDescription": "Ao receber dano, há a possibilidade de causar dano ao redor. Por ser um Pokémon aquático que se envolve em bolhas, possui resistência natural ao tipo Rock.",
+      "defenseByBossType": {
+        "rock": 0.5
+      }
     },
     {
       "name": "Piloswine Mud Stick Form",

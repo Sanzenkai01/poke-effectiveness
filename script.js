@@ -499,8 +499,8 @@ const APP_ROUTE_ALIASES = {
     horizons: { path: '/horizons', tab: 'bosses', bossMode: 'horizons' }
 };
 let initialRouteApplied = false;
-const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261119-team-hunt-stage-tier-v1';
-const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20261118-pokemon-balance-update-v3';
+const POKEMON_CATALOG_URL = 'pokemons/pokemons.json?v=20261119-kommo-o-frontal-pull-v1';
+const POKEMON_MEGA_CATALOG_URL = 'pokemons/mega-pokemons.json?v=20261119-pokemon-passive-balancing-v1';
 const POKEMON_GENERATION_MAP_URL = 'pokemons/generations.json?v=20260808a';
 const POKEMON_POKEDEX_MAP_URL = 'pokemons/pokedex.json?v=20261030-ace-pokemon-trio-v1';
 const POKEMON_LOOTS_URL = 'pokemons/pokemon-loots.json?v=20261108-pokemon-loot-section-v3';
@@ -26934,6 +26934,12 @@ function getPokemonNormalCaptureAverageForBall(entry, ballKey){
         if(!ballPrice || !storyBallPrice) return 0;
         return Math.ceil(braveBallAverage * CATCH_BRAVE_BALL_STORY_EQUIVALENT * storyBallPrice / ballPrice);
     }
+    const storyBallAverage = Number(entry?.normalCaptureStoryAverage || 0);
+    if(storyBallAverage > 0){
+        const storyBallPrice = Number(ballPrices.story || 0);
+        if(!ballPrice || !storyBallPrice) return 0;
+        return Math.ceil(storyBallAverage * storyBallPrice / ballPrice);
+    }
     if(!ballPrice || !pokemonPrice) return 0;
     return Math.ceil(pokemonPrice / ballPrice);
 }
@@ -27203,6 +27209,9 @@ function normalizePokemonCatalogEntry(entry, index){
         acquisitionUrl: String(entry.acquisitionUrl || '').trim(),
         normalCaptureBraveAverage: Number.isFinite(Number(entry.normalCaptureBraveAverage)) && Number(entry.normalCaptureBraveAverage) > 0
             ? Number(entry.normalCaptureBraveAverage)
+            : 0,
+        normalCaptureStoryAverage: Number.isFinite(Number(entry.normalCaptureStoryAverage)) && Number(entry.normalCaptureStoryAverage) > 0
+            ? Number(entry.normalCaptureStoryAverage)
             : 0,
         levelLabel: String(entry.levelLabel || '').trim(),
         movesetLabel: String(entry.movesetLabel || '').trim(),
