@@ -24,6 +24,8 @@
         { name: 'nandoxd1996', supportsDrops: false },
         { name: 'ailimm', supportsDrops: false },
         { name: 'dudabatistas' },
+        { name: 'sinxzyn' },
+        { name: 'loxastv' },
     ];
 
     function normalizeStreamerChannelName(name){
