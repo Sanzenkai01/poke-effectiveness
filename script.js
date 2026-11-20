@@ -1308,7 +1308,8 @@ const TEAM_BUILDER_ADDITIONAL_HUNT_NAMES = Object.freeze([
     'Gogoat',
     'Zoroark',
     'Hydrapple',
-    'Aegislash (shield form)'
+    'Aegislash (shield form)',
+    'Cofagrigus'
 ]);
 const TEAM_BUILDER_HUNT_DISPLAY_NAME_OVERRIDES = Object.freeze({
     'aegislash (shield form)': 'Aegislash',
@@ -11868,7 +11869,9 @@ function createTeamBuilderPokemonCard(entry){
     card.className = 'team-builder-result-card';
     card.dataset.slotKind = getTeamBuilderSlotConfig()?.kind || 'dps';
     card.setAttribute('role', 'listitem');
-    card.setAttribute('aria-label', `Selecionar ${entry.name}`);
+    const tier = getPokemonCatalogTier(entry);
+    const tierLabel = tier ? getPokemonTierLabel(tier) : 'Tier não definido';
+    card.setAttribute('aria-label', `Selecionar ${entry.name}, ${tierLabel}`);
 
     const media = document.createElement('span');
     media.className = 'team-builder-result-card__media';
@@ -11899,6 +11902,12 @@ function createTeamBuilderPokemonCard(entry){
     body.className = 'team-builder-result-card__body';
     const name = document.createElement('strong');
     name.textContent = entry.name;
+    const tierBadge = document.createElement('span');
+    tierBadge.className = 'pokemon-entry-card__tier team-builder-result-card__tier';
+    tierBadge.dataset.tier = tier || 'unassigned';
+    tierBadge.textContent = tier ? tierLabel : 'TnF';
+    if(!tier) tierBadge.title = 'Tier não definido';
+    name.appendChild(tierBadge);
     const clanIcon = createPokemonTeamBadge(entry.team);
     clanIcon.classList.add('team-builder-clan-icon');
     clanIcon.title = entry.teamLabel || getPokemonTeamInfo(entry.team).label;
