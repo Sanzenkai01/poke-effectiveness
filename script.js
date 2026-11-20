@@ -1309,7 +1309,8 @@ const TEAM_BUILDER_ADDITIONAL_HUNT_NAMES = Object.freeze([
     'Zoroark',
     'Hydrapple',
     'Aegislash (shield form)',
-    'Cofagrigus'
+    'Cofagrigus',
+    'Gothitelle'
 ]);
 const TEAM_BUILDER_HUNT_DISPLAY_NAME_OVERRIDES = Object.freeze({
     'aegislash (shield form)': 'Aegislash',

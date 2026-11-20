@@ -3,10 +3,10 @@ let CACHE_NAME = `${CACHE_PREFIX}v1127`;
 const APP_SHELL = [
   new URL('./', self.registration.scope).toString(),
   new URL('./index.html', self.registration.scope).toString(),
-  new URL('./app.html?v=20261119-team-builder-tier-badge-v1', self.registration.scope).toString(),
+  new URL('./app.html?v=20261120-team-builder-gothitelle-hunt-v1', self.registration.scope).toString(),
   new URL('./styles.css?v=20261119-team-builder-tier-badge-v1', self.registration.scope).toString(),
   new URL('./wiki-theme.css?v=20261119-wiki-official-link-v1', self.registration.scope).toString(),
-  new URL('./script.js?v=20261119-team-builder-tier-badge-v1', self.registration.scope).toString(),
+  new URL('./script.js?v=20261120-team-builder-gothitelle-hunt-v1', self.registration.scope).toString(),
   ...[
     'ancient_stone.gif', 'brave_stone.png', 'berryjuice.png', 'bug-gem.png', 'card.png',
     'cocoon_stone.gif', 'dark-gem.png', 'darkness_stone.png', 'dragon_stone.gif',
