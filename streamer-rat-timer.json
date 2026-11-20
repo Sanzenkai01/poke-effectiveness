@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-11-20T13:36:20.029Z",
+  "updatedAt": "2026-11-20T13:37:23.482Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-20T13:12:19.599Z",
-    "endedAt": "2026-11-20T13:36:20.029Z",
-    "reason": "timeout",
+    "startedAt": "2026-11-20T13:36:51.051Z",
+    "endedAt": "2026-11-20T13:37:23.482Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "karlin_nara",
       "dragonslayerpiva",
       "gordallink",
       "adivorcio",
@@ -20,7 +21,6 @@
       "galego_rj",
       "indypereira",
       "jackpist0la",
-      "karlin_nara",
       "lineashh",
       "nandoxd1996",
       "nazgulplayer",
@@ -31,11 +31,28 @@
       "vivihbecker",
       "zsales33"
     ],
-    "pstoryDropChannels": [],
-    "observedChannels": [],
+    "pstoryDropChannels": [
+      "karlin_nara"
+    ],
+    "observedChannels": [
+      "karlin_nara"
+    ],
     "observedSpawnChannels": [],
     "observedSpawns": [],
-    "observedRatMessages": [],
+    "observedRatMessages": [
+      {
+        "channel": "karlin_nara",
+        "kind": "rattata-message",
+        "messageAt": 1795181843410,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      },
+      {
+        "channel": "karlin_nara",
+        "kind": "escape",
+        "messageAt": 1795181843410,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+      }
+    ],
     "monitorMs": 1440000,
     "hasChatToken": true,
     "tokenLogin": "selflessbot",
@@ -83,6 +100,26 @@
     ],
     "error": ""
   },
-  "latest": null,
-  "timers": {}
+  "latest": {
+    "channel": "karlin_nara",
+    "lastMessageAt": 1795181843410,
+    "expectedNextAt": 1795183043410,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "streamStartedAt": "2026-11-20T13:28:01Z",
+    "source": "github-action-chat-escape",
+    "updatedAt": 1795181843481,
+    "persistedAt": 1795181843481
+  },
+  "timers": {
+    "karlin_nara": {
+      "channel": "karlin_nara",
+      "lastMessageAt": 1795181843410,
+      "expectedNextAt": 1795183043410,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "streamStartedAt": "2026-11-20T13:28:01Z",
+      "source": "github-action-chat-escape",
+      "updatedAt": 1795181843481,
+      "persistedAt": 1795181843481
+    }
+  }
 }
