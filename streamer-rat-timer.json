@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-21T01:58:20.622Z",
+  "updatedAt": "2026-11-21T01:59:20.609Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-21T01:48:24.346Z",
-    "endedAt": "2026-11-21T01:58:20.622Z",
-    "reason": "rat-found",
+    "startedAt": "2026-11-21T01:58:52.886Z",
+    "endedAt": "2026-11-21T01:59:20.609Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "cafeina54",
       "callmevitao_",
@@ -45,28 +45,20 @@
     "observedChannels": [
       "indypereira"
     ],
-    "observedSpawnChannels": [
-      "indypereira"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "indypereira",
-        "messageAt": 1795226300519,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "indypereira",
         "kind": "rattata-message",
-        "messageAt": 1795226300519,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1795226360522,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "indypereira",
-        "kind": "spawn",
-        "messageAt": 1795226300519,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1795226360522,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -118,24 +110,24 @@
   },
   "latest": {
     "channel": "indypereira",
-    "lastMessageAt": 1795226300519,
-    "expectedNextAt": 1795227560519,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1795226360522,
+    "expectedNextAt": 1795227560522,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-11-20T22:29:17Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1795226300622,
-    "persistedAt": 1795226300622
+    "source": "github-action-chat-escape",
+    "updatedAt": 1795226360609,
+    "persistedAt": 1795226360609
   },
   "timers": {
     "indypereira": {
       "channel": "indypereira",
-      "lastMessageAt": 1795226300519,
-      "expectedNextAt": 1795227560519,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1795226360522,
+      "expectedNextAt": 1795227560522,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-11-20T22:29:17Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1795226300622,
-      "persistedAt": 1795226300622
+      "source": "github-action-chat-escape",
+      "updatedAt": 1795226360609,
+      "persistedAt": 1795226360609
     }
   }
 }
