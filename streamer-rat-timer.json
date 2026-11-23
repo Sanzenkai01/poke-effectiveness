@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-11-23T21:57:16.337Z",
+  "updatedAt": "2026-11-23T21:58:16.316Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-23T21:38:39.623Z",
-    "endedAt": "2026-11-23T21:57:16.337Z",
-    "reason": "rat-found",
+    "startedAt": "2026-11-23T21:57:40.740Z",
+    "endedAt": "2026-11-23T21:58:16.316Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
+      "nazgulplayer",
       "sinxzyn",
       "vivihbecker",
       "zsales33",
@@ -29,12 +30,12 @@
       "lineashh",
       "loxastv",
       "nandoxd1996",
-      "nazgulplayer",
       "okamiulv",
       "thigaartus",
       "uguettolitz"
     ],
     "pstoryDropChannels": [
+      "nazgulplayer",
       "sinxzyn",
       "vivihbecker",
       "zsales33"
@@ -42,28 +43,20 @@
     "observedChannels": [
       "vivihbecker"
     ],
-    "observedSpawnChannels": [
-      "vivihbecker"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "vivihbecker",
-        "messageAt": 1795471036213,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "vivihbecker",
         "kind": "rattata-message",
-        "messageAt": 1795471036213,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1795471096216,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "vivihbecker",
-        "kind": "spawn",
-        "messageAt": 1795471036213,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1795471096216,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -115,24 +108,24 @@
   },
   "latest": {
     "channel": "vivihbecker",
-    "lastMessageAt": 1795471036213,
-    "expectedNextAt": 1795472296213,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1795471096216,
+    "expectedNextAt": 1795472296216,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-11-23T20:55:30Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1795471036336,
-    "persistedAt": 1795471036336
+    "source": "github-action-chat-escape",
+    "updatedAt": 1795471096316,
+    "persistedAt": 1795471096316
   },
   "timers": {
     "vivihbecker": {
       "channel": "vivihbecker",
-      "lastMessageAt": 1795471036213,
-      "expectedNextAt": 1795472296213,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1795471096216,
+      "expectedNextAt": 1795472296216,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-11-23T20:55:30Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1795471036336,
-      "persistedAt": 1795471036336
+      "source": "github-action-chat-escape",
+      "updatedAt": 1795471096316,
+      "persistedAt": 1795471096316
     },
     "sinxzyn": {
       "channel": "sinxzyn",
@@ -142,17 +135,7 @@
       "streamStartedAt": "2026-11-23T20:21:07Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1795468684097,
-      "persistedAt": 1795469919623
-    },
-    "zsales33": {
-      "channel": "zsales33",
-      "lastMessageAt": 1795467475896,
-      "expectedNextAt": 1795468675896,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
-      "streamStartedAt": "2026-11-23T14:13:18Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1795467475996,
-      "persistedAt": 1795469919623
+      "persistedAt": 1795471060740
     }
   }
 }
