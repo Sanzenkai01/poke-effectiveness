@@ -27,6 +27,7 @@
         { name: 'sinxzyn' },
         { name: 'loxastv' },
         { name: 'darkfen_'},
+        { name: 'xdaren_' },
     ];
 
     function normalizeStreamerChannelName(name){
