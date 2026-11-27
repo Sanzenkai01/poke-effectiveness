@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-27T22:07:14.706Z",
+  "updatedAt": "2026-11-27T22:26:22.864Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-27T22:06:43.057Z",
-    "endedAt": "2026-11-27T22:07:14.706Z",
-    "reason": "rat-escape-found",
+    "startedAt": "2026-11-27T22:17:03.638Z",
+    "endedAt": "2026-11-27T22:26:22.864Z",
+    "reason": "rat-found",
     "candidateChannels": [
       "karlin_nara",
       "sinxzyn",
@@ -45,20 +45,28 @@
     "observedChannels": [
       "karlin_nara"
     ],
-    "observedSpawnChannels": [],
-    "observedSpawns": [],
+    "observedSpawnChannels": [
+      "karlin_nara"
+    ],
+    "observedSpawns": [
+      {
+        "channel": "karlin_nara",
+        "messageAt": 1795818382745,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+      }
+    ],
     "observedRatMessages": [
       {
         "channel": "karlin_nara",
         "kind": "rattata-message",
-        "messageAt": 1795817234611,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "messageAt": 1795818382745,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       },
       {
         "channel": "karlin_nara",
-        "kind": "escape",
-        "messageAt": 1795817234611,
-        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
+        "kind": "spawn",
+        "messageAt": 1795818382745,
+        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
       }
     ],
     "monitorMs": 1440000,
@@ -110,24 +118,24 @@
   },
   "latest": {
     "channel": "karlin_nara",
-    "lastMessageAt": 1795817234611,
-    "expectedNextAt": 1795818434611,
-    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+    "lastMessageAt": 1795818382745,
+    "expectedNextAt": 1795819642745,
+    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
     "streamStartedAt": "2026-11-27T16:18:45Z",
-    "source": "github-action-chat-escape",
-    "updatedAt": 1795817234705,
-    "persistedAt": 1795817234705
+    "source": "github-action-chat-spawn",
+    "updatedAt": 1795818382863,
+    "persistedAt": 1795818382863
   },
   "timers": {
     "karlin_nara": {
       "channel": "karlin_nara",
-      "lastMessageAt": 1795817234611,
-      "expectedNextAt": 1795818434611,
-      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
+      "lastMessageAt": 1795818382745,
+      "expectedNextAt": 1795819642745,
+      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
       "streamStartedAt": "2026-11-27T16:18:45Z",
-      "source": "github-action-chat-escape",
-      "updatedAt": 1795817234705,
-      "persistedAt": 1795817234705
+      "source": "github-action-chat-spawn",
+      "updatedAt": 1795818382863,
+      "persistedAt": 1795818382863
     }
   }
 }
