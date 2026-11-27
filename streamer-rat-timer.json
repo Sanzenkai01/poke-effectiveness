@@ -1,15 +1,14 @@
 {
-  "updatedAt": "2026-11-27T03:59:30.706Z",
+  "updatedAt": "2026-11-27T04:00:30.695Z",
   "refreshMs": 2400000,
   "intervalMs": 1200000,
   "source": "github-action-twitch-chat",
   "monitor": {
-    "startedAt": "2026-11-27T03:40:54.909Z",
-    "endedAt": "2026-11-27T03:59:30.706Z",
-    "reason": "rat-found",
+    "startedAt": "2026-11-27T03:59:55.434Z",
+    "endedAt": "2026-11-27T04:00:30.695Z",
+    "reason": "rat-escape-found",
     "candidateChannels": [
       "dragonslayerpiva",
-      "indypereira",
       "sinxzyn",
       "dudabatistas",
       "adivorcio",
@@ -23,6 +22,7 @@
       "fernandoalcatraz",
       "galego_rj",
       "gordallink",
+      "indypereira",
       "jackpist0la",
       "karlin_nara",
       "lineashh",
@@ -39,34 +39,25 @@
     ],
     "pstoryDropChannels": [
       "dragonslayerpiva",
-      "indypereira",
       "sinxzyn"
     ],
     "observedChannels": [
       "dragonslayerpiva"
     ],
-    "observedSpawnChannels": [
-      "dragonslayerpiva"
-    ],
-    "observedSpawns": [
-      {
-        "channel": "dragonslayerpiva",
-        "messageAt": 1795751970600,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
-      }
-    ],
+    "observedSpawnChannels": [],
+    "observedSpawns": [],
     "observedRatMessages": [
       {
         "channel": "dragonslayerpiva",
         "kind": "rattata-message",
-        "messageAt": 1795751970600,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "messageAt": 1795752030601,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       },
       {
         "channel": "dragonslayerpiva",
-        "kind": "spawn",
-        "messageAt": 1795751970600,
-        "messageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥"
+        "kind": "escape",
+        "messageAt": 1795752030601,
+        "messageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez."
       }
     ],
     "monitorMs": 1440000,
@@ -118,24 +109,24 @@
   },
   "latest": {
     "channel": "dragonslayerpiva",
-    "lastMessageAt": 1795751970600,
-    "expectedNextAt": 1795753230600,
-    "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+    "lastMessageAt": 1795752030601,
+    "expectedNextAt": 1795753230601,
+    "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
     "streamStartedAt": "2026-11-27T00:59:36Z",
-    "source": "github-action-chat-spawn",
-    "updatedAt": 1795751970706,
-    "persistedAt": 1795751970706
+    "source": "github-action-chat-escape",
+    "updatedAt": 1795752030694,
+    "persistedAt": 1795752030694
   },
   "timers": {
     "dragonslayerpiva": {
       "channel": "dragonslayerpiva",
-      "lastMessageAt": 1795751970600,
-      "expectedNextAt": 1795753230600,
-      "lastMessageText": "Um Rattata selvagem apareceu segurando um item misterioso! Digite !battle para enfrentá-lo! 💥",
+      "lastMessageAt": 1795752030601,
+      "expectedNextAt": 1795753230601,
+      "lastMessageText": "O Rattata selvagem escapou da batalha! 💨 Tente novamente na próxima vez.",
       "streamStartedAt": "2026-11-27T00:59:36Z",
-      "source": "github-action-chat-spawn",
-      "updatedAt": 1795751970706,
-      "persistedAt": 1795751970706
+      "source": "github-action-chat-escape",
+      "updatedAt": 1795752030694,
+      "persistedAt": 1795752030694
     },
     "indypereira": {
       "channel": "indypereira",
@@ -145,7 +136,7 @@
       "streamStartedAt": "2026-11-26T23:06:33Z",
       "source": "github-action-chat-spawn",
       "updatedAt": 1795750761265,
-      "persistedAt": 1795750854909
+      "persistedAt": 1795751995433
     },
     "sinxzyn": {
       "channel": "sinxzyn",
@@ -155,7 +146,7 @@
       "streamStartedAt": "2026-11-26T21:20:49Z",
       "source": "github-action-chat-escape",
       "updatedAt": 1795749619532,
-      "persistedAt": 1795750854909
+      "persistedAt": 1795751995433
     }
   }
 }
